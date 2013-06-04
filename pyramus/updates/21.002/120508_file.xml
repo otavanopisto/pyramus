@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table name="FileType" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" length="255" nullable="false"/> 
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+
+    <table name="File" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+
+        <field name="name" type="java.lang.String" length="255" nullable="false"/> 
+        <field name="fileName" type="java.lang.String" length="255" nullable="false"/> 
+        <field name="fileType" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="contentType" type="java.lang.String" nullable="true" unique="false" />
+        <field name="data" type="java.sql.Blob" nullable="true" unique="false" length="1073741824"/>
+
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="created" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="creator" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="lastModified" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="lastModifier" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+
+    <table name="StudentFile" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="student" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+  </createTables>
+
+  <alterTables>
+    <table name="File">
+      <addForeignKeys>
+        <key columns="fileType" referencedColumns="id" referencedTable="FileType" />
+        <key columns="creator" referencedColumns="id" referencedTable="User" />
+        <key columns="lastModifier" referencedColumns="id" referencedTable="User" />
+      </addForeignKeys>
+    </table>
+    
+    <table name="StudentFile">
+      <addForeignKeys>
+        <key columns="id" referencedColumns="id" referencedTable="File" />
+        <key columns="student" referencedColumns="id" referencedTable="Student" />
+      </addForeignKeys>
+    </table>
+  </alterTables>
+
+</update>

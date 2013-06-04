@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <createTables>
+    <table name="SchoolField" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+  </createTables>
+
+  <alterTables>
+    <table name="School">
+      <addFields>
+        <field name="field" type="java.lang.Long" nullable="true"/>
+      </addFields>
+
+      <addForeignKeys>
+        <key columns="field" referencedColumns="id" referencedTable="SchoolField" />
+      </addForeignKeys>
+    </table>
+  </alterTables>
+</update>

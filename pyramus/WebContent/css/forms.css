@@ -1,0 +1,215 @@
+/* GENERIC FIELDS */
+
+input[type='text']{
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  border-radius:3px;
+  border:1px solid #739de7;
+  padding:1px 0px 2px 0px;
+  font-family: "trebuchet ms";
+  height:17px;
+}
+
+textarea{
+  font-size:12px;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  border-radius:3px;
+  border:1px solid #739de7;
+  padding:1px 0px 2px 0px;
+  font-family: "trebuchet ms";
+}
+
+select{
+  border:1px solid #739DE7;
+  -moz-border-radius:3px 3px 3px 3px;
+  -webkit-border-radius:3px 3px 3px 3px;
+  border-radius:3px 3px 3px 3px;
+  padding-top:2px;
+  padding-bottom:2px;
+  padding-left:2px;
+  padding-right:2px;
+}
+
+input[type='password']{
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  border-radius:3px;
+  border:1px solid #739de7;
+  padding:2px 0px 3px 0px;
+}
+
+input[type='checkbox']{
+
+}
+
+input[type='radio']{
+
+}
+
+input[type='submit']{
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  border:1px solid #fff;
+  color:#fff;
+  padding:3px 8px 3px 8px;
+  background-color:#2e5ec5;
+  font-family: "trebuchet ms";
+  font-size:13px;
+}
+
+input.submitButton{
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  border:1px solid #fff;
+  color:#fff;
+  padding:3px 8px 3px 8px;
+  background-color:#2e5ec5;
+  font-family: "trebuchet ms";
+  font-size:13px;
+}
+
+input.resetButton{
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  border:1px solid #fff;
+  color:#fff;
+  padding:3px 8px 3px 8px;
+  background-color:#739DE7;
+  font-family: "trebuchet ms";
+  font-size:13px;
+}
+
+input.cancelButton{
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  border:1px solid #fff;
+  color:#fff;
+  padding:3px 8px 3px 8px;
+  background-color:#739DE7;
+  font-family: "trebuchet ms";
+  font-size:13px;
+}
+
+input[type='button']{
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  border:1px solid #fff;
+  color:#fff;
+  padding:3px 8px 3px 8px;
+  background-color:#2e5ec5;
+  font-family: "trebuchet ms";
+  font-size:13px;
+}
+
+.genericFormContainer {
+  margin-bottom: 4px;
+}
+
+.genericFormError {
+  padding: 8px;
+  background: #ff0000;
+  color:#fff;
+  font-weight: bold;
+}
+
+.genericFormSection {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.genericFormSubmitSection {
+  padding:8px 0px 4px 0px;
+}
+
+.genericFormSubmitSectionOffTab{
+  padding:8px 0px 4px 12px;
+}
+
+.genericFormSubmitSection input {
+  cursor: pointer;
+}
+
+.genericFormTitle {
+  margin-bottom:2px;
+}
+
+.genericFormTitleText {
+  font-weight: bold;
+  font-size: 12px; 
+  display: inline-block;
+}
+
+.genericFormSectionHelp {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: default;
+  margin-left: 4px;
+}
+
+.genericFormSectionHelpText {
+  display: none; 
+}
+
+.genericFormSectionHelp:hover>.genericFormSectionHelpText {
+  display: block; 
+  position: absolute;
+  z-index: 9999;
+  border: 1px solid #597DC5;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #fff;
+  opacity: 0.9;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
+  padding: 4px;
+  max-width: 800px;
+  cursor: default;
+  margin-top: -4px;
+  font-weight: bold;
+}
+
+.genericFormSection input[type='text'], .genericFormSection input[type='password']{
+
+}
+
+.numberField {
+  text-align: right;
+}
+
+.tabContent .tabRelatedActionsContainer {
+  margin-right: 8px;
+}
+
+.tabContent .tabContent .tabRelatedActionsContainer {
+  margin-right: 16px;
+}
+
+.tabContent .tabContent .tabContent .tabRelatedActionsContainer {
+  margin-right: 24px;
+}
+
+.tabRelatedActionsContainer {
+  position: absolute;
+  right: 0px;
+  z-index: 99;
+}
+
+/* LOGIN FORM */
+
+#loginForm {
+  width:253px;  
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:16px;
+  padding:32px;
+}
+

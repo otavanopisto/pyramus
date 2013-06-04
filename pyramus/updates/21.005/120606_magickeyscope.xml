@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="MagicKey">
+      <addFields>
+        <field name="scope" type="java.lang.String" nullable="false" unique="false" />
+      </addFields>
+    </table>
+  </alterTables>
+
+  <alterData>
+    <update table="MagicKey">
+      <set>
+        <value type="java.lang.String" column="scope" value="REQUEST"/>
+      </set>
+    </update>
+  </alterData>  
+
+</update>

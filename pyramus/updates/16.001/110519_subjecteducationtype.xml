@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <alterTables>
+    <table name="StudyProgrammeCategory">
+      <addFields>
+        <field name="educationType" type="java.lang.Long" nullable="true" unique="false" />
+      </addFields>
+      <addForeignKeys>
+        <key columns="educationType" referencedColumns="id" referencedTable="EducationType"/>
+      </addForeignKeys>
+    </table>
+
+    <table name="Subject">
+      <addFields>
+        <field name="educationType" type="java.lang.Long" nullable="true" unique="false" />
+      </addFields>
+      <addForeignKeys>
+        <key columns="educationType" referencedColumns="id" referencedTable="EducationType"/>
+      </addForeignKeys>
+    </table>
+  </alterTables>
+
+</update>

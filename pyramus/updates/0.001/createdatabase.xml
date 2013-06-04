@@ -1,0 +1,941 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table name="AbstractStudent" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="socialSecurityNumber" type="java.lang.String" nullable="true" unique="false" />
+        <field name="basicInfo" type="java.lang.String" nullable="true" unique="false" length="1073741824" />
+        <field name="birthday" type="Types.DATE" nullable="true" unique="false" />
+        <field name="sex" type="java.lang.Integer" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="AcademicTerm" primaryKeys="id">
+      <fields>
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="startDate" type="Types.DATE" nullable="false" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="endDate" type="Types.DATE" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="Address" primaryKeys="id">
+      <fields>
+        <field name="contactType" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="city" type="java.lang.String" nullable="true" unique="false" />
+        <field name="postalCode" type="java.lang.String" nullable="true" unique="false" />
+        <field name="indexColumn" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="country" type="java.lang.String" nullable="true" unique="false" />
+        <field name="streetAddress" type="java.lang.String" nullable="true" unique="false" />
+        <field name="defaultAddress" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="contactInfo" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="BasicCourseResource" primaryKeys="id">
+      <fields>
+        <field name="course" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="hours" type="java.lang.Double" nullable="false" unique="false" />
+        <field name="resource" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="unitCost" type="java.lang.Double" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="units" type="java.lang.Integer" nullable="false" unique="false" />
+        <field name="hourlyCost" type="java.lang.Double" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="ComponentBase" primaryKeys="id">
+      <fields>
+        <field name="description" type="java.lang.String" nullable="true" unique="false" length="1073741824" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="length" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="ContactInfo" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="additionalInfo" type="java.lang.String" nullable="true" unique="false" length="1073741824" />
+      </fields>
+    </table>
+    <table name="ContactType" primaryKeys="id">
+      <fields>
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="ContactURL" primaryKeys="id">
+      <fields>
+        <field name="contactURLType" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="indexColumn" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="url" type="java.lang.String" nullable="false" unique="false" />
+        <field name="contactInfo" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="ContactURLType" primaryKeys="id">
+      <fields>
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="Course" primaryKeys="id">
+      <fields>
+        <field name="teachingHours" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="endDate" type="Types.TIMESTAMP" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="localTeachingDays" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="module" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="beginDate" type="Types.TIMESTAMP" nullable="true" unique="false" />
+        <field name="nameExtension" type="java.lang.String" nullable="true" unique="false" />
+        <field name="state" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="distanceTeachingDays" type="java.lang.Double" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseAssessment" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="course" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseBase" primaryKeys="id">
+      <fields>
+        <field name="creator" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="lastModified" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="lastModifier" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="courseNumber" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="subject" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="created" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="courseLength" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="description" type="java.lang.String" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseBaseVariable" primaryKeys="id">
+      <fields>
+        <field name="value" type="java.lang.String" nullable="true" unique="false" />
+        <field name="courseBase" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="variableKey" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseBaseVariableKey" primaryKeys="id">
+      <fields>
+        <field name="variableType" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="userEditable" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="variableKey" type="java.lang.String" nullable="false" unique="false" />
+        <field name="variableName" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseComponent" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="course" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="indexColumn" type="java.lang.Integer" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseEducationSubtype" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="courseEducationType" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="educationSubtype" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseEducationType" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="courseBase" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="educationType" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseEnrolmentType" primaryKeys="id">
+      <fields>
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseParticipationType" primaryKeys="id">
+      <fields>
+        <field name="indexColumn" type="java.lang.Integer" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseState" primaryKeys="id">
+      <fields>
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseStudent" primaryKeys="id">
+      <fields>
+        <field name="enrolmentTime" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="participationType" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="lodging" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="student" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="course" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="enrolmentType" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseUser" primaryKeys="id">
+      <fields>
+        <field name="userRole" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="pyramusUser" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="course" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="CourseUserRole" primaryKeys="id">
+      <fields>
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="Credit" primaryKeys="id">
+      <fields>
+        <field name="grade" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="date" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="student" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="verbalAssessment" type="java.lang.String" nullable="true" unique="false" length="1073741824" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="assessingUser" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="creditType" type="java.lang.Integer" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="Defaults" primaryKeys="id">
+      <fields>
+        <field name="courseState" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="educationalTimeUnit" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="EducationalLength" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="units" type="java.lang.Double" nullable="false" unique="false" />
+        <field name="unit" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="EducationalTimeUnit" primaryKeys="id">
+      <fields>
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="baseUnits" type="java.lang.Double" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="EducationSubtype" primaryKeys="id">
+      <fields>
+        <field name="code" type="java.lang.String" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="educationType" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="EducationType" primaryKeys="id">
+      <fields>
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="code" type="java.lang.String" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="Email" primaryKeys="id">
+      <fields>
+        <field name="contactType" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="address" type="java.lang.String" nullable="false" unique="false" />
+        <field name="indexColumn" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="defaultAddress" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="contactInfo" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="FormDraft" primaryKeys="id">
+      <fields>
+        <field name="creator" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="data" type="java.lang.String" nullable="true" unique="false" length="1073741824" />
+        <field name="modified" type="Types.TIMESTAMP" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="url" type="java.lang.String" nullable="true" unique="false" />
+        <field name="created" type="Types.TIMESTAMP" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="Grade" primaryKeys="id">
+      <fields>
+        <field name="passingGrade" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="description" type="java.lang.String" nullable="true" unique="false" />
+        <field name="qualification" type="java.lang.String" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="gradingScale" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="GPA" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="indexColumn" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="GradeCourseResource" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="course" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="hourlyCost" type="java.lang.Double" nullable="false" unique="false" />
+        <field name="resource" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="hours" type="java.lang.Double" nullable="false" unique="false" />
+        <field name="unitCost" type="java.lang.Double" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="GradingScale" primaryKeys="id">
+      <fields>
+        <field name="archived" type="java.lang.Boolean" nullable="true" unique="false" />
+        <field name="description" type="java.lang.String" nullable="true" unique="false" length="1073741824" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="hibernate_sequences" primaryKeys="sequence_name">
+      <fields>
+        <field name="sequence_next_hi_value" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="sequence_name" type="java.lang.String" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="InternalAuth" primaryKeys="id">
+      <fields>
+        <field name="password" type="java.lang.String" nullable="false" unique="false" />
+        <field name="username" type="java.lang.String" nullable="false" unique="true" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="true" />
+      </fields>
+    </table>
+    <table name="Language" primaryKeys="id">
+      <fields>
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="code" type="java.lang.String" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="MagicKey" primaryKeys="id">
+      <fields>
+        <field name="created" type="Types.TIMESTAMP" nullable="false" unique="true" />
+        <field name="name" type="java.lang.String" nullable="false" unique="true" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="true" />
+      </fields>
+    </table>
+    <table name="MaterialResource" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="unitCost" type="java.lang.Double" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="Module" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="ModuleComponent" primaryKeys="id">
+      <fields>
+        <field name="indexColumn" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="module" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="Municipality" primaryKeys="id">
+      <fields>
+        <field name="code" type="java.lang.String" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="Nationality" primaryKeys="id">
+      <fields>
+        <field name="code" type="java.lang.String" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="OtherCost" primaryKeys="id">
+      <fields>
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="course" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="cost" type="java.lang.Double" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="PhoneNumber" primaryKeys="id">
+      <fields>
+        <field name="defaultNumber" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="indexColumn" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="number" type="java.lang.String" nullable="false" unique="false" />
+        <field name="contactInfo" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="contactType" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="Project" primaryKeys="id">
+      <fields>
+        <field name="created" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="creator" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="description" type="java.lang.String" nullable="true" unique="false" length="1073741824" />
+        <field name="lastModifier" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="lastModified" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="optionalStudies" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="ProjectModule" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="indexColumn" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="optionality" type="java.lang.Integer" nullable="false" unique="false" />
+        <field name="module" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="project" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="Report" primaryKeys="id">
+      <fields>
+        <field name="data" type="java.lang.String" nullable="false" unique="false" length="1073741824" />
+        <field name="lastModifier" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="lastModified" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="created" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="creator" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="Resource" primaryKeys="id">
+      <fields>
+        <field name="version" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="category" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="ResourceCategory" primaryKeys="id">
+      <fields>
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="School" primaryKeys="id">
+      <fields>
+        <field name="code" type="java.lang.String" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="contactInfo" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="SchoolVariable" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="value" type="java.lang.String" nullable="true" unique="false" />
+        <field name="variableKey" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="school" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="SchoolVariableKey" primaryKeys="id">
+      <fields>
+        <field name="variableName" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="variableType" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="userEditable" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="variableKey" type="java.lang.String" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="Setting" primaryKeys="id">
+      <fields>
+        <field name="settingKey" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="value" type="java.lang.String" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="SettingKey" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="true" />
+        <field name="name" type="java.lang.String" nullable="false" unique="true" />
+      </fields>
+    </table>
+    <table name="Student" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="language" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="studyStartDate" type="Types.DATE" nullable="true" unique="false" />
+        <field name="firstName" type="java.lang.String" nullable="false" unique="false" />
+        <field name="studyEndReason" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="contactInfo" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="previousStudies" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="additionalInfo" type="java.lang.String" nullable="true" unique="false" length="1073741824" />
+        <field name="municipality" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="studyTimeEnd" type="Types.DATE" nullable="true" unique="false" />
+        <field name="lastName" type="java.lang.String" nullable="false" unique="false" />
+        <field name="studyProgramme" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="educationalLevel" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="studyEndDate" type="Types.DATE" nullable="true" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="nationality" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="abstractStudent" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="lodging" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="examinationType" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="studyEndText" type="java.lang.String" nullable="true" unique="false" />
+        <field name="education" type="java.lang.String" nullable="true" unique="false" />
+        <field name="school" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="activityType" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="nickname" type="java.lang.String" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="StudentActivityType" primaryKeys="id">
+      <fields>
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="StudentContactLogEntry" primaryKeys="id">
+      <fields>
+        <field name="student" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="entryDate" type="Types.TIMESTAMP" nullable="true" unique="false" />
+        <field name="text" type="java.lang.String" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="type" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="creator" type="java.lang.String" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="StudentCourseResource" primaryKeys="id">
+      <fields>
+        <field name="unitCost" type="java.lang.Double" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="course" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="hourlyCost" type="java.lang.Double" nullable="false" unique="false" />
+        <field name="resource" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="hours" type="java.lang.Double" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="StudentEducationalLevel" primaryKeys="id">
+      <fields>
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="StudentExaminationType" primaryKeys="id">
+      <fields>
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="StudentProject" primaryKeys="id">
+      <fields>
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="student" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="created" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="creator" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="description" type="java.lang.String" nullable="true" unique="false" length="1073741824" />
+        <field name="lastModifier" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="lastModified" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="optionalStudies" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="StudentProjectModule" primaryKeys="id">
+      <fields>
+        <field name="optionality" type="java.lang.Integer" nullable="false" unique="false" />
+        <field name="indexColumn" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="academicTerm" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="module" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="studentProject" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="StudentStudyEndReason" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="true" unique="false" />
+        <field name="parentReason" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="StudentVariable" primaryKeys="id">
+      <fields>
+        <field name="student" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="value" type="java.lang.String" nullable="true" unique="false" />
+        <field name="variableKey" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="StudentVariableKey" primaryKeys="id">
+      <fields>
+        <field name="variableName" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="variableType" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="userEditable" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="variableKey" type="java.lang.String" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="StudyProgramme" primaryKeys="id">
+      <fields>
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="code" type="java.lang.String" nullable="true" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="category" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="StudyProgrammeCategory" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="Subject" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="code" type="java.lang.String" nullable="true" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="TransferCredit" primaryKeys="id">
+      <fields>
+        <field name="school" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="courseName" type="java.lang.String" nullable="false" unique="false" />
+        <field name="subject" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="courseLength" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="User" primaryKeys="id">
+      <fields>
+        <field name="externalId" type="java.lang.String" nullable="false" unique="false" />
+        <field name="contactInfo" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="firstName" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="lastName" type="java.lang.String" nullable="false" unique="false" />
+        <field name="authProvider" type="java.lang.String" nullable="false" unique="false" />
+        <field name="role" type="java.lang.Integer" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="UserVariable" primaryKeys="id">
+      <fields>
+        <field name="variableKey" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="user" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="value" type="java.lang.String" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="UserVariableKey" primaryKeys="id">
+      <fields>
+        <field name="variableKey" type="java.lang.String" nullable="false" unique="false" />
+        <field name="variableName" type="java.lang.String" nullable="false" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="variableType" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="userEditable" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table name="WorkResource" primaryKeys="id">
+      <fields>
+        <field name="costPerUse" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="hourlyCost" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+  </createTables>
+
+  <alterTables>
+    <table name="Address">
+      <addForeignKeys>
+        <key name="FK1ED033D4C0329886" columns="contactType" referencedColumns="id" referencedTable="ContactType" />
+        <key name="FK1ED033D4C028436E" columns="contactInfo" referencedColumns="id" referencedTable="ContactInfo" />
+      </addForeignKeys>
+    </table>
+    <table name="BasicCourseResource">
+      <addForeignKeys>
+        <key name="FK87983CF75475C87B" columns="course" referencedColumns="id" referencedTable="Course" />
+        <key name="FK87983CF7A7C0C394" columns="resource" referencedColumns="id" referencedTable="Resource" />
+      </addForeignKeys>
+    </table>
+    <table name="ComponentBase">
+      <addForeignKeys>
+        <key name="FK954D014E6270F1B1" columns="length" referencedColumns="id" referencedTable="EducationalLength" />
+      </addForeignKeys>
+    </table>
+    <table name="ContactURL">
+      <addForeignKeys>
+        <key name="FK7F280D4F58FFEF20" columns="contactURLType" referencedColumns="id" referencedTable="ContactURLType" />
+        <key name="FK7F280D4FC028436E" columns="contactInfo" referencedColumns="id" referencedTable="ContactInfo" />
+      </addForeignKeys>
+    </table>
+    <table name="Course">
+      <addForeignKeys>
+        <key name="FK78A7CC3BB33F86B5" columns="id" referencedColumns="id" referencedTable="CourseBase" />
+        <key name="FK78A7CC3B5D81ECA2" columns="state" referencedColumns="id" referencedTable="CourseState" />
+        <key name="FK78A7CC3BD7113A6E" columns="module" referencedColumns="id" referencedTable="Module" />
+      </addForeignKeys>
+    </table>
+    <table name="CourseAssessment">
+      <addForeignKeys>
+        <key name="FK9833115D6EEA9BD" columns="id" referencedColumns="id" referencedTable="Credit" />
+        <key name="FK9833115D5475C87B" columns="course" referencedColumns="id" referencedTable="Course" />
+      </addForeignKeys>
+    </table>
+    <table name="CourseBase">
+      <addForeignKeys>
+        <key name="FKB40B1AC977F310A" columns="subject" referencedColumns="id" referencedTable="Subject" />
+        <key name="FKB40B1AC76DFD82D" columns="lastModifier" referencedColumns="id" referencedTable="User" />
+        <key name="FKB40B1AC4344B8EC" columns="creator" referencedColumns="id" referencedTable="User" />
+        <key name="FKB40B1AC2054118C" columns="courseLength" referencedColumns="id" referencedTable="EducationalLength" />
+      </addForeignKeys>
+    </table>
+    <table name="CourseBaseVariable">
+      <addForeignKeys>
+        <key name="FK73597C4847BCDB06" columns="courseBase" referencedColumns="id" referencedTable="CourseBase" />
+        <key name="FK73597C48322966AC" columns="variableKey" referencedColumns="id" referencedTable="CourseBaseVariableKey" />
+      </addForeignKeys>
+    </table>
+    <table name="CourseComponent">
+      <addForeignKeys>
+        <key name="FK4A4C03025F7117BB" columns="id" referencedColumns="id" referencedTable="ComponentBase" />
+        <key name="FK4A4C03025475C87B" columns="course" referencedColumns="id" referencedTable="Course" />
+      </addForeignKeys>
+    </table>
+    <table name="CourseEducationSubtype">
+      <addForeignKeys>
+        <key name="FK102A2B0DC9842B12" columns="educationSubtype" referencedColumns="id" referencedTable="EducationSubtype" />
+        <key name="FK102A2B0DED033D00" columns="courseEducationType" referencedColumns="id" referencedTable="CourseEducationType" />
+      </addForeignKeys>
+    </table>
+    <table name="CourseEducationType">
+      <addForeignKeys>
+        <key name="FK5F27B287A5E07316" columns="educationType" referencedColumns="id" referencedTable="EducationType" />
+        <key name="FK5F27B28747BCDB06" columns="courseBase" referencedColumns="id" referencedTable="CourseBase" />
+      </addForeignKeys>
+    </table>
+    <table name="CourseStudent">
+      <addForeignKeys>
+        <key name="FK21572580EE2B836F" columns="student" referencedColumns="id" referencedTable="Student" />
+        <key name="FK215725805475C87B" columns="course" referencedColumns="id" referencedTable="Course" />
+        <key name="FK2157258023DFBF96" columns="participationType" referencedColumns="id" referencedTable="CourseParticipationType" />
+        <key name="FK21572580D2B417DC" columns="enrolmentType" referencedColumns="id" referencedTable="CourseEnrolmentType" />
+      </addForeignKeys>
+    </table>
+    <table name="CourseUser">
+      <addForeignKeys>
+        <key name="FKB4996A65475C87B" columns="course" referencedColumns="id" referencedTable="Course" />
+        <key name="FKB4996A657C009DE" columns="pyramusUser" referencedColumns="id" referencedTable="User" />
+        <key name="FKB4996A6D5977E22" columns="userRole" referencedColumns="id" referencedTable="CourseUserRole" />
+      </addForeignKeys>
+    </table>
+    <table name="Credit">
+      <addForeignKeys>
+        <key name="FK78CA9719EE2B836F" columns="student" referencedColumns="id" referencedTable="Student" />
+        <key name="FK78CA9719D709AF89" columns="assessingUser" referencedColumns="id" referencedTable="User" />
+        <key name="FK78CA971979EF34E5" columns="grade" referencedColumns="id" referencedTable="Grade" />
+      </addForeignKeys>
+    </table>
+    <table name="Defaults">
+      <addForeignKeys>
+        <key name="FK2A415672531DE567" columns="courseState" referencedColumns="id" referencedTable="CourseState" />
+        <key name="FK2A415672572F2D3A" columns="educationalTimeUnit" referencedColumns="id" referencedTable="EducationalTimeUnit" />
+      </addForeignKeys>
+    </table>
+    <table name="EducationSubtype">
+      <addForeignKeys>
+        <key name="FKD17434D2A5E07316" columns="educationType" referencedColumns="id" referencedTable="EducationType" />
+      </addForeignKeys>
+    </table>
+    <table name="EducationalLength">
+      <addForeignKeys>
+        <key name="FK8E7A679278A621A" columns="unit" referencedColumns="id" referencedTable="EducationalTimeUnit" />
+      </addForeignKeys>
+    </table>
+    <table name="Email">
+      <addForeignKeys>
+        <key name="FK3FF5B7CC0329886" columns="contactType" referencedColumns="id" referencedTable="ContactType" />
+        <key name="FK3FF5B7CC028436E" columns="contactInfo" referencedColumns="id" referencedTable="ContactInfo" />
+      </addForeignKeys>
+    </table>
+    <table name="FormDraft">
+      <addForeignKeys>
+        <key name="FKE1D2F71D4344B8EC" columns="creator" referencedColumns="id" referencedTable="User" />
+      </addForeignKeys>
+    </table>
+    <table name="Grade">
+      <addForeignKeys>
+        <key name="FK41DCFB7146934B5" columns="gradingScale" referencedColumns="id" referencedTable="GradingScale" />
+      </addForeignKeys>
+    </table>
+    <table name="GradeCourseResource">
+      <addForeignKeys>
+        <key name="FK39880CE05475C87B" columns="course" referencedColumns="id" referencedTable="Course" />
+        <key name="FK39880CE0A7C0C394" columns="resource" referencedColumns="id" referencedTable="Resource" />
+      </addForeignKeys>
+    </table>
+    <table name="MaterialResource">
+      <addForeignKeys>
+        <key name="FKE255BA75BC150CA1" columns="id" referencedColumns="id" referencedTable="Resource" />
+      </addForeignKeys>
+    </table>
+    <table name="Module">
+      <addForeignKeys>
+        <key name="FK89B0928CB33F86B5" columns="id" referencedColumns="id" referencedTable="CourseBase" />
+      </addForeignKeys>
+    </table>
+    <table name="ModuleComponent">
+      <addForeignKeys>
+        <key name="FKFAFEC7D15F7117BB" columns="id" referencedColumns="id" referencedTable="ComponentBase" />
+        <key name="FKFAFEC7D1D7113A6E" columns="module" referencedColumns="id" referencedTable="Module" />
+      </addForeignKeys>
+    </table>
+    <table name="OtherCost">
+      <addForeignKeys>
+        <key name="FK36EBADD5475C87B" columns="course" referencedColumns="id" referencedTable="Course" />
+      </addForeignKeys>
+    </table>
+    <table name="PhoneNumber">
+      <addForeignKeys>
+        <key name="FK1C4E6237C0329886" columns="contactType" referencedColumns="id" referencedTable="ContactType" />
+        <key name="FK1C4E6237C028436E" columns="contactInfo" referencedColumns="id" referencedTable="ContactInfo" />
+      </addForeignKeys>
+    </table>
+    <table name="Project">
+      <addForeignKeys>
+        <key name="FK50C8E2F9BE6D6F92" columns="optionalStudies" referencedColumns="id" referencedTable="EducationalLength" />
+        <key name="FK50C8E2F976DFD82D" columns="lastModifier" referencedColumns="id" referencedTable="User" />
+        <key name="FK50C8E2F94344B8EC" columns="creator" referencedColumns="id" referencedTable="User" />
+      </addForeignKeys>
+    </table>
+    <table name="ProjectModule">
+      <addForeignKeys>
+        <key name="FKD8B796C536EE660D" columns="project" referencedColumns="id" referencedTable="Project" />
+        <key name="FKD8B796C5D7113A6E" columns="module" referencedColumns="id" referencedTable="Module" />
+      </addForeignKeys>
+    </table>
+    <table name="Report">
+      <addForeignKeys>
+        <key name="FK91B1415476DFD82D" columns="lastModifier" referencedColumns="id" referencedTable="User" />
+        <key name="FK91B141544344B8EC" columns="creator" referencedColumns="id" referencedTable="User" />
+      </addForeignKeys>
+    </table>
+    <table name="Resource">
+      <addForeignKeys>
+        <key name="FKEF86282E3857F7A2" columns="category" referencedColumns="id" referencedTable="ResourceCategory" />
+      </addForeignKeys>
+    </table>
+    <table name="School">
+      <addForeignKeys>
+        <key name="FK93464794C028436E" columns="contactInfo" referencedColumns="id" referencedTable="ContactInfo" />
+      </addForeignKeys>
+    </table>
+    <table name="SchoolVariable">
+      <addForeignKeys>
+        <key name="FK58FEAA301BB391F6" columns="school" referencedColumns="id" referencedTable="School" />
+        <key name="FK58FEAA3092C708C4" columns="variableKey" referencedColumns="id" referencedTable="SchoolVariableKey" />
+      </addForeignKeys>
+    </table>
+    <table name="Setting">
+      <addForeignKeys>
+        <key name="FKD997A6301C9B8DAE" columns="settingKey" referencedColumns="id" referencedTable="SettingKey" />
+      </addForeignKeys>
+    </table>
+    <table name="Student">
+      <addForeignKeys>
+        <key name="FKF3371A1BEF70A856" columns="educationalLevel" referencedColumns="id" referencedTable="StudentEducationalLevel" />
+        <key name="FKF3371A1B30ED0CC0" columns="studyEndReason" referencedColumns="id" referencedTable="StudentStudyEndReason" />
+        <key name="FKF3371A1BFDB61D8B" columns="abstractStudent" referencedColumns="id" referencedTable="AbstractStudent" />
+        <key name="FKF3371A1BC655592A" columns="nationality" referencedColumns="id" referencedTable="Nationality" />
+        <key name="FKF3371A1BC028436E" columns="contactInfo" referencedColumns="id" referencedTable="ContactInfo" />
+        <key name="FKF3371A1B9F140BD4" columns="studyProgramme" referencedColumns="id" referencedTable="StudyProgramme" />
+        <key name="FKF3371A1B29206186" columns="municipality" referencedColumns="id" referencedTable="Municipality" />
+        <key name="FKF3371A1B8ECB763E" columns="language" referencedColumns="id" referencedTable="Language" />
+        <key name="FKF3371A1B44566106" columns="activityType" referencedColumns="id" referencedTable="StudentActivityType" />
+        <key name="FKF3371A1B1BB391F6" columns="school" referencedColumns="id" referencedTable="School" />
+        <key name="FKF3371A1B7CB521A2" columns="examinationType" referencedColumns="id" referencedTable="StudentExaminationType" />
+      </addForeignKeys>
+    </table>
+    <table name="StudentContactLogEntry">
+      <addForeignKeys>
+        <key name="FKEBB80C33EE2B836F" columns="student" referencedColumns="id" referencedTable="Student" />
+      </addForeignKeys>
+    </table>
+    <table name="StudentCourseResource">
+      <addForeignKeys>
+        <key name="FKCF4D58445475C87B" columns="course" referencedColumns="id" referencedTable="Course" />
+        <key name="FKCF4D5844A7C0C394" columns="resource" referencedColumns="id" referencedTable="Resource" />
+      </addForeignKeys>
+    </table>
+    <table name="StudentProject">
+      <addForeignKeys>
+        <key name="FK7500447EBE6D6F92" columns="optionalStudies" referencedColumns="id" referencedTable="EducationalLength" />
+        <key name="FK7500447EEE2B836F" columns="student" referencedColumns="id" referencedTable="Student" />
+        <key name="FK7500447E76DFD82D" columns="lastModifier" referencedColumns="id" referencedTable="User" />
+        <key name="FK7500447E4344B8EC" columns="creator" referencedColumns="id" referencedTable="User" />
+      </addForeignKeys>
+    </table>
+    <table name="StudentProjectModule">
+      <addForeignKeys>
+        <key name="FK6FBF008A22B70CA1" columns="studentProject" referencedColumns="id" referencedTable="StudentProject" />
+        <key name="FK6FBF008A15319894" columns="academicTerm" referencedColumns="id" referencedTable="AcademicTerm" />
+        <key name="FK6FBF008AD7113A6E" columns="module" referencedColumns="id" referencedTable="Module" />
+      </addForeignKeys>
+    </table>
+    <table name="StudentStudyEndReason">
+      <addForeignKeys>
+        <key name="FK9136D6316227D0F8" columns="parentReason" referencedColumns="id" referencedTable="StudentStudyEndReason" />
+      </addForeignKeys>
+    </table>
+    <table name="StudentVariable">
+      <addForeignKeys>
+        <key name="FK1C1405B7EE2B836F" columns="student" referencedColumns="id" referencedTable="Student" />
+        <key name="FK1C1405B7B02EFAD2" columns="variableKey" referencedColumns="id" referencedTable="StudentVariableKey" />
+      </addForeignKeys>
+    </table>
+    <table name="StudyProgramme">
+      <addForeignKeys>
+        <key name="FKB037EB733296F97D" columns="category" referencedColumns="id" referencedTable="StudyProgrammeCategory" />
+      </addForeignKeys>
+    </table>
+    <table name="TransferCredit">
+      <addForeignKeys>
+        <key name="FKB1D3EE4977F310A" columns="subject" referencedColumns="id" referencedTable="Subject" />
+        <key name="FKB1D3EE46EEA9BD" columns="id" referencedColumns="id" referencedTable="Credit" />
+        <key name="FKB1D3EE42054118C" columns="courseLength" referencedColumns="id" referencedTable="EducationalLength" />
+        <key name="FKB1D3EE41BB391F6" columns="school" referencedColumns="id" referencedTable="School" />
+      </addForeignKeys>
+    </table>
+    <table name="User">
+      <addForeignKeys>
+        <key name="FK285FEBC028436E" columns="contactInfo" referencedColumns="id" referencedTable="ContactInfo" />
+      </addForeignKeys>
+    </table>
+    <table name="UserVariable">
+      <addForeignKeys>
+        <key name="FK918A7B87E073D3C6" columns="variableKey" referencedColumns="id" referencedTable="UserVariableKey" />
+        <key name="FK918A7B8762D248B" columns="user" referencedColumns="id" referencedTable="User" />
+      </addForeignKeys>
+    </table>
+    <table name="WorkResource">
+      <addForeignKeys>
+        <key name="FKDD5DA25FBC150CA1" columns="id" referencedColumns="id" referencedTable="Resource" />
+      </addForeignKeys>
+    </table>
+  </alterTables>
+
+</update>

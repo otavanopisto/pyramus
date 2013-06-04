@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="Credit">
+      <changeFields>
+        <field name="creditType" type="java.lang.String" nullable="false"/>
+      </changeFields>
+    </table>
+  </alterTables>
+  
+  <alterData>
+  
+    <update table="Credit">
+      <set>
+        <value type="java.lang.String" column="creditType" value="CourseAssessment"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="creditType" value="1"/>
+      </where>
+    </update>
+    
+    <update table="Credit">
+      <set>
+        <value type="java.lang.String" column="creditType" value="TransferCredit"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="creditType" value="2"/>
+      </where>
+    </update>
+    
+    <update table="Credit">
+      <set>
+        <value type="java.lang.String" column="creditType" value="ProjectAssessment"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="creditType" value="3"/>
+      </where>
+    </update>
+
+  </alterData>
+
+</update>

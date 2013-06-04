@@ -1,0 +1,48 @@
+@CHARSET "UTF-8";
+
+span.IxSearchNavigationPageLink {
+  text-decoration: none;
+  color: #2e5ec5;
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  padding-top: 2px; 
+  padding-bottom: 2px;
+  border:1px solid #2e5ec5;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  border-radius:3px;
+  cursor:pointer;
+}
+
+span.IxSearchNavigationPageLink:hover{
+  background-color:#2e5ec5;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  border-radius:3px;
+  color:#fff;
+}
+
+span.IxSearchNavigationPageLinkActive {
+  background-color:#2e5ec5;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  border-radius:3px;
+  color:#fff;
+}
+
+div.IxSearchNavigationPageContainer {
+  min-width: 20px;
+  margin-right:6px;
+  text-align: center;
+  display: inline-block;
+  background-color:#fff;
+  margin-top:4px;
+}
+
+div.IxSearchNavigationPageContainerDisabled>span.IxSearchNavigationPageLink {
+  background-color:#fefefe;
+  cursor:default;
+  border:1px solid #cacaca;
+  color: #cacaca;
+}

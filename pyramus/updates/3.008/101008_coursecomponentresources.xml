@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <createTables>
+    <table name="CourseComponentResource" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="usagePercent" type="java.lang.Double" nullable="false"/>
+        <field name="courseComponent" type="java.lang.Long"/>
+        <field name="resource" type="java.lang.Long"/>
+      </fields>
+      <foreignKeys>
+        <key columns="courseComponent" referencedColumns="id" referencedTable="CourseComponent"/>
+        <key columns="resource" referencedColumns="id" referencedTable="Resource"/>
+      </foreignKeys>
+    </table>
+  </createTables>
+</update>

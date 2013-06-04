@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table primaryKeys="id" name="CourseAssessmentRequest">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="courseStudent" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="created" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="requestText" type="java.lang.String" length="1073741824" nullable="false"/> 
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="courseStudent" referencedTable="CourseStudent"/>
+      </foreignKeys>
+    </table>
+  </createTables>
+
+</update>

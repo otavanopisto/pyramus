@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="CourseBaseVariableKey">
+      <changeFields>
+        <field name="variableType" type="java.lang.String" nullable="true"/>
+      </changeFields>
+    </table>
+    
+    <table name="SchoolVariableKey">
+      <changeFields>
+        <field name="variableType" type="java.lang.String" nullable="true"/>
+      </changeFields>
+    </table>
+    
+    <table name="StudentVariableKey">
+      <changeFields>
+        <field name="variableType" type="java.lang.String" nullable="true"/>
+      </changeFields>
+    </table>
+    
+    <table name="UserVariableKey">
+      <changeFields>
+        <field name="variableType" type="java.lang.String" nullable="true"/>
+      </changeFields>
+    </table>
+  </alterTables>
+
+  <alterData>
+  
+    <!-- SchoolVariableKey -->
+  
+    <update table="CourseBaseVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="TEXT"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="0"/>
+      </where>
+    </update>
+    
+    <update table="CourseBaseVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="NUMBER"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="1"/>
+      </where>
+    </update>
+    
+    <update table="CourseBaseVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="DATE"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="2"/>
+      </where>
+    </update>
+    
+    <update table="CourseBaseVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="BOOLEAN"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="3"/>
+      </where>
+    </update>
+    
+    <!-- SchoolVariableKey -->
+    
+    <update table="SchoolVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="TEXT"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="0"/>
+      </where>
+    </update>
+    
+    <update table="SchoolVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="NUMBER"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="1"/>
+      </where>
+    </update>
+    
+    <update table="SchoolVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="DATE"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="2"/>
+      </where>
+    </update>
+    
+    <update table="SchoolVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="BOOLEAN"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="3"/>
+      </where>
+    </update>
+    
+    <!-- StudentVariableKey -->
+    
+    <update table="StudentVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="TEXT"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="0"/>
+      </where>
+    </update>
+    
+    <update table="StudentVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="NUMBER"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="1"/>
+      </where>
+    </update>
+    
+    <update table="StudentVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="DATE"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="2"/>
+      </where>
+    </update>
+    
+    <update table="StudentVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="BOOLEAN"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="3"/>
+      </where>
+    </update>
+    
+    <!-- UserVariableKey -->
+    
+    <update table="UserVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="TEXT"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="0"/>
+      </where>
+    </update>
+    
+    <update table="UserVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="NUMBER"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="1"/>
+      </where>
+    </update>
+    
+    <update table="UserVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="DATE"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="2"/>
+      </where>
+    </update>
+    
+    <update table="UserVariableKey">
+      <set>
+        <value type="java.lang.String" column="variableType" value="BOOLEAN"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="variableType" value="3"/>
+      </where>
+    </update>
+  </alterData>
+
+</update>

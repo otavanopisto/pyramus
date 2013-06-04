@@ -1,0 +1,89 @@
+/******************************
+ Dialog z-index: 100-200
+ 
+ glasspane at 100, 
+ first dialog at 101
+******************************/
+
+@CHARSET "UTF-8";
+
+.IxDialog {
+  z-index: 101;
+  position: absolute;
+  padding: 0;
+  border: 5px solid #C9DCFE;
+  background:#2e5ec5;
+  -moz-border-radius:10px;
+  -webkit-border-radius:10px;
+  border-radius:10px;
+  padding:1px;
+}
+
+.IxDialogContent {
+  min-width: 200px;
+  background: #eaf0fe;
+}
+
+.IxDialogTitleBar {
+  color: #fff;
+}
+
+.IxDialogTitle {
+  padding: 4px 8px;
+  background: #2e5ec5;
+  cursor: move;
+  color: #fff;
+  -moz-user-select: none;
+  font-weight:bold;
+}
+
+.IxDialogTitleBarButtons {
+  
+}
+
+.dialogGlassPane {
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  height: 100%;
+  background: #fff;
+  opacity: 0.7;
+   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";  
+  cursor: wait;
+  z-index: 100;
+}
+
+.IxDialogButtonsContainer {
+  height: 26px;
+  color: #660; 
+  padding-top: 2px; 
+  padding-left: 4px; 
+  padding-bottom: 4px;
+  -moz-border-radius-bottomleft:3px;
+  -moz-border-radius-bottomright:3px;
+  -webkit-border-bottom-left-radius:3px;
+  -webkit-border-bottom-right-radius:3px;
+  border-bottom-left-radius:3px;
+  border-bottom-right-radius:3px;
+  background:#fff;
+}
+
+.IxDialogButton {
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  border:1px solid #fff;
+  color:#fff;
+  padding:3px 8px 3px 8px;
+  background-color:#2e5ec5;
+}
+
+.IxDialogButton:hover {
+  cursor:pointer;
+}
+
+.IxDialogButton[disabled='disabled'] {
+  background-color:#c5c5c5;
+	cursor:default;
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<public:component xmlns:public="urn:HTMLComponent" lightweight="true">
+<!--Thanks for naturalWidth/naturalHeight fix goes to: http://arunprasad.wordpress.com/2008/08/26/naturalwidth-and-naturalheight-for-image-element-in-internet-explorer/-->
+<public:attach event="oncontentready" handler="onContentReady"/>
+<script type="text/javascript">
+//<![CDATA[    
+  function onContentReady() {
+    var io = new Image();
+    io.el = element;
+    io.onload = function () {
+      var imgElement = this.el; 
+      imgElement.naturalWidth = this.width;
+      imgElement.naturalHeight = this.height;    
+      var maxWidth = Element.getStyleInPixels(imgElement, "max-width");
+	    var maxHeight = Element.getStyleInPixels(imgElement, "max-height");       
+    };
+    
+    io.src = element.src;
+  };
+//]]>
+</script>
+</public:component>

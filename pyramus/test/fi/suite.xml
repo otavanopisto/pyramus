@@ -1,0 +1,74 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Pyramus">
+  <test verbose="2" name="fi.pyramus" annotations="JDK">
+    <classes>
+      <class name="fi.pyramus.ServletTest"/>
+    </classes>
+  </test>
+  
+  <test verbose="2" name="fi.pyramus.auth" annotations="JDK">
+    <classes>
+      <class name="fi.pyramus.auth.AuthorizationProvidersTest"/>
+      <class name="fi.pyramus.auth.InternalAuthorizationProviderTest"/>
+    </classes>
+  </test>
+  
+  <test verbose="2" name="fi.pyramus.I18N" annotations="JDK">
+    <classes>
+      <class name="fi.pyramus.I18N.MessagesTest"/>
+    </classes>
+  </test>
+  
+  <test verbose="2" name="fi.pyramus.persistence.usertypes" annotations="JDK">
+  </test>
+  
+  <test verbose="2" name="fi.pyramus.domainmodel.base" annotations="JDK">
+    <classes>
+      <class name="fi.pyramus.domainmodel.base.CourseEducationSubtypeTest"/>
+      <class name="fi.pyramus.domainmodel.base.CourseEducationTypeTest"/>
+      <class name="fi.pyramus.domainmodel.base.EducationSubtypeTest"/>
+      <class name="fi.pyramus.domainmodel.base.EducationTypeTest"/>
+      <class name="fi.pyramus.domainmodel.base.SubjectTest"/>
+    </classes>
+  </test>
+
+  <test verbose="2" name="fi.pyramus.domainmodel.modules" annotations="JDK">
+    <classes>
+      <class name="fi.pyramus.domainmodel.modules.ModuleTest"/>
+    </classes>
+  </test>
+  
+  <test verbose="2" name="fi.pyramus.domainmodel.resources" annotations="JDK">
+    <classes>
+      <class name="fi.pyramus.domainmodel.resources.ResourceTest"/>
+      <class name="fi.pyramus.domainmodel.resources.ResourceCategoryTest"/>
+      <class name="fi.pyramus.domainmodel.resources.MaterialResourceTest"/>
+      <class name="fi.pyramus.domainmodel.resources.WorkResourceTest"/>
+    </classes>
+  </test>
+  
+  <test verbose="2" name="fi.pyramus.domainmodel.users" annotations="JDK">
+    <classes>
+      <class name="fi.pyramus.domainmodel.users.UserTest"/>
+      <class name="fi.pyramus.domainmodel.users.InternalAuthTest"/>
+    </classes>
+  </test>
+  
+  <test verbose="2" name="fi.pyramus.domainmodel.students" annotations="JDK">
+    <classes>
+      <class name="fi.pyramus.domainmodel.students.StudentTest"/>
+    </classes>
+  </test>
+  
+  <test verbose="2" name="fi.pyramus.dao" annotations="JDK">
+    <classes>
+      <class name="fi.pyramus.dao.BaseDAOTest"/>
+      <class name="fi.pyramus.dao.CourseDAOTest"/>
+      <class name="fi.pyramus.dao.ModuleDAOTest"/>
+      <class name="fi.pyramus.dao.ResourceDAOTest"/>
+      <class name="fi.pyramus.dao.UserDAOTest"/>
+      <class name="fi.pyramus.dao.StudentDAOTest"/>
+    </classes>
+  </test>
+ 
+</suite>

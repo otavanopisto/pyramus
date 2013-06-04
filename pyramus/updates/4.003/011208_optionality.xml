@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="CourseStudent">
+      <addFields>
+        <field name="optionality" type="java.lang.Integer" nullable="true" unique="false" />
+      </addFields>
+    </table>
+    
+    <table name="TransferCredit">
+      <addFields>
+        <field name="optionality" type="java.lang.Integer" nullable="true" unique="false" />
+      </addFields>
+    </table>
+  </alterTables>
+
+</update>

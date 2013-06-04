@@ -1,0 +1,282 @@
+@charset "UTF-8";
+
+#coursePlannerContainer {
+  height: 600px;
+  background: #fff;
+  width: 100%;
+  position: relative;
+}
+
+.coursePlanner {
+  border: 1px solid #000000;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  left: 0px;
+  right: 0px;
+}
+
+.coursePlannerView {
+	bottom: 60px;
+	cursor: move;
+	left: 0px;
+	overflow: hidden;
+	position: absolute;
+	right: 0px;
+	top: 20px;
+	border-top: 1px solid #AAAAAA;
+}
+
+.coursePlannerPointerLabel {
+  background: none repeat scroll 0pt 0pt #FFAA00;
+  border-radius: 3px 3px 3px 3px;
+  border: 1px solid #EE9900;
+  color: #FFFFFF;
+  font-size: 12px;
+  margin-left: -40px;
+  position: absolute;
+  text-align: center;
+  width: 80px;  
+}
+
+.coursePlannerYearLabelContainer {
+  text-align: center;
+}
+
+.coursePlannerYearLabel {
+  background: #AB6C00;
+  width: 200px;
+  height: 18px;
+  margin-top: 1px;
+  display: inline-block;
+  color: #FFFFFF;
+  cursor: pointer;
+  font-size: 15px;
+  border-radius: 3px 3px 3px 3px;
+  z-index: 1; 
+  position: relative;  
+  opacity: 0.8;
+}
+
+.coursePlannerLabels {
+	border-top: 1px solid #AAAAAA;
+	bottom: 0px;
+	cursor: move;
+	height: 60px;
+	left: 0px;
+	position: absolute;
+	right: 0px;
+}
+
+.coursePlannerVerticalPointer {
+	background: none repeat scroll 0% 0% #000000;
+	height: 100%;
+	position: absolute;
+	width: 1px;
+	z-index: 99;
+}
+
+.coursePlannerMonthLine {
+	background: none repeat scroll 0pt 0pt #FFAA00;
+	height: 100%;
+	position: absolute;
+	width: 1px;
+	z-index: 98;
+}
+
+.coursePlannerWeekLine {
+	background: none repeat scroll 0pt 0pt #BB7C00;
+	bottom: 0px;
+	height: 20px;
+	position: absolute;
+	width: 1px;
+	z-index: 97;
+}
+
+.coursePlannerDayLine {
+	background: none repeat scroll 0pt 0pt #7B3C00;
+	bottom: 0px;
+	height: 10px;
+	position: absolute;
+	width: 1px;
+	z-index: 96;
+}
+
+.coursePlannerMonthLabel {
+	background: none repeat scroll 0pt 0pt #FFAA00;
+	border: 1px solid #ee9900;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	font-size: 12px;
+	margin-left: -43px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 86px;
+	text-align: center;
+	margin-top: 42px;
+	cursor: pointer;
+}
+
+.coursePlannerWeekLabel {
+  background: #BB7C00;
+  border: 1px solid #aa6b00;
+  border-radius: 3px 3px 3px 3px;
+  color: #FFFFFF;
+  font-size: 12px;
+  margin-left: -15px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 30px;
+  text-align: center;
+  margin-top: 22px;
+  cursor: pointer;
+}
+
+.coursePlannerDayLabel {
+  background: #7B3C00;
+  border: 1px solid #6a2b00;
+  border-radius: 3px 3px 3px 3px;
+  color: #FFFFFF;
+  font-size: 12px;
+  margin-left: -25px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 50px;
+  text-align: center;
+  margin-top: 2px;
+  cursor: pointer;  
+}
+
+.coursePlannerTrackHighlight {
+	background: #DDDDEE;
+	left: 0px;
+	opacity: 0.5;
+	position: absolute;
+	right: 0px;
+}
+
+.coursePlannerCourse {
+	border-radius: 5px 5px 5px 5px;
+	box-shadow: 3px 3px 3px #666666;
+	cursor: default;
+	opacity: 0.9;
+	overflow: hidden;
+	position: absolute;
+}
+
+.coursePlannerCourseMovable {
+	cursor: move;
+}
+
+.coursePlannerCourseMovable:hover {
+	border: 3px solid #000000;
+	margin: -3px;
+}
+
+.coursePlannerCourseDragging {
+	
+}
+
+.coursePlannerCourseName {
+	color: #FFFFFF;
+	font-size: 14px;
+	margin: 4px;
+	white-space: nowrap;
+}
+
+.coursePlannerCourseDates {
+	color: #FFFFFF;
+	font-size: 10px;
+	font-style: italic;
+	font-weight: bold;
+	margin: 4px;
+	white-space: nowrap;
+}
+
+.coursePlannerCourseResizeHandle {
+	background: none repeat scroll 0% 0% #AAAAAA;
+	border-bottom-right-radius: 5px;
+	border-left: 1px dotted #FFFFFF;
+	border-top-right-radius: 5px;
+	bottom: 0px;
+	cursor: e-resize;
+	opacity: 0.7;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 4px;
+}
+
+#coursePlannerSettingsBackground, #coursePlannerSettingsContainer {
+     
+}
+
+#coursePlannerSettingsContainer {
+  bottom: 0px;
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  overflow: hidden;
+}
+
+#coursePlannerSettingsBackground {
+  background: none repeat scroll 0% 0% #FFFFFF;
+  opacity: 0.9;
+  z-index: 9998;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  top: 0px;
+  left: 0px;
+}
+
+#coursePlannerSettingsContainer h2 {
+	color: #2E5EC5;
+	font-family: verdana;
+	font-size: 16px;
+	font-weight: normal;
+	margin: 0px;
+	padding: 0px;
+}
+
+#coursePlannerSettingsContainer .genericFormSection {
+    
+}
+
+#coursePlannerSettingsHandle {
+	position: absolute;
+  bottom: 0px;
+  top: 0px;
+  left: 0px;
+  width: 19px;
+  color: #000;
+  font-size: 14px;
+  text-align: center; 
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 9999;
+  border-left: 1px dotted #000;
+}
+
+#coursePlannerSettingsContent {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  top: 0px;
+  left: 28px;
+  z-index: 9999;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.coursePlannerEducationTypesFilter {
+  display: table;
+}
+
+.coursePlannerEducationTypeFilter {
+  display: table-cell;
+  padding-right: 8px;
+}

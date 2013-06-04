@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://pyramus.googlecode.com/files/UpdaterSchema-1.11.xsd">
+
+  <alterTables>
+    <table name="ChangeLogEntry">
+      <dropFields>
+        <field name="ip"/>
+      </dropFields>
+    </table>
+  </alterTables>
+  
+</update>

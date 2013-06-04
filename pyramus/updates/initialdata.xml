@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<initialData>
+
+  <entity package="fi.pyramus.domainmodel.users" class="InternalAuth">
+    <e password="d8578edf8458ce06fbc5bb76a58c5ca4" username="admin" storeVariable="adminAuth"/> <!-- qwerty -->
+  </entity>
+
+  <entity package="fi.pyramus.domainmodel.users" class="User">
+    <e authProvider="internal" externalId="{adminAuth}" firstName="Admin" lastName="Admin" role="4" storeVariable="adminUser"/>
+  </entity>
+
+  <entity package="fi.pyramus.domainmodel.help" class="HelpFolder">
+    <e indexColumn="0" lastModified="NOW" created="NOW" storeVariable="aboutFolder">
+      <j class="fi.pyramus.domainmodel.users.User" name="creator">{adminUser}</j>
+      <j class="fi.pyramus.domainmodel.users.User" name="lastModifier">{adminUser}</j>
+      <list name="titles" method="addTitle">
+        <e locale="en_US" title="About Pyramus" lastModified="NOW" created="NOW">
+          <j class="fi.pyramus.domainmodel.users.User" name="creator">{adminUser}</j>
+          <j class="fi.pyramus.domainmodel.users.User" name="lastModifier">{adminUser}</j>
+          <j name="item" class="fi.pyramus.domainmodel.help.HelpItem">PARENT</j>
+        </e>
+      </list>
+    </e>
+  </entity>
+  
+  <entity package="fi.pyramus.domainmodel.help" class="HelpPage">
+    <e indexColumn="0" lastModified="NOW" created="NOW">
+      <j name="parent" class="fi.pyramus.domainmodel.help.HelpFolder">{aboutFolder}</j>
+      <j class="fi.pyramus.domainmodel.users.User" name="creator">{adminUser}</j>
+      <j class="fi.pyramus.domainmodel.users.User" name="lastModifier">{adminUser}</j>
+      <list name="titles" method="addTitle">
+        <e locale="en_US" title="What is Pyramus?" lastModified="NOW" created="NOW">
+          <j class="fi.pyramus.domainmodel.users.User" name="creator">{adminUser}</j>
+          <j class="fi.pyramus.domainmodel.users.User" name="lastModifier">{adminUser}</j>
+          <j name="item" class="fi.pyramus.domainmodel.help.HelpItem">PARENT</j>
+        </e>
+      </list>
+      <list name="contents" method="addContent">
+        <e locale="en_US" lastModified="NOW" created="NOW" content="&lt;p&gt;Pyramus is an institute type independent school administration system, which is based on the ideology of project management. Project tasks (modules, courses) are scheduled in accordance to resources (teachers, rooms, equipment) after which the data is turned into costs and incomes. This enables synchronized course and financial planning as well as automatic project tracking and reporting. In addition to planning, the software produces simultaneously reports of financial and pedagogical data (e.g. credits) from the course and project level up to the school level.&lt;/p&gt;">
+          <j class="fi.pyramus.domainmodel.users.User" name="creator">{adminUser}</j>
+          <j class="fi.pyramus.domainmodel.users.User" name="lastModifier">{adminUser}</j>
+          <j name="page" class="fi.pyramus.domainmodel.help.HelpPage">PARENT</j>
+        </e>
+      </list>
+    </e>
+    <e indexColumn="1" lastModified="NOW" created="NOW">
+      <j name="parent" class="fi.pyramus.domainmodel.help.HelpFolder">{aboutFolder}</j>
+      <j class="fi.pyramus.domainmodel.users.User" name="creator">{adminUser}</j>
+      <j class="fi.pyramus.domainmodel.users.User" name="lastModifier">{adminUser}</j>
+      <list name="titles" method="addTitle">
+        <e locale="en_US" title="3rd Party Libraries" lastModified="NOW" created="NOW">
+          <j name="item" class="fi.pyramus.domainmodel.help.HelpItem">PARENT</j>
+        </e>
+      </list>
+      <list name="contents" method="addContent">
+        <e locale="en_US" lastModified="NOW" created="NOW" content="&lt;p&gt;As Pyramus is based on open source it uses several open source libraries.&lt;/p&gt;&lt;p&gt;List of tools and libraries:&lt;/p&gt;&lt;p&gt;&lt;b&gt;JavaScript tools&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;  &lt;li&gt;CKEditor (&lt;a href=&quot;http://ckeditor.com&quot;&gt;http://ckeditor.com/&lt;/a&gt;)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;JavaScript libraries&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;  &lt;li&gt;DatePicker (&lt;a href=&quot;http://frequency-decoder.com/&quot;&gt;http://frequency-decoder.com/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;FNIEvents (&lt;a href=&quot;http://code.google.com/p/fnievents/&quot;&gt;http://code.google.com/p/fnievents/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;FNILocale (&lt;a href=&quot;http://code.google.com/p/fnilocale/&quot;&gt;http://code.google.com/p/fnilocale/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;FNIPrototypeExt(&lt;a href=&quot;http://code.google.com/p/fni/source/browse/#svn/trunk/fni/WebContent/scripts/fniprototypeext/&quot;&gt;http://code.google.com/p/fni/source/browse/#svn/trunk/fni/WebContent/scripts/fniprototypeext/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;jshash (&lt;a href=&quot;http://pajhome.org.uk/crypt/md5/scripts.html&quot;&gt;http://pajhome.org.uk/crypt/md5/scripts.html&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;PrototypeJS (&lt;a href=&quot;http://www.prototypejs.org/&quot;&gt;http://www.prototypejs.org/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;script.aculo.us &lt;a href=&quot;http://script.aculo.us/&quot;&gt;(http://script.aculo.us/)&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Java libraries:&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;  &lt;li&gt;Apache Commons Collections (&lt;a href=&quot;http://commons.apache.org/collections/&quot;&gt;http://commons.apache.org/collections/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Apache Commons FileUpload (&lt;a href=&quot;http://commons.apache.org/fileupload/&quot;&gt;http://commons.apache.org/fileupload/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Apache Commons HttpClient (&lt;a href=&quot;http://hc.apache.org/httpclient-3.x/&quot;&gt;http://hc.apache.org/httpclient-3.x/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Apache Commons Lang (&lt;a href=&quot;http://commons.apache.org/lang/&quot;&gt;http://commons.apache.org/lang/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Apache Commons Logging (&lt;a href=&quot;http://commons.apache.org/logging/&quot;&gt;http://commons.apache.org/logging/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Apache log4j (&lt;a href=&quot;http://logging.apache.org/log4j/&quot;&gt;http://logging.apache.org/log4j/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;DOM4J (&lt;a href=&quot;http://www.dom4j.org/&quot;&gt;http://www.dom4j.org/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;EHCache (&lt;a href=&quot;http://ehcache.org/&quot;&gt;http://ehcache.org/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;EZMorph (&lt;a href=&quot;http://ezmorph.sourceforge.net/&quot;&gt;http://ezmorph.sourceforge.net/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Freemarker (&lt;a href=&quot;http://freemarker.sourceforge.net/&quot;&gt;http://freemarker.sourceforge.net/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Hibernate (&lt;a href=&quot;http://www.hibernate.org/&quot;&gt;http://www.hibernate.org/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Hibernate Search (&lt;a href=&quot;http://www.hibernate.org/subprojects/search.html&quot;&gt;http://www.hibernate.org/subprojects/search.html&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Hibernate Validator (&lt;a href=&quot;http://www.hibernate.org/subprojects/validator.html&quot;&gt;http://www.hibernate.org/subprojects/validator.html&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;JSON-Lib (&lt;a href=&quot;http://json-lib.sourceforge.net/&quot;&gt;http://json-lib.sourceforge.net/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;JTidy (&lt;a href=&quot;http://jtidy.sourceforge.net/&quot;&gt;http://jtidy.sourceforge.net/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Quartz (&lt;a href=&quot;http://www.quartz-scheduler.org/&quot;&gt;http://www.quartz-scheduler.org/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;SLF4J (&lt;a href=&quot;http://www.slf4j.org/&quot;&gt;http://www.slf4j.org/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Xerces (&lt;a href=&quot;http://xerces.apache.org/xerces-j/&quot;&gt;http://xerces.apache.org/xerces-j/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Eclipse BIRT (&lt;a href=&quot;http://www.eclipse.org/birt/&quot;&gt;http://www.eclipse.org/birt/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;Axis2 (&lt;a href=&quot;http://ws.apache.org/axis2/&quot;&gt;http://ws.apache.org/axis2/&lt;/a&gt;)&lt;/li&gt;&lt;li&gt;opencsv (&lt;a href=&quot;http://opencsv.sourceforge.net/&quot;&gt;http://opencsv.sourceforge.net/&lt;/a&gt;)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Libraries used in plugins:&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;  &lt;li&gt;Novell-jldap (&lt;a href=&quot;http://developer.novell.com/wiki/index.php/Jldap&quot;&gt;http://developer.novell.com/wiki/index.php/Jldap&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;OpenID4java (&lt;a href=&quot;http://code.google.com/p/openid4java/&quot;&gt;http://code.google.com/p/openid4java/&lt;/a&gt;)&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Libraries used in unit testing&lt;/b&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;TestNG (&lt;a href=&quot;http://testng.org/&quot;&gt;http://testng.org/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;HSQLDB (&lt;a href=&quot;http://hsqldb.org/&quot;&gt;http://hsqldb.org/&lt;/a&gt;)&lt;/li&gt;  &lt;li&gt;EasyMock &lt;a href=&quot;http://easymock.org/&quot;&gt;(http://easymock.org/)&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;">
+          <j name="page" class="fi.pyramus.domainmodel.help.HelpPage">PARENT</j>
+        </e>
+      </list>
+    </e>
+  </entity>
+  
+  <entity package="fi.pyramus.domainmodel.base" class="Defaults">
+    <e id="1"/>
+  </entity>
+  
+  <entity package="fi.pyramus.domainmodel.system" class="SettingKey">
+  	<e name="system.environment" storeVariable="systemEnvironmentKey" />
+    <e name="authentication.enabledStrategies" storeVariable="enabledAuth"/>
+    <e name="reports.contextPath" storeVariable="reportsPath"/>
+  </entity>
+
+  <entity package="fi.pyramus.domainmodel.system" class="Setting">
+    <e value="production">
+      <j name="key" class="fi.pyramus.domainmodel.system.SettingKey">{systemEnvironmentKey}</j>
+    </e>
+    <e value="internal">
+      <j name="key" class="fi.pyramus.domainmodel.system.SettingKey">{enabledAuth}</j>
+    </e>
+    <e value="/PyramusReports">
+      <j name="key" class="fi.pyramus.domainmodel.system.SettingKey">{reportsPath}</j>
+    </e>
+  </entity>
+</initialData>

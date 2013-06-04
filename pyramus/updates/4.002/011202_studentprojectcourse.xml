@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="StudentProjectCourse">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="indexColumn" type="java.lang.Integer" nullable="true" unique="false" />
+      </addFields>
+    </table>
+  </alterTables>
+
+</update>

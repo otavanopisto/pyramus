@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table name="StudentGroup" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="archived" type="java.lang.Boolean" nullable="false"/>
+        <field name="beginDate" type="java.util.Date"/> 
+        <field name="created" type="java.util.Date" nullable="false"/>
+        <field name="description" type="java.lang.String" length="1073741824"/> 
+        <field name="lastModified" type="java.util.Date" nullable="false"/>
+        <field name="name" type="java.lang.String" length="255" nullable="false"/> 
+        <field name="creator" type="java.lang.Long"/> 
+        <field name="lastModifier" type="java.lang.Long"/>
+      </fields>
+      <foreignKeys>
+        <key name="FK75A052476DFD82D" columns="lastModifier" referencedColumns="id" referencedTable="User"/>
+        <key name="FK75A05244344B8EC" columns="creator" referencedColumns="id" referencedTable="User"/>
+      </foreignKeys>
+    </table>
+    
+    <table name="StudentGroupStudent" primaryKeys="id">
+      <fields>
+         <field name="id" type="java.lang.Long" nullable="false"/>
+         <field name="student" type="java.lang.Long"/>
+         <field name="studentGroup" type="java.lang.Long"/>
+      </fields>
+      <foreignKeys>
+        <key name="FKD427C477EE2B836F" columns="student" referencedTable="Student" referencedColumns="id"/>
+        <key name="FKD427C47786F746CF" columns="studentGroup" referencedTable="StudentGroup" referencedColumns="id"/>
+      </foreignKeys>
+    </table>
+    
+    <table name="StudentGroupUser" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="studentGroup" type="java.lang.Long"/>
+        <field name="user" type="java.lang.Long"/>
+      </fields>
+      <foreignKeys>
+        <key name="FK12F3330F86F746CF" columns="studentGroup" referencedTable="StudentGroup" referencedColumns="id"/>
+        <key name="FK12F3330F62D248B" columns="user" referencedTable="User" referencedColumns="id"/>
+      </foreignKeys>
+    </table>
+  </createTables>
+  
+</update>

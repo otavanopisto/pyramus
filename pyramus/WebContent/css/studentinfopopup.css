@@ -1,0 +1,87 @@
+@CHARSET "UTF-8";
+
+.studentInfoPopupContainer {
+  display: table;
+  table-layout: fixed;
+  border-spacing: 2px;
+  line-height: 15px;
+}
+
+.studentInfoPopupImageContainer {
+  display: table-cell;
+  vertical-align: top;
+  background-color: #1d4db4;
+  border: 1px solid #4f8fe8; 
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.studentInfoPopupImage {
+  max-height: 128px;
+  max-height: 128px;
+  padding: 4px;
+}
+
+.studentInfoPopupDetailsContainer {
+  display: table-cell;
+  vertical-align: top;
+  background-color: #1d4db4;
+  width: 290px;
+  border: 1px solid #4f8fe8; 
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  padding: 4px;
+  color: #fff;
+  overflow: hidden;
+}
+
+.studentInfoPopupName {
+  font-size: 140%;
+}
+
+.studentInfoPopupMail:before {
+  content: '<'
+}
+
+.studentInfoPopupMail:after {
+  content: '>'
+}
+
+.studentInfoPopupMail {
+  font-style: italic
+}
+
+.studentInfoPopupSSNContainer {
+  margin-top: 4px;
+}
+
+.studentInfoPopupPhoneNumberContainer,
+.studentInfoPopupNationalityContainer,
+.studentInfoPopupLanguageContainer,	
+.studentInfoPopupStudyProgrammeContainer,
+.studentInfoPopupArchivedStudyProgrammeContainer {
+  white-space:nowrap;
+}
+
+.studentInfoPopupPhoneNumberTitle,
+.studentInfoPopupNationalityTitle,
+.studentInfoPopupLanguageTitle,	
+.studentInfoPopupStudyProgrammeTitle, 
+.studentInfoPopupArchivedStudyProgrammeTitle,
+.studentInfoPopupSSNTitle {
+  display: inline-block;
+  width: 120px;
+}
+
+.studentInfoPopupPhoneNumberValue,
+.studentInfoPopupNationalityValue,
+.studentInfoPopupLanguageValue,
+.studentInfoPopupStudyProgrammeValue, 
+.studentInfoPopupArchivedStudyProgrammeValue, 
+.studentInfoPopupSSNValue {
+  display: inline-block;
+}

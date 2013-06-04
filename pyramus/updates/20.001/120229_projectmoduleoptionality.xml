@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="ProjectModule">
+      <changeFields>
+        <field name="optionality" type="java.lang.String" nullable="false"/>
+      </changeFields>
+    </table>
+  </alterTables>
+
+  <alterData>
+  
+    <update table="ProjectModule">
+      <set>
+        <value type="java.lang.String" column="optionality" value="MANDATORY"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="optionality" value="0"/>
+      </where>
+    </update>
+    
+    <update table="ProjectModule">
+      <set>
+        <value type="java.lang.String" column="optionality" value="OPTIONAL"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="optionality" value="1"/>
+      </where>
+    </update>
+
+  </alterData>
+  
+</update>

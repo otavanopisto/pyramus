@@ -1,0 +1,27 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd" version="2.0">
+  <persistence-unit name="pyramusManager" transaction-type="JTA">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <jta-data-source>jdbc/pyramus</jta-data-source>
+    <properties>
+
+      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+      <property name="hibernate.current_session_context_class" value="jta" />
+      <property name="hibernate.generate_statistics" value="true" />
+      <property name="hibernate.show_sql" value="false" />
+
+      <!-- Cache -->
+
+      <property name="hibernate.cache.use_second_level_cache" value="true" />
+      <property name="hibernate.cache.use_query_cache" value="true" />
+      <property name="hibernate.cache.infinispan.statistics" value="true"/>
+
+      <!-- Search -->
+
+      <property name="hibernate.search.default.optimizer.operation_limit.max" value="1000" />
+      <property name="hibernate.search.default.optimizer.transaction_limit.max" value="100" />
+      <property name="hibernate.search.default.exclusive_index_use" value="true"/>
+ 
+    </properties>
+  </persistence-unit>
+</persistence>

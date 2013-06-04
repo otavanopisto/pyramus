@@ -1,0 +1,107 @@
+div.datepicker {
+	-moz-user-select: none;
+	background: none repeat scroll 0pt 0pt transparent;
+	font: 900 0.8em/0.8em Verdana, Sans-Serif;
+	height: 248px;
+	position: absolute;
+	table-layout: fixed;
+	width: 228px;
+}
+
+div.datepicker table {
+	background-color: #FFFFFF;
+	background-image: url("../gfx/datepicker/backgroundg.jpg");
+	background-repeat: repeat-x;
+	border-collapse: separate;
+	border-spacing: 2px;
+	border: 1px solid #CCCCCC;
+	margin: 0pt;
+	padding: 0pt;
+	position: relative;
+	text-align: center;
+}
+
+.datepicker thead tr th {
+	cursor: pointer;
+	font-family: serif;
+	font-size: 10px;
+}
+
+.datepicker thead tr th:nth-child(2) {
+	cursor: default;
+	font: 12px Verdana, Sans-Serif;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+}
+
+.datepicker table tr td.nclick_outbound {
+	background: url("../gfx/datepicker/outbound.jpg") repeat scroll 0pt 0pt
+		#FFFFFF;
+	border-color: #DCDCDC;
+	color: #AAAAAA;
+	cursor: default ! important;
+	padding: 0pt;
+}
+
+.datepicker table tr td.wday {
+	background: none repeat scroll 0% 0% transparent;
+	border: 0px none;
+	color: #000000;
+	font-weight: bold;
+	height: 14px;
+	padding-top: 8px;
+}
+
+.datepicker table tr td:nth-child(6),.datepicker table tr td:nth-child(7)
+	{
+	color: #A86666;
+}
+
+.datepicker table tr td.nclick_outbound:nth-child(6),.datepicker table tr td.nclick_outbound:nth-child(7)
+	{
+	color: #AAAAAA;
+}
+
+.datepicker table tr td.wday:nth-child(6),.datepicker table tr td.wday:nth-child(7)
+	{
+	color: #000000;
+}
+
+.datepicker table tr td {
+	background-color: #FFFFFF;
+	border: 1px solid #CCCCCC;
+	cursor: pointer;
+	font-size: 10px;
+	font-weight: bold;
+	height: 28px;
+	outline: medium none;
+	padding: 0pt;
+	text-align: center;
+	vertical-align: middle;
+	width: 28px;
+}
+
+.datepicker tfoot {
+	display: none;
+}
+
+div.datepicker table tbody tr td.today {
+	background-image: url('../gfx/datepicker/today.gif');
+	background-repeat: no-repeat;
+}
+
+div.datepicker table tbody tr td.selectedDate, div.datepicker table tbody tr td:hover,div.datepicker table tbody tr td.outbound:hover {
+	background-color: #C8E6E8;
+	border-color: #6482AA;
+	color: #6482AA;
+	cursor: pointer;
+}
+
+div.datepicker table tbody tr td.wday:hover {
+	background: none repeat scroll 0% 0% transparent;
+	color: #000000;
+}
+
+.datepicker table tr td.nclick_outbound:hover {
+	color: #AAAAAA;
+}

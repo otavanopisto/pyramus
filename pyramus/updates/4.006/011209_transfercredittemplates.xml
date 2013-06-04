@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table primaryKeys="id" name="TransferCreditTemplate">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+      </fields>
+    </table>
+    <table primaryKeys="id" name="TransferCreditTemplateCourse">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="courseName" type="java.lang.String" nullable="false" unique="false" />
+        <field name="courseNumber" type="java.lang.Integer" nullable="true" unique="false" />
+        <field name="optionality" type="java.lang.Integer" nullable="false" unique="false" />
+        <field name="courseLength" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="subject" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="transferCreditTemplate" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="indexColumn" type="java.lang.Integer" nullable="true" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="subject" referencedTable="Subject"/>
+        <key referencedColumns="id" columns="transferCreditTemplate" referencedTable="TransferCreditTemplate"/>
+        <key referencedColumns="id" columns="courseLength" referencedTable="EducationalLength"/>
+      </foreignKeys>
+    </table>
+  </createTables>
+
+</update>

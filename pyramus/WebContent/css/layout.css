@@ -1,0 +1,341 @@
+body {
+  font-family: "trebuchet ms", verdana, sans-serif;
+  font-size: 12px;
+  padding:5px;
+  margin:0;
+  background:#fff;
+}
+
+/******************************
+ Header 
+******************************/
+
+#breadcrumbsContainer {
+  position: absolute;
+  top: 95px;
+  height:16px;
+  right:5px;
+  color:#666;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  left: 5px;
+  background-color:#eaf0fe;
+  padding:2px 12px 3px 10px;
+}
+
+#breadcrumbsContainer a{
+  text-decoration:none;
+  color:#2e5ec5;
+}
+
+#GUI_headerContainer{
+  position:absolute;
+  top:0;
+  left:5px;
+  right:5px;
+  height:92px;
+  background:#fff;
+}
+
+
+#GUI_headerLeft{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:67px;
+  background-image:url(../gfx/gui/header_left.jpg);
+  background-repeat:no-repeat;
+  background-position:left;
+}
+
+#GUI_headerLogo{
+  position:absolute;
+  top:10px;
+  left:10px;
+  height:43px;
+  width:231px;
+  background-image:url(../gfx/gui/header_logo.png);
+  background-repeat:no-repeat
+}
+
+#GUI_headerRepeat{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:67px;
+  background-image:url(../gfx/gui/header_repeat.jpg);
+  background-repeat:repeat-x;
+}
+
+#GUI_headerRight{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:67px;
+  background-image:url(../gfx/gui/header_right.jpg);
+  background-repeat:no-repeat;
+  background-position:right;
+}
+
+#GUI_headerLoginInformationContainer{
+  position:absolute;
+  right:10px;
+  top:10px;
+  color:#fff;
+}
+
+#GUI_headerLocaleSelectionContainer{
+  position:absolute;
+  right:10px;
+  top:35px;
+  color:#fff;
+  height:30px;
+  width:200px;
+  text-align:right;
+}
+
+.GUI_headerLocaleSelectionLink{
+  color:#fff;
+  padding:1px;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  background-color:#4080EE;
+  text-decoration:none;
+  display:inline-block;
+  margin-left:5px;
+  width:30px;
+  text-align:center;
+}
+
+.GUI_headerLocaleSelectionLink:hover{
+  color:#4080EE;
+  padding:1px;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  background-color:#fefefe;
+  text-decoration:none;
+  display:inline-block;
+  margin-left:5px;
+  width:30px;
+  text-align:center;
+}
+
+#GUI_headerLoggedInAs {
+  padding-right:5px;
+  font-style:italic;
+}
+
+.GUI_headerEditUserLink {
+  text-decoration:none;
+  font-weight:bold;
+  color:#fff;
+}
+
+.GUI_headerLogoutLoginLink {
+  text-decoration:none;
+  padding-left:5px;
+  font-weight:bold;
+  color:#fff;
+}
+
+#GUI_headerNavigationBackground{
+  height:24px;
+  position:absolute;
+  top:67px;
+  left:0px;
+  right:0px;
+  border-top:1px solid #597DC5;
+  background-image:url(../gfx/gui/header_navigation_bg.jpg);
+  background-repeat:repeat-x;
+  -moz-border-radius-bottomleft:5px;
+  -moz-border-radius-bottomright:5px;
+  -webkit-border-bottom-left-radius:5px;
+  -webkit-border-bottom-right-radius:5px;
+  border-bottom-left-radius:5px;
+  border-bottom-right-radius:5px;
+}
+
+#GUI_headerNavigationContainer{
+  position:absolute;
+  top:64px;
+  left:0px;
+  right:0px;
+  padding:0;
+}
+
+/******************************
+ Menu z-index: 20-30
+******************************/
+
+ul#GUI_MENU_indexContainer,ul#GUI_MENU_userContainer,ul#GUI_MENU_coursesContainer,ul#GUI_MENU_studentsContainer,ul#GUI_MENU_modulesContainer,ul#GUI_MENU_projectsContainer,ul#GUI_MENU_resourcesContainer,ul#GUI_MENU_reportsContainer,ul#GUI_MENU_settingsContainer,ul#GUI_MENU_systemContainer,ul#GUI_MENU_helpContainer{
+  list-style-type:none;
+  padding:0;
+  margin:0;
+  display:inline-block;
+  position:relative;
+  z-index:20;  
+}
+
+ul.GUI_MENU_itemContainer{
+  margin:0;
+  padding:0;
+  list-style-type:none;
+  -moz-border-radius-bottomleft:5px;
+  -moz-border-radius-bottomright:5px;
+  -webkit-border-bottom-left-radius:5px;
+  -webkit-border-bottom-right-radius:5px;
+  border-bottom-left-radius:5px;
+  border-bottom-right-radius:5px;
+  background:#739de7;
+}
+
+li.GUI_MENU_top{
+  background:#5a7db9;
+  height:1px;
+}
+
+li.GUI_MENU_bottom{
+  margin-left:1px;
+  margin-right:1px;
+  background:#739de7;
+  height:1px;
+}
+
+li.GUI_MENU_item{
+  padding:6px 10px 6px 10px;
+  margin:2px 2px 2px 2px;
+  list-style-type:none;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+li.GUI_MENU_item:hover{
+  background:#5b87d4;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  border-radius:3px;
+}
+
+a.GUI_MENU_itemLink{
+  text-decoration:none;
+  color:#fff;
+  cursor:pointer;
+}
+
+li#GUI_MENU_indexLink,li#GUI_MENU_userLink,li#GUI_MENU_coursesLink,li#GUI_MENU_studentsLink,li#GUI_MENU_modulesLink,li#GUI_MENU_projectsLink,li#GUI_MENU_resourcesLink,li#GUI_MENU_reportsLink,li#GUI_MENU_settingsLink,li#GUI_MENU_systemLink,li#GUI_MENU_helpLink{
+  padding:7px 10px 4px 10px;
+  margin:0px 0px 0px 0px;
+  color:#fff;
+  cursor:pointer;
+  list-style-type:none;
+}
+
+li#GUI_MENU_userLink:hover,li#GUI_MENU_coursesLink:hover,li#GUI_MENU_studentsLink:hover,li#GUI_MENU_modulesLink:hover,li#GUI_MENU_projectsLink:hover,li#GUI_MENU_resourcesLink:hover,li#GUI_MENU_reportsLink:hover,li#GUI_MENU_settingsLink:hover,li#GUI_MENU_systemLink:hover{
+  background:#1e469f;
+  padding:6px 9px 3px 9px;
+  border-top:1px solid #597DC5;
+  border-left:1px solid #597DC5;
+  border-right:1px solid #597DC5;
+  -moz-border-radius-topleft:5px;
+  -moz-border-radius-topright:5px;
+  -webkit-border-top-left-radius:5px;
+  -webkit-border-top-right-radius:5px;
+  border-top-left-radius:5px;
+  border-top-right-radius:5px;
+}
+
+ul#GUI_MENU_userItemContainer,ul#GUI_MENU_coursesItemContainer,ul#GUI_MENU_studentsItemContainer,ul#GUI_MENU_modulesItemContainer,ul#GUI_MENU_projectsItemContainer,ul#GUI_MENU_resourcesItemContainer,ul#GUI_MENU_reportsItemContainer,ul#GUI_MENU_settingsItemContainer,ul#GUI_MENU_systemItemContainer{
+  display:none;
+  margin:0;
+  padding:0;
+  list-style-type:none;
+  opacity:.96;
+   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=96)";  
+  border-left:1px solid #fff;
+  border-right:1px solid #fff;
+  border-bottom:1px solid #fff;
+}
+
+li#GUI_MENU_userLink:hover>ul#GUI_MENU_userItemContainer{
+  margin:3px 0px 0px 0px;
+  display:block;
+  position:absolute;
+  left:0px;
+}
+
+li#GUI_MENU_coursesLink:hover>ul#GUI_MENU_coursesItemContainer{
+  margin:3px 0px 0px 0px;
+  display:block;
+  position:absolute;
+  left:0px;
+}
+
+li#GUI_MENU_studentsLink:hover>ul#GUI_MENU_studentsItemContainer{
+  margin:3px 0px 0px 0px;
+  display:block;
+  position:absolute;
+  left:0px;
+}
+
+li#GUI_MENU_modulesLink:hover>ul#GUI_MENU_modulesItemContainer{
+  margin:3px 0px 0px 0px;
+  display:block;
+  position:absolute;
+  left:0px;
+}
+
+li#GUI_MENU_projectsLink:hover>ul#GUI_MENU_projectsItemContainer{
+  margin:3px 0px 0px 0px;
+  display:block;
+  position:absolute;
+  left:0px;
+}
+
+li#GUI_MENU_resourcesLink:hover>ul#GUI_MENU_resourcesItemContainer{
+  margin:3px 0px 0px 0px;
+  display:block;
+  position:absolute;
+  left:0px;
+}
+
+li#GUI_MENU_reportsLink:hover>ul#GUI_MENU_reportsItemContainer{
+  margin:3px 0px 0px 0px;
+  display:block;
+  position:absolute;
+  left:0px;
+}
+
+li#GUI_MENU_settingsLink:hover>ul#GUI_MENU_settingsItemContainer{
+  margin:3px 0px 0px 0px;
+  display:block;
+  position:absolute;
+  left:0px;
+}
+
+li#GUI_MENU_systemLink:hover>ul#GUI_MENU_systemItemContainer{
+  margin:3px 0px 0px 0px;
+  display:block;
+  position:absolute;
+  left:0px;
+}
+
+
+
+/******************************
+ Content 
+******************************/
+
+#GUI_contentContainer{
+ position:absolute;
+ top:125px;
+ left:5px;
+ right:5px;
+ min-height:500px; 
+}
+

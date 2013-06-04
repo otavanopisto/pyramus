@@ -1,0 +1,98 @@
+@CHARSET "UTF-8";
+
+.IxHoverMenu {
+  display:block;
+  float:left;
+  text-decoration: none;
+  -moz-border-radius-topleft:5px;
+  -moz-border-radius-topright:5px;
+  -moz-border-radius-bottomleft:5px;
+  -moz-border-radius-bottomright:5px;
+  -webkit-border-top-left-radius:5px;
+  -webkit-border-top-right-radius:5px;
+  -webkit-border-bottom-left-radius:5px;
+  -webkit-border-bottom-right-radius:5px;
+  border-top-left-radius:5px;
+  border-top-right-radius:5px;
+  border-bottom-left-radius:5px;
+  border-bottom-right-radius:5px;
+  color:#fff;
+  background-color:#739de7;
+  cursor: pointer;
+  position: relative;  
+}
+
+.IxHoverMenuTextArrow {
+  font-size: 75%;
+  display: inline-block;
+  vertical-align: middle;
+  position: absolute;  
+  top: 6px;
+  right: 8px;
+}
+
+.IxHoverMenuText {
+  display: inline-block;
+  height: 14px;
+  padding-right:20px;
+}
+
+.IxHoverMenuTextContainer {
+  padding:4px 10px 4px 10px;
+}
+
+.IxHoverMenuItemsContainer {
+  visibility: hidden;
+  height: 0px;
+}
+
+.IxHoverMenu:hover .IxHoverMenuItemsContainer {
+  height: auto;
+  visibility: visible;
+  margin-top: 6px;
+  margin-bottom: 2px;
+}
+
+.IxHoverMenuItem {
+  margin: 2px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.IxHoverMenuItem:hover {
+  background-color: #2E5EC5;
+  -moz-border-radius-topleft:5px;
+  -moz-border-radius-topright:5px;
+  -moz-border-radius-bottomleft:5px;
+  -moz-border-radius-bottomright:5px;
+  -webkit-border-top-left-radius:5px;
+  -webkit-border-top-right-radius:5px;
+  -webkit-border-bottom-left-radius:5px;
+  -webkit-border-bottom-right-radius:5px;
+  border-top-left-radius:5px;
+  border-top-right-radius:5px;
+  border-bottom-left-radius:5px;
+  border-bottom-right-radius:5px;
+}
+
+.IxHoverMenuItemIcon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  margin-top: -16px;
+  margin-left: -4px;
+}
+
+.IxHoverMenuItemText {
+  display: block;
+  margin-left: 16px;
+}
+
+.IxHoverMenuSpacer {
+  background:#5b87d4;
+  height:1px;
+  margin:4px 8px 4px 8px;
+}

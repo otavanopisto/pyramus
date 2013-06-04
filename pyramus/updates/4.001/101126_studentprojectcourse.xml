@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table name="StudentProjectCourse" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="course" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="studentProject" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+  </createTables>
+
+  <alterTables>
+    <table name="StudentProjectCourse">
+      <addForeignKeys>
+        <key columns="studentProject" referencedColumns="id" referencedTable="StudentProject" />
+        <key columns="course" referencedColumns="id" referencedTable="Course" />
+      </addForeignKeys>
+    </table>
+  </alterTables>
+
+</update>

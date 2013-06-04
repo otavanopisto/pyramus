@@ -1,0 +1,19 @@
+select.required, input.required, .genericFormSection input[type='text'].required, .genericFormSection input[type='password'].required {
+  border:1px solid #A5A532;
+  background: #ffffe5;
+}
+
+select.valid, input.valid, .genericFormSection input[type='text'].valid, .genericFormSection input[type='password'].valid {
+  border:1px solid #49A749;
+  background: #e5ffe5;
+}
+
+select.invalid, input.invalid, .genericFormSection input[type='text'].invalid, .genericFormSection input[type='password'].invalid {
+  border:1px solid #BB6161;
+  background: #ffe5e5;
+}
+
+input.formvalid[disabled='disabled'] {
+  color: #777;
+  background: #cacaca;
+}

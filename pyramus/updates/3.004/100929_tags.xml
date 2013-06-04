@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <createTables>
+    <table name="Tag" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="true"/>
+        <field name="text" type="java.lang.String" length="255" nullable="false"/>
+      </fields>
+    </table>
+    <table name="__CourseTags" primaryKeys="course,tag">
+      <fields>
+        <field name="course" type="java.lang.Long" nullable="false"/>
+        <field name="tag" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key columns="course" referencedColumns="id" referencedTable="Course"/>
+        <key columns="tag" referencedColumns="id" referencedTable="Tag"/>
+      </foreignKeys>
+    </table>
+    <table name="__HelpItemTags" primaryKeys="helpItem,tag">
+      <fields>
+        <field name="helpItem" type="java.lang.Long" nullable="false"/>
+        <field name="tag" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key columns="helpItem" referencedColumns="id" referencedTable="HelpItem"/>
+        <key columns="tag" referencedColumns="id" referencedTable="Tag"/>
+      </foreignKeys>
+    </table>
+    <table name="__ModuleTags" primaryKeys="module,tag">
+      <fields>
+        <field name="module" type="java.lang.Long" nullable="false"/>
+        <field name="tag" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key columns="module" referencedColumns="id" referencedTable="Module"/>
+        <key columns="tag" referencedColumns="id" referencedTable="Tag"/>
+      </foreignKeys>
+    </table>
+    <table name="__ProjectTags" primaryKeys="project,tag">
+      <fields>
+        <field name="project" type="java.lang.Long" nullable="false"/>
+        <field name="tag" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key columns="project" referencedColumns="id" referencedTable="Project"/>
+        <key columns="tag" referencedColumns="id" referencedTable="Tag"/>
+      </foreignKeys>
+    </table>
+    <table name="__ResourceTags" primaryKeys="resource,tag">
+      <fields>
+        <field name="resource" type="java.lang.Long" nullable="false"/>
+        <field name="tag" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key columns="resource" referencedColumns="id" referencedTable="Resource"/>
+        <key columns="tag" referencedColumns="id" referencedTable="Tag"/>
+      </foreignKeys>
+    </table>
+    <table name="__SchoolTags" primaryKeys="school,tag">
+      <fields>
+        <field name="school" type="java.lang.Long" nullable="false"/>
+        <field name="tag" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key columns="school" referencedColumns="id" referencedTable="School"/>
+        <key columns="tag" referencedColumns="id" referencedTable="Tag"/>
+      </foreignKeys>
+    </table>
+    <table name="__StudentProjectTags" primaryKeys="studentProject,tag">
+      <fields>
+        <field name="studentProject" type="java.lang.Long" nullable="false"/>
+        <field name="tag" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key columns="studentProject" referencedColumns="id" referencedTable="StudentProject"/>
+        <key columns="tag" referencedColumns="id" referencedTable="Tag"/>
+      </foreignKeys>
+    </table>
+    <table name="__StudentGroupTags" primaryKeys="studentGroup,tag">
+      <fields>
+        <field name="studentGroup" type="java.lang.Long" nullable="false"/>
+        <field name="tag" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key columns="studentGroup" referencedColumns="id" referencedTable="StudentGroup"/>
+        <key columns="tag" referencedColumns="id" referencedTable="Tag"/>
+      </foreignKeys>
+    </table>
+    <table name="__StudentTags" primaryKeys="student,tag">
+      <fields>
+        <field name="student" type="java.lang.Long" nullable="false"/>
+        <field name="tag" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key columns="student" referencedColumns="id" referencedTable="Student"/>
+        <key columns="tag" referencedColumns="id" referencedTable="Tag"/>
+      </foreignKeys>
+    </table>
+    <table name="__UserTags" primaryKeys="user,tag">
+      <fields>
+        <field name="user" type="java.lang.Long" nullable="false"/>
+        <field name="tag" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key columns="user" referencedColumns="id" referencedTable="User"/>
+        <key columns="tag" referencedColumns="id" referencedTable="Tag"/>
+      </foreignKeys>
+    </table>
+  </createTables>
+</update>

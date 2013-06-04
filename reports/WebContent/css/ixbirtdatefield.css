@@ -1,0 +1,59 @@
+@CHARSET "UTF-8";
+
+.ixDateField {
+}
+
+.ixDateFieldDay, .ixDateFieldMonth{
+  width: 20px;
+  margin-right: 2px;
+  text-align: right;
+  border: 1px inset #DADADA;
+}
+
+.ixDateFieldYear{
+  width: 40px;
+  text-align: right;
+  border:1px inset #DADADA;
+}
+
+.ixDateField a.date-picker-control {
+  display: inline-block;
+}
+
+// Datepicker component style overrides to make it tiny and cute
+
+div.datePicker {
+  min-width:auto;
+  width:auto;
+}
+
+div.datePicker th span.prev-but,
+div.datePicker th span.next-but {
+  font-size:1.3em;
+}
+
+div.datePicker th span.today-but {
+  font-size:0.9em;
+}
+
+div.datePicker th span.fd-day-header {
+  width:auto;
+}
+
+div.datePicker table {
+  width:auto;
+}
+
+div.datePicker table td {
+  font-weight:normal;
+  width:1.8em;
+  height:auto !important;
+}
+
+div.datePicker table thead th.date-picker-title {
+  padding:0;
+}
+
+div.datePicker table th.date-picker-day-header {
+  width:auto;
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="CourseAssessment">
+      <dropForeignKeys>
+        <key name="FK9833115D5475C87B"/>
+      </dropForeignKeys>
+    </table>
+    
+    <table name="Credit">
+      <dropForeignKeys>
+        <key name="FK78CA9719EE2B836F"/>
+      </dropForeignKeys>
+    </table>
+  
+    <table name="CourseAssessment">
+      <addFields>
+        <field name="courseStudent" type="java.lang.Long" nullable="true" unique="true" />
+      </addFields>
+
+      <dropFields>
+        <field name="course"/>
+      </dropFields>
+      
+      <addForeignKeys>
+        <key referencedColumns="id" columns="courseStudent" referencedTable="CourseStudent"/>
+      </addForeignKeys>
+    </table>
+
+    <table name="Credit">
+      <dropFields>
+        <field name="student"/>
+      </dropFields>
+    </table>
+
+    <table name="TransferCredit">
+      <addFields>
+        <field name="student" type="java.lang.Long" nullable="true" unique="false" />
+      </addFields>
+
+      <addForeignKeys>
+        <key referencedColumns="id" columns="student" referencedTable="Student"/>
+      </addForeignKeys>
+    </table>
+  </alterTables>
+
+</update>

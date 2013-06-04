@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="User">
+      <changeFields>
+        <field name="role" type="java.lang.String" nullable="false"/>
+      </changeFields>
+    </table>
+  </alterTables>
+
+  <alterData>
+
+    <update table="User">
+      <set>
+        <value type="java.lang.String" column="role" value="EVERYONE"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="role" value="0"/>
+      </where>
+    </update>
+    
+    <update table="User">
+      <set>
+        <value type="java.lang.String" column="role" value="GUEST"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="role" value="1"/>
+      </where>
+    </update>
+    
+    <update table="User">
+      <set>
+        <value type="java.lang.String" column="role" value="USER"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="role" value="2"/>
+      </where>
+    </update>
+    
+    <update table="User">
+      <set>
+        <value type="java.lang.String" column="role" value="MANAGER"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="role" value="3"/>
+      </where>
+    </update>
+    
+    <update table="User">
+      <set>
+        <value type="java.lang.String" column="role" value="ADMINISTRATOR"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="role" value="4"/>
+      </where>
+    </update>
+    
+  </alterData>
+
+
+
+</update>

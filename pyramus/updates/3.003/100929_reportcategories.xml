@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <createTables>  
+    <table name="ReportCategory" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="indexColumn" type="java.lang.Integer"/>
+        <field name="name" type="java.lang.String" length="255" nullable="false"/>
+      </fields>
+    </table>
+  </createTables>
+
+  <alterTables>
+    <table name="Report">
+      <addFields>
+        <field name="category" type="java.lang.Long"/>
+      </addFields>
+      <addForeignKeys>
+        <key name="FK91B1415426DDD5AE" columns="category" referencedColumns="id" referencedTable="ReportCategory"/>
+      </addForeignKeys>
+    </table>
+  </alterTables>
+
+</update>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table name="ReportContext" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="report" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="context" type="java.lang.String" length="255" nullable="false"/> 
+      </fields>
+      <foreignKeys>
+        <key columns="report" referencedColumns="id" referencedTable="Report" />
+      </foreignKeys>
+    </table>
+  </createTables>
+
+  <sql>insert into ReportContext (id, report, context) select id, id, 'Common' from Report</sql> 
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ReportContext', coalesce(max(id) + 1, 1) from ReportContext</sql>
+</update>

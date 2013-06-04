@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  <alterTables>
+    <table name="StudentContactLogEntry">
+      <addFields>
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+      </addFields>
+      <changeFields>
+        <field name="creator" newName="creatorName" type="java.lang.String"/>
+      </changeFields>
+    </table>
+  </alterTables>
+</update>

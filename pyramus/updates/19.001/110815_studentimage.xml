@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table name="StudentImage" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="student" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="contentType" type="java.lang.String" nullable="true" unique="false" />
+        <field name="data" type="java.sql.Blob" nullable="true" unique="false" length="1073741824"/>
+      </fields>
+    </table>
+  </createTables>
+
+  <alterTables>
+    <table name="StudentImage">
+      <addForeignKeys>
+        <key columns="student" referencedColumns="id" referencedTable="Student" />
+      </addForeignKeys>
+    </table>
+  </alterTables>
+
+</update>

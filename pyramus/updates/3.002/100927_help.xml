@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  <createTables>
+    <table name="HelpItem" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="indexColumn" type="java.lang.Integer" nullable="false"/>
+        <field name="parent" type="java.lang.Long"/>
+        <field name="created" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="creator" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="lastModified" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="lastModifier" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key name="FKD4C29A1476DFD82D" columns="lastModifier" referencedColumns="id" referencedTable="User"/>
+        <key name="FKD4C29A144344B8EC" columns="creator" referencedColumns="id" referencedTable="User"/>
+      </foreignKeys>
+    </table>
+    
+    <table name="HelpItemTitle" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="item" type="java.lang.Long"/>
+        <field name="locale" type="java.lang.String" length="255" nullable="false"/>
+        <field name="title" type="java.lang.String" length="255" nullable="false"/>
+        <field name="created" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="creator" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="lastModified" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="lastModifier" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key name="FKD4C29A148774E157" columns="item" referencedColumns="id" referencedTable="HelpItem"/>
+        <key name="FKC5BFC4A4E1463B97" columns="lastModifier" referencedColumns="id" referencedTable="User"/>
+        <key name="FKC5BFC4A44344B8EC" columns="creator" referencedColumns="id" referencedTable="User"/>
+      </foreignKeys>
+    </table>
+    
+    <table name="HelpFolder" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key name="FKA9227F2F42CE482D" columns="id" referencedColumns="id" referencedTable="HelpItem"/>
+      </foreignKeys>
+    </table>
+    
+    <table name="HelpPage" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key name="FKD4C5819042CE482D" columns="id" referencedColumns="id" referencedTable="HelpItem"/>
+      </foreignKeys>
+    </table>
+    
+    <table name="HelpPageContent" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="page" type="java.lang.Long"/>
+        <field name="locale" type="java.lang.String" length="255" nullable="false"/>
+        <field name="content" type="java.lang.String" length="1073741824" nullable="false"/>
+        <field name="created" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="creator" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="lastModified" type="Types.TIMESTAMP" nullable="false" unique="false" />
+        <field name="lastModifier" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key name="FKB5D068C94305851D" columns="page" referencedColumns="id" referencedTable="HelpPage"/>
+        <key name="FKB5D068C9E1463B97" columns="lastModifier" referencedColumns="id" referencedTable="User"/>
+        <key name="FKB5D068C94344B8EC" columns="creator" referencedColumns="id" referencedTable="User"/>
+      </foreignKeys>
+    </table>
+  </createTables>
+
+  <alterTables>
+    <table name="HelpItem">
+      <addForeignKeys>
+        <key columns="parent" referencedColumns="id" referencedTable="HelpFolder"/>
+      </addForeignKeys>
+    </table>
+  </alterTables>
+</update>

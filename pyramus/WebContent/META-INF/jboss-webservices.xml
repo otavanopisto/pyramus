@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webservices
+  xmlns="http://www.jboss.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  version="1.0"
+  xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss_webservices_1_0.xsd">
+
+  <port-component>
+    <ejb-name>BaseService</ejb-name>
+    <port-component-uri>PyramusWebServices/services/Base/*</port-component-uri>
+    <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    <auth-method>BASIC</auth-method>
+    <secure-wsdl-access>true</secure-wsdl-access>
+  </port-component>
+
+  <port-component>
+    <ejb-name>CoursesService</ejb-name>
+    <port-component-uri>PyramusWebServices/services/Courses/*</port-component-uri>
+    <transport-guarantee>CONFIDENTIAL</transport-guarantee>    
+    <auth-method>BASIC</auth-method>
+    <secure-wsdl-access>true</secure-wsdl-access>
+  </port-component>
+
+  <port-component>
+    <ejb-name>FileService</ejb-name>
+    <port-component-uri>PyramusWebServices/services/File/*</port-component-uri>
+    <transport-guarantee>CONFIDENTIAL</transport-guarantee>    
+    <auth-method>BASIC</auth-method>
+    <secure-wsdl-access>true</secure-wsdl-access>
+  </port-component>
+
+  <port-component>
+    <ejb-name>GradingService</ejb-name>
+    <port-component-uri>PyramusWebServices/services/Grading/*</port-component-uri>
+    <transport-guarantee>CONFIDENTIAL</transport-guarantee>    
+    <auth-method>BASIC</auth-method>
+    <secure-wsdl-access>true</secure-wsdl-access>
+  </port-component>
+
+  <port-component>
+    <ejb-name>ModulesService</ejb-name>
+    <port-component-uri>PyramusWebServices/services/Modules/*</port-component-uri>
+    <transport-guarantee>CONFIDENTIAL</transport-guarantee>    
+    <auth-method>BASIC</auth-method>
+    <secure-wsdl-access>true</secure-wsdl-access>
+  </port-component>
+
+  <port-component>
+    <ejb-name>StudentsService</ejb-name>
+    <port-component-uri>PyramusWebServices/services/Students/*</port-component-uri>
+    <transport-guarantee>CONFIDENTIAL</transport-guarantee>    
+    <auth-method>BASIC</auth-method>
+    <secure-wsdl-access>true</secure-wsdl-access>
+  </port-component>
+
+  <port-component>
+    <ejb-name>UsersService</ejb-name>
+    <port-component-uri>PyramusWebServices/services/Users/*</port-component-uri>
+    <transport-guarantee>CONFIDENTIAL</transport-guarantee>    
+    <auth-method>BASIC</auth-method>
+    <secure-wsdl-access>true</secure-wsdl-access>
+  </port-component>
+  
+</webservices>

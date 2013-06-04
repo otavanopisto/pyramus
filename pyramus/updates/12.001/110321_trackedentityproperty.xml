@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://pyramus.googlecode.com/files/UpdaterSchema-1.11.xsd">
+
+  <createTables>
+    <table name="TrackedEntityProperty" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="entity" type="java.lang.String" nullable="false" unique="false" />
+        <field name="property" type="java.lang.String" nullable="false" unique="false" />
+      </fields>
+    </table>
+    
+    <table name="ChangeLogEntryEntity" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="true" />
+      </fields>
+    </table>
+
+    <table name="ChangeLogEntryEntityProperty" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="false" />
+        <field name="entity" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="entity" referencedTable="ChangeLogEntryEntity" />
+      </foreignKeys>
+    </table>
+
+    <table name="ChangeLogEntry" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="type" type="java.lang.String" nullable="false" unique="false" />
+        <field name="entity" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="entityId" type="java.lang.String" nullable="false" unique="false" />
+        <field name="ip" type="java.lang.String" nullable="true" unique="false" />
+        <field name="time" type="Types.TIMESTAMP" nullable="true" unique="false" />
+        <field name="user" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="entity" referencedTable="ChangeLogEntryEntity" />
+        <key referencedColumns="id" columns="user" referencedTable="User" />
+      </foreignKeys>
+    </table>
+
+    <table name="ChangeLogEntryProperty" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="property" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="entry" type="java.lang.Long" nullable="true" unique="false" />
+        <field name="value" type="java.lang.String" nullable="false" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="property" referencedTable="ChangeLogEntryEntityProperty" />
+        <key referencedColumns="id" columns="entry" referencedTable="ChangeLogEntry" />
+      </foreignKeys>
+    </table>
+  </createTables>
+  
+</update>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="StudentContactLogEntry">
+      <changeFields>
+        <field name="type" type="java.lang.String" nullable="true"/>
+      </changeFields>
+    </table>
+  </alterTables>
+
+  <alterData>
+
+    <update table="StudentContactLogEntry">
+      <set>
+        <value type="java.lang.String" column="type" value="OTHER"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="type" value="0"/>
+      </where>
+    </update>
+    
+    <update table="StudentContactLogEntry">
+      <set>
+        <value type="java.lang.String" column="type" value="LETTER"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="type" value="1"/>
+      </where>
+    </update>
+    
+    <update table="StudentContactLogEntry">
+      <set>
+        <value type="java.lang.String" column="type" value="EMAIL"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="type" value="2"/>
+      </where>
+    </update>
+    
+    <update table="StudentContactLogEntry">
+      <set>
+        <value type="java.lang.String" column="type" value="PHONE"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="type" value="3"/>
+      </where>
+    </update>
+    
+    <update table="StudentContactLogEntry">
+      <set>
+        <value type="java.lang.String" column="type" value="CHATLOG"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="type" value="4"/>
+      </where>
+    </update>
+    
+    <update table="StudentContactLogEntry">
+      <set>
+        <value type="java.lang.String" column="type" value="SKYPE"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="type" value="5"/>
+      </where>
+    </update>
+    
+    <update table="StudentContactLogEntry">
+      <set>
+        <value type="java.lang.String" column="type" value="FACE2FACE"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="type" value="6"/>
+      </where>
+    </update>
+    
+  </alterData>
+
+
+
+</update>

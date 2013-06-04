@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table primaryKeys="id" name="PluginRepository">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="true"/>
+        <field name="url" type="java.lang.String" nullable="false" unique="true"/>
+      </fields>
+    </table>
+    <table primaryKeys="id" name="Plugin">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="true"/>
+        <field name="groupId" type="java.lang.String" nullable="false" unique="false"/>
+        <field name="artifactId" type="java.lang.String" nullable="false" unique="false"/>
+        <field name="version" type="java.lang.String" nullable="false" unique="false"/>
+        <field name="enabled" type="java.lang.Boolean" nullable="false" unique="false"/>
+      </fields>
+    </table>
+  </createTables>
+  <alterData>
+    <insert table="PluginRepository">
+      <value type="java.lang.Long" column="id" value="1"/>
+      <value type="java.lang.String" column="url" value="http://repo1.maven.org/maven2"/>
+    </insert>
+    <insert table="hibernate_sequences">
+      <value type="java.lang.String" column="sequence_name" value="PluginRepository"/>
+      <value type="java.lang.Long" column="sequence_next_hi_value" value="2"/>
+    </insert>
+  </alterData>
+</update>

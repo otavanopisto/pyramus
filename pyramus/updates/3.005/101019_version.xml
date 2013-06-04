@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <alterTables>
+    <!-- Base -->
+  
+    <table name="AcademicTerm">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="Address">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="ComponentBase">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="ContactInfo">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="ContactType">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="ContactURL">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="ContactURLType">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="CourseBase">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="CourseBaseVariable">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="CourseBaseVariableKey">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="CourseEducationSubtype">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="CourseEducationType">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="Defaults">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="EducationalLength">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="EducationalTimeUnit">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="EducationSubtype">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="EducationType">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="Email">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="Language">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="MagicKey">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="Municipality">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="Nationality">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="PhoneNumber">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="School">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="SchoolVariable">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="SchoolVariableKey">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudyProgramme">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudyProgrammeCategory">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="Subject">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="Tag">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <!-- Courses -->
+
+    <table name="BasicCourseResource">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="CourseEnrolmentType">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="CourseParticipationType">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="CourseState">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="CourseStudent">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="CourseUser">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="CourseUserRole">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="GradeCourseResource">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="OtherCost">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentCourseResource">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <!-- Drafts -->
+
+    <table name="FormDraft">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+    
+    <!-- Grading -->
+
+    <table name="Credit">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="Grade">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="GradingScale">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+
+    <!-- Projects -->
+
+    <table name="Project">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="ProjectModule">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentProject">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentProjectModule">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <!-- Reports -->
+
+    <table name="Report">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="ReportCategory">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <!-- Resources -->
+
+    <table name="ResourceCategory">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <!-- Student -->
+    
+    <table name="AbstractStudent">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="Student">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentActivityType">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentContactLogEntry">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentEducationalLevel">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentExaminationType">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentGroup">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentGroupStudent">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentGroupUser">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentStudyEndReason">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentVariable">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="StudentVariableKey">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+   
+    
+    <!-- User -->
+    
+    <table name="InternalAuth">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="User">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="UserVariable">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+
+    <table name="UserVariableKey">
+      <addFields>
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </addFields>
+    </table>
+    
+  </alterTables>
+  
+</update>

@@ -1,0 +1,16 @@
+@CHARSET "UTF-8";
+
+body {
+  padding: 0px;
+  margin: 0px;
+}
+
+.simpleDialogContainer {
+  padding: 8px;
+}
+
+.simpleDialogMessage {
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}

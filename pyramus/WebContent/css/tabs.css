@@ -1,0 +1,241 @@
+@CHARSET "UTF-8";
+
+.tabLabelsContainer {
+  display:table;
+  clear:both;
+  padding-left:13px;
+  position:relative;
+  z-index:2;
+}
+
+.tabLabel {
+  text-align:center;
+  display:block;
+  float:left;
+  text-decoration: none;
+  margin-right:2px;
+  padding:4px 10px 3px 10px;
+  -moz-border-radius-topleft:5px;
+  -moz-border-radius-topright:5px;
+  -webkit-border-top-left-radius:5px;
+  -webkit-border-top-right-radius:5px;
+  border-top-left-radius:5px;
+  border-top-right-radius:5px;
+  color:#888;
+  background-color:#d2d2d2;
+  border: 1px solid #d2d2d2;
+  line-height: 20px;
+}
+
+.containsNestedTabs .tabLabel {
+  text-align:center;
+  display:block;
+  float:left;
+  text-decoration: none;
+  margin-right:2px;
+  padding:4px 10px 3px 10px;
+  -moz-border-radius-topleft:5px;
+  -moz-border-radius-topright:5px;
+  -webkit-border-top-left-radius:5px;
+  -webkit-border-top-right-radius:5px;
+  border-top-left-radius:5px;
+  border-top-right-radius:5px;
+  color:#999;
+  background-color:#e2e2e2;
+  border:1px solid #e2e2e2;
+}
+
+.tabLabel:hover{
+  color:#2e5ec5;
+}
+
+.activeTabLabel{
+  font-weight:bold;
+  z-index:9999;
+  display:block;
+  float:left;
+  text-decoration: none;
+  margin-right:2px;
+  padding:4px 10px 4px 10px;
+  -moz-border-radius-topleft:5px;
+  -moz-border-radius-topright:5px;
+  -webkit-border-top-left-radius:5px;
+  -webkit-border-top-right-radius:5px;
+  border-top-left-radius:5px;
+  border-top-right-radius:5px;
+  color:#2e5ec5;
+  background-color:#D1DFF8;
+  border-top: 1px solid #A0BFF7;
+  border-left: 1px solid #A0BFF7;
+  border-right: 1px solid #A0BFF7;
+  border-bottom: 1px solid #D1DFF8;
+}
+
+.containsNestedTabs .activeTabLabel{
+  font-weight:bold;
+  z-index:9999;
+  display:block;
+  float:left;
+  text-decoration: none;
+  margin-right:2px;
+  padding:4px 10px 4px 10px;
+  -moz-border-radius-topleft:5px;
+  -moz-border-radius-topright:5px;
+  -webkit-border-top-left-radius:5px;
+  -webkit-border-top-right-radius:5px;
+  border-top-left-radius:5px;
+  border-top-right-radius:5px;
+  color:#2e5ec5;
+  background-color:#E0E9F8;
+  border-top: 1px solid #D1DFF8;
+  border-left: 1px solid #D1DFF8;
+  border-right: 1px solid #D1DFF8;
+  border-bottom: 1px solid #E0E9F8;
+}
+
+.hiddenTab {
+  visibility: visible;
+  height: 0px;
+  position: absolute;
+  left: -20000px;
+}
+
+.activeTab {
+  visibility: visible;
+  height: auto;
+}
+
+.hiddenTabIE {
+  display:none;
+}
+
+.activeTabIE {
+  display:block;
+}
+
+/* ToDo:
+
+  * .tabContent have to be generalized and .tabContentixTableFormattedData has to be removed
+  * There can't be another 'alternative' tabContent but instead to complete the definition 
+    when ever needed have to be done by adding more definitions via other classes     
+
+*/
+
+.tabContent {
+  margin-top:-1px;
+  padding: 8px 8px 14px 10px;
+  border: 1px solid #A0BFF7;
+  background-color:#F6F8FE;
+  background-image:url(../gfx/gui/tabcontent_background.gif);
+  background-repeat:repeat-x;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  min-height:20px;
+
+}
+
+.tabContentNestedTabs{
+  background-image:url(../gfx/gui/tabcontent_background_alt.gif);
+  background-color:#f8f8f8;
+  border-top: 1px solid #D1DFF8;
+  border-left: 1px solid #f0f0f0;
+  border-right: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.tabContentixTableFormattedData {
+  margin-top:-1px;
+  padding: 8px 2px 14px 2px;
+  border: 1px solid #A0BFF7;
+  background-color:#F6F8FE;
+  background-image:url(../gfx/gui/tabcontent_background.gif);
+  background-repeat:repeat-x;
+  -moz-border-radius-bottomleft:15px;
+  -moz-border-radius-topright:15px;
+  -moz-border-radius-bottomright:5px;
+  -moz-border-radius-topleft:5px;
+  -webkit-border-bottom-left-radius:15px;
+  -webkit-border-top-right-radius:15px;
+  -webkit-border-bottom-right-radius:5px;
+  -webkit-border-top-left-radius:5px;
+  border-bottom-left-radius:15px;
+  border-top-right-radius:15px;
+  border-bottom-right-radius:5px;
+  border-top-left-radius:5px;
+}
+
+.tabContentixTableFormattedData .ixTableRow{
+  padding-top:4px;
+}
+
+.tabContentixTableFormattedData .ixTableRow:hover{
+  background:#D7E3F9;
+  color:#2351B1;  
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  border-radius:3px;
+}
+
+.tabContentSubTabContainer{
+  background:#fff;
+}
+
+.fixedSizedTabContent{
+	position:absolute;
+	top:73px;
+	bottom:0;
+	left:0;
+	right:0;
+}
+
+.tabAdd {
+	position: relative;
+	cursor: pointer;
+	font-size: 18px;
+}
+
+.ixPrototabsContextMenu {
+  /*border: solid 1px;
+  background: #ffffff;*/
+  position: absolute;
+  left: -2px;
+  top: 0px;
+  padding: 4px 4px 4px 4px;
+  z-index: 2;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  border-radius:3px;
+  text-align: left;
+  
+  background: #739de7;
+  border:1px solid #739DE7;
+  color:#fff;
+  margin-top:24px;
+  font-size: 12px;
+}
+
+.ixPrototabsContextMenuItem {
+  padding: 2px 8px 2px 8px;
+  cursor:pointer;
+  white-space: nowrap;
+}
+
+.ixPrototabsContextMenuItemDisabled {
+  color: #aaaafa;
+}
+
+.ixPrototabsContextMenuItem:hover {
+  /*background: #cecece;*/
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  border-radius:3px;
+
+  background:#5b87d4;
+}
+
+.ixPrototabsContextMenuItemSpacer {
+  background:#5b87d4;
+  height:1px;
+  margin:4px 8px 4px 8px;
+}

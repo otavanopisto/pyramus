@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table name="BillingDetails" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="personName" type="java.lang.String" nullable="true" unique="false" />
+        <field name="companyName" type="java.lang.String" nullable="true" unique="false" />
+        <field name="streetAddress1" type="java.lang.String" nullable="true" unique="false" />
+        <field name="streetAddress2" type="java.lang.String" nullable="true" unique="false" />
+        <field name="postalCode" type="java.lang.String" nullable="true" unique="false" />
+        <field name="city" type="java.lang.String" nullable="true" unique="false" />
+        <field name="region" type="java.lang.String" nullable="true" unique="false" />
+        <field name="country" type="java.lang.String" nullable="true" unique="false" />
+        <field name="phoneNumber" type="java.lang.String" nullable="true" unique="false" />
+        <field name="emailAddress" type="java.lang.String" nullable="true" unique="false" />
+        <field name="bic" type="java.lang.String" nullable="true" unique="false" />
+        <field name="iban" type="java.lang.String" nullable="true" unique="false" />
+        <field name="companyIdentifier" type="java.lang.String" nullable="true" unique="false" />
+        <field name="referenceNumber" type="java.lang.String" nullable="true" unique="false" />
+      </fields>
+    </table>
+    <table name="__UserBillingDetails" primaryKeys="user,billingDetails">
+      <fields>
+        <field name="user" type="java.lang.Long" nullable="false"/>
+        <field name="billingDetails" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key columns="user" referencedColumns="id" referencedTable="User"/>
+        <key columns="billingDetails" referencedColumns="id" referencedTable="BillingDetails"/>
+      </foreignKeys>
+    </table>
+    <table name="__StudentBillingDetails" primaryKeys="student,billingDetails">
+      <fields>
+        <field name="student" type="java.lang.Long" nullable="false"/>
+        <field name="billingDetails" type="java.lang.Long" nullable="false"/>
+      </fields>
+      <foreignKeys>
+        <key columns="student" referencedColumns="id" referencedTable="Student"/>
+        <key columns="billingDetails" referencedColumns="id" referencedTable="BillingDetails"/>
+      </foreignKeys>
+    </table>
+  </createTables>
+
+  <alterTables>
+    <table name="CourseStudent">
+      <addFields>
+        <field name="billingDetails" type="java.lang.Long" nullable="true" unique="false" />
+      </addFields>
+      <addForeignKeys>
+        <key referencedColumns="id" columns="billingDetails" referencedTable="BillingDetails"/>
+      </addForeignKeys>
+    </table>
+  </alterTables>
+
+</update>
