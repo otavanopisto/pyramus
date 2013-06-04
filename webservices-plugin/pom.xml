@@ -1,0 +1,86 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>webservices-plugin</artifactId>
+  
+  <parent>
+    <groupId>fi.pyramus</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.6.5-SNAPSHOT</version>
+  </parent>
+  
+  <dependencies>
+    <dependency>
+      <groupId>fi.pyramus</groupId>
+      <artifactId>persistence</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.ws</groupId>
+      <artifactId>jbossws-spi</artifactId>
+      <version>2.0.3.GA</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>6.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+ 
+  <url>http://pyramus.googlecode.com/</url>
+  <scm>
+    <url>http://pyramus.googlecode.com/svn</url>
+  </scm>
+  <issueManagement>
+    <system>Google Code</system>
+    <url>https://code.google.com/p/pyramus/issues/</url>
+  </issueManagement>
+  <organization>
+    <name>Internetix / Otava Folk High School</name>
+    <url>http://www.otavanopisto.fi</url>
+  </organization>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <name>Pyramus WebServices Plugin</name>
+  
+  <build>
+    <finalName>${project.artifactId}-${project.version}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <repositories>
+    <repository>
+      <id>otavanopisto-releases</id>
+      <name>Otavan Opisto Releases</name>
+      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/releases</url>
+    </repository>
+    <repository>
+      <id>otavanopisto-snapshots</id>
+      <name>Otavan Opisto Snapshots</name>
+      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/snapshots</url>
+    </repository>
+    <repository>
+      <id>repository.jboss.org-public</id>
+      <name>JBoss repository</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public</url>
+    </repository>
+  </repositories>
+  
+</project>

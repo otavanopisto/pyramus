@@ -1,0 +1,189 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fi.pyramus</groupId>
+  <artifactId>bom</artifactId>
+  <version>0.6.5-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Pyramus BOM</name>
+  
+  <properties>
+    <pyramus.version>0.6.5-SNAPSHOT</pyramus.version>
+    <hibernate.version>4.0.1.Final</hibernate.version>
+    <hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
+    <jboss-ejb-api_3.1_spec.version>1.0.1.Final</jboss-ejb-api_3.1_spec.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Hibernate -->
+    
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>${hibernate.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <version>${hibernate.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>org.hibernate.common</groupId>
+        <artifactId>hibernate-commons-annotations</artifactId>
+        <version>${hibernate.version}</version>
+      </dependency>
+    
+      <!-- Import the EJB API, we use provided scope as the API is included in JBoss AS 7 -->
+      <dependency>
+        <groupId>org.jboss.spec.javax.ejb</groupId>
+        <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+        <version>${jboss-ejb-api_3.1_spec.version}</version>
+      </dependency>
+    
+      <!-- Hibernate Validator is shipped in JBoss AS 7 -->
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>${hibernate-validator.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+    
+      <!-- Annotation processor to generate the JPA 2.0 metamodel classes for typesafe criteria queries -->
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-jpamodelgen</artifactId>
+        <version>1.1.1.Final</version>
+      </dependency>  
+
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-search</artifactId>
+        <version>4.1.1.Final</version>
+      </dependency>
+
+      <!-- Apache Commons -->
+     
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.1</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.6</version>
+      </dependency>
+
+      <!-- SMVCJ -->
+
+      <dependency>
+        <groupId>fi.internetix.smvcj</groupId>
+        <artifactId>smvcj</artifactId>
+        <version>0.0.3</version>
+      </dependency>
+
+      <!-- Pyramus -->
+    
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>pyramus</artifactId>
+        <version>${pyramus.version}</version>
+        <type>war</type>
+      </dependency>
+
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>common</artifactId>
+        <version>${pyramus.version}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>domainmodelextension</artifactId>
+        <version>${pyramus.version}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>framework</artifactId>
+        <version>${pyramus.version}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>ldap-plugin</artifactId>
+        <version>${pyramus.version}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>openid-plugin</artifactId>
+        <version>${pyramus.version}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>persistence</artifactId>
+        <version>${pyramus.version}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>plugin-core</artifactId>
+        <version>${pyramus.version}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>reports</artifactId>
+        <version>${pyramus.version}</version>
+        <type>war</type>
+      </dependency>
+
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>simple-plugin</artifactId>
+        <version>${pyramus.version}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>webservices-plugin</artifactId>
+        <version>${pyramus.version}</version>
+        <type>jar</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>otavanopisto-snapshots</id>
+      <name>Otavan Opisto Snapshots</name>
+      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>otavanopisto-releases</id>
+      <name>Otavan Opisto Releases</name>
+      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/releases</url>
+    </repository>
+  </distributionManagement>
+
+</project>

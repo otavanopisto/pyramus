@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fi.pyramus</groupId>
+  <artifactId>parent</artifactId>
+  <version>0.6.5-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Pyramus Parent POM</name>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>bom</artifactId>
+        <version>0.6.5-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>otavanopisto-releases</id>
+      <name>Otavan Opisto Releases</name>
+      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/releases</url>
+    </repository>
+    <repository>
+      <id>otavanopisto-snapshots</id>
+      <name>Otavan Opisto Snapshots</name>
+      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/snapshots</url>
+    </repository>
+    <repository>
+      <id>repository.jboss.org-public</id>
+      <name>JBoss repository</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public</url>
+    </repository>
+  </repositories>
+  
+  <distributionManagement>
+    <snapshotRepository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>otavanopisto-snapshots</id>
+      <name>Otavan Opisto Snapshots</name>
+      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>otavanopisto-releases</id>
+      <name>Otavan Opisto Releases</name>
+      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/releases</url>
+    </repository>
+  </distributionManagement>
+  
+</project>
