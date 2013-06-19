@@ -34,7 +34,7 @@ public class ProjectAssessmentDAO extends PyramusEntityDAO<ProjectAssessment> {
     return projectAssessment;
   }
 
-  public List<ProjectAssessment> listByProject(StudentProject studentProject) {
+  public List<ProjectAssessment> listUnarchivedByProject(StudentProject studentProject) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -42,7 +42,8 @@ public class ProjectAssessmentDAO extends PyramusEntityDAO<ProjectAssessment> {
     Root<ProjectAssessment> root = criteria.from(ProjectAssessment.class);
     criteria.select(root);
     criteria.where(
-        criteriaBuilder.equal(root.get(ProjectAssessment_.studentProject), studentProject)
+        criteriaBuilder.equal(root.get(ProjectAssessment_.studentProject), studentProject),
+        criteriaBuilder.equal(root.get(ProjectAssessment_.archived), Boolean.FALSE)
     );
     
     return entityManager.createQuery(criteria).getResultList();
