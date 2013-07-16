@@ -123,11 +123,11 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
       if ((assessmentModified != null) && (assessmentModified.intValue() == 1)) {
         Long assessmentId = jsonRequestContext.getLong(colPrefix + ".assessmentId");
         ProjectAssessment projectAssessment = ((assessmentId != null) && (assessmentId.intValue() != -1)) ? projectAssessmentDAO.findById(assessmentId) : null;
-        Long assessmentDeleted = jsonRequestContext.getLong(colPrefix + ".deleted");
+        Long assessmentArchived = jsonRequestContext.getLong(colPrefix + ".deleted");
 
-        if ((assessmentDeleted != null) && (assessmentDeleted.intValue() == 1)) {
+        if ((assessmentArchived != null) && (assessmentArchived.intValue() == 1)) {
           if (projectAssessment != null)
-            projectAssessmentDAO.delete(projectAssessment);
+            projectAssessmentDAO.archive(projectAssessment);
           else
             throw new SmvcRuntimeException(PyramusStatusCode.OK, "Assessment marked for delete does not exist.");
         } else {
