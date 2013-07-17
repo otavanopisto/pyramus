@@ -27,6 +27,11 @@
     </repository>
   </repositories>
   
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <tranquil-model-gen.version>1.0.3-SNAPSHOT</tranquil-model-gen.version>
+  </properties>
+  
   <dependencies>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -88,9 +93,6 @@
     <name>Internetix / Otava Folk High School</name>
     <url>http://www.otavanopisto.fi</url>
   </organization>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
   
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
@@ -217,4 +219,48 @@
     </plugins>
   </build>
   
+  <profiles>
+    <profile>
+      <id>generate-tranquil-model</id>
+      <build>
+        <plugins>
+           <plugin>
+            <groupId>org.bsc.maven</groupId>
+            <artifactId>maven-processor-plugin</artifactId>
+            <version>2.2.1</version>
+            <dependencies>
+              <dependency>
+                <groupId>fi.tranquil-model</groupId>
+                <artifactId>tranquil-model-gen</artifactId>
+                <version>${tranquil-model-gen.version}</version>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <id>process-tranquilmodel</id>
+                <goals>
+                  <goal>process</goal>
+                </goals>
+                <phase>generate-sources</phase>
+                <configuration>
+                  <includes>
+                    <include>**fi/pyramus/domainmodel/**/*.java</include>
+                  </includes>
+    
+                  <outputDirectory>${basedir}/generated</outputDirectory>
+                  <processors>
+                    <processor>fi.tranquil.TranquilModelAnnotationProcessor</processor>
+                  </processors>
+                  <optionMap>
+                    <lookupPackage>fi.pyramus.rest.tranquil</lookupPackage>
+                  </optionMap>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>  
+
 </project>
