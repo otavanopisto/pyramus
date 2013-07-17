@@ -1,0 +1,124 @@
+package fi.pyramus.rest.tranquil;
+
+public class CompactLookup implements fi.tranquil.processing.EntityLookup {
+
+  public CompactLookup() {
+    classes.put(fi.pyramus.domainmodel.reports.ReportCategory.class, fi.pyramus.rest.tranquil.reports.ReportCategoryCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.StudentStudyEndReason.class, fi.pyramus.rest.tranquil.students.StudentStudyEndReasonCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.StudentVariableKey.class, fi.pyramus.rest.tranquil.students.StudentVariableKeyCompact.class);
+    classes.put(fi.pyramus.domainmodel.grading.TransferCredit.class, fi.pyramus.rest.tranquil.grading.TransferCreditCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.School.class, fi.pyramus.rest.tranquil.base.SchoolCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.BillingDetails.class, fi.pyramus.rest.tranquil.base.BillingDetailsCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.CourseDescription.class, fi.pyramus.rest.tranquil.courses.CourseDescriptionCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.StudentContactLogEntryComment.class, fi.pyramus.rest.tranquil.students.StudentContactLogEntryCommentCompact.class);
+    classes.put(fi.pyramus.domainmodel.resources.WorkResource.class, fi.pyramus.rest.tranquil.resources.WorkResourceCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.StudentContactLogEntry.class, fi.pyramus.rest.tranquil.students.StudentContactLogEntryCompact.class);
+    classes.put(fi.pyramus.domainmodel.users.UserVariableKey.class, fi.pyramus.rest.tranquil.users.UserVariableKeyCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.ContactInfo.class, fi.pyramus.rest.tranquil.base.ContactInfoCompact.class);
+    classes.put(fi.pyramus.domainmodel.projects.StudentProjectModule.class, fi.pyramus.rest.tranquil.projects.StudentProjectModuleCompact.class);
+    classes.put(fi.pyramus.domainmodel.grading.CreditVariableKey.class, fi.pyramus.rest.tranquil.grading.CreditVariableKeyCompact.class);
+    classes.put(fi.pyramus.domainmodel.help.HelpPage.class, fi.pyramus.rest.tranquil.help.HelpPageCompact.class);
+    classes.put(fi.pyramus.domainmodel.reports.ReportContext.class, fi.pyramus.rest.tranquil.reports.ReportContextCompact.class);
+    classes.put(fi.pyramus.domainmodel.help.HelpPageContent.class, fi.pyramus.rest.tranquil.help.HelpPageContentCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.StudentVariable.class, fi.pyramus.rest.tranquil.students.StudentVariableCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.Nationality.class, fi.pyramus.rest.tranquil.base.NationalityCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.CourseUser.class, fi.pyramus.rest.tranquil.courses.CourseUserCompact.class);
+    classes.put(fi.pyramus.domainmodel.grading.CourseAssessmentRequest.class, fi.pyramus.rest.tranquil.grading.CourseAssessmentRequestCompact.class);
+    classes.put(fi.pyramus.domainmodel.file.File.class, fi.pyramus.rest.tranquil.file.FileCompact.class);
+    classes.put(fi.pyramus.domainmodel.system.Setting.class, fi.pyramus.rest.tranquil.system.SettingCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.Tag.class, fi.pyramus.rest.tranquil.base.TagCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.CourseBaseVariable.class, fi.pyramus.rest.tranquil.base.CourseBaseVariableCompact.class);
+    classes.put(fi.pyramus.domainmodel.projects.Project.class, fi.pyramus.rest.tranquil.projects.ProjectCompact.class);
+    classes.put(fi.pyramus.domainmodel.resources.Resource.class, fi.pyramus.rest.tranquil.resources.ResourceCompact.class);
+    classes.put(fi.pyramus.domainmodel.system.SettingKey.class, fi.pyramus.rest.tranquil.system.SettingKeyCompact.class);
+    classes.put(fi.pyramus.domainmodel.changelog.ChangeLogEntryEntityProperty.class, fi.pyramus.rest.tranquil.changelog.ChangeLogEntryEntityPropertyCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.ComponentBase.class, fi.pyramus.rest.tranquil.base.ComponentBaseCompact.class);
+    classes.put(fi.pyramus.domainmodel.resources.MaterialResource.class, fi.pyramus.rest.tranquil.resources.MaterialResourceCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.StudyProgrammeCategory.class, fi.pyramus.rest.tranquil.base.StudyProgrammeCategoryCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.EducationType.class, fi.pyramus.rest.tranquil.base.EducationTypeCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.ContactURL.class, fi.pyramus.rest.tranquil.base.ContactURLCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.Address.class, fi.pyramus.rest.tranquil.base.AddressCompact.class);
+    classes.put(fi.pyramus.domainmodel.users.InternalAuth.class, fi.pyramus.rest.tranquil.users.InternalAuthCompact.class);
+    classes.put(fi.pyramus.domainmodel.changelog.ChangeLogEntryEntity.class, fi.pyramus.rest.tranquil.changelog.ChangeLogEntryEntityCompact.class);
+    classes.put(fi.pyramus.domainmodel.grading.ProjectAssessment.class, fi.pyramus.rest.tranquil.grading.ProjectAssessmentCompact.class);
+    classes.put(fi.pyramus.domainmodel.grading.GradingScale.class, fi.pyramus.rest.tranquil.grading.GradingScaleCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.MagicKey.class, fi.pyramus.rest.tranquil.base.MagicKeyCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.SchoolVariable.class, fi.pyramus.rest.tranquil.base.SchoolVariableCompact.class);
+    classes.put(fi.pyramus.domainmodel.projects.ProjectModule.class, fi.pyramus.rest.tranquil.projects.ProjectModuleCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.CourseComponentResource.class, fi.pyramus.rest.tranquil.courses.CourseComponentResourceCompact.class);
+    classes.put(fi.pyramus.domainmodel.users.User.class, fi.pyramus.rest.tranquil.users.UserCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.CourseEnrolmentType.class, fi.pyramus.rest.tranquil.courses.CourseEnrolmentTypeCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.ContactURLType.class, fi.pyramus.rest.tranquil.base.ContactURLTypeCompact.class);
+    classes.put(fi.pyramus.domainmodel.modules.Module.class, fi.pyramus.rest.tranquil.modules.ModuleCompact.class);
+    classes.put(fi.pyramus.domainmodel.users.UserVariable.class, fi.pyramus.rest.tranquil.users.UserVariableCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.StudentGroup.class, fi.pyramus.rest.tranquil.students.StudentGroupCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.AcademicTerm.class, fi.pyramus.rest.tranquil.base.AcademicTermCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.GradeCourseResource.class, fi.pyramus.rest.tranquil.courses.GradeCourseResourceCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.CourseComponent.class, fi.pyramus.rest.tranquil.courses.CourseComponentCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.CourseParticipationType.class, fi.pyramus.rest.tranquil.courses.CourseParticipationTypeCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.StudentGroupUser.class, fi.pyramus.rest.tranquil.students.StudentGroupUserCompact.class);
+    classes.put(fi.pyramus.domainmodel.help.HelpFolder.class, fi.pyramus.rest.tranquil.help.HelpFolderCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.Course.class, fi.pyramus.rest.tranquil.courses.CourseCompact.class);
+    classes.put(fi.pyramus.domainmodel.reports.Report.class, fi.pyramus.rest.tranquil.reports.ReportCompact.class);
+    classes.put(fi.pyramus.domainmodel.help.HelpItemTitle.class, fi.pyramus.rest.tranquil.help.HelpItemTitleCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.CourseDescriptionCategory.class, fi.pyramus.rest.tranquil.courses.CourseDescriptionCategoryCompact.class);
+    classes.put(fi.pyramus.domainmodel.changelog.TrackedEntityProperty.class, fi.pyramus.rest.tranquil.changelog.TrackedEntityPropertyCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.SchoolVariableKey.class, fi.pyramus.rest.tranquil.base.SchoolVariableKeyCompact.class);
+    classes.put(fi.pyramus.domainmodel.grading.CreditVariable.class, fi.pyramus.rest.tranquil.grading.CreditVariableCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.StudentEducationalLevel.class, fi.pyramus.rest.tranquil.students.StudentEducationalLevelCompact.class);
+    classes.put(fi.pyramus.domainmodel.changelog.ChangeLogEntryProperty.class, fi.pyramus.rest.tranquil.changelog.ChangeLogEntryPropertyCompact.class);
+    classes.put(fi.pyramus.domainmodel.file.FileType.class, fi.pyramus.rest.tranquil.file.FileTypeCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.StudentExaminationType.class, fi.pyramus.rest.tranquil.students.StudentExaminationTypeCompact.class);
+    classes.put(fi.pyramus.domainmodel.modules.ModuleComponent.class, fi.pyramus.rest.tranquil.modules.ModuleComponentCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.OtherCost.class, fi.pyramus.rest.tranquil.courses.OtherCostCompact.class);
+    classes.put(fi.pyramus.domainmodel.plugins.PluginRepository.class, fi.pyramus.rest.tranquil.plugins.PluginRepositoryCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.EducationSubtype.class, fi.pyramus.rest.tranquil.base.EducationSubtypeCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.CourseUserRole.class, fi.pyramus.rest.tranquil.courses.CourseUserRoleCompact.class);
+    classes.put(fi.pyramus.domainmodel.changelog.ChangeLogEntry.class, fi.pyramus.rest.tranquil.changelog.ChangeLogEntryCompact.class);
+    classes.put(fi.pyramus.domainmodel.grading.CreditLink.class, fi.pyramus.rest.tranquil.grading.CreditLinkCompact.class);
+    classes.put(fi.pyramus.domainmodel.plugins.Plugin.class, fi.pyramus.rest.tranquil.plugins.PluginCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.CourseEducationSubtype.class, fi.pyramus.rest.tranquil.base.CourseEducationSubtypeCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.PhoneNumber.class, fi.pyramus.rest.tranquil.base.PhoneNumberCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.StudentActivityType.class, fi.pyramus.rest.tranquil.students.StudentActivityTypeCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.CourseState.class, fi.pyramus.rest.tranquil.courses.CourseStateCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.Student.class, fi.pyramus.rest.tranquil.students.StudentCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.StudyProgramme.class, fi.pyramus.rest.tranquil.base.StudyProgrammeCompact.class);
+    classes.put(fi.pyramus.domainmodel.resources.ResourceCategory.class, fi.pyramus.rest.tranquil.resources.ResourceCategoryCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.StudentCourseResource.class, fi.pyramus.rest.tranquil.courses.StudentCourseResourceCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.Defaults.class, fi.pyramus.rest.tranquil.base.DefaultsCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.Language.class, fi.pyramus.rest.tranquil.base.LanguageCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.CourseEducationType.class, fi.pyramus.rest.tranquil.base.CourseEducationTypeCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.Municipality.class, fi.pyramus.rest.tranquil.base.MunicipalityCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.CourseStudent.class, fi.pyramus.rest.tranquil.courses.CourseStudentCompact.class);
+    classes.put(fi.pyramus.domainmodel.grading.TransferCreditTemplateCourse.class, fi.pyramus.rest.tranquil.grading.TransferCreditTemplateCourseCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.CourseBaseVariableKey.class, fi.pyramus.rest.tranquil.base.CourseBaseVariableKeyCompact.class);
+    classes.put(fi.pyramus.domainmodel.drafts.FormDraft.class, fi.pyramus.rest.tranquil.drafts.FormDraftCompact.class);
+    classes.put(fi.pyramus.domainmodel.help.HelpItem.class, fi.pyramus.rest.tranquil.help.HelpItemCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.CourseBase.class, fi.pyramus.rest.tranquil.base.CourseBaseCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.AbstractStudent.class, fi.pyramus.rest.tranquil.students.AbstractStudentCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.BasicCourseResource.class, fi.pyramus.rest.tranquil.courses.BasicCourseResourceCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.CourseStudentVariable.class, fi.pyramus.rest.tranquil.courses.CourseStudentVariableCompact.class);
+    classes.put(fi.pyramus.domainmodel.projects.StudentProject.class, fi.pyramus.rest.tranquil.projects.StudentProjectCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.StudentGroupStudent.class, fi.pyramus.rest.tranquil.students.StudentGroupStudentCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.EducationalTimeUnit.class, fi.pyramus.rest.tranquil.base.EducationalTimeUnitCompact.class);
+    classes.put(fi.pyramus.domainmodel.courses.CourseStudentVariableKey.class, fi.pyramus.rest.tranquil.courses.CourseStudentVariableKeyCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.ContactType.class, fi.pyramus.rest.tranquil.base.ContactTypeCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.Email.class, fi.pyramus.rest.tranquil.base.EmailCompact.class);
+    classes.put(fi.pyramus.domainmodel.grading.Credit.class, fi.pyramus.rest.tranquil.grading.CreditCompact.class);
+    classes.put(fi.pyramus.domainmodel.grading.Grade.class, fi.pyramus.rest.tranquil.grading.GradeCompact.class);
+    classes.put(fi.pyramus.domainmodel.file.StudentFile.class, fi.pyramus.rest.tranquil.file.StudentFileCompact.class);
+    classes.put(fi.pyramus.domainmodel.students.StudentImage.class, fi.pyramus.rest.tranquil.students.StudentImageCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.EducationalLength.class, fi.pyramus.rest.tranquil.base.EducationalLengthCompact.class);
+    classes.put(fi.pyramus.domainmodel.grading.TransferCreditTemplate.class, fi.pyramus.rest.tranquil.grading.TransferCreditTemplateCompact.class);
+    classes.put(fi.pyramus.domainmodel.grading.CourseAssessment.class, fi.pyramus.rest.tranquil.grading.CourseAssessmentCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.Subject.class, fi.pyramus.rest.tranquil.base.SubjectCompact.class);
+    classes.put(fi.pyramus.domainmodel.base.SchoolField.class, fi.pyramus.rest.tranquil.base.SchoolFieldCompact.class);
+  }
+
+  @Override
+  public Class<?> findTranquilModel(Class<?> entity) {
+    return classes.get(entity);
+  }
+
+  private java.util.Map<Class<?>, Class<?>> classes =  new java.util.HashMap<Class<?>, Class<?>>();
+}
