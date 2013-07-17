@@ -13,6 +13,7 @@
     <jboss-ejb-api_3.1_spec.version>1.0.1.Final</jboss-ejb-api_3.1_spec.version>
     <jboss-javaee6-spec.version>1.0.0.Final</jboss-javaee6-spec.version>
     <resteasy-jaxrs.version>2.3.2.Final</resteasy-jaxrs.version>
+    <tranquil-model.version>1.0.3-SNAPSHOT</tranquil-model.version>
   </properties>
 
   <dependencyManagement>
@@ -117,6 +118,14 @@
         <groupId>fi.internetix.smvcj</groupId>
         <artifactId>smvcj</artifactId>
         <version>0.0.3</version>
+      </dependency>
+      
+      <!-- Tranquil Model -->
+      
+      <dependency>
+        <groupId>fi.tranquil-model</groupId>
+        <artifactId>tranquil-model</artifactId>
+        <version>${tranquil-model.version}</version>
       </dependency>
           
       <!-- Pyramus -->
