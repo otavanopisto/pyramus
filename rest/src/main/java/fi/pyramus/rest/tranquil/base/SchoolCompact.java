@@ -22,29 +22,9 @@ public class SchoolCompact extends SchoolBase {
     this.field_id = field_id;
   }
 
-  public java.util.List<Long> getVariables_ids() {
-    return variables_ids;
-  }
-
-  public void setVariables_ids(java.util.List<Long> variables_ids) {
-    this.variables_ids = variables_ids;
-  }
-
-  public java.util.List<Long> getTags_ids() {
-    return tags_ids;
-  }
-
-  public void setTags_ids(java.util.List<Long> tags_ids) {
-    this.tags_ids = tags_ids;
-  }
-
   private Long contactInfo_id;
 
   private Long field_id;
 
-  private java.util.List<Long> variables_ids;
-
-  private java.util.List<Long> tags_ids;
-
-  public final static String[] properties = {"contactInfo","field","variables","tags"};
+  public final static String[] properties = {"contactInfo","field"};
 }

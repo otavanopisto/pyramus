@@ -25,6 +25,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -201,6 +202,7 @@ public class School implements ArchivableEntity {
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="school")
+  @XmlTransient
   private List<SchoolVariable> variables = new ArrayList<SchoolVariable>();
 
   @NotNull
@@ -210,7 +212,8 @@ public class School implements ArchivableEntity {
 
   @ManyToMany (fetch = FetchType.LAZY)
   @JoinTable (name="__SchoolTags", joinColumns=@JoinColumn(name="school"), inverseJoinColumns=@JoinColumn(name="tag"))
-  @IndexedEmbedded 
+  @IndexedEmbedded
+  @XmlTransient
   private Set<Tag> tags = new HashSet<Tag>();
 
   @ManyToOne

@@ -23,29 +23,9 @@ public class SchoolComplete extends SchoolBase {
     this.field = field;
   }
 
-  public java.util.List<TranquilModelEntity> getVariables() {
-    return variables;
-  }
-
-  public void setVariables(java.util.List<TranquilModelEntity> variables) {
-    this.variables = variables;
-  }
-
-  public java.util.List<TranquilModelEntity> getTags() {
-    return tags;
-  }
-
-  public void setTags(java.util.List<TranquilModelEntity> tags) {
-    this.tags = tags;
-  }
-
   private TranquilModelEntity contactInfo;
 
   private TranquilModelEntity field;
 
-  private java.util.List<TranquilModelEntity> variables;
-
-  private java.util.List<TranquilModelEntity> tags;
-
-  public final static String[] properties = {"contactInfo","field","variables","tags"};
+  public final static String[] properties = {"contactInfo","field"};
 }
