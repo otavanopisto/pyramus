@@ -38,44 +38,12 @@ public class StudentGroupBase implements fi.tranquil.TranquilModelEntity {
     this.archived = archived;
   }
 
-  public java.util.Set<fi.pyramus.domainmodel.students.StudentGroupStudent> getStudents() {
-    return students;
-  }
-
-  public void setStudents(java.util.Set<fi.pyramus.domainmodel.students.StudentGroupStudent> students) {
-    this.students = students;
-  }
-
-  public java.util.Set<fi.pyramus.domainmodel.students.StudentGroupUser> getUsers() {
-    return users;
-  }
-
-  public void setUsers(java.util.Set<fi.pyramus.domainmodel.students.StudentGroupUser> users) {
-    this.users = users;
-  }
-
   public java.util.Date getBeginDate() {
     return beginDate;
   }
 
   public void setBeginDate(java.util.Date beginDate) {
     this.beginDate = beginDate;
-  }
-
-  public java.util.Set<fi.pyramus.domainmodel.base.Tag> getTags() {
-    return tags;
-  }
-
-  public void setTags(java.util.Set<fi.pyramus.domainmodel.base.Tag> tags) {
-    this.tags = tags;
-  }
-
-  public String getNameSortable() {
-    return nameSortable;
-  }
-
-  public void setNameSortable(String nameSortable) {
-    this.nameSortable = nameSortable;
   }
 
   public java.util.Date getCreated() {
@@ -110,15 +78,7 @@ public class StudentGroupBase implements fi.tranquil.TranquilModelEntity {
 
   private Boolean archived;
 
-  private java.util.Set<fi.pyramus.domainmodel.students.StudentGroupStudent> students;
-
-  private java.util.Set<fi.pyramus.domainmodel.students.StudentGroupUser> users;
-
   private java.util.Date beginDate;
-
-  private java.util.Set<fi.pyramus.domainmodel.base.Tag> tags;
-
-  private String nameSortable;
 
   private java.util.Date created;
 
@@ -126,5 +86,5 @@ public class StudentGroupBase implements fi.tranquil.TranquilModelEntity {
 
   private Long version;
 
-  public final static String[] properties = {"id","name","description","archived","students","users","beginDate","tags","nameSortable","created","lastModified","version"};
+  public final static String[] properties = {"id","name","description","archived","beginDate","created","lastModified","version"};
 }

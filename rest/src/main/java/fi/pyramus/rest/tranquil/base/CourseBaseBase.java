@@ -62,14 +62,6 @@ public class CourseBaseBase implements fi.tranquil.TranquilModelEntity {
     this.courseNumber = courseNumber;
   }
 
-  public String getNameSortable() {
-    return nameSortable;
-  }
-
-  public void setNameSortable(String nameSortable) {
-    this.nameSortable = nameSortable;
-  }
-
   public Long getVersion() {
     return version;
   }
@@ -100,11 +92,9 @@ public class CourseBaseBase implements fi.tranquil.TranquilModelEntity {
 
   private Integer courseNumber;
 
-  private String nameSortable;
-
   private Long version;
 
   private Long maxParticipantCount;
 
-  public final static String[] properties = {"id","name","created","lastModified","description","archived","courseNumber","nameSortable","version","maxParticipantCount"};
+  public final static String[] properties = {"id","name","created","lastModified","description","archived","courseNumber","version","maxParticipantCount"};
 }

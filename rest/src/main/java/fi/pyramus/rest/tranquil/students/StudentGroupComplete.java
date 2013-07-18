@@ -23,9 +23,39 @@ public class StudentGroupComplete extends StudentGroupBase {
     this.lastModifier = lastModifier;
   }
 
+  public java.util.List<TranquilModelEntity> getStudents() {
+    return students;
+  }
+
+  public void setStudents(java.util.List<TranquilModelEntity> students) {
+    this.students = students;
+  }
+
+  public java.util.List<TranquilModelEntity> getUsers() {
+    return users;
+  }
+
+  public void setUsers(java.util.List<TranquilModelEntity> users) {
+    this.users = users;
+  }
+
+  public java.util.List<TranquilModelEntity> getTags() {
+    return tags;
+  }
+
+  public void setTags(java.util.List<TranquilModelEntity> tags) {
+    this.tags = tags;
+  }
+
   private TranquilModelEntity creator;
 
   private TranquilModelEntity lastModifier;
 
-  public final static String[] properties = {"creator","lastModifier"};
+  private java.util.List<TranquilModelEntity> students;
+
+  private java.util.List<TranquilModelEntity> users;
+
+  private java.util.List<TranquilModelEntity> tags;
+
+  public final static String[] properties = {"creator","lastModifier","students","users","tags"};
 }

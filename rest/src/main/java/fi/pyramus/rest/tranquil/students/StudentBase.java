@@ -30,14 +30,6 @@ public class StudentBase implements fi.tranquil.TranquilModelEntity {
     this.lastName = lastName;
   }
 
-  public String getFullName() {
-    return fullName;
-  }
-
-  public void setFullName(String fullName) {
-    this.fullName = fullName;
-  }
-
   public String getAdditionalInfo() {
     return additionalInfo;
   }
@@ -94,38 +86,6 @@ public class StudentBase implements fi.tranquil.TranquilModelEntity {
     this.studyEndText = studyEndText;
   }
 
-  public boolean getActive() {
-    return active;
-  }
-
-  public void setActive(boolean active) {
-    this.active = active;
-  }
-
-  public boolean getHasStartedStudies() {
-    return hasStartedStudies;
-  }
-
-  public void setHasStartedStudies(boolean hasStartedStudies) {
-    this.hasStartedStudies = hasStartedStudies;
-  }
-
-  public boolean getHasFinishedStudies() {
-    return hasFinishedStudies;
-  }
-
-  public void setHasFinishedStudies(boolean hasFinishedStudies) {
-    this.hasFinishedStudies = hasFinishedStudies;
-  }
-
-  public java.util.Map<java.lang.String,java.lang.String> getVariablesAsStringMap() {
-    return variablesAsStringMap;
-  }
-
-  public void setVariablesAsStringMap(java.util.Map<java.lang.String,java.lang.String> variablesAsStringMap) {
-    this.variablesAsStringMap = variablesAsStringMap;
-  }
-
   public String getEducation() {
     return education;
   }
@@ -150,14 +110,6 @@ public class StudentBase implements fi.tranquil.TranquilModelEntity {
     this.lodging = lodging;
   }
 
-  public java.util.Set<fi.pyramus.domainmodel.base.Tag> getTags() {
-    return tags;
-  }
-
-  public void setTags(java.util.Set<fi.pyramus.domainmodel.base.Tag> tags) {
-    this.tags = tags;
-  }
-
   public Long getVersion() {
     return version;
   }
@@ -171,8 +123,6 @@ public class StudentBase implements fi.tranquil.TranquilModelEntity {
   private String firstName;
 
   private String lastName;
-
-  private String fullName;
 
   private String additionalInfo;
 
@@ -188,23 +138,13 @@ public class StudentBase implements fi.tranquil.TranquilModelEntity {
 
   private String studyEndText;
 
-  private boolean active;
-
-  private boolean hasStartedStudies;
-
-  private boolean hasFinishedStudies;
-
-  private java.util.Map<java.lang.String,java.lang.String> variablesAsStringMap;
-
   private String education;
 
   private String nickname;
 
   private Boolean lodging;
 
-  private java.util.Set<fi.pyramus.domainmodel.base.Tag> tags;
-
   private Long version;
 
-  public final static String[] properties = {"id","firstName","lastName","fullName","additionalInfo","studyTimeEnd","archived","studyEndDate","studyStartDate","previousStudies","studyEndText","active","hasStartedStudies","hasFinishedStudies","variablesAsStringMap","education","nickname","lodging","tags","version"};
+  public final static String[] properties = {"id","firstName","lastName","additionalInfo","studyTimeEnd","archived","studyEndDate","studyStartDate","previousStudies","studyEndText","education","nickname","lodging","version"};
 }

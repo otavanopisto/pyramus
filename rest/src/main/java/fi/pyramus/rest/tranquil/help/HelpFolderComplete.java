@@ -31,20 +31,20 @@ public class HelpFolderComplete extends HelpFolderBase {
     this.lastModifier = lastModifier;
   }
 
-  public TranquilModelEntity getTitleByLocale() {
-    return titleByLocale;
-  }
-
-  public void setTitleByLocale(TranquilModelEntity titleByLocale) {
-    this.titleByLocale = titleByLocale;
-  }
-
   public java.util.List<TranquilModelEntity> getTitles() {
     return titles;
   }
 
   public void setTitles(java.util.List<TranquilModelEntity> titles) {
     this.titles = titles;
+  }
+
+  public java.util.List<TranquilModelEntity> getTags() {
+    return tags;
+  }
+
+  public void setTags(java.util.List<TranquilModelEntity> tags) {
+    this.tags = tags;
   }
 
   public java.util.List<TranquilModelEntity> getChildren() {
@@ -61,11 +61,11 @@ public class HelpFolderComplete extends HelpFolderBase {
 
   private TranquilModelEntity lastModifier;
 
-  private TranquilModelEntity titleByLocale;
-
   private java.util.List<TranquilModelEntity> titles;
+
+  private java.util.List<TranquilModelEntity> tags;
 
   private java.util.List<TranquilModelEntity> children;
 
-  public final static String[] properties = {"parent","creator","lastModifier","titleByLocale","titles","children"};
+  public final static String[] properties = {"parent","creator","lastModifier","titles","tags","children"};
 }

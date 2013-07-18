@@ -22,22 +22,6 @@ public class SchoolBase implements fi.tranquil.TranquilModelEntity {
     this.name = name;
   }
 
-  public String getNameSortable() {
-    return nameSortable;
-  }
-
-  public void setNameSortable(String nameSortable) {
-    this.nameSortable = nameSortable;
-  }
-
-  public java.util.Map<java.lang.String,java.lang.String> getVariablesAsStringMap() {
-    return variablesAsStringMap;
-  }
-
-  public void setVariablesAsStringMap(java.util.Map<java.lang.String,java.lang.String> variablesAsStringMap) {
-    this.variablesAsStringMap = variablesAsStringMap;
-  }
-
   public String getCode() {
     return code;
   }
@@ -54,14 +38,6 @@ public class SchoolBase implements fi.tranquil.TranquilModelEntity {
     this.archived = archived;
   }
 
-  public java.util.Set<fi.pyramus.domainmodel.base.Tag> getTags() {
-    return tags;
-  }
-
-  public void setTags(java.util.Set<fi.pyramus.domainmodel.base.Tag> tags) {
-    this.tags = tags;
-  }
-
   public Long getVersion() {
     return version;
   }
@@ -74,17 +50,11 @@ public class SchoolBase implements fi.tranquil.TranquilModelEntity {
 
   private String name;
 
-  private String nameSortable;
-
-  private java.util.Map<java.lang.String,java.lang.String> variablesAsStringMap;
-
   private String code;
 
   private Boolean archived;
 
-  private java.util.Set<fi.pyramus.domainmodel.base.Tag> tags;
-
   private Long version;
 
-  public final static String[] properties = {"id","name","nameSortable","variablesAsStringMap","code","archived","tags","version"};
+  public final static String[] properties = {"id","name","code","archived","version"};
 }

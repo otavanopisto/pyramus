@@ -22,9 +22,39 @@ public class StudentGroupCompact extends StudentGroupBase {
     this.lastModifier_id = lastModifier_id;
   }
 
+  public java.util.List<Long> getStudents_ids() {
+    return students_ids;
+  }
+
+  public void setStudents_ids(java.util.List<Long> students_ids) {
+    this.students_ids = students_ids;
+  }
+
+  public java.util.List<Long> getUsers_ids() {
+    return users_ids;
+  }
+
+  public void setUsers_ids(java.util.List<Long> users_ids) {
+    this.users_ids = users_ids;
+  }
+
+  public java.util.List<Long> getTags_ids() {
+    return tags_ids;
+  }
+
+  public void setTags_ids(java.util.List<Long> tags_ids) {
+    this.tags_ids = tags_ids;
+  }
+
   private Long creator_id;
 
   private Long lastModifier_id;
 
-  public final static String[] properties = {"creator","lastModifier"};
+  private java.util.List<Long> students_ids;
+
+  private java.util.List<Long> users_ids;
+
+  private java.util.List<Long> tags_ids;
+
+  public final static String[] properties = {"creator","lastModifier","students","users","tags"};
 }

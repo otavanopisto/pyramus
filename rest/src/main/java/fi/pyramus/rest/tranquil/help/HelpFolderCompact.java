@@ -30,20 +30,20 @@ public class HelpFolderCompact extends HelpFolderBase {
     this.lastModifier_id = lastModifier_id;
   }
 
-  public Long getTitleByLocale_id() {
-    return titleByLocale_id;
-  }
-
-  public void setTitleByLocale_id(Long titleByLocale_id) {
-    this.titleByLocale_id = titleByLocale_id;
-  }
-
   public java.util.List<Long> getTitles_ids() {
     return titles_ids;
   }
 
   public void setTitles_ids(java.util.List<Long> titles_ids) {
     this.titles_ids = titles_ids;
+  }
+
+  public java.util.List<Long> getTags_ids() {
+    return tags_ids;
+  }
+
+  public void setTags_ids(java.util.List<Long> tags_ids) {
+    this.tags_ids = tags_ids;
   }
 
   public java.util.List<Long> getChildren_ids() {
@@ -60,11 +60,11 @@ public class HelpFolderCompact extends HelpFolderBase {
 
   private Long lastModifier_id;
 
-  private Long titleByLocale_id;
-
   private java.util.List<Long> titles_ids;
+
+  private java.util.List<Long> tags_ids;
 
   private java.util.List<Long> children_ids;
 
-  public final static String[] properties = {"parent","creator","lastModifier","titleByLocale","titles","children"};
+  public final static String[] properties = {"parent","creator","lastModifier","titles","tags","children"};
 }

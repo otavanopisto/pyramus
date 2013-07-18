@@ -54,6 +54,14 @@ public class StudentProjectCompact extends StudentProjectBase {
     this.studentProjectModules_ids = studentProjectModules_ids;
   }
 
+  public java.util.List<Long> getTags_ids() {
+    return tags_ids;
+  }
+
+  public void setTags_ids(java.util.List<Long> tags_ids) {
+    this.tags_ids = tags_ids;
+  }
+
   private Long creator_id;
 
   private Long lastModifier_id;
@@ -66,5 +74,7 @@ public class StudentProjectCompact extends StudentProjectBase {
 
   private java.util.List<Long> studentProjectModules_ids;
 
-  public final static String[] properties = {"creator","lastModifier","optionalStudiesLength","student","project","studentProjectModules"};
+  private java.util.List<Long> tags_ids;
+
+  public final static String[] properties = {"creator","lastModifier","optionalStudiesLength","student","project","studentProjectModules","tags"};
 }

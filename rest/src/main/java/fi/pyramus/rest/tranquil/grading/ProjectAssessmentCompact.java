@@ -22,14 +22,6 @@ public class ProjectAssessmentCompact extends ProjectAssessmentBase {
     this.assessingUser_id = assessingUser_id;
   }
 
-  public Long getStudent_id() {
-    return student_id;
-  }
-
-  public void setStudent_id(Long student_id) {
-    this.student_id = student_id;
-  }
-
   public Long getStudentProject_id() {
     return studentProject_id;
   }
@@ -42,9 +34,7 @@ public class ProjectAssessmentCompact extends ProjectAssessmentBase {
 
   private Long assessingUser_id;
 
-  private Long student_id;
-
   private Long studentProject_id;
 
-  public final static String[] properties = {"grade","assessingUser","student","studentProject"};
+  public final static String[] properties = {"grade","assessingUser","studentProject"};
 }

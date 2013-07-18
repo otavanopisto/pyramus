@@ -39,6 +39,14 @@ public class ProjectComplete extends ProjectBase {
     this.projectModules = projectModules;
   }
 
+  public java.util.List<TranquilModelEntity> getTags() {
+    return tags;
+  }
+
+  public void setTags(java.util.List<TranquilModelEntity> tags) {
+    this.tags = tags;
+  }
+
   private TranquilModelEntity creator;
 
   private TranquilModelEntity lastModifier;
@@ -47,5 +55,7 @@ public class ProjectComplete extends ProjectBase {
 
   private java.util.List<TranquilModelEntity> projectModules;
 
-  public final static String[] properties = {"creator","lastModifier","optionalStudiesLength","projectModules"};
+  private java.util.List<TranquilModelEntity> tags;
+
+  public final static String[] properties = {"creator","lastModifier","optionalStudiesLength","projectModules","tags"};
 }

@@ -15,7 +15,17 @@ public class ResourceComplete extends ResourceBase {
     this.category = category;
   }
 
+  public java.util.List<TranquilModelEntity> getTags() {
+    return tags;
+  }
+
+  public void setTags(java.util.List<TranquilModelEntity> tags) {
+    this.tags = tags;
+  }
+
   private TranquilModelEntity category;
 
-  public final static String[] properties = {"category"};
+  private java.util.List<TranquilModelEntity> tags;
+
+  public final static String[] properties = {"category","tags"};
 }

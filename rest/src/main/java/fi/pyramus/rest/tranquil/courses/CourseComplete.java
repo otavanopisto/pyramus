@@ -135,6 +135,14 @@ public class CourseComplete extends CourseBase {
     this.otherCosts = otherCosts;
   }
 
+  public java.util.List<TranquilModelEntity> getTags() {
+    return tags;
+  }
+
+  public void setTags(java.util.List<TranquilModelEntity> tags) {
+    this.tags = tags;
+  }
+
   private TranquilModelEntity creator;
 
   private TranquilModelEntity lastModifier;
@@ -167,5 +175,7 @@ public class CourseComplete extends CourseBase {
 
   private java.util.List<TranquilModelEntity> otherCosts;
 
-  public final static String[] properties = {"creator","lastModifier","subject","courseEducationTypeByEducationTypeId","courseLength","module","state","courseEducationTypes","variables","courseComponents","courseUsers","courseStudents","studentCourseResources","basicCourseResources","gradeCourseResources","otherCosts"};
+  private java.util.List<TranquilModelEntity> tags;
+
+  public final static String[] properties = {"creator","lastModifier","subject","courseEducationTypeByEducationTypeId","courseLength","module","state","courseEducationTypes","variables","courseComponents","courseUsers","courseStudents","studentCourseResources","basicCourseResources","gradeCourseResources","otherCosts","tags"};
 }

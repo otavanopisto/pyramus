@@ -62,14 +62,6 @@ public class ModuleBase implements fi.tranquil.TranquilModelEntity {
     this.courseNumber = courseNumber;
   }
 
-  public String getNameSortable() {
-    return nameSortable;
-  }
-
-  public void setNameSortable(String nameSortable) {
-    this.nameSortable = nameSortable;
-  }
-
   public Long getVersion() {
     return version;
   }
@@ -86,14 +78,6 @@ public class ModuleBase implements fi.tranquil.TranquilModelEntity {
     this.maxParticipantCount = maxParticipantCount;
   }
 
-  public java.util.Set<fi.pyramus.domainmodel.base.Tag> getTags() {
-    return tags;
-  }
-
-  public void setTags(java.util.Set<fi.pyramus.domainmodel.base.Tag> tags) {
-    this.tags = tags;
-  }
-
   private Long id;
 
   private String name;
@@ -108,13 +92,9 @@ public class ModuleBase implements fi.tranquil.TranquilModelEntity {
 
   private Integer courseNumber;
 
-  private String nameSortable;
-
   private Long version;
 
   private Long maxParticipantCount;
 
-  private java.util.Set<fi.pyramus.domainmodel.base.Tag> tags;
-
-  public final static String[] properties = {"id","name","created","lastModified","description","archived","courseNumber","nameSortable","version","maxParticipantCount","tags"};
+  public final static String[] properties = {"id","name","created","lastModified","description","archived","courseNumber","version","maxParticipantCount"};
 }

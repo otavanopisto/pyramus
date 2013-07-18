@@ -30,14 +30,6 @@ public class StudentCourseResourceBase implements fi.tranquil.TranquilModelEntit
     this.hourlyCost = hourlyCost;
   }
 
-  public Integer getUnits() {
-    return units;
-  }
-
-  public void setUnits(Integer units) {
-    this.units = units;
-  }
-
   public fi.pyramus.persistence.usertypes.MonetaryAmount getUnitCost() {
     return unitCost;
   }
@@ -60,11 +52,9 @@ public class StudentCourseResourceBase implements fi.tranquil.TranquilModelEntit
 
   private fi.pyramus.persistence.usertypes.MonetaryAmount hourlyCost;
 
-  private Integer units;
-
   private fi.pyramus.persistence.usertypes.MonetaryAmount unitCost;
 
   private Long version;
 
-  public final static String[] properties = {"id","hours","hourlyCost","units","unitCost","version"};
+  public final static String[] properties = {"id","hours","hourlyCost","unitCost","version"};
 }

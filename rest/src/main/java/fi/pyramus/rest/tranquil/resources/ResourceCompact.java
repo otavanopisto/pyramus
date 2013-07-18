@@ -14,7 +14,17 @@ public class ResourceCompact extends ResourceBase {
     this.category_id = category_id;
   }
 
+  public java.util.List<Long> getTags_ids() {
+    return tags_ids;
+  }
+
+  public void setTags_ids(java.util.List<Long> tags_ids) {
+    this.tags_ids = tags_ids;
+  }
+
   private Long category_id;
 
-  public final static String[] properties = {"category"};
+  private java.util.List<Long> tags_ids;
+
+  public final static String[] properties = {"category","tags"};
 }

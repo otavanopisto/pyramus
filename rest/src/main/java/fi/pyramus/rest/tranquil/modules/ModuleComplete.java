@@ -71,6 +71,14 @@ public class ModuleComplete extends ModuleBase {
     this.moduleComponents = moduleComponents;
   }
 
+  public java.util.List<TranquilModelEntity> getTags() {
+    return tags;
+  }
+
+  public void setTags(java.util.List<TranquilModelEntity> tags) {
+    this.tags = tags;
+  }
+
   private TranquilModelEntity creator;
 
   private TranquilModelEntity lastModifier;
@@ -87,5 +95,7 @@ public class ModuleComplete extends ModuleBase {
 
   private java.util.List<TranquilModelEntity> moduleComponents;
 
-  public final static String[] properties = {"creator","lastModifier","subject","courseEducationTypeByEducationTypeId","courseLength","courseEducationTypes","variables","moduleComponents"};
+  private java.util.List<TranquilModelEntity> tags;
+
+  public final static String[] properties = {"creator","lastModifier","subject","courseEducationTypeByEducationTypeId","courseLength","courseEducationTypes","variables","moduleComponents","tags"};
 }

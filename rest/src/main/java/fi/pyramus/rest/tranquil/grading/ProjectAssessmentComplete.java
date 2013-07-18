@@ -23,14 +23,6 @@ public class ProjectAssessmentComplete extends ProjectAssessmentBase {
     this.assessingUser = assessingUser;
   }
 
-  public TranquilModelEntity getStudent() {
-    return student;
-  }
-
-  public void setStudent(TranquilModelEntity student) {
-    this.student = student;
-  }
-
   public TranquilModelEntity getStudentProject() {
     return studentProject;
   }
@@ -43,9 +35,7 @@ public class ProjectAssessmentComplete extends ProjectAssessmentBase {
 
   private TranquilModelEntity assessingUser;
 
-  private TranquilModelEntity student;
-
   private TranquilModelEntity studentProject;
 
-  public final static String[] properties = {"grade","assessingUser","student","studentProject"};
+  public final static String[] properties = {"grade","assessingUser","studentProject"};
 }

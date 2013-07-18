@@ -23,6 +23,14 @@ public class UserComplete extends UserBase {
     this.variables = variables;
   }
 
+  public java.util.List<TranquilModelEntity> getTags() {
+    return tags;
+  }
+
+  public void setTags(java.util.List<TranquilModelEntity> tags) {
+    this.tags = tags;
+  }
+
   public java.util.List<TranquilModelEntity> getBillingDetails() {
     return billingDetails;
   }
@@ -35,7 +43,9 @@ public class UserComplete extends UserBase {
 
   private java.util.List<TranquilModelEntity> variables;
 
+  private java.util.List<TranquilModelEntity> tags;
+
   private java.util.List<TranquilModelEntity> billingDetails;
 
-  public final static String[] properties = {"contactInfo","variables","billingDetails"};
+  public final static String[] properties = {"contactInfo","variables","tags","billingDetails"};
 }

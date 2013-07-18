@@ -31,28 +31,20 @@ public class HelpPageComplete extends HelpPageBase {
     this.lastModifier = lastModifier;
   }
 
-  public TranquilModelEntity getTitleByLocale() {
-    return titleByLocale;
-  }
-
-  public void setTitleByLocale(TranquilModelEntity titleByLocale) {
-    this.titleByLocale = titleByLocale;
-  }
-
-  public TranquilModelEntity getContentByLocale() {
-    return contentByLocale;
-  }
-
-  public void setContentByLocale(TranquilModelEntity contentByLocale) {
-    this.contentByLocale = contentByLocale;
-  }
-
   public java.util.List<TranquilModelEntity> getTitles() {
     return titles;
   }
 
   public void setTitles(java.util.List<TranquilModelEntity> titles) {
     this.titles = titles;
+  }
+
+  public java.util.List<TranquilModelEntity> getTags() {
+    return tags;
+  }
+
+  public void setTags(java.util.List<TranquilModelEntity> tags) {
+    this.tags = tags;
   }
 
   public java.util.List<TranquilModelEntity> getContents() {
@@ -69,13 +61,11 @@ public class HelpPageComplete extends HelpPageBase {
 
   private TranquilModelEntity lastModifier;
 
-  private TranquilModelEntity titleByLocale;
-
-  private TranquilModelEntity contentByLocale;
-
   private java.util.List<TranquilModelEntity> titles;
+
+  private java.util.List<TranquilModelEntity> tags;
 
   private java.util.List<TranquilModelEntity> contents;
 
-  public final static String[] properties = {"parent","creator","lastModifier","titleByLocale","contentByLocale","titles","contents"};
+  public final static String[] properties = {"parent","creator","lastModifier","titles","tags","contents"};
 }

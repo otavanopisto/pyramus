@@ -22,19 +22,9 @@ public class CreditCompact extends CreditBase {
     this.assessingUser_id = assessingUser_id;
   }
 
-  public Long getStudent_id() {
-    return student_id;
-  }
-
-  public void setStudent_id(Long student_id) {
-    this.student_id = student_id;
-  }
-
   private Long grade_id;
 
   private Long assessingUser_id;
 
-  private Long student_id;
-
-  public final static String[] properties = {"grade","assessingUser","student"};
+  public final static String[] properties = {"grade","assessingUser"};
 }

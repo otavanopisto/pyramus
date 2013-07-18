@@ -38,22 +38,6 @@ public class HelpFolderBase implements fi.tranquil.TranquilModelEntity {
     this.indexColumn = indexColumn;
   }
 
-  public java.util.Set<fi.pyramus.domainmodel.base.Tag> getTags() {
-    return tags;
-  }
-
-  public void setTags(java.util.Set<fi.pyramus.domainmodel.base.Tag> tags) {
-    this.tags = tags;
-  }
-
-  public String getRecursiveIndex() {
-    return recursiveIndex;
-  }
-
-  public void setRecursiveIndex(String recursiveIndex) {
-    this.recursiveIndex = recursiveIndex;
-  }
-
   private Long id;
 
   private java.util.Date created;
@@ -62,9 +46,5 @@ public class HelpFolderBase implements fi.tranquil.TranquilModelEntity {
 
   private Integer indexColumn;
 
-  private java.util.Set<fi.pyramus.domainmodel.base.Tag> tags;
-
-  private String recursiveIndex;
-
-  public final static String[] properties = {"id","created","lastModified","indexColumn","tags","recursiveIndex"};
+  public final static String[] properties = {"id","created","lastModified","indexColumn"};
 }

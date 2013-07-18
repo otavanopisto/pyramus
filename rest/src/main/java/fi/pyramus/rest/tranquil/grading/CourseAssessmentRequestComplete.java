@@ -15,17 +15,7 @@ public class CourseAssessmentRequestComplete extends CourseAssessmentRequestBase
     this.courseStudent = courseStudent;
   }
 
-  public TranquilModelEntity getStudent() {
-    return student;
-  }
-
-  public void setStudent(TranquilModelEntity student) {
-    this.student = student;
-  }
-
   private TranquilModelEntity courseStudent;
 
-  private TranquilModelEntity student;
-
-  public final static String[] properties = {"courseStudent","student"};
+  public final static String[] properties = {"courseStudent"};
 }

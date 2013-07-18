@@ -22,14 +22,6 @@ public class EducationalLengthBase implements fi.tranquil.TranquilModelEntity {
     this.units = units;
   }
 
-  public Double getBaseUnits() {
-    return baseUnits;
-  }
-
-  public void setBaseUnits(Double baseUnits) {
-    this.baseUnits = baseUnits;
-  }
-
   public Long getVersion() {
     return version;
   }
@@ -42,9 +34,7 @@ public class EducationalLengthBase implements fi.tranquil.TranquilModelEntity {
 
   private Double units;
 
-  private Double baseUnits;
-
   private Long version;
 
-  public final static String[] properties = {"id","units","baseUnits","version"};
+  public final static String[] properties = {"id","units","version"};
 }

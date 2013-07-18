@@ -14,17 +14,7 @@ public class CourseAssessmentRequestCompact extends CourseAssessmentRequestBase 
     this.courseStudent_id = courseStudent_id;
   }
 
-  public Long getStudent_id() {
-    return student_id;
-  }
-
-  public void setStudent_id(Long student_id) {
-    this.student_id = student_id;
-  }
-
   private Long courseStudent_id;
 
-  private Long student_id;
-
-  public final static String[] properties = {"courseStudent","student"};
+  public final static String[] properties = {"courseStudent"};
 }

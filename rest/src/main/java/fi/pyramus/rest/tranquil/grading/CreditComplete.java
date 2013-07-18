@@ -23,19 +23,9 @@ public class CreditComplete extends CreditBase {
     this.assessingUser = assessingUser;
   }
 
-  public TranquilModelEntity getStudent() {
-    return student;
-  }
-
-  public void setStudent(TranquilModelEntity student) {
-    this.student = student;
-  }
-
   private TranquilModelEntity grade;
 
   private TranquilModelEntity assessingUser;
 
-  private TranquilModelEntity student;
-
-  public final static String[] properties = {"grade","assessingUser","student"};
+  public final static String[] properties = {"grade","assessingUser"};
 }

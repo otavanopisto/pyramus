@@ -30,22 +30,6 @@ public class UserBase implements fi.tranquil.TranquilModelEntity {
     this.lastName = lastName;
   }
 
-  public String getFirstNameSortable() {
-    return firstNameSortable;
-  }
-
-  public void setFirstNameSortable(String firstNameSortable) {
-    this.firstNameSortable = firstNameSortable;
-  }
-
-  public String getLastNameSortable() {
-    return lastNameSortable;
-  }
-
-  public void setLastNameSortable(String lastNameSortable) {
-    this.lastNameSortable = lastNameSortable;
-  }
-
   public String getAuthProvider() {
     return authProvider;
   }
@@ -62,36 +46,12 @@ public class UserBase implements fi.tranquil.TranquilModelEntity {
     this.externalId = externalId;
   }
 
-  public String getFullName() {
-    return fullName;
-  }
-
-  public void setFullName(String fullName) {
-    this.fullName = fullName;
-  }
-
   public fi.pyramus.domainmodel.users.Role getRole() {
     return role;
   }
 
   public void setRole(fi.pyramus.domainmodel.users.Role role) {
     this.role = role;
-  }
-
-  public java.util.Set<fi.pyramus.domainmodel.base.Tag> getTags() {
-    return tags;
-  }
-
-  public void setTags(java.util.Set<fi.pyramus.domainmodel.base.Tag> tags) {
-    this.tags = tags;
-  }
-
-  public java.util.Map<java.lang.String,java.lang.String> getVariablesAsStringMap() {
-    return variablesAsStringMap;
-  }
-
-  public void setVariablesAsStringMap(java.util.Map<java.lang.String,java.lang.String> variablesAsStringMap) {
-    this.variablesAsStringMap = variablesAsStringMap;
   }
 
   public Long getVersion() {
@@ -116,25 +76,15 @@ public class UserBase implements fi.tranquil.TranquilModelEntity {
 
   private String lastName;
 
-  private String firstNameSortable;
-
-  private String lastNameSortable;
-
   private String authProvider;
 
   private String externalId;
 
-  private String fullName;
-
   private fi.pyramus.domainmodel.users.Role role;
-
-  private java.util.Set<fi.pyramus.domainmodel.base.Tag> tags;
-
-  private java.util.Map<java.lang.String,java.lang.String> variablesAsStringMap;
 
   private Long version;
 
   private String title;
 
-  public final static String[] properties = {"id","firstName","lastName","firstNameSortable","lastNameSortable","authProvider","externalId","fullName","role","tags","variablesAsStringMap","version","title"};
+  public final static String[] properties = {"id","firstName","lastName","authProvider","externalId","role","version","title"};
 }

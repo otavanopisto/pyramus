@@ -54,22 +54,6 @@ public class ProjectBase implements fi.tranquil.TranquilModelEntity {
     this.description = description;
   }
 
-  public String getNameSortable() {
-    return nameSortable;
-  }
-
-  public void setNameSortable(String nameSortable) {
-    this.nameSortable = nameSortable;
-  }
-
-  public java.util.Set<fi.pyramus.domainmodel.base.Tag> getTags() {
-    return tags;
-  }
-
-  public void setTags(java.util.Set<fi.pyramus.domainmodel.base.Tag> tags) {
-    this.tags = tags;
-  }
-
   public Long getVersion() {
     return version;
   }
@@ -90,11 +74,7 @@ public class ProjectBase implements fi.tranquil.TranquilModelEntity {
 
   private String description;
 
-  private String nameSortable;
-
-  private java.util.Set<fi.pyramus.domainmodel.base.Tag> tags;
-
   private Long version;
 
-  public final static String[] properties = {"id","name","created","lastModified","archived","description","nameSortable","tags","version"};
+  public final static String[] properties = {"id","name","created","lastModified","archived","description","version"};
 }

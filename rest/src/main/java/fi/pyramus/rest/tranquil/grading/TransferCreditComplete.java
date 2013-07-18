@@ -23,14 +23,6 @@ public class TransferCreditComplete extends TransferCreditBase {
     this.assessingUser = assessingUser;
   }
 
-  public TranquilModelEntity getStudent() {
-    return student;
-  }
-
-  public void setStudent(TranquilModelEntity student) {
-    this.student = student;
-  }
-
   public TranquilModelEntity getCourseLength() {
     return courseLength;
   }
@@ -55,11 +47,17 @@ public class TransferCreditComplete extends TransferCreditBase {
     this.subject = subject;
   }
 
+  public TranquilModelEntity getStudent() {
+    return student;
+  }
+
+  public void setStudent(TranquilModelEntity student) {
+    this.student = student;
+  }
+
   private TranquilModelEntity grade;
 
   private TranquilModelEntity assessingUser;
-
-  private TranquilModelEntity student;
 
   private TranquilModelEntity courseLength;
 
@@ -67,5 +65,7 @@ public class TransferCreditComplete extends TransferCreditBase {
 
   private TranquilModelEntity subject;
 
-  public final static String[] properties = {"grade","assessingUser","student","courseLength","school","subject"};
+  private TranquilModelEntity student;
+
+  public final static String[] properties = {"grade","assessingUser","courseLength","school","subject","student"};
 }

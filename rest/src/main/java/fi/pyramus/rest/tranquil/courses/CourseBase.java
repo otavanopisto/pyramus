@@ -62,14 +62,6 @@ public class CourseBase implements fi.tranquil.TranquilModelEntity {
     this.courseNumber = courseNumber;
   }
 
-  public String getNameSortable() {
-    return nameSortable;
-  }
-
-  public void setNameSortable(String nameSortable) {
-    this.nameSortable = nameSortable;
-  }
-
   public Long getVersion() {
     return version;
   }
@@ -100,14 +92,6 @@ public class CourseBase implements fi.tranquil.TranquilModelEntity {
 
   public void setEndDate(java.util.Date endDate) {
     this.endDate = endDate;
-  }
-
-  public Integer getStudentCount() {
-    return studentCount;
-  }
-
-  public void setStudentCount(Integer studentCount) {
-    this.studentCount = studentCount;
   }
 
   public String getNameExtension() {
@@ -158,14 +142,6 @@ public class CourseBase implements fi.tranquil.TranquilModelEntity {
     this.planningHours = planningHours;
   }
 
-  public java.util.Set<fi.pyramus.domainmodel.base.Tag> getTags() {
-    return tags;
-  }
-
-  public void setTags(java.util.Set<fi.pyramus.domainmodel.base.Tag> tags) {
-    this.tags = tags;
-  }
-
   public java.util.Date getEnrolmentTimeEnd() {
     return enrolmentTimeEnd;
   }
@@ -188,8 +164,6 @@ public class CourseBase implements fi.tranquil.TranquilModelEntity {
 
   private Integer courseNumber;
 
-  private String nameSortable;
-
   private Long version;
 
   private Long maxParticipantCount;
@@ -197,8 +171,6 @@ public class CourseBase implements fi.tranquil.TranquilModelEntity {
   private java.util.Date beginDate;
 
   private java.util.Date endDate;
-
-  private Integer studentCount;
 
   private String nameExtension;
 
@@ -212,9 +184,7 @@ public class CourseBase implements fi.tranquil.TranquilModelEntity {
 
   private Double planningHours;
 
-  private java.util.Set<fi.pyramus.domainmodel.base.Tag> tags;
-
   private java.util.Date enrolmentTimeEnd;
 
-  public final static String[] properties = {"id","name","created","lastModified","description","archived","courseNumber","nameSortable","version","maxParticipantCount","beginDate","endDate","studentCount","nameExtension","localTeachingDays","teachingHours","distanceTeachingDays","assessingHours","planningHours","tags","enrolmentTimeEnd"};
+  public final static String[] properties = {"id","name","created","lastModified","description","archived","courseNumber","version","maxParticipantCount","beginDate","endDate","nameExtension","localTeachingDays","teachingHours","distanceTeachingDays","assessingHours","planningHours","enrolmentTimeEnd"};
 }

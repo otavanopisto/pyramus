@@ -30,30 +30,6 @@ public class MaterialResourceBase implements fi.tranquil.TranquilModelEntity {
     this.archived = archived;
   }
 
-  public java.util.Set<fi.pyramus.domainmodel.base.Tag> getTags() {
-    return tags;
-  }
-
-  public void setTags(java.util.Set<fi.pyramus.domainmodel.base.Tag> tags) {
-    this.tags = tags;
-  }
-
-  public fi.pyramus.domainmodel.resources.ResourceType getResourceType() {
-    return resourceType;
-  }
-
-  public void setResourceType(fi.pyramus.domainmodel.resources.ResourceType resourceType) {
-    this.resourceType = resourceType;
-  }
-
-  public String getNameSortable() {
-    return nameSortable;
-  }
-
-  public void setNameSortable(String nameSortable) {
-    this.nameSortable = nameSortable;
-  }
-
   public Long getVersion() {
     return version;
   }
@@ -76,15 +52,9 @@ public class MaterialResourceBase implements fi.tranquil.TranquilModelEntity {
 
   private Boolean archived;
 
-  private java.util.Set<fi.pyramus.domainmodel.base.Tag> tags;
-
-  private fi.pyramus.domainmodel.resources.ResourceType resourceType;
-
-  private String nameSortable;
-
   private Long version;
 
   private fi.pyramus.persistence.usertypes.MonetaryAmount unitCost;
 
-  public final static String[] properties = {"id","name","archived","tags","resourceType","nameSortable","version","unitCost"};
+  public final static String[] properties = {"id","name","archived","version","unitCost"};
 }

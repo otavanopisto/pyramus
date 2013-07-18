@@ -31,14 +31,6 @@ public class HelpItemComplete extends HelpItemBase {
     this.lastModifier = lastModifier;
   }
 
-  public TranquilModelEntity getTitleByLocale() {
-    return titleByLocale;
-  }
-
-  public void setTitleByLocale(TranquilModelEntity titleByLocale) {
-    this.titleByLocale = titleByLocale;
-  }
-
   public java.util.List<TranquilModelEntity> getTitles() {
     return titles;
   }
@@ -47,15 +39,23 @@ public class HelpItemComplete extends HelpItemBase {
     this.titles = titles;
   }
 
+  public java.util.List<TranquilModelEntity> getTags() {
+    return tags;
+  }
+
+  public void setTags(java.util.List<TranquilModelEntity> tags) {
+    this.tags = tags;
+  }
+
   private TranquilModelEntity parent;
 
   private TranquilModelEntity creator;
 
   private TranquilModelEntity lastModifier;
 
-  private TranquilModelEntity titleByLocale;
-
   private java.util.List<TranquilModelEntity> titles;
 
-  public final static String[] properties = {"parent","creator","lastModifier","titleByLocale","titles"};
+  private java.util.List<TranquilModelEntity> tags;
+
+  public final static String[] properties = {"parent","creator","lastModifier","titles","tags"};
 }

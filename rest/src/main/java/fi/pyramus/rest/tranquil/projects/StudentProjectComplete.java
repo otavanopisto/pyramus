@@ -55,6 +55,14 @@ public class StudentProjectComplete extends StudentProjectBase {
     this.studentProjectModules = studentProjectModules;
   }
 
+  public java.util.List<TranquilModelEntity> getTags() {
+    return tags;
+  }
+
+  public void setTags(java.util.List<TranquilModelEntity> tags) {
+    this.tags = tags;
+  }
+
   private TranquilModelEntity creator;
 
   private TranquilModelEntity lastModifier;
@@ -67,5 +75,7 @@ public class StudentProjectComplete extends StudentProjectBase {
 
   private java.util.List<TranquilModelEntity> studentProjectModules;
 
-  public final static String[] properties = {"creator","lastModifier","optionalStudiesLength","student","project","studentProjectModules"};
+  private java.util.List<TranquilModelEntity> tags;
+
+  public final static String[] properties = {"creator","lastModifier","optionalStudiesLength","student","project","studentProjectModules","tags"};
 }

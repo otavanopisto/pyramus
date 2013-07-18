@@ -22,14 +22,6 @@ public class TransferCreditCompact extends TransferCreditBase {
     this.assessingUser_id = assessingUser_id;
   }
 
-  public Long getStudent_id() {
-    return student_id;
-  }
-
-  public void setStudent_id(Long student_id) {
-    this.student_id = student_id;
-  }
-
   public Long getCourseLength_id() {
     return courseLength_id;
   }
@@ -54,11 +46,17 @@ public class TransferCreditCompact extends TransferCreditBase {
     this.subject_id = subject_id;
   }
 
+  public Long getStudent_id() {
+    return student_id;
+  }
+
+  public void setStudent_id(Long student_id) {
+    this.student_id = student_id;
+  }
+
   private Long grade_id;
 
   private Long assessingUser_id;
-
-  private Long student_id;
 
   private Long courseLength_id;
 
@@ -66,5 +64,7 @@ public class TransferCreditCompact extends TransferCreditBase {
 
   private Long subject_id;
 
-  public final static String[] properties = {"grade","assessingUser","student","courseLength","school","subject"};
+  private Long student_id;
+
+  public final static String[] properties = {"grade","assessingUser","courseLength","school","subject","student"};
 }
