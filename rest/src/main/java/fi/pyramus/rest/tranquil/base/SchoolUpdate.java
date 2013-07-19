@@ -1,4 +1,4 @@
-package fi.pyramus.rest.tranquil.base;
+package fi.pyramus.domainmodel.base;
 
 import fi.tranquil.TranquilModel;
 import fi.tranquil.TranquilModelType;
@@ -11,7 +11,7 @@ public class SchoolUpdate extends SchoolComplete {
   }
 
   public ContactInfoCompact getContactInfo() {
-    return super.getContactInfo();
+    return (ContactInfoCompact)super.getContactInfo();
   }
 
   public void setField(SchoolFieldCompact field) {
@@ -19,7 +19,7 @@ public class SchoolUpdate extends SchoolComplete {
   }
 
   public SchoolFieldCompact getField() {
-    return super.getField();
+    return (SchoolFieldCompact)super.getField();
   }
 
   public final static String[] properties = {"contactInfo","field"};
