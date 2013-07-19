@@ -7,19 +7,19 @@ import fi.tranquil.TranquilModelType;
 public class SchoolUpdate extends SchoolComplete {
 
   public void setContactInfo(ContactInfoCompact contactInfo) {
-    this.contactInfo = contactInfo;
+    super.setContactInfo(contactInfo);
   }
 
   public ContactInfoCompact getContactInfo() {
-    return contactInfo;
+    return super.getContactInfo();
   }
 
   public void setField(SchoolFieldCompact field) {
-    this.field = field;
+    super.setField(field);
   }
 
   public SchoolFieldCompact getField() {
-    return field;
+    return super.getField();
   }
 
   public final static String[] properties = {"contactInfo","field"};
