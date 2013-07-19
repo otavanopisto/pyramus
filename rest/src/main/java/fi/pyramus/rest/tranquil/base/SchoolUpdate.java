@@ -1,4 +1,4 @@
-package fi.pyramus.domainmodel.base;
+package fi.pyramus.rest.tranquil.base;
 
 import fi.tranquil.TranquilModel;
 import fi.tranquil.TranquilModelType;
