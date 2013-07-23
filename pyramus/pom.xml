@@ -241,6 +241,11 @@
       <groupId>fi.pyramus</groupId>
       <artifactId>webservices-plugin</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>fi.pyramus</groupId>
+      <artifactId>rest</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.xalan</groupId>
@@ -271,14 +276,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>2.2</version>
-        <configuration>
-          <webXml>WebContent/WEB-INF/web.xml</webXml>
-          <webResources>
-            <resource>
-              <directory>WebContent</directory>
-            </resource>
-          </webResources>
-        </configuration>
       </plugin>
     </plugins>
   </build>

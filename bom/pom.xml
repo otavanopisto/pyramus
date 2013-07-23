@@ -11,10 +11,49 @@
     <hibernate.version>4.0.1.Final</hibernate.version>
     <hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
     <jboss-ejb-api_3.1_spec.version>1.0.1.Final</jboss-ejb-api_3.1_spec.version>
+    <jboss-javaee6-spec.version>1.0.0.Final</jboss-javaee6-spec.version>
+    <resteasy-jaxrs.version>2.3.2.Final</resteasy-jaxrs.version>
+    <tranquil-model.version>1.0.3-SNAPSHOT</tranquil-model.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+    
+      <!-- JBoss -->
+    
+      <dependency>
+        <groupId>org.jboss.spec</groupId>
+        <artifactId>jboss-javaee-6.0</artifactId>
+        <type>pom</type>
+        <version>${jboss-javaee6-spec.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.jboss.spec.javax.ejb</groupId>
+        <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+        <version>${jboss-ejb-api_3.1_spec.version}</version>
+      </dependency>
+      
+      <!-- JBoss RESTEasy -->
+      
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-jaxrs</artifactId>
+        <version>${resteasy-jaxrs.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>async-http-servlet-3.0</artifactId>
+        <version>${resteasy-jaxrs.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-oauth</artifactId>
+        <version>${resteasy-jaxrs.version}</version>
+      </dependency>
+      
       <!-- Hibernate -->
     
       <dependency>
@@ -34,15 +73,7 @@
         <artifactId>hibernate-commons-annotations</artifactId>
         <version>${hibernate.version}</version>
       </dependency>
-    
-      <!-- Import the EJB API, we use provided scope as the API is included in JBoss AS 7 -->
-      <dependency>
-        <groupId>org.jboss.spec.javax.ejb</groupId>
-        <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-        <version>${jboss-ejb-api_3.1_spec.version}</version>
-      </dependency>
-    
-      <!-- Hibernate Validator is shipped in JBoss AS 7 -->
+
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-validator</artifactId>
@@ -54,8 +85,7 @@
           </exclusion>
         </exclusions>
       </dependency>
-    
-      <!-- Annotation processor to generate the JPA 2.0 metamodel classes for typesafe criteria queries -->
+
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-jpamodelgen</artifactId>
@@ -89,7 +119,15 @@
         <artifactId>smvcj</artifactId>
         <version>0.0.3</version>
       </dependency>
-
+      
+      <!-- Tranquil Model -->
+      
+      <dependency>
+        <groupId>fi.tranquil-model</groupId>
+        <artifactId>tranquil-model</artifactId>
+        <version>${tranquil-model.version}</version>
+      </dependency>
+          
       <!-- Pyramus -->
     
       <dependency>
@@ -165,6 +203,13 @@
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>webservices-plugin</artifactId>
+        <version>${pyramus.version}</version>
+        <type>jar</type>
+      </dependency>
+      
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>rest</artifactId>
         <version>${pyramus.version}</version>
         <type>jar</type>
       </dependency>
