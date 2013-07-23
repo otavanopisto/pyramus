@@ -80,6 +80,13 @@
       <artifactId>hibernate-core</artifactId>
       <scope>provided</scope>
     </dependency>
+    
+    <!-- Tranquil Model -->
+      
+    <dependency>
+      <groupId>fi.tranquil-model</groupId>
+      <artifactId>tranquil-model</artifactId>
+    </dependency>
   </dependencies>
   <url>http://pyramus.googlecode.com/</url>
   <scm>
