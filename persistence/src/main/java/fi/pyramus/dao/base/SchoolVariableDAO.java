@@ -61,10 +61,11 @@ public class SchoolVariableDAO extends PyramusEntityDAO<SchoolVariable> {
     }
   }
 
-  public void update(SchoolVariable schoolVariable, String value) {
+  public SchoolVariable update(SchoolVariable schoolVariable, String value) {
     EntityManager entityManager = getEntityManager();
     schoolVariable.setValue(value);
     entityManager.persist(schoolVariable);
+    return schoolVariable;
   }
 
   public void setVariable(School school, String key, String value) {
