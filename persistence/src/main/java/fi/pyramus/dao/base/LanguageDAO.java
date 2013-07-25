@@ -13,6 +13,16 @@ import fi.pyramus.domainmodel.base.Language_;
 @Stateless
 public class LanguageDAO extends PyramusEntityDAO<Language> {
 
+  
+  public Language create(String code, String name, Boolean archived){
+    Language language = new Language();
+    language.setCode(code);
+    language.setName(name);
+    language.setArchived(archived);
+    getEntityManager().persist(language);
+    return language;
+  }
+  
   /**
    * Returns the language corresponding to the given code.
    * 
