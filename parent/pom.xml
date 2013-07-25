@@ -28,6 +28,9 @@
       <id>otavanopisto-snapshots</id>
       <name>Otavan Opisto Snapshots</name>
       <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
     <repository>
       <id>repository.jboss.org-public</id>
