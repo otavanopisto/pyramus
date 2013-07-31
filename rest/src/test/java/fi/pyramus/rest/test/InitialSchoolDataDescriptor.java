@@ -22,7 +22,7 @@ public class InitialSchoolDataDescriptor implements Serializable {
 
 	@PostConstruct
 	public void init() {
-		SchoolField universitySchoolField = schoolController.createSchoolField(getSchoolFieldUniversity());
+		SchoolField universitySchoolField = schoolController.createSchoolField(getSchoolFieldName());
 		School mitSchool = schoolController.createSchool(getSchoolCode(), getSchoolName(), universitySchoolField);
 		
 		setSchoolFieldId(universitySchoolField.getId());
@@ -41,7 +41,7 @@ public class InitialSchoolDataDescriptor implements Serializable {
 		return schoolId;
 	}
 	
-	public String getSchoolFieldUniversity() {
+	public String getSchoolFieldName() {
 		return "University";
 	}
 
