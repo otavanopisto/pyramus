@@ -33,12 +33,12 @@ public class SchoolController {
      return schoolField;
    }
   
-  public List<School> getSchools() {
+  public List<School> findSchools() {
     List<School> schools = schoolDAO.listAll();
     return schools;
   }
 
-  public School getSchoolById(Long id) {
+  public School findSchoolById(Long id) {
     try {
       School school = schoolDAO.findById(id);
       return school;
@@ -47,12 +47,12 @@ public class SchoolController {
     }
   }
 
-  public List<SchoolField> getSchoolFields() {
+  public List<SchoolField> findSchoolFields() {
     List<SchoolField> schoolFields = schoolFieldDAO.listAll();
     return schoolFields;
   }
 
-  public SchoolField getSchoolFieldById(Long id) {
+  public SchoolField findSchoolFieldById(Long id) {
     try {
       SchoolField schoolField = schoolFieldDAO.findById(id);
       return schoolField;
@@ -61,12 +61,12 @@ public class SchoolController {
     }
   }
 
-  public List<SchoolVariable> getSchoolVariables() {
+  public List<SchoolVariable> findSchoolVariables() {
     List<SchoolVariable> schoolVariables = schoolVariableDAO.listAll();
     return schoolVariables;
   }
 
-  public SchoolVariable getSchoolVariabledById(Long id) {
+  public SchoolVariable findSchoolVariablesById(Long id) {
     try {
       SchoolVariable schoolVariable = schoolVariableDAO.findById(id);
       return schoolVariable;

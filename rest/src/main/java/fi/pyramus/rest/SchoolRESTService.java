@@ -39,10 +39,10 @@ public class SchoolRESTService extends AbstractRESTService {
   @Path("/schools")
   @POST
   public Response createSchool(SchoolEntity schoolEntity) {
-    SchoolField schoolField = schoolController.getSchoolFieldById(schoolEntity.getField_id());
+    SchoolField schoolField = schoolController.findSchoolFieldById(schoolEntity.getField_id());
     String schoolCode = schoolEntity.getCode();
     String schoolName = schoolEntity.getName();
-    if(schoolCode != null && schoolName != null && schoolField != null) {
+    if(!schoolCode.isEmpty() && !schoolName.isEmpty() && !schoolField.equals(null)) {
       return Response.ok()
           .entity(tranqualise(schoolController.createSchool(schoolCode, schoolName, schoolField)))
           .build();
@@ -55,7 +55,7 @@ public class SchoolRESTService extends AbstractRESTService {
   @POST
   public Response createSchoolField(SchoolFieldEntity schoolFieldEntity) {
     String name = schoolFieldEntity.getName();
-    if(name != null) {
+    if(!name.isEmpty()) {
       return Response.ok()
           .entity(tranqualise(schoolController.createSchoolField(name)))
           .build();
@@ -66,33 +66,19 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools")
   @GET
-  public Response getSchools() {
+  public Response findSchools() {
     return Response.ok()
-        .entity(tranqualise(schoolController.getSchools()))
+        .entity(tranqualise(schoolController.findSchools()))
         .build();
   }
 
   @Path("/schools/{ID:[0-9]*}")
   @GET
-  public Response getSchoolById(@PathParam("ID") Long id) {
-    School school = schoolController.getSchoolById(id);
-    if(school != null) {
+  public Response findSchoolById(@PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(id);
+    if(!school.equals(null)) {
       return Response.ok()
           .entity(tranqualise(school))
-          .build();
-    } else {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-  }
-  
-  @Path("/schools/{ID:[0-9]*}/variables")
-  @GET
-  public Response getSchoolVariablesBySchool(@PathParam("ID") Long id) {
-    School school = schoolController.getSchoolById(id);
-    List<SchoolVariable> schoolVariables = school.getVariables();
-    if(schoolVariables != null) {
-      return Response.ok()
-          .entity(tranqualise(schoolVariables))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
@@ -101,17 +87,17 @@ public class SchoolRESTService extends AbstractRESTService {
 
   @Path("/schoolFields")
   @GET
-  public Response getSchoolFields() {
+  public Response findSchoolFields() {
     return Response.ok()
-        .entity(tranqualise(schoolController.getSchoolFields()))
+        .entity(tranqualise(schoolController.findSchoolFields()))
         .build();
   }
   
   @Path("/schoolFields/{ID:[0-9]*}")
   @GET
-  public Response getSchoolFieldByID(@PathParam("ID") Long id) {
-    SchoolField schoolField = schoolController.getSchoolFieldById(id);
-    if(schoolField != null) {
+  public Response findSchoolFieldByID(@PathParam("ID") Long id) {
+    SchoolField schoolField = schoolController.findSchoolFieldById(id);
+    if(!schoolField.equals(null)) {
       return Response.ok()
           .entity(tranqualise(schoolField))
           .build();
@@ -122,17 +108,17 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/variables")
   @GET
-  public Response getVariables() {
+  public Response findSchoolVariables() {
     return Response.ok()
-        .entity(tranqualise(schoolController.getSchoolVariables()))
+        .entity(tranqualise(schoolController.findSchoolVariables()))
         .build();
   }
   
   @Path("/variables/{ID:[0-9]*}")
   @GET
-  public Response getVariablesdByID(@PathParam("ID") Long id) {
-    SchoolVariable schoolVariable = schoolController.getSchoolVariabledById(id);
-    if(schoolVariable != null) {
+  public Response findVariablesByID(@PathParam("ID") Long id) {
+    SchoolVariable schoolVariable = schoolController.findSchoolVariablesById(id);
+    if(!schoolVariable.equals(null)) {
       return Response.ok()
           .entity(tranqualise(schoolVariable))
           .build();
@@ -140,15 +126,29 @@ public class SchoolRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
   }
+  
+  @Path("/schools/{ID:[0-9]*}/variables")
+  @GET
+  public Response findSchoolVariablesBySchool(@PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(id);
+    List<SchoolVariable> schoolVariables = school.getVariables();
+    if(!schoolVariables.equals(null)) {
+      return Response.ok()
+          .entity(tranqualise(schoolVariables))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
 
   @Path("/schools/{ID:[0-9]*}")
-  @PUT
+  @POST
   public Response updateSchool(@PathParam("ID") Long id, SchoolEntity schoolEntity) {
-    School school = schoolController.getSchoolById(id);
-    SchoolField schoolField = schoolController.getSchoolFieldById(schoolEntity.getField_id());
+    School school = schoolController.findSchoolById(id);
+    SchoolField schoolField = schoolController.findSchoolFieldById(schoolEntity.getField_id());
     String schoolCode = schoolEntity.getCode();
     String schoolName = schoolEntity.getName();
-    if(school != null && schoolCode != null && schoolName != null && schoolField != null) {
+    if(!school.equals(null) && !schoolCode.isEmpty() && !schoolName.isEmpty() && !schoolField.equals(null)) {
       return Response.ok()
           .entity(tranqualise(schoolController.updateSchool(school, schoolCode, schoolName, schoolField)))
           .build();
@@ -158,11 +158,11 @@ public class SchoolRESTService extends AbstractRESTService {
   }
   
   @Path("/schoolFields/{ID:[0-9]*}")
-  @PUT
+  @POST
   public Response updateSchoolField(@PathParam("ID") Long id, SchoolFieldEntity schoolFieldEntity) {
-    SchoolField schoolField = schoolController.getSchoolFieldById(id);
+    SchoolField schoolField = schoolController.findSchoolFieldById(id);
     String name = schoolFieldEntity.getName();
-    if(schoolField != null && name != null){
+    if(!schoolField.equals(null) && !name.isEmpty()){
       return Response.ok()
           .entity(tranqualise(schoolController.updateSchoolField(schoolField, name)))
           .build();
@@ -172,11 +172,11 @@ public class SchoolRESTService extends AbstractRESTService {
   }
   
   @Path("/variables/{ID:[0-9]*}")
-  @PUT
+  @POST
   public Response updateSchoolVariable(@PathParam("ID") Long id, SchoolVariableEntity schoolVariableEntity) {
-    SchoolVariable schoolVariable = schoolController.getSchoolVariabledById(id);
+    SchoolVariable schoolVariable = schoolController.findSchoolVariablesById(id);
     String value = schoolVariableEntity.getValue();
-    if(schoolVariable != null && value != null) {
+    if(!schoolVariable.equals(null) && !value.isEmpty()) {
       return Response.ok()
           .entity(tranqualise(schoolController.updateSchoolVariable(schoolVariable, value)))
           .build();
@@ -188,8 +188,8 @@ public class SchoolRESTService extends AbstractRESTService {
   @Path("/schools/{ID:[0-9]*}")
   @DELETE
   public Response archiveSchool(@PathParam("ID") Long id) {
-    School school = schoolController.getSchoolById(id);
-       if(school != null) {
+    School school = schoolController.findSchoolById(id);
+       if(!school.equals(null)) {
          return Response.ok()
            .entity(tranqualise(schoolController.archiveSchool(school)))
            .build();
@@ -201,8 +201,8 @@ public class SchoolRESTService extends AbstractRESTService {
   @Path("/schoolFields/{ID:[0-9]*}")
   @DELETE
   public Response archiveSchoolField(@PathParam("ID") Long id) {
-    SchoolField schoolField = schoolController.getSchoolFieldById(id);
-    if(schoolField != null) {
+    SchoolField schoolField = schoolController.findSchoolFieldById(id);
+    if(!schoolField.equals(null)) {
       return Response.ok()
           .entity(tranqualise(schoolController.archiveSchoolField(schoolField)))
           .build();
