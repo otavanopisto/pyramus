@@ -12,6 +12,7 @@ import fi.pyramus.dao.base.SchoolVariableDAO;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariable;
+import fi.pyramus.domainmodel.users.User;
 
 @Dependent
 @Stateless
@@ -87,23 +88,23 @@ public class SchoolController {
     return schoolVariableDAO.update(schoolVariable, value);
   }
 
-  public School archiveSchool(School school) {
-    schoolDAO.archive(school);
+  public School archiveSchool(School school, User user) {
+    schoolDAO.archive(school, user);
     return school;
   }
 
-  public School unarchiveSchool(School school) {
-    schoolDAO.unarchive(school);
+  public School unarchiveSchool(School school, User user) {
+    schoolDAO.unarchive(school, user);
     return school;
   }
  
-  public SchoolField archiveSchoolField(SchoolField schoolField) {
-    schoolFieldDAO.archive(schoolField);
+  public SchoolField archiveSchoolField(SchoolField schoolField, User user) {
+    schoolFieldDAO.archive(schoolField, user);
     return schoolField;
   }
 
-  public SchoolField unarchiveSchoolField(SchoolField schoolField) {
-    schoolFieldDAO.unarchive(schoolField);
+  public SchoolField unarchiveSchoolField(SchoolField schoolField, User user) {
+    schoolFieldDAO.unarchive(schoolField, user);
     return schoolField;
   }
 
