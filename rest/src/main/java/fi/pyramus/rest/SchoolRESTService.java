@@ -7,18 +7,23 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.apache.commons.lang.StringUtils;
 
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariable;
+import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.tranquil.base.SchoolEntity;
 import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
@@ -55,7 +60,7 @@ public class SchoolRESTService extends AbstractRESTService {
   @POST
   public Response createSchoolField(SchoolFieldEntity schoolFieldEntity) {
     String name = schoolFieldEntity.getName();
-    if(!name.isEmpty()) {
+    if (!name.isEmpty()) {
       return Response.ok()
           .entity(tranqualise(schoolController.createSchoolField(name)))
           .build();
@@ -66,10 +71,35 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools")
   @GET
-  public Response findSchools() {
-    return Response.ok()
-        .entity(tranqualise(schoolController.findSchools()))
-        .build();
+  public Response findSchools(@DefaultValue("") @QueryParam("code") String code,
+                              @DefaultValue("") @QueryParam("name") String name,
+                              @DefaultValue("") @QueryParam("tags") String tags,
+                              @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+
+    if (StringUtils.isBlank(code) && StringUtils.isBlank(name) && StringUtils.isBlank(tags)) {
+      List<School> schools;
+      if (filterArchived) {
+        schools = schoolController.findUnarchivedSchools();
+      } else {
+        schools = schoolController.findSchools();
+      }
+      if (!schools.isEmpty()){
+        return Response.ok()
+            .entity(tranqualise(schools))
+            .build();
+      } else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+    } else {
+      SearchResult<School> schools = schoolController.searchSchools(100,0,code,name,tags,filterArchived);
+      if (!schools.getResults().isEmpty()) {
+        return Response.ok()
+          .entity(tranqualise(schools.getResults()))
+          .build();
+      } else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+    }
   }
 
   @Path("/schools/{ID:[0-9]*}")

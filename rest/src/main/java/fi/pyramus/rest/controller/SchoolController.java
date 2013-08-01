@@ -13,6 +13,7 @@ import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariable;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.persistence.search.SearchResult;
 
 @Dependent
 @Stateless
@@ -36,6 +37,16 @@ public class SchoolController {
   
   public List<School> findSchools() {
     List<School> schools = schoolDAO.listAll();
+    return schools;
+  }
+  
+  public SearchResult<School> searchSchools(int resultsPerPage, int page, String code, String name, String tags, boolean filterArchived) {
+      SearchResult<School> schools = schoolDAO.searchSchools(resultsPerPage, page, code, name, tags, filterArchived);
+      return schools;
+  }
+  
+  public List<School> findUnarchivedSchools() {
+    List<School> schools = schoolDAO.listUnarchived();
     return schools;
   }
 

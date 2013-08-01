@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 
 import javax.inject.Inject;
@@ -119,6 +118,28 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
     }
   }
 
+  @Test
+  public void testSearchSchools() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/schools/schools?code=TAMK");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SchoolEntity[] schoolEntities = unserializeEntity(SchoolEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(schoolEntities);
+      assertEquals(1, schoolEntities.length);
+      assertEquals((Long) 2l, schoolEntities[0].getId());
+      assertEquals("Tampereen ammattikorkeakoulu", schoolEntities[0].getName());
+      assertEquals("TAMK", schoolEntities[0].getCode());
+      assertEquals((Long) 1l, schoolEntities[0].getField_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
   @Test
   public void testFindSchoolById() throws ClientProtocolException, IOException {
     HttpResponse response = doGetRequest("/schools/schools/" + initialSchoolDataDescriptor.getSchoolId());
@@ -265,6 +286,28 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
       assertNotNull(schoolEntity);
       assertEquals((Long) 2l, schoolEntity.getId());
       assertEquals(true, schoolEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testFindUnarchivedSchools() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/schools/schools?filterArchived=true");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SchoolEntity[] schoolEntities = unserializeEntity(SchoolEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(schoolEntities);
+      assertEquals(1, schoolEntities.length);
+      assertEquals((Long) 1l, schoolEntities[0].getId());
+      assertEquals("Shahjalal University of Science and Technology", schoolEntities[0].getName());
+      assertEquals("SUST", schoolEntities[0].getCode());
+      assertEquals((Long) 2l, schoolEntities[0].getField_id());
     } finally {
       EntityUtils.consume(entity);
     }
