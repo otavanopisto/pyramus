@@ -12,6 +12,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.JsonGenerationException;
@@ -104,6 +105,14 @@ public class RestfulServiceTest {
   protected HttpResponse doGetRequest(String path) throws ClientProtocolException, IOException {
     DefaultHttpClient httpClient = new DefaultHttpClient();
     HttpGet request = new HttpGet(baseUri + path);
+    return httpClient.execute(request);
+  }
+  
+  protected HttpResponse doPutRequest(String path, StringEntity entity) throws ClientProtocolException, IOException {
+    DefaultHttpClient httpClient = new DefaultHttpClient();
+    HttpPut request = new HttpPut(baseUri + path);
+    request.addHeader("content-type", "application/json");
+    request.setEntity(entity);;
     return httpClient.execute(request);
   }
 

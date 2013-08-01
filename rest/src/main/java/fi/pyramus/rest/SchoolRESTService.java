@@ -9,6 +9,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -141,7 +142,7 @@ public class SchoolRESTService extends AbstractRESTService {
   }
 
   @Path("/schools/{ID:[0-9]*}")
-  @POST
+  @PUT
   public Response updateSchool(@PathParam("ID") Long id, SchoolEntity schoolEntity) {
     School school = schoolController.findSchoolById(id);
     SchoolField schoolField = schoolController.findSchoolFieldById(schoolEntity.getField_id());
@@ -157,7 +158,7 @@ public class SchoolRESTService extends AbstractRESTService {
   }
   
   @Path("/schoolFields/{ID:[0-9]*}")
-  @POST
+  @PUT
   public Response updateSchoolField(@PathParam("ID") Long id, SchoolFieldEntity schoolFieldEntity) {
     SchoolField schoolField = schoolController.findSchoolFieldById(id);
     String name = schoolFieldEntity.getName();
@@ -171,7 +172,7 @@ public class SchoolRESTService extends AbstractRESTService {
   }
   
   @Path("/variables/{ID:[0-9]*}")
-  @POST
+  @PUT
   public Response updateSchoolVariable(@PathParam("ID") Long id, SchoolVariableEntity schoolVariableEntity) {
     SchoolVariable schoolVariable = schoolController.findSchoolVariablesById(id);
     String value = schoolVariableEntity.getValue();
@@ -181,6 +182,32 @@ public class SchoolRESTService extends AbstractRESTService {
           .build();
     } else {
       return Response.status(501).build();
+    }
+  }
+  
+  @Path("/schools/{ID:[0-9]*}")
+  @POST
+  public Response unarchiveSchool(@PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(id);
+    if(!school.equals(null)) {
+      return Response.ok()
+        .entity(tranqualise(schoolController.unarchiveSchool(school, getUser())))
+        .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/schoolFields/{ID:[0-9]*}")
+  @POST
+  public Response unarchiveSchoolField(@PathParam("ID") Long id) {
+    SchoolField schoolField = schoolController.findSchoolFieldById(id);
+    if(!schoolField.equals(null)) {
+      return Response.ok()
+        .entity(tranqualise(schoolController.unarchiveSchoolField(schoolField, getUser())))
+        .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
     }
   }
   

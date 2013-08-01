@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 
 import javax.inject.Inject;
@@ -202,7 +203,7 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
 
     StringEntity str = new StringEntity("{\"field_id\":2,\"code\":\"SUST\",\"name\":\"Shahjalal University of Science and Technology\"}");
 
-    HttpResponse response = doPostRequest(path, str);
+    HttpResponse response = doPutRequest(path, str);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -227,7 +228,7 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
 
     StringEntity str = new StringEntity("{\"name\":\"College\"}");
 
-    HttpResponse response = doPostRequest(path, str);
+    HttpResponse response = doPutRequest(path, str);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
@@ -268,6 +269,27 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
+  
+  @Test
+  public void testUnarchiveSchool() throws ClientProtocolException, IOException {
+    String path = "/schools/schools/2";
+    StringEntity str = new StringEntity("");
+    HttpResponse response = doPostRequest(path,str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SchoolEntity schoolEntity = unserializeEntity(SchoolEntity.class, EntityUtils.toString(entity));
+      assertNotNull(schoolEntity);
+      assertEquals((Long) 2l, schoolEntity.getId());
+      assertEquals(false, schoolEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 
   @Test
   public void testArchiveSchoolField() throws ClientProtocolException, IOException {
@@ -285,6 +307,27 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
       assertNotNull(schoolFieldEntity);
       assertEquals((Long) 2l, schoolFieldEntity.getId());
       assertEquals(true, schoolFieldEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testUnarchiveSchoolField() throws ClientProtocolException, IOException {
+    String path = "/schools/schoolFields/2";
+    StringEntity str = new StringEntity("");
+    HttpResponse response = doPostRequest(path,str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SchoolFieldEntity schoolFieldEntity = unserializeEntity(SchoolFieldEntity.class, EntityUtils.toString(entity));
+      assertNotNull(schoolFieldEntity);
+      assertEquals((Long) 2l, schoolFieldEntity.getId());
+      assertEquals(false, schoolFieldEntity.getArchived());
     } finally {
       EntityUtils.consume(entity);
     }
