@@ -19,7 +19,7 @@ import fi.pyramus.domainmodel.base.SchoolVariable_;
 @Stateless
 public class SchoolVariableDAO extends PyramusEntityDAO<SchoolVariable> {
 
-  private SchoolVariable create(School school, SchoolVariableKey key, String value) {
+  public SchoolVariable create(School school, SchoolVariableKey key, String value) {
     EntityManager entityManager = getEntityManager();
 
     SchoolVariable schoolVariable = new SchoolVariable();
