@@ -69,7 +69,7 @@ public class SchoolRESTService extends AbstractRESTService {
     }
   }
   
-  @Path("/schoolVariables")
+  @Path("/variables")
   @POST
   public Response createSchoolVariable(SchoolVariableEntity schoolVariableEntity) {
     School school = schoolController.findSchoolById(schoolVariableEntity.getSchool_id());
@@ -82,7 +82,6 @@ public class SchoolRESTService extends AbstractRESTService {
     } else {
       return Response.status(501).build();
     }
-    
   }
   
   @Path("/schools")

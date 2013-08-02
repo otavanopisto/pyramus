@@ -101,7 +101,7 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
   public void testCreateSchoolVariable() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"key_id\":1,\"school_id\":1,\"value\":\"Test variable\"}");
 
-    HttpResponse response = doPostRequest("/schools/schoolVariables/", str);
+    HttpResponse response = doPostRequest("/schools/variables/", str);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
@@ -224,8 +224,24 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
   }
 
   @Test
-  public void testFindSchoolVariables() {
-    fail("Not yet implemented");
+  public void testFindSchoolVariables() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/schools/variables");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SchoolVariableEntity[] schoolVariableEntities = unserializeEntity(SchoolVariableEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(schoolVariableEntities);
+      assertEquals(1, schoolVariableEntities.length);
+      assertEquals((Long) 1l, schoolVariableEntities[0].getId());
+      assertEquals("Test variable", schoolVariableEntities[0].getValue());
+      assertEquals((Long) 1l, schoolVariableEntities[0].getSchool_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
   }
 
   @Test
