@@ -161,7 +161,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/variables/{ID:[0-9]*}")
   @GET
-  public Response findVariablesByID(@PathParam("ID") Long id) {
+  public Response findScoolVariableByID(@PathParam("ID") Long id) {
     SchoolVariable schoolVariable = schoolController.findSchoolVariablesById(id);
     if (!schoolVariable.equals(null)) {
       return Response.ok()

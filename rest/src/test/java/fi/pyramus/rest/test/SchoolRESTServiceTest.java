@@ -2,7 +2,6 @@ package fi.pyramus.rest.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -245,13 +244,44 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
   }
 
   @Test
-  public void testFindVariablesByID() {
-    fail("Not yet implemented");
+  public void testSchoolFindVariableByID() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/schools/variables/1");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SchoolVariableEntity schoolVariableEntity = unserializeEntity(SchoolVariableEntity.class, EntityUtils.toString(entity));
+      assertNotNull(schoolVariableEntity);
+      assertEquals((Long) 1l, schoolVariableEntity.getId());
+      assertEquals("Test variable", schoolVariableEntity.getValue());
+      assertEquals((Long) 1l, schoolVariableEntity.getSchool_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
   }
 
   @Test
-  public void testFindSchoolVariablesBySchool() {
-    fail("Not yet implemented");
+  public void testFindSchoolVariablesBySchool() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/schools/schools/1/variables");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SchoolVariableEntity[] schoolVariableEntities = unserializeEntity(SchoolVariableEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(schoolVariableEntities);
+      assertEquals(1, schoolVariableEntities.length);
+      assertEquals((Long) 1l, schoolVariableEntities[0].getId());
+      assertEquals("Test variable", schoolVariableEntities[0].getValue());
+      assertEquals((Long) 1l, schoolVariableEntities[0].getSchool_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
   }
 
   @Test
@@ -303,8 +333,25 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
   }
 
   @Test
-  public void testUpdateSchoolVariable() {
-    fail("Not yet implemented");
+  public void testUpdateSchoolVariable() throws ClientProtocolException, IOException {
+    String path = "/schools/variables/1";
+
+    StringEntity str = new StringEntity("{\"value\":\"foo bar value\"}");
+
+    HttpResponse response = doPutRequest(path, str);
+    
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SchoolVariableEntity schoolVariableEntity = unserializeEntity(SchoolVariableEntity.class, EntityUtils.toString(entity));
+      assertNotNull(schoolVariableEntity);
+      assertEquals((Long) 1l, schoolVariableEntity.getId());
+      assertEquals("foo bar value", schoolVariableEntity.getValue());
+      assertEquals((Long) 1l, schoolVariableEntity.getSchool_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
   }
 
   @Test
