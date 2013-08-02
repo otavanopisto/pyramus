@@ -26,6 +26,7 @@ import fi.pyramus.rest.SchoolRESTService;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.tranquil.base.SchoolEntity;
 import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
+import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
 
 @RunWith(Arquillian.class)
 public class SchoolRESTServiceTest extends RestfulServiceTest {
@@ -91,6 +92,26 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
       SchoolFieldEntity schoolFieldEntity = unserializeEntity(SchoolFieldEntity.class, EntityUtils.toString(entity));
       assertNotNull(schoolFieldEntity);
       assertEquals("Polytechnic", schoolFieldEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testCreateSchoolVariable() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"key_id\":1,\"school_id\":1,\"value\":\"Test variable\"}");
+
+    HttpResponse response = doPostRequest("/schools/schoolVariables/", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SchoolVariableEntity schoolVariableEntity = unserializeEntity(SchoolVariableEntity.class, EntityUtils.toString(entity));
+      assertNotNull(schoolVariableEntity);
+      assertEquals((Long) 1l, schoolVariableEntity.getSchool_id());
+      assertEquals("Test variable", schoolVariableEntity.getValue());
     } finally {
       EntityUtils.consume(entity);
     }

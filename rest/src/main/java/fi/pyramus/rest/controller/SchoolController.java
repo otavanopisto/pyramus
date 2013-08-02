@@ -9,9 +9,11 @@ import javax.inject.Inject;
 import fi.pyramus.dao.base.SchoolDAO;
 import fi.pyramus.dao.base.SchoolFieldDAO;
 import fi.pyramus.dao.base.SchoolVariableDAO;
+import fi.pyramus.dao.base.SchoolVariableKeyDAO;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariable;
+import fi.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.persistence.search.SearchResult;
 
@@ -24,6 +26,8 @@ public class SchoolController {
   private SchoolFieldDAO schoolFieldDAO;
   @Inject
   private SchoolVariableDAO schoolVariableDAO;
+  @Inject
+  private SchoolVariableKeyDAO schoolVariableKeyDAO;
   
    public School createSchool(String code, String name, SchoolField schoolField) {
      School school = schoolDAO.create(code, name, schoolField);
@@ -33,6 +37,12 @@ public class SchoolController {
    public SchoolField createSchoolField(String name) {
      SchoolField schoolField = schoolFieldDAO.create(name);
      return schoolField;
+   }
+   
+   public SchoolVariable createSchoolVariable(School school, Long keyId, String value) {
+     SchoolVariableKey key = schoolVariableKeyDAO.findById(keyId);
+     SchoolVariable schoolVariable = schoolVariableDAO.create(school, key, value);
+     return schoolVariable;
    }
   
   public List<School> findSchools() {
