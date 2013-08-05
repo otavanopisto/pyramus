@@ -86,11 +86,10 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools")
   @GET
-  public Response findSchools(@DefaultValue("") @QueryParam("code") String code,
-                              @DefaultValue("") @QueryParam("name") String name,
-                              @DefaultValue("") @QueryParam("tags") String tags,
+  public Response findSchools(@QueryParam("code") String code,
+                              @QueryParam("name") String name,
+                              @QueryParam("tags") String tags,
                               @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-
     if (StringUtils.isBlank(code) && StringUtils.isBlank(name) && StringUtils.isBlank(tags)) {
       List<School> schools;
       if (filterArchived) {
@@ -181,6 +180,25 @@ public class SchoolRESTService extends AbstractRESTService {
       return Response.ok()
           .entity(tranqualise(schoolVariables))
           .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/schools/{SID:[0-9]*}/variables/{ID:[0-9]*}")
+  @GET
+  public Response findSchoolVariableBySchool(@PathParam("SID") Long schoolId, @PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(schoolId);
+    SchoolVariable schoolVariable = schoolController.findSchoolVariablesById(id);
+    if (!school.equals(null) && !schoolVariable.equals(null)) {
+      List<SchoolVariable> schoolVariables = school.getVariables();
+      if (schoolVariables.contains(schoolVariable)) {
+        return Response.ok()
+            .entity(tranqualise(schoolVariable))
+            .build();
+      } else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }

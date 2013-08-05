@@ -283,7 +283,27 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
+  
+  @Test
+  public void testFindSchoolVariableBySchool() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/schools/schools/1/variables/1");
 
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SchoolVariableEntity schoolVariableEntity = unserializeEntity(SchoolVariableEntity.class, EntityUtils.toString(entity));
+      assertNotNull(schoolVariableEntity);
+      assertEquals((Long) 1l, schoolVariableEntity.getId());
+      assertEquals("Test variable", schoolVariableEntity.getValue());
+      assertEquals((Long) 1l, schoolVariableEntity.getSchool_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
   @Test
   public void testUpdateSchool() throws ClientProtocolException, IOException {
 
