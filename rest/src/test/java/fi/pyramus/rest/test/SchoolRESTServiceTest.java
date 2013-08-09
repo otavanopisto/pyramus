@@ -244,7 +244,7 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
   }
 
   @Test
-  public void testSchoolFindVariableByID() throws ClientProtocolException, IOException {
+  public void testFindSchoolVariableByID() throws ClientProtocolException, IOException {
     HttpResponse response = doGetRequest("/schools/variables/1");
 
     assertEquals(200, response.getStatusLine().getStatusCode());
