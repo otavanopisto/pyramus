@@ -61,7 +61,7 @@ public class ProjectDAO extends PyramusEntityDAO<Project> {
     return project;
   }
 
-  public void update(Project project, String name, String description, Double optionalStudiesLength,
+  public Project update(Project project, String name, String description, Double optionalStudiesLength,
       EducationalTimeUnit optionalStudiesLengthTimeUnit, User user) {
     EntityManager entityManager = getEntityManager();
 
@@ -75,6 +75,7 @@ public class ProjectDAO extends PyramusEntityDAO<Project> {
     project.setLastModified(now);
 
     entityManager.persist(project);
+    return project;
   }
 
   @SuppressWarnings("unchecked")
