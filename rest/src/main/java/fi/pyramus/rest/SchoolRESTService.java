@@ -208,13 +208,18 @@ public class SchoolRESTService extends AbstractRESTService {
   @PUT
   public Response updateSchool(@PathParam("ID") Long id, SchoolEntity schoolEntity) {
     School school = schoolController.findSchoolById(id);
-    SchoolField schoolField = schoolController.findSchoolFieldById(schoolEntity.getField_id());
+    SchoolField schoolField = school.getField();
     String schoolCode = schoolEntity.getCode();
     String schoolName = schoolEntity.getName();
     if (!school.equals(null) && !StringUtils.isBlank(schoolCode) && !StringUtils.isBlank(schoolName) && !schoolField.equals(null)) {
+      schoolField = schoolController.findSchoolFieldById(schoolEntity.getField_id());
       return Response.ok()
           .entity(tranqualise(schoolController.updateSchool(school, schoolCode, schoolName, schoolField)))
           .build();
+    } else if (schoolEntity.getArchived()) {
+        return Response.ok()
+            .entity(tranqualise(schoolController.unarchiveSchool(school, getUser())))
+            .build();
     } else {
       return Response.status(501).build();
     }
@@ -229,9 +234,13 @@ public class SchoolRESTService extends AbstractRESTService {
       return Response.ok()
           .entity(tranqualise(schoolController.updateSchoolField(schoolField, name)))
           .build();
-    } else {
-      return Response.status(501).build();
-    }
+    } else if (schoolFieldEntity.getArchived()) {
+      return Response.ok()
+          .entity(tranqualise(schoolController.unarchiveSchoolField(schoolField, getUser())))
+          .build();
+  } else {
+    return Response.status(501).build();
+  }
   }
   
   @Path("/variables/{ID:[0-9]*}")
@@ -245,32 +254,6 @@ public class SchoolRESTService extends AbstractRESTService {
           .build();
     } else {
       return Response.status(501).build();
-    }
-  }
-  
-  @Path("/schools/{ID:[0-9]*}")
-  @POST
-  public Response unarchiveSchool(@PathParam("ID") Long id) {
-    School school = schoolController.findSchoolById(id);
-    if (!school.equals(null)) {
-      return Response.ok()
-        .entity(tranqualise(schoolController.unarchiveSchool(school, getUser())))
-        .build();
-    } else {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-  }
-  
-  @Path("/schoolFields/{ID:[0-9]*}")
-  @POST
-  public Response unarchiveSchoolField(@PathParam("ID") Long id) {
-    SchoolField schoolField = schoolController.findSchoolFieldById(id);
-    if (!schoolField.equals(null)) {
-      return Response.ok()
-        .entity(tranqualise(schoolController.unarchiveSchoolField(schoolField, getUser())))
-        .build();
-    } else {
-      return Response.status(Status.NOT_FOUND).build();
     }
   }
   

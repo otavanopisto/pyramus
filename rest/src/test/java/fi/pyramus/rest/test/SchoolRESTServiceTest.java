@@ -419,9 +419,10 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
   
   @Test
   public void testUnarchiveSchool() throws ClientProtocolException, IOException {
-    String path = "/schools/schools/2";
-    StringEntity str = new StringEntity("");
-    HttpResponse response = doPostRequest(path,str);
+    String path = "/schools/schools/2";    
+    StringEntity str = new StringEntity("{\"archived\":true}");
+    
+    HttpResponse response = doPutRequest(path,str);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -437,7 +438,7 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-
+  
   @Test
   public void testArchiveSchoolField() throws ClientProtocolException, IOException {
     String path = "/schools/schoolFields/2";
@@ -462,8 +463,9 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
   @Test
   public void testUnarchiveSchoolField() throws ClientProtocolException, IOException {
     String path = "/schools/schoolFields/2";
-    StringEntity str = new StringEntity("");
-    HttpResponse response = doPostRequest(path,str);
+    StringEntity str = new StringEntity("{\"archived\":true}");
+    
+    HttpResponse response = doPutRequest(path,str);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
