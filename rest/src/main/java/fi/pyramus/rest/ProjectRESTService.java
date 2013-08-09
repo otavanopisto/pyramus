@@ -1,16 +1,20 @@
 package fi.pyramus.rest;
 
+import java.util.List;
+
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -51,10 +55,20 @@ public class ProjectRESTService extends AbstractRESTService {
   
   @Path("/projects")
   @GET
-  public Response findProjects() {
-    return Response.ok()
-        .entity(tranqualise(projectController.findProjects()))
-        .build();
+  public Response findProjects(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Project> schools;
+    if (filterArchived) {
+      schools = projectController.findUnarchivedProjects();
+    } else {
+      schools = projectController.findProjects();
+    }
+    if (!schools.isEmpty()){
+      return Response.ok()
+          .entity(tranqualise(schools))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
   }
 
   @Path("/projects/{ID:[0-9]*}")

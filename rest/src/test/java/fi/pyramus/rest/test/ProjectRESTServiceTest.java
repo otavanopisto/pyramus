@@ -163,4 +163,24 @@ public class ProjectRESTServiceTest extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
+  
+  @Test
+  public void testFindUnarchivedProjects() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/projects/projects?filterArchived=true");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ProjectEntity[] projectEntities = unserializeEntity(ProjectEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(projectEntities);
+      assertEquals(1, projectEntities.length);
+      assertEquals("Updating project", projectEntities[0].getName());
+      assertEquals("Testing if project update works", projectEntities[0].getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 }

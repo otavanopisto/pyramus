@@ -26,6 +26,11 @@ public class ProjectController {
     List<Project> projects = projectDAO.listAll();
     return projects;
   }
+  
+  public List<Project> findUnarchivedProjects() {
+    List<Project> projects = projectDAO.listUnarchived();
+    return projects;
+  }
 
   public Project findProjectById(Long id) {
     try {
