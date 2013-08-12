@@ -61,12 +61,8 @@ public class SchoolController {
   }
 
   public School findSchoolById(Long id) {
-    try {
-      School school = schoolDAO.findById(id);
-      return school;
-    } catch (NullPointerException e) {
-      return null;
-    }
+    School school = schoolDAO.findById(id);
+    return school;
   }
 
   public List<SchoolField> findSchoolFields() {
@@ -75,12 +71,8 @@ public class SchoolController {
   }
 
   public SchoolField findSchoolFieldById(Long id) {
-    try {
       SchoolField schoolField = schoolFieldDAO.findById(id);
       return schoolField;
-    } catch (NullPointerException e) {
-      return null;
-    }
   }
 
   public List<SchoolVariable> findSchoolVariables() {
@@ -89,12 +81,8 @@ public class SchoolController {
   }
 
   public SchoolVariable findSchoolVariablesById(Long id) {
-    try {
       SchoolVariable schoolVariable = schoolVariableDAO.findById(id);
       return schoolVariable;
-    } catch (NullPointerException e) {
-      return null;
-    }
   }
   
   public School updateSchool(School school, String code, String name, SchoolField schoolField) {
@@ -139,5 +127,4 @@ public class SchoolController {
 //    return schoolVariable;
 //  }
   
-
 }

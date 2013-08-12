@@ -44,12 +44,8 @@ public class ProjectController {
   }
 
   public Project findProjectById(Long id) {
-    try {
-      Project project = projectDAO.findById(id);
-      return project;
-    } catch (NullPointerException e) {
-      return null;
-    }
+    Project project = projectDAO.findById(id);
+    return project;
   }
   
   public Set<Tag> findTags(Project project) {
@@ -58,12 +54,8 @@ public class ProjectController {
   }
   
   public Tag findTagById(Long id) {
-    try {
-      Tag tag = tagDAO.findById(id);
-      return tag;
-    } catch(NullPointerException e) {
-      return null;
-    }
+    Tag tag = tagDAO.findById(id);
+    return tag;
   }
 
   public Project updateProject(Project project, String name, String description, double optionalStudiesLength,
