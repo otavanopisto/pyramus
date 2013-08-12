@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 
 import fi.pyramus.rest.ProjectRESTService;
 import fi.pyramus.rest.controller.ProjectController;
+import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.projects.ProjectEntity;
 
 @RunWith(Arquillian.class)
@@ -51,6 +52,25 @@ public class ProjectRESTServiceTest extends RestfulServiceTest {
       assertNotNull(projectEntity);
       assertEquals("Pyramus REST", projectEntity.getName());
       assertEquals("Pyramus RESTService development", projectEntity.getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testCreateTag() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"text\":\"Test environment\"}");
+
+    HttpResponse response = doPostRequest("/projects/projects/1/tags", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      TagEntity tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
+      assertNotNull(tagEntity);
+      assertEquals("Test environment", tagEntity.getText());
     } finally {
       EntityUtils.consume(entity);
     }
@@ -91,6 +111,25 @@ public class ProjectRESTServiceTest extends RestfulServiceTest {
       assertEquals((Long) 1l, projectEntity.getId());
       assertEquals("Pyramus REST", projectEntity.getName());
       assertEquals("Pyramus RESTService development", projectEntity.getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testFindTags() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/projects/projects/1/tags");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      TagEntity[] tagEntities = unserializeEntity(TagEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(tagEntities);
+      assertEquals(1, tagEntities.length);
+      assertEquals("Test environment", tagEntities[0].getText());
     } finally {
       EntityUtils.consume(entity);
     }
@@ -179,6 +218,27 @@ public class ProjectRESTServiceTest extends RestfulServiceTest {
       assertEquals(1, projectEntities.length);
       assertEquals("Updating project", projectEntities[0].getName());
       assertEquals("Testing if project update works", projectEntities[0].getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testDeleteProjectTag() throws ClientProtocolException, IOException {
+    String path = "/projects/projects/1/tags/1";
+
+    HttpResponse response = doDeleteRequest(path);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ProjectEntity projectEntity = unserializeEntity(ProjectEntity.class, EntityUtils.toString(entity));
+      assertNotNull(projectEntity);
+      assertEquals((Long) 1l, projectEntity.getId());
+      assertEquals(0, projectEntity.getTags_ids().size());
     } finally {
       EntityUtils.consume(entity);
     }
