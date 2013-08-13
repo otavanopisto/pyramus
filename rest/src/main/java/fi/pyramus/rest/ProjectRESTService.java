@@ -43,10 +43,15 @@ public class ProjectRESTService extends AbstractRESTService {
   @Path("/projects")
   @POST
   public Response createProject(ProjectEntity projectEntity) {
+    EducationalTimeUnit timeUnit = null;
+    double optionalStudiesLength = 0;
     String name = projectEntity.getName();
     String description = projectEntity.getDescription();
-    double optionalStudiesLength = 0;
-    EducationalTimeUnit timeUnit = null;
+    Long optionalStudiesLengthId = projectEntity.getOptionalStudiesLength_id();
+    if(optionalStudiesLengthId != null) {
+      timeUnit = projectController.findEducationalTimeUnitById(optionalStudiesLengthId);
+      optionalStudiesLength = timeUnit.getBaseUnits();
+    }
     if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description) ) {
       return Response.ok()
           .entity(tranqualise(projectController.createProject(name, description, optionalStudiesLength, timeUnit, getUser())))
