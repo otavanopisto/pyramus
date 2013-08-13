@@ -14,6 +14,7 @@ import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.persistence.search.SearchResult;
 
 @Dependent
 @Stateless
@@ -50,6 +51,11 @@ public class ProjectController {
     Project project = projectDAO.findById(id);
     return project;
   }
+  
+  public SearchResult<Project> searchProjects(int resultsPerPage, int page,String name, String description,  String tags, boolean filterArchived) {
+    SearchResult<Project> projects = projectDAO.searchProjects(resultsPerPage, page, name, description, tags, filterArchived);
+    return projects;
+}
   
   public EducationalTimeUnit findEducationalTimeUnitById(Long id) {
     EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.findById(id);

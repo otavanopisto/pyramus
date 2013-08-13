@@ -128,5 +128,75 @@ public class ProjectDAO extends PyramusEntityDAO<Project> {
       throw new PersistenceException(e);
     }
   }
+  
+  /**
+   * Returns a list of projects matching the given search terms.
+   * 
+   * @param resultsPerPage
+   *          The amount of projects per page
+   * @param page
+   *          The search results page
+   * @param name
+   *          The project name
+   * @param description
+   *          The project description
+   * @param tags
+   *          The projects tags
+   * @param filterArchived
+   *          <code>true</code> if archived projects should be omitted, otherwise <code>false</code>
+   * 
+   * @return A list of projects matching the given search terms
+   */
+  @SuppressWarnings("unchecked")
+  public SearchResult<Project> searchProjects(int resultsPerPage, int page, String name, String description, String tags, boolean filterArchived) {
+
+    int firstResult = page * resultsPerPage;
+
+    StringBuilder queryBuilder = new StringBuilder();
+    if (!StringUtils.isBlank(name)) {
+      addTokenizedSearchCriteria(queryBuilder, "name", name, false);
+    }
+    if (!StringUtils.isBlank(description)) {
+      addTokenizedSearchCriteria(queryBuilder, "description", description, false);
+    }
+    if (!StringUtils.isBlank(tags)) {
+      addTokenizedSearchCriteria(queryBuilder, "tags.text", tags, false);
+    }
+
+    EntityManager entityManager = getEntityManager();
+    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+
+    try {
+      String queryString = queryBuilder.toString();
+      Query luceneQuery;
+      QueryParser parser = new QueryParser(Version.LUCENE_29, "", new StandardAnalyzer(Version.LUCENE_29));
+      if (StringUtils.isBlank(queryString)) {
+        luceneQuery = new MatchAllDocsQuery();
+      } else {
+        luceneQuery = parser.parse(queryString);
+      }
+
+      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, Project.class)
+          .setSort(new Sort(new SortField[] { SortField.FIELD_SCORE, new SortField("nameSortable", SortField.STRING) })).setFirstResult(firstResult)
+          .setMaxResults(resultsPerPage);
+
+      if (filterArchived) {
+        query.enableFullTextFilter("ArchivedProject").setParameter("archived", Boolean.FALSE);
+      }
+
+      int hits = query.getResultSize();
+      int pages = hits / resultsPerPage;
+      if (hits % resultsPerPage > 0) {
+        pages++;
+      }
+
+      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
+
+      return new SearchResult<Project>(page, pages, hits, firstResult, lastResult, query.getResultList());
+
+    } catch (ParseException e) {
+      throw new PersistenceException(e);
+    }
+  }
 
 }

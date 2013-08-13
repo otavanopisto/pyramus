@@ -39,7 +39,7 @@ public class ProjectRESTServiceTest extends RestfulServiceTest {
 
   @Test
   public void testCreateProject() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"Pyramus REST\", \"description\":\"Pyramus RESTService development\"}");
+    StringEntity str = new StringEntity("{\"name\":\"PyramusREST\", \"description\":\"Pyramus RESTService development\"}");
 
     HttpResponse response = doPostRequest("/projects/projects", str);
 
@@ -50,7 +50,7 @@ public class ProjectRESTServiceTest extends RestfulServiceTest {
       assertEquals("application/json", entity.getContentType().getValue());
       ProjectEntity projectEntity = unserializeEntity(ProjectEntity.class, EntityUtils.toString(entity));
       assertNotNull(projectEntity);
-      assertEquals("Pyramus REST", projectEntity.getName());
+      assertEquals("PyramusREST", projectEntity.getName());
       assertEquals("Pyramus RESTService development", projectEntity.getDescription());
     } finally {
       EntityUtils.consume(entity);
@@ -89,7 +89,7 @@ public class ProjectRESTServiceTest extends RestfulServiceTest {
       ProjectEntity[] projectEntities = unserializeEntity(ProjectEntity[].class, EntityUtils.toString(entity));
       assertNotNull(projectEntities);
       assertEquals(1, projectEntities.length);
-      assertEquals("Pyramus REST", projectEntities[0].getName());
+      assertEquals("PyramusREST", projectEntities[0].getName());
       assertEquals("Pyramus RESTService development", projectEntities[0].getDescription());
     } finally {
       EntityUtils.consume(entity);
@@ -109,8 +109,28 @@ public class ProjectRESTServiceTest extends RestfulServiceTest {
       ProjectEntity projectEntity = unserializeEntity(ProjectEntity.class, EntityUtils.toString(entity));
       assertNotNull(projectEntity);
       assertEquals((Long) 1l, projectEntity.getId());
-      assertEquals("Pyramus REST", projectEntity.getName());
+      assertEquals("PyramusREST", projectEntity.getName());
       assertEquals("Pyramus RESTService development", projectEntity.getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testSearchProjects() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/projects/projects?name=PyramusREST&tags=Test%20environment");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ProjectEntity[] projectEntities = unserializeEntity(ProjectEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(projectEntities);
+      assertEquals(1, projectEntities.length);
+      assertEquals("PyramusREST", projectEntities[0].getName());
+      assertEquals("Pyramus RESTService development", projectEntities[0].getDescription());
     } finally {
       EntityUtils.consume(entity);
     }

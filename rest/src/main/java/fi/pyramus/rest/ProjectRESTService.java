@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.projects.Project;
+import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.rest.controller.ProjectController;
 import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.projects.ProjectEntity;
@@ -77,19 +78,33 @@ public class ProjectRESTService extends AbstractRESTService {
   
   @Path("/projects")
   @GET
-  public Response findProjects(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-    List<Project> schools;
-    if (filterArchived) {
-      schools = projectController.findUnarchivedProjects();
+  public Response findProjects(@QueryParam("name") String name,
+                              @QueryParam("desciprtion") String description,
+                              @QueryParam("tags") String tags,
+                              @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    if (StringUtils.isBlank(name) && StringUtils.isBlank(description) && StringUtils.isBlank(tags)) {
+      List<Project> schools;
+      if (filterArchived) {
+        schools = projectController.findUnarchivedProjects();
+      } else {
+        schools = projectController.findProjects();
+      }
+      if (!schools.isEmpty()){
+        return Response.ok()
+            .entity(tranqualise(schools))
+            .build();
+      } else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
     } else {
-      schools = projectController.findProjects();
-    }
-    if (!schools.isEmpty()){
-      return Response.ok()
-          .entity(tranqualise(schools))
+      SearchResult<Project> projects = projectController.searchProjects(100,0,name,description,tags,filterArchived);
+      if (!projects.getResults().isEmpty()) {
+        return Response.ok()
+          .entity(tranqualise(projects.getResults()))
           .build();
-    } else {
-      return Response.status(Status.NOT_FOUND).build();
+      } else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
     }
   }
 
