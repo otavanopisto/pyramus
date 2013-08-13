@@ -77,6 +77,14 @@ public class ReportEntity implements fi.tranquil.TranquilModelEntity {
   public void setCategory_id(Long category_id) {
     this.category_id = category_id;
   }
+  
+  public Boolean getArchived() {
+    return archived;
+  }
+
+  public void setArchived(Boolean archived) {
+    this.archived = archived;
+  }
 
   private Long id;
 
@@ -95,6 +103,8 @@ public class ReportEntity implements fi.tranquil.TranquilModelEntity {
   private Long lastModifier_id;
 
   private Long category_id;
+  
+  private Boolean archived;
 
-  public final static String[] properties = {"id","name","data","created","lastModified","version","creator","lastModifier","category"};
+  public final static String[] properties = {"id","name","data","archived","created","lastModified","version","creator","lastModifier","category"};
 }

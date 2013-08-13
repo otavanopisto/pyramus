@@ -17,12 +17,28 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FullTextFilterDef;
+import org.hibernate.search.annotations.FullTextFilterDefs;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import fi.pyramus.domainmodel.base.ArchivableEntity;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
 @Entity
-public class Report {
+@Indexed
+@Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@FullTextFilterDefs (
+  @FullTextFilterDef (
+     name="ArchivedReport",
+     impl=ArchivedEntityFilterFactory.class
+  )
+)
+public class Report implements ArchivableEntity{
 
   public Long getId() {
     return id;
@@ -92,6 +108,14 @@ public class Report {
   public Long getVersion() {
     return version;
   }
+  
+  public void setArchived(Boolean archived) {
+    this.archived = archived;
+  }
+
+  public Boolean getArchived() {
+    return archived;
+  }
 
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Report")  
@@ -131,4 +155,9 @@ public class Report {
   @Version
   @Column(nullable = false)
   private Long version;
+  
+  @NotNull
+  @Column (nullable = false)
+  @Field
+  private Boolean archived = Boolean.FALSE;
 }
