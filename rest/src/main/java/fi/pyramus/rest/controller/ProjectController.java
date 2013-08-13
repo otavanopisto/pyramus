@@ -78,8 +78,8 @@ public class ProjectController {
     return updatedProject;
   }
 
-  public Project archiveProject(Project project) {
-    projectDAO.archive(project);
+  public Project archiveProject(Project project, User user) {
+    projectDAO.archive(project, user);
     return project;
   }
 

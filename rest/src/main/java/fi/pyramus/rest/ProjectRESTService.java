@@ -177,7 +177,7 @@ public class ProjectRESTService extends AbstractRESTService {
     Project project = projectController.findProjectById(id);
     if(project != null) {
       return Response.ok()
-          .entity(tranqualise(projectController.archiveProject(project)))
+          .entity(tranqualise(projectController.archiveProject(project, getUser())))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
