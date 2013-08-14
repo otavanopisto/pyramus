@@ -161,7 +161,7 @@ public class SchoolRESTService extends AbstractRESTService {
   @Path("/variables/{ID:[0-9]*}")
   @GET
   public Response findScoolVariableByID(@PathParam("ID") Long id) {
-    SchoolVariable schoolVariable = schoolController.findSchoolVariablesById(id);
+    SchoolVariable schoolVariable = schoolController.findSchoolVariableById(id);
     if (schoolVariable != null) {
       return Response.ok()
           .entity(tranqualise(schoolVariable))
@@ -193,7 +193,7 @@ public class SchoolRESTService extends AbstractRESTService {
   @GET
   public Response findSchoolVariableBySchool(@PathParam("SID") Long schoolId, @PathParam("ID") Long id) {
     School school = schoolController.findSchoolById(schoolId);
-    SchoolVariable schoolVariable = schoolController.findSchoolVariablesById(id);
+    SchoolVariable schoolVariable = schoolController.findSchoolVariableById(id);
     if (school != null && schoolVariable != null) {
       List<SchoolVariable> schoolVariables = school.getVariables();
       if (schoolVariables.contains(schoolVariable)) {
@@ -242,21 +242,25 @@ public class SchoolRESTService extends AbstractRESTService {
       return Response.ok()
           .entity(tranqualise(schoolController.unarchiveSchoolField(schoolField, getUser())))
           .build();
-  } else {
-    return Response.status(501).build();
-  }
+    } else {
+      return Response.status(501).build();
+    }
   }
   
   @Path("/variables/{ID:[0-9]*}")
   @PUT
   public Response updateSchoolVariable(@PathParam("ID") Long id, SchoolVariableEntity schoolVariableEntity) {
-    SchoolVariable schoolVariable = schoolController.findSchoolVariablesById(id);
+    SchoolVariable schoolVariable = schoolController.findSchoolVariableById(id);
     String value = schoolVariableEntity.getValue();
     if (schoolVariable != null && !StringUtils.isBlank(value)) {
       return Response.ok()
           .entity(tranqualise(schoolController.updateSchoolVariable(schoolVariable, value)))
           .build();
-    } else {
+    } else if (schoolVariableEntity.getArchived()) {
+      return Response.ok()
+          .entity(tranqualise(schoolController.unarchiveSchoolVariable(schoolVariable, getUser())))
+          .build();
+    }  else {
       return Response.status(501).build();
     }
   }
@@ -281,6 +285,19 @@ public class SchoolRESTService extends AbstractRESTService {
     if (schoolField != null) {
       return Response.ok()
           .entity(tranqualise(schoolController.archiveSchoolField(schoolField, getUser())))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/variables/{ID:[0-9]*}")
+  @DELETE
+  public Response archiveSchoolVariable(@PathParam("ID") Long id) {
+    SchoolVariable schoolVariable = schoolController.findSchoolVariableById(id);
+    if (schoolVariable != null) {
+      return Response.ok()
+          .entity(tranqualise(schoolController.archiveSchoolVariable(schoolVariable, getUser())))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();

@@ -1,15 +1,29 @@
 package fi.pyramus.domainmodel.base;
 
 import java.lang.Long;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FullTextFilterDef;
+import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import fi.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
 /**
  * Entity implementation class for Entity: CourseVariable
  *
  */
 @Entity
-public class SchoolVariable {
+@FullTextFilterDefs (
+  @FullTextFilterDef (
+     name="ArchivedSchoolVariable",
+     impl=ArchivedEntityFilterFactory.class
+  )
+)
+public class SchoolVariable implements ArchivableEntity {
 
 	public SchoolVariable() {
 		super();
@@ -51,6 +65,23 @@ public class SchoolVariable {
   public Long getVersion() {
     return version;
   }
+  
+  /**
+   * Sets archived status for this object
+   * 
+   * @param archived
+   */
+  public void setArchived(Boolean archived) {
+    this.archived = archived;
+  }
+
+  /**
+   * Sets archived status for this object
+   * @return
+   */
+  public Boolean getArchived() {
+    return archived;
+  }
 
 	@Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="SchoolVariable")  
@@ -71,4 +102,9 @@ public class SchoolVariable {
   @Version
   @Column(nullable = false)
   private Long version;
+  
+  @NotNull
+  @Column (nullable = false)
+  @Field
+  private Boolean archived = Boolean.FALSE;
 }

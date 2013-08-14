@@ -80,7 +80,7 @@ public class SchoolController {
     return schoolVariables;
   }
 
-  public SchoolVariable findSchoolVariablesById(Long id) {
+  public SchoolVariable findSchoolVariableById(Long id) {
       SchoolVariable schoolVariable = schoolVariableDAO.findById(id);
       return schoolVariable;
   }
@@ -117,14 +117,14 @@ public class SchoolController {
     return schoolField;
   }
 
-//  public SchoolVariable archiveSchoolVariable(SchoolVariable schoolVariable) {
-//    schoolVariableDAO.archive(schoolVariable);
-//    return schoolVariable;
-//  }
-//  
-//  public SchoolVariable unarchiveSchoolVariable(SchoolVariable schoolVariable) {
-//    schoolVariableDAO.unarchive(schoolVariable);
-//    return schoolVariable;
-//  }
+  public SchoolVariable archiveSchoolVariable(SchoolVariable schoolVariable, User user) {
+    schoolVariableDAO.archive(schoolVariable, user);
+    return schoolVariable;
+  }
+  
+  public SchoolVariable unarchiveSchoolVariable(SchoolVariable schoolVariable, User user) {
+    schoolVariableDAO.unarchive(schoolVariable, user);
+    return schoolVariable;
+  }
   
 }

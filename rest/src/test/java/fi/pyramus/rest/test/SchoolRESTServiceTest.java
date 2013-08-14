@@ -482,4 +482,46 @@ public class SchoolRESTServiceTest extends RestfulServiceTest {
     }
   }
 
+  @Test
+  public void testArchiveSchoolVariable() throws ClientProtocolException, IOException {
+    String path = "/schools/variables/1";
+
+    HttpResponse response = doDeleteRequest(path);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SchoolVariableEntity schoolVariableEntity = unserializeEntity(SchoolVariableEntity.class, EntityUtils.toString(entity));
+      assertNotNull(schoolVariableEntity);
+      assertEquals((Long) 1l, schoolVariableEntity.getId());
+      assertEquals(true, schoolVariableEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testUnarchiveSchoolVariable() throws ClientProtocolException, IOException {
+    String path = "/schools/variables/1";
+    StringEntity str = new StringEntity("{\"archived\":true}");
+    
+    HttpResponse response = doPutRequest(path,str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SchoolVariableEntity schoolVariableEntity = unserializeEntity(SchoolVariableEntity.class, EntityUtils.toString(entity));
+      assertNotNull(schoolVariableEntity);
+      assertEquals((Long) 1l, schoolVariableEntity.getId());
+      assertEquals(false, schoolVariableEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 }

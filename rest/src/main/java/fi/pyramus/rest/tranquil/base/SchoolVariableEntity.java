@@ -45,6 +45,15 @@ public class SchoolVariableEntity implements fi.tranquil.TranquilModelEntity {
   public void setKey_id(Long key_id) {
     this.key_id = key_id;
   }
+  
+  public Boolean getArchived() {
+    return archived;
+  }
+
+  public void setArchived(Boolean archived) {
+    this.archived = archived;
+  }
+
 
   private Long id;
 
@@ -55,6 +64,8 @@ public class SchoolVariableEntity implements fi.tranquil.TranquilModelEntity {
   private Long school_id;
 
   private Long key_id;
+  
+  private Boolean archived;
 
-  public final static String[] properties = {"id","value","version","school","key"};
+  public final static String[] properties = {"id","value","version","school","key","archived"};
 }
