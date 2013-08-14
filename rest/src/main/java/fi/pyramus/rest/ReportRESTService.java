@@ -133,10 +133,22 @@ public class ReportRESTService extends AbstractRESTService{
   public Response updateReport(@PathParam("ID") Long id, ReportEntity reportEntity) {
     Report report = reportController.findReportById(id);
     String name = reportEntity.getName();
-    if(report != null && !StringUtils.isBlank(name)) {
-      ReportCategory reportCategory = reportController.findReportCategoryById(reportEntity.getCategory_id());
+    String data = reportEntity.getData();
+    if (report != null && !StringUtils.isBlank(name)) {
+      Long categoryId = reportEntity.getCategory_id();
+      if (categoryId != null) {
+        ReportCategory reportCategory = reportController.findReportCategoryById(categoryId);
+        return Response.ok()
+            .entity(tranqualise(reportController.updateReport(report, name, reportCategory)))
+            .build();
+      } else {
+        return Response.ok()
+            .entity(tranqualise(reportController.updateReportName(report, name, getUser())))
+            .build(); 
+      }
+    } else if (!StringUtils.isBlank(data)) {
       return Response.ok()
-          .entity(tranqualise(reportController.updateReport(report, name, reportCategory)))
+          .entity(tranqualise(reportController.updateReportData(report,data,getUser())))
           .build();
     } else if (reportEntity.getArchived()) {
         return Response.ok()

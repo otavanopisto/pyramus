@@ -156,11 +156,12 @@ public class ReportRESTServiceTest extends RestfulServiceTest{
     }
   }
   
+  @Test
   public void testUpdateReport() throws ClientProtocolException, IOException {
 
     String path = "/reports/reports/1";
 
-    StringEntity str = new StringEntity("{\"name\":\"Updated ReportREST\",\"data\":\"rideableLlama\"}");
+    StringEntity str = new StringEntity("{\"name\":\"Updated ReportREST\"}");
 
     HttpResponse response = doPutRequest(path, str);
 
@@ -174,17 +175,18 @@ public class ReportRESTServiceTest extends RestfulServiceTest{
       assertNotNull(reportEntity);
       assertEquals((Long) 1l, reportEntity.getId());
       assertEquals("Updated ReportREST", reportEntity.getName());
-      assertEquals("rideableLlama", reportEntity.getData());
+      assertEquals("llama data", reportEntity.getData());
     } finally {
       EntityUtils.consume(entity);
     }
   }
   
+  @Test
   public void testUpdateReportCategory() throws ClientProtocolException, IOException {
 
-    String path = "/reportCategorys/reportCategorys/1";
+    String path = "/reports/categories/1";
 
-    StringEntity str = new StringEntity("{\"name\":\"Speacial Llamas\",\"indexColumn\":2}");
+    StringEntity str = new StringEntity("{\"name\":\"Special Llamas\",\"indexColumn\":2}");
 
     HttpResponse response = doPutRequest(path, str);
 

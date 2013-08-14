@@ -65,6 +65,16 @@ public class ReportController {
     return report;
   }
   
+  public Report updateReportName(Report report, String name, User user) {
+    reportDAO.updateName(report, name, user);
+    return report;
+  }
+  
+  public Report updateReportData(Report report, String data, User user) {
+    reportDAO.updateData(report, data, user);
+    return report;
+  }
+  
   public ReportCategory updateReportCategory(ReportCategory reportCategory, String name, Integer indexColumn) {
     reportCategoryDAO.update(reportCategory, name, indexColumn);
     return reportCategory;
