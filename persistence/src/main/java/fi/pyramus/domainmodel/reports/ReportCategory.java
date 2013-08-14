@@ -9,10 +9,27 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FullTextFilterDef;
+import org.hibernate.search.annotations.FullTextFilterDefs;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import fi.pyramus.domainmodel.base.ArchivableEntity;
+import fi.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
+
 @Entity
-public class ReportCategory {
+@Indexed
+@Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@FullTextFilterDefs (
+  @FullTextFilterDef (
+     name="ArchivedReportCategory",
+     impl=ArchivedEntityFilterFactory.class
+  )
+)
+public class ReportCategory implements ArchivableEntity {
 
   public Long getId() {
     return id;
@@ -42,6 +59,14 @@ public class ReportCategory {
   public Long getVersion() {
     return version;
   }
+  
+  public void setArchived(Boolean archived) {
+    this.archived = archived;
+  }
+
+  public Boolean getArchived() {
+    return archived;
+  }
 
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="ReportCategory")  
@@ -58,4 +83,9 @@ public class ReportCategory {
   @Version
   @Column(nullable = false)
   private Long version;
+  
+  @NotNull
+  @Column (nullable = false)
+  @Field
+  private Boolean archived = Boolean.FALSE;
 }

@@ -37,6 +37,14 @@ public class ReportCategoryEntity implements fi.tranquil.TranquilModelEntity {
   public void setVersion(Long version) {
     this.version = version;
   }
+  
+  public Boolean getArchived() {
+    return archived;
+  }
+
+  public void setArchived(Boolean archived) {
+    this.archived = archived;
+  }
 
   private Long id;
 
@@ -45,6 +53,8 @@ public class ReportCategoryEntity implements fi.tranquil.TranquilModelEntity {
   private Integer indexColumn;
 
   private Long version;
+  
+  private Boolean archived;
 
-  public final static String[] properties = {"id","name","indexColumn","version"};
+  public final static String[] properties = {"id","name","indexColumn","version","archived"};
 }
