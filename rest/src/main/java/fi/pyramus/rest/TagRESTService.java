@@ -6,18 +6,23 @@ import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
 
 import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.projects.Project;
+import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.tranquil.TranquilityBuilderFactory;
@@ -72,6 +77,21 @@ public class TagRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/tags/{ID:[0-9]*}/projects")
+  @GET
+  public Response findProjectsByTag(@PathParam("ID") Long id, @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    Tag tag = tagController.findTagById(id);
+    if (tag != null) {
+      String text = tag.getText();
+      SearchResult<Project> projects = tagController.findProjectsByTag(100, 0, text, filterArchived);
+      return Response.ok()
+          .entity(tranqualise(projects.getResults()))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/tags/{ID:[0-9]*}")
   @PUT
   public Response updateTagText(@PathParam("ID") Long id, TagEntity tagEntity) {
@@ -83,6 +103,18 @@ public class TagRESTService extends AbstractRESTService {
           .build();
     } else {
       return Response.status(500).build();
+    }
+  }
+  
+  @Path("/tags/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteTag(@PathParam("ID") Long id) {
+    Tag tag = tagController.findTagById(id);
+    if (tag != null) {
+      tagController.deleteTag(tag);
+      return Response.status(Status.OK).build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
     }
   }
 

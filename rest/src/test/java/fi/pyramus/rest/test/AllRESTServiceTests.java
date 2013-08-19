@@ -620,7 +620,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testSearchProjects() throws ClientProtocolException, IOException {
-    HttpResponse response = doGetRequest("/projects/projects?name=PyramusREST&tags=Test%20environment");
+    HttpResponse response = doGetRequest("/projects/projects?tags=Test%20environment");
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -662,7 +662,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
     String path = "/projects/projects/1";
 
-    StringEntity str = new StringEntity("{\"name\":\"Updating project\",\"description\":\"Testing if project update works\"}");
+    StringEntity str = new StringEntity("{\"name\":\"Updated project\",\"description\":\"Four legged llama\"}");
 
     HttpResponse response = doPutRequest(path, str);
 
@@ -675,8 +675,8 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       ProjectEntity projectEntity = unserializeEntity(ProjectEntity.class, EntityUtils.toString(entity));
       assertNotNull(projectEntity);
       assertEquals((Long) 1l, projectEntity.getId());
-      assertEquals("Updating project", projectEntity.getName());
-      assertEquals("Testing if project update works", projectEntity.getDescription());
+      assertEquals("Updated project", projectEntity.getName());
+      assertEquals("Four legged llama", projectEntity.getDescription());
     } finally {
       EntityUtils.consume(entity);
     }
@@ -738,15 +738,15 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       ProjectEntity[] projectEntities = unserializeEntity(ProjectEntity[].class, EntityUtils.toString(entity));
       assertNotNull(projectEntities);
       assertEquals(1, projectEntities.length);
-      assertEquals("Updating project", projectEntities[0].getName());
-      assertEquals("Testing if project update works", projectEntities[0].getDescription());
+      assertEquals("Updated project", projectEntities[0].getName());
+      assertEquals("Four legged llama", projectEntities[0].getDescription());
     } finally {
       EntityUtils.consume(entity);
     }
   }
 
   @Test
-  public void testDeleteProjectTag() throws ClientProtocolException, IOException {
+  public void testRemoveProjectTag() throws ClientProtocolException, IOException {
     String path = "/projects/projects/1/tags/1";
 
     HttpResponse response = doDeleteRequest(path);
@@ -1083,6 +1083,30 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
+  
+  @Test
+  public void testFindProjectsByTag()  throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"text\":\"Test environment\"}");
+
+    doPostRequest("/projects/projects/1/tags", str);
+
+    HttpResponse response = doGetRequest("/tags/tags/1/projects");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ProjectEntity[] projectEntities = unserializeEntity(ProjectEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(projectEntities);
+      assertEquals(1, projectEntities.length);
+      assertEquals("Updated project", projectEntities[0].getName());
+      assertEquals("Four legged llama", projectEntities[0].getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 
   @Test
   public void testUpdateTag() throws ClientProtocolException, IOException {
@@ -1107,4 +1131,13 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
+  
+  @Test
+  public void testDeleteTag() throws ClientProtocolException, IOException {
+    String path = "/tags/tags/2";
+    HttpResponse response = doDeleteRequest(path);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  }
+  
 }

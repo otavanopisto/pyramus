@@ -158,7 +158,7 @@ public class ProjectRESTService extends AbstractRESTService {
   
   @Path("/projects/{PID:[0-9]*}/tags/{ID:[0-9]*}")
   @DELETE
-  public Response deleteTags(@PathParam("PID") Long projectId, @PathParam("ID") Long tagId) {
+  public Response removeTag(@PathParam("PID") Long projectId, @PathParam("ID") Long tagId) {
     Project project = projectController.findProjectById(projectId);
     Tag tag = projectController.findTagById(tagId);
     if(project != null && tag != null) {

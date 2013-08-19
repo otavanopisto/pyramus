@@ -32,7 +32,10 @@ public class ProjectController {
   }
   
   public Tag createTag(Project project, String text) {
-    Tag tag = tagDAO.create(text);
+    Tag tag = tagDAO.findByText(text);
+    if (tag == null) {
+      tag = tagDAO.create(text);
+    }
     project.addTag(tag);
     return tag;
   }
