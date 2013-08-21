@@ -83,15 +83,15 @@ public class ProjectRESTService extends AbstractRESTService {
                               @QueryParam("tags") String tags,
                               @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     if (StringUtils.isBlank(name) && StringUtils.isBlank(description) && StringUtils.isBlank(tags)) {
-      List<Project> schools;
+      List<Project> projects;
       if (filterArchived) {
-        schools = projectController.findUnarchivedProjects();
+        projects = projectController.findUnarchivedProjects();
       } else {
-        schools = projectController.findProjects();
+        projects = projectController.findProjects();
       }
-      if (!schools.isEmpty()){
+      if (!projects.isEmpty()){
         return Response.ok()
-            .entity(tranqualise(schools))
+            .entity(tranqualise(projects))
             .build();
       } else {
         return Response.status(Status.NOT_FOUND).build();
