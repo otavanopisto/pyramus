@@ -22,9 +22,11 @@ import org.apache.commons.lang.StringUtils;
 
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Subject;
+import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.tranquil.base.EducationTypeEntity;
 import fi.pyramus.rest.tranquil.base.SubjectEntity;
+import fi.pyramus.rest.tranquil.grading.GradingScaleEntity;
 import fi.tranquil.TranquilityBuilderFactory;
 
 @Path("/common")
@@ -61,6 +63,20 @@ public class CommonRESTService extends AbstractRESTService {
     if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code) && educationType != null) {
       return Response.ok()
           .entity(tranqualise(commonController.createSubject(code, name, educationType)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/gradingScales")
+  @POST
+  public Response createGradingScale(GradingScaleEntity gradingScaleEntity) {
+    String name = gradingScaleEntity.getName();
+    String description = gradingScaleEntity.getDescription();
+    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description)) {
+      return Response.ok()
+          .entity(tranqualise(commonController.createGradingScale(name, description)))
           .build();
     } else {
       return Response.status(500).build();
@@ -142,6 +158,37 @@ public class CommonRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/gradingScales")
+  @GET
+  public Response findGradingScales(@DefaultValue("false") @QueryParam("filterARchived") boolean filterArchived) {
+    List<GradingScale> gradingScales;
+    if (filterArchived) {
+      gradingScales = commonController.findUnarchivedGradingScales();
+    } else {
+      gradingScales = commonController.findGradingScales();
+    }
+    if (!gradingScales.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(gradingScales))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/gradingScales/{ID:[0-9]*}")
+  @GET
+  public Response findGradingScalesById(@PathParam("ID") Long id) {
+    GradingScale gradingScale = commonController.findGradingScaleById(id);
+    if (gradingScale != null) {
+      return Response.ok()
+          .entity(tranqualise(gradingScale))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/educationTypes/{ID:[0-9]*}")
   @PUT
   public Response updateEducationType(@PathParam("ID") Long id, EducationTypeEntity educationTypeEntity) {
@@ -192,6 +239,30 @@ public class CommonRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/gradingScales/{ID:[0-9]*}")
+  @PUT
+  public Response updateGradingScale(@PathParam("ID") Long id, GradingScaleEntity gradingScaleEntity) {
+    GradingScale gradingScale = commonController.findGradingScaleById(id);
+    if (gradingScale != null) {
+      String name = gradingScaleEntity.getName();
+      String description = gradingScaleEntity.getDescription();
+      if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description)) {
+        return Response.ok()
+            .entity(tranqualise(commonController.updateGradingScale(gradingScale, name, description)))
+            .build();
+      }
+      if (!gradingScaleEntity.getArchived()) {
+        return Response.ok()
+            .entity(tranqualise(commonController.unarchiveGradingScale(gradingScale, getUser())))
+            .build();
+      } else {
+        return Response.status(500).build();
+      }
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/educationTypes/{ID:[0-9]*}")
   @DELETE
   public Response archiveEducationType(@PathParam("ID") Long id) {
@@ -209,9 +280,22 @@ public class CommonRESTService extends AbstractRESTService {
   @DELETE
   public Response archiveSubject(@PathParam("ID") Long id) {
     Subject subject = commonController.findSubjectById(id);
-    if(subject != null) {
+    if (subject != null) {
       return Response.ok()
           .entity(tranqualise(commonController.archiveSubject(subject, getUser())))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/gradingScales/{ID:[0-9]*}")
+  @DELETE
+  public Response archiveGradingScale(@PathParam("ID") Long id)  {
+    GradingScale gradingScale = commonController.findGradingScaleById(id);
+    if (gradingScale != null) {
+      return Response.ok()
+          .entity(tranqualise(commonController.archiveGradingScale(gradingScale, getUser())))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();

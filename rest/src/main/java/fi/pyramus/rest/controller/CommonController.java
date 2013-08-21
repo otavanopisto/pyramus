@@ -8,8 +8,10 @@ import javax.inject.Inject;
 
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.base.SubjectDAO;
+import fi.pyramus.dao.grading.GradingScaleDAO;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Subject;
+import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.users.User;
 
 @Dependent
@@ -19,6 +21,8 @@ public class CommonController {
   private EducationTypeDAO educationTypeDAO;
   @Inject
   private SubjectDAO subjectDAO;
+  @Inject
+  private GradingScaleDAO gradingScaleDAO;
   
   public EducationType createEducationType(String name, String code) {
     EducationType educationType = educationTypeDAO.create(name, code);
@@ -28,6 +32,11 @@ public class CommonController {
   public Subject createSubject(String code, String name, EducationType educationType) {
     Subject subject = subjectDAO.create(code, name, educationType);
     return subject;
+  }
+  
+  public GradingScale createGradingScale(String name, String description) {
+    GradingScale gradingScale = gradingScaleDAO.create(name, description);
+    return gradingScale;
   }
   
   public List<EducationType> findEducationTypes() {
@@ -65,6 +74,21 @@ public class CommonController {
     return subject;
   }
   
+  public List<GradingScale> findGradingScales() {
+    List<GradingScale> gradingScales = gradingScaleDAO.listAll();
+    return gradingScales;
+  }
+  
+  public List<GradingScale> findUnarchivedGradingScales() {
+    List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
+    return gradingScales;
+  }
+  
+  public GradingScale findGradingScaleById(Long id) {
+    GradingScale gradingScale = gradingScaleDAO.findById(id);
+    return gradingScale;
+  }
+  
   public EducationType updateEducationType(EducationType educationType, String name, String code) {
     educationTypeDAO.update(educationType, name, code);
     return educationType;
@@ -73,6 +97,11 @@ public class CommonController {
   public Subject updateSubject(Subject subject, String code, String name, EducationType educationType) {
     subjectDAO.update(subject, code, name, educationType);
     return subject;
+  }
+  
+  public GradingScale updateGradingScale(GradingScale gradingScale, String name, String description) {
+    gradingScaleDAO.update(gradingScale, name, description);
+    return gradingScale;
   }
   
   public EducationType archiveEducationType(EducationType educationType, User user) {
@@ -93,5 +122,15 @@ public class CommonController {
   public Subject unarchiveSubject(Subject subject, User user) {
     subjectDAO.unarchive(subject, user);
     return subject;
+  }
+  
+  public GradingScale archiveGradingScale(GradingScale gradingScale, User user) {
+    gradingScaleDAO.archive(gradingScale, user);
+    return gradingScale;
+  }
+  
+  public GradingScale unarchiveGradingScale(GradingScale gradingScale, User user) {
+    gradingScaleDAO.unarchive(gradingScale, user);
+    return gradingScale;
   }
 }

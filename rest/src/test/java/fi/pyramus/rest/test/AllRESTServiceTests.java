@@ -36,6 +36,7 @@ import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
 import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
 import fi.pyramus.rest.tranquil.base.SubjectEntity;
 import fi.pyramus.rest.tranquil.base.TagEntity;
+import fi.pyramus.rest.tranquil.grading.GradingScaleEntity;
 import fi.pyramus.rest.tranquil.projects.ProjectEntity;
 import fi.pyramus.rest.tranquil.reports.ReportCategoryEntity;
 import fi.pyramus.rest.tranquil.reports.ReportEntity;
@@ -1406,6 +1407,128 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertNotNull(subjectEntity);
       assertEquals((Long) 1l, subjectEntity.getId());
       assertEquals(false, subjectEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  // CommonRESTServiceTests GradingScales
+  
+  @Test
+  public void testCreateGradingScale() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"name\":\"Standard Grading\",\"description\":\"Basic gradingScale\"}");
+
+    HttpResponse response = doPostRequest("/common/gradingScales/", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      GradingScaleEntity gradingScaleEntity = unserializeEntity(GradingScaleEntity.class, EntityUtils.toString(entity));
+      assertNotNull(gradingScaleEntity);
+      assertEquals("Standard Grading", gradingScaleEntity.getName());
+      assertEquals("Basic gradingScale", gradingScaleEntity.getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindGradingScales() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/common/gradingScales/");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      GradingScaleEntity[] gradingScaleEntities = unserializeEntity(GradingScaleEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(gradingScaleEntities);
+      assertEquals(1, gradingScaleEntities.length);
+      assertEquals("Standard Grading", gradingScaleEntities[0].getName());
+      assertEquals("Basic gradingScale", gradingScaleEntities[0].getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindGradingScaleId() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/common/gradingScales/1");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      GradingScaleEntity gradingScaleEntity = unserializeEntity(GradingScaleEntity.class, EntityUtils.toString(entity));
+      assertNotNull(gradingScaleEntity);
+      assertEquals((Long) 1l, gradingScaleEntity.getId());
+      assertEquals("Standard Grading", gradingScaleEntity.getName());
+      assertEquals("Basic gradingScale", gradingScaleEntity.getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testUpdateGradingScale() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"name\":\"Llama Grading\",\"description\":\"GradingScale for llama's rideability\"}");
+
+    HttpResponse response = doPutRequest("/common/gradingScales/1", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      GradingScaleEntity gradingScaleEntity = unserializeEntity(GradingScaleEntity.class, EntityUtils.toString(entity));
+      assertNotNull(gradingScaleEntity);
+      assertEquals("Llama Grading", gradingScaleEntity.getName());
+      assertEquals("GradingScale for llama's rideability", gradingScaleEntity.getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testArchiveGradingScale() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/common/gradingScales/1");
+    
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      GradingScaleEntity gradingScaleEntity = unserializeEntity(GradingScaleEntity.class, EntityUtils.toString(entity));
+      assertNotNull(gradingScaleEntity);
+      assertEquals((Long) 1l, gradingScaleEntity.getId());
+      assertEquals(true, gradingScaleEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUnarchiveGradingScale() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"archived\":false}");
+    
+    HttpResponse response = doPutRequest("/common/gradingScales/1", str);
+    
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      GradingScaleEntity gradingScaleEntity = unserializeEntity(GradingScaleEntity.class, EntityUtils.toString(entity));
+      assertNotNull(gradingScaleEntity);
+      assertEquals((Long) 1l, gradingScaleEntity.getId());
+      assertEquals(false, gradingScaleEntity.getArchived());
     } finally {
       EntityUtils.consume(entity);
     }
