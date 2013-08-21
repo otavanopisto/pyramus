@@ -20,14 +20,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import fi.pyramus.domainmodel.base.School;
+import fi.pyramus.rest.CommonRESTService;
 import fi.pyramus.rest.ProjectRESTService;
 import fi.pyramus.rest.ReportRESTService;
 import fi.pyramus.rest.SchoolRESTService;
 import fi.pyramus.rest.TagRESTService;
+import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ProjectController;
 import fi.pyramus.rest.controller.ReportController;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.TagController;
+import fi.pyramus.rest.tranquil.base.EducationTypeEntity;
 import fi.pyramus.rest.tranquil.base.SchoolEntity;
 import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
 import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
@@ -53,7 +56,8 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   @OverProtocol("Servlet 3.0")
   public static Archive<?> createTestArchive() {
     Archive<?> archive = createArchive(InitialSchoolDataDescriptor.class, SchoolController.class, SchoolRESTService.class, ProjectController.class,
-        ProjectRESTService.class, ReportController.class, ReportRESTService.class, TagController.class, TagRESTService.class);
+        ProjectRESTService.class, ReportController.class, ReportRESTService.class, TagController.class, TagRESTService.class, CommonController.class,
+        CommonRESTService.class);
 
     return archive;
   }
@@ -1140,4 +1144,125 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     assertEquals(200, response.getStatusLine().getStatusCode());
   }
   
+  // CommonRESTServiceTests EducationTypes
+  
+  @Test
+  public void testCreateEducationType() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"name\":\"Etaopinto\",\"code\":\"EO1\"}");
+
+    HttpResponse response = doPostRequest("/common/educationTypes/", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      EducationTypeEntity educationTypeEntity = unserializeEntity(EducationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(educationTypeEntity);
+      assertEquals("Etaopinto", educationTypeEntity.getName());
+      assertEquals("EO1", educationTypeEntity.getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindEducationTypes() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/common/educationTypes/");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      EducationTypeEntity[] educationTypeEntities = unserializeEntity(EducationTypeEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(educationTypeEntities);
+      assertEquals(1, educationTypeEntities.length);
+      assertEquals("Etaopinto", educationTypeEntities[0].getName());
+      assertEquals("EO1", educationTypeEntities[0].getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindEducationTypeById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/common/educationTypes/1");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      EducationTypeEntity educationTypeEntity = unserializeEntity(EducationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(educationTypeEntity);
+      assertEquals((Long) 1l, educationTypeEntity.getId());
+      assertEquals("Etaopinto", educationTypeEntity.getName());
+      assertEquals("EO1", educationTypeEntity.getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testUpdateEducationType() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"name\":\"LlamaTeaching\",\"code\":\"Llama\"}");
+
+    HttpResponse response = doPutRequest("/common/educationTypes/1", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      EducationTypeEntity educationTypeEntity = unserializeEntity(EducationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(educationTypeEntity);
+      assertEquals("LlamaTeaching", educationTypeEntity.getName());
+      assertEquals("Llama", educationTypeEntity.getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testArchiveEducationType() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/common/educationTypes/1");
+    
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      EducationTypeEntity educationTypeEntity = unserializeEntity(EducationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(educationTypeEntity);
+      assertEquals((Long) 1l, educationTypeEntity.getId());
+      assertEquals(true, educationTypeEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUnarchiveEducationType() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"archived\":\"false\"}");
+    
+    HttpResponse response = doPutRequest("/common/educationTypes/1", str);
+    
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      EducationTypeEntity educationTypeEntity = unserializeEntity(EducationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(educationTypeEntity);
+      assertEquals((Long) 1l, educationTypeEntity.getId());
+      assertEquals(false, educationTypeEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 }
