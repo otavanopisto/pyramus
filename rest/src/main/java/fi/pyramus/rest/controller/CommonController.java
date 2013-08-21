@@ -7,9 +7,11 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.pyramus.dao.base.EducationTypeDAO;
+import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.SubjectDAO;
 import fi.pyramus.dao.grading.GradingScaleDAO;
 import fi.pyramus.domainmodel.base.EducationType;
+import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.users.User;
@@ -23,6 +25,8 @@ public class CommonController {
   private SubjectDAO subjectDAO;
   @Inject
   private GradingScaleDAO gradingScaleDAO;
+  @Inject
+  private EducationalTimeUnitDAO educationalTimeUnitDAO;
   
   public EducationType createEducationType(String name, String code) {
     EducationType educationType = educationTypeDAO.create(name, code);
@@ -37,6 +41,11 @@ public class CommonController {
   public GradingScale createGradingScale(String name, String description) {
     GradingScale gradingScale = gradingScaleDAO.create(name, description);
     return gradingScale;
+  }
+  
+  public EducationalTimeUnit createEducationalTimeUnit(Double baseUnits, String name) {
+    EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.create(baseUnits, name);
+    return educationalTimeUnit;
   }
   
   public List<EducationType> findEducationTypes() {
@@ -89,6 +98,21 @@ public class CommonController {
     return gradingScale;
   }
   
+  public List<EducationalTimeUnit> findEducationalTimeUnits() {
+    List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listAll();
+    return educationalTimeUnits;
+  }
+  
+  public List<EducationalTimeUnit> findUnarchivedEducationalTimeUnits() {
+    List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listUnarchived();
+    return educationalTimeUnits;
+  }
+  
+  public EducationalTimeUnit findEducationalTimeUnitById(Long id) {
+    EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.findById(id);
+    return educationalTimeUnit;
+  }
+  
   public EducationType updateEducationType(EducationType educationType, String name, String code) {
     educationTypeDAO.update(educationType, name, code);
     return educationType;
@@ -102,6 +126,11 @@ public class CommonController {
   public GradingScale updateGradingScale(GradingScale gradingScale, String name, String description) {
     gradingScaleDAO.update(gradingScale, name, description);
     return gradingScale;
+  }
+  
+  public EducationalTimeUnit updateEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, Double baseUnits, String name) {
+    educationalTimeUnitDAO.update(educationalTimeUnit, baseUnits, name);
+    return educationalTimeUnit;
   }
   
   public EducationType archiveEducationType(EducationType educationType, User user) {
@@ -132,5 +161,15 @@ public class CommonController {
   public GradingScale unarchiveGradingScale(GradingScale gradingScale, User user) {
     gradingScaleDAO.unarchive(gradingScale, user);
     return gradingScale;
+  }
+  
+  public EducationalTimeUnit archiveEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, User user) {
+    educationalTimeUnitDAO.archive(educationalTimeUnit, user);
+    return educationalTimeUnit;
+  }
+  
+  public EducationalTimeUnit unarchiveEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, User user) {
+    educationalTimeUnitDAO.unarchive(educationalTimeUnit, user);
+    return educationalTimeUnit;
   }
 }

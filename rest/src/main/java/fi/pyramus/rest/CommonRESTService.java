@@ -21,10 +21,12 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang.StringUtils;
 
 import fi.pyramus.domainmodel.base.EducationType;
+import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.tranquil.base.EducationTypeEntity;
+import fi.pyramus.rest.tranquil.base.EducationalTimeUnitEntity;
 import fi.pyramus.rest.tranquil.base.SubjectEntity;
 import fi.pyramus.rest.tranquil.grading.GradingScaleEntity;
 import fi.tranquil.TranquilityBuilderFactory;
@@ -77,6 +79,20 @@ public class CommonRESTService extends AbstractRESTService {
     if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description)) {
       return Response.ok()
           .entity(tranqualise(commonController.createGradingScale(name, description)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/educationalTimeUnits") 
+  @POST
+  public Response createEducationalTimeUnit(EducationalTimeUnitEntity educationalTimeUnitEntity) {
+    Double baseUnits = educationalTimeUnitEntity.getBaseUnits();
+    String name = educationalTimeUnitEntity.getName();
+    if (!StringUtils.isBlank(name) && baseUnits != null) {
+      return Response.ok()
+          .entity(tranqualise(commonController.createEducationalTimeUnit(baseUnits, name)))
           .build();
     } else {
       return Response.status(500).build();
@@ -160,7 +176,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/gradingScales")
   @GET
-  public Response findGradingScales(@DefaultValue("false") @QueryParam("filterARchived") boolean filterArchived) {
+  public Response findGradingScales(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<GradingScale> gradingScales;
     if (filterArchived) {
       gradingScales = commonController.findUnarchivedGradingScales();
@@ -183,6 +199,37 @@ public class CommonRESTService extends AbstractRESTService {
     if (gradingScale != null) {
       return Response.ok()
           .entity(tranqualise(gradingScale))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/educationalTimeUnits")
+  @GET
+  public Response findEducationalTimeUnits(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<EducationalTimeUnit> educationalTimeUnits;
+    if (filterArchived) {
+      educationalTimeUnits = commonController.findUnarchivedEducationalTimeUnits();
+    } else {
+      educationalTimeUnits = commonController.findEducationalTimeUnits();
+    }
+    if (!educationalTimeUnits.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(educationalTimeUnits))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/educationalTimeUnits/{ID:[0-9]*}")
+  @GET
+  public Response findEducationalTimeUnitsById(@PathParam("ID") Long id) {
+    EducationalTimeUnit educationalTimeUnit = commonController.findEducationalTimeUnitById(id);
+    if (educationalTimeUnit != null) {
+      return Response.ok()
+          .entity(tranqualise(educationalTimeUnit))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
@@ -263,6 +310,30 @@ public class CommonRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/educationalTimeUnits/{ID:[0-9]*}")
+  @PUT
+  public Response updateEducationalTimeUnit(@PathParam("ID") Long id, EducationalTimeUnitEntity educationalTimeUnitEntity) {
+    EducationalTimeUnit educationalTimeUnit = commonController.findEducationalTimeUnitById(id);
+    if (educationalTimeUnit != null) {
+      Double baseUnits = educationalTimeUnitEntity.getBaseUnits();
+      String name = educationalTimeUnitEntity.getName();
+      if (!StringUtils.isBlank(name) && baseUnits != null) {
+        return Response.ok()
+            .entity(tranqualise(commonController.updateEducationalTimeUnit(educationalTimeUnit, baseUnits, name)))
+            .build();
+      }
+      if (!educationalTimeUnitEntity.getArchived()) {
+        return Response.ok()
+            .entity(tranqualise(commonController.unarchiveEducationalTimeUnit(educationalTimeUnit, getUser())))
+            .build();
+      } else {
+        return Response.status(500).build();
+      }
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/educationTypes/{ID:[0-9]*}")
   @DELETE
   public Response archiveEducationType(@PathParam("ID") Long id) {
@@ -296,6 +367,19 @@ public class CommonRESTService extends AbstractRESTService {
     if (gradingScale != null) {
       return Response.ok()
           .entity(tranqualise(commonController.archiveGradingScale(gradingScale, getUser())))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/educationalTimeUnits/{ID:[0-9]*}")
+  @DELETE
+  public Response archiveEducationalTimeUnit(@PathParam("ID") Long id) {
+    EducationalTimeUnit educationalTimeUnit = commonController.findEducationalTimeUnitById(id);
+    if (educationalTimeUnit != null) {
+      return Response.ok()
+          .entity(tranqualise(commonController.archiveEducationalTimeUnit(educationalTimeUnit, getUser())))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
