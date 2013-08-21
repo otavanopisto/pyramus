@@ -436,7 +436,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   @Test
   public void testUnarchiveSchool() throws ClientProtocolException, IOException {
     String path = "/schools/schools/2";
-    StringEntity str = new StringEntity("{\"archived\":true}");
+    StringEntity str = new StringEntity("{\"archived\":false}");
 
     HttpResponse response = doPutRequest(path, str);
 
@@ -479,7 +479,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   @Test
   public void testUnarchiveSchoolField() throws ClientProtocolException, IOException {
     String path = "/schools/schoolFields/2";
-    StringEntity str = new StringEntity("{\"archived\":true}");
+    StringEntity str = new StringEntity("{\"archived\":false}");
 
     HttpResponse response = doPutRequest(path, str);
 
@@ -522,7 +522,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   @Test
   public void testUnarchiveSchoolVariable() throws ClientProtocolException, IOException {
     String path = "/schools/variables/1";
-    StringEntity str = new StringEntity("{\"archived\":true}");
+    StringEntity str = new StringEntity("{\"archived\":false}");
 
     HttpResponse response = doPutRequest(path, str);
 
@@ -710,7 +710,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   @Test
   public void testUnarchiveProject() throws ClientProtocolException, IOException {
     String path = "/projects/projects/1";
-    StringEntity str = new StringEntity("{\"archived\":true}");
+    StringEntity str = new StringEntity("{\"archived\":false}");
 
     HttpResponse response = doPutRequest(path, str);
 
@@ -965,7 +965,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   @Test
   public void testUnarchiveReport() throws ClientProtocolException, IOException {
     String path = "/reports/reports/1";
-    StringEntity str = new StringEntity("{\"archived\":true}");
+    StringEntity str = new StringEntity("{\"archived\":false}");
 
     HttpResponse response = doPutRequest(path, str);
 
@@ -1008,7 +1008,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   @Test
   public void testUnarchiveReportCategory() throws ClientProtocolException, IOException {
     String path = "/reports/categories/1";
-    StringEntity str = new StringEntity("{\"archived\":true}");
+    StringEntity str = new StringEntity("{\"archived\":false}");
 
     HttpResponse response = doPutRequest(path, str);
 
@@ -1247,7 +1247,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveEducationType() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"archived\":\"false\"}");
+    StringEntity str = new StringEntity("{\"archived\":false}");
     
     HttpResponse response = doPutRequest("/common/educationTypes/1", str);
     

@@ -147,7 +147,7 @@ public class ProjectRESTService extends AbstractRESTService {
       return Response.ok()
           .entity(tranqualise(projectController.updateProject(project, name, description, optionalStudiesLength, timeUnit, getUser())))
           .build();
-    } else if (projectEntity.getArchived()) {
+    } else if (!projectEntity.getArchived()) {
         return Response.ok()
             .entity(tranqualise(projectController.unarchiveProject(project, getUser())))
             .build();

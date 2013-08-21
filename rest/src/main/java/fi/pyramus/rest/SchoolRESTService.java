@@ -220,7 +220,7 @@ public class SchoolRESTService extends AbstractRESTService {
       return Response.ok()
           .entity(tranqualise(schoolController.updateSchool(school, schoolCode, schoolName, schoolField)))
           .build();
-    } else if (schoolEntity.getArchived()) {
+    } else if (!schoolEntity.getArchived()) {
         return Response.ok()
             .entity(tranqualise(schoolController.unarchiveSchool(school, getUser())))
             .build();
@@ -238,7 +238,7 @@ public class SchoolRESTService extends AbstractRESTService {
       return Response.ok()
           .entity(tranqualise(schoolController.updateSchoolField(schoolField, name)))
           .build();
-    } else if (schoolFieldEntity.getArchived()) {
+    } else if (!schoolFieldEntity.getArchived()) {
       return Response.ok()
           .entity(tranqualise(schoolController.unarchiveSchoolField(schoolField, getUser())))
           .build();
@@ -256,7 +256,7 @@ public class SchoolRESTService extends AbstractRESTService {
       return Response.ok()
           .entity(tranqualise(schoolController.updateSchoolVariable(schoolVariable, value)))
           .build();
-    } else if (schoolVariableEntity.getArchived()) {
+    } else if (!schoolVariableEntity.getArchived()) {
       return Response.ok()
           .entity(tranqualise(schoolController.unarchiveSchoolVariable(schoolVariable, getUser())))
           .build();

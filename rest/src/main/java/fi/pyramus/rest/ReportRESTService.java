@@ -150,7 +150,7 @@ public class ReportRESTService extends AbstractRESTService{
       return Response.ok()
           .entity(tranqualise(reportController.updateReportData(report,data,getUser())))
           .build();
-    } else if (reportEntity.getArchived()) {
+    } else if (!reportEntity.getArchived()) {
         return Response.ok()
             .entity(tranqualise(reportController.unarchiveReport(report, getUser())))
             .build();
@@ -169,7 +169,7 @@ public class ReportRESTService extends AbstractRESTService{
       return Response.ok()
           .entity(tranqualise(reportController.updateReportCategory(reportCategory, name, indexColumn)))
           .build();
-    } else if (reportCategoryEntity.getArchived()) {
+    } else if (!reportCategoryEntity.getArchived()) {
         return Response.ok()
             .entity(tranqualise(reportController.unarchiveReportCategory(reportCategory, getUser())))
             .build();
