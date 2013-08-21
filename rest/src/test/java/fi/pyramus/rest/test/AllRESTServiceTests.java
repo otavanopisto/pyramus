@@ -34,6 +34,7 @@ import fi.pyramus.rest.tranquil.base.EducationTypeEntity;
 import fi.pyramus.rest.tranquil.base.SchoolEntity;
 import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
 import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
+import fi.pyramus.rest.tranquil.base.SubjectEntity;
 import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.projects.ProjectEntity;
 import fi.pyramus.rest.tranquil.reports.ReportCategoryEntity;
@@ -1261,6 +1262,150 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertNotNull(educationTypeEntity);
       assertEquals((Long) 1l, educationTypeEntity.getId());
       assertEquals(false, educationTypeEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  // CommonRESTServiceTests Subjects
+  
+  @Test
+  public void testCreateSubject() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"name\":\"Basic Math\",\"code\":\"BM1\", \"educationType_id\":1}");
+
+    HttpResponse response = doPostRequest("/common/subjects/", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SubjectEntity subjectEntity = unserializeEntity(SubjectEntity.class, EntityUtils.toString(entity));
+      assertNotNull(subjectEntity);
+      assertEquals("Basic Math", subjectEntity.getName());
+      assertEquals("BM1", subjectEntity.getCode());
+      assertEquals((Long) 1l, subjectEntity.getEducationType_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindSubjects() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/common/subjects/");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SubjectEntity[] subjectEntities = unserializeEntity(SubjectEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(subjectEntities);
+      assertEquals(1, subjectEntities.length);
+      assertEquals("Basic Math", subjectEntities[0].getName());
+      assertEquals("BM1", subjectEntities[0].getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindSubjectId() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/common/subjects/1");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SubjectEntity subjectEntity = unserializeEntity(SubjectEntity.class, EntityUtils.toString(entity));
+      assertNotNull(subjectEntity);
+      assertEquals((Long) 1l, subjectEntity.getId());
+      assertEquals("Basic Math", subjectEntity.getName());
+      assertEquals("BM1", subjectEntity.getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testFindSubjectsByEducationType() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/common/educationTypes/1/subjects");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SubjectEntity[] subjectEntities = unserializeEntity(SubjectEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(subjectEntities);
+      assertEquals(1, subjectEntities.length);
+      assertEquals("Basic Math", subjectEntities[0].getName());
+      assertEquals("BM1", subjectEntities[0].getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testUpdateSubject() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"name\":\"Llama Math\",\"code\":\"LM1\", \"educationType_id\":1}");
+
+    HttpResponse response = doPutRequest("/common/subjects/1", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SubjectEntity subjectEntity = unserializeEntity(SubjectEntity.class, EntityUtils.toString(entity));
+      assertNotNull(subjectEntity);
+      assertEquals("Llama Math", subjectEntity.getName());
+      assertEquals("LM1", subjectEntity.getCode());
+      assertEquals((Long) 1l, subjectEntity.getEducationType_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testArchiveSubject() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/common/subjects/1");
+    
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SubjectEntity subjectEntity = unserializeEntity(SubjectEntity.class, EntityUtils.toString(entity));
+      assertNotNull(subjectEntity);
+      assertEquals((Long) 1l, subjectEntity.getId());
+      assertEquals(true, subjectEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUnarchiveSubject() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"archived\":false}");
+    
+    HttpResponse response = doPutRequest("/common/subjects/1", str);
+    
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SubjectEntity subjectEntity = unserializeEntity(SubjectEntity.class, EntityUtils.toString(entity));
+      assertNotNull(subjectEntity);
+      assertEquals((Long) 1l, subjectEntity.getId());
+      assertEquals(false, subjectEntity.getArchived());
     } finally {
       EntityUtils.consume(entity);
     }
