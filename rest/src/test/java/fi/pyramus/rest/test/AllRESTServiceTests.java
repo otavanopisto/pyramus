@@ -1413,6 +1413,26 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     }
   }
   
+  @Test
+  public void testSearchSubjects() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/common/subjects/?text=Llama");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      SubjectEntity[] subjectEntities = unserializeEntity(SubjectEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(subjectEntities);
+      assertEquals(1, subjectEntities.length);
+      assertEquals("Llama Math", subjectEntities[0].getName());
+      assertEquals("LM1", subjectEntities[0].getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
   // CommonRESTServiceTests GradingScales
   
   @Test

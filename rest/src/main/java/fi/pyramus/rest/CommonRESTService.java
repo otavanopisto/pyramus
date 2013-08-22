@@ -24,6 +24,7 @@ import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.grading.GradingScale;
+import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.tranquil.base.EducationTypeEntity;
 import fi.pyramus.rest.tranquil.base.EducationalTimeUnitEntity;
@@ -145,19 +146,26 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/subjects")
   @GET
-  public Response findSubjects(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-    List<Subject> subjects;
-    if (filterArchived) {
-      subjects = commonController.findUnarchivedSubjects();
+  public Response findSubjects(@QueryParam("text") String text, @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    if(StringUtils.isBlank(text)) {
+      List<Subject> subjects;
+      if (filterArchived) {
+        subjects = commonController.findUnarchivedSubjects();
+      } else {
+        subjects = commonController.findSubjects();
+      }
+      if (!subjects.isEmpty()) {
+        return Response.ok()
+            .entity(tranqualise(subjects))
+            .build();
+      } else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
     } else {
-      subjects = commonController.findSubjects();
-    }
-    if (!subjects.isEmpty()) {
+      SearchResult<Subject> subjects = commonController.searchSubjects(100, 0, text);
       return Response.ok()
-          .entity(tranqualise(subjects))
+          .entity(tranqualise(subjects.getResults()))
           .build();
-    } else {
-      return Response.status(Status.NOT_FOUND).build();
     }
   }
   

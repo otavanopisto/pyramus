@@ -15,6 +15,7 @@ import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.persistence.search.SearchResult;
 
 @Dependent
 @Stateless
@@ -111,6 +112,11 @@ public class CommonController {
   public EducationalTimeUnit findEducationalTimeUnitById(Long id) {
     EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.findById(id);
     return educationalTimeUnit;
+  }
+  
+  public SearchResult<Subject> searchSubjects(int resultsPerPage, int page, String text) {
+    SearchResult<Subject> subjects = subjectDAO.searchSubjectsBasic(resultsPerPage, page, text);
+    return subjects;
   }
   
   public EducationType updateEducationType(EducationType educationType, String name, String code) {
