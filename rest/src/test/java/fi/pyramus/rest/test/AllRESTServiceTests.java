@@ -1,6 +1,7 @@
 package fi.pyramus.rest.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -21,11 +22,13 @@ import org.junit.runner.RunWith;
 
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.rest.CommonRESTService;
+import fi.pyramus.rest.ModuleRESTService;
 import fi.pyramus.rest.ProjectRESTService;
 import fi.pyramus.rest.ReportRESTService;
 import fi.pyramus.rest.SchoolRESTService;
 import fi.pyramus.rest.TagRESTService;
 import fi.pyramus.rest.controller.CommonController;
+import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
 import fi.pyramus.rest.controller.ReportController;
 import fi.pyramus.rest.controller.SchoolController;
@@ -38,6 +41,7 @@ import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
 import fi.pyramus.rest.tranquil.base.SubjectEntity;
 import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.grading.GradingScaleEntity;
+import fi.pyramus.rest.tranquil.modules.ModuleEntity;
 import fi.pyramus.rest.tranquil.projects.ProjectEntity;
 import fi.pyramus.rest.tranquil.reports.ReportCategoryEntity;
 import fi.pyramus.rest.tranquil.reports.ReportEntity;
@@ -60,7 +64,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   public static Archive<?> createTestArchive() {
     Archive<?> archive = createArchive(InitialSchoolDataDescriptor.class, SchoolController.class, SchoolRESTService.class, ProjectController.class,
         ProjectRESTService.class, ReportController.class, ReportRESTService.class, TagController.class, TagRESTService.class, CommonController.class,
-        CommonRESTService.class);
+        CommonRESTService.class, ModuleController.class, ModuleRESTService.class);
 
     return archive;
   }
@@ -1090,9 +1094,9 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   @Test
-  public void testFindProjectsByTag()  throws ClientProtocolException, IOException {
+  public void testFindProjectsByTag() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"text\":\"Test environment\"}");
 
     doPostRequest("/projects/projects/1/tags", str);
@@ -1138,7 +1142,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   @Test
   public void testDeleteTag() throws ClientProtocolException, IOException {
     String path = "/tags/tags/2";
@@ -1146,9 +1150,9 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
     assertEquals(200, response.getStatusLine().getStatusCode());
   }
-  
+
   // CommonRESTServiceTests EducationTypes
-  
+
   @Test
   public void testCreateEducationType() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"name\":\"Etaopinto\",\"code\":\"EO1\"}");
@@ -1208,7 +1212,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   @Test
   public void testUpdateEducationType() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"name\":\"LlamaTeaching\",\"code\":\"Llama\"}");
@@ -1228,13 +1232,13 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   @Test
   public void testArchiveEducationType() throws ClientProtocolException, IOException {
     HttpResponse response = doDeleteRequest("/common/educationTypes/1");
-    
+
     assertEquals(200, response.getStatusLine().getStatusCode());
-    
+
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
@@ -1251,11 +1255,11 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   @Test
   public void testUnarchiveEducationType() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"archived\":false}");
-    
+
     HttpResponse response = doPutRequest("/common/educationTypes/1", str);
-    
+
     assertEquals(200, response.getStatusLine().getStatusCode());
-    
+
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
@@ -1268,9 +1272,9 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   // CommonRESTServiceTests Subjects
-  
+
   @Test
   public void testCreateSubject() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"name\":\"Basic Math\",\"code\":\"BM1\", \"educationType_id\":1}");
@@ -1331,7 +1335,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   @Test
   public void testFindSubjectsByEducationType() throws ClientProtocolException, IOException {
     HttpResponse response = doGetRequest("/common/educationTypes/1/subjects");
@@ -1351,7 +1355,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   @Test
   public void testUpdateSubject() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"name\":\"Llama Math\",\"code\":\"LM1\", \"educationType_id\":1}");
@@ -1372,13 +1376,13 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   @Test
   public void testArchiveSubject() throws ClientProtocolException, IOException {
     HttpResponse response = doDeleteRequest("/common/subjects/1");
-    
+
     assertEquals(200, response.getStatusLine().getStatusCode());
-    
+
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
@@ -1395,11 +1399,11 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   @Test
   public void testUnarchiveSubject() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"archived\":false}");
-    
+
     HttpResponse response = doPutRequest("/common/subjects/1", str);
-    
+
     assertEquals(200, response.getStatusLine().getStatusCode());
-    
+
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
@@ -1412,7 +1416,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   @Test
   public void testSearchSubjects() throws ClientProtocolException, IOException {
     HttpResponse response = doGetRequest("/common/subjects/?text=Llama");
@@ -1432,9 +1436,9 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   // CommonRESTServiceTests GradingScales
-  
+
   @Test
   public void testCreateGradingScale() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"name\":\"Standard Grading\",\"description\":\"Basic gradingScale\"}");
@@ -1494,7 +1498,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   @Test
   public void testUpdateGradingScale() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"name\":\"Llama Grading\",\"description\":\"GradingScale for llama's rideability\"}");
@@ -1514,13 +1518,13 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   @Test
   public void testArchiveGradingScale() throws ClientProtocolException, IOException {
     HttpResponse response = doDeleteRequest("/common/gradingScales/1");
-    
+
     assertEquals(200, response.getStatusLine().getStatusCode());
-    
+
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
@@ -1537,11 +1541,11 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   @Test
   public void testUnarchiveGradingScale() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"archived\":false}");
-    
+
     HttpResponse response = doPutRequest("/common/gradingScales/1", str);
-    
+
     assertEquals(200, response.getStatusLine().getStatusCode());
-    
+
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
@@ -1554,9 +1558,9 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   // CommonRESTServiceTests EducationalTimeUnits
-  
+
   @Test
   public void testCreateEducationalTimeUnit() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"name\":\"Standard timeUnit\",\"baseUnits\": 60}");
@@ -1616,7 +1620,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   @Test
   public void testUpdateEducationalTimeUnit() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"name\":\"Llama Time\",\"baseUnits\":4}");
@@ -1636,13 +1640,13 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
   @Test
   public void testArchiveEducationalTimeUnit() throws ClientProtocolException, IOException {
     HttpResponse response = doDeleteRequest("/common/educationalTimeUnits/1");
-    
+
     assertEquals(200, response.getStatusLine().getStatusCode());
-    
+
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
@@ -1659,11 +1663,11 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   @Test
   public void testUnarchiveEducationalTimeUnit() throws ClientProtocolException, IOException {
     StringEntity str = new StringEntity("{\"archived\":false}");
-    
+
     HttpResponse response = doPutRequest("/common/educationalTimeUnits/1", str);
-    
+
     assertEquals(200, response.getStatusLine().getStatusCode());
-    
+
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
@@ -1676,5 +1680,136 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
+
+  // ModuleRESTServiceTests
+
+  @Test
+  public void testCreateModule() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity(
+        "{\"name\":\"Basic module\",\"subject_id\":1,\"courseNumber\":1,\"courseLength_id\":1,\"description\":\"module for unitTesting\",\"maxParticipantCount\":20}");
+
+    HttpResponse response = doPostRequest("/modules/modules/", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ModuleEntity moduleEntity = unserializeEntity(ModuleEntity.class, EntityUtils.toString(entity));
+      assertNotNull(moduleEntity);
+      assertEquals("Basic module", moduleEntity.getName());
+      assertEquals((Long) 1l, moduleEntity.getSubject_id());
+      assertEquals((Integer) 1, moduleEntity.getCourseNumber());
+      assertEquals("module for unitTesting", moduleEntity.getDescription());
+      assertEquals((Long) 20l, moduleEntity.getMaxParticipantCount());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindModules() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/modules/modules/");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ModuleEntity[] moduleEntities = unserializeEntity(ModuleEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(moduleEntities);
+      assertEquals(1, moduleEntities.length);
+      assertEquals("Basic module", moduleEntities[0].getName());
+      assertEquals("module for unitTesting", moduleEntities[0].getDescription());
+      assertEquals((Long) 20l, moduleEntities[0].getMaxParticipantCount());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindModuleById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/modules/modules/1");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ModuleEntity moduleEntity = unserializeEntity(ModuleEntity.class, EntityUtils.toString(entity));
+      assertNotNull(moduleEntity);
+      assertEquals((Long) 1l, moduleEntity.getId());
+      assertEquals("Basic module", moduleEntity.getName());
+      assertEquals("module for unitTesting", moduleEntity.getDescription());
+      assertEquals((Long) 20l, moduleEntity.getMaxParticipantCount());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateModule() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity(
+        "{\"name\":\"Llama module\",\"subject_id\":1,\"courseNumber\":1,\"courseLength_id\":1,\"description\":\"module for llamas\",\"maxParticipantCount\":12}");
+
+    HttpResponse response = doPutRequest("/modules/modules/1", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ModuleEntity moduleEntity = unserializeEntity(ModuleEntity.class, EntityUtils.toString(entity));
+      assertNotNull(moduleEntity);
+      assertEquals("Llama module", moduleEntity.getName());
+      assertEquals((Long) 1l, moduleEntity.getSubject_id());
+      assertEquals((Integer) 1, moduleEntity.getCourseNumber());
+      assertEquals("module for llamas", moduleEntity.getDescription());
+      assertEquals((Long) 12l, moduleEntity.getMaxParticipantCount());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testArchiveModule() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/modules/modules/1");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ModuleEntity moduleEntity = unserializeEntity(ModuleEntity.class, EntityUtils.toString(entity));
+      assertNotNull(moduleEntity);
+      assertEquals((Long) 1l, moduleEntity.getId());
+      assertEquals(true, moduleEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUnarchiveModule() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"archived\":false}");
+
+    HttpResponse response = doPutRequest("/modules/modules/1", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ModuleEntity moduleEntity = unserializeEntity(ModuleEntity.class, EntityUtils.toString(entity));
+      assertNotNull(moduleEntity);
+      assertEquals((Long) 1l, moduleEntity.getId());
+      assertEquals(false, moduleEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 }
