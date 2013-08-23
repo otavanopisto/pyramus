@@ -1,5 +1,6 @@
 package fi.pyramus.rest.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -7,9 +8,12 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.pyramus.dao.modules.ModuleDAO;
+import fi.pyramus.dao.projects.ProjectModuleDAO;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.modules.Module;
+import fi.pyramus.domainmodel.projects.Project;
+import fi.pyramus.domainmodel.projects.ProjectModule;
 import fi.pyramus.domainmodel.users.User;
 
 @Dependent
@@ -17,6 +21,8 @@ import fi.pyramus.domainmodel.users.User;
 public class ModuleController {
   @Inject
   private ModuleDAO moduleDAO;
+  @Inject
+  private ProjectModuleDAO projectModuleDAO;
 
   public Module createModule(String name, Subject subject, Integer courseNumber, Double moduleLength, EducationalTimeUnit moduleLengthTimeUnit,
       String description, Long maxParticipantCount, User user) {
@@ -37,6 +43,17 @@ public class ModuleController {
   public Module findModuleById(Long id) {
     Module module = moduleDAO.findById(id);
     return module;
+  }
+  
+  public List<Project> findProjects(Long id) {
+    List<Project> projects = new ArrayList<Project>();
+    List<ProjectModule> projectModules = projectModuleDAO.listAll();
+    for (ProjectModule projectModule : projectModules) {
+      if(projectModule.getModule().getId().equals(id)) {
+        projects.add(projectModule.getProject());
+      }
+    }
+    return projects;
   }
 
   public Module updateModule(Module module, String name, Subject subject, Integer courseNumber, Double length, EducationalTimeUnit lengthTimeUnit,

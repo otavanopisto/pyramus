@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.modules.Module;
+import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.tranquil.modules.ModuleEntity;
@@ -89,6 +90,19 @@ public class ModuleRESTService extends AbstractRESTService{
     if (module != null) {
       return Response.ok()
           .entity(tranqualise(module))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/modules/{ID:[0-9]*}/projects")
+  @GET
+  public Response findProjects(@PathParam("ID") Long id) {
+    List<Project> projects = moduleController.findProjects(id);
+    if (!projects.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(projects))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();

@@ -1860,6 +1860,27 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   }
   
   @Test
+  public void testFindProjectsByModule() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/modules/modules/1/projects");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ProjectEntity[] projectEntities = unserializeEntity(ProjectEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(projectEntities);
+      assertEquals(1, projectEntities.length);
+      assertEquals("Updated project", projectEntities[0].getName());
+      assertEquals("Four legged llama", projectEntities[0].getDescription());
+      assertEquals((Long) 1l,projectEntities[0].getId());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
   public void testDeleteProjectModule() throws ClientProtocolException, IOException {
     HttpResponse response = doDeleteRequest("/projects/projects/1/modules/1");
 
