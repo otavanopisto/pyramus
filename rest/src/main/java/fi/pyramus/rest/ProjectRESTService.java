@@ -28,6 +28,7 @@ import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.domainmodel.projects.ProjectModule;
 import fi.pyramus.domainmodel.projects.ProjectModuleOptionality;
 import fi.pyramus.persistence.search.SearchResult;
+import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
 import fi.pyramus.rest.tranquil.base.TagEntity;
@@ -47,6 +48,8 @@ public class ProjectRESTService extends AbstractRESTService {
   private ProjectController projectController;
   @Inject
   private ModuleController moduleController;
+  @Inject
+  private CommonController commonController;
 
   @Path("/projects")
   @POST
@@ -57,7 +60,7 @@ public class ProjectRESTService extends AbstractRESTService {
     String description = projectEntity.getDescription();
     Long optionalStudiesLengthId = projectEntity.getOptionalStudiesLength_id();
     if(optionalStudiesLengthId != null) {
-      timeUnit = projectController.findEducationalTimeUnitById(optionalStudiesLengthId);
+      timeUnit = commonController.findEducationalTimeUnitById(optionalStudiesLengthId);
       optionalStudiesLength = timeUnit.getBaseUnits();
     }
     if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description) ) {

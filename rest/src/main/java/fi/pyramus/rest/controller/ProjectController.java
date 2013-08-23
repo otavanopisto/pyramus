@@ -7,7 +7,6 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.projects.ProjectDAO;
 import fi.pyramus.dao.projects.ProjectModuleDAO;
@@ -27,8 +26,6 @@ public class ProjectController {
   private ProjectDAO projectDAO;
   @Inject
   private TagDAO tagDAO;
-  @Inject
-  private EducationalTimeUnitDAO educationalTimeUnitDAO;
   @Inject
   private ProjectModuleDAO projectModuleDAO;
 
@@ -69,11 +66,6 @@ public class ProjectController {
   public SearchResult<Project> searchProjects(int resultsPerPage, int page,String name, String description,  String tags, boolean filterArchived) {
     SearchResult<Project> projects = projectDAO.searchProjects(resultsPerPage, page, name, description, tags, filterArchived);
     return projects;
-  }
-  
-  public EducationalTimeUnit findEducationalTimeUnitById(Long id) {
-    EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.findById(id);
-    return educationalTimeUnit;
   }
   
   public List<ProjectModule> findProjectModules(Project project) {
