@@ -23,11 +23,16 @@ import org.apache.commons.lang.StringUtils;
 
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.projects.Project;
+import fi.pyramus.domainmodel.projects.ProjectModule;
+import fi.pyramus.domainmodel.projects.ProjectModuleOptionality;
 import fi.pyramus.persistence.search.SearchResult;
+import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
 import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.projects.ProjectEntity;
+import fi.pyramus.rest.tranquil.projects.ProjectModuleEntity;
 import fi.tranquil.TranquilityBuilderFactory;
 
 @Path("/projects")
@@ -40,6 +45,8 @@ public class ProjectRESTService extends AbstractRESTService {
   private TranquilityBuilderFactory tranquilityBuilderFactory;
   @Inject
   private ProjectController projectController;
+  @Inject
+  private ModuleController moduleController;
 
   @Path("/projects")
   @POST
@@ -59,6 +66,25 @@ public class ProjectRESTService extends AbstractRESTService {
           .build();
     } else {
       return Response.status(501).build();
+    }
+  }
+  
+  @Path("/projects/{ID:[0-9]*}/modules")
+  @POST
+  public Response createModule(@PathParam("ID") Long id, ProjectModuleEntity moduleEntity) {
+    try {
+      Project project = projectController.findProjectById(id);
+      Module module = moduleController.findModuleById(moduleEntity.getModule_id());
+      ProjectModuleOptionality optionality = moduleEntity.getOptionality();
+      if (project != null && module != null && optionality != null) {
+        return Response.ok()
+            .entity(tranqualise(projectController.createProjectModule(project, module, optionality)))
+            .build();
+      } else {
+        return Response.status(500).build();
+      }
+    } catch (NullPointerException e) {
+      return Response.status(Status.NOT_FOUND).build();
     }
   }
   
@@ -121,11 +147,24 @@ public class ProjectRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/projects/{ID:[0-9]*}/modules")
+  @GET
+  public Response findProjectModules(@PathParam("ID") Long id) {
+    Project project = projectController.findProjectById(id);
+    if (project != null) {
+      return Response.ok()
+          .entity(tranqualise(projectController.findProjectModules(project)))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path ("/projects/{ID:[0-9]*}/tags")
   @GET
   public Response findTags(@PathParam("ID") Long id) {
     Project project = projectController.findProjectById(id);
-    if(project != null) {
+    if (project != null) {
       Set<Tag> tags = project.getTags();
       return Response.ok()
           .entity(tranqualise(tags))
@@ -156,18 +195,17 @@ public class ProjectRESTService extends AbstractRESTService {
     }
   }
   
-  @Path("/projects/{PID:[0-9]*}/tags/{ID:[0-9]*}")
-  @DELETE
-  public Response removeTag(@PathParam("PID") Long projectId, @PathParam("ID") Long tagId) {
-    Project project = projectController.findProjectById(projectId);
-    Tag tag = projectController.findTagById(tagId);
-    if(project != null && tag != null) {
-      project.removeTag(tag);
+  @Path("/projects/{PID:[0-9]*}/modules/{ID:[0-9]*}")
+  @PUT
+  public Response updateProjectModule(@PathParam("ID") Long id, ProjectModuleEntity projectModuleEntity) {
+    ProjectModule projectModule = projectController.findProjectModuleById(id);
+    ProjectModuleOptionality optionality = projectModuleEntity.getOptionality();
+    if (projectModule != null) {
       return Response.ok()
-          .entity(tranqualise(project))
+          .entity(tranqualise(projectController.updateProjectModule(projectModule, optionality)))
           .build();
     } else {
-        return Response.status(Status.NOT_FOUND).build();
+      return Response.status(500).build();
     }
   }
 
@@ -175,12 +213,39 @@ public class ProjectRESTService extends AbstractRESTService {
   @DELETE
   public Response archiveProject(@PathParam("ID") Long id) {
     Project project = projectController.findProjectById(id);
-    if(project != null) {
+    if (project != null) {
       return Response.ok()
           .entity(tranqualise(projectController.archiveProject(project, getUser())))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/projects/{PID:[0-9]*}/modules/{ID:[0-9]*}")
+  @DELETE
+  public Response removeProjectModule(@PathParam("ID") Long id) {
+    ProjectModule projectModule = projectController.findProjectModuleById(id);
+    if (projectModule != null) {
+      projectController.deleteProjectModule(projectModule);
+      return Response.status(200).build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/projects/{PID:[0-9]*}/tags/{ID:[0-9]*}")
+  @DELETE
+  public Response removeTag(@PathParam("PID") Long projectId, @PathParam("ID") Long tagId) {
+    Project project = projectController.findProjectById(projectId);
+    Tag tag = projectController.findTagById(tagId);
+    if (project != null && tag != null) {
+      project.removeTag(tag);
+      return Response.ok()
+          .entity(tranqualise(project))
+          .build();
+    } else {
+        return Response.status(Status.NOT_FOUND).build();
     }
   }
 

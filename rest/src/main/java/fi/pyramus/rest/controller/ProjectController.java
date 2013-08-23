@@ -10,9 +10,13 @@ import javax.inject.Inject;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.projects.ProjectDAO;
+import fi.pyramus.dao.projects.ProjectModuleDAO;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.projects.Project;
+import fi.pyramus.domainmodel.projects.ProjectModule;
+import fi.pyramus.domainmodel.projects.ProjectModuleOptionality;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.persistence.search.SearchResult;
 
@@ -25,10 +29,17 @@ public class ProjectController {
   private TagDAO tagDAO;
   @Inject
   private EducationalTimeUnitDAO educationalTimeUnitDAO;
+  @Inject
+  private ProjectModuleDAO projectModuleDAO;
 
   public Project createProject(String name, String description, double optionalStudiesLength, EducationalTimeUnit optionalStudiesLengthTimeUnit, User user) {
     Project project = projectDAO.create(name, description, optionalStudiesLength, optionalStudiesLengthTimeUnit, user);
     return project;
+  }
+  
+  public ProjectModule createProjectModule(Project project, Module module, ProjectModuleOptionality optionality) {
+    ProjectModule projectModule = projectModuleDAO.create(project, module, optionality);
+    return projectModule;
   }
   
   public Tag createTag(Project project, String text) {
@@ -58,11 +69,21 @@ public class ProjectController {
   public SearchResult<Project> searchProjects(int resultsPerPage, int page,String name, String description,  String tags, boolean filterArchived) {
     SearchResult<Project> projects = projectDAO.searchProjects(resultsPerPage, page, name, description, tags, filterArchived);
     return projects;
-}
+  }
   
   public EducationalTimeUnit findEducationalTimeUnitById(Long id) {
     EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.findById(id);
     return educationalTimeUnit;
+  }
+  
+  public List<ProjectModule> findProjectModules(Project project) {
+    List<ProjectModule> modules = projectModuleDAO.listByProject(project);
+    return modules;
+  }
+  
+  public ProjectModule findProjectModuleById(Long id) {
+    ProjectModule projectModule = projectModuleDAO.findById(id);
+    return projectModule;
   }
   
   public Set<Tag> findTags(Project project) {
@@ -80,6 +101,11 @@ public class ProjectController {
     Project updatedProject = projectDAO.update(project, name, description, optionalStudiesLength, optionalStudiesLengthTimeUnit, user);
     return updatedProject;
   }
+  
+  public ProjectModule updateProjectModule(ProjectModule projectModule, ProjectModuleOptionality optionality) {
+    projectModuleDAO.update(projectModule, optionality);
+    return projectModule;
+  }
 
   public Project archiveProject(Project project, User user) {
     projectDAO.archive(project, user);
@@ -89,5 +115,9 @@ public class ProjectController {
   public Project unarchiveProject(Project project, User user) {
     projectDAO.unarchive(project, user);
     return project;
+  }
+  
+  public void deleteProjectModule(ProjectModule projectModule) {
+    projectModuleDAO.delete(projectModule);
   }
 }

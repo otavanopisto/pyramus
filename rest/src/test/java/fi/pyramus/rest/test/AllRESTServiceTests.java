@@ -43,6 +43,7 @@ import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.grading.GradingScaleEntity;
 import fi.pyramus.rest.tranquil.modules.ModuleEntity;
 import fi.pyramus.rest.tranquil.projects.ProjectEntity;
+import fi.pyramus.rest.tranquil.projects.ProjectModuleEntity;
 import fi.pyramus.rest.tranquil.reports.ReportCategoryEntity;
 import fi.pyramus.rest.tranquil.reports.ReportEntity;
 
@@ -1811,5 +1812,57 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     } finally {
       EntityUtils.consume(entity);
     }
+  }
+  
+  // ProjectRESTServiceTests ProjectModule
+  
+  @Test
+  public void testCreateProjectModule() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity(
+        "{\"module_id\":1,\"optionality\":1}");
+
+    HttpResponse response = doPostRequest("/projects/projects/1/modules/", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ProjectModuleEntity projectModuleEntity = unserializeEntity(ProjectModuleEntity.class, EntityUtils.toString(entity));
+      assertNotNull(projectModuleEntity);
+      assertEquals((Long) 1l, projectModuleEntity.getProject_id());
+      assertEquals((Long) 1l, projectModuleEntity.getModule_id());
+      assertEquals("OPTIONAL", projectModuleEntity.getOptionality().toString());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindProjectModules() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/projects/projects/1/modules/");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ProjectModuleEntity[] projectModuleEntities = unserializeEntity(ProjectModuleEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(projectModuleEntities);
+      assertEquals(1, projectModuleEntities.length);
+      assertEquals((Long) 1l, projectModuleEntities[0].getProject_id());
+      assertEquals((Long) 1l, projectModuleEntities[0].getModule_id());
+      assertEquals("OPTIONAL", projectModuleEntities[0].getOptionality().toString());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testDeleteProjectModule() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/projects/projects/1/modules/1");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
   }
 }
