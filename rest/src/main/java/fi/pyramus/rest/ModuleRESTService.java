@@ -116,6 +116,19 @@ public class ModuleRESTService extends AbstractRESTService{
     }
   }
   
+  @Path("/modules/{ID:[0-9]*}/components")
+  @GET
+  public Response findComponents(@PathParam("ID") Long id) {
+    Module module = moduleController.findModuleById(id);
+    if (module != null) {
+      return Response.ok()
+          .entity(tranqualise(moduleController.findComponents(module)))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/modules/{ID:[0-9]*}/projects")
   @GET
   public Response findProjects(@PathParam("ID") Long id) {

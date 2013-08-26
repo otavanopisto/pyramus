@@ -16,6 +16,7 @@ import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.modules.Module;
+import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.domainmodel.projects.ProjectModule;
 import fi.pyramus.domainmodel.users.User;
@@ -60,9 +61,9 @@ public class ModuleController {
     return module;
   }
   
-  public List<CourseBaseVariable> findVariables(Module module) {
-    List<CourseBaseVariable> variables = module.getVariables();
-    return variables;
+  public List<ModuleComponent> findComponents(Module module) {
+    List<ModuleComponent> components = module.getModuleComponents();
+    return components;
   }
   
   public List<Project> findProjects(Long id) {
@@ -74,6 +75,11 @@ public class ModuleController {
       }
     }
     return projects;
+  }
+  
+  public List<CourseBaseVariable> findVariables(Module module) {
+    List<CourseBaseVariable> variables = module.getVariables();
+    return variables;
   }
   
   public Set<Tag> findModuleTags(Module module) {
