@@ -129,6 +129,19 @@ public class ModuleRESTService extends AbstractRESTService{
     }
   }
   
+  @Path("/modules/{ID:[0-9]*}/variables")
+  @GET
+  public Response findVariables(@PathParam("ID") Long id) {
+    Module module = moduleController.findModuleById(id);
+    if (module != null) {
+      return Response.ok()
+          .entity(tranqualise(moduleController.findVariables(module)))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/modules/{ID:[0-9]*}/tags")
   @GET
   public Response findTags(@PathParam("ID") Long id) {

@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.projects.ProjectModuleDAO;
+import fi.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
@@ -57,6 +58,11 @@ public class ModuleController {
   public Module findModuleById(Long id) {
     Module module = moduleDAO.findById(id);
     return module;
+  }
+  
+  public List<CourseBaseVariable> findVariables(Module module) {
+    List<CourseBaseVariable> variables = module.getVariables();
+    return variables;
   }
   
   public List<Project> findProjects(Long id) {
