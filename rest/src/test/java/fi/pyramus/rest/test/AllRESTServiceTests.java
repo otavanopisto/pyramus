@@ -1814,6 +1814,55 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     }
   }
   
+  // ModuleRESTServiceTests Tags
+  
+  @Test
+  public void testCreateModuleTag() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity(
+        "{\"text\":\"Module Tag\"}");
+
+    HttpResponse response = doPostRequest("/modules/modules/1/tags", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      TagEntity tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
+      assertNotNull(tagEntity);
+      assertEquals((Long) 3l, tagEntity.getId());
+      assertEquals("Module Tag", tagEntity.getText());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindTagss() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/modules/modules/1/tags");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      TagEntity[] tagEntities = unserializeEntity(TagEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(tagEntities);
+      assertEquals(1, tagEntities.length);
+      assertEquals("Module Tag", tagEntities[0].getText());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testRemoveTag() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/modules/modules/1/tags/3");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  }
+  
   // ProjectRESTServiceTests ProjectModule
   
   @Test

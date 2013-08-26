@@ -1,6 +1,7 @@
 package fi.pyramus.rest;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -22,10 +23,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
+import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
+import fi.pyramus.rest.controller.TagController;
+import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.modules.ModuleEntity;
 import fi.tranquil.TranquilityBuilderFactory;
 
@@ -41,6 +45,8 @@ public class ModuleRESTService extends AbstractRESTService{
   ModuleController moduleController;
   @Inject
   CommonController commonController;
+  @Inject
+  TagController tagController;
   
   @Path("/modules")
   @POST
@@ -62,6 +68,20 @@ public class ModuleRESTService extends AbstractRESTService{
       }
     } catch (NullPointerException e) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/modules/{ID:[0-9]*}/tags")
+  @POST
+  public Response createTag(@PathParam("ID") Long id, TagEntity tagEntity) {
+    Module module = moduleController.findModuleById(id);
+    String text = tagEntity.getText();
+    if (module != null && !StringUtils.isBlank(text)) {
+      return Response.ok()
+          .entity(tranqualise(moduleController.createModuleTag(module, text)))
+          .build();
+    } else {
+      return Response.status(500).build();
     }
   }
   
@@ -109,6 +129,20 @@ public class ModuleRESTService extends AbstractRESTService{
     }
   }
   
+  @Path("/modules/{ID:[0-9]*}/tags")
+  @GET
+  public Response findTags(@PathParam("ID") Long id) {
+    Module module = moduleController.findModuleById(id);
+    if (module != null) {
+      Set<Tag> tags = moduleController.findModuleTags(module);
+      return Response.ok()
+          .entity(tranqualise(tags))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/modules/{ID:[0-9]*}")
   @PUT
   public Response updateModule(@PathParam("ID") Long id, ModuleEntity moduleEntity) {
@@ -145,6 +179,19 @@ public class ModuleRESTService extends AbstractRESTService{
       return Response.ok()
           .entity(tranqualise(moduleController.archiveModule(module, getUser())))
           .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/modules/{MID:[0-9]*}/tags/{ID:[0-9]*}")
+  @DELETE
+  public Response removeTag(@PathParam("MID") Long moduleId, @PathParam("ID") Long tagId) {
+    Module module = moduleController.findModuleById(moduleId);
+    Tag tag = tagController.findTagById(tagId);
+    if (module != null && tag != null) {
+      moduleController.removeTag(module, tag);
+      return Response.status(200).build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }
