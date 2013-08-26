@@ -25,7 +25,6 @@ import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.modules.Module;
-import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.TagController;
@@ -129,13 +128,26 @@ public class ModuleRESTService extends AbstractRESTService{
     }
   }
   
+  @Path("/modules/{ID:[0-9]*}/courses")
+  @GET
+  public Response findCourses(@PathParam("ID") Long id) {
+    Module module = moduleController.findModuleById(id);
+    if (module != null) {
+      return Response.ok()
+          .entity(tranqualise(moduleController.findCourses(module)))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/modules/{ID:[0-9]*}/projects")
   @GET
   public Response findProjects(@PathParam("ID") Long id) {
-    List<Project> projects = moduleController.findProjects(id);
-    if (!projects.isEmpty()) {
+    Module module = moduleController.findModuleById(id);
+    if( module != null) {
       return Response.ok()
-          .entity(tranqualise(projects))
+          .entity(tranqualise(moduleController.findProjects(module)))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();

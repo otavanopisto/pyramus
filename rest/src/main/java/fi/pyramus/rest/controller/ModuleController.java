@@ -9,12 +9,14 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.pyramus.dao.base.TagDAO;
+import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.projects.ProjectModuleDAO;
 import fi.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.projects.Project;
@@ -30,6 +32,8 @@ public class ModuleController {
   private ProjectModuleDAO projectModuleDAO;
   @Inject
   private TagDAO tagDAO;
+  @Inject
+  private CourseDAO courseDAO;
 
   public Module createModule(String name, Subject subject, Integer courseNumber, Double moduleLength, EducationalTimeUnit moduleLengthTimeUnit,
       String description, Long maxParticipantCount, User user) {
@@ -66,11 +70,22 @@ public class ModuleController {
     return components;
   }
   
-  public List<Project> findProjects(Long id) {
+  public List<Course> findCourses(Module module) {
+    List<Course> courses = courseDAO.listAll();
+    List<Course> moduleCourses = new ArrayList<Course>();
+    for (Course course : courses) {
+      if (course.getModule().equals(module)) {
+        moduleCourses.add(course);
+      }
+    }
+    return courses;
+  }
+  
+  public List<Project> findProjects(Module module) {
     List<Project> projects = new ArrayList<Project>();
     List<ProjectModule> projectModules = projectModuleDAO.listAll();
     for (ProjectModule projectModule : projectModules) {
-      if(projectModule.getModule().getId().equals(id)) {
+      if(projectModule.getModule().equals(module)) {
         projects.add(projectModule.getProject());
       }
     }
