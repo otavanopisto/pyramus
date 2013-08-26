@@ -1838,7 +1838,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   }
 
   @Test
-  public void testFindTagss() throws ClientProtocolException, IOException {
+  public void testFindModuleTags() throws ClientProtocolException, IOException {
     HttpResponse response = doGetRequest("/modules/modules/1/tags");
 
     assertEquals(200, response.getStatusLine().getStatusCode());
@@ -1851,6 +1851,26 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertNotNull(tagEntities);
       assertEquals(1, tagEntities.length);
       assertEquals("Module Tag", tagEntities[0].getText());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testFindModulesByTag() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/tags/tags/3/modules");
+    
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      ModuleEntity[] moduleEntities = unserializeEntity(ModuleEntity[].class,EntityUtils.toString(entity));
+      assertNotNull(moduleEntities);
+      assertEquals(1, moduleEntities.length);
+      assertEquals((Long) 1l, moduleEntities[0].getId());
+      assertEquals("Llama module", moduleEntities[0].getName());
     } finally {
       EntityUtils.consume(entity);
     }
