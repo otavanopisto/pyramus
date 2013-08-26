@@ -1075,6 +1075,24 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
+  
+  @Test
+  public void testFindTagByText() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/tags/tags/?text=Ratkaisutiimi");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      TagEntity tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
+      assertNotNull(tagEntity);
+      assertEquals("Ratkaisutiimi", tagEntity.getText());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 
   @Test
   public void testFindTagById() throws ClientProtocolException, IOException {

@@ -42,6 +42,11 @@ public class TagController {
     return tag;
   }
   
+  public Tag findTagByText(String text) {
+    Tag tag = tagDAO.findByText(text);
+    return tag;
+  }
+  
   public SearchResult<Project> findProjectsByTag(int resultsPerPage, int page, String tag, boolean filterArchived) {
     SearchResult<Project> projects = projectDAO.searchProjects(resultsPerPage, page, null, null, tag, filterArchived);
     return projects;

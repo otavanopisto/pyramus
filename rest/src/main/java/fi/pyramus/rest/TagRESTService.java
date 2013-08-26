@@ -54,7 +54,17 @@ public class TagRESTService extends AbstractRESTService {
   
   @Path("/tags")
   @GET
-  public Response findTags() {
+  public Response findTags(@QueryParam("text") String text) {
+    if (!StringUtils.isBlank(text)) {
+      Tag tag = tagController.findTagByText(text);
+      if (tag != null) {
+        return Response.ok()
+            .entity(tranqualise(tag))
+            .build();
+      } else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+    }
     List<Tag> tags = tagController.findTags();
     if (!tags.isEmpty()) {
       return Response.ok()
