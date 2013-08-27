@@ -48,7 +48,8 @@ public class CalendarController {
     return academicTerm;
   }
   
-  public void unarchiveAcademicTerm(AcademicTerm academicTerm, User user) {
+  public AcademicTerm unarchiveAcademicTerm(AcademicTerm academicTerm, User user) {
     academicTermDAO.unarchive(academicTerm, user);
+    return academicTerm;
   }
 }

@@ -21,18 +21,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import fi.pyramus.domainmodel.base.School;
+import fi.pyramus.rest.CalendarRESTService;
 import fi.pyramus.rest.CommonRESTService;
 import fi.pyramus.rest.ModuleRESTService;
 import fi.pyramus.rest.ProjectRESTService;
 import fi.pyramus.rest.ReportRESTService;
 import fi.pyramus.rest.SchoolRESTService;
 import fi.pyramus.rest.TagRESTService;
+import fi.pyramus.rest.controller.CalendarController;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
 import fi.pyramus.rest.controller.ReportController;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.TagController;
+import fi.pyramus.rest.tranquil.base.AcademicTermEntity;
 import fi.pyramus.rest.tranquil.base.EducationTypeEntity;
 import fi.pyramus.rest.tranquil.base.EducationalTimeUnitEntity;
 import fi.pyramus.rest.tranquil.base.SchoolEntity;
@@ -65,7 +68,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   public static Archive<?> createTestArchive() {
     Archive<?> archive = createArchive(InitialSchoolDataDescriptor.class, SchoolController.class, SchoolRESTService.class, ProjectController.class,
         ProjectRESTService.class, ReportController.class, ReportRESTService.class, TagController.class, TagRESTService.class, CommonController.class,
-        CommonRESTService.class, ModuleController.class, ModuleRESTService.class);
+        CommonRESTService.class, ModuleController.class, ModuleRESTService.class, CalendarController.class, CalendarRESTService.class);
 
     return archive;
   }
@@ -1972,5 +1975,128 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     HttpResponse response = doDeleteRequest("/projects/projects/1/modules/1");
 
     assertEquals(200, response.getStatusLine().getStatusCode());
+  }
+  
+  // CalendarRESTServiceTests acedemicTerm
+  
+  @Test
+  public void testCreateAcademicTerm() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"name\":\"Test term\",\"startDate\":\"2012-04-23T08:15:00+03:00\",\"endDate\":\"2012-07-23T16:00:00+03:00\"}");
+
+    HttpResponse response = doPostRequest("/calendar/academicTerms/", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      AcademicTermEntity academicTermEntity = unserializeEntity(AcademicTermEntity.class, EntityUtils.toString(entity));
+      assertNotNull(academicTermEntity);
+      assertEquals("Test term", academicTermEntity.getName());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2012-04-23T08:15:00+03:00").getTime(), academicTermEntity.getStartDate());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2012-07-23T16:00:00+03:00").getTime(), academicTermEntity.getEndDate());
+
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindAcademicTerms() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/calendar/academicTerms/");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      AcademicTermEntity[] academicTermsEntities = unserializeEntity(AcademicTermEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(academicTermsEntities);
+      assertEquals(1, academicTermsEntities.length);
+      assertEquals("Test term", academicTermsEntities[0].getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindAcademicTermById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/calendar/academicTerms/1");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      AcademicTermEntity academicTermEntity = unserializeEntity(AcademicTermEntity.class, EntityUtils.toString(entity));
+      assertNotNull(academicTermEntity);
+      assertEquals((Long) 1l, academicTermEntity.getId());
+      assertEquals("Test term", academicTermEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateAcademicTerm() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"name\":\"Llama term\",\"startDate\":\"2013-01-23T07:45:00+03:00\",\"endDate\":\"2013-05-31T12:00:00+03:00\"}");
+
+    HttpResponse response = doPutRequest("/calendar/academicTerms/1", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      AcademicTermEntity academicTermEntity = unserializeEntity(AcademicTermEntity.class, EntityUtils.toString(entity));
+      assertNotNull(academicTermEntity);
+      assertEquals("Llama term", academicTermEntity.getName());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-01-23T07:45:00+03:00").getTime(), academicTermEntity.getStartDate());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-05-31T12:00:00+03:00").getTime(), academicTermEntity.getEndDate());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testArchiveAcademicTerm() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/calendar/academicTerms/1");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      AcademicTermEntity academicTermEntity = unserializeEntity(AcademicTermEntity.class, EntityUtils.toString(entity));
+      assertNotNull(academicTermEntity);
+      assertEquals((Long) 1l, academicTermEntity.getId());
+      assertEquals(true, academicTermEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUnarchiveAcademicTerm() throws ClientProtocolException, IOException {
+    StringEntity str = new StringEntity("{\"archived\":false}");
+
+    HttpResponse response = doPutRequest("/calendar/academicTerms/1", str);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      AcademicTermEntity academicTermEntity = unserializeEntity(AcademicTermEntity.class, EntityUtils.toString(entity));
+      assertNotNull(academicTermEntity);
+      assertEquals((Long) 1l, academicTermEntity.getId());
+      assertEquals(false, academicTermEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
   }
 }

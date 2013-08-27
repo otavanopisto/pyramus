@@ -94,9 +94,10 @@ public class CalendarRESTService extends AbstractRESTService {
       return Response.ok()
           .entity(tranqualise(calendarController.updateAcademicTerm(academicTerm, name, startDate, endDate)))
           .build();
-    } else if (termEntity.getArchived()) {
-      calendarController.unarchiveAcademicTerm(academicTerm, getUser());
-      return Response.ok(200).build();
+    } else if (!termEntity.getArchived()) {
+      return Response.ok()
+          .entity(tranqualise(calendarController.unarchiveAcademicTerm(academicTerm, getUser())))
+          .build();
     } else {
       return Response.status(500).build();
     } 
