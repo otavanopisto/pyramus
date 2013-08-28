@@ -5,13 +5,15 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.inject.Inject;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
@@ -21,8 +23,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import fi.pyramus.domainmodel.base.School;
+import fi.pyramus.domainmodel.projects.ProjectModuleOptionality;
 import fi.pyramus.rest.CalendarRESTService;
 import fi.pyramus.rest.CommonRESTService;
+import fi.pyramus.rest.CourseRESTService;
 import fi.pyramus.rest.ModuleRESTService;
 import fi.pyramus.rest.ProjectRESTService;
 import fi.pyramus.rest.ReportRESTService;
@@ -30,6 +34,7 @@ import fi.pyramus.rest.SchoolRESTService;
 import fi.pyramus.rest.TagRESTService;
 import fi.pyramus.rest.controller.CalendarController;
 import fi.pyramus.rest.controller.CommonController;
+import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
 import fi.pyramus.rest.controller.ReportController;
@@ -68,7 +73,8 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   public static Archive<?> createTestArchive() {
     Archive<?> archive = createArchive(InitialSchoolDataDescriptor.class, SchoolController.class, SchoolRESTService.class, ProjectController.class,
         ProjectRESTService.class, ReportController.class, ReportRESTService.class, TagController.class, TagRESTService.class, CommonController.class,
-        CommonRESTService.class, ModuleController.class, ModuleRESTService.class, CalendarController.class, CalendarRESTService.class);
+        CommonRESTService.class, ModuleController.class, ModuleRESTService.class, CalendarController.class, CalendarRESTService.class, CourseController.class,
+        CourseRESTService.class);
 
     return archive;
   }
@@ -85,16 +91,19 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateSchool() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"field_id\":1,\"code\":\"TAMK\",\"name\":\"Tampereen ammattikorkeakoulu\"}");
+    SchoolEntity schoolEntity = new SchoolEntity();
+    schoolEntity.setField_id(1l);
+    schoolEntity.setCode("TAMK");
+    schoolEntity.setName("Tampereen ammattikorkeakoulu");
 
-    HttpResponse response = doPostRequest("/schools/schools/", str);
+    HttpResponse response = doPostRequest("/schools/schools/", schoolEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      SchoolEntity schoolEntity = unserializeEntity(SchoolEntity.class, EntityUtils.toString(entity));
+      schoolEntity = unserializeEntity(SchoolEntity.class, EntityUtils.toString(entity));
       assertNotNull(schoolEntity);
       assertEquals("Tampereen ammattikorkeakoulu", schoolEntity.getName());
       assertEquals("TAMK", schoolEntity.getCode());
@@ -106,16 +115,17 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateSchoolField() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"Polytechnic\"}");
+    SchoolFieldEntity schoolFieldEntity = new SchoolFieldEntity();
+    schoolFieldEntity.setName("Polytechnic");
 
-    HttpResponse response = doPostRequest("/schools/schoolFields/", str);
+    HttpResponse response = doPostRequest("/schools/schoolFields/", schoolFieldEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      SchoolFieldEntity schoolFieldEntity = unserializeEntity(SchoolFieldEntity.class, EntityUtils.toString(entity));
+      schoolFieldEntity = unserializeEntity(SchoolFieldEntity.class, EntityUtils.toString(entity));
       assertNotNull(schoolFieldEntity);
       assertEquals("Polytechnic", schoolFieldEntity.getName());
     } finally {
@@ -125,16 +135,19 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateSchoolVariable() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"key_id\":1,\"school_id\":1,\"value\":\"Test variable\"}");
-
-    HttpResponse response = doPostRequest("/schools/variables/", str);
+    SchoolVariableEntity schoolVariableEntity = new SchoolVariableEntity();
+    schoolVariableEntity.setKey_id(1l);
+    schoolVariableEntity.setSchool_id(1l);
+    schoolVariableEntity.setValue("Test variable");
+    
+    HttpResponse response = doPostRequest("/schools/variables/", schoolVariableEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      SchoolVariableEntity schoolVariableEntity = unserializeEntity(SchoolVariableEntity.class, EntityUtils.toString(entity));
+      schoolVariableEntity = unserializeEntity(SchoolVariableEntity.class, EntityUtils.toString(entity));
       assertNotNull(schoolVariableEntity);
       assertEquals((Long) 1l, schoolVariableEntity.getSchool_id());
       assertEquals("Test variable", schoolVariableEntity.getValue());
@@ -312,7 +325,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   }
 
   @Test
-  public void testFindSchoolVariableBySchool() throws ClientProtocolException, IOException {
+  public void testFindSchoolVariableBySchoolAndId() throws ClientProtocolException, IOException {
     HttpResponse response = doGetRequest("/schools/schools/1/variables/1");
 
     assertEquals(200, response.getStatusLine().getStatusCode());
@@ -333,12 +346,14 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUpdateSchool() throws ClientProtocolException, IOException {
+    SchoolEntity schoolEntity = new SchoolEntity();
+    schoolEntity.setField_id(2l);
+    schoolEntity.setCode("SUST");
+    schoolEntity.setName("Shahjalal University of Science and Technology");
 
     String path = "/schools/schools/1";
 
-    StringEntity str = new StringEntity("{\"field_id\":2,\"code\":\"SUST\",\"name\":\"Shahjalal University of Science and Technology\"}");
-
-    HttpResponse response = doPutRequest(path, str);
+    HttpResponse response = doPutRequest(path, schoolEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -346,7 +361,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      SchoolEntity schoolEntity = unserializeEntity(SchoolEntity.class, EntityUtils.toString(entity));
+      schoolEntity = unserializeEntity(SchoolEntity.class, EntityUtils.toString(entity));
       assertNotNull(schoolEntity);
       assertEquals(initialSchoolDataDescriptor.getSchoolId(), schoolEntity.getId());
       assertEquals("Shahjalal University of Science and Technology", schoolEntity.getName());
@@ -359,18 +374,19 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUpdateSchoolField() throws ClientProtocolException, IOException {
+    SchoolFieldEntity schoolFieldEntity = new SchoolFieldEntity();
+    schoolFieldEntity.setName("College");
+    
     String path = "/schools/schoolFields/1";
-
-    StringEntity str = new StringEntity("{\"name\":\"College\"}");
-
-    HttpResponse response = doPutRequest(path, str);
+    
+    HttpResponse response = doPutRequest(path, schoolFieldEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      SchoolFieldEntity schoolFieldEntity = unserializeEntity(SchoolFieldEntity.class, EntityUtils.toString(entity));
+      schoolFieldEntity = unserializeEntity(SchoolFieldEntity.class, EntityUtils.toString(entity));
       assertNotNull(schoolFieldEntity);
       assertEquals(initialSchoolDataDescriptor.getSchoolFieldId(), schoolFieldEntity.getId());
       assertEquals("College", schoolFieldEntity.getName());
@@ -381,17 +397,18 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUpdateSchoolVariable() throws ClientProtocolException, IOException {
+    SchoolVariableEntity schoolVariableEntity = new SchoolVariableEntity();
+    schoolVariableEntity.setValue("foo bar value");
+    
     String path = "/schools/variables/1";
 
-    StringEntity str = new StringEntity("{\"value\":\"foo bar value\"}");
-
-    HttpResponse response = doPutRequest(path, str);
+    HttpResponse response = doPutRequest(path, schoolVariableEntity);
 
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      SchoolVariableEntity schoolVariableEntity = unserializeEntity(SchoolVariableEntity.class, EntityUtils.toString(entity));
+      schoolVariableEntity = unserializeEntity(SchoolVariableEntity.class, EntityUtils.toString(entity));
       assertNotNull(schoolVariableEntity);
       assertEquals((Long) 1l, schoolVariableEntity.getId());
       assertEquals("foo bar value", schoolVariableEntity.getValue());
@@ -446,10 +463,12 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveSchool() throws ClientProtocolException, IOException {
+    SchoolEntity schoolEntity = new SchoolEntity();
+    schoolEntity.setArchived(false);
+    
     String path = "/schools/schools/2";
-    StringEntity str = new StringEntity("{\"archived\":false}");
 
-    HttpResponse response = doPutRequest(path, str);
+    HttpResponse response = doPutRequest(path, schoolEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -457,7 +476,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      SchoolEntity schoolEntity = unserializeEntity(SchoolEntity.class, EntityUtils.toString(entity));
+      schoolEntity = unserializeEntity(SchoolEntity.class, EntityUtils.toString(entity));
       assertNotNull(schoolEntity);
       assertEquals((Long) 2l, schoolEntity.getId());
       assertEquals(false, schoolEntity.getArchived());
@@ -489,10 +508,12 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveSchoolField() throws ClientProtocolException, IOException {
+    SchoolFieldEntity schoolFieldEntity = new SchoolFieldEntity();
+    schoolFieldEntity.setArchived(false);
+    
     String path = "/schools/schoolFields/2";
-    StringEntity str = new StringEntity("{\"archived\":false}");
 
-    HttpResponse response = doPutRequest(path, str);
+    HttpResponse response = doPutRequest(path, schoolFieldEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -500,7 +521,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      SchoolFieldEntity schoolFieldEntity = unserializeEntity(SchoolFieldEntity.class, EntityUtils.toString(entity));
+      schoolFieldEntity = unserializeEntity(SchoolFieldEntity.class, EntityUtils.toString(entity));
       assertNotNull(schoolFieldEntity);
       assertEquals((Long) 2l, schoolFieldEntity.getId());
       assertEquals(false, schoolFieldEntity.getArchived());
@@ -532,10 +553,12 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveSchoolVariable() throws ClientProtocolException, IOException {
-    String path = "/schools/variables/1";
-    StringEntity str = new StringEntity("{\"archived\":false}");
+    SchoolVariableEntity schoolVariableEntity = new SchoolVariableEntity();
+    schoolVariableEntity.setArchived(false);
 
-    HttpResponse response = doPutRequest(path, str);
+    String path = "/schools/variables/1";
+
+    HttpResponse response = doPutRequest(path, schoolVariableEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -543,7 +566,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      SchoolVariableEntity schoolVariableEntity = unserializeEntity(SchoolVariableEntity.class, EntityUtils.toString(entity));
+      schoolVariableEntity = unserializeEntity(SchoolVariableEntity.class, EntityUtils.toString(entity));
       assertNotNull(schoolVariableEntity);
       assertEquals((Long) 1l, schoolVariableEntity.getId());
       assertEquals(false, schoolVariableEntity.getArchived());
@@ -556,16 +579,18 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateProject() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"PyramusREST\", \"description\":\"Pyramus RESTService development\"}");
+    ProjectEntity projectEntity = new ProjectEntity();
+    projectEntity.setName("PyramusREST");
+    projectEntity.setDescription("Pyramus RESTService development");
 
-    HttpResponse response = doPostRequest("/projects/projects", str);
+    HttpResponse response = doPostRequest("/projects/projects", projectEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ProjectEntity projectEntity = unserializeEntity(ProjectEntity.class, EntityUtils.toString(entity));
+      projectEntity = unserializeEntity(ProjectEntity.class, EntityUtils.toString(entity));
       assertNotNull(projectEntity);
       assertEquals("PyramusREST", projectEntity.getName());
       assertEquals("Pyramus RESTService development", projectEntity.getDescription());
@@ -576,16 +601,17 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateProjectTag() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"text\":\"Test environment\"}");
-
-    HttpResponse response = doPostRequest("/projects/projects/1/tags", str);
+    TagEntity tagEntity = new TagEntity();
+    tagEntity.setText("Test environment");
+    
+    HttpResponse response = doPostRequest("/projects/projects/1/tags", tagEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      TagEntity tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
+      tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
       assertNotNull(tagEntity);
       assertEquals("Test environment", tagEntity.getText());
     } finally {
@@ -674,12 +700,13 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUpdateProject() throws ClientProtocolException, IOException {
-
+    ProjectEntity projectEntity = new ProjectEntity();
+    projectEntity.setName("Updated project");
+    projectEntity.setDescription("Four legged llama");
+    
     String path = "/projects/projects/1";
 
-    StringEntity str = new StringEntity("{\"name\":\"Updated project\",\"description\":\"Four legged llama\"}");
-
-    HttpResponse response = doPutRequest(path, str);
+    HttpResponse response = doPutRequest(path, projectEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -687,7 +714,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ProjectEntity projectEntity = unserializeEntity(ProjectEntity.class, EntityUtils.toString(entity));
+      projectEntity = unserializeEntity(ProjectEntity.class, EntityUtils.toString(entity));
       assertNotNull(projectEntity);
       assertEquals((Long) 1l, projectEntity.getId());
       assertEquals("Updated project", projectEntity.getName());
@@ -720,10 +747,12 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveProject() throws ClientProtocolException, IOException {
+    ProjectEntity projectEntity = new ProjectEntity();
+    projectEntity.setArchived(false);
+    
     String path = "/projects/projects/1";
-    StringEntity str = new StringEntity("{\"archived\":false}");
 
-    HttpResponse response = doPutRequest(path, str);
+    HttpResponse response = doPutRequest(path, projectEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -731,7 +760,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ProjectEntity projectEntity = unserializeEntity(ProjectEntity.class, EntityUtils.toString(entity));
+      projectEntity = unserializeEntity(ProjectEntity.class, EntityUtils.toString(entity));
       assertNotNull(projectEntity);
       assertEquals((Long) 1l, projectEntity.getId());
       assertEquals(false, projectEntity.getArchived());
@@ -785,16 +814,18 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateReport() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"Pyramus RESTTest Report\", \"data\":\"llama data\"}");
-
-    HttpResponse response = doPostRequest("/reports/reports", str);
+    ReportEntity reportEntity = new ReportEntity();
+    reportEntity.setName("Pyramus RESTTest Report");
+    reportEntity.setData("llama data");
+    
+    HttpResponse response = doPostRequest("/reports/reports", reportEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ReportEntity reportEntity = unserializeEntity(ReportEntity.class, EntityUtils.toString(entity));
+      reportEntity = unserializeEntity(ReportEntity.class, EntityUtils.toString(entity));
       assertNotNull(reportEntity);
       assertEquals("Pyramus RESTTest Report", reportEntity.getName());
       assertEquals("llama data", reportEntity.getData());
@@ -805,18 +836,20 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateReportCategory() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"llama category\", \"indexColumn\":1}");
+    ReportCategoryEntity reportCategoryEntity = new ReportCategoryEntity();
+    reportCategoryEntity.setName("Llama category");
+    reportCategoryEntity.setIndexColumn(1);
 
-    HttpResponse response = doPostRequest("/reports/categories", str);
+    HttpResponse response = doPostRequest("/reports/categories", reportCategoryEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ReportCategoryEntity reportCategoryEntity = unserializeEntity(ReportCategoryEntity.class, EntityUtils.toString(entity));
+      reportCategoryEntity = unserializeEntity(ReportCategoryEntity.class, EntityUtils.toString(entity));
       assertNotNull(reportCategoryEntity);
-      assertEquals("llama category", reportCategoryEntity.getName());
+      assertEquals("Llama category", reportCategoryEntity.getName());
       assertEquals((Integer) 1, reportCategoryEntity.getIndexColumn());
     } finally {
       EntityUtils.consume(entity);
@@ -876,7 +909,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       ReportCategoryEntity[] reportCategoryEntities = unserializeEntity(ReportCategoryEntity[].class, EntityUtils.toString(entity));
       assertNotNull(reportCategoryEntities);
       assertEquals(1, reportCategoryEntities.length);
-      assertEquals("llama category", reportCategoryEntities[0].getName());
+      assertEquals("Llama category", reportCategoryEntities[0].getName());
       assertEquals((Integer) 1, reportCategoryEntities[0].getIndexColumn());
     } finally {
       EntityUtils.consume(entity);
@@ -895,7 +928,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertEquals("application/json", entity.getContentType().getValue());
       ReportCategoryEntity reportCategoryEntity = unserializeEntity(ReportCategoryEntity.class, EntityUtils.toString(entity));
       assertNotNull(reportCategoryEntity);
-      assertEquals("llama category", reportCategoryEntity.getName());
+      assertEquals("Llama category", reportCategoryEntity.getName());
       assertEquals((Integer) 1, reportCategoryEntity.getIndexColumn());
     } finally {
       EntityUtils.consume(entity);
@@ -904,12 +937,12 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUpdateReport() throws ClientProtocolException, IOException {
-
+    ReportEntity reportEntity = new ReportEntity();
+    reportEntity.setName("Updated ReportREST");
+    
     String path = "/reports/reports/1";
 
-    StringEntity str = new StringEntity("{\"name\":\"Updated ReportREST\"}");
-
-    HttpResponse response = doPutRequest(path, str);
+    HttpResponse response = doPutRequest(path, reportEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -917,7 +950,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ReportEntity reportEntity = unserializeEntity(ReportEntity.class, EntityUtils.toString(entity));
+      reportEntity = unserializeEntity(ReportEntity.class, EntityUtils.toString(entity));
       assertNotNull(reportEntity);
       assertEquals((Long) 1l, reportEntity.getId());
       assertEquals("Updated ReportREST", reportEntity.getName());
@@ -929,12 +962,13 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUpdateReportCategory() throws ClientProtocolException, IOException {
-
+    ReportCategoryEntity reportCategoryEntity = new ReportCategoryEntity();
+    reportCategoryEntity.setName("Special Llamas");
+    reportCategoryEntity.setIndexColumn(2);
+    
     String path = "/reports/categories/1";
 
-    StringEntity str = new StringEntity("{\"name\":\"Special Llamas\",\"indexColumn\":2}");
-
-    HttpResponse response = doPutRequest(path, str);
+    HttpResponse response = doPutRequest(path, reportCategoryEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -942,7 +976,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ReportCategoryEntity reportCategoryEntity = unserializeEntity(ReportCategoryEntity.class, EntityUtils.toString(entity));
+      reportCategoryEntity = unserializeEntity(ReportCategoryEntity.class, EntityUtils.toString(entity));
       assertNotNull(reportCategoryEntity);
       assertEquals((Long) 1l, reportCategoryEntity.getId());
       assertEquals("Special Llamas", reportCategoryEntity.getName());
@@ -975,10 +1009,12 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveReport() throws ClientProtocolException, IOException {
+    ReportEntity reportEntity = new ReportEntity();
+    reportEntity.setArchived(false);
+    
     String path = "/reports/reports/1";
-    StringEntity str = new StringEntity("{\"archived\":false}");
 
-    HttpResponse response = doPutRequest(path, str);
+    HttpResponse response = doPutRequest(path, reportEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -986,7 +1022,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ReportEntity reportEntity = unserializeEntity(ReportEntity.class, EntityUtils.toString(entity));
+      reportEntity = unserializeEntity(ReportEntity.class, EntityUtils.toString(entity));
       assertNotNull(reportEntity);
       assertEquals((Long) 1l, reportEntity.getId());
       assertEquals(false, reportEntity.getArchived());
@@ -1018,10 +1054,12 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveReportCategory() throws ClientProtocolException, IOException {
+    ReportCategoryEntity reportCategoryEntity = new ReportCategoryEntity();
+    reportCategoryEntity.setArchived(false);
+    
     String path = "/reports/categories/1";
-    StringEntity str = new StringEntity("{\"archived\":false}");
 
-    HttpResponse response = doPutRequest(path, str);
+    HttpResponse response = doPutRequest(path, reportCategoryEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -1029,7 +1067,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ReportCategoryEntity reportCategoryEntity = unserializeEntity(ReportCategoryEntity.class, EntityUtils.toString(entity));
+      reportCategoryEntity = unserializeEntity(ReportCategoryEntity.class, EntityUtils.toString(entity));
       assertNotNull(reportCategoryEntity);
       assertEquals((Long) 1l, reportCategoryEntity.getId());
       assertEquals(false, reportCategoryEntity.getArchived());
@@ -1042,16 +1080,17 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateTag() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"text\":\"Ratkaisutiimi\"}");
-
-    HttpResponse response = doPostRequest("/tags/tags/", str);
+    TagEntity tagEntity = new TagEntity();
+    tagEntity.setText("Ratkaisutiimi");
+    
+    HttpResponse response = doPostRequest("/tags/tags/", tagEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      TagEntity tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
+      tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
       assertNotNull(tagEntity);
       assertEquals("Ratkaisutiimi", tagEntity.getText());
     } finally {
@@ -1119,9 +1158,10 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testFindProjectsByTag() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"text\":\"Test environment\"}");
+    TagEntity tagEntity = new TagEntity();
+    tagEntity.setText("Test environment");
 
-    doPostRequest("/projects/projects/1/tags", str);
+    doPostRequest("/projects/projects/1/tags", tagEntity);
 
     HttpResponse response = doGetRequest("/tags/tags/1/projects");
 
@@ -1143,12 +1183,12 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUpdateTag() throws ClientProtocolException, IOException {
+    TagEntity tagEntity = new TagEntity();
+    tagEntity.setText("Updated tag");
 
     String path = "/tags/tags/1";
 
-    StringEntity str = new StringEntity("{\"text\":\"Updated tag\"}");
-
-    HttpResponse response = doPutRequest(path, str);
+    HttpResponse response = doPutRequest(path, tagEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -1156,7 +1196,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      TagEntity tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
+      tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
       assertNotNull(tagEntity);
       assertEquals((Long) 1l, tagEntity.getId());
       assertEquals("Updated tag", tagEntity.getText());
@@ -1177,16 +1217,18 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateEducationType() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"Etaopinto\",\"code\":\"EO1\"}");
+    EducationTypeEntity educationTypeEntity = new EducationTypeEntity();
+    educationTypeEntity.setName("Etaopinto");
+    educationTypeEntity.setCode("EO1");
 
-    HttpResponse response = doPostRequest("/common/educationTypes/", str);
+    HttpResponse response = doPostRequest("/common/educationTypes/", educationTypeEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      EducationTypeEntity educationTypeEntity = unserializeEntity(EducationTypeEntity.class, EntityUtils.toString(entity));
+      educationTypeEntity = unserializeEntity(EducationTypeEntity.class, EntityUtils.toString(entity));
       assertNotNull(educationTypeEntity);
       assertEquals("Etaopinto", educationTypeEntity.getName());
       assertEquals("EO1", educationTypeEntity.getCode());
@@ -1237,16 +1279,18 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUpdateEducationType() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"LlamaTeaching\",\"code\":\"Llama\"}");
+    EducationTypeEntity educationTypeEntity = new EducationTypeEntity();
+    educationTypeEntity.setName("LlamaTeaching");
+    educationTypeEntity.setCode("Llama");
 
-    HttpResponse response = doPutRequest("/common/educationTypes/1", str);
+    HttpResponse response = doPutRequest("/common/educationTypes/1", educationTypeEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      EducationTypeEntity educationTypeEntity = unserializeEntity(EducationTypeEntity.class, EntityUtils.toString(entity));
+      educationTypeEntity = unserializeEntity(EducationTypeEntity.class, EntityUtils.toString(entity));
       assertNotNull(educationTypeEntity);
       assertEquals("LlamaTeaching", educationTypeEntity.getName());
       assertEquals("Llama", educationTypeEntity.getCode());
@@ -1276,9 +1320,10 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveEducationType() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"archived\":false}");
-
-    HttpResponse response = doPutRequest("/common/educationTypes/1", str);
+    EducationTypeEntity educationTypeEntity = new EducationTypeEntity();
+    educationTypeEntity.setArchived(false);
+    
+    HttpResponse response = doPutRequest("/common/educationTypes/1", educationTypeEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -1286,7 +1331,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      EducationTypeEntity educationTypeEntity = unserializeEntity(EducationTypeEntity.class, EntityUtils.toString(entity));
+      educationTypeEntity = unserializeEntity(EducationTypeEntity.class, EntityUtils.toString(entity));
       assertNotNull(educationTypeEntity);
       assertEquals((Long) 1l, educationTypeEntity.getId());
       assertEquals(false, educationTypeEntity.getArchived());
@@ -1299,16 +1344,19 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateSubject() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"Basic Math\",\"code\":\"BM1\", \"educationType_id\":1}");
+    SubjectEntity subjectEntity = new SubjectEntity();
+    subjectEntity.setName("Basic Math");
+    subjectEntity.setCode("BM1");
+    subjectEntity.setEducationType_id(1l);
 
-    HttpResponse response = doPostRequest("/common/subjects/", str);
+    HttpResponse response = doPostRequest("/common/subjects/", subjectEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      SubjectEntity subjectEntity = unserializeEntity(SubjectEntity.class, EntityUtils.toString(entity));
+      subjectEntity = unserializeEntity(SubjectEntity.class, EntityUtils.toString(entity));
       assertNotNull(subjectEntity);
       assertEquals("Basic Math", subjectEntity.getName());
       assertEquals("BM1", subjectEntity.getCode());
@@ -1380,16 +1428,19 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUpdateSubject() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"Llama Math\",\"code\":\"LM1\", \"educationType_id\":1}");
-
-    HttpResponse response = doPutRequest("/common/subjects/1", str);
+    SubjectEntity subjectEntity = new SubjectEntity();
+    subjectEntity.setName("Llama Math");
+    subjectEntity.setCode("LM1");
+    subjectEntity.setEducationType_id(1l);
+    
+    HttpResponse response = doPutRequest("/common/subjects/1", subjectEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      SubjectEntity subjectEntity = unserializeEntity(SubjectEntity.class, EntityUtils.toString(entity));
+      subjectEntity = unserializeEntity(SubjectEntity.class, EntityUtils.toString(entity));
       assertNotNull(subjectEntity);
       assertEquals("Llama Math", subjectEntity.getName());
       assertEquals("LM1", subjectEntity.getCode());
@@ -1420,9 +1471,10 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveSubject() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"archived\":false}");
+    SubjectEntity subjectEntity = new SubjectEntity();
+    subjectEntity.setArchived(false);
 
-    HttpResponse response = doPutRequest("/common/subjects/1", str);
+    HttpResponse response = doPutRequest("/common/subjects/1", subjectEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -1430,7 +1482,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      SubjectEntity subjectEntity = unserializeEntity(SubjectEntity.class, EntityUtils.toString(entity));
+      subjectEntity = unserializeEntity(SubjectEntity.class, EntityUtils.toString(entity));
       assertNotNull(subjectEntity);
       assertEquals((Long) 1l, subjectEntity.getId());
       assertEquals(false, subjectEntity.getArchived());
@@ -1463,16 +1515,18 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateGradingScale() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"Standard Grading\",\"description\":\"Basic gradingScale\"}");
+    GradingScaleEntity gradingScaleEntity = new GradingScaleEntity();
+    gradingScaleEntity.setName("Standard Grading");
+    gradingScaleEntity.setDescription("Basic gradingScale");
 
-    HttpResponse response = doPostRequest("/common/gradingScales/", str);
+    HttpResponse response = doPostRequest("/common/gradingScales/", gradingScaleEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      GradingScaleEntity gradingScaleEntity = unserializeEntity(GradingScaleEntity.class, EntityUtils.toString(entity));
+      gradingScaleEntity = unserializeEntity(GradingScaleEntity.class, EntityUtils.toString(entity));
       assertNotNull(gradingScaleEntity);
       assertEquals("Standard Grading", gradingScaleEntity.getName());
       assertEquals("Basic gradingScale", gradingScaleEntity.getDescription());
@@ -1523,19 +1577,21 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUpdateGradingScale() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"Llama Grading\",\"description\":\"GradingScale for llama's rideability\"}");
+    GradingScaleEntity gradingScaleEntity = new GradingScaleEntity();
+    gradingScaleEntity.setName("Llama Grading");
+    gradingScaleEntity.setDescription("GradingScale for llamas");
 
-    HttpResponse response = doPutRequest("/common/gradingScales/1", str);
+    HttpResponse response = doPutRequest("/common/gradingScales/1", gradingScaleEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      GradingScaleEntity gradingScaleEntity = unserializeEntity(GradingScaleEntity.class, EntityUtils.toString(entity));
+      gradingScaleEntity = unserializeEntity(GradingScaleEntity.class, EntityUtils.toString(entity));
       assertNotNull(gradingScaleEntity);
       assertEquals("Llama Grading", gradingScaleEntity.getName());
-      assertEquals("GradingScale for llama's rideability", gradingScaleEntity.getDescription());
+      assertEquals("GradingScale for llamas", gradingScaleEntity.getDescription());
     } finally {
       EntityUtils.consume(entity);
     }
@@ -1562,9 +1618,10 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveGradingScale() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"archived\":false}");
-
-    HttpResponse response = doPutRequest("/common/gradingScales/1", str);
+    GradingScaleEntity gradingScaleEntity = new GradingScaleEntity();
+    gradingScaleEntity.setArchived(false);
+    
+    HttpResponse response = doPutRequest("/common/gradingScales/1", gradingScaleEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -1572,7 +1629,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      GradingScaleEntity gradingScaleEntity = unserializeEntity(GradingScaleEntity.class, EntityUtils.toString(entity));
+      gradingScaleEntity = unserializeEntity(GradingScaleEntity.class, EntityUtils.toString(entity));
       assertNotNull(gradingScaleEntity);
       assertEquals((Long) 1l, gradingScaleEntity.getId());
       assertEquals(false, gradingScaleEntity.getArchived());
@@ -1585,16 +1642,18 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateEducationalTimeUnit() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"Standard timeUnit\",\"baseUnits\": 60}");
+    EducationalTimeUnitEntity educationalTimeUnitEntity = new EducationalTimeUnitEntity();
+    educationalTimeUnitEntity.setName("Standard timeUnit");
+    educationalTimeUnitEntity.setBaseUnits(60d);
 
-    HttpResponse response = doPostRequest("/common/educationalTimeUnits/", str);
+    HttpResponse response = doPostRequest("/common/educationalTimeUnits/", educationalTimeUnitEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      EducationalTimeUnitEntity educationalTimeUnitEntity = unserializeEntity(EducationalTimeUnitEntity.class, EntityUtils.toString(entity));
+      educationalTimeUnitEntity = unserializeEntity(EducationalTimeUnitEntity.class, EntityUtils.toString(entity));
       assertNotNull(educationalTimeUnitEntity);
       assertEquals("Standard timeUnit", educationalTimeUnitEntity.getName());
       assertEquals((Double) 60d, educationalTimeUnitEntity.getBaseUnits());
@@ -1645,16 +1704,18 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUpdateEducationalTimeUnit() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"Llama Time\",\"baseUnits\":4}");
-
-    HttpResponse response = doPutRequest("/common/educationalTimeUnits/1", str);
+    EducationalTimeUnitEntity educationalTimeUnitEntity = new EducationalTimeUnitEntity();
+    educationalTimeUnitEntity.setName("Llama Time");
+    educationalTimeUnitEntity.setBaseUnits(4d);
+    
+    HttpResponse response = doPutRequest("/common/educationalTimeUnits/1", educationalTimeUnitEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      EducationalTimeUnitEntity educationalTimeUnitEntity = unserializeEntity(EducationalTimeUnitEntity.class, EntityUtils.toString(entity));
+      educationalTimeUnitEntity = unserializeEntity(EducationalTimeUnitEntity.class, EntityUtils.toString(entity));
       assertNotNull(educationalTimeUnitEntity);
       assertEquals("Llama Time", educationalTimeUnitEntity.getName());
       assertEquals((Double) 4d, educationalTimeUnitEntity.getBaseUnits());
@@ -1684,9 +1745,10 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveEducationalTimeUnit() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"archived\":false}");
+    EducationalTimeUnitEntity educationalTimeUnitEntity = new EducationalTimeUnitEntity();
+    educationalTimeUnitEntity.setArchived(false);
 
-    HttpResponse response = doPutRequest("/common/educationalTimeUnits/1", str);
+    HttpResponse response = doPutRequest("/common/educationalTimeUnits/1", educationalTimeUnitEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -1694,7 +1756,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      EducationalTimeUnitEntity educationalTimeUnitEntity = unserializeEntity(EducationalTimeUnitEntity.class, EntityUtils.toString(entity));
+      educationalTimeUnitEntity = unserializeEntity(EducationalTimeUnitEntity.class, EntityUtils.toString(entity));
       assertNotNull(educationalTimeUnitEntity);
       assertEquals((Long) 1l, educationalTimeUnitEntity.getId());
       assertEquals(false, educationalTimeUnitEntity.getArchived());
@@ -1707,17 +1769,22 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testCreateModule() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity(
-        "{\"name\":\"Basic module\",\"subject_id\":1,\"courseNumber\":1,\"courseLength_id\":1,\"description\":\"module for unitTesting\",\"maxParticipantCount\":20}");
+    ModuleEntity moduleEntity = new ModuleEntity();
+    moduleEntity.setName("Basic module");
+    moduleEntity.setSubject_id(1l);
+    moduleEntity.setCourseNumber(1);
+    moduleEntity.setCourseLength_id(1l);
+    moduleEntity.setDescription("module for unitTesting");
+    moduleEntity.setMaxParticipantCount(20l);
 
-    HttpResponse response = doPostRequest("/modules/modules/", str);
+    HttpResponse response = doPostRequest("/modules/modules/", moduleEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ModuleEntity moduleEntity = unserializeEntity(ModuleEntity.class, EntityUtils.toString(entity));
+      moduleEntity = unserializeEntity(ModuleEntity.class, EntityUtils.toString(entity));
       assertNotNull(moduleEntity);
       assertEquals("Basic module", moduleEntity.getName());
       assertEquals((Long) 1l, moduleEntity.getSubject_id());
@@ -1773,17 +1840,22 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUpdateModule() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity(
-        "{\"name\":\"Llama module\",\"subject_id\":1,\"courseNumber\":1,\"courseLength_id\":1,\"description\":\"module for llamas\",\"maxParticipantCount\":12}");
+    ModuleEntity moduleEntity = new ModuleEntity();
+    moduleEntity.setName("Llama module");
+    moduleEntity.setSubject_id(1l);
+    moduleEntity.setCourseNumber(1);
+    moduleEntity.setCourseLength_id(1l);
+    moduleEntity.setDescription("module for llamas");
+    moduleEntity.setMaxParticipantCount(12l);
 
-    HttpResponse response = doPutRequest("/modules/modules/1", str);
+    HttpResponse response = doPutRequest("/modules/modules/1", moduleEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ModuleEntity moduleEntity = unserializeEntity(ModuleEntity.class, EntityUtils.toString(entity));
+      moduleEntity = unserializeEntity(ModuleEntity.class, EntityUtils.toString(entity));
       assertNotNull(moduleEntity);
       assertEquals("Llama module", moduleEntity.getName());
       assertEquals((Long) 1l, moduleEntity.getSubject_id());
@@ -1816,9 +1888,10 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveModule() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"archived\":false}");
+    ModuleEntity moduleEntity = new ModuleEntity();
+    moduleEntity.setArchived(false);
 
-    HttpResponse response = doPutRequest("/modules/modules/1", str);
+    HttpResponse response = doPutRequest("/modules/modules/1", moduleEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -1826,7 +1899,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ModuleEntity moduleEntity = unserializeEntity(ModuleEntity.class, EntityUtils.toString(entity));
+      moduleEntity = unserializeEntity(ModuleEntity.class, EntityUtils.toString(entity));
       assertNotNull(moduleEntity);
       assertEquals((Long) 1l, moduleEntity.getId());
       assertEquals(false, moduleEntity.getArchived());
@@ -1839,17 +1912,17 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   
   @Test
   public void testCreateModuleTag() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity(
-        "{\"text\":\"Module Tag\"}");
+    TagEntity tagEntity = new TagEntity();
+    tagEntity.setText("Module Tag");
 
-    HttpResponse response = doPostRequest("/modules/modules/1/tags", str);
+    HttpResponse response = doPostRequest("/modules/modules/1/tags", tagEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      TagEntity tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
+      tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
       assertNotNull(tagEntity);
       assertEquals((Long) 3l, tagEntity.getId());
       assertEquals("Module Tag", tagEntity.getText());
@@ -1908,17 +1981,18 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   
   @Test
   public void testCreateProjectModule() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity(
-        "{\"module_id\":1,\"optionality\":1}");
+    ProjectModuleEntity projectModuleEntity = new ProjectModuleEntity();
+    projectModuleEntity.setModule_id(1l);
+    projectModuleEntity.setOptionality(ProjectModuleOptionality.getOptionality(1));
 
-    HttpResponse response = doPostRequest("/projects/projects/1/modules/", str);
+    HttpResponse response = doPostRequest("/projects/projects/1/modules/", projectModuleEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      ProjectModuleEntity projectModuleEntity = unserializeEntity(ProjectModuleEntity.class, EntityUtils.toString(entity));
+      projectModuleEntity = unserializeEntity(ProjectModuleEntity.class, EntityUtils.toString(entity));
       assertNotNull(projectModuleEntity);
       assertEquals((Long) 1l, projectModuleEntity.getProject_id());
       assertEquals((Long) 1l, projectModuleEntity.getModule_id());
@@ -1980,21 +2054,27 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   // CalendarRESTServiceTests acedemicTerm
   
   @Test
-  public void testCreateAcademicTerm() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"Test term\",\"startDate\":\"2012-04-23T08:15:00+03:00\",\"endDate\":\"2012-07-23T16:00:00+03:00\"}");
+  public void testCreateAcademicTerm() throws ClientProtocolException, IOException, ParseException {
+    AcademicTermEntity academicTermEntity = new AcademicTermEntity();
+    academicTermEntity.setName("Test term");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date startDate = sdf.parse("2012-04-23");
+    Date endDate = sdf.parse("2012-07-27");
+    academicTermEntity.setStartDate(startDate);
+    academicTermEntity.setEndDate(endDate);
 
-    HttpResponse response = doPostRequest("/calendar/academicTerms/", str);
+    HttpResponse response = doPostRequest("/calendar/academicTerms/", academicTermEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      AcademicTermEntity academicTermEntity = unserializeEntity(AcademicTermEntity.class, EntityUtils.toString(entity));
+      academicTermEntity = unserializeEntity(AcademicTermEntity.class, EntityUtils.toString(entity));
       assertNotNull(academicTermEntity);
       assertEquals("Test term", academicTermEntity.getName());
-      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2012-04-23T08:15:00+03:00").getTime(), academicTermEntity.getStartDate());
-      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2012-07-23T16:00:00+03:00").getTime(), academicTermEntity.getEndDate());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2012-04-23T00:00:00").getTime(), academicTermEntity.getStartDate());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2012-07-27T00:00:00").getTime(), academicTermEntity.getEndDate());
 
     } finally {
       EntityUtils.consume(entity);
@@ -2015,6 +2095,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertNotNull(academicTermsEntities);
       assertEquals(1, academicTermsEntities.length);
       assertEquals("Test term", academicTermsEntities[0].getName());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2012-04-23T00:00:00").getTime(), academicTermsEntities[0].getStartDate());
     } finally {
       EntityUtils.consume(entity);
     }
@@ -2034,27 +2115,34 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertNotNull(academicTermEntity);
       assertEquals((Long) 1l, academicTermEntity.getId());
       assertEquals("Test term", academicTermEntity.getName());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2012-04-23T00:00:00").getTime(), academicTermEntity.getStartDate());
     } finally {
       EntityUtils.consume(entity);
     }
   }
 
   @Test
-  public void testUpdateAcademicTerm() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"name\":\"Llama term\",\"startDate\":\"2013-01-23T07:45:00+03:00\",\"endDate\":\"2013-05-31T12:00:00+03:00\"}");
+  public void testUpdateAcademicTerm() throws ClientProtocolException, IOException, ParseException {
+    AcademicTermEntity academicTermEntity = new AcademicTermEntity();
+    academicTermEntity.setName("Llama term");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date startDate = sdf.parse("2013-01-23");
+    Date endDate = sdf.parse("2013-05-31");
+    academicTermEntity.setStartDate(startDate);
+    academicTermEntity.setEndDate(endDate);
 
-    HttpResponse response = doPutRequest("/calendar/academicTerms/1", str);
+    HttpResponse response = doPutRequest("/calendar/academicTerms/1", academicTermEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
     HttpEntity entity = response.getEntity();
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      AcademicTermEntity academicTermEntity = unserializeEntity(AcademicTermEntity.class, EntityUtils.toString(entity));
+      academicTermEntity = unserializeEntity(AcademicTermEntity.class, EntityUtils.toString(entity));
       assertNotNull(academicTermEntity);
       assertEquals("Llama term", academicTermEntity.getName());
-      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-01-23T07:45:00+03:00").getTime(), academicTermEntity.getStartDate());
-      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-05-31T12:00:00+03:00").getTime(), academicTermEntity.getEndDate());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-01-23T00:00:00").getTime(), academicTermEntity.getStartDate());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-05-31T00:00:00").getTime(), academicTermEntity.getEndDate());
     } finally {
       EntityUtils.consume(entity);
     }
@@ -2081,9 +2169,10 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
   @Test
   public void testUnarchiveAcademicTerm() throws ClientProtocolException, IOException {
-    StringEntity str = new StringEntity("{\"archived\":false}");
+    AcademicTermEntity academicTermEntity = new AcademicTermEntity();
+    academicTermEntity.setArchived(false);
 
-    HttpResponse response = doPutRequest("/calendar/academicTerms/1", str);
+    HttpResponse response = doPutRequest("/calendar/academicTerms/1", academicTermEntity);
 
     assertEquals(200, response.getStatusLine().getStatusCode());
 
@@ -2091,12 +2180,12 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     try {
       assertNotNull(entity);
       assertEquals("application/json", entity.getContentType().getValue());
-      AcademicTermEntity academicTermEntity = unserializeEntity(AcademicTermEntity.class, EntityUtils.toString(entity));
+      academicTermEntity = unserializeEntity(AcademicTermEntity.class, EntityUtils.toString(entity));
       assertNotNull(academicTermEntity);
       assertEquals((Long) 1l, academicTermEntity.getId());
       assertEquals(false, academicTermEntity.getArchived());
     } finally {
       EntityUtils.consume(entity);
     }
-  }
+  }  
 }

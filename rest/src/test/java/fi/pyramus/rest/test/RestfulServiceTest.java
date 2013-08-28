@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.HttpResponse;
@@ -84,6 +85,8 @@ public class RestfulServiceTest {
 
   protected <T> T unserializeEntity(Class<? extends T> clazz, String data) throws JsonParseException, JsonMappingException, IOException {
     ObjectMapper mapper = new ObjectMapper();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    mapper.getDeserializationConfig().setDateFormat(sdf);
     StringReader stringReader = new StringReader(data);
     try {
       return mapper.readValue(stringReader, clazz);
@@ -91,14 +94,12 @@ public class RestfulServiceTest {
       stringReader.close();
     }
   }
-
-  protected HttpResponse doPostRequest(String path, StringEntity entity) throws ClientProtocolException, IOException {
+  
+  protected HttpResponse doPostRequest(String path, Object entity) throws ClientProtocolException, IOException {
     DefaultHttpClient httpClient = new DefaultHttpClient();
     HttpPost request = new HttpPost(baseUri + path);
-    // String serialized = serializeEntity(entity);
-    // request.setEntity(new StringEntity(serialized, "application/json", "UTF-8"));
-    request.addHeader("content-type", "application/json");
-    request.setEntity(entity);
+    String serialized = serializeEntity(entity);
+    request.setEntity(new StringEntity(serialized, "application/json", "UTF-8"));
     return httpClient.execute(request);
   }
 
@@ -108,11 +109,11 @@ public class RestfulServiceTest {
     return httpClient.execute(request);
   }
   
-  protected HttpResponse doPutRequest(String path, StringEntity entity) throws ClientProtocolException, IOException {
+  protected HttpResponse doPutRequest(String path, Object entity) throws ClientProtocolException, IOException {
     DefaultHttpClient httpClient = new DefaultHttpClient();
     HttpPut request = new HttpPut(baseUri + path);
-    request.addHeader("content-type", "application/json");
-    request.setEntity(entity);;
+    String serialized = serializeEntity(entity);
+    request.setEntity(new StringEntity(serialized, "application/json", "UTF-8"));
     return httpClient.execute(request);
   }
 
