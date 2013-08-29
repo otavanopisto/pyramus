@@ -48,6 +48,7 @@ import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
 import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
 import fi.pyramus.rest.tranquil.base.SubjectEntity;
 import fi.pyramus.rest.tranquil.base.TagEntity;
+import fi.pyramus.rest.tranquil.courses.CourseEntity;
 import fi.pyramus.rest.tranquil.grading.GradingScaleEntity;
 import fi.pyramus.rest.tranquil.modules.ModuleEntity;
 import fi.pyramus.rest.tranquil.projects.ProjectEntity;
@@ -2188,4 +2189,179 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }  
+  
+  // CourseRESTServiceTest Course
+  
+  @Test
+  public void testCreateCourse() throws ClientProtocolException, IOException, ParseException {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date beginDate = sdf.parse("2013-02-13");
+    Date endDate = sdf.parse("2013-05-09");
+    Date enrolmentTimeEnd = sdf.parse("2013-01-31");
+    CourseEntity courseEntity = new CourseEntity();
+    courseEntity.setModule_id(1l);
+    courseEntity.setName("Test course");
+    courseEntity.setNameExtension("Test extension");
+    courseEntity.setState_id(1l);
+    courseEntity.setSubject_id(1l);
+    courseEntity.setCourseNumber(2);
+    courseEntity.setBeginDate(beginDate);
+    courseEntity.setEndDate(endDate);
+    courseEntity.setCourseLength_id(1l);
+    courseEntity.setCourseLength(15d);
+    courseEntity.setDistanceTeachingDays(10d);
+    courseEntity.setLocalTeachingDays(5d);
+    courseEntity.setTeachingHours(60d);
+    courseEntity.setPlanningHours(15d);
+    courseEntity.setAssessingHours(5d);
+    courseEntity.setDescription("Testing how courses work");
+    courseEntity.setMaxParticipantCount(25l);
+    courseEntity.setEnrolmentTimeEnd(enrolmentTimeEnd);
+  
+    HttpResponse response = doPostRequest("/courses/courses/", courseEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      courseEntity = unserializeEntity(CourseEntity.class, EntityUtils.toString(entity));
+      assertNotNull(courseEntity);
+      assertEquals((Long) 2l, courseEntity.getId());
+      assertEquals("Test course", courseEntity.getName());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-02-13T00:00:00").getTime(), courseEntity.getBeginDate());
+      assertEquals("Testing how courses work", courseEntity.getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourses() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/courses/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseEntity[] courseEntities = unserializeEntity(CourseEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(courseEntities);
+      assertEquals(1, courseEntities.length);
+      assertEquals("Test course", courseEntities[0].getName());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-02-13T00:00:00").getTime(), courseEntities[0].getBeginDate());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-01-31T00:00:00").getTime(), courseEntities[0].getEnrolmentTimeEnd());
+      assertEquals("Testing how courses work", courseEntities[0].getDescription());  
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourseById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/courses/2");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseEntity courseEntity = unserializeEntity(CourseEntity.class, EntityUtils.toString(entity));
+      assertNotNull(courseEntity);
+      assertEquals("Test course", courseEntity.getName());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-02-13T00:00:00").getTime(), courseEntity.getBeginDate());
+      assertEquals("Testing how courses work", courseEntity.getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateCourse() throws ClientProtocolException, IOException, ParseException {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date beginDate = sdf.parse("2013-08-04");
+    Date endDate = sdf.parse("2013-12-20");
+    Date enrolmentTimeEnd = sdf.parse("2013-07-02");
+    CourseEntity courseEntity = new CourseEntity();
+    courseEntity.setModule_id(1l);
+    courseEntity.setName("Llama course");
+    courseEntity.setNameExtension("extending");
+    courseEntity.setState_id(1l);
+    courseEntity.setSubject_id(1l);
+    courseEntity.setCourseNumber(3);
+    courseEntity.setBeginDate(beginDate);
+    courseEntity.setEndDate(endDate);
+    courseEntity.setCourseLength_id(1l);
+    courseEntity.setCourseLength(20d);
+    courseEntity.setDistanceTeachingDays(5d);
+    courseEntity.setLocalTeachingDays(20d);
+    courseEntity.setTeachingHours(80d);
+    courseEntity.setPlanningHours(10d);
+    courseEntity.setAssessingHours(2d);
+    courseEntity.setDescription("Updating course");
+    courseEntity.setMaxParticipantCount(30l);
+    courseEntity.setEnrolmentTimeEnd(enrolmentTimeEnd);
+  
+    HttpResponse response = doPutRequest("/courses/courses/2", courseEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      courseEntity = unserializeEntity(CourseEntity.class, EntityUtils.toString(entity));
+      assertNotNull(courseEntity);
+      assertEquals("Llama course", courseEntity.getName());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-08-04T00:00:00").getTime(), courseEntity.getBeginDate());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-12-20T00:00:00").getTime(), courseEntity.getEndDate());
+      assertEquals(false, courseEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testArchiveCourse() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/courses/courses/2");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseEntity courseEntity = unserializeEntity(CourseEntity.class, EntityUtils.toString(entity));
+      assertNotNull(courseEntity);
+      assertEquals((Long) 2l, courseEntity.getId());
+      assertEquals(true, courseEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testUnarchiveCourse() throws ClientProtocolException, IOException {
+    CourseEntity courseEntity = new CourseEntity();
+    courseEntity.setArchived(false);
+
+    HttpResponse response = doPutRequest("/courses/courses/2", courseEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      courseEntity = unserializeEntity(CourseEntity.class, EntityUtils.toString(entity));
+      assertNotNull(courseEntity);
+      assertEquals((Long) 2l, courseEntity.getId());
+      assertEquals(false, courseEntity.getArchived());
+      assertEquals("Llama course", courseEntity.getName());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-08-04T00:00:00").getTime(), courseEntity.getBeginDate());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 }
