@@ -2127,7 +2127,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     AcademicTermEntity academicTermEntity = new AcademicTermEntity();
     academicTermEntity.setName("Llama term");
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    Date startDate = sdf.parse("2013-01-23");
+    Date startDate = sdf.parse("2013-01-01");
     Date endDate = sdf.parse("2013-05-31");
     academicTermEntity.setStartDate(startDate);
     academicTermEntity.setEndDate(endDate);
@@ -2142,7 +2142,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       academicTermEntity = unserializeEntity(AcademicTermEntity.class, EntityUtils.toString(entity));
       assertNotNull(academicTermEntity);
       assertEquals("Llama term", academicTermEntity.getName());
-      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-01-23T00:00:00").getTime(), academicTermEntity.getStartDate());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-01-01T00:00:00").getTime(), academicTermEntity.getStartDate());
       assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-05-31T00:00:00").getTime(), academicTermEntity.getEndDate());
     } finally {
       EntityUtils.consume(entity);
@@ -2299,6 +2299,29 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
+  
+  @Test
+  public void testFindCoursesByTerm() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/calendar/academicTerms/1/courses");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseEntity[] courseEntities = unserializeEntity(CourseEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(courseEntities);
+      assertEquals(1, courseEntities.length);
+      assertEquals("Test course", courseEntities[0].getName());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-02-13T00:00:00").getTime(), courseEntities[0].getBeginDate());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-01-31T00:00:00").getTime(), courseEntities[0].getEnrolmentTimeEnd());
+      assertEquals("Testing how courses work", courseEntities[0].getDescription());  
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
 
   @Test
   public void testUpdateCourse() throws ClientProtocolException, IOException, ParseException {
