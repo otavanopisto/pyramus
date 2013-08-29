@@ -40,6 +40,11 @@ public class CourseController {
     return course;
   }
   
+  public CourseState createCourseState(String name) {
+    CourseState courseState = courseStateDAO.create(name);
+    return courseState;
+  }
+  
   public Tag createModuleTag(Course course, String text) {
     Tag tag = tagDAO.findByText(text);
     if(tag == null) {
@@ -64,6 +69,16 @@ public class CourseController {
     return course;
   }
   
+  public List<CourseState> findCourseStates() {
+    List<CourseState> courseStates = courseStateDAO.listAll();
+    return courseStates;
+  }
+  
+  public List<CourseState> findUnarchivedCourseStates() {
+    List<CourseState> courseStates = courseStateDAO.listUnarchived();
+    return courseStates;
+  }
+  
   public CourseState findCourseStateById(Long id) {
     CourseState state = courseStateDAO.findById(id);
     return state;
@@ -84,6 +99,11 @@ public class CourseController {
     return course;
   }
   
+  public CourseState updateCourseState(CourseState courseState, String name) {
+    CourseState updated = courseStateDAO.update(courseState, name);
+    return updated;
+  }
+  
   public Course archiveCourse(Course course, User user) {
     courseDAO.archive(course, user);
     return course;
@@ -92,6 +112,16 @@ public class CourseController {
   public Course unarchiveCourse(Course course, User user) {
     courseDAO.unarchive(course, user);
     return course;
+  }
+  
+  public CourseState archiveCourseState(CourseState courseState, User user) {
+    courseStateDAO.archive(courseState, user);
+    return courseState;
+  }
+  
+  public CourseState unarchiveCourseState(CourseState courseState, User user) {
+    courseStateDAO.unarchive(courseState, user);
+    return courseState;
   }
   
   public void removeCourseTag(Course course, Tag tag) {
