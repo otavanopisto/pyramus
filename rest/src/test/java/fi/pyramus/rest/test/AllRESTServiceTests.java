@@ -49,6 +49,7 @@ import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
 import fi.pyramus.rest.tranquil.base.SubjectEntity;
 import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.courses.CourseEntity;
+import fi.pyramus.rest.tranquil.courses.CourseStateEntity;
 import fi.pyramus.rest.tranquil.grading.GradingScaleEntity;
 import fi.pyramus.rest.tranquil.modules.ModuleEntity;
 import fi.pyramus.rest.tranquil.projects.ProjectEntity;
@@ -2190,6 +2191,130 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     }
   }  
   
+ //CourseRESTServiceTest CourseState
+  
+
+  @Test
+  public void testCreateCourseState() throws ClientProtocolException, IOException, ParseException {
+    CourseStateEntity courseStateEntity = new CourseStateEntity();
+    courseStateEntity.setName("Test State");
+  
+    HttpResponse response = doPostRequest("/courses/courseStates/", courseStateEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      courseStateEntity = unserializeEntity(CourseStateEntity.class, EntityUtils.toString(entity));
+      assertNotNull(courseStateEntity);
+      assertEquals((Long) 1l, courseStateEntity.getId());
+      assertEquals("Test State", courseStateEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourseStates() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/courseStates/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseStateEntity[] courseStateEntities = unserializeEntity(CourseStateEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(courseStateEntities);
+      assertEquals(1, courseStateEntities.length);
+      assertEquals("Test State", courseStateEntities[0].getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourseStateById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/courseStates/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseStateEntity courseStateEntity = unserializeEntity(CourseStateEntity.class, EntityUtils.toString(entity));
+      assertNotNull(courseStateEntity);
+      assertEquals("Test State", courseStateEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateCourseState() throws ClientProtocolException, IOException, ParseException {
+    CourseStateEntity courseStateEntity = new CourseStateEntity();
+    courseStateEntity.setName("Updated State");
+  
+    HttpResponse response = doPutRequest("/courses/courseStates/1", courseStateEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      courseStateEntity = unserializeEntity(CourseStateEntity.class, EntityUtils.toString(entity));
+      assertNotNull(courseStateEntity);
+      assertEquals("Updated State", courseStateEntity.getName());
+      assertEquals(false, courseStateEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testArchiveCourseState() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/courses/courseStates/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseStateEntity courseStateEntity = unserializeEntity(CourseStateEntity.class, EntityUtils.toString(entity));
+      assertNotNull(courseStateEntity);
+      assertEquals((Long) 1l, courseStateEntity.getId());
+      assertEquals(true, courseStateEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testUnarchiveCourseState() throws ClientProtocolException, IOException {
+    CourseStateEntity courseStateEntity = new CourseStateEntity();
+    courseStateEntity.setArchived(false);
+
+    HttpResponse response = doPutRequest("/courses/courseStates/1", courseStateEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      courseStateEntity = unserializeEntity(CourseStateEntity.class, EntityUtils.toString(entity));
+      assertNotNull(courseStateEntity);
+      assertEquals((Long) 1l, courseStateEntity.getId());
+      assertEquals(false, courseStateEntity.getArchived());
+      assertEquals("Updated State", courseStateEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
   // CourseRESTServiceTest Course
   
   @Test
@@ -2410,8 +2535,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     }
   }
   
-  //CourseRESTServiceTest Tag
-  
+  //CourseRESTServiceTest Tag 
 
   @Test
   public void testCreateCourseTag() throws ClientProtocolException, IOException {
