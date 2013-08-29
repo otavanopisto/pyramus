@@ -2409,6 +2409,27 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   }
   
   @Test
+  public void testFindCoursesByTag() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/tags/tags/4/courses");
+    
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseEntity[] courseEntities = unserializeEntity(CourseEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(courseEntities);
+      assertEquals(1, courseEntities.length);
+      assertEquals(false, courseEntities[0].getArchived());
+      assertEquals("Llama course", courseEntities[0].getName());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-08-04T00:00:00").getTime(), courseEntities[0].getBeginDate());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
   public void testRemoveCourseTag() throws ClientProtocolException, IOException {
     HttpResponse response = doDeleteRequest("/courses/courses/2/tags/4");
 
