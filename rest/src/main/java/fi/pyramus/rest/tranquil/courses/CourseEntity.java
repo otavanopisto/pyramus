@@ -141,6 +141,14 @@ public class CourseEntity implements fi.tranquil.TranquilModelEntity {
   public void setPlanningHours(Double planningHours) {
     this.planningHours = planningHours;
   }
+  
+  public Double getCourseLength() {
+    return courseLength;
+  }
+  
+  public void setCourseLength(Double courseLength) {
+    this.courseLength = courseLength;
+  }
 
   public java.util.Date getEnrolmentTimeEnd() {
     return enrolmentTimeEnd;
@@ -319,6 +327,8 @@ public class CourseEntity implements fi.tranquil.TranquilModelEntity {
   private Double assessingHours;
 
   private Double planningHours;
+  
+  private Double courseLength;
 
   private java.util.Date enrolmentTimeEnd;
 
