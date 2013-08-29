@@ -71,13 +71,7 @@ public class ModuleController {
   }
   
   public List<Course> findCourses(Module module) {
-    List<Course> courses = courseDAO.listAll();
-    List<Course> moduleCourses = new ArrayList<Course>();
-    for (Course course : courses) {
-      if (course.getModule().equals(module)) {
-        moduleCourses.add(course);
-      }
-    }
+    List<Course> courses = courseDAO.listByModule(module);
     return courses;
   }
   
