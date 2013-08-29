@@ -2,15 +2,18 @@ package fi.pyramus.rest.controller;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
+import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
@@ -23,6 +26,8 @@ public class CourseController {
   CourseDAO courseDAO;
   @Inject
   CourseStateDAO courseStateDAO;
+  @Inject
+  TagDAO tagDAO;
   
   public Course createCourse(Module module, String name, String nameExtension, CourseState state, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
@@ -33,6 +38,15 @@ public class CourseController {
             localTeachingDays, teachingHours, planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, creatingUser);
 
     return course;
+  }
+  
+  public Tag createModuleTag(Course course, String text) {
+    Tag tag = tagDAO.findByText(text);
+    if(tag == null) {
+      tag = tagDAO.create(text);
+    }
+    course.addTag(tag);
+    return tag;
   }
   
   public List<Course> findCourses() {
@@ -55,6 +69,11 @@ public class CourseController {
     return state;
   }
   
+  public Set<Tag> findCourseTags(Course course) {
+    Set<Tag> tags= course.getTags();
+    return tags;
+  }
+  
   public Course updateCourse(Course course, String name, String nameExtension, CourseState courseState, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
       Double planningHours, Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User user) {
@@ -73,5 +92,9 @@ public class CourseController {
   public Course unarchiveCourse(Course course, User user) {
     courseDAO.unarchive(course, user);
     return course;
+  }
+  
+  public void removeCourseTag(Course course, Tag tag) {
+    course.removeTag(tag);
   }
 }

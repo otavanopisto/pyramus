@@ -19,14 +19,19 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
+import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
+import fi.pyramus.rest.controller.TagController;
+import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.courses.CourseEntity;
 import fi.tranquil.TranquilityBuilderFactory;
 
@@ -44,6 +49,8 @@ public class CourseRESTService extends AbstractRESTService {
   ModuleController moduleController;
   @Inject
   CommonController commonController;
+  @Inject
+  TagController tagController;
   
   @Path("/courses")
   @POST
@@ -79,6 +86,20 @@ public class CourseRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/courses/{ID:[0-9]*}/tags")
+  @POST
+  public Response createCourseTag(@PathParam("ID") Long id, TagEntity tagEntity) {
+    Course course = courseController.findCourseById(id);
+    String text = tagEntity.getText();
+    if (course != null && !StringUtils.isBlank(text)) {
+      return Response.ok()
+          .entity(tranqualise(courseController.createModuleTag(course, text)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
   @Path("/courses")
   @GET
   public Response findCourses(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -104,6 +125,19 @@ public class CourseRESTService extends AbstractRESTService {
     if (course != null) {
       return Response.ok()
           .entity(tranqualise(course))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/courses/{ID:[0-9]*}/tags")
+  @GET
+  public Response findCourseTags(@PathParam("ID") Long id) {
+    Course course = courseController.findCourseById(id);
+    if (course != null) {
+      return Response.ok()
+          .entity(tranqualise(courseController.findCourseTags(course)))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
@@ -167,6 +201,19 @@ public class CourseRESTService extends AbstractRESTService {
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/courses/{CID:[0-9]*}/tags/{ID:[0-9]*}")
+  @DELETE
+  public Response removeTag(@PathParam("CID") Long courseId, @PathParam("ID") Long tagId) {
+    Course course = courseController.findCourseById(courseId);
+    Tag tag = tagController.findTagById(tagId);
+    if (course != null && tag != null) {
+      courseController.removeCourseTag(course, tag);
+      return Response.status(200).build();
+    } else {
+      return Response.status(500).build();
     }
   }
   
