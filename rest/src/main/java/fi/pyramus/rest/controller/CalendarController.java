@@ -9,14 +9,20 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.pyramus.dao.base.AcademicTermDAO;
+import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.domainmodel.base.AcademicTerm;
+import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.persistence.search.SearchResult;
+import fi.pyramus.persistence.search.SearchTimeFilterMode;
 
 @Dependent
 @Stateless
 public class CalendarController {
   @Inject
   private AcademicTermDAO academicTermDAO;
+  @Inject
+  private CourseDAO courseDAO;
   
   public AcademicTerm createAcademicTerm(String name, Date startDate, Date endDate) {
     AcademicTerm academicTerm = academicTermDAO.create(name, startDate, endDate);
@@ -36,6 +42,11 @@ public class CalendarController {
   public AcademicTerm findAcademicTermById(Long id) {
     AcademicTerm academicTerm = academicTermDAO.findById(id);
     return academicTerm;
+  }
+  
+  public SearchResult<Course> findCoursesByTerm(int resultsPerPage, int page, SearchTimeFilterMode timeFilterMode, Date timeframeStart, Date timeframeEnd, boolean filterArchived) {
+    SearchResult<Course> courses = courseDAO.searchCourses(resultsPerPage, page, null, null, null, null, null, null, timeFilterMode, timeframeStart, timeframeEnd, filterArchived);
+    return courses;
   }
   
   public AcademicTerm updateAcademicTerm(AcademicTerm term, String name, Date startDate, Date endDate) {

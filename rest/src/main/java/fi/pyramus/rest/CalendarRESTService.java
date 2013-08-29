@@ -22,6 +22,9 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.AcademicTerm;
+import fi.pyramus.domainmodel.courses.Course;
+import fi.pyramus.persistence.search.SearchResult;
+import fi.pyramus.persistence.search.SearchTimeFilterMode;
 import fi.pyramus.rest.controller.CalendarController;
 import fi.pyramus.rest.tranquil.base.AcademicTermEntity;
 import fi.tranquil.TranquilityBuilderFactory;
@@ -77,6 +80,22 @@ public class CalendarRESTService extends AbstractRESTService {
     if (term != null) {
       return Response.ok()
           .entity(tranqualise(term))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/academicTerms/{ID:[0-9]*}/courses")
+  @GET
+  public Response findCoursesByTerm(@PathParam("ID") Long id, @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    AcademicTerm term = calendarController.findAcademicTermById(id);
+    if (term != null) {
+      Date timeframeStart = term.getStartDate();
+      Date timeframeEnd = term.getEndDate();
+      SearchResult<Course> courses = calendarController.findCoursesByTerm(100, 0, SearchTimeFilterMode.getMode(1), timeframeStart, timeframeEnd, filterArchived);
+      return Response.ok()
+          .entity(tranqualise(courses.getResults()))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
