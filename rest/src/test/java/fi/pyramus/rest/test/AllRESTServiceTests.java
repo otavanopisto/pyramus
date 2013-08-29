@@ -1972,7 +1972,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   }
   
   @Test
-  public void testRemoveTag() throws ClientProtocolException, IOException {
+  public void testRemoveModuleTag() throws ClientProtocolException, IOException {
     HttpResponse response = doDeleteRequest("/modules/modules/1/tags/3");
 
     assertEquals(200, response.getStatusLine().getStatusCode());
@@ -2363,5 +2363,55 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     } finally {
       EntityUtils.consume(entity);
     }
+  }
+  
+  //CourseRESTServiceTest Tag
+  
+
+  @Test
+  public void testCreateCourseTag() throws ClientProtocolException, IOException {
+    TagEntity tagEntity = new TagEntity();
+    tagEntity.setText("CourseTag");
+
+    HttpResponse response = doPostRequest("/courses/courses/2/tags", tagEntity);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
+      assertNotNull(tagEntity);
+      assertEquals((Long) 4l, tagEntity.getId());
+      assertEquals("CourseTag", tagEntity.getText());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourseTags() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/courses/2/tags");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      TagEntity[] tagEntities = unserializeEntity(TagEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(tagEntities);
+      assertEquals(1, tagEntities.length);
+      assertEquals("CourseTag", tagEntities[0].getText());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testRemoveCourseTag() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/courses/courses/2/tags/4");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
   }
 }
