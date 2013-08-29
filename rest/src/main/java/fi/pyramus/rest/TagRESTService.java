@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang.StringUtils;
 
 import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.persistence.search.SearchResult;
@@ -82,6 +83,21 @@ public class TagRESTService extends AbstractRESTService {
     if (tag != null) {
       return Response.ok()
           .entity(tranqualise(tag))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/tags/{ID:[0-9]*}/courses")
+  @GET
+  public Response findCoursesByTag(@PathParam("ID") Long id, @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    Tag tag = tagController.findTagById(id);
+    if (tag != null) {
+      String text = tag.getText();
+      SearchResult<Course> courses = tagController.findCoursesByTag(100, 0, text, filterArchived);
+      return Response.ok()
+          .entity(tranqualise(courses.getResults()))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();

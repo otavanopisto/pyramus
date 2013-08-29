@@ -7,9 +7,11 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.pyramus.dao.base.TagDAO;
+import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.projects.ProjectDAO;
 import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.persistence.search.SearchResult;
@@ -23,6 +25,8 @@ public class TagController {
   ProjectDAO projectDAO;
   @Inject
   ModuleDAO moduleDAO;
+  @Inject
+  CourseDAO courseDAO;
 
   public Tag createTag(String text) {
     Tag tag = tagDAO.findByText(text);
@@ -47,6 +51,11 @@ public class TagController {
     return tag;
   }
   
+  public SearchResult<Course> findCoursesByTag(int resultsPerPage, int page, String tags, boolean filterArchived) {
+    SearchResult<Course> courses = courseDAO.searchCourses(resultsPerPage, page, null, tags, null, null, null, null, null, null, null, filterArchived);
+    return courses;
+  }
+  
   public SearchResult<Project> findProjectsByTag(int resultsPerPage, int page, String tag, boolean filterArchived) {
     SearchResult<Project> projects = projectDAO.searchProjects(resultsPerPage, page, null, null, tag, filterArchived);
     return projects;
@@ -56,7 +65,7 @@ public class TagController {
     SearchResult<Module> modules = moduleDAO.searchModules(resultsPerPage, page, null, null, tags, null, null, null, null, filterArchived);
     return modules;
   }
-
+  
   public Tag updateTagText(Tag tag, String text) {
     tagDAO.updateText(tag, text);
     return tag;
