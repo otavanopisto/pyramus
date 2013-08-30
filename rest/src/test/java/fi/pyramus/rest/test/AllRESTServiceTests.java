@@ -48,6 +48,7 @@ import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
 import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
 import fi.pyramus.rest.tranquil.base.SubjectEntity;
 import fi.pyramus.rest.tranquil.base.TagEntity;
+import fi.pyramus.rest.tranquil.courses.CourseComponentEntity;
 import fi.pyramus.rest.tranquil.courses.CourseDescriptionCategoryEntity;
 import fi.pyramus.rest.tranquil.courses.CourseEntity;
 import fi.pyramus.rest.tranquil.courses.CourseParticipationTypeEntity;
@@ -2779,6 +2780,139 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertEquals(false, courseEntity.getArchived());
       assertEquals("Llama course", courseEntity.getName());
       assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-08-04T00:00:00").getTime(), courseEntity.getBeginDate());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  //CourseRESTServiceTest CourseComponent
+
+  @Test
+  public void testCreateCourseComponent() throws ClientProtocolException, IOException, ParseException {
+    CourseComponentEntity componentEntity = new CourseComponentEntity();
+    componentEntity.setName("Test Component");
+    componentEntity.setDescription("Courses have components");
+    componentEntity.setLength(60d);
+    componentEntity.setLength_id(1l);
+  
+    HttpResponse response = doPostRequest("/courses/courses/2/components", componentEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      componentEntity = unserializeEntity(CourseComponentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(componentEntity);
+      assertEquals((Long) 1l, componentEntity.getId());
+      assertEquals("Test Component", componentEntity.getName());
+      assertEquals("Courses have components", componentEntity.getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourseComponents() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/courses/2/components");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseComponentEntity[] componentEntities = unserializeEntity(CourseComponentEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(componentEntities);
+      assertEquals(1, componentEntities.length);
+      assertEquals((Long) 1l, componentEntities[0].getId());
+      assertEquals("Test Component", componentEntities[0].getName());
+      assertEquals("Courses have components", componentEntities[0].getDescription());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourseComponentById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/courses/2/components/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseComponentEntity componentEntity = unserializeEntity(CourseComponentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(componentEntity);
+      assertEquals("Test Component", componentEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateCourseComponent() throws ClientProtocolException, IOException, ParseException {
+    CourseComponentEntity componentEntity = new CourseComponentEntity();
+    componentEntity.setName("Updated Component");
+    componentEntity.setDescription("Llama has 4 legs and you can ride it!");
+    componentEntity.setLength(9001d);
+    componentEntity.setLength_id(1l);
+  
+    HttpResponse response = doPutRequest("/courses/courses/2/components/1", componentEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      componentEntity = unserializeEntity(CourseComponentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(componentEntity);
+      assertEquals("Updated Component", componentEntity.getName());
+      assertEquals("Llama has 4 legs and you can ride it!", componentEntity.getDescription());
+      assertEquals(false, componentEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testArchiveCourseComponent() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/courses/courses/2/components/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseComponentEntity componentEntity = unserializeEntity(CourseComponentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(componentEntity);
+      assertEquals((Long) 1l, componentEntity.getId());
+      assertEquals(true, componentEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testUnarchiveCourseComponent() throws ClientProtocolException, IOException {
+    CourseComponentEntity componentEntity = new CourseComponentEntity();
+    componentEntity.setArchived(false);
+
+    HttpResponse response = doPutRequest("/courses/courses/2/components/1", componentEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      componentEntity = unserializeEntity(CourseComponentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(componentEntity);
+      assertEquals((Long) 1l, componentEntity.getId());
+      assertEquals(false, componentEntity.getArchived());
+      assertEquals("Updated Component", componentEntity.getName());
     } finally {
       EntityUtils.consume(entity);
     }
