@@ -50,6 +50,7 @@ import fi.pyramus.rest.tranquil.base.SubjectEntity;
 import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.courses.CourseDescriptionCategoryEntity;
 import fi.pyramus.rest.tranquil.courses.CourseEntity;
+import fi.pyramus.rest.tranquil.courses.CourseParticipationTypeEntity;
 import fi.pyramus.rest.tranquil.courses.CourseStateEntity;
 import fi.pyramus.rest.tranquil.grading.GradingScaleEntity;
 import fi.pyramus.rest.tranquil.modules.ModuleEntity;
@@ -2435,6 +2436,129 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertEquals((Long) 1l, categoryEntity.getId());
       assertEquals(false, categoryEntity.getArchived());
       assertEquals("Updated Category", categoryEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  //CourseRESTServiceTest CourseParticipationType
+
+  @Test
+  public void testCreateCourseParticipationType() throws ClientProtocolException, IOException, ParseException {
+    CourseParticipationTypeEntity participationEntity = new CourseParticipationTypeEntity();
+    participationEntity.setName("Test participationType");
+  
+    HttpResponse response = doPostRequest("/courses/participationTypes/", participationEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      participationEntity = unserializeEntity(CourseParticipationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(participationEntity);
+      assertEquals((Long) 1l, participationEntity.getId());
+      assertEquals("Test participationType", participationEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourseParticipationTypes() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/participationTypes/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseParticipationTypeEntity[] participationTypeEntities = unserializeEntity(CourseParticipationTypeEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(participationTypeEntities);
+      assertEquals(1, participationTypeEntities.length);
+      assertEquals("Test participationType", participationTypeEntities[0].getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourseParticipationTypeById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/participationTypes/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseParticipationTypeEntity participationTypeEntity = unserializeEntity(CourseParticipationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(participationTypeEntity);
+      assertEquals("Test participationType", participationTypeEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateCourseParticipationType() throws ClientProtocolException, IOException, ParseException {
+    CourseParticipationTypeEntity participationTypeEntity = new CourseParticipationTypeEntity();
+    participationTypeEntity.setName("Updated participationType");
+  
+    HttpResponse response = doPutRequest("/courses/participationTypes/1", participationTypeEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      participationTypeEntity = unserializeEntity(CourseParticipationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(participationTypeEntity);
+      assertEquals("Updated participationType", participationTypeEntity.getName());
+      assertEquals(false, participationTypeEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testArchiveCourseParticipationType() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/courses/participationTypes/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseParticipationTypeEntity participationTypeEntity = unserializeEntity(CourseParticipationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(participationTypeEntity);
+      assertEquals((Long) 1l, participationTypeEntity.getId());
+      assertEquals(true, participationTypeEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testUnarchiveCourseParticipationType() throws ClientProtocolException, IOException {
+    CourseParticipationTypeEntity participationTypeEntity = new CourseParticipationTypeEntity();
+    participationTypeEntity.setArchived(false);
+
+    HttpResponse response = doPutRequest("/courses/participationTypes/1", participationTypeEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      participationTypeEntity = unserializeEntity(CourseParticipationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(participationTypeEntity);
+      assertEquals((Long) 1l, participationTypeEntity.getId());
+      assertEquals(false, participationTypeEntity.getArchived());
+      assertEquals("Updated participationType", participationTypeEntity.getName());
     } finally {
       EntityUtils.consume(entity);
     }
