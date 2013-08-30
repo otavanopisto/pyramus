@@ -45,6 +45,14 @@ public class CourseComponentEntity implements fi.tranquil.TranquilModelEntity {
   public void setVersion(Long version) {
     this.version = version;
   }
+  
+  public Double getLength() {
+    return length;
+  }
+  
+  public void setLength(Double length) {
+    this.length = length;
+  }
 
   public Long getLength_id() {
     return length_id;
@@ -79,6 +87,8 @@ public class CourseComponentEntity implements fi.tranquil.TranquilModelEntity {
   private Boolean archived;
 
   private Long version;
+  
+  private Double length;
 
   private Long length_id;
 
