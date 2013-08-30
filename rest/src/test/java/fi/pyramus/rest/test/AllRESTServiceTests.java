@@ -48,6 +48,7 @@ import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
 import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
 import fi.pyramus.rest.tranquil.base.SubjectEntity;
 import fi.pyramus.rest.tranquil.base.TagEntity;
+import fi.pyramus.rest.tranquil.courses.CourseDescriptionCategoryEntity;
 import fi.pyramus.rest.tranquil.courses.CourseEntity;
 import fi.pyramus.rest.tranquil.courses.CourseStateEntity;
 import fi.pyramus.rest.tranquil.grading.GradingScaleEntity;
@@ -2310,6 +2311,130 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertEquals((Long) 1l, courseStateEntity.getId());
       assertEquals(false, courseStateEntity.getArchived());
       assertEquals("Updated State", courseStateEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  //CourseRESTServiceTest CourseDescriptionCategory
+  
+
+  @Test
+  public void testCreateCourseDescriptionCategory() throws ClientProtocolException, IOException, ParseException {
+    CourseDescriptionCategoryEntity categoryEntity = new CourseDescriptionCategoryEntity();
+    categoryEntity.setName("Test Category");
+  
+    HttpResponse response = doPostRequest("/courses/descriptionCategories/", categoryEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      categoryEntity = unserializeEntity(CourseDescriptionCategoryEntity.class, EntityUtils.toString(entity));
+      assertNotNull(categoryEntity);
+      assertEquals((Long) 1l, categoryEntity.getId());
+      assertEquals("Test Category", categoryEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourseDescriptionCategories() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/descriptionCategories/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseDescriptionCategoryEntity[] categoryEntities = unserializeEntity(CourseDescriptionCategoryEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(categoryEntities);
+      assertEquals(1, categoryEntities.length);
+      assertEquals("Test Category", categoryEntities[0].getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourseDescriptionCategoryById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/descriptionCategories/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseDescriptionCategoryEntity categoryEntity = unserializeEntity(CourseDescriptionCategoryEntity.class, EntityUtils.toString(entity));
+      assertNotNull(categoryEntity);
+      assertEquals("Test Category", categoryEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateCourseDescriptionCategory() throws ClientProtocolException, IOException, ParseException {
+    CourseDescriptionCategoryEntity categoryEntity = new CourseDescriptionCategoryEntity();
+    categoryEntity.setName("Updated Category");
+  
+    HttpResponse response = doPutRequest("/courses/descriptionCategories/1", categoryEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      categoryEntity = unserializeEntity(CourseDescriptionCategoryEntity.class, EntityUtils.toString(entity));
+      assertNotNull(categoryEntity);
+      assertEquals("Updated Category", categoryEntity.getName());
+      assertEquals(false, categoryEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testArchiveCourseDescriptionCategory() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/courses/descriptionCategories/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseDescriptionCategoryEntity categoriesEntity = unserializeEntity(CourseDescriptionCategoryEntity.class, EntityUtils.toString(entity));
+      assertNotNull(categoriesEntity);
+      assertEquals((Long) 1l, categoriesEntity.getId());
+      assertEquals(true, categoriesEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testUnarchiveCourseDescriptionCategory() throws ClientProtocolException, IOException {
+    CourseDescriptionCategoryEntity categoryEntity = new CourseDescriptionCategoryEntity();
+    categoryEntity.setArchived(false);
+
+    HttpResponse response = doPutRequest("/courses/descriptionCategories/1", categoryEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      categoryEntity = unserializeEntity(CourseDescriptionCategoryEntity.class, EntityUtils.toString(entity));
+      assertNotNull(categoryEntity);
+      assertEquals((Long) 1l, categoryEntity.getId());
+      assertEquals(false, categoryEntity.getArchived());
+      assertEquals("Updated Category", categoryEntity.getName());
     } finally {
       EntityUtils.consume(entity);
     }
