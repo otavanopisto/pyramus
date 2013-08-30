@@ -10,11 +10,13 @@ import javax.inject.Inject;
 
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.courses.CourseDAO;
+import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
+import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.users.User;
@@ -28,6 +30,8 @@ public class CourseController {
   CourseStateDAO courseStateDAO;
   @Inject
   TagDAO tagDAO;
+  @Inject
+  CourseDescriptionCategoryDAO courseDescriptionCategoryDAO;
   
   public Course createCourse(Module module, String name, String nameExtension, CourseState state, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
@@ -40,12 +44,17 @@ public class CourseController {
     return course;
   }
   
+  public CourseDescriptionCategory createCourseDescriptionCategory(String name) {
+    CourseDescriptionCategory courseDescriptionCategory = courseDescriptionCategoryDAO.create(name);
+    return courseDescriptionCategory;
+  }
+  
   public CourseState createCourseState(String name) {
     CourseState courseState = courseStateDAO.create(name);
     return courseState;
   }
   
-  public Tag createModuleTag(Course course, String text) {
+  public Tag createCourseTag(Course course, String text) {
     Tag tag = tagDAO.findByText(text);
     if(tag == null) {
       tag = tagDAO.create(text);
@@ -67,6 +76,21 @@ public class CourseController {
   public Course findCourseById(Long id) {
     Course course = courseDAO.findById(id);
     return course;
+  }
+  
+  public List<CourseDescriptionCategory> findCourseDescriptionCategories() {
+    List<CourseDescriptionCategory> courseDescriptionCategories = courseDescriptionCategoryDAO.listAll();
+    return courseDescriptionCategories;
+  }
+
+  public List<CourseDescriptionCategory> findUnarchivedCourseDescriptionCategories() {
+    List<CourseDescriptionCategory> courseDescriptionCategories = courseDescriptionCategoryDAO.listUnarchived();
+    return courseDescriptionCategories;
+  }
+  
+  public CourseDescriptionCategory findCourseDescriptionCategoryById(Long id) {
+    CourseDescriptionCategory courseDescriptionCategory = courseDescriptionCategoryDAO.findById(id);
+    return courseDescriptionCategory;
   }
   
   public List<CourseState> findCourseStates() {
@@ -99,6 +123,11 @@ public class CourseController {
     return course;
   }
   
+  public CourseDescriptionCategory updateCourseDescriptionCategory(CourseDescriptionCategory courseDescriptionCategory, String name) {
+    CourseDescriptionCategory updated = courseDescriptionCategoryDAO.update(courseDescriptionCategory, name);
+    return updated;
+  }
+  
   public CourseState updateCourseState(CourseState courseState, String name) {
     CourseState updated = courseStateDAO.update(courseState, name);
     return updated;
@@ -112,6 +141,16 @@ public class CourseController {
   public Course unarchiveCourse(Course course, User user) {
     courseDAO.unarchive(course, user);
     return course;
+  }
+  
+  public CourseDescriptionCategory archiveCourseDescriptionCategory(CourseDescriptionCategory courseDescriptionCategory, User user) {
+    courseDescriptionCategoryDAO.archive(courseDescriptionCategory, user);
+    return courseDescriptionCategory;
+  }
+  
+  public CourseDescriptionCategory unarchiveCourseDescriptionCategory(CourseDescriptionCategory courseDescriptionCategory, User user) {
+    courseDescriptionCategoryDAO.unarchive(courseDescriptionCategory, user);
+    return courseDescriptionCategory;
   }
   
   public CourseState archiveCourseState(CourseState courseState, User user) {

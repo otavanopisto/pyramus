@@ -25,6 +25,7 @@ import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
+import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.rest.controller.CommonController;
@@ -32,6 +33,7 @@ import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.TagEntity;
+import fi.pyramus.rest.tranquil.courses.CourseDescriptionCategoryEntity;
 import fi.pyramus.rest.tranquil.courses.CourseEntity;
 import fi.pyramus.rest.tranquil.courses.CourseStateEntity;
 import fi.tranquil.TranquilityBuilderFactory;
@@ -87,6 +89,19 @@ public class CourseRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/descriptionCategories")
+  @POST
+  public Response createCourseDescriptionCategory(CourseDescriptionCategoryEntity categoryEntity) {
+    String name = categoryEntity.getName();
+    if (!StringUtils.isBlank(name)) {
+      return Response.ok()
+          .entity(tranqualise(courseController.createCourseDescriptionCategory(name)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
   @Path("/courseStates")
   @POST
   public Response createCourseState(CourseStateEntity courseStateEntity) {
@@ -107,7 +122,7 @@ public class CourseRESTService extends AbstractRESTService {
     String text = tagEntity.getText();
     if (course != null && !StringUtils.isBlank(text)) {
       return Response.ok()
-          .entity(tranqualise(courseController.createModuleTag(course, text)))
+          .entity(tranqualise(courseController.createCourseTag(course, text)))
           .build();
     } else {
       return Response.status(500).build();
@@ -123,7 +138,7 @@ public class CourseRESTService extends AbstractRESTService {
     } else {
       courses = courseController.findCourses();
     }
-    if(!courses.isEmpty()) {
+    if (!courses.isEmpty()) {
       return Response.ok()
           .entity(tranqualise(courses))
           .build();
@@ -139,6 +154,37 @@ public class CourseRESTService extends AbstractRESTService {
     if (course != null) {
       return Response.ok()
           .entity(tranqualise(course))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/descriptionCategories")
+  @GET
+  public Response findCourseDescriptionCategories(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<CourseDescriptionCategory> categories;
+    if (filterArchived) {
+      categories = courseController.findUnarchivedCourseDescriptionCategories();
+    } else {
+      categories = courseController.findCourseDescriptionCategories();
+    }
+    if (!categories.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(categories))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/descriptionCategories/{ID:[0-9]*}")
+  @GET
+  public Response findCourseDescriptionCategoryById(@PathParam("ID") Long id) {
+    CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(id);
+    if (category != null) {
+      return Response.ok()
+          .entity(tranqualise(category))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
@@ -236,6 +282,28 @@ public class CourseRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/descriptionCategories/{ID:[0-9]*}")
+  @PUT
+  public Response updateCourseDescriptionCategories(@PathParam("ID") Long id, CourseDescriptionCategoryEntity categoryEntity) {
+    CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(id);
+    if (category != null) {
+      String name = categoryEntity.getName();
+      if (!StringUtils.isBlank(name)) {
+        return Response.ok()
+            .entity(tranqualise(courseController.updateCourseDescriptionCategory(category, name)))
+            .build();
+      } else if (categoryEntity.getArchived() != null) {
+        if (!categoryEntity.getArchived()) {
+          return Response.ok()
+              .entity(tranqualise(courseController.unarchiveCourseDescriptionCategory(category, getUser())))
+              .build();
+        }
+      }
+      return Response.status(500).build();
+    }
+    return Response.status(Status.NOT_FOUND).build();
+  }
+  
   @Path("/courseStates/{ID:[0-9]*}")
   @PUT
   public Response updateCourseState(@PathParam("ID") Long id, CourseStateEntity courseStateEntity) {
@@ -268,6 +336,19 @@ public class CourseRESTService extends AbstractRESTService {
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/descriptionCategories/{ID:[0-9]*}")
+  @DELETE
+  public Response arciveCourseDescriptionCategory(@PathParam("ID") Long id) {
+    CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(id);
+    if (category != null) {
+      return Response.ok()
+          .entity(tranqualise(courseController.archiveCourseDescriptionCategory(category, getUser())))
+          .build();
+    } else {
+      return Response.status(500).build();
     }
   }
   
