@@ -25,6 +25,7 @@ import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
+import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseState;
@@ -34,6 +35,7 @@ import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.TagEntity;
+import fi.pyramus.rest.tranquil.courses.CourseComponentEntity;
 import fi.pyramus.rest.tranquil.courses.CourseDescriptionCategoryEntity;
 import fi.pyramus.rest.tranquil.courses.CourseEntity;
 import fi.pyramus.rest.tranquil.courses.CourseParticipationTypeEntity;
@@ -89,6 +91,28 @@ public class CourseRESTService extends AbstractRESTService {
     } catch(NullPointerException e) {
       return Response.status(500).build();
     }
+  }
+  
+  @Path("/courses/{ID:[0-9]*}/components")
+  @POST
+  public Response createCourseComponent(@PathParam("ID") Long id, CourseComponentEntity componentEntity) {
+    Course course = courseController.findCourseById(id);
+    if (course != null) {
+      try {
+        Double componentLength = componentEntity.getLength();
+        EducationalTimeUnit componentLengthTimeUnit = commonController.findEducationalTimeUnitById(componentEntity.getLength_id());
+        String name = componentEntity.getName();
+        String description = componentEntity.getDescription();
+        if (componentLength != null && componentLengthTimeUnit != null && !StringUtils.isBlank(name) && !StringUtils.isBlank(description)) {
+          return Response.ok()
+              .entity(tranqualise(courseController.createCourseComponent(course, componentLength, componentLengthTimeUnit, name, description)))
+              .build();
+        }
+      } catch(NullPointerException e) {
+        return Response.status(500).build();
+      }
+    }
+    return Response.status(Status.NOT_FOUND).build();
   }
   
   @Path("/descriptionCategories")
@@ -169,6 +193,33 @@ public class CourseRESTService extends AbstractRESTService {
     if (course != null) {
       return Response.ok()
           .entity(tranqualise(course))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/courses/{ID:[0-9]*}/components")
+  @GET
+  public Response findCourseComponents(@PathParam("ID") Long id) {
+    Course course = courseController.findCourseById(id);
+    List<CourseComponent> components = courseController.findCourseComponentsByCourse(course);
+    if (!components.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(components))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/courses/{CID:[0-9]*}/components/{ID:[0-9]*}")
+  @GET
+  public Response findCourseComponentById(@PathParam("CID") Long courseId, @PathParam("ID") Long componentId) {
+    CourseComponent component = courseController.findCourseComponentById(componentId);
+    if (component.getCourse().getId().equals(courseId) && component != null) {
+      return Response.ok()
+          .entity(tranqualise(component))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
@@ -328,6 +379,41 @@ public class CourseRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/courses/{CID:[0-9]*}/components/{ID:[0-9]*}")
+  @PUT
+  public Response updateCourseComponent(@PathParam("CID") Long courseId, @PathParam("ID") Long componentId, CourseComponentEntity componentEntity) {
+    try {
+      CourseComponent component = courseController.findCourseComponentById(componentId);
+      if (component.getCourse().getId().equals(courseId)) {
+        if (componentEntity.getArchived() != null) {
+          if (!componentEntity.getArchived()) {
+            return Response.ok()
+                .entity(tranqualise(courseController.unarchiveCourseComponent(component, getUser())))
+                .build();
+          } else {
+            return Response.status(500).build();
+          }
+        } else {
+          Double length = componentEntity.getLength();
+          EducationalTimeUnit lengthTimeUnit = commonController.findEducationalTimeUnitById(componentEntity.getLength_id());
+          String name = componentEntity.getName();
+          String description = componentEntity.getDescription();
+          if (length != null && lengthTimeUnit != null && !StringUtils.isBlank(name) && !StringUtils.isBlank(description)) {
+            return Response.ok()
+                .entity(tranqualise(courseController.updateCourseComponent(component, length, lengthTimeUnit, name, description)))
+                .build();
+          } else {
+            return Response.status(500).build();
+          }
+        }
+      } else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+    } catch (NullPointerException e) {
+      return Response.status(500).build();
+    }
+  }
+  
   @Path("/descriptionCategories/{ID:[0-9]*}")
   @PUT
   public Response updateCourseDescriptionCategories(@PathParam("ID") Long id, CourseDescriptionCategoryEntity categoryEntity) {
@@ -403,6 +489,21 @@ public class CourseRESTService extends AbstractRESTService {
           .entity(tranqualise(courseController.archiveCourse(course, getUser())))
           .build();
     } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/courses/{CID:[0-9]*}/components/{ID:[0-9]*}")
+  @DELETE
+  public Response archiveCourseComponent(@PathParam("CID") Long courseId, @PathParam("ID") Long componentId) {
+    Course course = courseController.findCourseById(courseId);
+    CourseComponent component = courseController.findCourseComponentById(componentId);
+    List<CourseComponent> courseComponents = courseController.findCourseComponentsByCourse(course);
+    if (courseComponents.contains(component)) {
+      return Response.ok()
+          .entity(tranqualise(courseController.archiveCourseComponent(component, getUser())))
+          .build();
+    } else  {
       return Response.status(Status.NOT_FOUND).build();
     }
   }

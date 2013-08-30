@@ -9,6 +9,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.pyramus.dao.base.TagDAO;
+import fi.pyramus.dao.courses.CourseComponentDAO;
 import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
@@ -17,6 +18,7 @@ import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
+import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseState;
@@ -36,6 +38,8 @@ public class CourseController {
   CourseDescriptionCategoryDAO courseDescriptionCategoryDAO;
   @Inject
   CourseParticipationTypeDAO courseParticipationTypeDAO;
+  @Inject
+  CourseComponentDAO courseComponentDAO;
   
   public Course createCourse(Module module, String name, String nameExtension, CourseState state, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
@@ -46,6 +50,11 @@ public class CourseController {
             localTeachingDays, teachingHours, planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, creatingUser);
 
     return course;
+  }
+  
+  public CourseComponent createCourseComponent(Course course, Double componentLength, EducationalTimeUnit componentLengthTimeUnit, String name, String description) {
+    CourseComponent courseComponent = courseComponentDAO.create(course, componentLength, componentLengthTimeUnit, name, description);
+    return courseComponent;
   }
   
   public CourseDescriptionCategory createCourseDescriptionCategory(String name) {
@@ -85,6 +94,21 @@ public class CourseController {
   public Course findCourseById(Long id) {
     Course course = courseDAO.findById(id);
     return course;
+  }
+  
+  public List<CourseComponent> findCourseComponentsByCourse(Course course) {
+    List<CourseComponent> components = courseComponentDAO.listByCourse(course);
+    return components;
+  }
+  
+  public List<CourseComponent> findUnarchivedCourseComponents() {
+    List<CourseComponent> components = courseComponentDAO.listUnarchived();
+    return components;
+  }
+  
+  public CourseComponent findCourseComponentById(Long id) {
+    CourseComponent component = courseComponentDAO.findById(id);
+    return component;
   }
   
   public List<CourseDescriptionCategory> findCourseDescriptionCategories() {
@@ -147,6 +171,11 @@ public class CourseController {
     return course;
   }
   
+  public CourseComponent updateCourseComponent(CourseComponent component, Double length, EducationalTimeUnit lengthTimeUnit, String name, String description) {
+    CourseComponent updated = courseComponentDAO.update(component, length, lengthTimeUnit, name, description);
+    return updated;
+  }
+  
   public CourseDescriptionCategory updateCourseDescriptionCategory(CourseDescriptionCategory courseDescriptionCategory, String name) {
     CourseDescriptionCategory updated = courseDescriptionCategoryDAO.update(courseDescriptionCategory, name);
     return updated;
@@ -170,6 +199,16 @@ public class CourseController {
   public Course unarchiveCourse(Course course, User user) {
     courseDAO.unarchive(course, user);
     return course;
+  }
+  
+  public CourseComponent archiveCourseComponent(CourseComponent courseComponent, User user) {
+    courseComponentDAO.archive(courseComponent, user);
+    return courseComponent;
+  }
+  
+  public CourseComponent unarchiveCourseComponent(CourseComponent courseComponent, User user) {
+    courseComponentDAO.unarchive(courseComponent, user);
+    return courseComponent;
   }
   
   public CourseDescriptionCategory archiveCourseDescriptionCategory(CourseDescriptionCategory courseDescriptionCategory, User user) {
