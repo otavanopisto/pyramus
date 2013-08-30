@@ -11,12 +11,14 @@ import javax.inject.Inject;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
+import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
+import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.users.User;
@@ -32,6 +34,8 @@ public class CourseController {
   TagDAO tagDAO;
   @Inject
   CourseDescriptionCategoryDAO courseDescriptionCategoryDAO;
+  @Inject
+  CourseParticipationTypeDAO courseParticipationTypeDAO;
   
   public Course createCourse(Module module, String name, String nameExtension, CourseState state, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
@@ -52,6 +56,11 @@ public class CourseController {
   public CourseState createCourseState(String name) {
     CourseState courseState = courseStateDAO.create(name);
     return courseState;
+  }
+  
+  public CourseParticipationType createCourseParticipationType(String name) {
+    CourseParticipationType courseParticipationType = courseParticipationTypeDAO.create(name);
+    return courseParticipationType;
   }
   
   public Tag createCourseTag(Course course, String text) {
@@ -113,6 +122,21 @@ public class CourseController {
     return tags;
   }
   
+  public List<CourseParticipationType> findCourseParticiPationTypes() {
+    List<CourseParticipationType> courseParticipationTypes = courseParticipationTypeDAO.listAll();
+    return courseParticipationTypes;
+  }
+  
+  public List<CourseParticipationType> findUnarchivedCourseParticiPationTypes() {
+    List<CourseParticipationType> courseParticipationTypes = courseParticipationTypeDAO.listUnarchived();
+    return courseParticipationTypes;
+  }
+  
+  public CourseParticipationType findCourseParticipationTypeById(Long id) {
+    CourseParticipationType courseParticipationType = courseParticipationTypeDAO.findById(id);
+    return courseParticipationType;
+  }
+  
   public Course updateCourse(Course course, String name, String nameExtension, CourseState courseState, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
       Double planningHours, Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User user) {
@@ -130,6 +154,11 @@ public class CourseController {
   
   public CourseState updateCourseState(CourseState courseState, String name) {
     CourseState updated = courseStateDAO.update(courseState, name);
+    return updated;
+  }
+  
+  public CourseParticipationType updateCourseParticipationType(CourseParticipationType courseParticipationType, String name) {
+    CourseParticipationType updated = courseParticipationTypeDAO.update(courseParticipationType, name);
     return updated;
   }
   
@@ -161,6 +190,16 @@ public class CourseController {
   public CourseState unarchiveCourseState(CourseState courseState, User user) {
     courseStateDAO.unarchive(courseState, user);
     return courseState;
+  }
+  
+  public CourseParticipationType archiveCourseParticipationType(CourseParticipationType courseParticipationType, User user) {
+    courseParticipationTypeDAO.archive(courseParticipationType, user);
+    return courseParticipationType;
+  }
+  
+  public CourseParticipationType unarchiveCourseParticipationType(CourseParticipationType courseParticipationType, User user) {
+    courseParticipationTypeDAO.unarchive(courseParticipationType, user);
+    return courseParticipationType;
   }
   
   public void removeCourseTag(Course course, Tag tag) {

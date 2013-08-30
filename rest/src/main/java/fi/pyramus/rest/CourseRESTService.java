@@ -26,6 +26,7 @@ import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
+import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.rest.controller.CommonController;
@@ -35,6 +36,7 @@ import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.courses.CourseDescriptionCategoryEntity;
 import fi.pyramus.rest.tranquil.courses.CourseEntity;
+import fi.pyramus.rest.tranquil.courses.CourseParticipationTypeEntity;
 import fi.pyramus.rest.tranquil.courses.CourseStateEntity;
 import fi.tranquil.TranquilityBuilderFactory;
 
@@ -109,6 +111,19 @@ public class CourseRESTService extends AbstractRESTService {
     if (!StringUtils.isBlank(name)) {
       return Response.ok()
           .entity(tranqualise(courseController.createCourseState(name)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/participationTypes")
+  @POST
+  public Response createCourseParticipationType(CourseParticipationTypeEntity participationTypeEntity) {
+    String name = participationTypeEntity.getName();
+    if (!StringUtils.isBlank(name)) {
+      return Response.ok()
+          .entity(tranqualise(courseController.createCourseParticipationType(name)))
           .build();
     } else {
       return Response.status(500).build();
@@ -222,6 +237,37 @@ public class CourseRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/participationTypes")
+  @GET
+  public Response findCourseParticipationTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<CourseParticipationType> participationTypes;
+    if (filterArchived) {
+      participationTypes = courseController.findUnarchivedCourseParticiPationTypes();
+    } else {
+      participationTypes = courseController.findCourseParticiPationTypes();
+    }
+    if (!participationTypes.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(participationTypes))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/participationTypes/{ID:[0-9]*}")
+  @GET
+  public Response findCourseParticipationTypeById(@PathParam("ID") Long id) {
+    CourseParticipationType participationType = courseController.findCourseParticipationTypeById(id);
+    if (participationType != null) {
+      return Response.ok()
+          .entity(tranqualise(participationType))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/courses/{ID:[0-9]*}/tags")
   @GET
   public Response findCourseTags(@PathParam("ID") Long id) {
@@ -326,6 +372,28 @@ public class CourseRESTService extends AbstractRESTService {
     return Response.status(Status.NOT_FOUND).build();
   }
   
+  @Path("/participationTypes/{ID:[0-9]*}")
+  @PUT
+  public Response updateCourseParticipationType(@PathParam("ID") Long id, CourseParticipationTypeEntity participationTypeEntity) {
+    CourseParticipationType participationType = courseController.findCourseParticipationTypeById(id);
+    if (participationType != null) {
+      String name = participationTypeEntity.getName();
+      if (!StringUtils.isBlank(name)) {
+        return Response.ok()
+            .entity(tranqualise(courseController.updateCourseParticipationType(participationType, name)))
+            .build();
+      } else if (participationTypeEntity.getArchived() != null) {
+        if (!participationTypeEntity.getArchived()) {
+          return Response.ok()
+              .entity(tranqualise(courseController.unarchiveCourseParticipationType(participationType, getUser())))
+              .build();
+        }
+      }
+      return Response.status(500).build();
+    }
+    return Response.status(Status.NOT_FOUND).build();
+  }
+  
   @Path("/courses/{ID:[0-9]*}")
   @DELETE
   public Response archiveCourse(@PathParam("ID") Long id) {
@@ -363,6 +431,19 @@ public class CourseRESTService extends AbstractRESTService {
     } else {
       return Response.status(500).build();
     } 
+  }
+  
+  @Path("/participationTypes/{ID:[0-9]*}")
+  @DELETE
+  public Response archiveCourseParticipationType(@PathParam("ID") Long id) {
+    CourseParticipationType participationType = courseController.findCourseParticipationTypeById(id);
+    if (participationType != null) {
+      return Response.ok()
+          .entity(tranqualise(courseController.archiveCourseParticipationType(participationType, getUser())))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
   }
   
   @Path("/courses/{CID:[0-9]*}/tags/{ID:[0-9]*}")
