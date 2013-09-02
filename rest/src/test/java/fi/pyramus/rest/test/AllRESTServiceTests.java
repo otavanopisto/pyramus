@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.projects.ProjectModuleOptionality;
+import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.rest.CalendarRESTService;
 import fi.pyramus.rest.CommonRESTService;
 import fi.pyramus.rest.CourseRESTService;
@@ -31,7 +32,9 @@ import fi.pyramus.rest.ModuleRESTService;
 import fi.pyramus.rest.ProjectRESTService;
 import fi.pyramus.rest.ReportRESTService;
 import fi.pyramus.rest.SchoolRESTService;
+import fi.pyramus.rest.StudentRESTService;
 import fi.pyramus.rest.TagRESTService;
+import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CalendarController;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
@@ -59,6 +62,7 @@ import fi.pyramus.rest.tranquil.projects.ProjectEntity;
 import fi.pyramus.rest.tranquil.projects.ProjectModuleEntity;
 import fi.pyramus.rest.tranquil.reports.ReportCategoryEntity;
 import fi.pyramus.rest.tranquil.reports.ReportEntity;
+import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
 
 @RunWith(Arquillian.class)
 public class AllRESTServiceTests extends RestfulServiceTest {
@@ -79,7 +83,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     Archive<?> archive = createArchive(InitialSchoolDataDescriptor.class, SchoolController.class, SchoolRESTService.class, ProjectController.class,
         ProjectRESTService.class, ReportController.class, ReportRESTService.class, TagController.class, TagRESTService.class, CommonController.class,
         CommonRESTService.class, ModuleController.class, ModuleRESTService.class, CalendarController.class, CalendarRESTService.class, CourseController.class,
-        CourseRESTService.class);
+        CourseRESTService.class, AbstractStudentController.class, StudentRESTService.class);
 
     return archive;
   }
@@ -2986,5 +2990,103 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     HttpResponse response = doDeleteRequest("/courses/courses/2/tags/4");
 
     assertEquals(200, response.getStatusLine().getStatusCode());
+  }
+  
+  
+  // StudentRESTServiceTest AbstractStudent
+
+  @Test
+  public void testCreateAbstractStudent() throws ClientProtocolException, IOException, ParseException {
+    AbstractStudentEntity abstractStudentEntity = new AbstractStudentEntity();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date birthday = sdf.parse("1981-02-19");
+    abstractStudentEntity.setBirthday(birthday);
+    abstractStudentEntity.setBasicInfo("Test BasicInfo");
+    abstractStudentEntity.setSecureInfo(false);
+    abstractStudentEntity.setSex(Sex.MALE);
+    abstractStudentEntity.setSocialSecurityNumber("190281-116Y");
+  
+    HttpResponse response = doPostRequest("/students/abstractStudents/", abstractStudentEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      abstractStudentEntity = unserializeEntity(AbstractStudentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(abstractStudentEntity);
+      assertEquals((Long) 1l, abstractStudentEntity.getId());
+      assertEquals(Sex.MALE, abstractStudentEntity.getSex());
+      assertEquals("190281-116Y", abstractStudentEntity.getSocialSecurityNumber());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindAbstractStudent() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/abstractStudents/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      AbstractStudentEntity[] abstractStudentEntities = unserializeEntity(AbstractStudentEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(abstractStudentEntities);
+      assertEquals(1, abstractStudentEntities.length);
+      assertEquals((Long) 1l, abstractStudentEntities[0].getId());
+      assertEquals(Sex.MALE, abstractStudentEntities[0].getSex());
+      assertEquals("Test BasicInfo", abstractStudentEntities[0].getBasicInfo());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindAbstractStudentById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/abstractStudents/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      AbstractStudentEntity abstractStudentEntity = unserializeEntity(AbstractStudentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(abstractStudentEntity);
+      assertEquals("190281-116Y", abstractStudentEntity.getSocialSecurityNumber());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateAbstractStudent() throws ClientProtocolException, IOException, ParseException {
+    AbstractStudentEntity abstractStudentEntity = new AbstractStudentEntity();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date birthday = sdf.parse("1981-02-09");
+    abstractStudentEntity.setBirthday(birthday);
+    abstractStudentEntity.setBasicInfo("Updated BasicInfo");
+    abstractStudentEntity.setSex(Sex.MALE);
+    abstractStudentEntity.setSecureInfo(true);
+    abstractStudentEntity.setSocialSecurityNumber("090281-116Y");
+  
+    HttpResponse response = doPutRequest("/students/abstractStudents/1", abstractStudentEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      abstractStudentEntity = unserializeEntity(AbstractStudentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(abstractStudentEntity);
+      assertEquals(Sex.MALE, abstractStudentEntity.getSex());
+      assertEquals("090281-116Y", abstractStudentEntity.getSocialSecurityNumber());
+      assertEquals(true, abstractStudentEntity.getSecureInfo());
+    } finally {
+      EntityUtils.consume(entity);
+    }
   }
 }
