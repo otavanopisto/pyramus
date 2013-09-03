@@ -42,6 +42,7 @@ import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
 import fi.pyramus.rest.controller.ReportController;
 import fi.pyramus.rest.controller.SchoolController;
+import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.AcademicTermEntity;
 import fi.pyramus.rest.tranquil.base.EducationTypeEntity;
@@ -63,6 +64,7 @@ import fi.pyramus.rest.tranquil.projects.ProjectModuleEntity;
 import fi.pyramus.rest.tranquil.reports.ReportCategoryEntity;
 import fi.pyramus.rest.tranquil.reports.ReportEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
+import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
 
 @RunWith(Arquillian.class)
 public class AllRESTServiceTests extends RestfulServiceTest {
@@ -83,7 +85,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     Archive<?> archive = createArchive(InitialSchoolDataDescriptor.class, SchoolController.class, SchoolRESTService.class, ProjectController.class,
         ProjectRESTService.class, ReportController.class, ReportRESTService.class, TagController.class, TagRESTService.class, CommonController.class,
         CommonRESTService.class, ModuleController.class, ModuleRESTService.class, CalendarController.class, CalendarRESTService.class, CourseController.class,
-        CourseRESTService.class, AbstractStudentController.class, StudentRESTService.class);
+        CourseRESTService.class, AbstractStudentController.class, StudentSubResourceController.class ,StudentRESTService.class);
 
     return archive;
   }
@@ -3024,7 +3026,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
   }
 
   @Test
-  public void testFindAbstractStudent() throws ClientProtocolException, IOException {
+  public void testFindAbstractStudents() throws ClientProtocolException, IOException {
     HttpResponse response = doGetRequest("/students/abstractStudents/");
   
     assertEquals(200, response.getStatusLine().getStatusCode());
@@ -3089,4 +3091,116 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
+  
+  // StudentRESTServiceTest StudentStudyEndReason
+  
+  @Test
+  public void testCreateStudentStudyEndReason() throws ClientProtocolException, IOException, ParseException {
+    StudentStudyEndReasonEntity endReasonEntity = new StudentStudyEndReasonEntity();
+    endReasonEntity.setName("Parent EndReason");
+  
+    HttpResponse response = doPostRequest("/students/endReasons/", endReasonEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      endReasonEntity = unserializeEntity(StudentStudyEndReasonEntity.class, EntityUtils.toString(entity));
+      assertNotNull(endReasonEntity);
+      assertEquals((Long) 1l, endReasonEntity.getId());
+      assertEquals(null, endReasonEntity.getParentReason_id());
+      assertEquals("Parent EndReason", endReasonEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testCreateStudentStudyEndReasonWithParent() throws ClientProtocolException, IOException, ParseException {
+    StudentStudyEndReasonEntity endReasonEntity = new StudentStudyEndReasonEntity();
+    endReasonEntity.setParentReason_id(1l);
+    endReasonEntity.setName("Child EndReason");
+  
+    HttpResponse response = doPostRequest("/students/endReasons/", endReasonEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      endReasonEntity = unserializeEntity(StudentStudyEndReasonEntity.class, EntityUtils.toString(entity));
+      assertNotNull(endReasonEntity);
+      assertEquals((Long) 2l, endReasonEntity.getId());
+      assertEquals((Long) 1l, endReasonEntity.getParentReason_id());
+      assertEquals("Child EndReason", endReasonEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+
+  @Test
+  public void testFindStudentStudyEndReasons() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/endReasons/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentStudyEndReasonEntity[] endReasonEntities = unserializeEntity(StudentStudyEndReasonEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(endReasonEntities);
+      assertEquals(2, endReasonEntities.length);
+      assertEquals((Long) 1l, endReasonEntities[0].getId());
+      assertEquals("Parent EndReason", endReasonEntities[0].getName());
+      assertEquals((Long) 2l, endReasonEntities[1].getId());
+      assertEquals("Child EndReason", endReasonEntities[1].getName());
+      assertEquals((Long) 1l, endReasonEntities[1].getParentReason_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudentStudyEndReasonById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/endReasons/2");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentStudyEndReasonEntity endReasonEntity = unserializeEntity(StudentStudyEndReasonEntity.class, EntityUtils.toString(entity));
+      assertNotNull(endReasonEntity);
+      assertEquals("Child EndReason", endReasonEntity.getName());
+      assertEquals((Long) 1l, endReasonEntity.getParentReason_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateStudentStudyEndReason() throws ClientProtocolException, IOException, ParseException {
+    StudentStudyEndReasonEntity endReasonEntity = new StudentStudyEndReasonEntity();
+    endReasonEntity.setName("Updated Parent EndReason");
+  
+    HttpResponse response = doPutRequest("/students/endReasons/1", endReasonEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      endReasonEntity = unserializeEntity(StudentStudyEndReasonEntity.class, EntityUtils.toString(entity));
+      assertNotNull(endReasonEntity);
+      assertEquals("Updated Parent EndReason", endReasonEntity.getName());
+      assertEquals(1, endReasonEntity.getChildEndReasons_ids().size());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
 }
