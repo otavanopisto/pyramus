@@ -47,6 +47,7 @@ import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.AcademicTermEntity;
 import fi.pyramus.rest.tranquil.base.EducationTypeEntity;
 import fi.pyramus.rest.tranquil.base.EducationalTimeUnitEntity;
+import fi.pyramus.rest.tranquil.base.MunicipalityEntity;
 import fi.pyramus.rest.tranquil.base.SchoolEntity;
 import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
 import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
@@ -3331,7 +3332,6 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertNotNull(studyProgrammeEntities);
       assertEquals(1, studyProgrammeEntities.length);
       assertEquals((Long) 1l, studyProgrammeEntities[0].getId());
-      assertEquals((Long) 1l, studyProgrammeEntities[0].getId());
       assertEquals("Test StudyProgramme", studyProgrammeEntities[0].getName());
       assertEquals("Test Code", studyProgrammeEntities[0].getCode());
     } finally {
@@ -3378,6 +3378,93 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertEquals("Updated StudyProgramme", studyProgrammeEntity.getName());
       assertEquals("Updated Code", studyProgrammeEntity.getCode());
       assertEquals((Long) 1l, studyProgrammeEntity.getCategory_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  // StudentRESTServiceTest Municipality
+  
+  @Test
+  public void testCreateMunicipality() throws ClientProtocolException, IOException, ParseException {
+    MunicipalityEntity municipalityEntity = new MunicipalityEntity();
+    municipalityEntity.setName("Test Municipality");
+    municipalityEntity.setCode("Test MunicipalityCode");
+  
+    HttpResponse response = doPostRequest("/students/municipalities/", municipalityEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      municipalityEntity = unserializeEntity(MunicipalityEntity.class, EntityUtils.toString(entity));
+      assertNotNull(municipalityEntity);
+      assertEquals((Long) 1l, municipalityEntity.getId());
+      assertEquals("Test Municipality", municipalityEntity.getName());
+      assertEquals("Test MunicipalityCode", municipalityEntity.getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindMunicipalities() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/municipalities/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      MunicipalityEntity[] municipalityEntities = unserializeEntity(MunicipalityEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(municipalityEntities);
+      assertEquals(1, municipalityEntities.length);
+      assertEquals((Long) 1l, municipalityEntities[0].getId());
+      assertEquals("Test Municipality", municipalityEntities[0].getName());
+      assertEquals("Test MunicipalityCode", municipalityEntities[0].getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindMunicipalityById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/municipalities/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      MunicipalityEntity municipalityEntity = unserializeEntity(MunicipalityEntity.class, EntityUtils.toString(entity));
+      assertNotNull(municipalityEntity);
+      assertEquals("Test Municipality", municipalityEntity.getName());
+      assertEquals("Test MunicipalityCode", municipalityEntity.getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateMunicipality() throws ClientProtocolException, IOException, ParseException {
+    MunicipalityEntity municipalityEntity = new MunicipalityEntity();
+    municipalityEntity.setName("Updated Municipality");
+    municipalityEntity.setCode("Updated MunicipalityCode");
+  
+    HttpResponse response = doPutRequest("/students/municipalities/1", municipalityEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      municipalityEntity = unserializeEntity(MunicipalityEntity.class, EntityUtils.toString(entity));
+      assertNotNull(municipalityEntity);
+      assertEquals("Updated Municipality", municipalityEntity.getName());
+      assertEquals("Updated MunicipalityCode", municipalityEntity.getCode());
     } finally {
       EntityUtils.consume(entity);
     }
