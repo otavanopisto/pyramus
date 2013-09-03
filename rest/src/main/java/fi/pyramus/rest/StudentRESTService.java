@@ -22,8 +22,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
+import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.rest.controller.AbstractStudentController;
+import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
+import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
 import fi.tranquil.TranquilityBuilderFactory;
 
 @Path("/students")
@@ -36,6 +39,34 @@ public class StudentRESTService extends AbstractRESTService {
   private TranquilityBuilderFactory tranquilityBuilderFactory;
   @Inject
   AbstractStudentController abstractStudentController;
+  @Inject
+  StudentSubResourceController studentSubController;
+  
+  @Path("/endReasons")
+  @POST
+  public Response createStudentStudyEndReason(StudentStudyEndReasonEntity endReasonEntity) {
+      Long parentId = endReasonEntity.getParentReason_id();
+      if (parentId != null) {
+        StudentStudyEndReason parentReason = studentSubController.findStudentStudyEndReasonById(parentId);
+        String name = endReasonEntity.getName();
+        if (parentReason != null && !StringUtils.isBlank(name)) {
+          return Response.ok()
+              .entity(tranqualise(studentSubController.createStudentStudyEndReason(parentReason, name)))
+              .build();
+        } else {
+          return Response.status(500).build();
+        }
+      } else {
+        String name = endReasonEntity.getName();
+        if (!StringUtils.isBlank(name)) {
+          return Response.ok()
+              .entity(tranqualise(studentSubController.createStudentStudyEndReason(null, name)))
+              .build();
+        } else {
+          return Response.status(500).build();
+        }
+      }
+  }
   
   @Path("/abstractStudents")
   @POST
@@ -52,6 +83,37 @@ public class StudentRESTService extends AbstractRESTService {
           .build();
     } else  {
       return Response.status(500).build();
+    }
+  }
+  
+  @Path("/endReasons")
+  @GET
+  public Response findStudentStudyEndReasons(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<StudentStudyEndReason> endReasons;
+    if (filterArchived) {
+      endReasons = studentSubController.findUnarchivedStudentStudyEndReasons();
+    } else {
+      endReasons = studentSubController.findStudentStudyEndReasons();
+    }
+    if (!endReasons.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(endReasons))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+
+  @Path("/endReasons/{ID:[0-9]*}")
+  @GET
+  public Response findStudentStudyEndReasonById(@PathParam("ID") Long id) {
+    StudentStudyEndReason endReason = studentSubController.findStudentStudyEndReasonById(id);
+    if (endReason != null) {
+      return Response.ok()
+          .entity(tranqualise(endReason))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
     }
   }
   
@@ -81,6 +143,30 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.ok()
           .entity(tranqualise(abstractStudent))
           .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/endReasons/{ID:[0-9]*}")
+  @PUT
+  public Response updateAbstractStudent(@PathParam("ID") Long id, StudentStudyEndReasonEntity endReasonEntity) {
+    StudentStudyEndReason endReason = studentSubController.findStudentStudyEndReasonById(id);
+    if (endReason != null) {
+      String name = endReasonEntity.getName();
+      Long parentReasonId = endReasonEntity.getParentReason_id();
+      if (!StringUtils.isBlank(name)) {
+        return Response.ok()
+            .entity(tranqualise(studentSubController.updateStudentStudyEndReason(endReason, name)))
+            .build();
+      } else if (parentReasonId != null) {
+        StudentStudyEndReason parentReason = studentSubController.findStudentStudyEndReasonById(parentReasonId);
+        return Response.ok()
+            .entity(tranqualise(studentSubController.updateStudentStudyEndReasonParent(endReason, parentReason)))
+            .build();
+      } else {
+        return Response.status(500).build();
+      }
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }
