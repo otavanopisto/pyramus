@@ -13,7 +13,7 @@ import fi.pyramus.domainmodel.base.Municipality_;
 @Stateless
 public class MunicipalityDAO extends PyramusEntityDAO<Municipality> {
 
-  public void create(String name, String code) {
+  public Municipality create(String name, String code) {
     EntityManager entityManager = getEntityManager();
 
     Municipality municipality = new Municipality();
@@ -21,6 +21,7 @@ public class MunicipalityDAO extends PyramusEntityDAO<Municipality> {
     municipality.setCode(code);
 
     entityManager.persist(municipality);
+    return municipality;
   }
 
   /**
