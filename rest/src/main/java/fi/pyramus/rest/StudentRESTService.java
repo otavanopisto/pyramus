@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.EducationType;
+import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
@@ -29,6 +30,7 @@ import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.tranquil.base.StudyProgrammeCategoryEntity;
+import fi.pyramus.rest.tranquil.base.StudyProgrammeEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
 import fi.tranquil.TranquilityBuilderFactory;
@@ -84,6 +86,26 @@ public class StudentRESTService extends AbstractRESTService {
       if (educationType != null) {
         return Response.ok()
             .entity(tranqualise(studentSubController.createStudyProgrammeCategory(name, educationType)))
+            .build();
+      } else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/studyProgrammes")
+  @POST
+  public Response createStudyProgramme(StudyProgrammeEntity studyProgrammeEntity) {
+    Long categoryId = studyProgrammeEntity.getCategory_id();
+    String name = studyProgrammeEntity.getName();
+    String code = studyProgrammeEntity.getCode();
+    if (categoryId != null && !StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
+      StudyProgrammeCategory category = studentSubController.findStudyProgrammeCategoryById(categoryId);
+      if (category != null) {
+        return Response.ok()
+            .entity(tranqualise(studentSubController.createStudyProgramme(name, category, code)))
             .build();
       } else {
         return Response.status(Status.NOT_FOUND).build();
@@ -173,6 +195,37 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/studyProgrammes")
+  @GET
+  public Response findStudyProgrammes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<StudyProgramme> studyProgrammes;
+    if (filterArchived) {
+      studyProgrammes = studentSubController.findUnarchivedStudyProgrammes();
+    } else {
+      studyProgrammes = studentSubController.findStudyProgrammes();
+    }
+    if (!studyProgrammes.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(studyProgrammes))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/studyProgrammes/{ID:[0-9]*}")
+  @GET
+  public Response findStudyProgrammeById(@PathParam("ID") Long id) {
+    StudyProgramme studyProgramme = studentSubController.findStudyProgrammeById(id);
+    if (studyProgramme != null) {
+      return Response.ok()
+          .entity(tranqualise(studyProgramme))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/abstractStudents")
   @GET
   public Response findAbstractStudents(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -240,6 +293,31 @@ public class StudentRESTService extends AbstractRESTService {
         if (educationType != null) {
           return Response.ok()
               .entity(tranqualise(studentSubController.updateStudyProgrammeCategory(studyProgrammeCategory, name, educationType)))
+              .build();
+        } else {
+          return Response.status(Status.NOT_FOUND).build();
+        }
+      } else {
+        return Response.status(500).build();
+      }
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/studyProgrammes/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudyProgramme(@PathParam("ID") Long id, StudyProgrammeEntity studyProgrammeEntity) {
+    StudyProgramme studyProgramme = studentSubController.findStudyProgrammeById(id);
+    if (studyProgramme != null) {
+      Long categoryId = studyProgrammeEntity.getCategory_id();
+      String name = studyProgrammeEntity.getName();
+      String code = studyProgrammeEntity.getCode();
+      if (categoryId != null && !StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
+        StudyProgrammeCategory category = studentSubController.findStudyProgrammeCategoryById(categoryId);
+        if (category != null) {
+          return Response.ok()
+              .entity(tranqualise(studentSubController.updateStudyProgramme(studyProgramme, name, category, code)))
               .build();
         } else {
           return Response.status(Status.NOT_FOUND).build();

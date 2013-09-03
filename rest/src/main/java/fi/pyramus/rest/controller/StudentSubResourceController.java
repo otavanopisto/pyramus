@@ -7,8 +7,10 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.pyramus.dao.base.StudyProgrammeCategoryDAO;
+import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.pyramus.domainmodel.base.EducationType;
+import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 
@@ -19,6 +21,8 @@ public class StudentSubResourceController {
   StudentStudyEndReasonDAO endReasonDAO;
   @Inject
   StudyProgrammeCategoryDAO studyProgrammeCategoryDAO;
+  @Inject
+  StudyProgrammeDAO studyProgrammeDAO;
   
   public StudentStudyEndReason createStudentStudyEndReason(StudentStudyEndReason parentReason, String name) {
     StudentStudyEndReason studentStudyEndReason = endReasonDAO.create(parentReason, name);
@@ -28,6 +32,11 @@ public class StudentSubResourceController {
   public StudyProgrammeCategory createStudyProgrammeCategory(String name, EducationType educationType) {
     StudyProgrammeCategory studyProgrammeCategory = studyProgrammeCategoryDAO.create(name, educationType);
     return studyProgrammeCategory;
+  }
+  
+  public StudyProgramme createStudyProgramme(String name, StudyProgrammeCategory category, String code) {
+    StudyProgramme studyProgramme = studyProgrammeDAO.create(name, category, code);
+    return studyProgramme;
   }
   
   public List<StudentStudyEndReason> findStudentStudyEndReasons() {
@@ -60,6 +69,21 @@ public class StudentSubResourceController {
     return studyProgrammeCategory;
   }
   
+  public List<StudyProgramme> findStudyProgrammes() {
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listAll();
+    return studyProgrammes;
+  }
+
+  public List<StudyProgramme> findUnarchivedStudyProgrammes() {
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
+    return studyProgrammes;
+  }
+  
+  public StudyProgramme findStudyProgrammeById(Long id) {
+    StudyProgramme studyProgramme = studyProgrammeDAO.findById(id);
+    return studyProgramme;
+  }
+  
   public StudentStudyEndReason updateStudentStudyEndReason(StudentStudyEndReason endReason, String name) {
     StudentStudyEndReason studentStudyEndReason = endReasonDAO.updateName(endReason, name);
     return studentStudyEndReason;
@@ -75,4 +99,8 @@ public class StudentSubResourceController {
     return studyProgrammeCategory;
   }
   
+  public StudyProgramme updateStudyProgramme(StudyProgramme studyProgramme, String name, StudyProgrammeCategory category, String code) {
+    studyProgrammeDAO.update(studyProgramme, name, category, code);
+    return studyProgramme;
+  }
 }
