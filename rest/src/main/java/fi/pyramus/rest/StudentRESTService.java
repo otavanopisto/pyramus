@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.EducationType;
+import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.students.AbstractStudent;
@@ -29,6 +30,7 @@ import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
+import fi.pyramus.rest.tranquil.base.MunicipalityEntity;
 import fi.pyramus.rest.tranquil.base.StudyProgrammeCategoryEntity;
 import fi.pyramus.rest.tranquil.base.StudyProgrammeEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
@@ -49,6 +51,21 @@ public class StudentRESTService extends AbstractRESTService {
   StudentSubResourceController studentSubController;
   @Inject
   CommonController commonController;
+  
+  
+  @Path("/municipalities")
+  @POST
+  public Response createMunicipality(MunicipalityEntity municipalityEntity) {
+    String name = municipalityEntity.getName();
+    String code = municipalityEntity.getCode();
+    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
+      return Response.ok()
+          .entity(tranqualise(studentSubController.createMunicipality(name, code)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
   
   @Path("/endReasons")
   @POST
@@ -130,6 +147,37 @@ public class StudentRESTService extends AbstractRESTService {
           .build();
     } else  {
       return Response.status(500).build();
+    }
+  }
+  
+  @Path("/municipalities")
+  @GET
+  public Response findMunicipalities(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Municipality> municipalities;
+    if (filterArchived) {
+      municipalities = studentSubController.findUnarchivedMunicipalities();
+    } else {
+      municipalities = studentSubController.findMunicipalities();
+    }
+    if (!municipalities.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(municipalities))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/municipalities/{ID:[0-9]*}")
+  @GET
+  public Response findMunicipalityById(@PathParam("ID") Long id) {
+    Municipality municipality = studentSubController.findMunicipalityById(id);
+    if (municipality != null) {
+      return Response.ok()
+          .entity(tranqualise(municipality))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
     }
   }
   
@@ -252,6 +300,25 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.ok()
           .entity(tranqualise(abstractStudent))
           .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/municipalities/{ID:[0-9]*}")
+  @PUT
+  public Response updateMunicipality(@PathParam("ID") Long id, MunicipalityEntity municipalityEntity) {
+    Municipality municipality = studentSubController.findMunicipalityById(id);
+    if (municipality != null) {
+      String name = municipalityEntity.getName();
+      String code = municipalityEntity.getCode();
+      if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
+        return Response.ok()
+            .entity(tranqualise(studentSubController.updateMunicipality(municipality, name, code)))
+            .build();
+      } else {
+        return Response.status(500).build();
+      }
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }

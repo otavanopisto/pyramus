@@ -6,10 +6,12 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.MunicipalityDAO;
 import fi.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.pyramus.domainmodel.base.EducationType;
+import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
@@ -23,6 +25,13 @@ public class StudentSubResourceController {
   StudyProgrammeCategoryDAO studyProgrammeCategoryDAO;
   @Inject
   StudyProgrammeDAO studyProgrammeDAO;
+  @Inject
+  MunicipalityDAO municipalityDAO;
+  
+  public Municipality createMunicipality(String name, String code) {
+    Municipality municipality = municipalityDAO.create(name, code);
+    return municipality;
+  }
   
   public StudentStudyEndReason createStudentStudyEndReason(StudentStudyEndReason parentReason, String name) {
     StudentStudyEndReason studentStudyEndReason = endReasonDAO.create(parentReason, name);
@@ -37,6 +46,21 @@ public class StudentSubResourceController {
   public StudyProgramme createStudyProgramme(String name, StudyProgrammeCategory category, String code) {
     StudyProgramme studyProgramme = studyProgrammeDAO.create(name, category, code);
     return studyProgramme;
+  }
+  
+  public List<Municipality> findMunicipalities() {
+    List<Municipality> municipalities = municipalityDAO.listAll();
+    return municipalities;
+  }
+
+  public List<Municipality> findUnarchivedMunicipalities() {
+    List<Municipality> municipalities = municipalityDAO.listUnarchived();
+    return municipalities;
+  }
+  
+  public Municipality findMunicipalityById(Long id) {
+    Municipality municipality = municipalityDAO.findById(id);
+    return municipality;
   }
   
   public List<StudentStudyEndReason> findStudentStudyEndReasons() {
@@ -82,6 +106,11 @@ public class StudentSubResourceController {
   public StudyProgramme findStudyProgrammeById(Long id) {
     StudyProgramme studyProgramme = studyProgrammeDAO.findById(id);
     return studyProgramme;
+  }
+  
+  public Municipality updateMunicipality(Municipality municipality, String name, String code) {
+    Municipality updated = municipalityDAO.update(municipality, name, code);
+    return updated;
   }
   
   public StudentStudyEndReason updateStudentStudyEndReason(StudentStudyEndReason endReason, String name) {
