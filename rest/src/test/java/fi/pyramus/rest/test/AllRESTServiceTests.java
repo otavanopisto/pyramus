@@ -50,6 +50,7 @@ import fi.pyramus.rest.tranquil.base.EducationalTimeUnitEntity;
 import fi.pyramus.rest.tranquil.base.SchoolEntity;
 import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
 import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
+import fi.pyramus.rest.tranquil.base.StudyProgrammeCategoryEntity;
 import fi.pyramus.rest.tranquil.base.SubjectEntity;
 import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.courses.CourseComponentEntity;
@@ -3203,4 +3204,88 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     }
   }
   
+  // StudentRESTServiceTest StudyProgrammeCategory
+  
+  @Test
+  public void testCreateStudyProgrammeCategory() throws ClientProtocolException, IOException, ParseException {
+    StudyProgrammeCategoryEntity studyProgrammeCategoryEntity = new StudyProgrammeCategoryEntity();
+    studyProgrammeCategoryEntity.setName("Test StudyProgrammeCategory");
+    studyProgrammeCategoryEntity.setEducationType_id(1l);
+  
+    HttpResponse response = doPostRequest("/students/studyProgrammeCategories/", studyProgrammeCategoryEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      studyProgrammeCategoryEntity = unserializeEntity(StudyProgrammeCategoryEntity.class, EntityUtils.toString(entity));
+      assertNotNull(studyProgrammeCategoryEntity);
+      assertEquals((Long) 1l, studyProgrammeCategoryEntity.getId());
+      assertEquals((Long) 1l, studyProgrammeCategoryEntity.getEducationType_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudyProgrammeCategories() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/studyProgrammeCategories/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudyProgrammeCategoryEntity[] studyProgrammeCategoryEntities = unserializeEntity(StudyProgrammeCategoryEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(studyProgrammeCategoryEntities);
+      assertEquals(1, studyProgrammeCategoryEntities.length);
+      assertEquals((Long) 1l, studyProgrammeCategoryEntities[0].getId());
+      assertEquals("Test StudyProgrammeCategory", studyProgrammeCategoryEntities[0].getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudyProgrammeCategoryById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/studyProgrammeCategories/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudyProgrammeCategoryEntity studyProgrammeCategoryEntity = unserializeEntity(StudyProgrammeCategoryEntity.class, EntityUtils.toString(entity));
+      assertNotNull(studyProgrammeCategoryEntity);
+      assertEquals("Test StudyProgrammeCategory", studyProgrammeCategoryEntity.getName());
+      assertEquals((Long) 1l, studyProgrammeCategoryEntity.getEducationType_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateStudyProgrammeCategory() throws ClientProtocolException, IOException, ParseException {
+    StudyProgrammeCategoryEntity studyProgrammeCategoryEntity = new StudyProgrammeCategoryEntity();
+    studyProgrammeCategoryEntity.setName("Updated StudyProgrammeCategory");
+    studyProgrammeCategoryEntity.setEducationType_id(1l);
+  
+    HttpResponse response = doPutRequest("/students/studyProgrammeCategories/1", studyProgrammeCategoryEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      studyProgrammeCategoryEntity = unserializeEntity(StudyProgrammeCategoryEntity.class, EntityUtils.toString(entity));
+      assertNotNull(studyProgrammeCategoryEntity);
+      assertEquals("Updated StudyProgrammeCategory", studyProgrammeCategoryEntity.getName());
+      assertEquals((Long) 1l, studyProgrammeCategoryEntity.getEducationType_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 }
