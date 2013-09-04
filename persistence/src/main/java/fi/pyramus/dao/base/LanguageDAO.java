@@ -14,11 +14,10 @@ import fi.pyramus.domainmodel.base.Language_;
 public class LanguageDAO extends PyramusEntityDAO<Language> {
 
   
-  public Language create(String code, String name, Boolean archived){
+  public Language create(String code, String name){
     Language language = new Language();
     language.setCode(code);
     language.setName(name);
-    language.setArchived(archived);
     getEntityManager().persist(language);
     return language;
   }
@@ -43,6 +42,14 @@ public class LanguageDAO extends PyramusEntityDAO<Language> {
     );
     
     return getSingleResult(entityManager.createQuery(criteria));
+  }
+  
+  public Language update(Language language, String name, String code) {
+    EntityManager entityManager = getEntityManager();
+    language.setName(name);
+    language.setCode(code);
+    entityManager.persist(language);
+    return language;
   }
 
 }
