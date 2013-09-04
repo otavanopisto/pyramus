@@ -6,11 +6,13 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.LanguageDAO;
 import fi.pyramus.dao.base.MunicipalityDAO;
 import fi.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.pyramus.domainmodel.base.EducationType;
+import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
@@ -27,6 +29,13 @@ public class StudentSubResourceController {
   StudyProgrammeDAO studyProgrammeDAO;
   @Inject
   MunicipalityDAO municipalityDAO;
+  @Inject
+  LanguageDAO languageDAO;
+  
+  public Language createLanguage(String name, String code) {
+    Language language = languageDAO.create(code, name);
+    return language;
+  }
   
   public Municipality createMunicipality(String name, String code) {
     Municipality municipality = municipalityDAO.create(name, code);
@@ -46,6 +55,21 @@ public class StudentSubResourceController {
   public StudyProgramme createStudyProgramme(String name, StudyProgrammeCategory category, String code) {
     StudyProgramme studyProgramme = studyProgrammeDAO.create(name, category, code);
     return studyProgramme;
+  }
+  
+  public List<Language> findLanguages() {
+    List<Language> languages = languageDAO.listAll();
+    return languages;
+  }
+  
+  public List<Language> findUnarchivedLanguages() {
+    List<Language> languages = languageDAO.listUnarchived();
+    return languages;
+  }
+  
+  public Language findLanguageById(Long id) {
+    Language language = languageDAO.findById(id);
+    return language;
   }
   
   public List<Municipality> findMunicipalities() {
@@ -106,6 +130,11 @@ public class StudentSubResourceController {
   public StudyProgramme findStudyProgrammeById(Long id) {
     StudyProgramme studyProgramme = studyProgrammeDAO.findById(id);
     return studyProgramme;
+  }
+  
+  public Language updateLanguage(Language language, String name, String code) {
+    Language updated = languageDAO.update(language, name, code);
+    return updated;
   }
   
   public Municipality updateMunicipality(Municipality municipality, String name, String code) {

@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.EducationType;
+import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
@@ -30,6 +31,7 @@ import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
+import fi.pyramus.rest.tranquil.base.LanguageEntity;
 import fi.pyramus.rest.tranquil.base.MunicipalityEntity;
 import fi.pyramus.rest.tranquil.base.StudyProgrammeCategoryEntity;
 import fi.pyramus.rest.tranquil.base.StudyProgrammeEntity;
@@ -52,6 +54,19 @@ public class StudentRESTService extends AbstractRESTService {
   @Inject
   CommonController commonController;
   
+  @Path("/languages")
+  @POST
+  public Response createLanguage(LanguageEntity languageEntity) {
+    String name = languageEntity.getName();
+    String code = languageEntity.getCode();
+    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
+      return Response.ok()
+          .entity(tranqualise(studentSubController.createLanguage(name, code)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
   
   @Path("/municipalities")
   @POST
@@ -147,6 +162,37 @@ public class StudentRESTService extends AbstractRESTService {
           .build();
     } else  {
       return Response.status(500).build();
+    }
+  }
+  
+  @Path("/languages")
+  @GET
+  public Response findLanguages(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Language> languages;
+    if (filterArchived) {
+      languages = studentSubController.findUnarchivedLanguages();
+    } else {
+      languages = studentSubController.findLanguages();
+    }
+    if (!languages.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(languages))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/languages/{ID:[0-9]*}")
+  @GET
+  public Response findLanguageByID(@PathParam("ID") Long id) {
+    Language language = studentSubController.findLanguageById(id);
+    if (language != null) {
+      return Response.ok()
+          .entity(tranqualise(language))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
     }
   }
   
@@ -300,6 +346,25 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.ok()
           .entity(tranqualise(abstractStudent))
           .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/languages/{ID:[0-9]*}")
+  @PUT
+  public Response updateLanguage(@PathParam("ID") Long id, LanguageEntity languageEntity) {
+    Language language = studentSubController.findLanguageById(id);
+    if (language != null) {
+      String name = languageEntity.getName();
+      String code = languageEntity.getCode();
+      if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
+        return Response.ok()
+            .entity(tranqualise(studentSubController.updateLanguage(language, name, code)))
+            .build();
+      } else {
+        return Response.status(500).build();
+      }
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }
