@@ -47,6 +47,7 @@ import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.AcademicTermEntity;
 import fi.pyramus.rest.tranquil.base.EducationTypeEntity;
 import fi.pyramus.rest.tranquil.base.EducationalTimeUnitEntity;
+import fi.pyramus.rest.tranquil.base.LanguageEntity;
 import fi.pyramus.rest.tranquil.base.MunicipalityEntity;
 import fi.pyramus.rest.tranquil.base.SchoolEntity;
 import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
@@ -3465,6 +3466,93 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertNotNull(municipalityEntity);
       assertEquals("Updated Municipality", municipalityEntity.getName());
       assertEquals("Updated MunicipalityCode", municipalityEntity.getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+ // StudentRESTServiceTest Language
+  
+  @Test
+  public void testCreateLanguage() throws ClientProtocolException, IOException, ParseException {
+    LanguageEntity languageEntity = new LanguageEntity();
+    languageEntity.setName("Test Language");
+    languageEntity.setCode("Test LanguageCode");
+  
+    HttpResponse response = doPostRequest("/students/languages/", languageEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      languageEntity = unserializeEntity(LanguageEntity.class, EntityUtils.toString(entity));
+      assertNotNull(languageEntity);
+      assertEquals((Long) 1l, languageEntity.getId());
+      assertEquals("Test Language", languageEntity.getName());
+      assertEquals("Test LanguageCode", languageEntity.getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindLanguages() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/languages/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      LanguageEntity[] languageEntities = unserializeEntity(LanguageEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(languageEntities);
+      assertEquals(1, languageEntities.length);
+      assertEquals((Long) 1l, languageEntities[0].getId());
+      assertEquals("Test Language", languageEntities[0].getName());
+      assertEquals("Test LanguageCode", languageEntities[0].getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindLanguageById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/languages/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      LanguageEntity languageEntity = unserializeEntity(LanguageEntity.class, EntityUtils.toString(entity));
+      assertNotNull(languageEntity);
+      assertEquals("Test Language", languageEntity.getName());
+      assertEquals("Test LanguageCode", languageEntity.getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateLanguage() throws ClientProtocolException, IOException, ParseException {
+    LanguageEntity languageEntity = new LanguageEntity();
+    languageEntity.setName("Updated Language");
+    languageEntity.setCode("Updated LanguageCode");
+  
+    HttpResponse response = doPutRequest("/students/languages/1", languageEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      languageEntity = unserializeEntity(LanguageEntity.class, EntityUtils.toString(entity));
+      assertNotNull(languageEntity);
+      assertEquals("Updated Language", languageEntity.getName());
+      assertEquals("Updated LanguageCode", languageEntity.getCode());
     } finally {
       EntityUtils.consume(entity);
     }
