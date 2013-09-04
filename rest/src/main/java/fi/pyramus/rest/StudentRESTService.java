@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
+import fi.pyramus.domainmodel.base.Nationality;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.students.AbstractStudent;
@@ -33,6 +34,7 @@ import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.tranquil.base.LanguageEntity;
 import fi.pyramus.rest.tranquil.base.MunicipalityEntity;
+import fi.pyramus.rest.tranquil.base.NationalityEntity;
 import fi.pyramus.rest.tranquil.base.StudyProgrammeCategoryEntity;
 import fi.pyramus.rest.tranquil.base.StudyProgrammeEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
@@ -76,6 +78,20 @@ public class StudentRESTService extends AbstractRESTService {
     if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
       return Response.ok()
           .entity(tranqualise(studentSubController.createMunicipality(name, code)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/nationalities")
+  @POST
+  public Response createNationalities(NationalityEntity nationalityEntity) {
+    String name = nationalityEntity.getName();
+    String code = nationalityEntity.getCode();
+    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
+      return Response.ok()
+          .entity(tranqualise(studentSubController.createNationality(name, code)))
           .build();
     } else {
       return Response.status(500).build();
@@ -221,6 +237,37 @@ public class StudentRESTService extends AbstractRESTService {
     if (municipality != null) {
       return Response.ok()
           .entity(tranqualise(municipality))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/nationalities")
+  @GET
+  public Response findNationalities(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Nationality> nationalities;
+    if (filterArchived) {
+      nationalities = studentSubController.findUnarchivedNationalities();
+    } else {
+      nationalities = studentSubController.findNationalities();
+    }
+    if (!nationalities.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(nationalities))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/nationalities/{ID:[0-9]*}")
+  @GET
+  public Response findNationalityById(@PathParam("ID") Long id) {
+    Nationality nationality = studentSubController.findNationalityById(id);
+    if (nationality != null) {
+      return Response.ok()
+          .entity(tranqualise(nationality))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
@@ -388,6 +435,27 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
   }
+  
+  @Path("/nationalities/{ID:[0-9]*}")
+  @PUT
+  public Response updateNationality(@PathParam("ID") Long id, NationalityEntity nationalityEntity) {
+    Nationality nationality = studentSubController.findNationalityById(id);
+    if (nationality != null) {
+      String name = nationalityEntity.getName();
+      String code = nationalityEntity.getCode();
+      if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
+        return Response.ok()
+            .entity(tranqualise(studentSubController.updateNationality(nationality, name, code)))
+            .build();
+      } else {
+        return Response.status(500).build();
+      }
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  
   
   @Path("/endReasons/{ID:[0-9]*}")
   @PUT

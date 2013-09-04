@@ -8,12 +8,14 @@ import javax.inject.Inject;
 
 import fi.pyramus.dao.base.LanguageDAO;
 import fi.pyramus.dao.base.MunicipalityDAO;
+import fi.pyramus.dao.base.NationalityDAO;
 import fi.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
+import fi.pyramus.domainmodel.base.Nationality;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
@@ -31,6 +33,8 @@ public class StudentSubResourceController {
   MunicipalityDAO municipalityDAO;
   @Inject
   LanguageDAO languageDAO;
+  @Inject
+  NationalityDAO nationalityDAO;
   
   public Language createLanguage(String name, String code) {
     Language language = languageDAO.create(code, name);
@@ -40,6 +44,11 @@ public class StudentSubResourceController {
   public Municipality createMunicipality(String name, String code) {
     Municipality municipality = municipalityDAO.create(name, code);
     return municipality;
+  }
+  
+  public Nationality createNationality(String name, String code) {
+    Nationality nationality = nationalityDAO.create(name, code);
+    return nationality;
   }
   
   public StudentStudyEndReason createStudentStudyEndReason(StudentStudyEndReason parentReason, String name) {
@@ -85,6 +94,21 @@ public class StudentSubResourceController {
   public Municipality findMunicipalityById(Long id) {
     Municipality municipality = municipalityDAO.findById(id);
     return municipality;
+  }
+  
+  public List<Nationality> findNationalities() {
+    List<Nationality> nationalities = nationalityDAO.listAll();
+    return nationalities;
+  }
+  
+  public List<Nationality> findUnarchivedNationalities() {
+    List<Nationality> nationalities = nationalityDAO.listUnarchived();
+    return nationalities;
+  }
+  
+  public Nationality findNationalityById(Long id) {
+    Nationality nationality = nationalityDAO.findById(id);
+    return nationality;
   }
   
   public List<StudentStudyEndReason> findStudentStudyEndReasons() {
@@ -139,6 +163,11 @@ public class StudentSubResourceController {
   
   public Municipality updateMunicipality(Municipality municipality, String name, String code) {
     Municipality updated = municipalityDAO.update(municipality, name, code);
+    return updated;
+  }
+  
+  public Nationality updateNationality(Nationality nationality, String name, String code) {
+    Nationality updated = nationalityDAO.update(nationality, name, code);
     return updated;
   }
   
