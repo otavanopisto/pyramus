@@ -49,6 +49,7 @@ import fi.pyramus.rest.tranquil.base.EducationTypeEntity;
 import fi.pyramus.rest.tranquil.base.EducationalTimeUnitEntity;
 import fi.pyramus.rest.tranquil.base.LanguageEntity;
 import fi.pyramus.rest.tranquil.base.MunicipalityEntity;
+import fi.pyramus.rest.tranquil.base.NationalityEntity;
 import fi.pyramus.rest.tranquil.base.SchoolEntity;
 import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
 import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
@@ -3557,4 +3558,91 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
+  
+  //StudentRESTServiceTest Nationality
+  
+ @Test
+ public void testCreateNationality() throws ClientProtocolException, IOException, ParseException {
+   NationalityEntity nationalityEntity = new NationalityEntity();
+   nationalityEntity.setName("Test Nationality");
+   nationalityEntity.setCode("Test NationalityCode");
+ 
+   HttpResponse response = doPostRequest("/students/nationalities/", nationalityEntity);
+ 
+   assertEquals(200, response.getStatusLine().getStatusCode());
+   HttpEntity entity = response.getEntity();
+   try {
+     assertNotNull(entity);
+     assertEquals("application/json", entity.getContentType().getValue());
+     nationalityEntity = unserializeEntity(NationalityEntity.class, EntityUtils.toString(entity));
+     assertNotNull(nationalityEntity);
+     assertEquals((Long) 1l, nationalityEntity.getId());
+     assertEquals("Test Nationality", nationalityEntity.getName());
+     assertEquals("Test NationalityCode", nationalityEntity.getCode());
+   } finally {
+     EntityUtils.consume(entity);
+   }
+ }
+
+ @Test
+ public void testFindNationalities() throws ClientProtocolException, IOException {
+   HttpResponse response = doGetRequest("/students/nationalities/");
+ 
+   assertEquals(200, response.getStatusLine().getStatusCode());
+ 
+   HttpEntity entity = response.getEntity();
+   try {
+     assertNotNull(entity);
+     assertEquals("application/json", entity.getContentType().getValue());
+     NationalityEntity[] nationalityEntities = unserializeEntity(NationalityEntity[].class, EntityUtils.toString(entity));
+     assertNotNull(nationalityEntities);
+     assertEquals(1, nationalityEntities.length);
+     assertEquals((Long) 1l, nationalityEntities[0].getId());
+     assertEquals("Test Nationality", nationalityEntities[0].getName());
+     assertEquals("Test NationalityCode", nationalityEntities[0].getCode());
+   } finally {
+     EntityUtils.consume(entity);
+   }
+ }
+
+ @Test
+ public void testFindNationalityById() throws ClientProtocolException, IOException {
+   HttpResponse response = doGetRequest("/students/nationalities/1");
+ 
+   assertEquals(200, response.getStatusLine().getStatusCode());
+ 
+   HttpEntity entity = response.getEntity();
+   try {
+     assertNotNull(entity);
+     assertEquals("application/json", entity.getContentType().getValue());
+     NationalityEntity nationalityEntity = unserializeEntity(NationalityEntity.class, EntityUtils.toString(entity));
+     assertNotNull(nationalityEntity);
+     assertEquals("Test Nationality", nationalityEntity.getName());
+     assertEquals("Test NationalityCode", nationalityEntity.getCode());
+   } finally {
+     EntityUtils.consume(entity);
+   }
+ }
+
+ @Test
+ public void testUpdateNationality() throws ClientProtocolException, IOException, ParseException {
+   NationalityEntity nationalityEntity = new NationalityEntity();
+   nationalityEntity.setName("Updated Nationality");
+   nationalityEntity.setCode("Updated NationalityCode");
+ 
+   HttpResponse response = doPutRequest("/students/nationalities/1", nationalityEntity);
+ 
+   assertEquals(200, response.getStatusLine().getStatusCode());
+   HttpEntity entity = response.getEntity();
+   try {
+     assertNotNull(entity);
+     assertEquals("application/json", entity.getContentType().getValue());
+     nationalityEntity = unserializeEntity(NationalityEntity.class, EntityUtils.toString(entity));
+     assertNotNull(nationalityEntity);
+     assertEquals("Updated Nationality", nationalityEntity.getName());
+     assertEquals("Updated NationalityCode", nationalityEntity.getCode());
+   } finally {
+     EntityUtils.consume(entity);
+   }
+ }
 }
