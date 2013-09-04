@@ -13,6 +13,16 @@ import fi.pyramus.domainmodel.base.Nationality_;
 @Stateless
 public class NationalityDAO extends PyramusEntityDAO<Nationality> {
 
+  public Nationality create(String name, String code) {
+    EntityManager entityManager = getEntityManager();
+    
+    Nationality nationality = new Nationality();
+    nationality.setName(name);
+    nationality.setCode(code);
+    
+    entityManager.persist(nationality);
+    return nationality;
+  }
   /**
    * Returns the nationality corresponding to the given code.
    * 
@@ -35,4 +45,13 @@ public class NationalityDAO extends PyramusEntityDAO<Nationality> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
+  public Nationality update(Nationality nationality, String name, String code) {
+    EntityManager entityManager = getEntityManager();
+    
+    nationality.setName(name);
+    nationality.setCode(code);
+    
+    entityManager.persist(nationality);
+    return nationality;
+  }
 }
