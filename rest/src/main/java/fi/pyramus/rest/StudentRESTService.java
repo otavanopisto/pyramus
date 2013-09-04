@@ -28,6 +28,7 @@ import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
+import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
@@ -38,6 +39,7 @@ import fi.pyramus.rest.tranquil.base.NationalityEntity;
 import fi.pyramus.rest.tranquil.base.StudyProgrammeCategoryEntity;
 import fi.pyramus.rest.tranquil.base.StudyProgrammeEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
+import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
 import fi.tranquil.TranquilityBuilderFactory;
 
@@ -92,6 +94,19 @@ public class StudentRESTService extends AbstractRESTService {
     if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
       return Response.ok()
           .entity(tranqualise(studentSubController.createNationality(name, code)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/studentActivityTypes")
+  @POST
+  public Response createStudentActivityType(StudentActivityTypeEntity activityTypeEntity) {
+    String name = activityTypeEntity.getName();
+    if (!StringUtils.isBlank(name)) {
+      return Response.ok()
+          .entity(tranqualise(studentSubController.createStudentActivityType(name)))
           .build();
     } else {
       return Response.status(500).build();
@@ -268,6 +283,37 @@ public class StudentRESTService extends AbstractRESTService {
     if (nationality != null) {
       return Response.ok()
           .entity(tranqualise(nationality))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/studentActivityTypes")
+  @GET
+  public Response findStudentActivityTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<StudentActivityType> activityTypes;
+    if (filterArchived) {
+      activityTypes = studentSubController.findUnarchivedStudentActivityTypes();
+    } else {
+      activityTypes = studentSubController.findStudentActivityTypes();
+    }
+    if (!activityTypes.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(activityTypes))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/studentActivityTypes/{ID:[0-9]*}")
+  @GET
+  public Response findStudentActivityTypeById(@PathParam("ID") Long id) {
+    StudentActivityType activityType = studentSubController.findStudentActivityTypeById(id);
+    if (activityType != null) {
+      return Response.ok()
+          .entity(tranqualise(activityType))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
@@ -455,7 +501,23 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
-  
+  @Path("/studentActivityTypes/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudentActivityType(@PathParam("ID") Long id, StudentActivityTypeEntity activityTypeEntity) {
+    StudentActivityType activityType = studentSubController.findStudentActivityTypeById(id);
+    if (activityType != null) {
+      String name = activityTypeEntity.getName();
+      if (!StringUtils.isBlank(name)) {
+        return Response.ok()
+            .entity(tranqualise(studentSubController.updateStudentActivityType(activityType, name)))
+            .build();
+      } else {
+        return Response.status(500).build();
+      }
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
   
   @Path("/endReasons/{ID:[0-9]*}")
   @PUT

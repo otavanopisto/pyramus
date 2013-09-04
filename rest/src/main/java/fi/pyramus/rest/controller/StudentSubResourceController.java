@@ -11,6 +11,7 @@ import fi.pyramus.dao.base.MunicipalityDAO;
 import fi.pyramus.dao.base.NationalityDAO;
 import fi.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
+import fi.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Language;
@@ -18,6 +19,7 @@ import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
+import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 
 @Dependent
@@ -35,6 +37,8 @@ public class StudentSubResourceController {
   LanguageDAO languageDAO;
   @Inject
   NationalityDAO nationalityDAO;
+  @Inject
+  StudentActivityTypeDAO activityTypeDAO;
   
   public Language createLanguage(String name, String code) {
     Language language = languageDAO.create(code, name);
@@ -49,6 +53,11 @@ public class StudentSubResourceController {
   public Nationality createNationality(String name, String code) {
     Nationality nationality = nationalityDAO.create(name, code);
     return nationality;
+  }
+  
+  public StudentActivityType createStudentActivityType(String name) {
+    StudentActivityType activityType = activityTypeDAO.create(name);
+    return activityType;
   }
   
   public StudentStudyEndReason createStudentStudyEndReason(StudentStudyEndReason parentReason, String name) {
@@ -111,6 +120,21 @@ public class StudentSubResourceController {
     return nationality;
   }
   
+  public List<StudentActivityType> findStudentActivityTypes() {
+    List<StudentActivityType> activityTypes = activityTypeDAO.listAll();
+    return activityTypes;
+  }
+
+  public List<StudentActivityType> findUnarchivedStudentActivityTypes() {
+    List<StudentActivityType> activityTypes = activityTypeDAO.listUnarchived();
+    return activityTypes;
+  }
+  
+  public StudentActivityType findStudentActivityTypeById(Long id) {
+    StudentActivityType activityType = activityTypeDAO.findById(id);
+    return activityType;
+  }
+  
   public List<StudentStudyEndReason> findStudentStudyEndReasons() {
     List<StudentStudyEndReason> endReasons = endReasonDAO.listAll();
     return endReasons;
@@ -168,6 +192,11 @@ public class StudentSubResourceController {
   
   public Nationality updateNationality(Nationality nationality, String name, String code) {
     Nationality updated = nationalityDAO.update(nationality, name, code);
+    return updated;
+  }
+  
+  public StudentActivityType updateStudentActivityType(StudentActivityType activityType, String name) {
+    StudentActivityType updated = activityTypeDAO.update(activityType, name);
     return updated;
   }
   
