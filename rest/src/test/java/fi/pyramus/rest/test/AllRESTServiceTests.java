@@ -2612,7 +2612,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertEquals("application/json", entity.getContentType().getValue());
       courseEntity = unserializeEntity(CourseEntity.class, EntityUtils.toString(entity));
       assertNotNull(courseEntity);
-      assertEquals((Long) 2l, courseEntity.getId());
+      assertEquals((Long) 1l, courseEntity.getId());
       assertEquals("Test course", courseEntity.getName());
       assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-02-13T00:00:00").getTime(), courseEntity.getBeginDate());
       assertEquals("Testing how courses work", courseEntity.getDescription());
