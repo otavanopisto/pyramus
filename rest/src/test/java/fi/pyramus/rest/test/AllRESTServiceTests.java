@@ -69,6 +69,7 @@ import fi.pyramus.rest.tranquil.projects.ProjectModuleEntity;
 import fi.pyramus.rest.tranquil.reports.ReportCategoryEntity;
 import fi.pyramus.rest.tranquil.reports.ReportEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
+import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
 
 @RunWith(Arquillian.class)
@@ -3559,90 +3560,171 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     }
   }
   
-  //StudentRESTServiceTest Nationality
+  // StudentRESTServiceTest Nationality
+
+  @Test
+  public void testCreateNationality() throws ClientProtocolException, IOException, ParseException {
+    NationalityEntity nationalityEntity = new NationalityEntity();
+    nationalityEntity.setName("Test Nationality");
+    nationalityEntity.setCode("Test NationalityCode");
+
+    HttpResponse response = doPostRequest("/students/nationalities/", nationalityEntity);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      nationalityEntity = unserializeEntity(NationalityEntity.class, EntityUtils.toString(entity));
+      assertNotNull(nationalityEntity);
+      assertEquals((Long) 1l, nationalityEntity.getId());
+      assertEquals("Test Nationality", nationalityEntity.getName());
+      assertEquals("Test NationalityCode", nationalityEntity.getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindNationalities() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/nationalities/");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      NationalityEntity[] nationalityEntities = unserializeEntity(NationalityEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(nationalityEntities);
+      assertEquals(1, nationalityEntities.length);
+      assertEquals((Long) 1l, nationalityEntities[0].getId());
+      assertEquals("Test Nationality", nationalityEntities[0].getName());
+      assertEquals("Test NationalityCode", nationalityEntities[0].getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindNationalityById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/nationalities/1");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      NationalityEntity nationalityEntity = unserializeEntity(NationalityEntity.class, EntityUtils.toString(entity));
+      assertNotNull(nationalityEntity);
+      assertEquals("Test Nationality", nationalityEntity.getName());
+      assertEquals("Test NationalityCode", nationalityEntity.getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateNationality() throws ClientProtocolException, IOException, ParseException {
+    NationalityEntity nationalityEntity = new NationalityEntity();
+    nationalityEntity.setName("Updated Nationality");
+    nationalityEntity.setCode("Updated NationalityCode");
+
+    HttpResponse response = doPutRequest("/students/nationalities/1", nationalityEntity);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      nationalityEntity = unserializeEntity(NationalityEntity.class, EntityUtils.toString(entity));
+      assertNotNull(nationalityEntity);
+      assertEquals("Updated Nationality", nationalityEntity.getName());
+      assertEquals("Updated NationalityCode", nationalityEntity.getCode());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
   
- @Test
- public void testCreateNationality() throws ClientProtocolException, IOException, ParseException {
-   NationalityEntity nationalityEntity = new NationalityEntity();
-   nationalityEntity.setName("Test Nationality");
-   nationalityEntity.setCode("Test NationalityCode");
- 
-   HttpResponse response = doPostRequest("/students/nationalities/", nationalityEntity);
- 
-   assertEquals(200, response.getStatusLine().getStatusCode());
-   HttpEntity entity = response.getEntity();
-   try {
-     assertNotNull(entity);
-     assertEquals("application/json", entity.getContentType().getValue());
-     nationalityEntity = unserializeEntity(NationalityEntity.class, EntityUtils.toString(entity));
-     assertNotNull(nationalityEntity);
-     assertEquals((Long) 1l, nationalityEntity.getId());
-     assertEquals("Test Nationality", nationalityEntity.getName());
-     assertEquals("Test NationalityCode", nationalityEntity.getCode());
-   } finally {
-     EntityUtils.consume(entity);
-   }
- }
+  //StudentRESTServiceTest StudentActivityType
+  
+  @Test
+  public void testCreateStudentActivityType() throws ClientProtocolException, IOException, ParseException {
+    StudentActivityTypeEntity activityTypeEntity = new StudentActivityTypeEntity();
+    activityTypeEntity.setName("Test ActivityType");
+  
+    HttpResponse response = doPostRequest("/students/studentActivityTypes/", activityTypeEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      activityTypeEntity = unserializeEntity(StudentActivityTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(activityTypeEntity);
+      assertEquals((Long) 1l, activityTypeEntity.getId());
+      assertEquals("Test ActivityType", activityTypeEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 
- @Test
- public void testFindNationalities() throws ClientProtocolException, IOException {
-   HttpResponse response = doGetRequest("/students/nationalities/");
- 
-   assertEquals(200, response.getStatusLine().getStatusCode());
- 
-   HttpEntity entity = response.getEntity();
-   try {
-     assertNotNull(entity);
-     assertEquals("application/json", entity.getContentType().getValue());
-     NationalityEntity[] nationalityEntities = unserializeEntity(NationalityEntity[].class, EntityUtils.toString(entity));
-     assertNotNull(nationalityEntities);
-     assertEquals(1, nationalityEntities.length);
-     assertEquals((Long) 1l, nationalityEntities[0].getId());
-     assertEquals("Test Nationality", nationalityEntities[0].getName());
-     assertEquals("Test NationalityCode", nationalityEntities[0].getCode());
-   } finally {
-     EntityUtils.consume(entity);
-   }
- }
+  @Test
+  public void testFindStudentActivityTypes() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/studentActivityTypes/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentActivityTypeEntity[] activityTypesEntities = unserializeEntity(StudentActivityTypeEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(activityTypesEntities);
+      assertEquals(1, activityTypesEntities.length);
+      assertEquals((Long) 1l, activityTypesEntities[0].getId());
+      assertEquals("Test ActivityType", activityTypesEntities[0].getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 
- @Test
- public void testFindNationalityById() throws ClientProtocolException, IOException {
-   HttpResponse response = doGetRequest("/students/nationalities/1");
- 
-   assertEquals(200, response.getStatusLine().getStatusCode());
- 
-   HttpEntity entity = response.getEntity();
-   try {
-     assertNotNull(entity);
-     assertEquals("application/json", entity.getContentType().getValue());
-     NationalityEntity nationalityEntity = unserializeEntity(NationalityEntity.class, EntityUtils.toString(entity));
-     assertNotNull(nationalityEntity);
-     assertEquals("Test Nationality", nationalityEntity.getName());
-     assertEquals("Test NationalityCode", nationalityEntity.getCode());
-   } finally {
-     EntityUtils.consume(entity);
-   }
- }
+  @Test
+  public void testFindStudentActivityTypeById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/studentActivityTypes/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentActivityTypeEntity activityTypeEntity = unserializeEntity(StudentActivityTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(activityTypeEntity);
+      assertEquals("Test ActivityType", activityTypeEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 
- @Test
- public void testUpdateNationality() throws ClientProtocolException, IOException, ParseException {
-   NationalityEntity nationalityEntity = new NationalityEntity();
-   nationalityEntity.setName("Updated Nationality");
-   nationalityEntity.setCode("Updated NationalityCode");
- 
-   HttpResponse response = doPutRequest("/students/nationalities/1", nationalityEntity);
- 
-   assertEquals(200, response.getStatusLine().getStatusCode());
-   HttpEntity entity = response.getEntity();
-   try {
-     assertNotNull(entity);
-     assertEquals("application/json", entity.getContentType().getValue());
-     nationalityEntity = unserializeEntity(NationalityEntity.class, EntityUtils.toString(entity));
-     assertNotNull(nationalityEntity);
-     assertEquals("Updated Nationality", nationalityEntity.getName());
-     assertEquals("Updated NationalityCode", nationalityEntity.getCode());
-   } finally {
-     EntityUtils.consume(entity);
-   }
- }
+  @Test
+  public void testUpdateStudentActivityType() throws ClientProtocolException, IOException, ParseException {
+    StudentActivityTypeEntity activityTypeEntity = new StudentActivityTypeEntity();
+    activityTypeEntity.setName("Updated ActivityType");
+  
+    HttpResponse response = doPutRequest("/students/studentActivityTypes/1", activityTypeEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      activityTypeEntity = unserializeEntity(StudentActivityTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(activityTypeEntity);
+      assertEquals("Updated ActivityType", activityTypeEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 }
