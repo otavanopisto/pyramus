@@ -71,6 +71,7 @@ import fi.pyramus.rest.tranquil.reports.ReportEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentEducationalLevelEntity;
+import fi.pyramus.rest.tranquil.students.StudentExaminationTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
 
 @RunWith(Arquillian.class)
@@ -3805,6 +3806,87 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       educationalLevelEntity = unserializeEntity(StudentEducationalLevelEntity.class, EntityUtils.toString(entity));
       assertNotNull(educationalLevelEntity);
       assertEquals("Updated EducationalLevel", educationalLevelEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+ //StudentRESTServiceTest StudentExaminationType
+  
+  @Test
+  public void testCreateStudentExaminationType() throws ClientProtocolException, IOException, ParseException {
+    StudentExaminationTypeEntity examinationTypeEntity = new StudentExaminationTypeEntity();
+    examinationTypeEntity.setName("Test ExaminationType");
+  
+    HttpResponse response = doPostRequest("/students/examinationTypes/", examinationTypeEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      examinationTypeEntity = unserializeEntity(StudentExaminationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(examinationTypeEntity);
+      assertEquals((Long) 1l, examinationTypeEntity.getId());
+      assertEquals("Test ExaminationType", examinationTypeEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudentExaminationTypes() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/examinationTypes/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentExaminationTypeEntity[] examinationTypeEntities = unserializeEntity(StudentExaminationTypeEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(examinationTypeEntities);
+      assertEquals(1, examinationTypeEntities.length);
+      assertEquals((Long) 1l, examinationTypeEntities[0].getId());
+      assertEquals("Test ExaminationType", examinationTypeEntities[0].getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudentExaminationTypeById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/examinationTypes/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentExaminationTypeEntity examinationTypeEntity = unserializeEntity(StudentExaminationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(examinationTypeEntity);
+      assertEquals("Test ExaminationType", examinationTypeEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateStudentExaminationType() throws ClientProtocolException, IOException, ParseException {
+    StudentExaminationTypeEntity examinationTypeEntity = new StudentExaminationTypeEntity();
+    examinationTypeEntity.setName("Updated ExaminationType");
+  
+    HttpResponse response = doPutRequest("/students/examinationTypes/1", examinationTypeEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      examinationTypeEntity = unserializeEntity(StudentExaminationTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(examinationTypeEntity);
+      assertEquals("Updated ExaminationType", examinationTypeEntity.getName());
     } finally {
       EntityUtils.consume(entity);
     }
