@@ -29,6 +29,7 @@ import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.StudentActivityType;
+import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
@@ -40,6 +41,7 @@ import fi.pyramus.rest.tranquil.base.StudyProgrammeCategoryEntity;
 import fi.pyramus.rest.tranquil.base.StudyProgrammeEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
+import fi.pyramus.rest.tranquil.students.StudentEducationalLevelEntity;
 import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
 import fi.tranquil.TranquilityBuilderFactory;
 
@@ -107,6 +109,19 @@ public class StudentRESTService extends AbstractRESTService {
     if (!StringUtils.isBlank(name)) {
       return Response.ok()
           .entity(tranqualise(studentSubController.createStudentActivityType(name)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/educationalLevels")
+  @POST
+  public Response createStudentEducationalLevel(StudentEducationalLevelEntity educationalLevelEntity) {
+    String name = educationalLevelEntity.getName();
+    if (!StringUtils.isBlank(name)) {
+      return Response.ok()
+          .entity(tranqualise(studentSubController.createStudentEducationalLevel(name)))
           .build();
     } else {
       return Response.status(500).build();
@@ -320,6 +335,37 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/educationalLevels")
+  @GET
+  public Response findStudentEducationalLevels(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<StudentEducationalLevel> educationalLevels;
+    if (filterArchived) {
+      educationalLevels = studentSubController.findUnarchivedStudentEducationalLevels();
+    } else {
+      educationalLevels = studentSubController.findStudentEducationalLevels();
+    }
+    if (!educationalLevels.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(educationalLevels))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/educationalLevels/{ID:[0-9]*}")
+  @GET
+  public Response findStudentEducationalLevelById(@PathParam("ID") Long id) {
+    StudentEducationalLevel educationalLevel = studentSubController.findStudentEducationalLevelById(id);
+    if (educationalLevel != null) {
+      return Response.ok()
+          .entity(tranqualise(educationalLevel))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/endReasons")
   @GET
   public Response findStudentStudyEndReasons(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -510,6 +556,24 @@ public class StudentRESTService extends AbstractRESTService {
       if (!StringUtils.isBlank(name)) {
         return Response.ok()
             .entity(tranqualise(studentSubController.updateStudentActivityType(activityType, name)))
+            .build();
+      } else {
+        return Response.status(500).build();
+      }
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/educationalLevels/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudentEducationalLevel(@PathParam("ID") Long id, StudentEducationalLevelEntity educationalLevelEntity) {
+    StudentEducationalLevel educationalLevel = studentSubController.findStudentEducationalLevelById(id);
+    if (educationalLevel != null) {
+      String name = educationalLevelEntity.getName();
+      if (!StringUtils.isBlank(name)) {
+        return Response.ok()
+            .entity(tranqualise(studentSubController.updateStudentEducationalLevel(educationalLevel, name)))
             .build();
       } else {
         return Response.status(500).build();

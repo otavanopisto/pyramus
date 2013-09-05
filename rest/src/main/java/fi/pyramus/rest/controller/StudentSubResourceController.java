@@ -12,6 +12,7 @@ import fi.pyramus.dao.base.NationalityDAO;
 import fi.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
+import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Language;
@@ -20,6 +21,7 @@ import fi.pyramus.domainmodel.base.Nationality;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.students.StudentActivityType;
+import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 
 @Dependent
@@ -39,6 +41,8 @@ public class StudentSubResourceController {
   NationalityDAO nationalityDAO;
   @Inject
   StudentActivityTypeDAO activityTypeDAO;
+  @Inject
+  StudentEducationalLevelDAO educationalLevelDAO;
   
   public Language createLanguage(String name, String code) {
     Language language = languageDAO.create(code, name);
@@ -58,6 +62,11 @@ public class StudentSubResourceController {
   public StudentActivityType createStudentActivityType(String name) {
     StudentActivityType activityType = activityTypeDAO.create(name);
     return activityType;
+  }
+  
+  public StudentEducationalLevel createStudentEducationalLevel(String name) {
+    StudentEducationalLevel educationalLevel = educationalLevelDAO.create(name);
+    return educationalLevel;
   }
   
   public StudentStudyEndReason createStudentStudyEndReason(StudentStudyEndReason parentReason, String name) {
@@ -135,6 +144,21 @@ public class StudentSubResourceController {
     return activityType;
   }
   
+  public List<StudentEducationalLevel> findStudentEducationalLevels() {
+    List<StudentEducationalLevel> educationalLevels = educationalLevelDAO.listAll();
+    return educationalLevels;
+  }
+  
+  public List<StudentEducationalLevel> findUnarchivedStudentEducationalLevels() {
+    List<StudentEducationalLevel> educationalLevels = educationalLevelDAO.listUnarchived();
+    return educationalLevels;
+  }
+  
+  public StudentEducationalLevel findStudentEducationalLevelById(Long id) {
+    StudentEducationalLevel educationalLevel = educationalLevelDAO.findById(id);
+    return educationalLevel;
+  }
+  
   public List<StudentStudyEndReason> findStudentStudyEndReasons() {
     List<StudentStudyEndReason> endReasons = endReasonDAO.listAll();
     return endReasons;
@@ -197,6 +221,11 @@ public class StudentSubResourceController {
   
   public StudentActivityType updateStudentActivityType(StudentActivityType activityType, String name) {
     StudentActivityType updated = activityTypeDAO.update(activityType, name);
+    return updated;
+  }
+  
+  public StudentEducationalLevel updateStudentEducationalLevel(StudentEducationalLevel educationalLevel, String name) {
+    StudentEducationalLevel updated = educationalLevelDAO.update(educationalLevel, name);
     return updated;
   }
   
