@@ -70,6 +70,7 @@ import fi.pyramus.rest.tranquil.reports.ReportCategoryEntity;
 import fi.pyramus.rest.tranquil.reports.ReportEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
+import fi.pyramus.rest.tranquil.students.StudentEducationalLevelEntity;
 import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
 
 @RunWith(Arquillian.class)
@@ -3723,6 +3724,87 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       activityTypeEntity = unserializeEntity(StudentActivityTypeEntity.class, EntityUtils.toString(entity));
       assertNotNull(activityTypeEntity);
       assertEquals("Updated ActivityType", activityTypeEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  //StudentRESTServiceTest StudentEducationalLevel
+  
+  @Test
+  public void testCreateStudentEducationalLevel() throws ClientProtocolException, IOException, ParseException {
+    StudentEducationalLevelEntity educationalLevelEntity = new StudentEducationalLevelEntity();
+    educationalLevelEntity.setName("Test EducationalLevel");
+  
+    HttpResponse response = doPostRequest("/students/educationalLevels/", educationalLevelEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      educationalLevelEntity = unserializeEntity(StudentEducationalLevelEntity.class, EntityUtils.toString(entity));
+      assertNotNull(educationalLevelEntity);
+      assertEquals((Long) 1l, educationalLevelEntity.getId());
+      assertEquals("Test EducationalLevel", educationalLevelEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudentEducationalLevels() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/educationalLevels/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentEducationalLevelEntity[] educationalLevelEntities = unserializeEntity(StudentEducationalLevelEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(educationalLevelEntities);
+      assertEquals(1, educationalLevelEntities.length);
+      assertEquals((Long) 1l, educationalLevelEntities[0].getId());
+      assertEquals("Test EducationalLevel", educationalLevelEntities[0].getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudentEducationalLevelById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/educationalLevels/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentEducationalLevelEntity educationalLevelEntity = unserializeEntity(StudentEducationalLevelEntity.class, EntityUtils.toString(entity));
+      assertNotNull(educationalLevelEntity);
+      assertEquals("Test EducationalLevel", educationalLevelEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateStudentEducationalLevel() throws ClientProtocolException, IOException, ParseException {
+    StudentEducationalLevelEntity educationalLevelEntity = new StudentEducationalLevelEntity();
+    educationalLevelEntity.setName("Updated EducationalLevel");
+  
+    HttpResponse response = doPutRequest("/students/educationalLevels/1", educationalLevelEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      educationalLevelEntity = unserializeEntity(StudentEducationalLevelEntity.class, EntityUtils.toString(entity));
+      assertNotNull(educationalLevelEntity);
+      assertEquals("Updated EducationalLevel", educationalLevelEntity.getName());
     } finally {
       EntityUtils.consume(entity);
     }
