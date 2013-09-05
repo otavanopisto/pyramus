@@ -30,6 +30,7 @@ import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
+import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
@@ -42,6 +43,7 @@ import fi.pyramus.rest.tranquil.base.StudyProgrammeEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentEducationalLevelEntity;
+import fi.pyramus.rest.tranquil.students.StudentExaminationTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
 import fi.tranquil.TranquilityBuilderFactory;
 
@@ -122,6 +124,19 @@ public class StudentRESTService extends AbstractRESTService {
     if (!StringUtils.isBlank(name)) {
       return Response.ok()
           .entity(tranqualise(studentSubController.createStudentEducationalLevel(name)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/examinationTypes")
+  @POST
+  public Response createStudentExaminationType(StudentExaminationTypeEntity examinationTypeEntity) {
+    String name = examinationTypeEntity.getName();
+    if (!StringUtils.isBlank(name)) {
+      return Response.ok()
+          .entity(tranqualise(studentSubController.createStudentExaminationType(name)))
           .build();
     } else {
       return Response.status(500).build();
@@ -366,6 +381,37 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/examinationTypes")
+  @GET
+  public Response findStudentExaminationTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<StudentExaminationType> examinationTypes;
+    if (filterArchived) {
+      examinationTypes = studentSubController.findUnarchivedStudentExaminationTypes();
+    } else {
+      examinationTypes = studentSubController.findStudentExaminationTypes();
+    }
+    if (!examinationTypes.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(examinationTypes))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/examinationTypes/{ID:[0-9]*}")
+  @GET
+  public Response findStudentExaminationTypes(@PathParam("ID") Long id) {
+    StudentExaminationType studentExaminationType = studentSubController.findStudentExaminationTypeById(id);
+    if (studentExaminationType != null) {
+      return Response.ok()
+          .entity(tranqualise(studentExaminationType))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/endReasons")
   @GET
   public Response findStudentStudyEndReasons(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -574,6 +620,24 @@ public class StudentRESTService extends AbstractRESTService {
       if (!StringUtils.isBlank(name)) {
         return Response.ok()
             .entity(tranqualise(studentSubController.updateStudentEducationalLevel(educationalLevel, name)))
+            .build();
+      } else {
+        return Response.status(500).build();
+      }
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/examinationTypes/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudentExaminationType(@PathParam("ID") Long id, StudentExaminationTypeEntity examinationTypeEntity) {
+    StudentExaminationType examinationType = studentSubController.findStudentExaminationTypeById(id);
+    if (examinationType != null) {
+      String name = examinationTypeEntity.getName();
+      if (!StringUtils.isBlank(name)) {
+        return Response.ok()
+            .entity(tranqualise(studentSubController.updateStudentExaminationType(examinationType, name)))
             .build();
       } else {
         return Response.status(500).build();

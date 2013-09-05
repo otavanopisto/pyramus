@@ -13,6 +13,7 @@ import fi.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
+import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Language;
@@ -22,6 +23,7 @@ import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
+import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 
 @Dependent
@@ -43,6 +45,8 @@ public class StudentSubResourceController {
   StudentActivityTypeDAO activityTypeDAO;
   @Inject
   StudentEducationalLevelDAO educationalLevelDAO;
+  @Inject
+  StudentExaminationTypeDAO examinationTypeDAO;
   
   public Language createLanguage(String name, String code) {
     Language language = languageDAO.create(code, name);
@@ -67,6 +71,11 @@ public class StudentSubResourceController {
   public StudentEducationalLevel createStudentEducationalLevel(String name) {
     StudentEducationalLevel educationalLevel = educationalLevelDAO.create(name);
     return educationalLevel;
+  }
+  
+  public StudentExaminationType createStudentExaminationType(String name) {
+    StudentExaminationType examinationType = examinationTypeDAO.create(name);
+    return examinationType;
   }
   
   public StudentStudyEndReason createStudentStudyEndReason(StudentStudyEndReason parentReason, String name) {
@@ -159,6 +168,21 @@ public class StudentSubResourceController {
     return educationalLevel;
   }
   
+  public List<StudentExaminationType> findStudentExaminationTypes() {
+    List<StudentExaminationType> examinationTypes = examinationTypeDAO.listAll();
+    return examinationTypes;
+  }
+  
+  public List<StudentExaminationType> findUnarchivedStudentExaminationTypes() {
+    List<StudentExaminationType> examinationTypes = examinationTypeDAO.listUnarchived();
+    return examinationTypes;
+  }
+  
+  public StudentExaminationType findStudentExaminationTypeById(Long id) {
+    StudentExaminationType examinationType = examinationTypeDAO.findById(id);
+    return examinationType;
+  }
+  
   public List<StudentStudyEndReason> findStudentStudyEndReasons() {
     List<StudentStudyEndReason> endReasons = endReasonDAO.listAll();
     return endReasons;
@@ -226,6 +250,11 @@ public class StudentSubResourceController {
   
   public StudentEducationalLevel updateStudentEducationalLevel(StudentEducationalLevel educationalLevel, String name) {
     StudentEducationalLevel updated = educationalLevelDAO.update(educationalLevel, name);
+    return updated;
+  }
+  
+  public StudentExaminationType updateStudentExaminationType(StudentExaminationType examinationType, String name) {
+    StudentExaminationType updated = examinationTypeDAO.update(examinationType, name);
     return updated;
   }
   
