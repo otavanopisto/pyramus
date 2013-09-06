@@ -7,6 +7,7 @@ import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -24,16 +25,20 @@ import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
+import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
+import fi.pyramus.rest.controller.SchoolController;
+import fi.pyramus.rest.controller.StudentController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.tranquil.base.LanguageEntity;
 import fi.pyramus.rest.tranquil.base.MunicipalityEntity;
@@ -43,6 +48,7 @@ import fi.pyramus.rest.tranquil.base.StudyProgrammeEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentEducationalLevelEntity;
+import fi.pyramus.rest.tranquil.students.StudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentExaminationTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
 import fi.tranquil.TranquilityBuilderFactory;
@@ -61,6 +67,10 @@ public class StudentRESTService extends AbstractRESTService {
   StudentSubResourceController studentSubController;
   @Inject
   CommonController commonController;
+  @Inject
+  StudentController studentController;
+  @Inject
+  SchoolController schoolController;
   
   @Path("/languages")
   @POST
@@ -224,6 +234,43 @@ public class StudentRESTService extends AbstractRESTService {
     } else  {
       return Response.status(500).build();
     }
+  }
+  
+  @Path("/students")
+  @POST
+  public Response createStudent(StudentEntity studentEntity) {
+    try {
+      AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(studentEntity.getAbstractStudent_id());
+      String firstName = studentEntity.getFirstName();
+      String lastName = studentEntity.getLastName();
+      String nickname = studentEntity.getNickname();
+      String additionalInfo = studentEntity.getAdditionalInfo();
+      Date studyTimeEnd = studentEntity.getStudyTimeEnd();
+      StudentActivityType activityType = studentSubController.findStudentActivityTypeById(studentEntity.getActivityType_id());
+      StudentExaminationType examinationType = studentSubController.findStudentExaminationTypeById(studentEntity.getExaminationType_id());
+      StudentEducationalLevel educationalLevel = studentSubController.findStudentEducationalLevelById(studentEntity.getEducationalLevel_id());
+      String education = studentEntity.getEducation();
+      Nationality nationality = studentSubController.findNationalityById(studentEntity.getNationality_id());
+      Municipality municipality = studentSubController.findMunicipalityById(studentEntity.getMunicipality_id());
+      Language language = studentSubController.findLanguageById(studentEntity.getLanguage_id());
+      School school = schoolController.findSchoolById(studentEntity.getSchool_id());
+      StudyProgramme studyProgramme = studentSubController.findStudyProgrammeById(studentEntity.getStudyProgramme_id());
+      Double previousStudies = studentEntity.getPreviousStudies();
+      Date studyStartDate = studentEntity.getStudyStartDate();
+      Date studyEndDate = studentEntity.getStudyEndDate();
+      StudentStudyEndReason studyEndReason = studentSubController.findStudentStudyEndReasonById(studentEntity.getStudyEndReason_id());
+      String studyEndText = studentEntity.getStudyEndText();
+      boolean lodging = studentEntity.getLodging();
+      
+      return Response.ok()
+          .entity(tranqualise(studentController.createStudent(abstractStudent, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType,
+                  examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies, studyStartDate,
+                  studyEndDate, studyEndReason, studyEndText, lodging)))
+          .build();
+    } catch (Exception e) {
+      return Response.status(500).build();
+    }
+    
   }
   
   @Path("/languages")
@@ -536,6 +583,37 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/students")
+  @GET
+  public Response findStudents(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Student> students;
+    if (filterArchived) {
+      students = studentController.findUnarchivedStudents();
+    } else {
+      students = studentController.findStudents();
+    }
+    if (!students.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(students))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/students/{ID:[0-9]*}")
+  @GET
+  public Response findStudentById(@PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(id);
+    if (student != null) {
+      return Response.ok()
+          .entity(tranqualise(student))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/languages/{ID:[0-9]*}")
   @PUT
   public Response updateLanguage(@PathParam("ID") Long id, LanguageEntity languageEntity) {
@@ -736,6 +814,68 @@ public class StudentRESTService extends AbstractRESTService {
           .build();
     } else  {
       return Response.status(500).build();
+    }
+  }
+  
+  @Path("/students/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudent(@PathParam("ID") Long id, StudentEntity studentEntity) {
+    Student student = studentController.findStudentById(id);
+    if (student != null) {
+      if (studentEntity.getArchived() == null) {
+        try {
+          String firstName = studentEntity.getFirstName();
+          String lastName = studentEntity.getLastName();
+          String nickname = studentEntity.getNickname();
+          String additionalInfo = studentEntity.getAdditionalInfo();
+          Date studyTimeEnd = studentEntity.getStudyTimeEnd();
+          StudentActivityType activityType = studentSubController.findStudentActivityTypeById(studentEntity.getActivityType_id());
+          StudentExaminationType examinationType = studentSubController.findStudentExaminationTypeById(studentEntity.getExaminationType_id());
+          StudentEducationalLevel educationalLevel = studentSubController.findStudentEducationalLevelById(studentEntity.getEducationalLevel_id());
+          String education = studentEntity.getEducation();
+          Nationality nationality = studentSubController.findNationalityById(studentEntity.getNationality_id());
+          Municipality municipality = studentSubController.findMunicipalityById(studentEntity.getMunicipality_id());
+          Language language = studentSubController.findLanguageById(studentEntity.getLanguage_id());
+          School school = schoolController.findSchoolById(studentEntity.getSchool_id());
+          StudyProgramme studyProgramme = studentSubController.findStudyProgrammeById(studentEntity.getStudyProgramme_id());
+          Double previousStudies = studentEntity.getPreviousStudies();
+          Date studyStartDate = studentEntity.getStudyStartDate();
+          Date studyEndDate = studentEntity.getStudyEndDate();
+          StudentStudyEndReason studyEndReason = studentSubController.findStudentStudyEndReasonById(studentEntity.getStudyEndReason_id());
+          String studyEndText = studentEntity.getStudyEndText();
+          boolean lodging = studentEntity.getLodging();
+          
+          return Response.ok()
+              .entity(tranqualise(studentController.updateStudent(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType,
+                      examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies,
+                      studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging)))
+              .build();
+          
+        } catch (Exception e) {
+          return Response.status(500).build();
+        }
+      } else if (!studentEntity.getArchived()){ 
+        return Response.ok()
+            .entity(tranqualise(studentController.unarchiveStudent(student, getUser())))
+            .build();
+      } else {
+        return Response.status(500).build();
+      }
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/students/{ID:[0-9]*}")
+  @DELETE
+  public Response archiveStudent(@PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(id);
+    if (student != null) {
+      return Response.ok()
+          .entity(tranqualise(studentController.archiveStudent(student, getUser())))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
     }
   }
   
