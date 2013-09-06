@@ -77,8 +77,8 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
    */
   @Override
   public void unarchive(ArchivableEntity entity, User modifier) {
+    super.unarchive(entity, modifier);
     AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
-    unarchive(entity, modifier);
     
     if (entity instanceof Student) {
       // This is necessary because AbstractStudent entity does not really
