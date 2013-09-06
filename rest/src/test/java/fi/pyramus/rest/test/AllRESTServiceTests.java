@@ -4071,4 +4071,46 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
+  
+  @Test
+  public void testFindStudentsByAbstractStudent() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/abstractStudents/1/students");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentEntity[] studentEntities = unserializeEntity(StudentEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(studentEntities);
+      assertEquals(1, studentEntities.length);
+      assertEquals((Long) 1l, studentEntities[0].getId());
+      assertEquals("Sakke", studentEntities[0].getFirstName());
+      assertEquals("The one and only", studentEntities[0].getAdditionalInfo());
+      assertEquals((Double) 66.6d, studentEntities[0].getPreviousStudies());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2001-01-01T00:00:00").getTime(), studentEntities[0].getStudyStartDate());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindAbstractStudentByStudent() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/students/1/abstractStudents");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      AbstractStudentEntity abstractStudentEntity = unserializeEntity(AbstractStudentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(abstractStudentEntity);
+      assertEquals((Long) 1l, abstractStudentEntity.getId());
+      assertEquals("090281-116Y", abstractStudentEntity.getSocialSecurityNumber());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 }
