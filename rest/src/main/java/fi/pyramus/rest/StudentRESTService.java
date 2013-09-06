@@ -35,11 +35,13 @@ import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
+import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.StudentController;
+import fi.pyramus.rest.controller.StudentGroupController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.LanguageEntity;
@@ -53,6 +55,7 @@ import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentEducationalLevelEntity;
 import fi.pyramus.rest.tranquil.students.StudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentExaminationTypeEntity;
+import fi.pyramus.rest.tranquil.students.StudentGroupEntity;
 import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
 import fi.tranquil.TranquilityBuilderFactory;
 
@@ -76,6 +79,8 @@ public class StudentRESTService extends AbstractRESTService {
   SchoolController schoolController;
   @Inject
   TagController tagController;
+  @Inject
+  StudentGroupController studentGroupController;
   
   @Path("/languages")
   @POST
@@ -286,6 +291,21 @@ public class StudentRESTService extends AbstractRESTService {
     if (!StringUtils.isBlank(text) && student != null) {
       return Response.ok()
           .entity(tranqualise(studentController.createStudentTag(student, text)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/studentGroups")
+  @POST
+  public Response createStudentGroup(StudentGroupEntity studentGroupEntity) {
+    String name = studentGroupEntity.getName();
+    String description = studentGroupEntity.getDescription();
+    Date beginDate = studentGroupEntity.getBeginDate();
+    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description) && beginDate != null) {
+      return Response.ok()
+          .entity(tranqualise(studentGroupController.createStudentGroup(name, description, beginDate, getUser())))
           .build();
     } else {
       return Response.status(500).build();
@@ -672,6 +692,37 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/studentGroups")
+  @GET
+  public Response findStudentGroups(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<StudentGroup> studentGroups;
+    if (filterArchived) {
+      studentGroups = studentGroupController.findUnarchivedStudentGroups();
+    } else {
+      studentGroups = studentGroupController.findStudentGroups();
+    }
+    if (!studentGroups.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(studentGroups))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/studentGroups/{ID:[0-9]*}")
+  @GET
+  public Response findStudentGroupById(@PathParam("ID") Long id) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    if (studentGroup != null) {
+      return Response.ok()
+          .entity(tranqualise(studentGroup))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/languages/{ID:[0-9]*}")
   @PUT
   public Response updateLanguage(@PathParam("ID") Long id, LanguageEntity languageEntity) {
@@ -924,6 +975,34 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/studentGroups/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudentGroup(@PathParam("ID") Long id, StudentGroupEntity studentGroupEntity) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    if (studentGroup != null) {
+      if (studentGroupEntity.getArchived() == null) {
+        String name = studentGroupEntity.getName();
+        String description = studentGroupEntity.getDescription();
+        Date beginDate = studentGroupEntity.getBeginDate();
+        if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description) && beginDate != null) {
+          return Response.ok()
+              .entity(tranqualise(studentGroupController.updateStudentGroup(studentGroup,name, description, beginDate, getUser())))
+              .build();
+        } else {
+          return Response.status(500).build();
+        }
+      } else if (!studentGroupEntity.getArchived()) {
+        return Response.ok()
+            .entity(tranqualise(studentGroupController.unarchiveStudentGroup(studentGroup, getUser())))
+            .build();
+      } else {
+        return Response.status(500).build();
+      }
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/students/{ID:[0-9]*}")
   @DELETE
   public Response archiveStudent(@PathParam("ID") Long id) {
@@ -931,6 +1010,19 @@ public class StudentRESTService extends AbstractRESTService {
     if (student != null) {
       return Response.ok()
           .entity(tranqualise(studentController.archiveStudent(student, getUser())))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/studentGroups/{ID:[0-9]*}")
+  @DELETE
+  public Response archiveStudentGroup(@PathParam("ID") Long id) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    if (studentGroup != null) {
+      return Response.ok()
+          .entity(tranqualise(studentGroupController.archiveStudentGroup(studentGroup, getUser())))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
