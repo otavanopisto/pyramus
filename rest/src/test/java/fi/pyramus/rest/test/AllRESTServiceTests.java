@@ -4113,4 +4113,53 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
+  
+  // StudentRESTService StudentTags
+  
+  @Test
+  public void testCreateStudentTag() throws ClientProtocolException, IOException {
+    TagEntity tagEntity = new TagEntity();
+    tagEntity.setText("StudentTag");
+
+    HttpResponse response = doPostRequest("/students/students/1/tags", tagEntity);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
+      assertNotNull(tagEntity);
+      assertEquals((Long) 5l, tagEntity.getId());
+      assertEquals("StudentTag", tagEntity.getText());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudentTags() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/students/1/tags");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      TagEntity[] tagEntities = unserializeEntity(TagEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(tagEntities);
+      assertEquals(1, tagEntities.length);
+      assertEquals("StudentTag", tagEntities[0].getText());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testRemoveStudentTag() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/students/students/1/tags/5");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  }
 }
