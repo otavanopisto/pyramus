@@ -4117,7 +4117,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     }
   }
   
-  // StudentRESTService StudentTags
+  // StudentRESTServiceTest StudentTags
   
   @Test
   public void testCreateStudentTag() throws ClientProtocolException, IOException {
@@ -4301,5 +4301,54 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     } finally {
       EntityUtils.consume(entity);
     }
+  }
+  
+  //StudentRESTService StudentGroupTags
+  
+  @Test
+  public void testCreateStudentGroupTag() throws ClientProtocolException, IOException {
+    TagEntity tagEntity = new TagEntity();
+    tagEntity.setText("StudentGroupTag");
+
+    HttpResponse response = doPostRequest("/students/studentGroups/1/tags", tagEntity);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      tagEntity = unserializeEntity(TagEntity.class, EntityUtils.toString(entity));
+      assertNotNull(tagEntity);
+      assertEquals((Long) 6l, tagEntity.getId());
+      assertEquals("StudentGroupTag", tagEntity.getText());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudentGroupTags() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/studentGroups/1/tags");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      TagEntity[] tagEntities = unserializeEntity(TagEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(tagEntities);
+      assertEquals(1, tagEntities.length);
+      assertEquals("StudentGroupTag", tagEntities[0].getText());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testRemoveStudentGroupTag() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/students/studentGroups/1/tags/6");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
   }
 }
