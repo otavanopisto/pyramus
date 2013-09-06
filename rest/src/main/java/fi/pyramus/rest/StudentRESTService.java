@@ -583,6 +583,19 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/abstractStudents/{ID:[0-9]*}/students")
+  @GET
+  public Response findStudentsByAbstractStudent(@PathParam("ID") Long id) {
+    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(id);
+    if (abstractStudent != null) {
+      return Response.ok()
+          .entity(tranqualise(studentController.findStudentByAbstractStudent(abstractStudent)))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/students")
   @GET
   public Response findStudents(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -608,6 +621,19 @@ public class StudentRESTService extends AbstractRESTService {
     if (student != null) {
       return Response.ok()
           .entity(tranqualise(student))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/students/{ID:[0-9]*}/abstractStudents")
+  @GET
+  public Response findAbstractStudentByStudent(@PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(id);
+    if (student != null) {
+      return Response.ok()
+          .entity(tranqualise(student.getAbstractStudent()))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();

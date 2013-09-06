@@ -53,7 +53,12 @@ public class StudentController {
     Student student = studentDAO.findById(id);
     return student;
   }
-
+  
+  public List<Student> findStudentByAbstractStudent(AbstractStudent abstractStudent) {
+    List<Student> students = studentDAO.listByAbstractStudent(abstractStudent);
+    return students;
+  }
+  
   public Student updateStudent(Student student, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
       Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Double previousStudies,
