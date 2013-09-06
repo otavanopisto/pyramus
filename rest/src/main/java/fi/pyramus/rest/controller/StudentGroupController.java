@@ -2,12 +2,15 @@ package fi.pyramus.rest.controller;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.students.StudentGroupDAO;
+import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.users.User;
 
@@ -16,10 +19,21 @@ import fi.pyramus.domainmodel.users.User;
 public class StudentGroupController {
   @Inject
   StudentGroupDAO studentGroupDAO;
+  @Inject
+  TagDAO tagDAO;
   
   public StudentGroup createStudentGroup(String name, String description, Date beginDate, User user) {
     StudentGroup studentGroup = studentGroupDAO.create(name, description, beginDate, user);
     return studentGroup;
+  }
+  
+  public Tag createStudentGroupTag(StudentGroup studentGroup, String text) {
+    Tag tag = tagDAO.findByText(text);
+    if (tag == null) {
+      tag = tagDAO.create(text);
+    }
+    studentGroup.addTag(tag);
+    return tag;
   }
   
   public List<StudentGroup> findStudentGroups() {
@@ -37,6 +51,11 @@ public class StudentGroupController {
     return studentGroup;
   }
   
+  public Set<Tag> findStudentGroupTags(StudentGroup studentGroup) {
+    Set<Tag> tags = studentGroup.getTags();
+    return tags;
+  }
+  
   public StudentGroup updateStudentGroup(StudentGroup studentGroup, String name, String description, Date beginDate, User user) {
     StudentGroup updated = studentGroupDAO.update(studentGroup, name, description, beginDate, user);
     return updated;
@@ -50,5 +69,9 @@ public class StudentGroupController {
   public StudentGroup unarchiveStudentGroup(StudentGroup studentGroup, User user) {
     studentGroupDAO.unarchive(studentGroup, user);
     return studentGroup;
+  }
+  
+  public void removeStudentGroupTag(StudentGroup studentGroup, Tag tag) {
+    studentGroup.removeTag(tag);
   }
 }

@@ -285,7 +285,7 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{ID:[0-9]*}/tags")
   @POST
-  public Response createStudentTags(@PathParam("ID") Long id, TagEntity tagEntity) {
+  public Response createStudentTag(@PathParam("ID") Long id, TagEntity tagEntity) {
     String text = tagEntity.getText();
     Student student = studentController.findStudentById(id);
     if (!StringUtils.isBlank(text) && student != null) {
@@ -306,6 +306,20 @@ public class StudentRESTService extends AbstractRESTService {
     if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description) && beginDate != null) {
       return Response.ok()
           .entity(tranqualise(studentGroupController.createStudentGroup(name, description, beginDate, getUser())))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/studentGroups/{ID:[0-9]*}/tags")
+  @POST
+  public Response createStudentGroupTag(@PathParam("ID") Long id, TagEntity tagEntity) {
+    String text = tagEntity.getText();
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    if (!StringUtils.isBlank(text) && studentGroup != null) {
+      return Response.ok()
+          .entity(tranqualise(studentGroupController.createStudentGroupTag(studentGroup, text)))
           .build();
     } else {
       return Response.status(500).build();
@@ -723,6 +737,19 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/studentGroups/{ID:[0-9]*}/tags")
+  @GET
+  public Response findStudentGroupTags(@PathParam("ID") Long id) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    if (studentGroup != null) {
+      return Response.ok()
+          .entity(tranqualise(studentGroupController.findStudentGroupTags(studentGroup)))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/languages/{ID:[0-9]*}")
   @PUT
   public Response updateLanguage(@PathParam("ID") Long id, LanguageEntity languageEntity) {
@@ -1036,6 +1063,19 @@ public class StudentRESTService extends AbstractRESTService {
     Tag tag = tagController.findTagById(tagId);
     if (student != null && tag != null) {
       studentController.removeStudentTag(student, tag);
+      return Response.status(200).build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/studentGroups/{SID:[0-9]*}/tags/{TID:[0-9]*}")
+  @DELETE
+  public Response deleteStudentGroupTag(@PathParam("SID") Long studentGroupId, @PathParam("TID") Long tagId) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(studentGroupId);
+    Tag tag = tagController.findTagById(tagId);
+    if (studentGroup != null && tag != null) {
+      studentGroupController.removeStudentGroupTag(studentGroup, tag);
       return Response.status(200).build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
