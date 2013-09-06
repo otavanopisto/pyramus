@@ -2,17 +2,20 @@ package fi.pyramus.rest.controller;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
+import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
@@ -26,6 +29,8 @@ import fi.pyramus.domainmodel.users.User;
 public class StudentController {
   @Inject
   StudentDAO studentDAO;
+  @Inject
+  TagDAO tagDAO;
 
   public Student createStudent(AbstractStudent abstractStudent, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
@@ -37,6 +42,15 @@ public class StudentController {
         studyEndReason, studyEndText, lodging);
 
     return student;
+  }
+  
+  public Tag createStudentTag(Student student, String text) {
+    Tag tag = tagDAO.findByText(text);
+    if (tag == null) {
+      tag = tagDAO.create(text);
+    }
+    student.addTag(tag);
+    return tag;
   }
 
   public List<Student> findStudents() {
@@ -59,6 +73,11 @@ public class StudentController {
     return students;
   }
   
+  public Set<Tag> findStudentTags(Student student) {
+    Set<Tag> tags = student.getTags();
+    return tags;
+  }
+  
   public Student updateStudent(Student student, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
       Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Double previousStudies,
@@ -79,5 +98,9 @@ public class StudentController {
   public Student unarchiveStudent(Student student, User user) {
     studentDAO.unarchive(student, user);
     return student;
+  }
+  
+  public void removeStudentTag(Student student, Tag tag) {
+    student.removeTag(tag);
   }
 }

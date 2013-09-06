@@ -28,6 +28,7 @@ import fi.pyramus.domainmodel.base.Nationality;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
+import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
@@ -40,11 +41,13 @@ import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.StudentController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
+import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.LanguageEntity;
 import fi.pyramus.rest.tranquil.base.MunicipalityEntity;
 import fi.pyramus.rest.tranquil.base.NationalityEntity;
 import fi.pyramus.rest.tranquil.base.StudyProgrammeCategoryEntity;
 import fi.pyramus.rest.tranquil.base.StudyProgrammeEntity;
+import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentEducationalLevelEntity;
@@ -71,6 +74,8 @@ public class StudentRESTService extends AbstractRESTService {
   StudentController studentController;
   @Inject
   SchoolController schoolController;
+  @Inject
+  TagController tagController;
   
   @Path("/languages")
   @POST
@@ -271,6 +276,20 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(500).build();
     }
     
+  }
+  
+  @Path("/students/{ID:[0-9]*}/tags")
+  @POST
+  public Response createStudentTags(@PathParam("ID") Long id, TagEntity tagEntity) {
+    String text = tagEntity.getText();
+    Student student = studentController.findStudentById(id);
+    if (!StringUtils.isBlank(text) && student != null) {
+      return Response.ok()
+          .entity(tranqualise(studentController.createStudentTag(student, text)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
   }
   
   @Path("/languages")
@@ -640,6 +659,19 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/students/{ID:[0-9]*}/tags")
+  @GET
+  public Response findStudentTags(@PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(id);
+    if (student != null) {
+      return Response.ok()
+          .entity(tranqualise(studentController.findStudentTags(student)))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/languages/{ID:[0-9]*}")
   @PUT
   public Response updateLanguage(@PathParam("ID") Long id, LanguageEntity languageEntity) {
@@ -900,6 +932,19 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.ok()
           .entity(tranqualise(studentController.archiveStudent(student, getUser())))
           .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/students/{SID:[0-9]*}/tags/{TID:[0-9]*}")
+  @DELETE
+  public Response deleteStudentTag(@PathParam("SID") Long studentId, @PathParam("TID") Long tagId) {
+    Student student = studentController.findStudentById(studentId);
+    Tag tag = tagController.findTagById(tagId);
+    if (student != null && tag != null) {
+      studentController.removeStudentTag(student, tag);
+      return Response.status(200).build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }
