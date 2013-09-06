@@ -42,6 +42,7 @@ import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
 import fi.pyramus.rest.controller.ReportController;
 import fi.pyramus.rest.controller.SchoolController;
+import fi.pyramus.rest.controller.StudentController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.AcademicTermEntity;
@@ -71,6 +72,7 @@ import fi.pyramus.rest.tranquil.reports.ReportEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentEducationalLevelEntity;
+import fi.pyramus.rest.tranquil.students.StudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentExaminationTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
 
@@ -93,7 +95,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     Archive<?> archive = createArchive(InitialSchoolDataDescriptor.class, SchoolController.class, SchoolRESTService.class, ProjectController.class,
         ProjectRESTService.class, ReportController.class, ReportRESTService.class, TagController.class, TagRESTService.class, CommonController.class,
         CommonRESTService.class, ModuleController.class, ModuleRESTService.class, CalendarController.class, CalendarRESTService.class, CourseController.class,
-        CourseRESTService.class, AbstractStudentController.class, StudentSubResourceController.class ,StudentRESTService.class);
+        CourseRESTService.class, AbstractStudentController.class, StudentSubResourceController.class, StudentController.class, StudentRESTService.class);
 
     return archive;
   }
@@ -3887,6 +3889,184 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       examinationTypeEntity = unserializeEntity(StudentExaminationTypeEntity.class, EntityUtils.toString(entity));
       assertNotNull(examinationTypeEntity);
       assertEquals("Updated ExaminationType", examinationTypeEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  //StudentRESTServiceTest Student
+  
+  @Test
+  public void testCreateStudent() throws ClientProtocolException, IOException, ParseException {
+    StudentEntity studentEntity = new StudentEntity();
+    studentEntity.setAbstractStudent_id(1l);
+    studentEntity.setFirstName("Tero");
+    studentEntity.setLastName("Testaaja");
+    studentEntity.setNickname("Llama");
+    studentEntity.setAdditionalInfo("Tero has four legs");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date studyTimeEnd = sdf.parse("2014-07-18");
+    studentEntity.setStudyTimeEnd(studyTimeEnd);
+    studentEntity.setActivityType_id(1l);
+    studentEntity.setExaminationType_id(1l);
+    studentEntity.setEducationalLevel_id(1l);
+    studentEntity.setEducation("Test Education");
+    studentEntity.setNationality_id(1l);
+    studentEntity.setMunicipality_id(1l);
+    studentEntity.setLanguage_id(1l);
+    studentEntity.setSchool_id(1l);
+    studentEntity.setStudyProgramme_id(1l);
+    studentEntity.setPreviousStudies(20d);
+    Date studyStartDate = sdf.parse("2013-09-09");
+    studentEntity.setStudyStartDate(studyStartDate);
+    Date studyEndDate = sdf.parse("2014-05-26");
+    studentEntity.setStudyEndDate(studyEndDate);
+    studentEntity.setStudyEndReason_id(1l);
+    studentEntity.setStudyEndText("Test EndReason");
+    studentEntity.setLodging(true);
+  
+    HttpResponse response = doPostRequest("/students/students/", studentEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      studentEntity = unserializeEntity(StudentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(studentEntity);
+      assertEquals((Long) 1l, studentEntity.getId());
+      assertEquals("Tero", studentEntity.getFirstName());
+      assertEquals((Double) 20d, studentEntity.getPreviousStudies());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-09-09T00:00:00").getTime(), studentEntity.getStudyStartDate());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudents() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/students/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentEntity[] studentEntities = unserializeEntity(StudentEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(studentEntities);
+      assertEquals(1, studentEntities.length);
+      assertEquals((Long) 1l, studentEntities[0].getId());
+      assertEquals("Tero", studentEntities[0].getFirstName());
+      assertEquals((Double) 20d, studentEntities[0].getPreviousStudies());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-09-09T00:00:00").getTime(), studentEntities[0].getStudyStartDate());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudentById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/students/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentEntity studentEntity = unserializeEntity(StudentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(studentEntity);
+      assertEquals("Tero", studentEntity.getFirstName());
+      assertEquals((Double) 20d, studentEntity.getPreviousStudies());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-09-09T00:00:00").getTime(), studentEntity.getStudyStartDate());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateStudent() throws ClientProtocolException, IOException, ParseException {
+    StudentEntity studentEntity = new StudentEntity();
+    studentEntity.setFirstName("Sakke");
+    studentEntity.setLastName("Engineer");
+    studentEntity.setNickname("The");
+    studentEntity.setAdditionalInfo("The one and only");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date studyTimeEnd = sdf.parse("2020-01-01");
+    studentEntity.setStudyTimeEnd(studyTimeEnd);
+    studentEntity.setActivityType_id(1l);
+    studentEntity.setExaminationType_id(1l);
+    studentEntity.setEducationalLevel_id(1l);
+    studentEntity.setEducation("Test Education");
+    studentEntity.setNationality_id(1l);
+    studentEntity.setMunicipality_id(1l);
+    studentEntity.setLanguage_id(1l);
+    studentEntity.setSchool_id(1l);
+    studentEntity.setStudyProgramme_id(1l);
+    studentEntity.setPreviousStudies(66.6d);
+    Date studyStartDate = sdf.parse("2001-01-01");
+    studentEntity.setStudyStartDate(studyStartDate);
+    Date studyEndDate = sdf.parse("2019-12-24");
+    studentEntity.setStudyEndDate(studyEndDate);
+    studentEntity.setStudyEndReason_id(1l);
+    studentEntity.setStudyEndText("Test EndReason");
+    studentEntity.setLodging(true);
+  
+    HttpResponse response = doPutRequest("/students/students/1", studentEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      studentEntity = unserializeEntity(StudentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(studentEntity);
+      assertEquals("Sakke", studentEntity.getFirstName());
+      assertEquals("The one and only", studentEntity.getAdditionalInfo());
+      assertEquals((Double) 66.6d, studentEntity.getPreviousStudies());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2001-01-01T00:00:00").getTime(), studentEntity.getStudyStartDate());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testArchiveStudent() throws ClientProtocolException, IOException {
+    HttpResponse response = doDeleteRequest("/students/students/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentEntity studentEntity = unserializeEntity(StudentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(studentEntity);
+      assertEquals((Long) 1l, studentEntity.getId());
+      assertEquals(true, studentEntity.getArchived());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  @Test
+  public void testUnarchiveStudent() throws ClientProtocolException, IOException {
+    StudentEntity studentEntity = new StudentEntity();
+    studentEntity.setArchived(false);
+
+    HttpResponse response = doPutRequest("/students/students/1", studentEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      studentEntity = unserializeEntity(StudentEntity.class, EntityUtils.toString(entity));
+      assertNotNull(studentEntity);
+      assertEquals((Long) 1l, studentEntity.getId());
+      assertEquals(false, studentEntity.getArchived());
     } finally {
       EntityUtils.consume(entity);
     }
