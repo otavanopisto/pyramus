@@ -37,12 +37,15 @@ import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.pyramus.domainmodel.students.StudentVariable;
+import fi.pyramus.domainmodel.students.StudentVariableKey;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.StudentController;
 import fi.pyramus.rest.controller.StudentGroupController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
+import fi.pyramus.rest.controller.StudentVariableController;
 import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.LanguageEntity;
 import fi.pyramus.rest.tranquil.base.MunicipalityEntity;
@@ -57,6 +60,7 @@ import fi.pyramus.rest.tranquil.students.StudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentExaminationTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentGroupEntity;
 import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
+import fi.pyramus.rest.tranquil.students.StudentVariableEntity;
 import fi.tranquil.TranquilityBuilderFactory;
 
 @Path("/students")
@@ -81,6 +85,8 @@ public class StudentRESTService extends AbstractRESTService {
   TagController tagController;
   @Inject
   StudentGroupController studentGroupController;
+  @Inject
+  StudentVariableController variableController;
   
   @Path("/languages")
   @POST
@@ -219,6 +225,27 @@ public class StudentRESTService extends AbstractRESTService {
       if (category != null) {
         return Response.ok()
             .entity(tranqualise(studentSubController.createStudyProgramme(name, category, code)))
+            .build();
+      } else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/variables")
+  @POST
+  public Response createStudentVariable(StudentVariableEntity studentVariableEntity) {
+    String value = studentVariableEntity.getValue();
+    Long studentId = studentVariableEntity.getStudent_id();
+    Long keyId = studentVariableEntity.getKey_id();
+    if (!StringUtils.isBlank(value) && studentId != null && keyId != null) {
+      Student student = studentController.findStudentById(studentId);
+      StudentVariableKey variableKey = variableController.findStudentVariableKeyById(keyId);
+      if (student != null) {
+        return Response.ok()
+            .entity(tranqualise(variableController.createStudentVariable(student, variableKey, value)))
             .build();
       } else {
         return Response.status(Status.NOT_FOUND).build();
@@ -605,6 +632,36 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/variables")
+  @GET
+  public Response findStudentVariables() {
+    List<StudentVariable> studentVariables = variableController.findStudentVariables();
+    if (!studentVariables.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(studentVariables))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("students/{SID:[0-9]*}/variables/{ID:[0-9]*}")
+  @GET
+  public Response findStudentVariableById(@PathParam("SID") Long studentId, @PathParam("ID") Long variableId) {
+    StudentVariable studentVariable = variableController.findStudentVariableById(variableId);
+    if (studentVariable != null) {
+      if (studentId.equals(studentVariable.getStudent().getId())) {
+        return Response.ok()
+            .entity(tranqualise(studentVariable))
+            .build();
+      } else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/abstractStudents")
   @GET
   public Response findAbstractStudents(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -931,6 +988,24 @@ public class StudentRESTService extends AbstractRESTService {
       }
     } else {
       return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("students/{SID:[0-9]*}/variables/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudentVariable(@PathParam("SID") Long studentId, @PathParam("ID") Long variableId, StudentVariableEntity studentVariableEntity) {
+    String value = studentVariableEntity.getValue();
+    StudentVariable studentVariable = variableController.findStudentVariableById(variableId);
+    if (!StringUtils.isBlank(value) && studentVariable != null) {
+      if(studentId.equals(studentVariable.getStudent().getId())) {
+        return Response.ok()
+            .entity(tranqualise(variableController.updateStudentVariable(studentVariable, value)))
+            .build();
+      } else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+    } else {
+      return Response.status(500).build();
     }
   }
   
