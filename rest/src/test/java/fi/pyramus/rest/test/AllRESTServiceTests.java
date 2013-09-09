@@ -45,6 +45,7 @@ import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.StudentController;
 import fi.pyramus.rest.controller.StudentGroupController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
+import fi.pyramus.rest.controller.StudentVariableController;
 import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.AcademicTermEntity;
 import fi.pyramus.rest.tranquil.base.EducationTypeEntity;
@@ -77,6 +78,7 @@ import fi.pyramus.rest.tranquil.students.StudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentExaminationTypeEntity;
 import fi.pyramus.rest.tranquil.students.StudentGroupEntity;
 import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
+import fi.pyramus.rest.tranquil.students.StudentVariableEntity;
 
 @RunWith(Arquillian.class)
 public class AllRESTServiceTests extends RestfulServiceTest {
@@ -98,7 +100,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
         ProjectRESTService.class, ReportController.class, ReportRESTService.class, TagController.class, TagRESTService.class, CommonController.class,
         CommonRESTService.class, ModuleController.class, ModuleRESTService.class, CalendarController.class, CalendarRESTService.class, CourseController.class,
         CourseRESTService.class, AbstractStudentController.class, StudentSubResourceController.class, StudentController.class, StudentGroupController.class,
-        StudentRESTService.class);
+        StudentVariableController.class, StudentRESTService.class);
 
     return archive;
   }
@@ -2621,7 +2623,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertEquals("application/json", entity.getContentType().getValue());
       courseEntity = unserializeEntity(CourseEntity.class, EntityUtils.toString(entity));
       assertNotNull(courseEntity);
-      assertEquals((Long) 1l, courseEntity.getId());
+      assertEquals((Long) 2l, courseEntity.getId());
       assertEquals("Test course", courseEntity.getName());
       assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-02-13T00:00:00").getTime(), courseEntity.getBeginDate());
       assertEquals("Testing how courses work", courseEntity.getDescription());
@@ -4351,4 +4353,89 @@ public class AllRESTServiceTests extends RestfulServiceTest {
 
     assertEquals(200, response.getStatusLine().getStatusCode());
   }
+  
+  //StudentRESTService StudentVariable
+  
+  @Test
+  public void testCreateStudentVariable() throws ClientProtocolException, IOException {
+    StudentVariableEntity studentVariableEntity = new StudentVariableEntity();
+    studentVariableEntity.setKey_id(1l);
+    studentVariableEntity.setStudent_id(1l);
+    studentVariableEntity.setValue("Test Variable");
+
+    HttpResponse response = doPostRequest("/students/variables", studentVariableEntity);
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      studentVariableEntity = unserializeEntity(StudentVariableEntity.class, EntityUtils.toString(entity));
+      assertNotNull(studentVariableEntity);
+      assertEquals((Long) 1l, studentVariableEntity.getId());
+      assertEquals("Test Variable", studentVariableEntity.getValue());
+      assertEquals((Long) 1l, studentVariableEntity.getStudent_id());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudentVariables() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/variables");
+
+    assertEquals(200, response.getStatusLine().getStatusCode());
+
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentVariableEntity[] studentVariableEntities = unserializeEntity(StudentVariableEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(studentVariableEntities);
+      assertEquals(1, studentVariableEntities.length);
+      assertEquals("Test Variable", studentVariableEntities[0].getValue());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+
+  @Test
+  public void testFindStudentVariableById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/students/1/variables/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentVariableEntity studentVariableEntity = unserializeEntity(StudentVariableEntity.class, EntityUtils.toString(entity));
+      assertNotNull(studentVariableEntity);
+      assertEquals("Test Variable", studentVariableEntity.getValue());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateStudentVariable() throws ClientProtocolException, IOException, ParseException {
+    StudentVariableEntity studentVariableEntity = new StudentVariableEntity();
+    studentVariableEntity.setValue("Updated Variable");
+    
+    HttpResponse response = doPutRequest("/students/students/1/variables/1", studentVariableEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      studentVariableEntity = unserializeEntity(StudentVariableEntity.class, EntityUtils.toString(entity));
+      assertNotNull(studentVariableEntity);
+      assertEquals("Updated Variable", studentVariableEntity.getValue());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
 }
