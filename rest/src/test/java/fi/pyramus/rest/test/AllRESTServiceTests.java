@@ -64,6 +64,7 @@ import fi.pyramus.rest.tranquil.base.SubjectEntity;
 import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.courses.CourseComponentEntity;
 import fi.pyramus.rest.tranquil.courses.CourseDescriptionCategoryEntity;
+import fi.pyramus.rest.tranquil.courses.CourseEnrolmentTypeEntity;
 import fi.pyramus.rest.tranquil.courses.CourseEntity;
 import fi.pyramus.rest.tranquil.courses.CourseParticipationTypeEntity;
 import fi.pyramus.rest.tranquil.courses.CourseStateEntity;
@@ -2461,6 +2462,86 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       assertEquals((Long) 1l, categoryEntity.getId());
       assertEquals(false, categoryEntity.getArchived());
       assertEquals("Updated Category", categoryEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+  
+  //CourseRESTServiceTest CourseEnrolmentType
+
+  @Test
+  public void testCreateCourseEnrolmentType() throws ClientProtocolException, IOException, ParseException {
+    CourseEnrolmentTypeEntity enrolmentTypeEntity = new CourseEnrolmentTypeEntity();
+    enrolmentTypeEntity.setName("Test EnrolmentType");
+  
+    HttpResponse response = doPostRequest("/courses/enrolmentTypes", enrolmentTypeEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      enrolmentTypeEntity = unserializeEntity(CourseEnrolmentTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(enrolmentTypeEntity);
+      assertEquals((Long) 1l, enrolmentTypeEntity.getId());
+      assertEquals("Test EnrolmentType", enrolmentTypeEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourseEnrolmentTypes() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/enrolmentTypes/");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseEnrolmentTypeEntity[] enrolmentTypeEntities = unserializeEntity(CourseEnrolmentTypeEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(enrolmentTypeEntities);
+      assertEquals(1, enrolmentTypeEntities.length);
+      assertEquals("Test EnrolmentType", enrolmentTypeEntities[0].getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindCourseEnrolmentTypeById() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/courses/enrolmentTypes/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      CourseEnrolmentTypeEntity enrolmentTypeEntity = unserializeEntity(CourseEnrolmentTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(enrolmentTypeEntity);
+      assertEquals("Test EnrolmentType", enrolmentTypeEntity.getName());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateCourseEnrolmentType() throws ClientProtocolException, IOException, ParseException {
+    CourseEnrolmentTypeEntity enrolmentTypeEntity = new CourseEnrolmentTypeEntity();
+    enrolmentTypeEntity.setName("Updated EnrolmentType");
+  
+    HttpResponse response = doPutRequest("/courses/enrolmentTypes/1", enrolmentTypeEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      enrolmentTypeEntity = unserializeEntity(CourseEnrolmentTypeEntity.class, EntityUtils.toString(entity));
+      assertNotNull(enrolmentTypeEntity);
+      assertEquals("Updated EnrolmentType", enrolmentTypeEntity.getName());
     } finally {
       EntityUtils.consume(entity);
     }
