@@ -17,9 +17,9 @@ import fi.pyramus.domainmodel.students.StudentVariableKey;
 @Stateless
 public class StudentVariableController {
   @Inject
-  StudentVariableDAO studentVariableDAO;
+  private StudentVariableDAO studentVariableDAO;
   @Inject
-  StudentVariableKeyDAO variableKeyDAO;
+  private StudentVariableKeyDAO variableKeyDAO;
   
   public StudentVariable createStudentVariable(Student student, StudentVariableKey key, String value) {
     StudentVariable studentVariable = studentVariableDAO.create(student, key, value);

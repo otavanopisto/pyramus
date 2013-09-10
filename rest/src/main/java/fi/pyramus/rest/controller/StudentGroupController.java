@@ -18,9 +18,9 @@ import fi.pyramus.domainmodel.users.User;
 @Stateless
 public class StudentGroupController {
   @Inject
-  StudentGroupDAO studentGroupDAO;
+  private StudentGroupDAO studentGroupDAO;
   @Inject
-  TagDAO tagDAO;
+  private TagDAO tagDAO;
   
   public StudentGroup createStudentGroup(String name, String description, Date beginDate, User user) {
     StudentGroup studentGroup = studentGroupDAO.create(name, description, beginDate, user);

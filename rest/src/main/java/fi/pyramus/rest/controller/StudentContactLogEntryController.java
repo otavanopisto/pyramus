@@ -16,7 +16,7 @@ import fi.pyramus.domainmodel.students.StudentContactLogEntryType;
 @Stateless
 public class StudentContactLogEntryController {
   @Inject
-  StudentContactLogEntryDAO contactLogEntryDAO;
+  private StudentContactLogEntryDAO contactLogEntryDAO;
 
   public StudentContactLogEntry createContactLogEntry(Student student, StudentContactLogEntryType type, String text, Date entryDate, String creator) {
     StudentContactLogEntry contactLogEntry = contactLogEntryDAO.create(student, type, text, entryDate, creator);

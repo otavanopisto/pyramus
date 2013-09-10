@@ -36,9 +36,9 @@ import fi.tranquil.TranquilityBuilderFactory;
 @RequestScoped
 public class CalendarRESTService extends AbstractRESTService {
   @Inject
-  TranquilityBuilderFactory tranquilityBuilderFactory;
+  private TranquilityBuilderFactory tranquilityBuilderFactory;
   @Inject
-  CalendarController calendarController;
+  private CalendarController calendarController;
   
   @Path("/academicTerms")
   @POST

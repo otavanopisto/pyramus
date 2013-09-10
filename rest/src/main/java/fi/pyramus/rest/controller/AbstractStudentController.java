@@ -15,7 +15,7 @@ import fi.pyramus.domainmodel.students.Sex;
 @Stateless
 public class AbstractStudentController {
   @Inject
-  AbstractStudentDAO abstractStudentDAO;
+  private AbstractStudentDAO abstractStudentDAO;
 
   public AbstractStudent createAbstractStudent(Date birthday, String socialSecurityNumber, Sex sex, String basicInfo, Boolean secureInfo) {
     AbstractStudent abstractStudent = abstractStudentDAO.create(birthday, socialSecurityNumber, sex, basicInfo, secureInfo);

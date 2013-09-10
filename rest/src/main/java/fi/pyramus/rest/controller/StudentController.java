@@ -28,9 +28,9 @@ import fi.pyramus.domainmodel.users.User;
 @Stateless
 public class StudentController {
   @Inject
-  StudentDAO studentDAO;
+  private StudentDAO studentDAO;
   @Inject
-  TagDAO tagDAO;
+  private TagDAO tagDAO;
 
   public Student createStudent(AbstractStudent abstractStudent, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,

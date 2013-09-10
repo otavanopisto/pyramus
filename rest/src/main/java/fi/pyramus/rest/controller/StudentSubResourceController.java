@@ -30,23 +30,23 @@ import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 @Stateless
 public class StudentSubResourceController {
   @Inject
-  StudentStudyEndReasonDAO endReasonDAO;
+  private StudentStudyEndReasonDAO endReasonDAO;
   @Inject
-  StudyProgrammeCategoryDAO studyProgrammeCategoryDAO;
+  private StudyProgrammeCategoryDAO studyProgrammeCategoryDAO;
   @Inject
-  StudyProgrammeDAO studyProgrammeDAO;
+  private StudyProgrammeDAO studyProgrammeDAO;
   @Inject
-  MunicipalityDAO municipalityDAO;
+  private MunicipalityDAO municipalityDAO;
   @Inject
-  LanguageDAO languageDAO;
+  private LanguageDAO languageDAO;
   @Inject
-  NationalityDAO nationalityDAO;
+  private NationalityDAO nationalityDAO;
   @Inject
-  StudentActivityTypeDAO activityTypeDAO;
+  private StudentActivityTypeDAO activityTypeDAO;
   @Inject
-  StudentEducationalLevelDAO educationalLevelDAO;
+  private StudentEducationalLevelDAO educationalLevelDAO;
   @Inject
-  StudentExaminationTypeDAO examinationTypeDAO;
+  private StudentExaminationTypeDAO examinationTypeDAO;
   
   public Language createLanguage(String name, String code) {
     Language language = languageDAO.create(code, name);

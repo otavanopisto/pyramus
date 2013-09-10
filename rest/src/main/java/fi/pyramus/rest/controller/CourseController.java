@@ -29,17 +29,17 @@ import fi.pyramus.domainmodel.users.User;
 @Stateless
 public class CourseController {
   @Inject
-  CourseDAO courseDAO;
+  private CourseDAO courseDAO;
   @Inject
-  CourseStateDAO courseStateDAO;
+  private CourseStateDAO courseStateDAO;
   @Inject
-  TagDAO tagDAO;
+  private TagDAO tagDAO;
   @Inject
-  CourseDescriptionCategoryDAO courseDescriptionCategoryDAO;
+  private CourseDescriptionCategoryDAO courseDescriptionCategoryDAO;
   @Inject
-  CourseParticipationTypeDAO courseParticipationTypeDAO;
+  private CourseParticipationTypeDAO courseParticipationTypeDAO;
   @Inject
-  CourseComponentDAO courseComponentDAO;
+  private CourseComponentDAO courseComponentDAO;
   
   public Course createCourse(Module module, String name, String nameExtension, CourseState state, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,

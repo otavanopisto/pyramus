@@ -39,13 +39,13 @@ import fi.tranquil.TranquilityBuilderFactory;
 @RequestScoped
 public class ModuleRESTService extends AbstractRESTService{
   @Inject
-  TranquilityBuilderFactory tranquilityBuilderFactory;
+  private TranquilityBuilderFactory tranquilityBuilderFactory;
   @Inject
-  ModuleController moduleController;
+  private ModuleController moduleController;
   @Inject
-  CommonController commonController;
+  private CommonController commonController;
   @Inject
-  TagController tagController;
+  private TagController tagController;
   
   @Path("/modules")
   @POST

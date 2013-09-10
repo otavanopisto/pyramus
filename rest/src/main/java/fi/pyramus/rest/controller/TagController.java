@@ -20,13 +20,13 @@ import fi.pyramus.persistence.search.SearchResult;
 @Stateless
 public class TagController {
   @Inject
-  TagDAO tagDAO;
+  private TagDAO tagDAO;
   @Inject
-  ProjectDAO projectDAO;
+  private ProjectDAO projectDAO;
   @Inject
-  ModuleDAO moduleDAO;
+  private ModuleDAO moduleDAO;
   @Inject
-  CourseDAO courseDAO;
+  private CourseDAO courseDAO;
 
   public Tag createTag(String text) {
     Tag tag = tagDAO.findByText(text);

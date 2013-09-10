@@ -76,23 +76,23 @@ public class StudentRESTService extends AbstractRESTService {
   @Inject
   private TranquilityBuilderFactory tranquilityBuilderFactory;
   @Inject
-  AbstractStudentController abstractStudentController;
+  private AbstractStudentController abstractStudentController;
   @Inject
-  StudentSubResourceController studentSubController;
+  private StudentSubResourceController studentSubController;
   @Inject
-  CommonController commonController;
+  private CommonController commonController;
   @Inject
-  StudentController studentController;
+  private StudentController studentController;
   @Inject
-  SchoolController schoolController;
+  private SchoolController schoolController;
   @Inject
-  TagController tagController;
+  private TagController tagController;
   @Inject
-  StudentGroupController studentGroupController;
+  private StudentGroupController studentGroupController;
   @Inject
-  StudentVariableController variableController;
+  private StudentVariableController variableController;
   @Inject
-  StudentContactLogEntryController contactLogEntryController;
+  private StudentContactLogEntryController contactLogEntryController;
   
   @Path("/languages")
   @POST
