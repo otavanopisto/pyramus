@@ -20,4 +20,13 @@ public class CourseEnrolmentTypeDAO extends PyramusEntityDAO<CourseEnrolmentType
     return courseEnrolmentType;
   }
   
+  public CourseEnrolmentType update(CourseEnrolmentType courseEnrolmentType, String name) {
+    EntityManager entityManager = getEntityManager();
+    
+    courseEnrolmentType.setName(name);
+    
+    entityManager.persist(courseEnrolmentType);
+    return courseEnrolmentType;
+  }
+  
 }
