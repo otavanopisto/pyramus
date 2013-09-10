@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.projects.ProjectModuleOptionality;
 import fi.pyramus.domainmodel.students.Sex;
+import fi.pyramus.domainmodel.students.StudentContactLogEntryType;
 import fi.pyramus.rest.CalendarRESTService;
 import fi.pyramus.rest.CommonRESTService;
 import fi.pyramus.rest.CourseRESTService;
@@ -42,6 +43,7 @@ import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
 import fi.pyramus.rest.controller.ReportController;
 import fi.pyramus.rest.controller.SchoolController;
+import fi.pyramus.rest.controller.StudentContactLogEntryController;
 import fi.pyramus.rest.controller.StudentController;
 import fi.pyramus.rest.controller.StudentGroupController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
@@ -73,6 +75,7 @@ import fi.pyramus.rest.tranquil.reports.ReportCategoryEntity;
 import fi.pyramus.rest.tranquil.reports.ReportEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
+import fi.pyramus.rest.tranquil.students.StudentContactLogEntryEntity;
 import fi.pyramus.rest.tranquil.students.StudentEducationalLevelEntity;
 import fi.pyramus.rest.tranquil.students.StudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentExaminationTypeEntity;
@@ -100,7 +103,7 @@ public class AllRESTServiceTests extends RestfulServiceTest {
         ProjectRESTService.class, ReportController.class, ReportRESTService.class, TagController.class, TagRESTService.class, CommonController.class,
         CommonRESTService.class, ModuleController.class, ModuleRESTService.class, CalendarController.class, CalendarRESTService.class, CourseController.class,
         CourseRESTService.class, AbstractStudentController.class, StudentSubResourceController.class, StudentController.class, StudentGroupController.class,
-        StudentVariableController.class, StudentRESTService.class);
+        StudentVariableController.class, StudentContactLogEntryController.class, StudentRESTService.class);
 
     return archive;
   }
@@ -4398,7 +4401,6 @@ public class AllRESTServiceTests extends RestfulServiceTest {
       EntityUtils.consume(entity);
     }
   }
-  
 
   @Test
   public void testFindStudentVariableById() throws ClientProtocolException, IOException {
@@ -4438,4 +4440,106 @@ public class AllRESTServiceTests extends RestfulServiceTest {
     }
   }
   
+ //StudentRESTServiceTest StudentContactLogEntry
+  
+  @Test
+  public void testCreateStudentContactLogEntry() throws ClientProtocolException, IOException, ParseException {
+    StudentContactLogEntryEntity contactLogEntryEntity = new StudentContactLogEntryEntity();
+    contactLogEntryEntity.setStudent_id(1l);
+    contactLogEntryEntity.setType(StudentContactLogEntryType.FACE2FACE);
+    contactLogEntryEntity.setText("Test StudentContactLogEntry");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date entryDate = sdf.parse("2013-09-09");
+    contactLogEntryEntity.setEntryDate(entryDate);
+    
+    HttpResponse response = doPostRequest("/students/students/1/contactLogEntries", contactLogEntryEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      contactLogEntryEntity = unserializeEntity(StudentContactLogEntryEntity.class, EntityUtils.toString(entity));
+      assertNotNull(contactLogEntryEntity);
+      assertEquals((Long) 1l, contactLogEntryEntity.getId());
+      assertEquals("Test StudentContactLogEntry", contactLogEntryEntity.getText());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-09-09T00:00:00").getTime(), contactLogEntryEntity.getEntryDate());
+      assertEquals("Master Splinter", contactLogEntryEntity.getCreatorName());
+      assertEquals(StudentContactLogEntryType.FACE2FACE, contactLogEntryEntity.getType());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudentContactLogEntry() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/students/1/contactLogEntries");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentContactLogEntryEntity[] studentContactLogEntryEntities = unserializeEntity(StudentContactLogEntryEntity[].class, EntityUtils.toString(entity));
+      assertNotNull(studentContactLogEntryEntities);
+      assertEquals(1, studentContactLogEntryEntities.length);
+      assertEquals((Long) 1l, studentContactLogEntryEntities[0].getId());
+      assertEquals("Test StudentContactLogEntry", studentContactLogEntryEntities[0].getText());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-09-09T00:00:00").getTime(), studentContactLogEntryEntities[0].getEntryDate());
+      assertEquals("Master Splinter", studentContactLogEntryEntities[0].getCreatorName());
+      assertEquals(StudentContactLogEntryType.FACE2FACE, studentContactLogEntryEntities[0].getType());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testFindStudentContactLogEntryByIdAndStudent() throws ClientProtocolException, IOException {
+    HttpResponse response = doGetRequest("/students/students/1/contactLogEntries/1");
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+  
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      StudentContactLogEntryEntity contactLogEntryEntity = unserializeEntity(StudentContactLogEntryEntity.class, EntityUtils.toString(entity));
+      assertNotNull(contactLogEntryEntity);
+      assertEquals("Test StudentContactLogEntry", contactLogEntryEntity.getText());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2013-09-09T00:00:00").getTime(), contactLogEntryEntity.getEntryDate());
+      assertEquals("Master Splinter", contactLogEntryEntity.getCreatorName());
+      assertEquals(StudentContactLogEntryType.FACE2FACE, contactLogEntryEntity.getType());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
+
+  @Test
+  public void testUpdateStudentContactLogEntry() throws ClientProtocolException, IOException, ParseException {
+    StudentContactLogEntryEntity contactLogEntryEntity = new StudentContactLogEntryEntity();
+    contactLogEntryEntity.setStudent_id(1l);
+    contactLogEntryEntity.setType(StudentContactLogEntryType.SKYPE);
+    contactLogEntryEntity.setText("Updated StudentContactLogEntry");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date entryDate = sdf.parse("2014-12-14");
+    contactLogEntryEntity.setEntryDate(entryDate);
+    
+    HttpResponse response = doPutRequest("/students/students/1/contactLogEntries/1", contactLogEntryEntity);
+  
+    assertEquals(200, response.getStatusLine().getStatusCode());
+    HttpEntity entity = response.getEntity();
+    try {
+      assertNotNull(entity);
+      assertEquals("application/json", entity.getContentType().getValue());
+      contactLogEntryEntity = unserializeEntity(StudentContactLogEntryEntity.class, EntityUtils.toString(entity));
+      assertNotNull(contactLogEntryEntity);
+      assertEquals("Updated StudentContactLogEntry", contactLogEntryEntity.getText());
+      assertEquals(javax.xml.bind.DatatypeConverter.parseDateTime("2014-12-14T00:00:00").getTime(), contactLogEntryEntity.getEntryDate());
+      assertEquals("Master Splinter", contactLogEntryEntity.getCreatorName());
+      assertEquals(StudentContactLogEntryType.SKYPE, contactLogEntryEntity.getType());
+    } finally {
+      EntityUtils.consume(entity);
+    }
+  }
 }
