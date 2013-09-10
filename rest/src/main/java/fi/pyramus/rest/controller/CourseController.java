@@ -12,6 +12,7 @@ import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.courses.CourseComponentDAO;
 import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
+import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -20,6 +21,7 @@ import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
+import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
@@ -40,6 +42,8 @@ public class CourseController {
   private CourseParticipationTypeDAO courseParticipationTypeDAO;
   @Inject
   private CourseComponentDAO courseComponentDAO;
+  @Inject
+  private CourseEnrolmentTypeDAO courseEnrolmentTypeDAO;
   
   public Course createCourse(Module module, String name, String nameExtension, CourseState state, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
@@ -60,6 +64,11 @@ public class CourseController {
   public CourseDescriptionCategory createCourseDescriptionCategory(String name) {
     CourseDescriptionCategory courseDescriptionCategory = courseDescriptionCategoryDAO.create(name);
     return courseDescriptionCategory;
+  }
+  
+  public CourseEnrolmentType createCourseEnrolmentType(String name) {
+    CourseEnrolmentType enrolmentType = courseEnrolmentTypeDAO.create(name);
+    return enrolmentType;
   }
   
   public CourseState createCourseState(String name) {
@@ -126,6 +135,16 @@ public class CourseController {
     return courseDescriptionCategory;
   }
   
+  public List<CourseEnrolmentType> findCourseEnrolmentTypes() {
+    List<CourseEnrolmentType> enrolmentTypes = courseEnrolmentTypeDAO.listAll();
+    return enrolmentTypes;
+  }
+  
+  public CourseEnrolmentType findCourseEnrolmentTypeById(Long id) {
+    CourseEnrolmentType enrolmentType = courseEnrolmentTypeDAO.findById(id);
+    return enrolmentType;
+  }
+  
   public List<CourseState> findCourseStates() {
     List<CourseState> courseStates = courseStateDAO.listAll();
     return courseStates;
@@ -173,6 +192,11 @@ public class CourseController {
   
   public CourseComponent updateCourseComponent(CourseComponent component, Double length, EducationalTimeUnit lengthTimeUnit, String name, String description) {
     CourseComponent updated = courseComponentDAO.update(component, length, lengthTimeUnit, name, description);
+    return updated;
+  }
+  
+  public CourseEnrolmentType updateCourseEnrolmentType(CourseEnrolmentType courseEnrolmentType, String name) {
+    CourseEnrolmentType updated = courseEnrolmentTypeDAO.update(courseEnrolmentType, name);
     return updated;
   }
   

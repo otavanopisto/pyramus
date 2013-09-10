@@ -27,6 +27,7 @@ import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
+import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
@@ -37,6 +38,7 @@ import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.courses.CourseComponentEntity;
 import fi.pyramus.rest.tranquil.courses.CourseDescriptionCategoryEntity;
+import fi.pyramus.rest.tranquil.courses.CourseEnrolmentTypeEntity;
 import fi.pyramus.rest.tranquil.courses.CourseEntity;
 import fi.pyramus.rest.tranquil.courses.CourseParticipationTypeEntity;
 import fi.pyramus.rest.tranquil.courses.CourseStateEntity;
@@ -122,6 +124,19 @@ public class CourseRESTService extends AbstractRESTService {
     if (!StringUtils.isBlank(name)) {
       return Response.ok()
           .entity(tranqualise(courseController.createCourseDescriptionCategory(name)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/enrolmentTypes")
+  @POST
+  public Response createCourseEnrolmentType(CourseEnrolmentTypeEntity courseEnrolmentTypeEntity) {
+    String name = courseEnrolmentTypeEntity.getName();
+    if (!StringUtils.isBlank(name)) {
+      return Response.ok()
+          .entity(tranqualise(courseController.createCourseEnrolmentType(name)))
           .build();
     } else {
       return Response.status(500).build();
@@ -251,6 +266,32 @@ public class CourseRESTService extends AbstractRESTService {
     if (category != null) {
       return Response.ok()
           .entity(tranqualise(category))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/enrolmentTypes")
+  @GET
+  public Response findCourseEnrolmentTypes() {
+    List<CourseEnrolmentType> courseEnrolmentTypes = courseController.findCourseEnrolmentTypes();
+    if (!courseEnrolmentTypes.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(courseEnrolmentTypes))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/enrolmentTypes/{ID:[0-9]*}")
+  @GET
+  public Response findCourseEnrolmentTypeById(@PathParam("ID") Long id) {
+    CourseEnrolmentType enrolmentType = courseController.findCourseEnrolmentTypeById(id);
+    if (enrolmentType != null) {
+      return Response.ok()
+          .entity(tranqualise(enrolmentType))
           .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
@@ -434,6 +475,24 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(500).build();
     }
     return Response.status(Status.NOT_FOUND).build();
+  }
+  
+  @Path("/enrolmentTypes/{ID:[0-9]*}")
+  @PUT
+  public Response updateCourseEnrolmentType(@PathParam("ID") Long id, CourseEnrolmentTypeEntity courseEnrolmentTypeEntity) {
+    CourseEnrolmentType enrolmentType = courseController.findCourseEnrolmentTypeById(id);
+    if (enrolmentType != null) {
+      String name = courseEnrolmentTypeEntity.getName();
+      if (!StringUtils.isBlank(name)) {
+      return Response.ok()
+          .entity(tranqualise(courseController.updateCourseEnrolmentType(enrolmentType, name)))
+          .build();
+      } else {
+        return Response.status(500).build();
+      }
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
   }
   
   @Path("/courseStates/{ID:[0-9]*}")
