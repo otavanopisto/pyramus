@@ -33,6 +33,8 @@ import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
+import fi.pyramus.domainmodel.students.StudentContactLogEntry;
+import fi.pyramus.domainmodel.students.StudentContactLogEntryType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
@@ -42,6 +44,7 @@ import fi.pyramus.domainmodel.students.StudentVariableKey;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.SchoolController;
+import fi.pyramus.rest.controller.StudentContactLogEntryController;
 import fi.pyramus.rest.controller.StudentController;
 import fi.pyramus.rest.controller.StudentGroupController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
@@ -55,6 +58,7 @@ import fi.pyramus.rest.tranquil.base.StudyProgrammeEntity;
 import fi.pyramus.rest.tranquil.base.TagEntity;
 import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
+import fi.pyramus.rest.tranquil.students.StudentContactLogEntryEntity;
 import fi.pyramus.rest.tranquil.students.StudentEducationalLevelEntity;
 import fi.pyramus.rest.tranquil.students.StudentEntity;
 import fi.pyramus.rest.tranquil.students.StudentExaminationTypeEntity;
@@ -87,6 +91,8 @@ public class StudentRESTService extends AbstractRESTService {
   StudentGroupController studentGroupController;
   @Inject
   StudentVariableController variableController;
+  @Inject
+  StudentContactLogEntryController contactLogEntryController;
   
   @Path("/languages")
   @POST
@@ -318,6 +324,24 @@ public class StudentRESTService extends AbstractRESTService {
     if (!StringUtils.isBlank(text) && student != null) {
       return Response.ok()
           .entity(tranqualise(studentController.createStudentTag(student, text)))
+          .build();
+    } else {
+      return Response.status(500).build();
+    }
+  }
+  
+  @Path("/students/{ID:[0-9]*}/contactLogEntries")
+  @POST
+  public Response createStudentContactLogEntry(@PathParam("ID") Long id, StudentContactLogEntryEntity contactLogEntryEntity) {
+    Student student = studentController.findStudentById(id);
+    StudentContactLogEntryType type = contactLogEntryEntity.getType();
+    String text = contactLogEntryEntity.getText();
+    Date entryDate = contactLogEntryEntity.getEntryDate();
+    String creator = getUser().getFullName();
+    
+    if (student != null && type != null && !StringUtils.isBlank(text) && entryDate != null &&!StringUtils.isBlank(creator)) {
+      return Response.ok()
+          .entity(tranqualise(contactLogEntryController.createContactLogEntry(student, type, text, entryDate, creator)))
           .build();
     } else {
       return Response.status(500).build();
@@ -763,6 +787,34 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/students/{ID:[0-9]*}/contactLogEntries")
+  @GET
+  public Response findStudentContactLogEntriesByStudent(@PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(id);
+    if (student != null) {
+      return Response.ok()
+          .entity(tranqualise(contactLogEntryController.findContactLogEntriesByStudent(student)))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
+  @Path("/students/{SID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
+  @GET
+  public Response findStudentContactLogEntryById(@PathParam("SID") Long studentId, @PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(studentId);
+    if (student != null) {
+      StudentContactLogEntry contactLogEntry = contactLogEntryController.findContactLogEntryByIdAndStudent(id, student);
+      if (contactLogEntry != null) {
+        return Response.ok()
+            .entity(tranqualise(contactLogEntry))
+            .build();
+      }
+    }
+    return Response.status(Status.NOT_FOUND).build();
+  }
+  
   @Path("/studentGroups")
   @GET
   public Response findStudentGroups(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -1075,6 +1127,30 @@ public class StudentRESTService extends AbstractRESTService {
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }
+  }
+  
+  @Path("/students/{SID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudentContactLogEntry(@PathParam("SID") Long studentId, @PathParam("ID") Long id, StudentContactLogEntryEntity contactLogEntryEntity) {
+    Student student = studentController.findStudentById(studentId);
+    if (student != null) {
+      StudentContactLogEntry contactLogEntry = contactLogEntryController.findContactLogEntryByIdAndStudent(id, student);
+      if (contactLogEntry != null) {
+        StudentContactLogEntryType type = contactLogEntryEntity.getType();
+        String text = contactLogEntryEntity.getText();
+        Date entryDate = contactLogEntryEntity.getEntryDate();
+        String creator = getUser().getFullName();
+        
+        if (student != null && type != null && !StringUtils.isBlank(text) && entryDate != null &&!StringUtils.isBlank(creator)) {
+          return Response.ok()
+              .entity(tranqualise(contactLogEntryController.updateContactLogEntry(contactLogEntry, type, text, entryDate, creator)))
+              .build();
+        } else {
+          return Response.status(500).build();
+        }
+      }
+    }
+    return Response.status(Status.NOT_FOUND).build();
   }
   
   @Path("/studentGroups/{ID:[0-9]*}")
