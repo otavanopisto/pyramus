@@ -232,7 +232,7 @@ public class CourseRESTService extends AbstractRESTService {
   @GET
   public Response findCourseComponentById(@PathParam("CID") Long courseId, @PathParam("ID") Long componentId) {
     CourseComponent component = courseController.findCourseComponentById(componentId);
-    if (component.getCourse().getId().equals(courseId) && component != null) {
+    if (component.getCourse().getId().equals(courseId)) {
       return Response.ok()
           .entity(tranqualise(component))
           .build();
