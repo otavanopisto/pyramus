@@ -132,9 +132,14 @@ public class SchoolRESTService extends AbstractRESTService {
   @Path("/schoolFields")
   @GET
   public Response findSchoolFields() {
-    return Response.ok()
-        .entity(tranqualise(schoolController.findSchoolFields()))
-        .build();
+    List<SchoolField> schoolFields = schoolController.findSchoolFields();
+    if (!schoolFields.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(schoolFields))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
   }
   
   @Path("/schoolFields/{ID:[0-9]*}")
@@ -153,9 +158,14 @@ public class SchoolRESTService extends AbstractRESTService {
   @Path("/variables")
   @GET
   public Response findSchoolVariables() {
-    return Response.ok()
-        .entity(tranqualise(schoolController.findSchoolVariables()))
-        .build();
+    List<SchoolVariable> schoolVariables = schoolController.findSchoolVariables();
+    if (!schoolVariables.isEmpty()) {
+      return Response.ok()
+          .entity(tranqualise(schoolController.findSchoolVariables()))
+          .build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
   }
   
   @Path("/variables/{ID:[0-9]*}")
