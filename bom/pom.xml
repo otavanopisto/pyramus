@@ -5,9 +5,34 @@
   <version>0.6.5-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus BOM</name>
+  <url>https://github.com/otavanopisto/edelphi/</url>
+  
+  <licenses>
+    <license>
+      <name>GNU LGPL v3</name>
+      <url>http://www.gnu.org/licenses/lgpl.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/otavanopisto/pyramus/issues</url>
+  </issueManagement>
+  
+  <scm>
+    <developerConnection>scm:git:git@github.com:otavanopisto/pyramus.git</developerConnection>
+    <url>git@github.com:otavanopisto/pyramus.git</url>
+    <connection>scm:git:git@github.com:otavanopisto/pyramus.git</connection>
+  </scm>
+  
+  <organization>
+    <name>Internetix / Otava Folk High School</name>
+    <url>http://www.otavanopisto.fi</url>
+  </organization>
   
   <properties>
-    <pyramus.version>0.6.5-SNAPSHOT</pyramus.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <hibernate.version>4.0.1.Final</hibernate.version>
     <hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
     <jboss-ejb-api_3.1_spec.version>1.0.1.Final</jboss-ejb-api_3.1_spec.version>
@@ -133,84 +158,84 @@
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>pyramus</artifactId>
-        <version>${pyramus.version}</version>
+        <version>${project.version}</version>
         <type>war</type>
       </dependency>
 
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>common</artifactId>
-        <version>${pyramus.version}</version>
+        <version>${project.version}</version>
         <type>jar</type>
       </dependency>
 
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>domainmodelextension</artifactId>
-        <version>${pyramus.version}</version>
+        <version>${project.version}</version>
         <type>jar</type>
       </dependency>
 
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>framework</artifactId>
-        <version>${pyramus.version}</version>
+        <version>${project.version}</version>
         <type>jar</type>
       </dependency>
 
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>ldap-plugin</artifactId>
-        <version>${pyramus.version}</version>
+        <version>${project.version}</version>
         <type>jar</type>
       </dependency>
 
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>openid-plugin</artifactId>
-        <version>${pyramus.version}</version>
+        <version>${project.version}</version>
         <type>jar</type>
       </dependency>
 
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>persistence</artifactId>
-        <version>${pyramus.version}</version>
+        <version>${project.version}</version>
         <type>jar</type>
       </dependency>
 
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>plugin-core</artifactId>
-        <version>${pyramus.version}</version>
+        <version>${project.version}</version>
         <type>jar</type>
       </dependency>
 
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>reports</artifactId>
-        <version>${pyramus.version}</version>
+        <version>${project.version}</version>
         <type>war</type>
       </dependency>
 
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>simple-plugin</artifactId>
-        <version>${pyramus.version}</version>
+        <version>${project.version}</version>
         <type>jar</type>
       </dependency>
 
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>webservices-plugin</artifactId>
-        <version>${pyramus.version}</version>
+        <version>${project.version}</version>
         <type>jar</type>
       </dependency>
       
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>rest</artifactId>
-        <version>${pyramus.version}</version>
+        <version>${project.version}</version>
         <type>jar</type>
       </dependency>
     </dependencies>
