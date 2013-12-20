@@ -5,6 +5,15 @@
   <version>0.6.5-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus Parent POM</name>
+  
+  <modules>
+    <module>bom</module>
+    <module>common</module>
+    <module>framework</module>
+    <module>persistence</module>
+    <module>reports</module>
+    <module>webservices-plugin</module>
+  </modules>
 
   <dependencyManagement>
     <dependencies>
