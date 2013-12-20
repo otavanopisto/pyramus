@@ -23,7 +23,7 @@ import org.hibernate.search.jpa.Search;
 @Stateless
 public class SystemDAO {
   
-  SystemDAO() {
+  public SystemDAO() {
   }
   
   // JPA methods
