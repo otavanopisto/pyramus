@@ -5,6 +5,35 @@
   <version>0.6.5-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus Parent POM</name>
+  <url>https://github.com/otavanopisto/edelphi/</url>
+  
+  <licenses>
+    <license>
+      <name>GNU LGPL v3</name>
+      <url>http://www.gnu.org/licenses/lgpl.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/otavanopisto/pyramus/issues</url>
+  </issueManagement>
+  
+  <scm>
+    <developerConnection>scm:git:git@github.com:otavanopisto/pyramus.git</developerConnection>
+    <url>git@github.com:otavanopisto/pyramus.git</url>
+    <connection>scm:git:git@github.com:otavanopisto/pyramus.git</connection>
+  </scm>
+  
+  <organization>
+    <name>Internetix / Otava Folk High School</name>
+    <url>http://www.otavanopisto.fi</url>
+  </organization>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
   
   <modules>
     <module>bom</module>
