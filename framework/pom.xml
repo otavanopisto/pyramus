@@ -1,6 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>framework</artifactId>
+  <name>Pyramus Framework</name>
 
   <parent>
     <groupId>fi.pyramus</groupId>
@@ -8,23 +9,6 @@
     <version>0.6.5-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
-
-  <name>Pyramus Framework</name>
-  <url>http://pyramus.googlecode.com/</url>
-  <scm>
-    <url>http://pyramus.googlecode.com/svn</url>
-  </scm>
-  <issueManagement>
-    <system>Google Code</system>
-    <url>https://code.google.com/p/pyramus/issues/</url>
-  </issueManagement>
-  <organization>
-    <name>Internetix / Otava Folk High School</name>
-    <url>http://www.otavanopisto.fi</url>
-  </organization>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -60,23 +44,5 @@
       </plugin>
     </plugins>
   </build>
-  
-  <repositories>
-    <repository>
-      <id>otavanopisto-releases</id>
-      <name>Otavan Opisto Releases</name>
-      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/releases</url>
-    </repository>
-    <repository>
-      <id>otavanopisto-snapshots</id>
-      <name>Otavan Opisto Snapshots</name>
-      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/snapshots</url>
-    </repository>
-    <repository>
-      <id>repository.jboss.org-public</id>
-      <name>JBoss repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public</url>
-    </repository>
-  </repositories>
   
 </project>

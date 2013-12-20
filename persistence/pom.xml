@@ -9,27 +9,8 @@
     <version>0.6.5-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
-
-  <repositories>
-    <repository>
-      <id>otavanopisto-releases</id>
-      <name>Otavan Opisto Releases</name>
-      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/releases</url>
-    </repository>
-    <repository>
-      <id>otavanopisto-snapshots</id>
-      <name>Otavan Opisto Snapshots</name>
-      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/snapshots</url>
-    </repository>
-    <repository>
-      <id>repository.jboss.org-public</id>
-      <name>JBoss repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public</url>
-    </repository>
-  </repositories>
   
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tranquil-model-gen.version>1.0.3-SNAPSHOT</tranquil-model-gen.version>
   </properties>
   
@@ -89,18 +70,6 @@
       <artifactId>tranquil-model</artifactId>
     </dependency>
   </dependencies>
-  <url>http://pyramus.googlecode.com/</url>
-  <scm>
-    <url>http://pyramus.googlecode.com/svn</url>
-  </scm>
-  <issueManagement>
-    <system>Google Code</system>
-    <url>https://code.google.com/p/pyramus/issues/</url>
-  </issueManagement>
-  <organization>
-    <name>Internetix / Otava Folk High School</name>
-    <url>http://www.otavanopisto.fi</url>
-  </organization>
   
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
