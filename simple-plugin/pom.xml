@@ -2,6 +2,12 @@
   <modelVersion>4.0.0</modelVersion>
   <name>Pyramus Simple Plugin</name>
   <artifactId>simple-plugin</artifactId>
+  <parent>
+    <groupId>fi.pyramus</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.6.5-SNAPSHOT</version>
+    <relativePath>../</relativePath>
+  </parent>
 
   <url>http://pyramus.googlecode.com/</url>
   <scm>
@@ -18,12 +24,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
-  <parent>
-    <groupId>fi.pyramus</groupId>
-    <artifactId>parent</artifactId>
-    <version>0.6.5-SNAPSHOT</version>
-  </parent>
   
   <dependencies>
     <dependency>

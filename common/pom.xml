@@ -6,6 +6,7 @@
     <groupId>fi.pyramus</groupId>
     <artifactId>parent</artifactId>
     <version>0.6.5-SNAPSHOT</version>
+    <relativePath>../</relativePath>
   </parent>
 
   <name>Pyramus Common</name>
