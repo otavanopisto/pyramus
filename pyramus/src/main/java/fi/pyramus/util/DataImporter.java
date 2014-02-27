@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.Query;
-import javax.persistence.metamodel.Metamodel;
 import javax.validation.ConstraintViolation;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,9 +21,6 @@ import javax.xml.transform.TransformerException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.xpath.XPathAPI;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.metadata.ClassMetadata;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -42,20 +37,6 @@ import fi.pyramus.util.dataimport.DataImportUtils;
 import fi.pyramus.util.dataimport.ValueInterpreter;
 
 public class DataImporter {
-  
-  public void importDataFromFile(String filename, Collection<String> entities) {
-    try {
-      DocumentBuilder db = documentBuilderFactory.newDocumentBuilder();
-      Document initialDataDocument = db.parse(filename);
-      importDataFromDocument(initialDataDocument, entities);
-    } catch (ParserConfigurationException e) {
-      throw new SmvcRuntimeException(e);
-    } catch (SAXException e) {
-      throw new SmvcRuntimeException(e);
-    } catch (IOException e) {
-      throw new SmvcRuntimeException(e);
-    }
-  }
   
   public void importDataFromStream(InputStream stream, Collection<String> entities) {
     try {

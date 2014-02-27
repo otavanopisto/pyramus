@@ -1,5 +1,7 @@
 package fi.pyramus.views.system;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,7 +15,7 @@ import fi.pyramus.framework.UserRole;
 import fi.pyramus.util.DataImporter;
 
 public class InitialDataViewController extends PyramusViewController {
-
+  
   public void process(PageRequestContext requestContext) {
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
 
@@ -21,11 +23,22 @@ public class InitialDataViewController extends PyramusViewController {
       throw new SmvcRuntimeException(new Exception("Pyramus is already initialized."));
     
     DataImporter dataImporter = new DataImporter();
-    String classes = requestContext.getRequest().getParameter("classes");
-    if (StringUtils.isEmpty(classes)) {
-      dataImporter.importDataFromFile(System.getProperty("appdirectory") + "initialdata.xml", null);
-    } else {
-      dataImporter.importDataFromFile(System.getProperty("appdirectory") + "initialdata.xml", Arrays.asList(classes.split(",")));
+    
+    ClassLoader classLoader = getClass().getClassLoader();
+    InputStream initialDataStream = classLoader.getResourceAsStream("initialdata.xml");
+    try {
+      String classes = requestContext.getRequest().getParameter("classes");
+      if (StringUtils.isEmpty(classes)) {
+        dataImporter.importDataFromStream(initialDataStream, null);
+      } else {
+        dataImporter.importDataFromStream(initialDataStream, Arrays.asList(classes.split(",")));
+      }
+    } finally {
+      try {
+        initialDataStream.close();
+      } catch (IOException e) {
+        throw new SmvcRuntimeException(e); 
+      }
     }
     
     requestContext.setRedirectURL(requestContext.getRequest().getContextPath() + "/system/reindexhibernateobjects.page");
