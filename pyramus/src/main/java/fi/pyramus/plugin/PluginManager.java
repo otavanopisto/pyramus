@@ -48,7 +48,7 @@ public class PluginManager {
   
   PluginManager(ClassLoader parentClassLoader, List<String> repositories) {
     this.jarLoader = new JarLoader(parentClassLoader);
-    mavenClient = new MavenClient(getPluginDirectory());
+    mavenClient = new MavenClient(getPluginDirectory(), System.getProperty("pyramus.workspace"));
     for (String repository : repositories) {
       mavenClient.addRepository(repository);
     }
