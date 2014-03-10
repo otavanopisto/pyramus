@@ -2,7 +2,6 @@ package fi.pyramus.plugin.mailchimp;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
@@ -10,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import com.ecwid.mailchimp.MailChimpClient;
 import com.ecwid.mailchimp.MailChimpException;
 
-import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.system.SettingDAO;
@@ -18,15 +16,21 @@ import fi.pyramus.dao.system.SettingKeyDAO;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.system.Setting;
 import fi.pyramus.domainmodel.system.SettingKey;
-import fi.pyramus.framework.JSONRequestController;
-import fi.pyramus.framework.UserRole;
+import fi.pyramus.plugin.scheduler.ScheduledPluginTask;
+import fi.pyramus.plugin.scheduler.ScheduledTaskException;
+import fi.pyramus.plugin.scheduler.ScheduledTaskInternal;
 
-public class TestBench extends JSONRequestController {
+public class MailChimpSynchronizationTask implements ScheduledPluginTask {
   
-  private Logger logger = Logger.getLogger(TestBench.class.toString());
+  private static Logger logger = Logger.getLogger(MailChimpSynchronizationTask.class.getName());
 
   @Override
-  public void process(JSONRequestContext jsonRequestContext) {
+  public ScheduledTaskInternal getInternal() {
+    return ScheduledTaskInternal.MINUTELY;
+  }
+
+  @Override
+  public void execute() throws ScheduledTaskException {
     SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
     SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
@@ -54,9 +58,9 @@ public class TestBench extends JSONRequestController {
             }
           }
         } catch (IOException e) {
-          logger.log(Level.SEVERE, "Unknown error occurred while synchronizing emails into MailChimp", e);
+          throw new ScheduledTaskException("Unknown error occurred while synchronizing emails into MailChimp", e);
         } catch (MailChimpException e) {
-          logger.log(Level.SEVERE, "Unknown error occurred while synchronizing emails into MailChimp", e);
+          throw new ScheduledTaskException("Unknown error occurred while synchronizing emails into MailChimp", e);
         }
         
         logger.info("MailChimp synchronization complete");
@@ -64,9 +68,4 @@ public class TestBench extends JSONRequestController {
     }
   }
 
-  @Override
-  public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.EVERYONE };
-  }
-  
 }

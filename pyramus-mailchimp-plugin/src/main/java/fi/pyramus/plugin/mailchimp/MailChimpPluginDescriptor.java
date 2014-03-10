@@ -1,41 +1,50 @@
 package fi.pyramus.plugin.mailchimp;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import fi.pyramus.plugin.PluginDescriptor;
+import fi.pyramus.plugin.scheduler.ScheduledPluginDescriptor;
+import fi.pyramus.plugin.scheduler.ScheduledPluginTask;
 
-public class MailChimpPluginDescriptor implements PluginDescriptor {
-  
+public class MailChimpPluginDescriptor implements PluginDescriptor, ScheduledPluginDescriptor {
+
   public Map<String, Class<?>> getBinaryRequestControllers() {
     return null;
   }
 
   public Map<String, Class<?>> getJSONRequestControllers() {
-    Map<String, Class<?>> result = new HashMap<String, Class<?>>();
-    
-    result.put("mctest", TestBench.class);
-    
-    return result;
+    return null;
   }
-  
+
   public String getName() {
     return "MailChimp";
   }
-  
+
   public Map<String, Class<?>> getPageHookControllers() {
     return null;
   }
-  
+
   public Map<String, Class<?>> getPageRequestControllers() {
     return null;
   }
-  
+
   public Map<String, Class<?>> getAuthenticationProviders() {
     return null;
   }
-  
+
   public String getMessagesBundlePath() {
     return null;
   }
+
+  @Override
+  public List<ScheduledPluginTask> getScheduledTasks() {
+    List<ScheduledPluginTask> result = new ArrayList<ScheduledPluginTask>();
+
+    result.add(new MailChimpSynchronizationTask());
+
+    return result;
+  }
+
 }
