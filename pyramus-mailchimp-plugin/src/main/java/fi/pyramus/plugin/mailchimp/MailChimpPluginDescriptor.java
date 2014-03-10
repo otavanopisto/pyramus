@@ -1,5 +1,6 @@
 package fi.pyramus.plugin.mailchimp;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import fi.pyramus.plugin.PluginDescriptor;
@@ -11,7 +12,11 @@ public class MailChimpPluginDescriptor implements PluginDescriptor {
   }
 
   public Map<String, Class<?>> getJSONRequestControllers() {
-    return null;
+    Map<String, Class<?>> result = new HashMap<String, Class<?>>();
+    
+    result.put("mctest", TestBench.class);
+    
+    return result;
   }
   
   public String getName() {
