@@ -2,6 +2,7 @@ package fi.pyramus.plugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,6 +14,9 @@ import org.sonatype.aether.resolution.ArtifactResolutionException;
 import sun.misc.Service;
 import fi.internetix.smvc.logging.Logging;
 import fi.pyramus.plugin.maven.MavenClient;
+import fi.pyramus.plugin.scheduler.ScheduledPluginDescriptor;
+import fi.pyramus.plugin.scheduler.ScheduledPluginTask;
+import fi.pyramus.plugin.scheduler.ScheduledTaskInternal;
 
 /** The class responsible for managing plugins.
  * 
@@ -188,6 +192,32 @@ public class PluginManager {
     }
     
     plugins.add(plugin);
+  }
+
+  public List<ScheduledPluginTask> getScheduledTasks(ScheduledTaskInternal internal) {
+    List<ScheduledPluginTask> result = new ArrayList<ScheduledPluginTask>();
+    
+    for (ScheduledPluginDescriptor sceduledPlugin : getSceduledPlugins()) {
+      for (ScheduledPluginTask task : sceduledPlugin.getScheduledTasks()) {
+        if (internal.equals(task.getInternal())) {
+          result.add(task); 
+        }
+      }
+    }
+    
+    return result;
+  }
+  
+  public List<ScheduledPluginDescriptor> getSceduledPlugins() {
+    List<ScheduledPluginDescriptor> result = new ArrayList<ScheduledPluginDescriptor>();
+    
+    for (PluginDescriptor plugin : getPlugins()) {
+      if (plugin instanceof ScheduledPluginDescriptor) {
+        result.add((ScheduledPluginDescriptor) plugin); 
+      }
+    }
+    
+    return Collections.unmodifiableList(result);
   }
 
   private JarLoader jarLoader;
