@@ -16,7 +16,7 @@ import fi.internetix.smvc.logging.Logging;
 import fi.pyramus.plugin.maven.MavenClient;
 import fi.pyramus.plugin.scheduler.ScheduledPluginDescriptor;
 import fi.pyramus.plugin.scheduler.ScheduledPluginTask;
-import fi.pyramus.plugin.scheduler.ScheduledTaskInternal;
+import fi.pyramus.plugin.scheduler.ScheduledTaskInterval;
 
 /** The class responsible for managing plugins.
  * 
@@ -194,13 +194,16 @@ public class PluginManager {
     plugins.add(plugin);
   }
 
-  public List<ScheduledPluginTask> getScheduledTasks(ScheduledTaskInternal internal) {
+  public List<ScheduledPluginTask> getScheduledTasks(ScheduledTaskInterval internal) {
     List<ScheduledPluginTask> result = new ArrayList<ScheduledPluginTask>();
     
-    for (ScheduledPluginDescriptor sceduledPlugin : getSceduledPlugins()) {
-      for (ScheduledPluginTask task : sceduledPlugin.getScheduledTasks()) {
-        if (internal.equals(task.getInternal())) {
-          result.add(task); 
+    for (ScheduledPluginDescriptor sceduledPlugin : getScheduledPlugins()) {
+      List<ScheduledPluginTask> tasks = sceduledPlugin.getScheduledTasks();
+      if (tasks != null) {
+        for (ScheduledPluginTask task : tasks) {
+          if (internal.equals(task.getInternal())) {
+            result.add(task); 
+          }
         }
       }
     }
@@ -208,7 +211,7 @@ public class PluginManager {
     return result;
   }
   
-  public List<ScheduledPluginDescriptor> getSceduledPlugins() {
+  public List<ScheduledPluginDescriptor> getScheduledPlugins() {
     List<ScheduledPluginDescriptor> result = new ArrayList<ScheduledPluginDescriptor>();
     
     for (PluginDescriptor plugin : getPlugins()) {

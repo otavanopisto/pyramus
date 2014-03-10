@@ -16,40 +16,40 @@ public class PluginScheduler {
 
   @Schedule(minute = "0", hour = "0", dayOfMonth="1", persistent = false)
   public void fireMonthly() {
-    executeTasks(ScheduledTaskInternal.MONTHLY);
+    executeTasks(ScheduledTaskInterval.MONTH);
   }
 
   @Schedule(minute = "0", hour = "0", dayOfWeek="0", persistent = false)
   public void fireWeekly() {
-    executeTasks(ScheduledTaskInternal.WEEKLY);
+    executeTasks(ScheduledTaskInterval.WEEK);
   }
 
   @Schedule(minute = "0", hour = "0", persistent = false)
   public void executeDaily() {
-    executeTasks(ScheduledTaskInternal.DAILY);
+    executeTasks(ScheduledTaskInterval.DAY);
   }
 
   @Schedule(minute = "0", hour = "*", persistent = false)
   public void executeHourly() {
-    executeTasks(ScheduledTaskInternal.HOURLY);
+    executeTasks(ScheduledTaskInterval.HOUR);
   }
 
   @Schedule(minute = "*/30", hour = "*", persistent = false)
   public void executeHalfHourly() {
-    executeTasks(ScheduledTaskInternal.HALF_HOURLY);
+    executeTasks(ScheduledTaskInterval.HALF_HOUR);
   }
 
   @Schedule(minute = "*/15", hour = "*", persistent = false)
   public void executeQuaterHourly() {
-    executeTasks(ScheduledTaskInternal.QUATER_HOURLY);
+    executeTasks(ScheduledTaskInterval.QUATER_HOUR);
   }
 
   @Schedule(minute = "*/1", hour = "*", persistent = false)
   public void executeMinutely() {
-    executeTasks(ScheduledTaskInternal.MINUTELY);
+    executeTasks(ScheduledTaskInterval.MINUTE);
   }
   
-  private void executeTasks(ScheduledTaskInternal internal) {
+  private void executeTasks(ScheduledTaskInterval internal) {
     List<ScheduledPluginTask> scheduledTasks = PluginManager.getInstance().getScheduledTasks(internal);
     if (scheduledTasks != null) {
       executeTasks(scheduledTasks);

@@ -18,15 +18,15 @@ import fi.pyramus.domainmodel.system.Setting;
 import fi.pyramus.domainmodel.system.SettingKey;
 import fi.pyramus.plugin.scheduler.ScheduledPluginTask;
 import fi.pyramus.plugin.scheduler.ScheduledTaskException;
-import fi.pyramus.plugin.scheduler.ScheduledTaskInternal;
+import fi.pyramus.plugin.scheduler.ScheduledTaskInterval;
 
 public class MailChimpSynchronizationTask implements ScheduledPluginTask {
   
   private static Logger logger = Logger.getLogger(MailChimpSynchronizationTask.class.getName());
 
   @Override
-  public ScheduledTaskInternal getInternal() {
-    return ScheduledTaskInternal.MINUTELY;
+  public ScheduledTaskInterval getInternal() {
+    return ScheduledTaskInterval.HOUR;
   }
 
   @Override
@@ -64,7 +64,11 @@ public class MailChimpSynchronizationTask implements ScheduledPluginTask {
         }
         
         logger.info("MailChimp synchronization complete");
+      } else {
+        logger.warning("MailChimp API key missing");
       }
+    } else {
+      logger.warning("MailChimp API key missing");
     }
   }
 
