@@ -69,6 +69,9 @@ public class MailChimpSyncUtils {
       }
       
       // TODO: Remove removed mails from MailChimp
+      if(!removedEmails.isEmpty()){
+        unsubscribeEmails.addAll(removedEmails);
+      }
       
       if (!subscribeEmails.isEmpty()) {
         BatchSubscribeMethod subscribeMethod = new BatchSubscribeMethod();
@@ -107,9 +110,9 @@ public class MailChimpSyncUtils {
         
         unsubscribeMethod.batch = new ArrayList<Email>();
   
-        for (String subscribeEmail : subscribeEmails) {
+        for (String unsubscribeEmail : unsubscribeEmails) {
           Email email = new Email();
-          email.email = subscribeEmail;
+          email.email = unsubscribeEmail;
           unsubscribeMethod.batch.add(email);
         }
   
