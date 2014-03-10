@@ -38,7 +38,7 @@ public class MailChimpSyncUtils {
       List<String> subscribed = getListMemberEmails(mailChimpClient, apiKey, listId, "subscribed");
       List<String> unsubscribed = getListMemberEmails(mailChimpClient, apiKey, listId, "unsubscribed");
       List<String> subscribeEmails = new ArrayList<String>();
-      List<String> unsubscribeEmails = new ArrayList<String>();
+      List<String> removeEmails = new ArrayList<String>();
       List<String> removedEmails = new ArrayList<String>(subscribed);
   
       List<Student> students = studentDAO.listByStudyProgramme(studyProgramme);
@@ -60,7 +60,7 @@ public class MailChimpSyncUtils {
                   subscribeEmails.add(email);
                 } else if ((!student.getActive()) && (emailSubscribed)) {
                   // If student is not active but is subscribed, we need to unsubscribe him/her
-                  unsubscribeEmails.add(email);
+                  removeEmails.add(email);
                 }
               } 
             }
@@ -68,9 +68,8 @@ public class MailChimpSyncUtils {
         }
       }
       
-      // TODO: Remove removed mails from MailChimp
-      if(!removedEmails.isEmpty()){
-        unsubscribeEmails.addAll(removedEmails);
+      if (!removedEmails.isEmpty()) {
+        removeEmails.addAll(removedEmails);
       }
       
       if (!subscribeEmails.isEmpty()) {
@@ -100,7 +99,7 @@ public class MailChimpSyncUtils {
         }
       }
       
-      if (!unsubscribeEmails.isEmpty()) {
+      if (!removeEmails.isEmpty()) {
         BatchUnsubscribeMethod unsubscribeMethod = new BatchUnsubscribeMethod();
         unsubscribeMethod.id = listId;
         unsubscribeMethod.apikey = apiKey;
@@ -110,9 +109,9 @@ public class MailChimpSyncUtils {
         
         unsubscribeMethod.batch = new ArrayList<Email>();
   
-        for (String unsubscribeEmail : unsubscribeEmails) {
+        for (String removeEmail : removeEmails) {
           Email email = new Email();
-          email.email = unsubscribeEmail;
+          email.email = removeEmail;
           unsubscribeMethod.batch.add(email);
         }
   
@@ -140,7 +139,9 @@ public class MailChimpSyncUtils {
 
     MembersResult membersResult = client.execute(membersMethod);
     for (MemberInfoData data : membersResult.data) {
-      result.add(data.email);
+      if (data != null && StringUtils.isNotBlank(data.email)) {
+        result.add(data.email);
+      }
     }
 
     return result;
