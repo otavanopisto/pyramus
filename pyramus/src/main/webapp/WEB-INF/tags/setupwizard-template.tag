@@ -20,10 +20,6 @@
 <jsp:include page="/templates/generic/validation_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/locale_support.jsp"></jsp:include>
 
-<script type="text/javascript">
-	function onLoad(event) {
-	}
-</script>
 <jsp:invoke fragment="script" />
 </head>
 <body onload="onLoad(event)">
@@ -45,6 +41,7 @@
 			</div>
 		</div>
 	</div>
+	
 	<jsp:include page="/templates/generic/footer.jsp"></jsp:include>
 </body>
 </html>
