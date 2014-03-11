@@ -7,7 +7,7 @@
 
 <html>
 <head>
-<title><fmt:message key="system.importcsv.pageTitle" /></title>
+<title><fmt:message key="system.setupwizard.pageTitle" /></title>
 <jsp:include page="/templates/generic/head_generic.jsp"></jsp:include>
 <jsp:include page="/templates/generic/ckeditor_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/dialog_support.jsp"></jsp:include>

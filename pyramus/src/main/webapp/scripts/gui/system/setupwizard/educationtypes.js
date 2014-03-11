@@ -2,7 +2,7 @@ var educationTypes = JSDATA["educationtypes"].evalJSON();
 
 function addEducationTypesTableRow() {
   var table = getIxTableById('educationTypesTable');
-  var rowIndex = table.addRow([ '', '', '', '', '', -1, 1 ]);
+  var rowIndex = table.addRow([ '', '', '', '', -1, 1 ]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -48,54 +48,7 @@ function onLoad(event) {
           editable : false,
           paramName : 'code',
           required : true
-        },
-        {
-          right : 8,
-          width : 30,
-          dataType : 'button',
-          imgsrc : GLOBAL_contextPath + '/gfx/edit-delete.png',
-          tooltip : getLocale().getText("settings.educationTypes.educationTypesTableArchiveTooltip"),
-          onclick : function(event) {
-            var table = event.tableComponent;
-            var educationTypeId = table.getCellValue(event.row, table.getNamedColumnIndex('educationTypeId'));
-            var educationTypeName = table.getCellValue(event.row, table.getNamedColumnIndex('name'));
-            var url = GLOBAL_contextPath + "/simpledialog.page?localeId=settings.educationTypes.educationTypeArchiveConfirmDialogContent&localeParams="
-                + encodeURIComponent(educationTypeName);
-
-            var archivedRowIndex;
-            archivedRowIndex = event.row;
-
-            var dialog = new IxDialog({
-              id : 'confirmRemoval',
-              contentURL : url,
-              centered : true,
-              showOk : true,
-              showCancel : true,
-              autoEvaluateSize : true,
-              title : getLocale().getText("settings.educationTypes.educationTypeArchiveConfirmDialogTitle"),
-              okLabel : getLocale().getText("settings.educationTypes.educationTypeArchiveConfirmDialogOkLabel"),
-              cancelLabel : getLocale().getText("settings.educationTypes.educationTypeArchiveConfirmDialogCancelLabel")
-            });
-
-            dialog.addDialogListener(function(event) {
-              switch (event.name) {
-                case 'okClick':
-                  JSONRequest.request("settings/archiveeducationtype.json", {
-                    parameters : {
-                      educationTypeId : educationTypeId
-                    },
-                    onSuccess : function(jsonResponse) {
-                      getIxTableById('educationTypesTable').deleteRow(archivedRowIndex);
-                    }
-                  });
-                break;
-              }
-            });
-
-            dialog.open();
-          },
-          paramName : 'archiveButton'
-        }, {
+        },{
           right : 8,
           width : 30,
           dataType : 'button',
@@ -110,7 +63,7 @@ function onLoad(event) {
             }
           },
           paramName : 'removeButton',
-          hidden : true
+          hidden : false
         }, {
           dataType : 'hidden',
           paramName : 'educationTypeId'
@@ -122,7 +75,7 @@ function onLoad(event) {
 
   var rows = new Array();
   for ( var i = 0, l = educationTypes.length; i < l; i++) {
-    rows.push([ '', jsonEscapeHTML(educationTypes[i].name), jsonEscapeHTML(educationTypes[i].code), '', '', educationTypes[i].id, 0 ]);
+    rows.push([ '', jsonEscapeHTML(educationTypes[i].name), jsonEscapeHTML(educationTypes[i].code), '', educationTypes[i].id, 0 ]);
   }
 
   educationTypesTable.addRows(rows);

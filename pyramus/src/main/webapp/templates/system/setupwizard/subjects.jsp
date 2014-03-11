@@ -5,17 +5,17 @@ pageEncoding="UTF-8"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="t"%>
 <t:setupwizard-template>
 <jsp:attribute name="script">
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/system/setupwizard/educationtypes.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/system/setupwizard/subjects.js"></script>
 </jsp:attribute>
 <jsp:body>
 <form method="post" action="">
-    <div id="educationTypes" class="tabContent">
+    <div id="subjects" class="tabContent">
         <div class="genericTableAddRowContainer">
-            <span class="genericTableAddRowLinkContainer" onclick="addEducationTypesTableRow();"><fmt:message key="system.setupwizard.educationtypes.addNew" /></span>
+            <span class="genericTableAddRowLinkContainer" onclick="addSubjectsTableRow();"><fmt:message key="system.setupwizard.subjects.addNew" /></span>
         </div>
-        <div id="educationTypesTable">
-        	<div id="noEducationTypesAddedMessageContainer">
-                <fmt:message key="system.setupwizard.educationtypes.addNew" />
+        <div id="subjectsTable">
+        	<div id="noSubjectsAddedMessageContainer">
+                <fmt:message key="system.setupwizard.subjects.addNew" />
             </div>
         </div>
     </div>
