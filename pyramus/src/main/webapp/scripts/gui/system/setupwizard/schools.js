@@ -11,7 +11,17 @@ function addSchoolsTableRow() {
 }
 
 function onLoad(event) {
-  var schoolsTable = new IxTable($('schoolsTable'), {
+  var schoolFields = JSDATA["schoolFields"].evalJSON();
+  var schoolFieldOptions = [schoolFields.length];
+  
+  for (var i = 0, l = schoolFields.length; i < l; i++) {
+    schoolFieldOptions.push({
+      text: schoolFields[i].name,
+      value: schoolFields[i].id
+    });
+  }
+  
+  new IxTable($('schoolsTable'), {
     id : "schoolsTable",
     columns : [ {
       header : getLocale().getText("system.setupwizard.schools.schoolsTableCodeHeader"),
@@ -25,7 +35,8 @@ function onLoad(event) {
       width: 300,
       dataType : 'select',
       paramName : 'field',
-      required : true
+      required : true,
+      options: schoolFieldOptions
     }, {
       header : getLocale().getText("system.setupwizard.schools.schoolsTableNameHeader"),
       left : 399,
@@ -50,4 +61,5 @@ function onLoad(event) {
       paramName : 'removeButton'
     }]
   });
+  
 }
