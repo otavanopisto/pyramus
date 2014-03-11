@@ -1,25 +1,24 @@
 package fi.pyramus.views.system.setupwizard;
 
-import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.DefaultsDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.domainmodel.courses.CourseState;
-import fi.pyramus.framework.PyramusFormViewController;
-import fi.pyramus.framework.PyramusStatusCode;
-import fi.pyramus.framework.UserRole;
 
-public class CourseStatesSetupWizardViewController extends PyramusFormViewController {
+public class CourseStatesSetupWizardViewController extends SetupWizardController {
+  
+  public CourseStatesSetupWizardViewController() {
+    super("coursestates");
+  }
   
   @Override
-  public void processForm(PageRequestContext requestContext) {
-    requestContext.getRequest().setAttribute("setupPhase", "coursestates");    
-    requestContext.setIncludeJSP("/templates/system/setupwizard/coursestates.jsp");
-  }
+  public void setup(PageRequestContext requestContext) throws SetupWizardException {
 
+  }
+  
   @Override
-  public void processSend(PageRequestContext requestContext) {
+  public void save(PageRequestContext requestContext) throws SetupWizardException {
     CourseStateDAO courseStateDAO = DAOFactory.getInstance().getCourseStateDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
 
@@ -35,7 +34,7 @@ public class CourseStatesSetupWizardViewController extends PyramusFormViewContro
       
       if (initialState) {
         if (initialCourseState != null) {
-          throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "Two or more initialCourseStates defined");
+          throw new SetupWizardException("Two or more initialCourseStates defined");
         }
         
         initialCourseState = courseState;
@@ -45,13 +44,8 @@ public class CourseStatesSetupWizardViewController extends PyramusFormViewContro
     if (initialCourseState != null) {
       defaultsDAO.updateDefaultInitialCourseState(initialCourseState);
     } else {
-      throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "initialCourseState not defined");
+      throw new SetupWizardException("initialCourseState not defined");
     }
-  }
-
-  @Override
-  public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.ADMINISTRATOR };
   }
 
 }

@@ -1,19 +1,14 @@
 package fi.pyramus.views.system.setupwizard;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.domainmodel.base.EducationType;
-import fi.pyramus.framework.PyramusFormViewController;
-import fi.pyramus.framework.UserRole;
 import fi.pyramus.util.JSONArrayExtractor;
 import fi.pyramus.util.StringAttributeComparator;
 
@@ -33,7 +28,7 @@ public class EducationTypesSetupWizardViewController extends SetupWizardControll
     this.setJsDataVariable(requestContext, "educationtypes", jsonEducationTypes);
     requestContext.setIncludeJSP("/templates/system/setupwizard/educationtypes.jsp");
   }
-
+  
   @Override
   public void save(PageRequestContext requestContext) throws SetupWizardException {
     EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();    
