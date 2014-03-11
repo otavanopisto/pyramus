@@ -1,12 +1,10 @@
 package fi.pyramus.views.system.setupwizard;
 
-import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.DefaultsDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
-import fi.pyramus.framework.PyramusStatusCode;
 
 public class CourseParticipationTypesSetupWizardViewController extends SetupWizardController {
   
@@ -47,7 +45,7 @@ public class CourseParticipationTypesSetupWizardViewController extends SetupWiza
     if (initialCourseParticipationType != null) {
       defaultsDAO.updateInitialCourseParticipationType(initialCourseParticipationType);
     } else {
-      throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "Initial course participation is not defined");
+      throw new SetupWizardException("Initial course participation is not defined");
     }
   }
   
