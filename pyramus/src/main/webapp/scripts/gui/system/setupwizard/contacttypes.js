@@ -1,24 +1,16 @@
-function addNationalitiesTableRow() {
-  getIxTableById('nationalitiesTable').addRow([ '', '', '']);
-  $('noNationalitiesAddedMessageContainer').setStyle({
+function addContactTypesTableRow() {
+  getIxTableById('contactTypesTable').addRow([ '', '']);
+  $('noContactTypesAddedMessageContainer').setStyle({
     display : 'none'
   });
 }
 
 function onLoad(event) {
-  new IxTable($('nationalitiesTable'), {
-    id : "nationalitiesTable",
+  new IxTable($('contactTypesTable'), {
+    id : "contactTypesTable",
     columns : [{
-      header : getLocale().getText("system.setupwizard.nationalities.nationalitiesTableCodeHeader"),
-      left : 8,
-      width: 75,
-      dataType : 'number',
-      paramName : 'code',
-      required : true,
-      editable: true
-    }, {
       header : getLocale().getText("system.setupwizard.nationalities.nationalitiesTableNameHeader"),
-      left : 91,
+      left : 8,
       right: 48,
       dataType : 'text',
       paramName : 'name',
