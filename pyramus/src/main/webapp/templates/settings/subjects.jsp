@@ -32,7 +32,7 @@
     
     <div id="manageSubjectsFormContainer"> 
 	    <div class="genericFormContainer"> 
-	      <form action="savesubjects.json" method="post" ix:jsonform="true" ix:useglasspane="true">
+	      <form action="" method="post">
 	  
 	        <div class="tabLabelsContainer" id="tabs">
 	          <a class="tabLabel" href="#manageSubjects">
