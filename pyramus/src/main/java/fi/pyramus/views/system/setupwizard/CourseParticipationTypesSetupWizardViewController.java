@@ -6,20 +6,21 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.DefaultsDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
-import fi.pyramus.framework.PyramusFormViewController;
 import fi.pyramus.framework.PyramusStatusCode;
-import fi.pyramus.framework.UserRole;
 
-public class CourseParticipationTypesSetupWizardViewController extends PyramusFormViewController {
-
+public class CourseParticipationTypesSetupWizardViewController extends SetupWizardController {
+  
+  public CourseParticipationTypesSetupWizardViewController() {
+    super("courseparticipationtypes");
+  }
+  
   @Override
-  public void processForm(PageRequestContext requestContext) {
-    requestContext.getRequest().setAttribute("setupPhase", "courseparticipationtypes");
-    requestContext.setIncludeJSP("/templates/system/setupwizard/courseparticipationtypes.jsp");
+  public void setup(PageRequestContext requestContext) throws SetupWizardException{
+
   }
 
   @Override
-  public void processSend(PageRequestContext requestContext) {
+  public void save(PageRequestContext requestContext) throws SetupWizardException {
     CourseParticipationTypeDAO participationTypeDAO = DAOFactory.getInstance().getCourseParticipationTypeDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
 
@@ -36,7 +37,7 @@ public class CourseParticipationTypesSetupWizardViewController extends PyramusFo
 
       if (initialType) {
         if (initialCourseParticipationType != null) {
-          throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "Two or more initial course participation types defined");
+          throw new SetupWizardException("Two or more initial course participation types defined");
         }
 
         initialCourseParticipationType = courseParticipationType;
@@ -49,10 +50,5 @@ public class CourseParticipationTypesSetupWizardViewController extends PyramusFo
       throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "Initial course participation is not defined");
     }
   }
-
-  @Override
-  public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.ADMINISTRATOR };
-  }
-
+  
 }
