@@ -25,6 +25,7 @@ public class EducationTypesSetupWizardViewController extends PyramusFormViewCont
     Collections.sort(educationTypes, new StringAttributeComparator("getName"));
     String jsonEducationTypes = new JSONArrayExtractor("name", "code", "id").extractString(educationTypes);
     req.setAttribute("setupPhase", "educationtypes");
+    this.setJsDataVariable(requestContext, "educationtypes", jsonEducationTypes);
     requestContext.setIncludeJSP("/templates/system/setupwizard/educationtypes.jsp");
   }
 
