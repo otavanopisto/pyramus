@@ -1,6 +1,6 @@
 function addCourseStatesTableRow() {
   var table = getIxTableById('courseStatesTable');
-  var rowIndex = table.addRow([ '', false, '', '', -1 ]);
+  var rowIndex = table.addRow([ '', false, '', '' ]);
   for (var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -59,9 +59,6 @@ function onLoad(event) {
         }
       },
       paramName : 'removeButton'
-    }, {
-      dataType : 'hidden',
-      paramName : 'courseStateId'
-    } ]
+    }]
   });
 }
