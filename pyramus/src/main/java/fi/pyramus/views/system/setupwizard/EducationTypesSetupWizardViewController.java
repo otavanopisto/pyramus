@@ -26,7 +26,6 @@ public class EducationTypesSetupWizardViewController extends SetupWizardControll
     String jsonEducationTypes = new JSONArrayExtractor("name", "code", "id").extractString(educationTypes);
 
     this.setJsDataVariable(requestContext, "educationtypes", jsonEducationTypes);
-    requestContext.setIncludeJSP("/templates/system/setupwizard/educationtypes.jsp");
   }
   
   @Override
