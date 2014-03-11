@@ -33,7 +33,7 @@ function onLoad(event) {
       onclick : function(event) {
         event.tableComponent.deleteRow(event.row);
         if (event.tableComponent.getRowCount() == 0) {
-          $('noNationalitiesAddedMessageContainer').setStyle({
+          $('noContactTypesAddedMessageContainer').setStyle({
             display : ''
           });
         }
