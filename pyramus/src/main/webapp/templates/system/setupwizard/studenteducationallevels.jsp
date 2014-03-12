@@ -5,8 +5,6 @@
 
 <t:setupwizard-template>
   <jsp:attribute name="script">
-    <jsp:include page="/templates/generic/table_support.jsp"></jsp:include>
-
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/system/setupwizard/studenteducationallevels.js"></script>
   </jsp:attribute>
   <jsp:body>
