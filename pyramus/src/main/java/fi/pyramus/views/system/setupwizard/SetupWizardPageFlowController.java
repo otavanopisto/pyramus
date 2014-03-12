@@ -15,6 +15,7 @@ public class SetupWizardPageFlowController {
   private static SetupWizardPageFlowController INSTANCE;
   
   private static final String[] PHASES = new String[] {
+    "index",
     "studentactivitytypes", 
     "studyprogrammecategories", 
     "nationalities", 
