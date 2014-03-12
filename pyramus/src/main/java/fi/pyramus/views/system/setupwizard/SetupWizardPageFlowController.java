@@ -37,13 +37,23 @@ public class SetupWizardPageFlowController {
   };
   
   public String next(String phase) {
-    int index = ArrayUtils.indexOf(PHASES, phase);
+    int index = getPhaseIndex(phase);
     
-    if (((index + 1) < (PHASES.length - 1))) {
+    if (((index + 1) < (getPhaseCount() - 1))) {
       return PHASES[index + 1];
     } 
     
     return null;
   }
+
+  public int getPhaseIndex(String phase) {
+    return ArrayUtils.indexOf(PHASES, phase);
+  }
+
+  public int getPhaseCount() {
+    return PHASES.length;
+  }
+  
+  
   
 }

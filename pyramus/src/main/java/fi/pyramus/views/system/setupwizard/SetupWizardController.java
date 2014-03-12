@@ -18,7 +18,14 @@ public abstract class SetupWizardController extends PyramusFormViewController {
   
   @Override
   public void processForm(PageRequestContext requestContext) {
+    SetupWizardPageFlowController flowPageController = SetupWizardPageFlowController.getInstance();
+    
     requestContext.getRequest().setAttribute("setupPhase", phase);
+    
+    requestContext.getRequest().setAttribute("phaseIndex", flowPageController.getPhaseIndex(phase));
+    requestContext.getRequest().setAttribute("phaseCount", flowPageController.getPhaseCount());
+    
+    
     requestContext.setIncludeJSP("/templates/system/setupwizard/" + phase + ".jsp");
     
     try {

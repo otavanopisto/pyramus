@@ -19,7 +19,7 @@
 <jsp:include page="/templates/generic/draftapi_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/validation_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/locale_support.jsp"></jsp:include>
-
+<link href="${pageContext.request.contextPath}/css/setupwizard.css" rel="stylesheet">
 <jsp:invoke fragment="script" />
 </head>
 <body onload="onLoad(event)">
@@ -27,6 +27,22 @@
 	<h1 class="genericPageHeader">
 		<fmt:message key="system.setupwizard.pageTitle" />
 	</h1>
+  
+    <div id="setupWizardProgressContainer">
+      <c:forEach var="index" begin="0" end="${phaseCount - 1}">
+        <c:choose>
+          <c:when test="${index lt phaseIndex}">
+            <div class="setupWizardProgressPhase setupWizardProgressPhaseDone"></div>
+          </c:when>
+          <c:when test="${index eq phaseIndex}">
+            <div class="setupWizardProgressPhase setupWizardProgressPhaseCurrent"></div>
+          </c:when>
+          <c:otherwise>
+            <div class="setupWizardProgressPhase setupWizardProgressPhasePending"></div>
+          </c:otherwise>
+        </c:choose>  
+      </c:forEach>
+    </div>
 
 	<div id="setupWizardFormContainer">
 		<div class="genericFormContainer">
