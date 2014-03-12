@@ -1,5 +1,7 @@
 package fi.pyramus.views.system.setupwizard;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.AccessDeniedException;
 import fi.internetix.smvc.LoginRequiredException;
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -35,11 +37,19 @@ public abstract class SetupWizardController extends PyramusFormViewController {
       throw new SmvcRuntimeException(e);
     }
     
-    nextPage();
+    nextPage(requestContext);
   }
   
-  private void nextPage() {
-    // TODO: Implement 
+  private void nextPage(PageRequestContext requestContext) {
+    SetupWizardPageFlowController flowPageController = SetupWizardPageFlowController.getInstance();
+    
+    String redirectPage = "/";
+    String next = flowPageController.next(phase);
+    if (StringUtils.isNotBlank(next)) {
+      redirectPage = "/system/setupwizard/" + next + ".page";
+    }
+    
+    requestContext.setRedirectURL(requestContext.getRequest().getContextPath() + redirectPage);
   }
   
   public abstract void setup(PageRequestContext requestContext) throws SetupWizardException;
