@@ -32,7 +32,7 @@
       <c:forEach var="index" begin="0" end="${phaseCount - 1}">
         <c:choose>
           <c:when test="${index lt phaseIndex}">
-            <div class="setupWizardProgressPhase setupWizardProgressPhaseDone"></div>
+            <a class="setupWizardProgressPhase setupWizardProgressPhaseDone" href="${phases[index]}.page"></a>
           </c:when>
           <c:when test="${index eq phaseIndex}">
             <div class="setupWizardProgressPhase setupWizardProgressPhaseCurrent"></div>

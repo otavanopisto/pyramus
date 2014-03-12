@@ -54,6 +54,8 @@ public class SetupWizardPageFlowController {
     return PHASES.length;
   }
   
-  
+  public String[] getPhases() {
+    return PHASES;
+  }
   
 }

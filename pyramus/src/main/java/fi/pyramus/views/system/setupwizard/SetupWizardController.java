@@ -24,7 +24,7 @@ public abstract class SetupWizardController extends PyramusFormViewController {
     
     requestContext.getRequest().setAttribute("phaseIndex", flowPageController.getPhaseIndex(phase));
     requestContext.getRequest().setAttribute("phaseCount", flowPageController.getPhaseCount());
-    
+    requestContext.getRequest().setAttribute("phases", flowPageController.getPhases());
     
     requestContext.setIncludeJSP("/templates/system/setupwizard/" + phase + ".jsp");
     
