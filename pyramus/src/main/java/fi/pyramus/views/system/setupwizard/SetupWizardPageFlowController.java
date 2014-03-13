@@ -20,7 +20,7 @@ public class SetupWizardPageFlowController {
 
     // Base
 
-    "languages", 
+    "adminpassword",
     "educationtypes", 
     "educationsubtypes", 
     "subjects",

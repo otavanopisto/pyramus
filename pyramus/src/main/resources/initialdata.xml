@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <initialData>
 
-  <entity package="fi.pyramus.domainmodel.users" class="InternalAuth">
-    <e password="d8578edf8458ce06fbc5bb76a58c5ca4" username="admin" storeVariable="adminAuth"/> <!-- qwerty -->
-  </entity>
-
   <entity package="fi.pyramus.domainmodel.users" class="User">
-    <e authProvider="internal" externalId="{adminAuth}" firstName="Admin" lastName="Admin" role="4" storeVariable="adminUser"/>
+    <!-- InternalAuth is defined in AdminPasswordSetupWizardViewController.java -->
+    <e authProvider="internal" externalId="ADMIN_INTERNALAUTH_ID_HERE" firstName="Admin" lastName="Admin" role="4" storeVariable="adminUser"/>
   </entity>
 
   <entity package="fi.pyramus.domainmodel.help" class="HelpFolder">
