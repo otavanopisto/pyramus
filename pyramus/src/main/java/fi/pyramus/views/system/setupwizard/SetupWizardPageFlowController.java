@@ -25,6 +25,7 @@ public class SetupWizardPageFlowController {
     "educationsubtypes", 
     "subjects",
     "nationalities", 
+    "languages", 
     "timeunits", 
     "schoolfields", 
     "schools", 
