@@ -17,31 +17,7 @@ import fi.pyramus.util.DataImporter;
 public class InitialDataViewController extends PyramusViewController {
   
   public void process(PageRequestContext requestContext) {
-    DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
-
-    if (defaultsDAO.isPyramusInitialized()) 
-      throw new SmvcRuntimeException(new Exception("Pyramus is already initialized."));
-    
-    DataImporter dataImporter = new DataImporter();
-    
-    ClassLoader classLoader = getClass().getClassLoader();
-    InputStream initialDataStream = classLoader.getResourceAsStream("initialdata.xml");
-    try {
-      String classes = requestContext.getRequest().getParameter("classes");
-      if (StringUtils.isEmpty(classes)) {
-        dataImporter.importDataFromStream(initialDataStream, null);
-      } else {
-        dataImporter.importDataFromStream(initialDataStream, Arrays.asList(classes.split(",")));
-      }
-    } finally {
-      try {
-        initialDataStream.close();
-      } catch (IOException e) {
-        throw new SmvcRuntimeException(e); 
-      }
-    }
-    
-    requestContext.setRedirectURL(requestContext.getRequest().getContextPath() + "/system/reindexhibernateobjects.page");
+    requestContext.setRedirectURL(requestContext.getRequest().getContextPath() + "/");
   }
 
   public UserRole[] getAllowedRoles() {

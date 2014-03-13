@@ -8,4 +8,8 @@ public class SetupWizardException extends Exception {
     super(message);
   }
 
+  public SetupWizardException(String message, Throwable cause) {
+    super(message, cause);
+  }
+  
 }
