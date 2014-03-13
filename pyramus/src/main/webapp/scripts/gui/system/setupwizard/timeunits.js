@@ -1,6 +1,6 @@
 function addTimeUnitsTableRow() {
   var table = getIxTableById('timeUnitsTable');
-  var rowIndex = table.addRow([ '', false, 0, '', '' ]);
+  var rowIndex = table.addRow([ false, 0, '', '' ]);
   
   if (rowIndex == 0) {
     table.setCellValue(0, table.getNamedColumnIndex("baseUnit"), true);
@@ -17,14 +17,14 @@ function onLoad(event) {
   var timeUnitsTable = new IxTable($('timeUnitsTable'), {
     id : "timeUnitsTable",
     columns : [{
-        header : getLocale().getText("settings.timeUnits.timeUnitsTableBaseUnitHeader"),
+        header : getLocale().getText("system.setupwizard.timeunits.timeUnitsTableBaseUnitHeader"),
         left : 8,
         width : 80,
         dataType : 'checkbox',
         editable : true,
         paramName : 'baseUnit'
       }, {
-        header : getLocale().getText("settings.timeUnits.timeUnitsTableBaseUnitsHeader"),
+        header : getLocale().getText("system.setupwizard.timeunits.timeUnitsTableBaseUnitsHeader"),
         left : 96,
         width : 100,
         dataType : 'number',
@@ -32,7 +32,7 @@ function onLoad(event) {
         paramName : 'baseUnits',
         required : true
       }, {
-        header : getLocale().getText("settings.timeUnits.timeUnitsTableNameHeader"),
+        header : getLocale().getText("system.setupwizard.timeunits.timeUnitsTableNameHeader"),
         left : 204,
         right : 46,
         dataType : 'text',
@@ -44,7 +44,7 @@ function onLoad(event) {
         width : 30,
         dataType : 'button',
         imgsrc : GLOBAL_contextPath + '/gfx/list-remove.png',
-        tooltip : getLocale().getText("settings.timeUnits.timeUnitsTableRemoveTooltip"),
+        tooltip : getLocale().getText("system.setupwizard.timeunits.timeUnitsTableRemoveTooltip"),
         onclick : function(event) {
           event.tableComponent.deleteRow(event.row);
           if (event.tableComponent.getRowCount() == 0) {
