@@ -71,5 +71,7 @@ function onLoad(event) {
     $('noEducationSubtypesAddedMessageContainer').setStyle({
       display : 'none'
     });
+  } else {
+    addEducationSubtypesTableRow();
   }
 }
