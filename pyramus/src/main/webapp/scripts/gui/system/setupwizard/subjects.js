@@ -1,13 +1,13 @@
 var subjects = JSDATA["subjects"].evalJSON();
 var educationTypes = JSDATA["educationTypes"].evalJSON();
 
-function addsubjectsTableRow() {
+function addSubjectsTableRow() {
   var table = getIxTableById('subjectsTable');
   var rowIndex = table.addRow([ '', '', '', -1, '', -1, 1 ]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
-  $('nosubjectsAddedMessageContainer').setStyle({
+  $('noSubjectsAddedMessageContainer').setStyle({
     display : 'none'
   });
   table.showCell(rowIndex, table.getNamedColumnIndex('removeButton'));
@@ -64,7 +64,7 @@ function onLoad(event) {
         {
           header : getLocale().getText("settings.subjects.educationTypeHeader"),
           left : 8 + 22 + 8 + 100 + 8 + 300 + 8,
-          right : 8 + 22 + 8,
+          right : 8 + 22 + 8 + 8,
           dataType : 'select',
           editable : false,
           paramName : 'educationTypeId',
@@ -133,5 +133,7 @@ function onLoad(event) {
     $('noSubjectsAddedMessageContainer').setStyle({
       display : 'none'
     });
+  } else {
+    addSubjectsTableRow(); 
   }
 }
