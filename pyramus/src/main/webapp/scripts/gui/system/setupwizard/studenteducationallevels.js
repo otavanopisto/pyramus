@@ -9,7 +9,7 @@ function onLoad(event) {
   new IxTable($('studentEducationalLevelsTable'), {
     id : "studentEducationalLevelsTable",
     columns : [{
-      header : getLocale().getText("system.setupwizard.schoolfields.studentEducationalLevelsTableNameHeader"),
+      header : getLocale().getText("system.setupwizard.studenteducationallevels.studentEducationalLevelsTableNameHeader"),
       left : 8,
       right: 48,
       dataType : 'text',
@@ -21,7 +21,7 @@ function onLoad(event) {
       width : 30,
       dataType : 'button',
       imgsrc : GLOBAL_contextPath + '/gfx/list-remove.png',
-      tooltip : getLocale().getText("system.setupwizard.nationalities.studentEducationalLevelsTableRemoveTooltip"),
+      tooltip : getLocale().getText("system.setupwizard.studenteducationallevels.studentEducationalLevelsTableRemoveTooltip"),
       onclick : function(event) {
         event.tableComponent.deleteRow(event.row);
         if (event.tableComponent.getRowCount() == 0) {

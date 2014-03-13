@@ -20,7 +20,7 @@ function onLoad(event) {
           width : 22,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-          tooltip : getLocale().getText("settings.studyProgrammes.studyProgrammesTableEditTooltip"),
+          tooltip : getLocale().getText("system.setupwizard.studyprogrammes.studyProgrammesTableEditTooltip"),
           onclick : function(event) {
             var table = event.tableComponent;
             table.setCellEditable(event.row, table.getNamedColumnIndex('code'), table.isCellEditable(event.row, table.getNamedColumnIndex('code')) == false);
@@ -30,7 +30,7 @@ function onLoad(event) {
           }
         },
         {
-          header : getLocale().getText("settings.studyProgrammes.studyProgrammesTableNameHeader"),
+          header : getLocale().getText("system.setupwizard.studyprogrammes.studyProgrammesTableNameHeader"),
           left : 38,
           width : 300,
           dataType : 'text',
@@ -39,7 +39,7 @@ function onLoad(event) {
           required : true
         },
         {
-          header : getLocale().getText("settings.studyProgrammes.studyProgrammesTableCategoryHeader"),
+          header : getLocale().getText("system.setupwizard.studyprogrammes.studyProgrammesTableCategoryHeader"),
           width : 200,
           left : 346,
           dataType : 'select',
@@ -57,7 +57,7 @@ function onLoad(event) {
           })()
         },
         {
-          header : getLocale().getText("settings.studyProgrammes.studyProgrammesTableCodeHeader"),
+          header : getLocale().getText("system.setupwizard.studyprogrammes.studyProgrammesTableCodeHeader"),
           left : 554,
           right : 44,
           dataType : 'text',
@@ -69,7 +69,7 @@ function onLoad(event) {
           width : 30,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/list-remove.png',
-          tooltip : getLocale().getText("settings.studyProgrammes.studyProgrammesTableRemoveTooltip"),
+          tooltip : getLocale().getText("system.setupwizard.studyprogrammes.studyProgrammesTableRemoveTooltip"),
           onclick : function(event) {
             event.tableComponent.deleteRow(event.row);
             if (event.tableComponent.getRowCount() == 0) {

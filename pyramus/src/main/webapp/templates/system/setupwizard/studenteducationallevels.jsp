@@ -12,11 +12,11 @@
     <form method="post" action="">
       <div id="educationTypes" class="tabContent">
         <div class="genericTableAddRowContainer">
-          <span class="genericTableAddRowLinkContainer" onclick="addStudentEducationalLevelsTableRow();"><fmt:message key="system.setupwizard.studentEducationalLevels.addNew" /></span>
+          <span class="genericTableAddRowLinkContainer" onclick="addStudentEducationalLevelsTableRow();"><fmt:message key="system.setupwizard.studenteducationallevels.addNew" /></span>
         </div>
         <div id="studentEducationalLevelsTable">
           <div id="noStudentEducationalLevelsAddedMessageContainer">
-            <fmt:message key="system.setupwizard.studentEducationalLevels.addNew" />
+            <fmt:message key="system.setupwizard.studenteducationallevels.addNew" />
           </div>
         </div>
       </div>
