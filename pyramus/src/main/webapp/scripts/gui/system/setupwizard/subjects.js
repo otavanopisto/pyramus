@@ -1,6 +1,3 @@
-var subjects = JSDATA["subjects"].evalJSON();
-var educationTypes = JSDATA["educationTypes"].evalJSON();
-
 function addSubjectsTableRow() {
   getIxTableById('subjectsTable').addRow([ '', '', -1, '' ]);
   $('noSubjectsAddedMessageContainer').setStyle({
@@ -39,6 +36,8 @@ function onLoad(event) {
             text : '-',
             value : ''
           } ];
+          
+          var educationTypes = JSDATA["educationTypes"].evalJSON();  
           for ( var i = 0, l = educationTypes.length; i < l; i++) {
             result.push({
               text : educationTypes[i].name,
@@ -65,19 +64,6 @@ function onLoad(event) {
       } 
     ]
   });
-
-  var rows = new Array();
-  for ( var i = 0, l = subjects.length; i < l; i++) {
-    rows.push([ '',
-                jsonEscapeHTML(subjects[i].code),
-                jsonEscapeHTML(subjects[i].name),
-                subjects[i].educationTypeId,
-                '',
-                subjects[i].id,
-                0 ]);
-  }
-
-  subjectsTable.addRows(rows);
 
   if (subjectsTable.getRowCount() > 0) {
     $('noSubjectsAddedMessageContainer').setStyle({
