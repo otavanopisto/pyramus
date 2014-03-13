@@ -1,8 +1,5 @@
-var subjects = JSDATA["subjects"].evalJSON();
-var educationTypes = JSDATA["educationTypes"].evalJSON();
-
 function addSubjectsTableRow() {
-  getIxTableById('subjectsTable').addRow([ '', '', -1, '' ]);
+  getIxTableById('subjectsTable').addRow([ '', -1, '', '' ]);
   $('noSubjectsAddedMessageContainer').setStyle({
     display : 'none'
   });
@@ -20,17 +17,9 @@ function onLoad(event) {
         editable : true,
         paramName : 'code'
       }, {
-        header : getLocale().getText("settings.subjects.subjectsTableNameHeader"),
+        header : getLocale().getText("settings.subjects.educationTypeHeader"),
         left : 8 + 100 + 8,
         width : 300,
-        dataType : 'text',
-        editable : true,
-        paramName : 'name',
-        required : true
-      }, {
-        header : getLocale().getText("settings.subjects.educationTypeHeader"),
-        left : 8 + 100 + 8 + 300 + 8,
-        right : 8 + 22 + 8 + 8,
         dataType : 'select',
         editable : true,
         paramName : 'educationTypeId',
@@ -39,6 +28,8 @@ function onLoad(event) {
             text : '-',
             value : ''
           } ];
+          
+          var educationTypes = JSDATA["educationTypes"].evalJSON();  
           for ( var i = 0, l = educationTypes.length; i < l; i++) {
             result.push({
               text : educationTypes[i].name,
@@ -47,6 +38,14 @@ function onLoad(event) {
           }
           return result;
         })()
+      }, {
+        header : getLocale().getText("settings.subjects.subjectsTableNameHeader"),
+        left : 8 + 100 + 8 + 300 + 8,
+        right : 8 + 22 + 8 + 8,
+        dataType : 'text',
+        editable : true,
+        paramName : 'name',
+        required : true
       }, {
         right : 8,
         width : 30,
@@ -65,17 +64,6 @@ function onLoad(event) {
       } 
     ]
   });
-
-  var rows = new Array();
-  for ( var i = 0, l = subjects.length; i < l; i++) {
-    rows.push([ jsonEscapeHTML(subjects[i].code),
-                jsonEscapeHTML(subjects[i].name),
-                subjects[i].educationTypeId,
-                ''
-              ]);
-  }
-
-  subjectsTable.addRows(rows);
 
   if (subjectsTable.getRowCount() > 0) {
     $('noSubjectsAddedMessageContainer').setStyle({

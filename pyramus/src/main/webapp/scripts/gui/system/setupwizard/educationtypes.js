@@ -1,16 +1,9 @@
-var educationTypes = JSDATA["educationtypes"].evalJSON();
-
 function addEducationTypesTableRow() {
-  var table = getIxTableById('educationTypesTable');
-  var rowIndex = table.addRow([ '', '', '', '', -1, 1 ]);
-  for ( var i = 0; i < table.getColumnCount(); i++) {
-    table.setCellEditable(rowIndex, i, true);
-  }
+  getIxTableById('educationTypesTable').addRow([ '', '', '', -1, 1 ]);
+  
   $('noEducationTypesAddedMessageContainer').setStyle({
     display : 'none'
   });
-  table.showCell(rowIndex, table.getNamedColumnIndex('removeButton'));
-  table.hideCell(rowIndex, table.getNamedColumnIndex('archiveButton'));
 }
 
 function onLoad(event) {
@@ -18,42 +11,28 @@ function onLoad(event) {
     id : "educationTypesTable",
     columns : [
         {
+          header : getLocale().getText("system.setupwizard.educationTypes.educationTypesTableCodeHeader"),
           left : 8,
-          width : 30,
-          dataType : 'button',
-          imgsrc : GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-          tooltip : getLocale().getText("settings.educationTypes.educationTypesTableEditTooltip"),
-          onclick : function(event) {
-            var table = event.tableComponent;
-            for ( var i = 0; i < table.getColumnCount(); i++) {
-              table.setCellEditable(event.row, i, table.isCellEditable(event.row, i) == false);
-            }
-            table.setCellValue(event.row, table.getNamedColumnIndex('modified'), 1);
-          }
-        },
-        {
-          header : getLocale().getText("settings.educationTypes.educationTypesTableNameHeader"),
-          left : 38,
-          width : 300,
+          width : 75,
           dataType : 'text',
-          editable : false,
-          paramName : 'name',
+          editable : true,
+          paramName : 'code',
           required : true
         },
         {
-          header : getLocale().getText("settings.educationTypes.educationTypesTableCodeHeader"),
-          left : 346,
-          right : 44,
+          header : getLocale().getText("system.setupwizard.educationTypes.educationTypesTableNameHeader"),
+          left : 91,
+          right : 48,
           dataType : 'text',
-          editable : false,
-          paramName : 'code',
+          editable : true,
+          paramName : 'name',
           required : true
         },{
           right : 8,
           width : 30,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/list-remove.png',
-          tooltip : getLocale().getText("settings.educationTypes.educationTypesTableRemoveTooltip"),
+          tooltip : getLocale().getText("system.setupwizard.educationTypes.educationTypesTableRemoveTooltip"),
           onclick : function(event) {
             event.tableComponent.deleteRow(event.row);
             if (event.tableComponent.getRowCount() == 0) {
@@ -62,8 +41,7 @@ function onLoad(event) {
               });
             }
           },
-          paramName : 'removeButton',
-          hidden : false
+          paramName : 'removeButton'
         }, {
           dataType : 'hidden',
           paramName : 'educationTypeId'
@@ -72,13 +50,6 @@ function onLoad(event) {
           paramName : 'modified'
         } ]
   });
-
-  var rows = new Array();
-  for ( var i = 0, l = educationTypes.length; i < l; i++) {
-    rows.push([ '', jsonEscapeHTML(educationTypes[i].name), jsonEscapeHTML(educationTypes[i].code), '', educationTypes[i].id, 0 ]);
-  }
-
-  educationTypesTable.addRows(rows);
 
   if (educationTypesTable.getRowCount() > 0) {
     $('noEducationTypesAddedMessageContainer').setStyle({
