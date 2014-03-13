@@ -84,5 +84,7 @@ function onLoad(event) {
     $('noEducationTypesAddedMessageContainer').setStyle({
       display : 'none'
     });
+  } else {
+    addEducationTypesTableRow();
   }
 }
