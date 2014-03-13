@@ -21,6 +21,8 @@ public class SetupWizardPageFlowController {
     // Base
 
     "languages", 
+    "educationtypes", 
+    "educationsubtypes", 
     "subjects",
     "nationalities", 
     "timeunits", 
@@ -36,8 +38,6 @@ public class SetupWizardPageFlowController {
     
     // Student
 
-    "educationtypes", 
-    "educationsubtypes", 
     "studyendreasons", 
     "contacttypes", 
     "studyprogrammecategories", 
