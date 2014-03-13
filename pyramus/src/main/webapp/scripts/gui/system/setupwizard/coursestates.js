@@ -1,6 +1,6 @@
 function addCourseStatesTableRow() {
   var table = getIxTableById('courseStatesTable');
-  var rowIndex = table.addRow([ '', false, '', '' ]);
+  var rowIndex = table.addRow([ false, '', '' ]);
   for (var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -15,30 +15,18 @@ function addCourseStatesTableRow() {
 }
 
 function onLoad(event) {
-  var courseStatesTable = new IxTable($('courseStatesTable'), {
+  new IxTable($('courseStatesTable'), {
     id : "courseStatesTable",
-    columns : [ {
-      left : 8,
-      width : 30,
-      dataType : 'button',
-      imgsrc : GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-      tooltip : getLocale().getText("system.setupwizard.coursestates.courseStatesTableEditTooltip"),
-      onclick : function(event) {
-        var table = event.tableComponent;
-        for (var i = 0; i < table.getColumnCount(); i++) {
-          table.setCellEditable(event.row, i, table.isCellEditable(event.row, i) == false);
-        }
-      }
-    }, {
+    columns : [{
       header : getLocale().getText("system.setupwizard.coursestates.courseStatesTableInitialStateHeader"),
-      left : 38,
-      width : 80,
+      left : 8,
+      width : 100,
       dataType : 'checkbox',
       editable : false,
       paramName : 'initialState'
     }, {
       header : getLocale().getText("system.setupwizard.coursestates.courseStatesTableNameHeader"),
-      left : 234,
+      left : 107,
       right : 46,
       dataType : 'text',
       editable : false,

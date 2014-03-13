@@ -50,8 +50,8 @@ public class CourseStatesSetupWizardViewController extends SetupWizardController
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    CourseStateDAO courseStateDAO = DAOFactory.getInstance().getCourseStateDAO();
+    return !courseStateDAO.listUnarchived().isEmpty();
   }
 
 }
