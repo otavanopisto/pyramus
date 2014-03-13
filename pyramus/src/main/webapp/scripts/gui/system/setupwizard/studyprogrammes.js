@@ -2,7 +2,7 @@ var categories = JSDATA["categories"].evalJSON();
 
 function addStudyProgrammesTableRow() {
   var table = getIxTableById('studyProgrammesTable');
-  var rowIndex = table.addRow([ '', '', '', '', '', -1, 1 ]);
+  var rowIndex = table.addRow([ '', '', '', '', -1]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -16,25 +16,11 @@ function onLoad(event) {
     id : "studyProgrammesTable",
     columns : [
         {
-          left : 8,
-          width : 22,
-          dataType : 'button',
-          imgsrc : GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-          tooltip : getLocale().getText("system.setupwizard.studyprogrammes.studyProgrammesTableEditTooltip"),
-          onclick : function(event) {
-            var table = event.tableComponent;
-            table.setCellEditable(event.row, table.getNamedColumnIndex('code'), table.isCellEditable(event.row, table.getNamedColumnIndex('code')) == false);
-            table.setCellEditable(event.row, table.getNamedColumnIndex('name'), table.isCellEditable(event.row, table.getNamedColumnIndex('name')) == false);
-
-            table.setCellValue(event.row, table.getNamedColumnIndex('modified'), 1);
-          }
-        },
-        {
           header : getLocale().getText("system.setupwizard.studyprogrammes.studyProgrammesTableNameHeader"),
           left : 38,
           width : 300,
           dataType : 'text',
-          editable : false,
+          editable : true,
           paramName : 'name',
           required : true
         },
@@ -43,7 +29,7 @@ function onLoad(event) {
           width : 200,
           left : 346,
           dataType : 'select',
-          editable : false,
+          editable : true,
           paramName : 'category',
           options : (function() {
             var result = [];
@@ -61,7 +47,7 @@ function onLoad(event) {
           left : 554,
           right : 44,
           dataType : 'text',
-          editable : false,
+          editable : true,
           paramName : 'code'
         },
         {
@@ -83,9 +69,6 @@ function onLoad(event) {
         }, {
           dataType : 'hidden',
           paramName : 'studyProgrammeId'
-        }, {
-          dataType : 'hidden',
-          paramName : 'modified'
-        } ]
+        }]
   });
 }
