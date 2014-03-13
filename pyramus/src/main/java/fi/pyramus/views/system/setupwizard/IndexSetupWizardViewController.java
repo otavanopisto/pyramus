@@ -54,7 +54,6 @@ public class IndexSetupWizardViewController extends SetupWizardController {
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
     return false;
   }
   
