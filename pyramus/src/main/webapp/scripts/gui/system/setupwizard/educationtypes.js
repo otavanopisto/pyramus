@@ -1,5 +1,3 @@
-var educationTypes = JSDATA["educationtypes"].evalJSON();
-
 function addEducationTypesTableRow() {
   var table = getIxTableById('educationTypesTable');
   var rowIndex = table.addRow([ '', '', '', '', -1, 1 ]);
@@ -10,7 +8,6 @@ function addEducationTypesTableRow() {
     display : 'none'
   });
   table.showCell(rowIndex, table.getNamedColumnIndex('removeButton'));
-  table.hideCell(rowIndex, table.getNamedColumnIndex('archiveButton'));
 }
 
 function onLoad(event) {
@@ -72,13 +69,6 @@ function onLoad(event) {
           paramName : 'modified'
         } ]
   });
-
-  var rows = new Array();
-  for ( var i = 0, l = educationTypes.length; i < l; i++) {
-    rows.push([ '', jsonEscapeHTML(educationTypes[i].name), jsonEscapeHTML(educationTypes[i].code), '', educationTypes[i].id, 0 ]);
-  }
-
-  educationTypesTable.addRows(rows);
 
   if (educationTypesTable.getRowCount() > 0) {
     $('noEducationTypesAddedMessageContainer').setStyle({
