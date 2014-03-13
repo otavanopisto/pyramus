@@ -1,21 +1,15 @@
 package fi.pyramus.views.system.setupwizard;
 
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.base.AcademicTermDAO;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.SchoolDAO;
 import fi.pyramus.dao.base.SubjectDAO;
 import fi.pyramus.dao.grading.TransferCreditTemplateCourseDAO;
 import fi.pyramus.dao.grading.TransferCreditTemplateDAO;
-import fi.pyramus.domainmodel.base.AcademicTerm;
 import fi.pyramus.domainmodel.base.CourseOptionality;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.School;
@@ -84,8 +78,8 @@ public class TransferCreditTemplateSetupWizardViewController extends SetupWizard
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    TransferCreditTemplateDAO transferCreditTemplateDAO = DAOFactory.getInstance().getTransferCreditTemplateDAO();
+    return !transferCreditTemplateDAO.listUnarchived().isEmpty();
   }
 
 }

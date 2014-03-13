@@ -1,29 +1,19 @@
 package fi.pyramus.views.system.setupwizard;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang.math.NumberUtils;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.base.EducationSubtypeDAO;
-import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
-import fi.pyramus.dao.base.SubjectDAO;
-import fi.pyramus.domainmodel.base.EducationSubtype;
-import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
-import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.util.JSONArrayExtractor;
-import fi.pyramus.util.StringAttributeComparator;
 
 public class StudyProgrammesSetupWizardViewController extends SetupWizardController {
   
@@ -78,7 +68,7 @@ public class StudyProgrammesSetupWizardViewController extends SetupWizardControl
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
+    return !studyProgrammeDAO.listUnarchived().isEmpty();
   }
 }

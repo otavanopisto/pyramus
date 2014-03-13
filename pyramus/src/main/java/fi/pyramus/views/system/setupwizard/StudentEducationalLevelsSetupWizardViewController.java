@@ -2,8 +2,6 @@ package fi.pyramus.views.system.setupwizard;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.base.ContactTypeDAO;
-import fi.pyramus.dao.base.NationalityDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 
 public class StudentEducationalLevelsSetupWizardViewController extends SetupWizardController {
@@ -19,20 +17,20 @@ public class StudentEducationalLevelsSetupWizardViewController extends SetupWiza
   
   @Override
   public void save(PageRequestContext requestContext) throws SetupWizardException {
-    StudentEducationalLevelDAO dao = DAOFactory.getInstance().getStudentEducationalLevelDAO();
+    StudentEducationalLevelDAO studentEducationalLevelDAO = DAOFactory.getInstance().getStudentEducationalLevelDAO();
     
     int rowCount = requestContext.getInteger("studentEducationalLevelsTable.rowCount");
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "studentEducationalLevelsTable." + i;
       String name = requestContext.getString(colPrefix + ".name");
-      dao.create(name);
+      studentEducationalLevelDAO.create(name);
     }  
   }
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    StudentEducationalLevelDAO studentEducationalLevelDAO = DAOFactory.getInstance().getStudentEducationalLevelDAO();
+    return !studentEducationalLevelDAO.listUnarchived().isEmpty();
   }
 
 }

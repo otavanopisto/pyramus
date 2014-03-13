@@ -1,18 +1,13 @@
 package fi.pyramus.views.system.setupwizard;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.base.AcademicTermDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
-import fi.pyramus.domainmodel.base.AcademicTerm;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 
 public class StudyEndReasonsSetupWizardViewController extends SetupWizardController {
@@ -64,8 +59,8 @@ public class StudyEndReasonsSetupWizardViewController extends SetupWizardControl
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    StudentStudyEndReasonDAO studentStudyEndReasonDAO = DAOFactory.getInstance().getStudentStudyEndReasonDAO();
+    return !studentStudyEndReasonDAO.listUnarchived().isEmpty();
   }
 
 }

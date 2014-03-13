@@ -4,10 +4,7 @@ import org.apache.commons.lang.math.NumberUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.base.ContactTypeDAO;
-import fi.pyramus.dao.base.NationalityDAO;
 import fi.pyramus.dao.base.SchoolFieldDAO;
-import fi.pyramus.domainmodel.base.SchoolField;
 
 public class SchoolFieldsSetupWizardViewController extends SetupWizardController {
   
@@ -34,8 +31,8 @@ public class SchoolFieldsSetupWizardViewController extends SetupWizardController
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    SchoolFieldDAO schoolFieldDAO = DAOFactory.getInstance().getSchoolFieldDAO();
+    return !schoolFieldDAO.listUnarchived().isEmpty();
   }
 
 }

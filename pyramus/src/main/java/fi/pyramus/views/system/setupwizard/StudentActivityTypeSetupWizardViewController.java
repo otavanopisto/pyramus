@@ -42,8 +42,8 @@ public class StudentActivityTypeSetupWizardViewController extends SetupWizardCon
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    StudentActivityTypeDAO studentActivityTypeDAO = DAOFactory.getInstance().getStudentActivityTypeDAO();
+    return !studentActivityTypeDAO.listUnarchived().isEmpty();
   }
   
 }

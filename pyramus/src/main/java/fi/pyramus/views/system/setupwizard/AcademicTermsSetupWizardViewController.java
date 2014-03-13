@@ -71,8 +71,8 @@ public class AcademicTermsSetupWizardViewController extends SetupWizardControlle
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    AcademicTermDAO academicTermDAO = DAOFactory.getInstance().getAcademicTermDAO();
+    return !academicTermDAO.listUnarchived().isEmpty();
   }
 
 }
