@@ -1,13 +1,9 @@
 function addEducationTypesTableRow() {
-  var table = getIxTableById('educationTypesTable');
-  var rowIndex = table.addRow([ '', '', '', -1, 1 ]);
-  for ( var i = 0; i < table.getColumnCount(); i++) {
-    table.setCellEditable(rowIndex, i, true);
-  }
+  getIxTableById('educationTypesTable').addRow([ '', '', '', -1, 1 ]);
+  
   $('noEducationTypesAddedMessageContainer').setStyle({
     display : 'none'
   });
-  table.showCell(rowIndex, table.getNamedColumnIndex('removeButton'));
 }
 
 function onLoad(event) {
@@ -15,21 +11,21 @@ function onLoad(event) {
     id : "educationTypesTable",
     columns : [
         {
-          header : getLocale().getText("settings.educationTypes.educationTypesTableNameHeader"),
+          header : getLocale().getText("settings.educationTypes.educationTypesTableCodeHeader"),
           left : 8,
-          width : 300,
+          width : 75,
           dataType : 'text',
-          editable : false,
-          paramName : 'name',
+          editable : true,
+          paramName : 'code',
           required : true
         },
         {
-          header : getLocale().getText("settings.educationTypes.educationTypesTableCodeHeader"),
-          left : 316,
+          header : getLocale().getText("settings.educationTypes.educationTypesTableNameHeader"),
+          left : 91,
           right : 48,
           dataType : 'text',
-          editable : false,
-          paramName : 'code',
+          editable : true,
+          paramName : 'name',
           required : true
         },{
           right : 8,
@@ -45,8 +41,7 @@ function onLoad(event) {
               });
             }
           },
-          paramName : 'removeButton',
-          hidden : false
+          paramName : 'removeButton'
         }, {
           dataType : 'hidden',
           paramName : 'educationTypeId'
