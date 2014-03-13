@@ -33,7 +33,7 @@ public class AdminPasswordSetupWizardViewController extends SetupWizardControlle
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
     
     InternalAuth internalAuth = internalAuthDAO.create(username, passwordMD5);
-    // defined in initialdata.xml
+    // ADMIN_INTERNALAUTH_ID_HERE defined in initialdata.xml
     User user = userDAO.findByExternalIdAndAuthProvider("ADMIN_INTERNALAUTH_ID_HERE", "internal");
     userDAO.updateExternalId(user, String.valueOf(internalAuth.getId()));
   }
