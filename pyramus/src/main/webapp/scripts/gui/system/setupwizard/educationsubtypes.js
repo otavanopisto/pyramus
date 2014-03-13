@@ -1,102 +1,75 @@
 var educationTypes = JSDATA["educationTypes"].evalJSON();
 
 function addEducationSubtypesTableRow() {
-  var table = getIxTableById('educationSubtypesTable');
-  var rowIndex = table.addRow([ -1, '', '', '', -1, 1 ]);
-  for ( var i = 0; i < table.getColumnCount(); i++) {
-    table.setCellEditable(rowIndex, i, true);
-  }
+  getIxTableById('educationSubtypesTable').addRow([ -1, '', '', '', -1, 1 ]);
   $('noEducationSubtypesAddedMessageContainer').setStyle({
     display : 'none'
   });
-  table.showCell(rowIndex, table.getNamedColumnIndex('removeButton'));
-  table.hideCell(rowIndex, table.getNamedColumnIndex('archiveButton'));
 }
 
 function onLoad(event) {
   var educationSubtypesTable = new IxTable($('educationSubtypesTable'), {
     id : "educationSubtypesTable",
     columns : [
-        {
-          header : getLocale().getText("system.setupwizard.educationsubtypes.educationTypeHeader"),
-          left : 8,
-          width : 150,
-          dataType : 'select',
-          editable : false,
-          paramName : 'educationTypeId',
-          options : (function() {
-            var result = [ {
-              text : '-',
-              value : ''
-            } ];
-            for ( var i = 0, l = educationTypes.length; i < l; i++) {
-              result.push({
-                text : educationTypes[i].name,
-                value : educationTypes[i].id
-              });
-            }
-            return result;
-          })(),
-          sortAttributes : {
-            sortAscending : {
-              toolTip : getLocale().getText("generic.sort.ascending"),
-              sortAction : IxTable_ROWSELECTSORT
-            },
-            sortDescending : {
-              toolTip : getLocale().getText("generic.sort.descending"),
-              sortAction : IxTable_ROWSELECTSORT
-            }
+      {
+        header : getLocale().getText("system.setupwizard.educationsubtypes.educationTypeHeader"),
+        left : 8,
+        width : 150,
+        dataType : 'select',
+        editable : true,
+        paramName : 'educationTypeId',
+        options : (function() {
+          var result = [ {
+            text : '-',
+            value : ''
+          } ];
+          for ( var i = 0, l = educationTypes.length; i < l; i++) {
+            result.push({
+              text : educationTypes[i].name,
+              value : educationTypes[i].id
+            });
+          }
+          return result;
+        })()
+      },
+      {
+        header : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableCodeHeader"),
+        left : 8 + 150 + 8,
+        width : 150,
+        dataType : 'text',
+        editable : true,
+        paramName : 'code'
+      },
+      {
+        header : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableNameHeader"),
+        left : 8 + 150 + 8 + 150 + 8,
+        right : 8 + 30 + 8,
+        dataType : 'text',
+        editable : true,
+        paramName : 'name',
+        required : true
+      }, {
+        right : 8,
+        width : 30,
+        dataType : 'button',
+        imgsrc : GLOBAL_contextPath + '/gfx/list-remove.png',
+        tooltip : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableRemoveTooltip"),
+        onclick : function(event) {
+          event.tableComponent.deleteRow(event.row);
+          if (event.tableComponent.getRowCount() == 0) {
+            $('noEducationSubtypesAddedMessageContainer').setStyle({
+              display : ''
+            });
           }
         },
-        {
-          header : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableCodeHeader"),
-          left : 8 + 150 + 8,
-          width : 150,
-          dataType : 'text',
-          editable : false,
-          paramName : 'code'
-        },
-        {
-          header : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableNameHeader"),
-          left : 8 + 150 + 8 + 150 + 8,
-          right : 8 + 30 + 8,
-          dataType : 'text',
-          editable : false,
-          paramName : 'name',
-          required : true,
-          sortAttributes : {
-            sortAscending : {
-              toolTip : getLocale().getText("generic.sort.ascending"),
-              sortAction : IxTable_ROWSTRINGSORT
-            },
-            sortDescending : {
-              toolTip : getLocale().getText("generic.sort.descending"),
-              sortAction : IxTable_ROWSTRINGSORT
-            }
-          }
-        }, {
-          right : 8,
-          width : 30,
-          dataType : 'button',
-          imgsrc : GLOBAL_contextPath + '/gfx/list-remove.png',
-          tooltip : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableRemoveTooltip"),
-          onclick : function(event) {
-            event.tableComponent.deleteRow(event.row);
-            if (event.tableComponent.getRowCount() == 0) {
-              $('noEducationSubtypesAddedMessageContainer').setStyle({
-                display : ''
-              });
-            }
-          },
-          paramName : 'removeButton',
-          hidden : false
-        }, {
-          dataType : 'hidden',
-          paramName : 'educationSubtypeId'
-        }, {
-          dataType : 'hidden',
-          paramName : 'modified'
-        } ]
+        paramName : 'removeButton'
+      }, {
+        dataType : 'hidden',
+        paramName : 'educationSubtypeId'
+      }, {
+        dataType : 'hidden',
+        paramName : 'modified'
+      } ]
   });
 
   var rows = new Array();
