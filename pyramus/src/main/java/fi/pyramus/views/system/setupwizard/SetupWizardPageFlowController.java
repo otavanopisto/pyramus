@@ -14,35 +14,46 @@ public class SetupWizardPageFlowController {
   
   private static SetupWizardPageFlowController INSTANCE;
   
+  
   private static final String[] PHASES = new String[] {
     "index",
-    "studentactivitytypes", 
-    "educationtypes", 
-    
-    /* Checked */
-    
-    "studyprogrammecategories", 
+
+    // Base
+
+    "languages", 
+    "subjects",
     "nationalities", 
     "timeunits", 
-    "coursestates", 
-    "contacttypes", 
     "schoolfields", 
-    "courseparticipationtypes", 
-    "studyendreasons", 
-    "transfercredittemplates", 
     "schools", 
-    "studenteducationallevels", 
+    
     "municipalities", 
+    
+    // Course
+    
+    "coursestates", 
+    "courseparticipationtypes", 
+    
+    // Student
+
+    "educationtypes", 
     "educationsubtypes", 
+    "studyendreasons", 
+    "contacttypes", 
+    "studyprogrammecategories", 
     "studyprogrammes", 
-    "languages", 
-    "subjects"
+    "studenteducationallevels", 
+    "studentactivitytypes", 
+    
+    // Credits
+    
+    "transfercredittemplates", 
   };
   
   public String next(String phase) {
     int index = getPhaseIndex(phase);
     
-    if (((index + 1) < (getPhaseCount() - 1))) {
+    if (((index + 1) < getPhaseCount())) {
       return PHASES[index + 1];
     } 
     
