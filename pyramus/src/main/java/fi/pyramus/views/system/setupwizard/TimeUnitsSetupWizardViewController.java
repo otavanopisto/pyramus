@@ -54,8 +54,8 @@ public class TimeUnitsSetupWizardViewController extends SetupWizardController {
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
+    return !educationalTimeUnitDAO.listUnarchived().isEmpty();
   }
 
 }
