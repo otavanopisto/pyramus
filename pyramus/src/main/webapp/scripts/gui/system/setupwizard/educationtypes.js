@@ -1,6 +1,6 @@
 function addEducationTypesTableRow() {
   var table = getIxTableById('educationTypesTable');
-  var rowIndex = table.addRow([ '', '', '', '', -1, 1 ]);
+  var rowIndex = table.addRow([ '', '', '', -1, 1 ]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -15,22 +15,8 @@ function onLoad(event) {
     id : "educationTypesTable",
     columns : [
         {
-          left : 8,
-          width : 30,
-          dataType : 'button',
-          imgsrc : GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-          tooltip : getLocale().getText("settings.educationTypes.educationTypesTableEditTooltip"),
-          onclick : function(event) {
-            var table = event.tableComponent;
-            for ( var i = 0; i < table.getColumnCount(); i++) {
-              table.setCellEditable(event.row, i, table.isCellEditable(event.row, i) == false);
-            }
-            table.setCellValue(event.row, table.getNamedColumnIndex('modified'), 1);
-          }
-        },
-        {
           header : getLocale().getText("settings.educationTypes.educationTypesTableNameHeader"),
-          left : 38,
+          left : 8,
           width : 300,
           dataType : 'text',
           editable : false,
@@ -39,8 +25,8 @@ function onLoad(event) {
         },
         {
           header : getLocale().getText("settings.educationTypes.educationTypesTableCodeHeader"),
-          left : 346,
-          right : 44,
+          left : 316,
+          right : 48,
           dataType : 'text',
           editable : false,
           paramName : 'code',
