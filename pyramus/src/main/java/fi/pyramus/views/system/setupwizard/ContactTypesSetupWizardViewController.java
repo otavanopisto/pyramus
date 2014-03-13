@@ -3,7 +3,6 @@ package fi.pyramus.views.system.setupwizard;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.ContactTypeDAO;
-import fi.pyramus.dao.base.NationalityDAO;
 
 public class ContactTypesSetupWizardViewController extends SetupWizardController {
   
@@ -30,8 +29,8 @@ public class ContactTypesSetupWizardViewController extends SetupWizardController
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
+    return !contactTypeDAO.listUnarchived().isEmpty();
   }
 
 }
