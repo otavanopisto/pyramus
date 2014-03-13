@@ -2,9 +2,11 @@ package fi.pyramus.views.system.setupwizard;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.SystemDAO;
 import fi.pyramus.dao.base.DefaultsDAO;
 import fi.pyramus.util.DataImporter;
 
@@ -17,6 +19,7 @@ public class IndexSetupWizardViewController extends SetupWizardController {
   @Override
   public void setup(PageRequestContext requestContext) throws SetupWizardException {
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
+    SystemDAO systemDAO = DAOFactory.getInstance().getSystemDAO();
 
     if (!defaultsDAO.isPyramusInitialized()) {
       DataImporter dataImporter = new DataImporter();
@@ -32,6 +35,16 @@ public class IndexSetupWizardViewController extends SetupWizardController {
           throw new SetupWizardException("Error occurred while importing initial data", e); 
         }
       }
+      
+      List<Class<?>> indexedEntities = systemDAO.getIndexedEntities();
+      for (Class<?> indexedEntity : indexedEntities) {
+        try {
+          systemDAO.reindexHibernateSearchObjects(indexedEntity, 200);
+        } catch (InterruptedException e) {
+          throw new SetupWizardException("Error occurred while initializing search indices", e); 
+        }
+      }
+      
     }
   }
 
