@@ -45,4 +45,6 @@ function onLoad(event) {
       paramName : 'removeButton'
     } ]
   });
+  
+  addCourseParticipationTypesTableRow();
 }
