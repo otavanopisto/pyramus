@@ -1,7 +1,5 @@
-var educationTypes = JSDATA["educationTypes"].evalJSON();
-
 function addEducationSubtypesTableRow() {
-  getIxTableById('educationSubtypesTable').addRow([ -1, '', '', '', -1, 1 ]);
+  getIxTableById('educationSubtypesTable').addRow([ -1, '', '', '' ]);
   $('noEducationSubtypesAddedMessageContainer').setStyle({
     display : 'none'
   });
@@ -23,6 +21,9 @@ function onLoad(event) {
             text : '-',
             value : ''
           } ];
+          
+          var educationTypes = JSDATA['educationTypes'].evalJSON();
+          
           for ( var i = 0, l = educationTypes.length; i < l; i++) {
             result.push({
               text : educationTypes[i].name,
@@ -63,24 +64,8 @@ function onLoad(event) {
           }
         },
         paramName : 'removeButton'
-      }, {
-        dataType : 'hidden',
-        paramName : 'educationSubtypeId'
-      }, {
-        dataType : 'hidden',
-        paramName : 'modified'
-      } ]
+      }]
   });
-
-  var rows = new Array();
-  for ( var i = 0; i < educationTypes.length; i++) {
-    var educationType = educationTypes[i];
-    for ( var j = 0; j < educationType.subtypes.length; j++) {
-      var educationSubtype = educationType.subtypes[j];
-      rows.push([ '', educationType.id, jsonEscapeHTML(educationSubtype.name), jsonEscapeHTML(educationSubtype.code), '', educationSubtype.id, 0 ]);
-    }
-  }
-  educationSubtypesTable.addRows(rows);
 
   if (educationSubtypesTable.getRowCount() > 0) {
     $('noEducationSubtypesAddedMessageContainer').setStyle({
