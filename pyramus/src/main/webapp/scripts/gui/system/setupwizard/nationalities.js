@@ -41,4 +41,6 @@ function onLoad(event) {
       paramName : 'removeButton'
     }]
   });
+  
+  addNationalitiesTableRow();
 }
