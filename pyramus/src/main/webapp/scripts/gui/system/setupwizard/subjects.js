@@ -10,14 +10,14 @@ function onLoad(event) {
     id : "subjectsTable",
     columns : [
       {
-        header : getLocale().getText("settings.subjects.subjectsTableCodeHeader"),
+        header : getLocale().getText("system.setupwizard.subjects.subjectsTableCodeHeader"),
         left : 8,
         width : 100,
         dataType : 'text',
         editable : true,
         paramName : 'code'
       }, {
-        header : getLocale().getText("settings.subjects.educationTypeHeader"),
+        header : getLocale().getText("system.setupwizard.subjects.educationTypeHeader"),
         left : 8 + 100 + 8,
         width : 300,
         dataType : 'select',
@@ -39,7 +39,7 @@ function onLoad(event) {
           return result;
         })()
       }, {
-        header : getLocale().getText("settings.subjects.subjectsTableNameHeader"),
+        header : getLocale().getText("system.setupwizard.subjects.subjectsTableNameHeader"),
         left : 8 + 100 + 8 + 300 + 8,
         right : 8 + 22 + 8 + 8,
         dataType : 'text',
@@ -51,7 +51,7 @@ function onLoad(event) {
         width : 30,
         dataType : 'button',
         imgsrc : GLOBAL_contextPath + '/gfx/list-remove.png',
-        tooltip : getLocale().getText("settings.subjects.subjectsTableRemoveTooltip"),
+        tooltip : getLocale().getText("system.setupwizard.subjects.subjectsTableRemoveTooltip"),
         onclick : function(event) {
           event.tableComponent.deleteRow(event.row);
           if (event.tableComponent.getRowCount() == 0) {
