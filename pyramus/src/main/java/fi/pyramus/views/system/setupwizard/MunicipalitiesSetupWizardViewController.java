@@ -30,8 +30,8 @@ public class MunicipalitiesSetupWizardViewController extends SetupWizardControll
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    MunicipalityDAO municipalityDAO = DAOFactory.getInstance().getMunicipalityDAO();
+    return !municipalityDAO.listUnarchived().isEmpty();
   }
 
 }

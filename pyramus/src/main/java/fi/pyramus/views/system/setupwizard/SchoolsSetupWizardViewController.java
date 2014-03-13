@@ -49,8 +49,8 @@ public class SchoolsSetupWizardViewController extends SetupWizardController {
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
+    return !schoolDAO.listUnarchived().isEmpty();
   }
   
 }
