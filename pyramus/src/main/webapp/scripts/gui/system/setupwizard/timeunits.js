@@ -16,29 +16,16 @@ function addTimeUnitsTableRow() {
 function onLoad(event) {
   var timeUnitsTable = new IxTable($('timeUnitsTable'), {
     id : "timeUnitsTable",
-    columns : [
-      {
-        left : 8,
-        width : 30,
-        dataType : 'button',
-        imgsrc : GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-        tooltip : getLocale().getText("settings.timeUnits.timeUnitsTableEditTooltip"),
-        onclick : function(event) {
-          var table = event.tableComponent;
-          for ( var i = 0; i < table.getColumnCount(); i++) {
-            table.setCellEditable(event.row, i, table.isCellEditable(event.row, i) == false);
-          }
-        }
-      }, {
+    columns : [{
         header : getLocale().getText("settings.timeUnits.timeUnitsTableBaseUnitHeader"),
-        left : 38,
+        left : 8,
         width : 80,
         dataType : 'checkbox',
         editable : true,
         paramName : 'baseUnit'
       }, {
         header : getLocale().getText("settings.timeUnits.timeUnitsTableBaseUnitsHeader"),
-        left : 126,
+        left : 96,
         width : 100,
         dataType : 'number',
         editable : true,
@@ -46,7 +33,7 @@ function onLoad(event) {
         required : true
       }, {
         header : getLocale().getText("settings.timeUnits.timeUnitsTableNameHeader"),
-        left : 234,
+        left : 204,
         right : 46,
         dataType : 'text',
         editable : true,
