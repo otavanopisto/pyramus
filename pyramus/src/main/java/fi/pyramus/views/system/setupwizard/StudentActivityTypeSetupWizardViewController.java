@@ -1,8 +1,12 @@
 package fi.pyramus.views.system.setupwizard;
 
+import java.util.List;
+
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
+import fi.pyramus.domainmodel.students.StudentActivityType;
+import fi.pyramus.util.JSONArrayExtractor;
 
 public class StudentActivityTypeSetupWizardViewController extends SetupWizardController {
   
@@ -12,7 +16,9 @@ public class StudentActivityTypeSetupWizardViewController extends SetupWizardCon
   
   @Override
   public void setup(PageRequestContext requestContext) throws SetupWizardException{
-
+    StudentActivityTypeDAO studentActivityTypeDAO = DAOFactory.getInstance().getStudentActivityTypeDAO();
+    List<StudentActivityType> studentActivityTypes = studentActivityTypeDAO.listUnarchived();
+    setJsDataVariable(requestContext, "studentActivityTypes", new JSONArrayExtractor("name", "id").extractString(studentActivityTypes));
   }
 
   @Override
@@ -23,7 +29,10 @@ public class StudentActivityTypeSetupWizardViewController extends SetupWizardCon
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "studentActivityTypesTable." + i;
       String name = requestContext.getString(colPrefix + ".name");
-      studentActivityTypeDAO.create(name);
+      Long id = requestContext.getLong(colPrefix + ".id");
+      if (id == -1l) {
+        studentActivityTypeDAO.create(name);
+      }
     }    
   }
   

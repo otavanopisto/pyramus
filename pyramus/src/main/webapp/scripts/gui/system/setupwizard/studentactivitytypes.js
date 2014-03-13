@@ -1,6 +1,6 @@
 function addStudentActivityTypesTableRow() {
   var table = getIxTableById('studentActivityTypesTable');
-  var rowIndex = table.addRow([ '', '' ]);
+  var rowIndex = table.addRow([ '', '', -1 ]);
   for (var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -11,7 +11,7 @@ function addStudentActivityTypesTableRow() {
 }
 
 function onLoad(event) {
-  new IxTable($('studentActivityTypesTable'), {
+  var table = new IxTable($('studentActivityTypesTable'), {
     id : "studentActivityTypesTable",
     columns : [{
       header : getLocale().getText("system.setupwizard.studentactivitytypes.studentActivityTypesTableNameHeader"),
@@ -36,6 +36,16 @@ function onLoad(event) {
         }
       },
       paramName : 'removeButton'
+    }, {
+      paramName: 'id',
+      dataType: 'hidden'
     }]
   });
+  
+  var studentActivityTypes = JSDATA["studentActivityTypes"].evalJSON();
+  for (var i = 0, l = studentActivityTypes.length; i < l; i++) {
+    var rowIndex = table.addRow([studentActivityTypes[i].name, '', studentActivityTypes[i].id]);
+    table.disableCellEditor(rowIndex, table.getNamedColumnIndex("removeButton"));
+  }
+  
 }
