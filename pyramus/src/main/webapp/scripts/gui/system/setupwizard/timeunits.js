@@ -173,5 +173,7 @@ function onLoad(event) {
     $('noTimeUnitsAddedMessageContainer').setStyle({
       display : 'none'
     });
+  } else {
+    addTimeUnitsTableRow();
   }
 }
