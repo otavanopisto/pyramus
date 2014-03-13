@@ -46,7 +46,7 @@ public class EducationSubtypesSetupWizardViewController extends SetupWizardContr
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();
+    return !educationSubtypeDAO.listUnarchived().isEmpty();
   }
 }
