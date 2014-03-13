@@ -8,13 +8,14 @@
 </jsp:attribute>
 	<jsp:body>
 <form method="post" action="">
+		<div class="tabContent">
             <div class="genericFormSection">  
               <jsp:include
 							page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale"
-								value="system.settings.setupwizard.adminpassword.usernameTitle" />
+								value="system.setupwizard.adminpassword.usernameTitle" />
                 <jsp:param name="helpLocale"
-								value="system.settings.setupwizard.adminpassword.usernameHelp" />
+								value="system.setupwizard.adminpassword.usernameHelp" />
               </jsp:include>                  
               <input type="text" name="username" class="required"
 							size="25" />
@@ -23,12 +24,22 @@
               <jsp:include
 							page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale"
-								value="system.settings.setupwizard.adminpassword.passwordTitle" />
+								value="system.setupwizard.adminpassword.passwordTitle" />
                 <jsp:param name="helpLocale"
-								value="system.settings.setupwizard.adminpassword.passwordHelp" />
+								value="system.setupwizard.adminpassword.passwordHelp" />
               </jsp:include>    
-              <input type="password" name="password" class="required"
-							size="20">
+              <input class="equals equals-password2" type="password" name="password1" class="required" size="25">
+            </div>
+            <div class="genericFormSection">  
+              <jsp:include
+							page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale"
+								value="system.setupwizard.adminpassword.passwordTitle" />
+                <jsp:param name="helpLocale"
+								value="system.setupwizard.adminpassword.passwordHelp" />
+              </jsp:include>    
+              <input class="equals equals-password1" type="password" name="password2" class="required" size="25">
+            </div>
             </div>
     <div class="genericFormSubmitSectionOffTab">
         <input type="submit" class="formvalid" name="next"
