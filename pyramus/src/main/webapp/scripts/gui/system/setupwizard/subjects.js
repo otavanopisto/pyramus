@@ -1,7 +1,7 @@
 var subjects = JSDATA["subjects"].evalJSON();
 var educationTypes = JSDATA["educationTypes"].evalJSON();
 
-function addsubjectsTableRow() {
+function addSubjectsTableRow() {
   var table = getIxTableById('subjectsTable');
   var rowIndex = table.addRow([ '', '', '', -1, '', -1, 1 ]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
