@@ -6,7 +6,7 @@ function addEducationSubtypesTableRow() {
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
-  $('noeducationSubtypesAddedMessageContainer').setStyle({
+  $('noEducationSubtypesAddedMessageContainer').setStyle({
     display : 'none'
   });
   table.showCell(rowIndex, table.getNamedColumnIndex('removeButton'));
