@@ -33,7 +33,11 @@ public class StudentActivityTypeSetupWizardViewController extends SetupWizardCon
       if (id == -1l) {
         studentActivityTypeDAO.create(name);
       }
-    }    
+    }
+    
+    if (studentActivityTypeDAO.listUnarchived().isEmpty()) {
+      throw new SetupWizardException("No Student Activity Types defined");
+    }
   }
   
 }

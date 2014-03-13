@@ -47,5 +47,8 @@ function onLoad(event) {
     var rowIndex = table.addRow([studentActivityTypes[i].name, '', studentActivityTypes[i].id]);
     table.disableCellEditor(rowIndex, table.getNamedColumnIndex("removeButton"));
   }
-  
+ 
+  if (table.getRowCount() == 0) {
+    addStudentActivityTypesTableRow();
+  }
 }
