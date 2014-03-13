@@ -11,7 +11,7 @@ function onLoad(event) {
     id : "educationTypesTable",
     columns : [
         {
-          header : getLocale().getText("settings.educationTypes.educationTypesTableCodeHeader"),
+          header : getLocale().getText("system.setupwizard.educationTypes.educationTypesTableCodeHeader"),
           left : 8,
           width : 75,
           dataType : 'text',
@@ -20,7 +20,7 @@ function onLoad(event) {
           required : true
         },
         {
-          header : getLocale().getText("settings.educationTypes.educationTypesTableNameHeader"),
+          header : getLocale().getText("system.setupwizard.educationTypes.educationTypesTableNameHeader"),
           left : 91,
           right : 48,
           dataType : 'text',
@@ -32,7 +32,7 @@ function onLoad(event) {
           width : 30,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/list-remove.png',
-          tooltip : getLocale().getText("settings.educationTypes.educationTypesTableRemoveTooltip"),
+          tooltip : getLocale().getText("system.setupwizard.educationTypes.educationTypesTableRemoveTooltip"),
           onclick : function(event) {
             event.tableComponent.deleteRow(event.row);
             if (event.tableComponent.getRowCount() == 0) {
