@@ -12,11 +12,11 @@
     <form method="post" action="">
       <div id="educationTypes" class="tabContent">
         <div class="genericTableAddRowContainer">
-          <span class="genericTableAddRowLinkContainer" onclick="addSchoolFieldsTableRow();"><fmt:message key="system.setupwizard.schoolFields.addNew" /></span>
+          <span class="genericTableAddRowLinkContainer" onclick="addSchoolFieldsTableRow();"><fmt:message key="system.setupwizard.schoolfields.addNew" /></span>
         </div>
         <div id="schoolFieldsTable">
           <div id="noSchoolFieldsAddedMessageContainer">
-            <fmt:message key="system.setupwizard.schoolFields.addNew" />
+            <fmt:message key="system.setupwizard.schoolfields.addNew" />
           </div>
         </div>
       </div>
