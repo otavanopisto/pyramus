@@ -56,4 +56,10 @@ public class EducationTypesSetupWizardViewController extends SetupWizardControll
       educationTypeDAO.archive(educationTypeDAO.findById(removedEducationTypeId));
     }
   }
+
+  @Override
+  public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
+    // TODO Auto-generated method stub
+    return false;
+  }
 }

@@ -46,5 +46,11 @@ public class SchoolsSetupWizardViewController extends SetupWizardController {
       schoolDAO.create(code, name, schoolField);
     }    
   }
+
+  @Override
+  public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
+    // TODO Auto-generated method stub
+    return false;
+  }
   
 }

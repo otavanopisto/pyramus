@@ -69,4 +69,10 @@ public class StudyProgrammeCategoriesSetupWizardViewController extends SetupWiza
     }
   }
 
+  @Override
+  public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
 }

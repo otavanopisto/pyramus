@@ -48,5 +48,11 @@ public class CourseParticipationTypesSetupWizardViewController extends SetupWiza
       throw new SetupWizardException("Initial course participation is not defined");
     }
   }
+
+  @Override
+  public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
+    // TODO Auto-generated method stub
+    return false;
+  }
   
 }

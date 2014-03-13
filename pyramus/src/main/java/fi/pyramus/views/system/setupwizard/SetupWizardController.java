@@ -18,6 +18,15 @@ public abstract class SetupWizardController extends PyramusFormViewController {
   
   @Override
   public void processForm(PageRequestContext requestContext) {
+    try {
+      if (isInitialized(requestContext)) {
+        nextPage(requestContext);
+        return;
+      }
+    } catch (SetupWizardException e) {
+      throw new SmvcRuntimeException(e);
+    }
+    
     SetupWizardPageFlowController flowPageController = SetupWizardPageFlowController.getInstance();
     
     requestContext.getRequest().setAttribute("setupPhase", phase);
@@ -61,6 +70,7 @@ public abstract class SetupWizardController extends PyramusFormViewController {
   
   public abstract void setup(PageRequestContext requestContext) throws SetupWizardException;
   public abstract void save(PageRequestContext requestContext) throws SetupWizardException;
+  public abstract boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException;
 
   @Override
   public void authorize(RequestContext requestContext) throws LoginRequiredException, AccessDeniedException {

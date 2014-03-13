@@ -80,4 +80,10 @@ public class SubjectsSetupWizardViewController extends SetupWizardController {
       subjectDAO.archive(subjectDAO.findById(removedSubjectId));
     }
   }
+
+  @Override
+  public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
+    // TODO Auto-generated method stub
+    return false;
+  }
 }

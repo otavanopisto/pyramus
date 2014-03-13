@@ -39,5 +39,11 @@ public class StudentActivityTypeSetupWizardViewController extends SetupWizardCon
       throw new SetupWizardException("No Student Activity Types defined");
     }
   }
+
+  @Override
+  public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
+    // TODO Auto-generated method stub
+    return false;
+  }
   
 }
