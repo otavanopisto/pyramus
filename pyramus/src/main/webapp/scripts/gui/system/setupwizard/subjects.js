@@ -1,5 +1,5 @@
 function addSubjectsTableRow() {
-  getIxTableById('subjectsTable').addRow([ '', '', -1, '' ]);
+  getIxTableById('subjectsTable').addRow([ '', -1, '', '' ]);
   $('noSubjectsAddedMessageContainer').setStyle({
     display : 'none'
   });
@@ -17,17 +17,9 @@ function onLoad(event) {
         editable : true,
         paramName : 'code'
       }, {
-        header : getLocale().getText("settings.subjects.subjectsTableNameHeader"),
+        header : getLocale().getText("settings.subjects.educationTypeHeader"),
         left : 8 + 100 + 8,
         width : 300,
-        dataType : 'text',
-        editable : true,
-        paramName : 'name',
-        required : true
-      }, {
-        header : getLocale().getText("settings.subjects.educationTypeHeader"),
-        left : 8 + 100 + 8 + 300 + 8,
-        right : 8 + 22 + 8 + 8,
         dataType : 'select',
         editable : true,
         paramName : 'educationTypeId',
@@ -46,6 +38,14 @@ function onLoad(event) {
           }
           return result;
         })()
+      }, {
+        header : getLocale().getText("settings.subjects.subjectsTableNameHeader"),
+        left : 8 + 100 + 8 + 300 + 8,
+        right : 8 + 22 + 8 + 8,
+        dataType : 'text',
+        editable : true,
+        paramName : 'name',
+        required : true
       }, {
         right : 8,
         width : 30,
