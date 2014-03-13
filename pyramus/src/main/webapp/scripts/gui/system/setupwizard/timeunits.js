@@ -21,8 +21,6 @@ function addTimeUnitsTableRow() {
 }
 
 function onLoad(event) {
-  tabControl = new IxProtoTabs($('tabs'));
-
   var timeUnitsTable = new IxTable($('timeUnitsTable'), {
     id : "timeUnitsTable",
     columns : [

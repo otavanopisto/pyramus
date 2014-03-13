@@ -17,6 +17,10 @@ public class SetupWizardPageFlowController {
   private static final String[] PHASES = new String[] {
     "index",
     "studentactivitytypes", 
+    "educationtypes", 
+    
+    /* Checked */
+    
     "studyprogrammecategories", 
     "nationalities", 
     "timeunits", 
@@ -32,7 +36,6 @@ public class SetupWizardPageFlowController {
     "educationsubtypes", 
     "studyprogrammes", 
     "languages", 
-    "educationtypes", 
     "subjects"
   };
   
