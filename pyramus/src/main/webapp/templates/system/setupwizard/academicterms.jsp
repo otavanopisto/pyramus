@@ -31,7 +31,6 @@
     
       <div class="genericFormSubmitSectionOffTab">
         <input type="submit" class="formvalid" name="next" value="<fmt:message key="system.setupwizard.next"/>">
-        <input type="submit" name="previous" value="<fmt:message key="system.setupwizard.previous"/>">
       </div>
     </form>
     
