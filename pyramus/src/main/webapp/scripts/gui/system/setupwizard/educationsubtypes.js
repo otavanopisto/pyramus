@@ -2,7 +2,7 @@ var educationTypes = JSDATA["educationTypes"].evalJSON();
 
 function addEducationSubtypesTableRow() {
   var table = getIxTableById('educationSubtypesTable');
-  var rowIndex = table.addRow([ '', -1, '', '', '', -1, 1 ]);
+  var rowIndex = table.addRow([ -1, '', '', '', -1, 1 ]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -18,22 +18,8 @@ function onLoad(event) {
     id : "educationSubtypesTable",
     columns : [
         {
-          left : 8,
-          width : 22,
-          dataType : 'button',
-          imgsrc : GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-          tooltip : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableEditTooltip"),
-          onclick : function(event) {
-            var table = event.tableComponent;
-            table.setCellEditable(event.row, table.getNamedColumnIndex('code'), table.isCellEditable(event.row, table.getNamedColumnIndex('code')) == false);
-            table.setCellEditable(event.row, table.getNamedColumnIndex('name'), table.isCellEditable(event.row, table.getNamedColumnIndex('name')) == false);
-
-            table.setCellValue(event.row, table.getNamedColumnIndex('modified'), 1);
-          }
-        },
-        {
           header : getLocale().getText("system.setupwizard.educationsubtypes.educationTypeHeader"),
-          left : 8 + 22 + 8,
+          left : 8,
           width : 150,
           dataType : 'select',
           editable : false,
@@ -64,7 +50,7 @@ function onLoad(event) {
         },
         {
           header : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableCodeHeader"),
-          left : 8 + 22 + 8 + 150 + 8,
+          left : 8 + 150 + 8,
           width : 150,
           dataType : 'text',
           editable : false,
@@ -72,7 +58,7 @@ function onLoad(event) {
         },
         {
           header : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableNameHeader"),
-          left : 8 + 22 + 8 + 150 + 8 + 150 + 8,
+          left : 8 + 150 + 8 + 150 + 8,
           right : 8 + 30 + 8,
           dataType : 'text',
           editable : false,
