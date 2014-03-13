@@ -4,6 +4,9 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="t"%>
 
 <t:setupwizard-template>
+  <jsp:attribute name="script">
+    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/system/setupwizard/index.js"></script>
+  </jsp:attribute>
   <jsp:body>
     <form method="post" action="">
       <div class="genericFormSubmitSectionOffTab">

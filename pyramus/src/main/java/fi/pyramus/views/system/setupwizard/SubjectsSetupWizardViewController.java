@@ -62,19 +62,12 @@ public class SubjectsSetupWizardViewController extends SetupWizardController {
       String name = requestContext.getString(colPrefix + ".name");
       String code = requestContext.getString(colPrefix + ".code");
       Long educationTypeId = requestContext.getLong(colPrefix + ".educationTypeId");
-      Long subjectId = requestContext.getLong(colPrefix + ".subjectId");
       
-      Subject subject = subjectDAO.findById(subjectId);
       EducationType educationType = null;
       if (educationTypeId != null) {
           educationType = educationTypeDAO.findById(educationTypeId);
       }
-      if (subject != null) {
-        subjectDAO.update(subject, code, name, educationType);
-        removedSubjectIds.remove(subject.getId());
-      } else {
-        subjectDAO.create(code, name, educationType);
-      }
+      subjectDAO.create(code, name, educationType);
     }
     for (Long removedSubjectId : removedSubjectIds) {
       subjectDAO.archive(subjectDAO.findById(removedSubjectId));
@@ -83,7 +76,7 @@ public class SubjectsSetupWizardViewController extends SetupWizardController {
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    // TODO Auto-generated method stub
-    return false;
+    SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
+    return !subjectDAO.listAll().isEmpty();
   }
 }

@@ -22,7 +22,7 @@ function onLoad(event) {
           width : 22,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-          tooltip : getLocale().getText("settings.educationSubtypes.educationSubtypesTableEditTooltip"),
+          tooltip : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableEditTooltip"),
           onclick : function(event) {
             var table = event.tableComponent;
             table.setCellEditable(event.row, table.getNamedColumnIndex('code'), table.isCellEditable(event.row, table.getNamedColumnIndex('code')) == false);
@@ -32,7 +32,7 @@ function onLoad(event) {
           }
         },
         {
-          header : getLocale().getText("settings.educationSubtypes.educationTypeHeader"),
+          header : getLocale().getText("system.setupwizard.educationsubtypes.educationTypeHeader"),
           left : 8 + 22 + 8,
           width : 150,
           dataType : 'select',
@@ -63,7 +63,7 @@ function onLoad(event) {
           }
         },
         {
-          header : getLocale().getText("settings.educationSubtypes.educationSubtypesTableCodeHeader"),
+          header : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableCodeHeader"),
           left : 8 + 22 + 8 + 150 + 8,
           width : 150,
           dataType : 'text',
@@ -71,7 +71,7 @@ function onLoad(event) {
           paramName : 'code'
         },
         {
-          header : getLocale().getText("settings.educationSubtypes.educationSubtypesTableNameHeader"),
+          header : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableNameHeader"),
           left : 8 + 22 + 8 + 150 + 8 + 150 + 8,
           right : 8 + 30 + 8,
           dataType : 'text',
@@ -93,7 +93,7 @@ function onLoad(event) {
           width : 30,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/list-remove.png',
-          tooltip : getLocale().getText("settings.educationSubtypes.educationSubtypesTableRemoveTooltip"),
+          tooltip : getLocale().getText("system.setupwizard.educationsubtypes.educationSubtypesTableRemoveTooltip"),
           onclick : function(event) {
             event.tableComponent.deleteRow(event.row);
             if (event.tableComponent.getRowCount() == 0) {

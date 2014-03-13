@@ -11,11 +11,11 @@ pageEncoding="UTF-8"%>
 <form method="post">
     <div id="educationSubtypes" class="tabContent">
         <div class="genericTableAddRowContainer">
-            <span class="genericTableAddRowLinkContainer" onclick="addEducationSubtypesTableRow();"><fmt:message key="system.setupwizard.educationSubtypes.addNew" /></span>
+            <span class="genericTableAddRowLinkContainer" onclick="addEducationSubtypesTableRow();"><fmt:message key="system.setupwizard.educationsubtypes.addNew" /></span>
         </div>
         <div id="educationSubtypesTable">
         	<div id="noEducationSubtypesAddedMessageContainer">
-                <fmt:message key="system.setupwizard.educationSubtypes.addNew" />
+                <fmt:message key="system.setupwizard.educationsubtypes.addNew" />
             </div>
         </div>
     </div>

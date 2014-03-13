@@ -21,8 +21,8 @@ public class SetupWizardPageFlowController {
     // Base
 
     "adminpassword",
-    "languages",
     "educationtypes", 
+    "educationsubtypes", 
     "subjects",
     "nationalities", 
     "timeunits", 
@@ -38,7 +38,6 @@ public class SetupWizardPageFlowController {
     
     // Student
 
-    "educationsubtypes", 
     "studyendreasons", 
     "contacttypes", 
     "studyprogrammecategories", 
