@@ -60,7 +60,7 @@ public class StudyEndReasonsSetupWizardViewController extends SetupWizardControl
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
     StudentStudyEndReasonDAO studentStudyEndReasonDAO = DAOFactory.getInstance().getStudentStudyEndReasonDAO();
-    return !studentStudyEndReasonDAO.listUnarchived().isEmpty();
+    return !studentStudyEndReasonDAO.listAll().isEmpty();
   }
 
 }
