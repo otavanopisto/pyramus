@@ -44,11 +44,7 @@ public class SetupWizardPageFlowController {
     "studyprogrammecategories", 
     "studyprogrammes", 
     "studenteducationallevels", 
-    "studentactivitytypes", 
-    
-    // Credits
-    
-    "transfercredittemplates", 
+    "studentactivitytypes"
   };
   
   public String next(String phase) {

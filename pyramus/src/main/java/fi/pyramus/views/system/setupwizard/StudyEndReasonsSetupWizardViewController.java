@@ -1,6 +1,11 @@
 package fi.pyramus.views.system.setupwizard;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -18,42 +23,49 @@ public class StudyEndReasonsSetupWizardViewController extends SetupWizardControl
 
   @Override
   public void setup(PageRequestContext requestContext) throws SetupWizardException {
-    StudentStudyEndReasonDAO studentStudyEndReasonDAO = DAOFactory.getInstance().getStudentStudyEndReasonDAO();
-    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    
-    List<StudentStudyEndReason> studyEndReasons = studentStudyEndReasonDAO.listAll();
-    
-    JSONArray jsonStudyEndReasons = new JSONArray();
-    JSONArray jsonReasonsInUse = new JSONArray();
-   
-    for (StudentStudyEndReason reason : studyEndReasons) {
-      JSONObject jsonReason = new JSONObject();
-      
-      jsonReason.put("id", reason.getId());
-      jsonReason.put("name", reason.getName());
-      if (reason.getParentReason() != null) {
-        jsonReason.put("parentId", reason.getParentReason().getId());
-      }
-      jsonStudyEndReasons.add(jsonReason);
-    }
-    
-    for (StudentStudyEndReason reason : studyEndReasons) {
-      if (studentDAO.countByStudyEndReason(reason) > 0) {
-        JSONObject jsonReason = new JSONObject();
-        jsonReason.put("id", reason.getId());
-        
-        jsonReasonsInUse.add(jsonReason);
-      }
-    }
-    
-    this.setJsDataVariable(requestContext, "studyEndReasons", jsonStudyEndReasons.toString());
-    this.setJsDataVariable(requestContext, "reasonsInUse", jsonReasonsInUse.toString());
 
   }
 
   @Override
   public void save(PageRequestContext requestContext) throws SetupWizardException {
+    StudentStudyEndReasonDAO studentStudyEndReasonDAO = DAOFactory.getInstance().getStudentStudyEndReasonDAO();    
 
+    int rowCount = requestContext.getInteger("studyEndReasonsTable.rowCount");
+    Map<String, StudentStudyEndReason> reasons = new HashMap<String, StudentStudyEndReason>();
+    Map<String, String> parents = new HashMap<String, String>();
+
+    for (int i = 0; i < rowCount; i++) {
+      String colPrefix = "studyEndReasonsTable." + i;
+      String guid = requestContext.getString(colPrefix + ".guid");
+      String parentGuid = requestContext.getString(colPrefix + ".parentGuid");
+      if (!StringUtils.isBlank(parentGuid)) {
+        parents.put(guid, parentGuid);
+      }
+    }
+    
+    for (String parentGuid : parents.values()) {
+      if (parents.keySet().contains(parentGuid)) {
+        throw new SetupWizardException("Parent end reasons can't have their own parents.");
+      }
+    }
+
+    for (int i = 0; i < rowCount; i++) {
+      String colPrefix = "studyEndReasonsTable." + i;
+      String name = requestContext.getString(colPrefix + ".name");
+      String guid = requestContext.getString(colPrefix + ".guid");
+      String parentGuid = requestContext.getString(colPrefix + ".parentGuid");
+      StudentStudyEndReason reason = studentStudyEndReasonDAO.create(null, name); 
+      reasons.put(guid, reason);
+    }
+
+    for (int i = 0; i < rowCount; i++) {
+      String colPrefix = "studyEndReasonsTable." + i;
+      String guid = requestContext.getString(colPrefix + ".guid");
+      String parentGuid = requestContext.getString(colPrefix + ".parentGuid");
+      StudentStudyEndReason reason = reasons.get(guid);
+      StudentStudyEndReason parentReason = reasons.get(parentGuid);
+      studentStudyEndReasonDAO.updateParentReason(reason, parentReason);
+    }
 
   }
 
