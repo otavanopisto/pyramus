@@ -226,11 +226,6 @@
       <groupId>fi.pyramus</groupId>
       <artifactId>webservices-plugin</artifactId>
     </dependency>
-    
-    <dependency>
-      <groupId>fi.pyramus</groupId>
-      <artifactId>rest</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.xalan</groupId>

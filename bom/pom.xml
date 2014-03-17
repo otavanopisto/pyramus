@@ -232,12 +232,6 @@
         <type>jar</type>
       </dependency>
       
-      <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>rest</artifactId>
-        <version>${project.version}</version>
-        <type>jar</type>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
