@@ -5,7 +5,7 @@
   <version>0.6.5-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus BOM</name>
-  <url>https://github.com/otavanopisto/edelphi/</url>
+  <url>https://github.com/otavanopisto/pyramus/</url>
   
   <licenses>
     <license>
