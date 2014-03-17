@@ -4,7 +4,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
 import fi.pyramus.dao.PyramusEntityDAO;
-import fi.pyramus.domainmodel.file.File;
 import fi.pyramus.domainmodel.file.FileType;
 
 @Stateless

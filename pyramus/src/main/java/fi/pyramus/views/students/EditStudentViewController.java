@@ -20,7 +20,6 @@ import fi.pyramus.dao.base.NationalityDAO;
 import fi.pyramus.dao.base.SchoolDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.grading.CourseAssessmentDAO;
-import fi.pyramus.dao.grading.CreditDAO;
 import fi.pyramus.dao.grading.CreditLinkDAO;
 import fi.pyramus.dao.grading.TransferCreditDAO;
 import fi.pyramus.dao.students.AbstractStudentDAO;

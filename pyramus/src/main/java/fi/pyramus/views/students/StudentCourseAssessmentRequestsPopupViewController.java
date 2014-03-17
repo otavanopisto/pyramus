@@ -5,20 +5,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang.math.NumberUtils;
-
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.grading.CourseAssessmentRequestDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
-import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.dao.students.StudentImageDAO;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.grading.CourseAssessmentRequest;
-import fi.pyramus.domainmodel.students.AbstractStudent;
-import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
 

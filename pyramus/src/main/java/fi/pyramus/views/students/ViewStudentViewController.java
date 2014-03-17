@@ -528,7 +528,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
         // Add ModuleBeans to response
         studentProjectModules.put(studentProject.getId(), studentProjectModuleBeans);
         
-        List<ProjectAssessment> projectAssessments = projectAssessmentDAO.listUnarchivedByProject(studentProject);
+        List<ProjectAssessment> projectAssessments = projectAssessmentDAO.listByProjectAndArchived(studentProject, Boolean.FALSE);
         Collections.sort(projectAssessments, new Comparator<ProjectAssessment>() {
           @Override
           public int compare(ProjectAssessment o1, ProjectAssessment o2) {

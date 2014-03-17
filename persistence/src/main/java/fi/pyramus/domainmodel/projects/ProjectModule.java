@@ -13,8 +13,6 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Type;
-
 import fi.pyramus.domainmodel.modules.Module;
 
 @Entity

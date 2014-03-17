@@ -19,7 +19,7 @@ public class StudentExaminationTypeDAO extends PyramusEntityDAO<StudentExaminati
     return studentExaminationType;
   }
   
-  public StudentExaminationType update(StudentExaminationType examinationType, String name) {
+  public StudentExaminationType updateName(StudentExaminationType examinationType, String name) {
     EntityManager entityManager = getEntityManager();
     
     examinationType.setName(name);

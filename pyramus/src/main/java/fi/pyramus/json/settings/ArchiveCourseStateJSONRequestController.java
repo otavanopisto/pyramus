@@ -2,7 +2,6 @@ package fi.pyramus.json.settings;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;

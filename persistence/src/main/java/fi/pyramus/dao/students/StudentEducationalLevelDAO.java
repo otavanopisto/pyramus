@@ -19,7 +19,7 @@ public class StudentEducationalLevelDAO extends PyramusEntityDAO<StudentEducatio
     return studentEducationalLevel;
   }
   
-  public StudentEducationalLevel update(StudentEducationalLevel studentEducationalLevel, String name) {
+  public StudentEducationalLevel updateName(StudentEducationalLevel studentEducationalLevel, String name) {
     EntityManager entityManager = getEntityManager();
     
     studentEducationalLevel.setName(name);
@@ -27,4 +27,5 @@ public class StudentEducationalLevelDAO extends PyramusEntityDAO<StudentEducatio
     entityManager.persist(studentEducationalLevel);
     return studentEducationalLevel;
   }
+  
 }

@@ -19,11 +19,12 @@ public class StudentActivityTypeDAO extends PyramusEntityDAO<StudentActivityType
     return studentActivityType;
   }
   
-  public StudentActivityType update(StudentActivityType studentActivityType, String name) {
+  public StudentActivityType updateName(StudentActivityType studentActivityType, String name) {
     EntityManager entityManager = getEntityManager();
     
     studentActivityType.setName(name);
     entityManager.persist(studentActivityType);
     return studentActivityType;
   }
+  
 }
