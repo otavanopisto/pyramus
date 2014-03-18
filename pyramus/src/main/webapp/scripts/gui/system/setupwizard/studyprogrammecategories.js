@@ -142,6 +142,8 @@ function onLoad(event) {
     rows.push([ '', jsonEscapeHTML(studyProgrammeCategory.name), studyProgrammeCategory.educationTypeId, '', '', studyProgrammeCategory.id, 0 ]);
   }
   studyProgrammeCategoriesTable.addRows(rows);
+  
+  addStudyProgrammeCategoriesTableRow();
 
   if (studyProgrammeCategoriesTable.getRowCount() > 0) {
     $('noStudyProgrammeCategoriesAddedMessageContainer').setStyle({

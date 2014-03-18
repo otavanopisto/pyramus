@@ -49,4 +49,6 @@ function onLoad(event) {
       paramName : 'removeButton'
     }]
   });
+  
+  addCourseStatesTableRow();
 }

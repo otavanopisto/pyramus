@@ -33,4 +33,6 @@ function onLoad(event) {
       paramName : 'removeButton'
     }]
   });
+  
+  addContactTypesTableRow();
 }

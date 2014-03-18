@@ -62,4 +62,6 @@ function onLoad(event) {
     }]
   });
   
+  
+  addSchoolsTableRow();
 }
