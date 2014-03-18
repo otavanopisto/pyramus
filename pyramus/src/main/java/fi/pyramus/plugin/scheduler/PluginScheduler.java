@@ -50,9 +50,12 @@ public class PluginScheduler {
   }
   
   private void executeTasks(ScheduledTaskInterval internal) {
-    List<ScheduledPluginTask> scheduledTasks = PluginManager.getInstance().getScheduledTasks(internal);
-    if (scheduledTasks != null) {
-      executeTasks(scheduledTasks);
+    PluginManager pluginManager = PluginManager.getInstance();
+    if (pluginManager != null) {
+      List<ScheduledPluginTask> scheduledTasks = pluginManager.getScheduledTasks(internal);
+      if (scheduledTasks != null) {
+        executeTasks(scheduledTasks);
+      }
     }
   }
  
