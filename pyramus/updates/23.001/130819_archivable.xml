@@ -17,4 +17,23 @@
        </addFields>
      </table>
    </alterTables>
+   <alterData>
+     <update table="SchoolVariable">
+       <set>
+         <value type="java.lang.Boolean" column="archived" value="false"/>
+       </set>
+     </update>
+     <update table="Report">
+       <set>
+         <value type="java.lang.Boolean" column="archived" value="false"/>
+       </set>
+     </update>
+     <update table="ReportCategory">
+       <set>
+         <value type="java.lang.Boolean" column="archived" value="false"/>
+       </set>
+     </update>
+   </alterData>
+   
+   
 </update>

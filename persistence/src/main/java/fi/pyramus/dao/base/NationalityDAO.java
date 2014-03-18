@@ -45,11 +45,19 @@ public class NationalityDAO extends PyramusEntityDAO<Nationality> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
-  public Nationality update(Nationality nationality, String name, String code) {
+  public Nationality updateCode(Nationality nationality, String code) {
+    EntityManager entityManager = getEntityManager();
+    
+    nationality.setCode(code);
+    
+    entityManager.persist(nationality);
+    return nationality;
+  }
+
+  public Nationality updateName(Nationality nationality, String name) {
     EntityManager entityManager = getEntityManager();
     
     nationality.setName(name);
-    nationality.setCode(code);
     
     entityManager.persist(nationality);
     return nationality;

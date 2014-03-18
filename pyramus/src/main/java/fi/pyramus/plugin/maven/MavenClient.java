@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.building.DefaultModelBuilder;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
@@ -36,7 +37,6 @@ import org.sonatype.aether.impl.internal.DefaultRepositorySystem;
 import org.sonatype.aether.impl.internal.DefaultSyncContextFactory;
 import org.sonatype.aether.impl.internal.DefaultUpdateCheckManager;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManagerFactory;
-import org.sonatype.aether.repository.ArtifactRepository;
 import org.sonatype.aether.repository.LocalArtifactRequest;
 import org.sonatype.aether.repository.LocalArtifactResult;
 import org.sonatype.aether.repository.LocalRepository;
@@ -66,7 +66,7 @@ public class MavenClient {
    * 
    * @param localRepositoryDirectory The directory containing the local Maven repository.
    */
-  public MavenClient(File localRepositoryDirectory) {
+  public MavenClient(File localRepositoryDirectory, String workspace) {
     RepositoryEventDispatcher repositoryEventDispatcher = new DefaultRepositoryEventDispatcher();
     SyncContextFactory syncContextFactory = new DefaultSyncContextFactory();
 
@@ -79,7 +79,7 @@ public class MavenClient {
     this.artifactResolver = createArtifactResolver(repositoryEventDispatcher, syncContextFactory, remoteRepositoryManager, versionResolver);
     this.artifactDescriptorReader = createArtifactDescriptionReader(repositoryEventDispatcher, versionResolver, artifactResolver, remoteRepositoryManager);
     this.versionRangeResolver = createVersionRangeResolver(metadataResolver, repositoryEventDispatcher, syncContextFactory);
-    this.systemSession = createSystemSession();
+    this.systemSession = createSystemSession(repositorySystem, workspace);
   }
 
   /** List the versions of a specified artifact.
@@ -306,11 +306,21 @@ public class MavenClient {
     return remoteRepositoryManager;
   }
 
-  private RepositorySystemSession createSystemSession() {
+  private RepositorySystemSession createSystemSession(DefaultRepositorySystem repositorySystem, String workspace) {
     repositorySystem.setLocalRepositoryProvider(getLocalRepositoryProvider());
     MavenRepositorySystemSession session = new MavenRepositorySystemSession();
     LocalRepository localRepository = new LocalRepository(localRepositoryPath);
     session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(localRepository));
+    
+    if (StringUtils.isNotBlank(workspace)) {
+     // If workspace directory is provided and exists we add workspace reader for it (for development only)
+    
+     File workspaceFolder = new File(workspace);
+     if (workspaceFolder.exists()) {
+       session.setWorkspaceReader(new LocalWorkspaceReader(workspaceFolder));
+     }
+    }
+    
     return session;
   }
  

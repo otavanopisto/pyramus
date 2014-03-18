@@ -2,6 +2,7 @@ package fi.pyramus.plugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,6 +14,9 @@ import org.sonatype.aether.resolution.ArtifactResolutionException;
 import sun.misc.Service;
 import fi.internetix.smvc.logging.Logging;
 import fi.pyramus.plugin.maven.MavenClient;
+import fi.pyramus.plugin.scheduler.ScheduledPluginDescriptor;
+import fi.pyramus.plugin.scheduler.ScheduledPluginTask;
+import fi.pyramus.plugin.scheduler.ScheduledTaskInterval;
 
 /** The class responsible for managing plugins.
  * 
@@ -48,7 +52,7 @@ public class PluginManager {
   
   PluginManager(ClassLoader parentClassLoader, List<String> repositories) {
     this.jarLoader = new JarLoader(parentClassLoader);
-    mavenClient = new MavenClient(getPluginDirectory());
+    mavenClient = new MavenClient(getPluginDirectory(), System.getProperty("pyramus.workspace"));
     for (String repository : repositories) {
       mavenClient.addRepository(repository);
     }
@@ -188,6 +192,35 @@ public class PluginManager {
     }
     
     plugins.add(plugin);
+  }
+
+  public List<ScheduledPluginTask> getScheduledTasks(ScheduledTaskInterval internal) {
+    List<ScheduledPluginTask> result = new ArrayList<ScheduledPluginTask>();
+    
+    for (ScheduledPluginDescriptor sceduledPlugin : getScheduledPlugins()) {
+      List<ScheduledPluginTask> tasks = sceduledPlugin.getScheduledTasks();
+      if (tasks != null) {
+        for (ScheduledPluginTask task : tasks) {
+          if (internal.equals(task.getInternal())) {
+            result.add(task); 
+          }
+        }
+      }
+    }
+    
+    return result;
+  }
+  
+  public List<ScheduledPluginDescriptor> getScheduledPlugins() {
+    List<ScheduledPluginDescriptor> result = new ArrayList<ScheduledPluginDescriptor>();
+    
+    for (PluginDescriptor plugin : getPlugins()) {
+      if (plugin instanceof ScheduledPluginDescriptor) {
+        result.add((ScheduledPluginDescriptor) plugin); 
+      }
+    }
+    
+    return Collections.unmodifiableList(result);
   }
 
   private JarLoader jarLoader;

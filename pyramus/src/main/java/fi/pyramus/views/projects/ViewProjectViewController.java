@@ -174,7 +174,7 @@ public class ViewProjectViewController extends PyramusViewController implements 
       }
     }
     
-    List<ProjectAssessment> projectAssessments = projectAssessmentDAO.listUnarchivedByProject(studentProject);
+    List<ProjectAssessment> projectAssessments = projectAssessmentDAO.listByProjectAndArchived(studentProject, Boolean.FALSE);
     
     Collections.sort(projectAssessments, new Comparator<ProjectAssessment>() {
       @Override

@@ -3,9 +3,6 @@ package fi.pyramus.views.settings;
 import java.util.List;
 import java.util.Locale;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import fi.pyramus.util.JSONArrayExtractor;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
