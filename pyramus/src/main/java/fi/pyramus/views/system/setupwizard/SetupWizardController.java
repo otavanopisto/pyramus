@@ -80,7 +80,7 @@ public abstract class SetupWizardController extends PyramusFormViewController {
   
   @Override
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.EVERYONE };
+    return new UserRole[] { UserRole.ADMINISTRATOR };
   }
   
   private String phase;
