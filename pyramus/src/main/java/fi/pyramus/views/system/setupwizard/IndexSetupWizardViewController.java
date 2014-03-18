@@ -8,6 +8,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.SystemDAO;
 import fi.pyramus.dao.base.DefaultsDAO;
+import fi.pyramus.framework.UserRole;
 import fi.pyramus.util.DataImporter;
 
 public class IndexSetupWizardViewController extends SetupWizardController {
@@ -57,4 +58,8 @@ public class IndexSetupWizardViewController extends SetupWizardController {
     return false;
   }
   
+  @Override
+  public UserRole[] getAllowedRoles() {
+    return new UserRole[] { UserRole.EVERYONE }; 
+  }
 }

@@ -1,5 +1,7 @@
 package fi.pyramus.views.system.setupwizard;
 
+import java.util.List;
+
 import org.apache.commons.codec.digest.DigestUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
@@ -42,5 +44,18 @@ public class AdminPasswordSetupWizardViewController extends SetupWizardControlle
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     return userDAO.findByExternalIdAndAuthProvider("ADMIN_INTERNALAUTH_ID_HERE", "internal") == null;
+  }
+
+  @Override
+  public UserRole[] getAllowedRoles() {
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    List<User> users = userDAO.listAll();
+    if (users.size() == 1
+        && users.get(0).getAuthProvider().equals("internal")
+        && users.get(0).getExternalId().equals("ADMIN_INTERNALAUTH_ID_HERE")) {
+      return new UserRole[] { UserRole.EVERYONE }; 
+    } else {
+      return super.getAllowedRoles();
+    }
   }
 }
