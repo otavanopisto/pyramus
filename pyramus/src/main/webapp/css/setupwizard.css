@@ -1,0 +1,28 @@
+#setupWizardProgressContainer {
+  position: absolute;
+  right: 2px;
+  top: 10px;
+}
+
+.setupWizardProgressPhase {
+  padding: 10px;
+  display: inline-block;
+  border-radius: 10px;
+}
+
+.setupWizardProgressPhaseCurrent {
+  background: #ff0;
+}
+
+.setupWizardProgressPhaseDone {
+  background: #0c0;
+}
+
+.setupWizardProgressPhaseCurrent {
+  background: #fc0;
+}
+
+
+.setupWizardProgressPhasePending {
+  background: #eee;
+}

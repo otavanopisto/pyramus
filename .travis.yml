@@ -14,3 +14,14 @@ after_success:
 - python travis-prepare-maven.py
 - mvn deploy --settings ~/.m2/trasettings.xml
 - wget -q $DEPLOY_PING
+
+# Notifications
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net#otavanopisto-pyramus"
+    use_notice: true
+    skip_join: true
+    template:
+      - "%{repository} (%{commit}) : %{message} %{foo} "
+      - "Build details: %{build_url}"
