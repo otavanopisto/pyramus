@@ -17,7 +17,7 @@ function onLoad(event) {
     columns : [
         {
           header : getLocale().getText("system.setupwizard.studyprogrammes.studyProgrammesTableNameHeader"),
-          left : 38,
+          left : 8,
           width : 300,
           dataType : 'text',
           editable : true,
@@ -27,7 +27,7 @@ function onLoad(event) {
         {
           header : getLocale().getText("system.setupwizard.studyprogrammes.studyProgrammesTableCategoryHeader"),
           width : 200,
-          left : 346,
+          left : 316,
           dataType : 'select',
           editable : true,
           paramName : 'category',
@@ -44,7 +44,7 @@ function onLoad(event) {
         },
         {
           header : getLocale().getText("system.setupwizard.studyprogrammes.studyProgrammesTableCodeHeader"),
-          left : 554,
+          left : 524,
           right : 44,
           dataType : 'text',
           editable : true,

@@ -34,9 +34,9 @@
               <jsp:include
 							page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale"
-								value="system.setupwizard.adminpassword.passwordTitle" />
+								value="system.setupwizard.adminpassword.password2Title" />
                 <jsp:param name="helpLocale"
-								value="system.setupwizard.adminpassword.passwordHelp" />
+								value="system.setupwizard.adminpassword.password2Help" />
               </jsp:include>    
               <input class="equals equals-password1" type="password" name="password2" class="required" size="25">
             </div>

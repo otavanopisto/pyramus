@@ -9,11 +9,6 @@ pageEncoding="UTF-8"%>
 </jsp:attribute>
 <jsp:body>
 <form method="post" action="">
-            <div class="tabLabelsContainer" id="tabs">
-              <a class="tabLabel" href="#manageStudyProgrammeCategories">
-                <fmt:message key="settings.studyProgrammeCategories.tabLabelStudyProgrammeCategories"/>
-              </a>
-            </div>
             
           <div id="manageStudyProgrammeCategories" class="tabContentixTableFormattedData">
             <div class="genericTableAddRowContainer">

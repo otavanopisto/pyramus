@@ -67,8 +67,6 @@ function updateParentDropdownBoxesAndDeleteButtons() {
 }
 
 function onLoad(event) {
-  tabControl = new IxProtoTabs($('tabs'));
-
   var studyEndReasonsTable = new IxTable($('studyEndReasonsTableContainer'), {
     id : "studyEndReasonsTable",
     columns : [
@@ -77,7 +75,7 @@ function onLoad(event) {
           width : 30,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-          tooltip : getLocale().getText("settings.studyEndReasons.studyEndReasonsTableEditTooltip"),
+          tooltip : getLocale().getText("system.setupwizard.studyendreasons.studyEndReasonsTableEditTooltip"),
           onclick : function(event) {
             var table = event.tableComponent;
             for ( var i = 0; i < table.getColumnCount(); i++) {
@@ -88,7 +86,7 @@ function onLoad(event) {
           }
         },
         {
-          header : getLocale().getText("settings.studyEndReasons.studyEndReasonsTableNameHeader"),
+          header : getLocale().getText("system.setupwizard.studyendreasons.studyEndReasonsTableNameHeader"),
           left : 38,
           width : 300,
           dataType : 'text',
@@ -97,7 +95,7 @@ function onLoad(event) {
           required : true
         },
         {
-          header : getLocale().getText("settings.studyEndReasons.parentReasonHeader"),
+          header : getLocale().getText("system.setupwizard.studyendreasons.parentReasonHeader"),
           left : 8 + 22 + 8 + 300 + 8,
           right : 8 + 22 + 8,
           dataType : 'select',
@@ -109,7 +107,7 @@ function onLoad(event) {
           width : 30,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/list-remove.png',
-          tooltip : getLocale().getText("settings.studyEndReasons.studyEndReasonsTableRemoveTooltip"),
+          tooltip : getLocale().getText("system.setupwizard.studyendreasons.studyEndReasonsTableRemoveTooltip"),
           onclick : function(event) {
             event.tableComponent.deleteRow(event.row);
             if (event.tableComponent.getRowCount() == 0) {

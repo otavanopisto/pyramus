@@ -9,12 +9,7 @@
   </jsp:attribute>
   <jsp:body>
         <form action="" method="post" >
-            <div class="tabLabelsContainer" id="tabs">
-              <a class="tabLabel" href="#manageStudyEndReasons">
-                <fmt:message key="settings.studyEndReasons.tabLabelStudyEndReasons"/>
-              </a>
-            </div>
-            
+          
           <div id="manageStudyEndReasons" class="tabContentixTableFormattedData">
             <div class="genericTableAddRowContainer">
               <span class="genericTableAddRowLinkContainer" onclick="addStudyEndReasonsTableRow();"><fmt:message key="settings.studyEndReasons.addStudyEndReasonLink"/></span>

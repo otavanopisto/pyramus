@@ -16,8 +16,6 @@ function addStudyProgrammeCategoriesTableRow() {
 }
 
 function onLoad(event) {
-  tabControl = new IxProtoTabs($('tabs'));
-
   var studyProgrammeCategoriesTable = new IxTable($('studyProgrammeCategoriesTableContainer'), {
     id : "studyProgrammeCategoriesTable",
     columns : [
