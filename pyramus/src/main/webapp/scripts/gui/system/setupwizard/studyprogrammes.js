@@ -71,4 +71,6 @@ function onLoad(event) {
           paramName : 'studyProgrammeId'
         }]
   });
+  
+  addStudyProgrammesTableRow();
 }

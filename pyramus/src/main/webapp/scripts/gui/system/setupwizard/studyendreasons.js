@@ -126,4 +126,5 @@ function onLoad(event) {
   });
 
   updateParentDropdownBoxesAndDeleteButtons();
+  addStudyEndReasonsTableRow();
 }
