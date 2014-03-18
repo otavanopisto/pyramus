@@ -85,21 +85,21 @@ public class PluginManager {
         if (pluginDirectory.canRead() && pluginDirectory.canWrite()) {
           return pluginDirectory;
         } else {
-          throw new PluginManagerException("Cannot read or write into plugin directory");
+          throw new PluginManagerException("Cannot read or write into plugin directory '" +  pluginDirectory +"'");
         }
       } else {
         if (parentDirectory.canWrite()) {
           if (!pluginDirectory.mkdir()) {
-            throw new PluginManagerException("Failed to create new plugin directory");
+            throw new PluginManagerException("Failed to create new plugin directory under parent directory '" + parentDirectory + "'");
           } else {
             return pluginDirectory;
           }
         } else {
-          throw new PluginManagerException("Unable to create new plugin directory. Parent folder is write protected");
+          throw new PluginManagerException("Unable to create new plugin directory. Parent directory '" + parentDirectory + "' is write protected");
         }
       }
     } else {
-      throw new PluginManagerException("Plugins parent directory does not exist");
+      throw new PluginManagerException("Plugins parent directory '" + parentDirectory + "' does not exist");
     }
   }
 
