@@ -71,8 +71,8 @@ function onLoad(event) {
     id : "studyEndReasonsTable",
     columns : [
         {
-          left : 8,
-          width : 30,
+          left : 0,
+          width : 0,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           tooltip : getLocale().getText("system.setupwizard.studyendreasons.studyEndReasonsTableEditTooltip"),
@@ -83,11 +83,12 @@ function onLoad(event) {
             }
             table.setCellValue(event.row, table.getNamedColumnIndex('modified'), 1);
             updateParentDropdownBoxesAndDeleteButtons();
-          }
+          },
+          hidden: true
         },
         {
           header : getLocale().getText("system.setupwizard.studyendreasons.studyEndReasonsTableNameHeader"),
-          left : 38,
+          left : 8,
           width : 300,
           dataType : 'text',
           editable : false,
@@ -96,7 +97,7 @@ function onLoad(event) {
         },
         {
           header : getLocale().getText("system.setupwizard.studyendreasons.parentReasonHeader"),
-          left : 8 + 22 + 8 + 300 + 8,
+          left : 8 + 300 + 8,
           right : 8 + 22 + 8,
           dataType : 'select',
           editable : false,

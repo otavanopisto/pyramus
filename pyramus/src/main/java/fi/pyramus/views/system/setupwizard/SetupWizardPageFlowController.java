@@ -44,7 +44,11 @@ public class SetupWizardPageFlowController {
     "studyprogrammecategories", 
     "studyprogrammes", 
     "studenteducationallevels", 
-    "studentactivitytypes"
+    "studentactivitytypes",
+    
+    // Final page
+    
+    "final"
   };
   
   public String next(String phase) {
