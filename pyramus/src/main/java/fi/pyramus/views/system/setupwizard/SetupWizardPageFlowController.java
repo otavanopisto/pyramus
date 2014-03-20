@@ -27,6 +27,7 @@ public class SetupWizardPageFlowController {
     "nationalities", 
     "languages", 
     "timeunits", 
+    "academicterms",
     "schoolfields", 
     "schools", 
     

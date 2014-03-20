@@ -11,19 +11,9 @@
     
 
         <form action="" method="post" >
-          <div class="tabLabelsContainer" id="tabs">
-            <a class="tabLabel" href="#manageAcademicTermsListTerms">
-              <fmt:message key="settings.academicTerms.tabLabelAcademicTerms"/>
-            </a>
-          </div>
-          
           <div id="manageAcademicTermsListTerms" class="tabContentixTableFormattedData">
             <div class="genericTableAddRowContainer">
               <span class="genericTableAddRowLinkContainer" onclick="addTermsTableRow();"><fmt:message key="settings.academicTerms.addTermLink"/></span>
-            </div>
-              
-            <div id="noTermsAddedMessageContainer" class="genericTableNotAddedMessageContainer">
-              <span><fmt:message key="settings.academicTerms.noTermsAddedPreFix"/> <span onclick="addTermsTableRow();" class="genericTableAddRowLink"><fmt:message key="settings.academicTerms.noTermsAddedClickHereLink"/></span>.</span>
             </div>
             
             <div id="termsTable"></div>
