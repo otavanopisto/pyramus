@@ -60,7 +60,7 @@ public class PrepareReportFilter implements Filter {
           File reportFile = new File(getReportsFolder(), reportFileName);
           if (reportFile.exists()) {
             urlConnection.addRequestProperty("If-Modified-Since",
-                new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(reportFile.lastModified()));
+                new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz").format(reportFile.lastModified())); // RFC 1123
           }
           
           switch (urlConnection.getResponseCode()) {
