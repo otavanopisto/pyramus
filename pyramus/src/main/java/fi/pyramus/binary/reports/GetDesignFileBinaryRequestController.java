@@ -25,15 +25,19 @@ public class GetDesignFileBinaryRequestController extends BinaryRequestControlle
     Long reportId = binaryRequestContext.getLong("reportId");
     
     Report report = reportDAO.findById(reportId);
-    String reportETag = String.valueOf(report.getLastModified().getTime());
+    long ifModifiedSince = binaryRequestContext.getRequest().getDateHeader("If-Modified-Since");
     
-    if (reportETag.equals(binaryRequestContext.getRequest().getHeader("If-None-Match"))) {
-      binaryRequestContext.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-      return;
+    try {
+      if (ifModifiedSince != -1 && ifModifiedSince <= report.getLastModified().getTime()) {
+        binaryRequestContext.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        return;
+      }
+    } catch (IllegalArgumentException ex) {
+      // Invalid "If-Modified-Since"
     }
     
     try {
-      binaryRequestContext.getResponse().setHeader("ETag", reportETag);
+      binaryRequestContext.getResponse().setDateHeader("Last-Modified", report.getLastModified().getTime());
       binaryRequestContext.setResponseContent(report.getData().getBytes("UTF-8"), "application/octet-stream");
     } catch (UnsupportedEncodingException e) {
       throw new SmvcRuntimeException(StatusCode.UNDEFINED, "Invalid charset UTF-8", e);
