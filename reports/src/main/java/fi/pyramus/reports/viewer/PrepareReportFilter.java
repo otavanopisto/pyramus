@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -48,12 +49,19 @@ public class PrepareReportFilter implements Filter {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
           }
+
            
           URL url = new URL(pyramusUrl + "/reports/getdesignfile.binary?reportId=" + reportId);
           HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
           urlConnection.setDoInput(true);
           urlConnection.setDoOutput(true);
           urlConnection.setRequestProperty("Authorization", "MagicKey " + magicKey);
+
+          File reportFile = new File(getReportsFolder(), reportFileName);
+          if (reportFile.exists()) {
+            urlConnection.addRequestProperty("If-Modified-Since",
+                new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(reportFile.lastModified()));
+          }
           
           switch (urlConnection.getResponseCode()) {
             case 200:
@@ -66,7 +74,6 @@ public class PrepareReportFilter implements Filter {
                 inputStream.close(); 
               }
               
-              File reportFile = new File(getReportsFolder(), reportFileName);
               if (reportFile.exists()) {
                 if (!reportFile.delete()) {
                   response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
