@@ -7,6 +7,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Status;
+
+import org.codehaus.plexus.util.StringUtils;
+
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
@@ -31,6 +36,7 @@ public class ViewReportContentsViewController extends PyramusViewController impl
    */
   public void process(PageRequestContext pageRequestContext) {
     MagicKeyDAO magicKeyDAO = DAOFactory.getInstance().getMagicKeyDAO();
+    HttpServletRequest request = pageRequestContext.getRequest();
 
     Long reportId = pageRequestContext.getLong("reportId");
     String reportsContextPath = System.getProperty("reports.contextPath");
@@ -44,34 +50,43 @@ public class ViewReportContentsViewController extends PyramusViewController impl
       .append(Long.toHexString(Thread.currentThread().getId()));
     
     MagicKey magicKey = magicKeyDAO.create(magicKeyBuilder.toString(), MagicKeyScope.REQUEST); 
+    String pyramusUrl = request.getRequestURL().toString();
+    pyramusUrl = pyramusUrl.substring(0, pyramusUrl.length() - request.getRequestURI().length());
     
-    StringBuilder urlBuilder = new StringBuilder()
-      .append(reportsContextPath)
-      .append("/")
-      .append(outputMethod)
-      .append("?magicKey=")
-      .append(magicKey.getName())
-      .append("&__report=reports/")
-      .append(reportId)
-      .append(".rptdesign");
-    
-    Map<String, String[]> parameterMap = pageRequestContext.getRequest().getParameterMap();
-    for (String parameterName : parameterMap.keySet()) {
-      if (!reservedParameters.contains(parameterName)) {
-        String[] values = parameterMap.get(parameterName);
-        for (String value : values) {
-          // TODO ISO-8859-1 should be UTF-8, once Birt's parameter dialog form has its accept-charset="UTF-8" set 
-          try {
-            urlBuilder.append('&').append(parameterName).append('=').append(URLEncoder.encode(value, "ISO-8859-1"));
-          }
-          catch (UnsupportedEncodingException e) {
-            throw new SmvcRuntimeException(e);
+    StringBuilder urlBuilder;
+    try {
+      urlBuilder = new StringBuilder()
+        .append(reportsContextPath)
+        .append("/")
+        .append(outputMethod)
+        .append("?magicKey=")
+        .append(magicKey.getName())
+        .append("&pyramusUrl=")
+        .append(URLEncoder.encode(pyramusUrl, "UTF-8"))
+        .append("&__report=reports/")
+        .append(reportId)
+        .append(".rptdesign");
+      
+      Map<String, String[]> parameterMap = pageRequestContext.getRequest().getParameterMap();
+      for (String parameterName : parameterMap.keySet()) {
+        if (!reservedParameters.contains(parameterName)) {
+          String[] values = parameterMap.get(parameterName);
+          for (String value : values) {
+            // TODO ISO-8859-1 should be UTF-8, once Birt's parameter dialog form has its accept-charset="UTF-8" set 
+            try {
+              urlBuilder.append('&').append(parameterName).append('=').append(URLEncoder.encode(value, "ISO-8859-1"));
+            }
+            catch (UnsupportedEncodingException e) {
+              throw new SmvcRuntimeException(e);
+            }
           }
         }
       }
+      
+      pageRequestContext.setIncludeUrl(urlBuilder.toString());
+    } catch (UnsupportedEncodingException e) {
+      throw new SmvcRuntimeException(Status.STATUS_UNKNOWN, "Unsupported encoding", e);
     }
-    
-    pageRequestContext.setIncludeUrl(urlBuilder.toString());
   }
 
   /**
