@@ -114,14 +114,6 @@
     <filter-class>org.eclipse.birt.report.filter.ViewerFilter</filter-class>
   </filter>
   <filter>
-    <filter-name>TransactionFilter</filter-name>
-    <filter-class>fi.pyramus.reports.viewer.TransactionFilter</filter-class>
-  </filter>
-  <filter>
-    <filter-name>SecurityFilter</filter-name>
-    <filter-class>fi.pyramus.reports.viewer.SecurityFilter</filter-class>
-  </filter>
-  <filter>
     <filter-name>PrepareReportFilter</filter-name>
     <filter-class>fi.pyramus.reports.viewer.PrepareReportFilter</filter-class>
   </filter>
@@ -142,28 +134,12 @@
     <url-pattern>/output</url-pattern>
   </servlet-mapping>
   <filter-mapping>
-    <filter-name>TransactionFilter</filter-name>
-    <servlet-name>ViewerServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>SecurityFilter</filter-name>
-    <servlet-name>ViewerServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping>
     <filter-name>PrepareReportFilter</filter-name>
     <servlet-name>ViewerServlet</servlet-name>
   </filter-mapping>
   <filter-mapping>
     <filter-name>ViewerFilter</filter-name>
     <servlet-name>ViewerServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>TransactionFilter</filter-name>
-    <servlet-name>EngineServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>SecurityFilter</filter-name>
-    <servlet-name>EngineServlet</servlet-name>
   </filter-mapping>
   <filter-mapping>
     <filter-name>PrepareReportFilter</filter-name>
