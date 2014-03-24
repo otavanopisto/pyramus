@@ -30,12 +30,12 @@ public class GetDesignFileBinaryRequestController extends BinaryRequestControlle
     long ifModifiedSince = binaryRequestContext.getRequest().getDateHeader("If-Modified-Since");
     
     try {
-      if (ifModifiedSince != -1 && ifModifiedSince <= report.getLastModified().getTime()) {
+      if (ifModifiedSince != -1 && ifModifiedSince >= report.getLastModified().getTime()) {
         binaryRequestContext.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
         return;
       }
     } catch (IllegalArgumentException ex) {
-      // Invalid "If-Modified-Since"
+      throw new SmvcRuntimeException(StatusCode.UNDEFINED, "Invalid modified since header", ex);
     }
     
     try {
