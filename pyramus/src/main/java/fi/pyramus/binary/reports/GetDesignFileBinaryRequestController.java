@@ -2,6 +2,8 @@ package fi.pyramus.binary.reports;
 
 import java.io.UnsupportedEncodingException;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.AccessDeniedException;
@@ -25,7 +27,19 @@ public class GetDesignFileBinaryRequestController extends BinaryRequestControlle
     Long reportId = binaryRequestContext.getLong("reportId");
     
     Report report = reportDAO.findById(reportId);
+    long ifModifiedSince = binaryRequestContext.getRequest().getDateHeader("If-Modified-Since");
+    
     try {
+      if (ifModifiedSince != -1 && ifModifiedSince <= report.getLastModified().getTime()) {
+        binaryRequestContext.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        return;
+      }
+    } catch (IllegalArgumentException ex) {
+      // Invalid "If-Modified-Since"
+    }
+    
+    try {
+      binaryRequestContext.getResponse().setDateHeader("Last-Modified", report.getLastModified().getTime());
       binaryRequestContext.setResponseContent(report.getData().getBytes("UTF-8"), "application/octet-stream");
     } catch (UnsupportedEncodingException e) {
       throw new SmvcRuntimeException(StatusCode.UNDEFINED, "Invalid charset UTF-8", e);
