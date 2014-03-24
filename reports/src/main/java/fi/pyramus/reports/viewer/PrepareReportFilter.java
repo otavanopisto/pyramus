@@ -3,7 +3,9 @@ package fi.pyramus.reports.viewer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -11,22 +13,89 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-
-import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.reports.ReportDAO;
-import fi.pyramus.domainmodel.reports.Report;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 public class PrepareReportFilter implements Filter {
 
   public void destroy() {
   }
 
-  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-    prepareReport(request.getParameter("__report"));
-    chain.doFilter(request, response);
+  public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
+    if ((req instanceof HttpServletRequest) && (resp instanceof HttpServletResponse)) {
+      synchronized (syncObject) {
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) resp;
+
+        String reportName = req.getParameter("__report");
+        
+        if (StringUtils.startsWith(reportName, "reports/") && StringUtils.endsWith(reportName, ".rptdesign")) {
+          
+          Long reportId = NumberUtils.createLong(reportName.substring(8, reportName.length() - 10));
+          String reportFileName = String.valueOf(reportId) + ".rptdesign";
+          String pyramusUrl = request.getParameter("pyramusUrl");
+          if (StringUtils.isBlank(pyramusUrl)) {
+            response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            return;
+          }
+          
+          String magicKey = request.getParameter("magicKey");
+          if (StringUtils.isBlank(magicKey)) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+          }
+           
+          URL url = new URL(pyramusUrl + "/reports/getdesignfile.binary?reportId=" + reportId);
+          HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+          urlConnection.setDoInput(true);
+          urlConnection.setDoOutput(true);
+          urlConnection.setRequestProperty("Authorization", "MagicKey " + magicKey);
+          
+          switch (urlConnection.getResponseCode()) {
+            case 200:
+              byte[] reportData = null;
+              
+              InputStream inputStream = urlConnection.getInputStream();
+              try {
+                reportData = IOUtils.toByteArray( inputStream );
+              } finally {
+                inputStream.close(); 
+              }
+              
+              File reportFile = new File(getReportsFolder(), reportFileName);
+              if (reportFile.exists()) {
+                if (!reportFile.delete()) {
+                  response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                  return;
+                }
+              }
+              
+              if (reportFile.createNewFile()) {
+                FileOutputStream fileOutputStream = new FileOutputStream(reportFile);
+                fileOutputStream.write(reportData);
+                fileOutputStream.flush();
+                fileOutputStream.close();
+              } else {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+              }
+            break;
+            case 304:
+              // Report is up-to-date
+            break;
+            default:
+              response.sendError(urlConnection.getResponseCode());
+            break;
+          }
+        }
+      }
+      
+      chain.doFilter(req, resp);
+    }
   }
 
   public void init(FilterConfig filterConfig) throws ServletException {
@@ -39,36 +108,6 @@ public class PrepareReportFilter implements Filter {
       reportsFolder.mkdirs();
 
     return reportsFolder;
-  }
-
-  private void prepareReport(String reportName) throws IOException {
-    synchronized (syncObject) {
-      ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
-      if (StringUtils.startsWith(reportName, "reports/") && StringUtils.endsWith(reportName, ".rptdesign")) {
-        Long reportId = NumberUtils.createLong(reportName.substring(8, reportName.length() - 10));
-        String reportFileName = String.valueOf(reportId) + ".rptdesign";
-
-        Report report = reportDAO.findById(reportId);
-        File reportFile = new File(getReportsFolder(), reportFileName);
-
-        if (reportFile.exists()) {
-          Date fileLastModified = new Date(reportFile.lastModified());
-          if (fileLastModified.before(report.getLastModified())) {
-            FileOutputStream fileOutputStream = new FileOutputStream(reportFile);
-            fileOutputStream.write(report.getData().getBytes("UTF-8"));
-            fileOutputStream.flush();
-            fileOutputStream.close();
-          }
-        } else {
-          if (reportFile.createNewFile()) {
-            FileOutputStream fileOutputStream = new FileOutputStream(reportFile);
-            fileOutputStream.write(report.getData().getBytes("UTF-8"));
-            fileOutputStream.flush();
-            fileOutputStream.close();
-          }
-        }
-      }
-    }
   }
 
   private Object syncObject = new Object();
