@@ -1,14 +1,8 @@
 package fi.pyramus.views.reports;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Status;
-
-import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
@@ -37,7 +31,6 @@ public class ViewReportParametersViewController extends PyramusViewController im
   public void process(PageRequestContext pageRequestContext) {
     MagicKeyDAO magicKeyDAO = DAOFactory.getInstance().getMagicKeyDAO();
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
-    HttpServletRequest request = pageRequestContext.getRequest();
 
     Long reportId = pageRequestContext.getLong("reportId");
     Report report = reportDAO.findById(reportId);
@@ -51,24 +44,15 @@ public class ViewReportParametersViewController extends PyramusViewController im
       .append(Long.toHexString(Thread.currentThread().getId()));
     
     MagicKey magicKey = magicKeyDAO.create(magicKeyBuilder.toString(), MagicKeyScope.REQUEST); 
-    String pyramusUrl = request.getRequestURL().toString();
-    pyramusUrl = pyramusUrl.substring(0, pyramusUrl.length() - request.getRequestURI().length());
     
-    StringBuilder urlBuilder;
-    try {
-      urlBuilder = new StringBuilder()
-        .append(reportsContextPath)
-        .append("/parameter?magicKey=")
-        .append(magicKey.getName())
-        .append("&pyramusUrl=")
-        .append(URLEncoder.encode(pyramusUrl, "UTF-8"))
-        .append("&__report=reports/").append(reportId).append(".rptdesign")
-        .append("&__masterpage=true&__nocache");
-      handleContextParameters(pageRequestContext, report, urlBuilder);
-      pageRequestContext.setIncludeUrl(urlBuilder.toString());
-    } catch (UnsupportedEncodingException e) {
-      throw new SmvcRuntimeException(Status.STATUS_UNKNOWN, "Unsupported encoding", e);
-    }
+    StringBuilder urlBuilder = new StringBuilder()
+      .append(reportsContextPath)
+      .append("/parameter?magicKey=")
+      .append(magicKey.getName())
+      .append("&__report=reports/").append(reportId).append(".rptdesign")
+      .append("&__masterpage=true&__nocache");
+    handleContextParameters(pageRequestContext, report, urlBuilder);
+    pageRequestContext.setIncludeUrl(urlBuilder.toString());
   }
 
   private void handleContextParameters(PageRequestContext pageRequestContext, Report report, StringBuilder urlBuilder) {

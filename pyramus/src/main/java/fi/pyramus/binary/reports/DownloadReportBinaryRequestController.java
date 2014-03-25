@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Status;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.BinaryRequestContext;
 import fi.pyramus.dao.DAOFactory;
@@ -47,7 +45,6 @@ public class DownloadReportBinaryRequestController extends BinaryRequestControll
   public void process(BinaryRequestContext binaryRequestContext) {
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
     MagicKeyDAO magicKeyDAO = DAOFactory.getInstance().getMagicKeyDAO();
-    HttpServletRequest request = binaryRequestContext.getRequest();
 
     Long reportId = binaryRequestContext.getLong("reportId");
     String formatParameter = binaryRequestContext.getString("format");
@@ -61,31 +58,21 @@ public class DownloadReportBinaryRequestController extends BinaryRequestControll
       .append(Long.toHexString(Thread.currentThread().getId()));
   
     MagicKey magicKey = magicKeyDAO.create(magicKeyBuilder.toString(), MagicKeyScope.REQUEST); 
-    String pyramusUrl = request.getRequestURL().toString();
-    pyramusUrl = pyramusUrl.substring(0, pyramusUrl.length() - request.getRequestURI().length());
-
     Report report = reportDAO.findById(reportId);
     
     String reportName = report.getName().toLowerCase().replaceAll("[^a-z0-9\\.]", "_");
     String reportsContextPath = System.getProperty("reports.contextPath");
     
-    StringBuilder urlBuilder;
-    try {
-      urlBuilder = new StringBuilder()
-        .append(reportsContextPath)
-        .append("/preview")
-        .append("?magicKey=")
-        .append(magicKey.getName())
-        .append("&__report=reports/")
-        .append(reportId)
-        .append(".rptdesign")
-        .append("&__format=")
-        .append(outputFormat.name())
-        .append("&pyramusUrl=")
-        .append(URLEncoder.encode(pyramusUrl, "UTF-8"));
-    } catch (UnsupportedEncodingException e) {
-      throw new SmvcRuntimeException(Status.STATUS_UNKNOWN, "Unsupported encoding", e);
-    }
+    StringBuilder urlBuilder = new StringBuilder()
+      .append(reportsContextPath)
+      .append("/preview")
+      .append("?magicKey=")
+      .append(magicKey.getName())
+      .append("&__report=reports/")
+      .append(reportId)
+      .append(".rptdesign")
+      .append("&__format=")
+      .append(outputFormat.name());
     
     Map<String, String[]> parameterMap = binaryRequestContext.getRequest().getParameterMap();
     for (String parameterName : parameterMap.keySet()) {

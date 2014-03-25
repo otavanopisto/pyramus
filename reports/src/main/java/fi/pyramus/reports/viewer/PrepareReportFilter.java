@@ -38,10 +38,11 @@ public class PrepareReportFilter implements Filter {
           
           Long reportId = NumberUtils.createLong(reportName.substring(8, reportName.length() - 10));
           String reportFileName = String.valueOf(reportId) + ".rptdesign";
-          String pyramusUrl = request.getParameter("pyramusUrl");
+
+          String pyramusUrl = System.getProperty("pyramus-url");
           if (StringUtils.isBlank(pyramusUrl)) {
-            response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
-            return;
+            pyramusUrl = request.getRequestURL().toString();
+            pyramusUrl = pyramusUrl.substring(0, pyramusUrl.length() - request.getRequestURI().length());
           }
           
           String magicKey = request.getParameter("magicKey");
@@ -50,7 +51,6 @@ public class PrepareReportFilter implements Filter {
             return;
           }
 
-           
           URL url = new URL(pyramusUrl + "/reports/getdesignfile.binary?reportId=" + reportId);
           HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
           urlConnection.setDoInput(true);
@@ -90,18 +90,22 @@ public class PrepareReportFilter implements Filter {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return;
               }
+              
+              chain.doFilter(req, resp);
             break;
             case 304:
               // Report is up-to-date
-            break;
+              chain.doFilter(req, resp);
+              return;
             default:
               response.sendError(urlConnection.getResponseCode());
-            break;
+              return;
           }
+        } else {
+          response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+          return;
         }
       }
-      
-      chain.doFilter(req, resp);
     }
   }
 
