@@ -62,33 +62,32 @@
           }]
         });
         
-        <c:forEach var="variableKey" items="${variableKeys}">
-          value = '${fn:escapeXml(user.variablesAsStringMap[variableKey.variableKey])}';
-          var rowNumber = variablesTable.addRow([
-            '',
-            '${fn:escapeXml(variableKey.variableKey)}',
-            '${fn:escapeXml(variableKey.variableName)}',
-            value
-          ]);
-  
-          var dataType;
-          <c:choose>
-            <c:when test="${variableKey.variableType == 'NUMBER'}">
-              dataType = 'number';
-            </c:when>
-            <c:when test="${variableKey.variableType == 'DATE'}">
-              dataType = 'date';
-            </c:when>
-            <c:when test="${variableKey.variableType == 'BOOLEAN'}">
-              dataType = 'checkbox';
-            </c:when>
-            <c:otherwise>
-              dataType = 'text';
-            </c:otherwise>
-          </c:choose>
-          
-          variablesTable.setCellDataType(rowNumber, 3, dataType);
-        </c:forEach>
+        var variables = JSDATA["variables"].evalJSON();
+        if (variables) {
+          for (var i = 0, l = variables.length; i < l; i++) {
+            var rowNumber = variablesTable.addRow([
+              '',
+              variables[i].key,
+              variables[i].name,
+              variables[i].value
+            ]);
+
+            switch (variables[i].type) {
+              case 'NUMBER':
+                variablesTable.setCellDataType(rowNumber, 3, 'number');
+              break;
+              case 'DATE':
+                variablesTable.setCellDataType(rowNumber, 3, 'date');
+              break;
+              case 'BOOLEAN':
+                variablesTable.setCellDataType(rowNumber, 3, 'checkbox');
+              break;
+              default:
+                variablesTable.setCellDataType(rowNumber, 3, 'text');
+              break;
+            }
+          }
+        }
       }
           
       function setupTags() {
@@ -426,7 +425,7 @@
         }
 
         <c:choose>
-          <c:when test="${(loggedUserRole == 'ADMINISTRATOR') && (fn:length(variableKeys) > 0)}">
+          <c:when test="${(loggedUserRole == 'ADMINISTRATOR')}">
             setupUserVariablesTable();
           </c:when>
         </c:choose>
@@ -599,17 +598,17 @@
                   </select>
                 </div>
                 
-                <c:choose>
-                  <c:when test="${fn:length(variableKeys) > 0}">
-		                <div class="genericFormSection">  
-		                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-		                    <jsp:param name="titleLocale" value="users.editUser.variablesTitle"/>
-		                    <jsp:param name="helpLocale" value="users.editUser.variablesHelp"/>
-		                  </jsp:include>         
-		                  <div id="variablesTableContainer"></div>
-		                </div>
-		              </c:when>
-		            </c:choose>
+            <c:choose>
+              <c:when test="${(loggedUserRole == 'ADMINISTRATOR')}">
+                <div class="genericFormSection">  
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="users.editUser.variablesTitle"/>
+                    <jsp:param name="helpLocale" value="users.editUser.variablesHelp"/>
+                  </jsp:include>         
+                  <div id="variablesTableContainer"></div>
+                </div>
+              </c:when>
+            </c:choose>
               </c:when>
               <c:otherwise>
                 <input type="hidden" name="role" value="${user.role.value}"/>

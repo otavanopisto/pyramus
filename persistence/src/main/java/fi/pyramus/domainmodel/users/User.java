@@ -1,10 +1,8 @@
 package fi.pyramus.domainmodel.users;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -19,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
@@ -107,14 +104,6 @@ public class User {
     return role;
   }
   
-  public void setVariables(List<UserVariable> variables) {
-    this.variables = variables;
-  }
-
-  public List<UserVariable> getVariables() {
-    return variables;
-  }
-
   public Set<Tag> getTags() {
     return tags;
   }
@@ -138,15 +127,6 @@ public class User {
       throw new PersistenceException("Entity does not have this tag");
     }
   }
-  
-  @Transient
-  public Map<String, String> getVariablesAsStringMap() {
-    Map<String, String> result = new HashMap<String, String>();
-    for (UserVariable userVariable : variables) {
-      result.put(userVariable.getKey().getVariableKey(), userVariable.getValue());
-    }
-    return result;
-  } 
 
   public void setContactInfo(ContactInfo contactInfo) {
     this.contactInfo = contactInfo;
@@ -237,10 +217,6 @@ public class User {
   @Field (store = Store.NO)
   // TODO Some way to disallow Role.EVERYONE
   private Role role;
-  
-  @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn (name="user")
-  private List<UserVariable> variables = new ArrayList<UserVariable>();
 
   @ManyToMany (fetch = FetchType.LAZY)
   @JoinTable (name="__UserBillingDetails", joinColumns=@JoinColumn(name="user"), inverseJoinColumns=@JoinColumn(name="billingDetails"))

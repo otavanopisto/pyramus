@@ -2,10 +2,14 @@ package fi.pyramus.views.users;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
@@ -13,12 +17,14 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.ContactTypeDAO;
 import fi.pyramus.dao.base.ContactURLTypeDAO;
 import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.ContactURLType;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
@@ -42,6 +48,7 @@ public class EditUserViewController extends PyramusViewController implements Bre
   public void process(PageRequestContext pageRequestContext) {
     // TODO loggedUserRole vs. user role
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     UserVariableKeyDAO variableKeyDAO = DAOFactory.getInstance().getUserVariableKeyDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     ContactURLTypeDAO contactURLTypeDAO = DAOFactory.getInstance().getContactURLTypeDAO();
@@ -85,15 +92,27 @@ public class EditUserViewController extends PyramusViewController implements Bre
     List<ContactType> contactTypes = contactTypeDAO.listUnarchived();
     Collections.sort(contactTypes, new StringAttributeComparator("getName"));
 
-    List<UserVariableKey> variableKeys = variableKeyDAO.listAll();
-    Collections.sort(variableKeys, new StringAttributeComparator("getVariableName"));
+    List<UserVariableKey> userVariableKeys = variableKeyDAO.listAll();
+    Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
+    
+    JSONArray variables = new JSONArray();
+    for (UserVariableKey userVariableKey : userVariableKeys) {
+      UserVariable userVariable = userVariableDAO.findByUserAndVariableKey(user, userVariableKey);
+      JSONObject variable = new JSONObject();
+      variable.put("type", userVariableKey.getVariableType());
+      variable.put("name", userVariableKey.getVariableName());
+      variable.put("key", userVariableKey.getVariableKey());
+      variable.put("value", userVariable != null ? userVariable.getValue() : "");
+      variables.add(variable);
+    }
+    
+    setJsDataVariable(pageRequestContext, "variables", variables.toString());
     
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());
     pageRequestContext.getRequest().setAttribute("user", user);
     pageRequestContext.getRequest().setAttribute("username", username);
     pageRequestContext.getRequest().setAttribute("contactTypes", contactTypes);
     pageRequestContext.getRequest().setAttribute("contactURLTypes", contactURLTypes);
-    pageRequestContext.getRequest().setAttribute("variableKeys", variableKeys);
     pageRequestContext.getRequest().setAttribute("authenticationProviders", authenticationProviders);
     
     pageRequestContext.setIncludeJSP("/templates/users/edituser.jsp");
