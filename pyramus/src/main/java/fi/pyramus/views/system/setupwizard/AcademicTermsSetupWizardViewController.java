@@ -1,16 +1,9 @@
 package fi.pyramus.views.system.setupwizard;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.AcademicTermDAO;
-import fi.pyramus.domainmodel.base.AcademicTerm;
 
 public class AcademicTermsSetupWizardViewController extends SetupWizardController {
 

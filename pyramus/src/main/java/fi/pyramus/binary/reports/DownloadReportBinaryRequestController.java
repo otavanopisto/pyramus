@@ -7,12 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpUtils;
 import javax.transaction.Status;
-import javax.ws.rs.core.Request;
-
-import org.codehaus.plexus.util.StringUtils;
-
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.BinaryRequestContext;
 import fi.pyramus.dao.DAOFactory;

@@ -6,12 +6,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.base.ContactTypeDAO;
-import fi.pyramus.dao.base.NationalityDAO;
 import fi.pyramus.dao.users.InternalAuthDAO;
 import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.domainmodel.users.InternalAuth;
-import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.UserRole;
 
