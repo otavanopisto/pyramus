@@ -7,5 +7,6 @@
   <jsp:attribute name="script">
   </jsp:attribute>
   <jsp:body>
+  	<a href="${requestContext.request.contextPath}/"><fmt:message key="system.setupwizard.final.frontpage" /></a>
   </jsp:body>
 </t:setupwizard-template>
