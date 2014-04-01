@@ -42,6 +42,7 @@ public class SetupWizardPageFlowController {
 
     "studyendreasons", 
     "contacttypes", 
+    "examinationtypes", 
     "studyprogrammecategories", 
     "studyprogrammes", 
     "studenteducationallevels", 
