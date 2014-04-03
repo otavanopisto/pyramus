@@ -35,24 +35,20 @@ public class AdminPasswordSetupWizardViewController extends SetupWizardControlle
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
     
     InternalAuth internalAuth = internalAuthDAO.create(username, passwordMD5);
-    // ADMIN_INTERNALAUTH_ID_HERE defined in initialdata.xml
-    User user = userDAO.findByExternalIdAndAuthProvider("ADMIN_INTERNALAUTH_ID_HERE", "internal");
-    userDAO.updateExternalId(user, String.valueOf(internalAuth.getId()));
+    User user = userDAO.create("Admin", "Admin", String.valueOf(internalAuth.getId()), "internal", Role.ADMINISTRATOR);
   }
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-    return userDAO.findByExternalIdAndAuthProvider("ADMIN_INTERNALAUTH_ID_HERE", "internal") == null;
+    return userDAO.listAll().size() > 0;
   }
 
   @Override
   public UserRole[] getAllowedRoles() {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     List<User> users = userDAO.listAll();
-    if (users.size() == 1
-        && users.get(0).getAuthProvider().equals("internal")
-        && users.get(0).getExternalId().equals("ADMIN_INTERNALAUTH_ID_HERE")) {
+    if (users.size() == 0) {
       return new UserRole[] { UserRole.EVERYONE }; 
     } else {
       return super.getAllowedRoles();

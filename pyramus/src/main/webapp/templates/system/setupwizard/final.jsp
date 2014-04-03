@@ -5,7 +5,11 @@
 
 <t:setupwizard-template>
   <jsp:attribute name="script">
+  <script>
+  function onLoad(event) {}
+  </script>
   </jsp:attribute>
   <jsp:body>
+  	<a href="${requestContext.request.contextPath}/"><fmt:message key="system.setupwizard.final.frontpage" /></a>
   </jsp:body>
 </t:setupwizard-template>
