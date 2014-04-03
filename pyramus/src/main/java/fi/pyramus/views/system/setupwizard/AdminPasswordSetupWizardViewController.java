@@ -9,6 +9,7 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.users.InternalAuthDAO;
 import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.domainmodel.users.InternalAuth;
+import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.UserRole;
 
