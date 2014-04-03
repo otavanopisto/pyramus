@@ -13,10 +13,14 @@
         <form action="" method="post" >
           <div id="manageAcademicTermsListTerms" class="tabContentixTableFormattedData">
             <div class="genericTableAddRowContainer">
-              <span class="genericTableAddRowLinkContainer" onclick="addTermsTableRow();"><fmt:message key="settings.academicTerms.addTermLink"/></span>
+              <span class="genericTableAddRowLinkContainer" onclick="addTermsTableRow();"><fmt:message key="system.setupwizard.academicterms.addTermLink"/></span>
             </div>
             
-            <div id="termsTable"></div>
+            <div id="termsTable">
+              <div id="noTermsAddedMessageContainer">
+                <fmt:message key="system.setupwizard.academicterms.addNew" />
+              </div>
+            </div>
           </div>
     
       <div class="genericFormSubmitSectionOffTab">

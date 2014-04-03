@@ -51,9 +51,7 @@ public class ViewReportParametersViewController extends PyramusViewController im
       .append(magicKey.getName())
       .append("&__report=reports/").append(reportId).append(".rptdesign")
       .append("&__masterpage=true&__nocache");
-    
     handleContextParameters(pageRequestContext, report, urlBuilder);
-    
     pageRequestContext.setIncludeUrl(urlBuilder.toString());
   }
 

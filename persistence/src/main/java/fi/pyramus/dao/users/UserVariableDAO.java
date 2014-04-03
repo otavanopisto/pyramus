@@ -28,13 +28,12 @@ public class UserVariableDAO extends PyramusEntityDAO<UserVariable> {
     userVariable.setValue(value);
     entityManager.persist(userVariable);
     
-    user.getVariables().add(userVariable);
     entityManager.persist(user);
     
     return userVariable;
   }
   
-  private UserVariable findByUserAndVariableKey(User user, UserVariableKey key) {
+  public UserVariable findByUserAndVariableKey(User user, UserVariableKey key) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();

@@ -1,15 +1,7 @@
 package fi.pyramus.views.system.setupwizard;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
 import fi.internetix.smvc.controllers.PageRequestContext;
-import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.SystemDAO;
-import fi.pyramus.dao.base.DefaultsDAO;
 import fi.pyramus.framework.UserRole;
-import fi.pyramus.util.DataImporter;
 
 public class FinalSetupWizardViewController extends SetupWizardController {
   

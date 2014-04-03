@@ -20,6 +20,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ResourceDelegateServlet extends HttpServlet {
   
+  private static final long serialVersionUID = 6948865332192958933L;
+
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);

@@ -58,7 +58,6 @@ public class DownloadReportBinaryRequestController extends BinaryRequestControll
       .append(Long.toHexString(Thread.currentThread().getId()));
   
     MagicKey magicKey = magicKeyDAO.create(magicKeyBuilder.toString(), MagicKeyScope.REQUEST); 
-    
     Report report = reportDAO.findById(reportId);
     
     String reportName = report.getName().toLowerCase().replaceAll("[^a-z0-9\\.]", "_");
@@ -72,7 +71,8 @@ public class DownloadReportBinaryRequestController extends BinaryRequestControll
       .append("&__report=reports/")
       .append(reportId)
       .append(".rptdesign")
-      .append("&__format=").append(outputFormat.name());
+      .append("&__format=")
+      .append(outputFormat.name());
     
     Map<String, String[]> parameterMap = binaryRequestContext.getRequest().getParameterMap();
     for (String parameterName : parameterMap.keySet()) {

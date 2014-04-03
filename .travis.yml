@@ -9,11 +9,9 @@ env:
   global:
   - secure: YWNyOCJ8MJ8L7Q38iM0bALv8c2+V++/msDlpGcROEpAzfHHfRcOkYbQAXhQUDFa8HIya0BqVbJ6Sh07fPWJz0I3HP6PgvTuQJzqrsljNdHJiSepNfrXFAX0ra6Gqa7JJ+BZdKF60N3hfIiUi/ZpVuunii9x9J1QC2OeICflVshs=
   - secure: Ta4ZzSKlSdsg3YEwKP0c6ldeTC/a2tTua4FD26bfUzeIz3W2Lx/9SfxepyqZE7KR7eey52cgvx+9Sj9CJeDTTmgnPlwYi3v+pjn0YNQ0ZfIaiAk/TlaUJ1tXWq3GRGHumvFR38i6E66eIFT9Gg4Z5HSeQm1DCvpAie7Snj1RyDM=
-  - secure: hwgRRgT2RRfLXs1E4SwmsB60Lgz6iO+MGBSSTcEa0Ztzy6zfNYkVp6lDUchxBF3rEmfb3Vs6ptGWCDKd/PNKfCM1IxcsWHWNqTcDKY9P/C6uv32z901llzVyWUucebZtgcIWYZbrXrPQHMG2y9F9YqWg2O2eo5ZaO+AUbvdhyUY=
 after_success:
 - python travis-prepare-maven.py
 - mvn deploy --settings ~/.m2/trasettings.xml
-- wget -q $DEPLOY_PING
 
 # Notifications
 notifications:
@@ -25,3 +23,10 @@ notifications:
     template:
       - "%{repository} (%{commit}) : %{message} %{foo} "
       - "Build details: %{build_url}"
+  webhooks:
+    urls: 
+    - http://build.staging.fi/travis.php
+    on_success: always
+    on_failure: never
+    on_start: false
+      

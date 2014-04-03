@@ -196,7 +196,7 @@ public class CourseController {
   }
   
   public CourseEnrolmentType updateCourseEnrolmentType(CourseEnrolmentType courseEnrolmentType, String name) {
-    CourseEnrolmentType updated = courseEnrolmentTypeDAO.update(courseEnrolmentType, name);
+    CourseEnrolmentType updated = courseEnrolmentTypeDAO.updateName(courseEnrolmentType, name);
     return updated;
   }
   

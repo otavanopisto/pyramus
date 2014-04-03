@@ -239,22 +239,21 @@ public class StudentSubResourceController {
   }
   
   public Nationality updateNationality(Nationality nationality, String name, String code) {
-    Nationality updated = nationalityDAO.update(nationality, name, code);
-    return updated;
+    return nationalityDAO.updateCode(nationalityDAO.updateName(nationality, name), code);
   }
   
   public StudentActivityType updateStudentActivityType(StudentActivityType activityType, String name) {
-    StudentActivityType updated = activityTypeDAO.update(activityType, name);
+    StudentActivityType updated = activityTypeDAO.updateName(activityType, name);
     return updated;
   }
   
   public StudentEducationalLevel updateStudentEducationalLevel(StudentEducationalLevel educationalLevel, String name) {
-    StudentEducationalLevel updated = educationalLevelDAO.update(educationalLevel, name);
+    StudentEducationalLevel updated = educationalLevelDAO.updateName(educationalLevel, name);
     return updated;
   }
   
   public StudentExaminationType updateStudentExaminationType(StudentExaminationType examinationType, String name) {
-    StudentExaminationType updated = examinationTypeDAO.update(examinationType, name);
+    StudentExaminationType updated = examinationTypeDAO.updateName(examinationType, name);
     return updated;
   }
   

@@ -15,30 +15,28 @@ function onLoad(event) {
     id : "termsTable",
     columns : [
         {
-          header : getLocale().getText("system.setupwizard.academicterms.termsTableNameHeader"),
-          left : 38,
-          width : 250,
-          dataType : 'text',
-          editable : false,
-          paramName : 'name',
-          required : true
-        },
-        {
           header : getLocale().getText("system.setupwizard.academicterms.termsTableStartDateHeader"),
-          left : 296,
+          left : 8,
           width : 150,
           dataType : 'date',
           editable : false,
           paramName : 'startDate',
           required : true
-        },
-        {
+        }, {
           header : getLocale().getText("system.setupwizard.academicterms.termsTableEndDateHeader"),
-          left : 438,
-          right : 30,
+          left : 158,
+          width: 150,
           dataType : 'date',
           editable : false,
           paramName : 'endDate',
+          required : true
+        }, {
+          header : getLocale().getText("system.setupwizard.academicterms.termsTableNameHeader"),
+          left : 316,
+          right : 46,
+          dataType : 'text',
+          editable : false,
+          paramName : 'name',
           required : true
         }, {
           right : 8,

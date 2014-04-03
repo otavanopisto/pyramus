@@ -22,8 +22,6 @@ import fi.pyramus.util.ReflectionApiUtils;
 import fi.pyramus.util.ThreadSessionContainer;
 
 public class EntityListener {
-
-  private static final long serialVersionUID = -1109310014693855151L;
   
   @PostPersist
   void onPostPersist(Object entity) {
