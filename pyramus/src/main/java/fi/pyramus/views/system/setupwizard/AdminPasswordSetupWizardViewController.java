@@ -28,12 +28,14 @@ public class AdminPasswordSetupWizardViewController extends SetupWizardControlle
   public void save(PageRequestContext requestContext) throws SetupWizardException {
     String username = requestContext.getString("username");
     String password = requestContext.getString("password1");
+    String firstName = requestContext.getString("firstName");
+    String lastName = requestContext.getString("lastName");
     String passwordMD5 = DigestUtils.md5Hex(password);
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
     
     InternalAuth internalAuth = internalAuthDAO.create(username, passwordMD5);
-    User user = userDAO.create("Admin", "Admin", String.valueOf(internalAuth.getId()), "internal", Role.ADMINISTRATOR);
+    User user = userDAO.create(firstName, lastName, String.valueOf(internalAuth.getId()), "internal", Role.ADMINISTRATOR);
   }
 
   @Override
