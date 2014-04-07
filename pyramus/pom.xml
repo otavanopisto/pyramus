@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <name>Pyramus</name>
   <artifactId>pyramus</artifactId>
@@ -13,9 +14,13 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Define the version of JBoss' Java EE 6 APIs we want to import. Any dependencies from org.jboss.spec will have their version defined by this BOM -->
-      <!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) of 
-        artifacts. We use this here so that we always get the correct versions of artifacts. -->
+      <!-- Define the version of JBoss' Java EE 6 APIs we want to import. 
+        Any dependencies from org.jboss.spec will have their version defined by this 
+        BOM -->
+      <!-- JBoss distributes a complete set of Java EE 6 APIs including a 
+        Bill of Materials (BOM). A BOM specifies the versions of a "stack" (or a 
+        collection) of artifacts. We use this here so that we always get the correct 
+        versions of artifacts. -->
       <dependency>
         <groupId>org.jboss.spec</groupId>
         <artifactId>jboss-javaee-web-6.0</artifactId>
@@ -28,50 +33,55 @@
 
   <dependencies>
     <!-- JBoss provided -->
-  
-    <!-- Import the CDI API, we use provided scope as the API is included  in JBoss AS 7 -->
+
+    <!-- Import the CDI API, we use provided scope as the API is included 
+      in JBoss AS 7 -->
     <dependency>
-       <groupId>javax.enterprise</groupId>
-       <artifactId>cdi-api</artifactId>
-       <scope>provided</scope>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <scope>provided</scope>
     </dependency>
 
-    <!-- Import the Common Annotations API (JSR-250), we use provided scope as the API is included in JBoss AS 7 -->
+    <!-- Import the Common Annotations API (JSR-250), we use provided scope 
+      as the API is included in JBoss AS 7 -->
     <dependency>
-       <groupId>org.jboss.spec.javax.annotation</groupId>
-       <artifactId>jboss-annotations-api_1.1_spec</artifactId>
-       <scope>provided</scope>
+      <groupId>org.jboss.spec.javax.annotation</groupId>
+      <artifactId>jboss-annotations-api_1.1_spec</artifactId>
+      <scope>provided</scope>
     </dependency>
 
-    <!-- Import the JAX-RS API, we use provided scope as the API is included in JBoss AS 7 -->
+    <!-- Import the JAX-RS API, we use provided scope as the API is included 
+      in JBoss AS 7 -->
     <dependency>
-       <groupId>org.jboss.spec.javax.ws.rs</groupId>
-       <artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
-       <scope>provided</scope>
+      <groupId>org.jboss.spec.javax.ws.rs</groupId>
+      <artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
+      <scope>provided</scope>
     </dependency>
 
-    <!-- Import the JPA API, we use provided scope as the API is included in JBoss AS 7 -->
+    <!-- Import the JPA API, we use provided scope as the API is included 
+      in JBoss AS 7 -->
     <dependency>
-       <groupId>org.hibernate.javax.persistence</groupId>
-       <artifactId>hibernate-jpa-2.0-api</artifactId>
-       <scope>provided</scope>
+      <groupId>org.hibernate.javax.persistence</groupId>
+      <artifactId>hibernate-jpa-2.0-api</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Hibernate -->
-  
+
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
       <scope>provided</scope>
-    </dependency>    
-    
+    </dependency>
+
     <dependency>
       <groupId>org.hibernate.common</groupId>
       <artifactId>hibernate-commons-annotations</artifactId>
       <scope>provided</scope>
     </dependency>
-    
-    <!-- Import the EJB API, we use provided scope as the API is included in JBoss AS 7 -->
+
+    <!-- Import the EJB API, we use provided scope as the API is included 
+      in JBoss AS 7 -->
     <dependency>
       <groupId>org.jboss.spec.javax.ejb</groupId>
       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
@@ -91,12 +101,13 @@
       </exclusions>
     </dependency>
 
-    <!-- Annotation processor to generate the JPA 2.0 metamodel classes  for typesafe criteria queries -->
+    <!-- Annotation processor to generate the JPA 2.0 metamodel classes for 
+      typesafe criteria queries -->
     <dependency>
-       <groupId>org.hibernate</groupId>
-       <artifactId>hibernate-jpamodelgen</artifactId>
-       <scope>provided</scope>
-    </dependency>  
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-jpamodelgen</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- JMS -->
     <dependency>
@@ -104,21 +115,21 @@
       <artifactId>jboss-jms-api_1.1_spec</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- JSTL -->
     <dependency>
       <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
       <artifactId>jboss-jstl-api_1.2_spec</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- Xerces -->
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
       <version>2.9.1</version>
     </dependency>
-    
+
     <!-- Dom4j -->
     <dependency>
       <groupId>dom4j</groupId>
@@ -128,37 +139,37 @@
     </dependency>
 
     <!-- Apache Commons -->
-   
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <version>1.2.2</version>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>1.6</version>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
-    
+
     <!-- Freemarker -->
-    
+
     <dependency>
       <groupId>org.freemarker</groupId>
       <artifactId>freemarker</artifactId>
       <version>2.3.18</version>
     </dependency>
-    
+
     <!-- JTidy -->
 
     <dependency>
@@ -166,15 +177,15 @@
       <artifactId>jtidy</artifactId>
       <version>r938</version>
     </dependency>
-    
+
     <!-- OpenCSV -->
-    
+
     <dependency>
       <groupId>net.sf.opencsv</groupId>
       <artifactId>opencsv</artifactId>
       <version>2.3</version>
     </dependency>
-    
+
     <!-- JSON -->
 
     <dependency>
@@ -183,45 +194,45 @@
       <version>2.4</version>
       <classifier>jdk15</classifier>
     </dependency>
-    
+
     <!-- Maven Aether -->
-    
+
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-aether-provider</artifactId>
       <version>3.0.4</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-connector-wagon</artifactId>
       <version>1.13.1</version>
     </dependency>
-    
+
     <!-- smvcj -->
-    
+
     <dependency>
       <groupId>fi.internetix.smvcj</groupId>
       <artifactId>smvcj</artifactId>
     </dependency>
-    
+
     <!-- Pyramus -->
-    
+
     <dependency>
       <groupId>fi.pyramus</groupId>
       <artifactId>framework</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>fi.pyramus</groupId>
       <artifactId>persistence</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>fi.pyramus</groupId>
       <artifactId>plugin-core</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>fi.pyramus</groupId>
       <artifactId>webservices-plugin</artifactId>
@@ -232,11 +243,18 @@
       <artifactId>xalan</artifactId>
       <version>2.7.1-1.jbossorg</version>
     </dependency>
-  
+
     <dependency>
       <groupId>org.apache.xalan</groupId>
       <artifactId>serializer</artifactId>
       <version>2.7.1-1.jbossorg</version>
     </dependency>
-  </dependencies>
+
+    <!-- Java Faker -->
+
+    <dependency>
+      <groupId>com.github.javafaker</groupId>
+      <artifactId>javafaker</artifactId>
+    </dependency>
+</dependencies>
 </project>

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>fi.pyramus</groupId>
   <artifactId>bom</artifactId>
@@ -6,7 +7,7 @@
   <packaging>pom</packaging>
   <name>Pyramus BOM</name>
   <url>https://github.com/otavanopisto/pyramus/</url>
-  
+
   <licenses>
     <license>
       <name>GNU LGPL v3</name>
@@ -14,23 +15,23 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <issueManagement>
     <system>GitHub</system>
     <url>https://github.com/otavanopisto/pyramus/issues</url>
   </issueManagement>
-  
+
   <scm>
     <developerConnection>scm:git:git@github.com:otavanopisto/pyramus.git</developerConnection>
     <url>git@github.com:otavanopisto/pyramus.git</url>
     <connection>scm:git:git@github.com:otavanopisto/pyramus.git</connection>
   </scm>
-  
+
   <organization>
     <name>Internetix / Otava Folk High School</name>
     <url>http://www.otavanopisto.fi</url>
   </organization>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <hibernate.version>4.0.1.Final</hibernate.version>
@@ -48,44 +49,44 @@
 
   <dependencyManagement>
     <dependencies>
-    
+
       <!-- JBoss -->
-    
+
       <dependency>
         <groupId>org.jboss.spec</groupId>
         <artifactId>jboss-javaee-6.0</artifactId>
         <type>pom</type>
         <version>${jboss-javaee6-spec.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.jboss.spec.javax.ejb</groupId>
         <artifactId>jboss-ejb-api_3.1_spec</artifactId>
         <version>${jboss-ejb-api_3.1_spec.version}</version>
       </dependency>
-      
+
       <!-- JBoss RESTEasy -->
-      
+
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-jaxrs</artifactId>
         <version>${resteasy-jaxrs.version}</version>
       </dependency>
-    
+
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>async-http-servlet-3.0</artifactId>
         <version>${resteasy-jaxrs.version}</version>
       </dependency>
-    
+
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-oauth</artifactId>
         <version>${resteasy-jaxrs.version}</version>
       </dependency>
-      
+
       <!-- Hibernate -->
-    
+
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-core</artifactId>
@@ -97,7 +98,7 @@
         <artifactId>hibernate-entitymanager</artifactId>
         <version>${hibernate.version}</version>
       </dependency>
-    
+
       <dependency>
         <groupId>org.hibernate.common</groupId>
         <artifactId>hibernate-commons-annotations</artifactId>
@@ -120,7 +121,7 @@
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-jpamodelgen</artifactId>
         <version>1.1.1.Final</version>
-      </dependency>  
+      </dependency>
 
       <dependency>
         <groupId>org.hibernate</groupId>
@@ -129,31 +130,31 @@
       </dependency>
 
       <!-- Apache Commons -->
-     
+
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${commons-lang3.versiopn}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
         <version>${commons-lang.version}</version>
       </dependency>
-    
+
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
         <version>${commons-codec.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons-io}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
@@ -167,17 +168,17 @@
         <artifactId>smvcj</artifactId>
         <version>0.0.3</version>
       </dependency>
-      
+
       <!-- Tranquil Model -->
-      
+
       <dependency>
         <groupId>fi.tranquil-model</groupId>
         <artifactId>tranquil-model</artifactId>
         <version>${tranquil-model.version}</version>
       </dependency>
-          
+
       <!-- Pyramus -->
-    
+
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>pyramus</artifactId>
@@ -254,7 +255,13 @@
         <version>${project.version}</version>
         <type>jar</type>
       </dependency>
-      
+
+      <dependency>
+        <groupId>com.github.javafaker</groupId>
+        <artifactId>javafaker</artifactId>
+        <version>0.3</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
