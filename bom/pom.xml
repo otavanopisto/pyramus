@@ -257,9 +257,9 @@
       </dependency>
 
       <dependency>
-        <groupId>com.github.javafaker</groupId>
+        <groupId>fi.otavanopisto</groupId>
         <artifactId>javafaker</artifactId>
-        <version>0.3</version>
+        <version>0.4-SNAPSHOT</version>
       </dependency>
 
     </dependencies>

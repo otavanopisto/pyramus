@@ -6,6 +6,10 @@ import java.util.logging.Logger;
 
 import com.github.javafaker.Faker;
 
+import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.util.dataimport.scripting.api.Handle;
+import fi.pyramus.util.dataimport.scripting.api.StudentAPI;
+
 public class ImportAPI {
   
   public void log(String arg) {
@@ -15,6 +19,19 @@ public class ImportAPI {
   public Faker getFaker() {
     Faker faker = new Faker(Locale.forLanguageTag("fi"));
     return faker;
+  }
+  
+  // TODO: Maybe get rid of this?
+  public DAOFactory getDaoFactory() {
+    return DAOFactory.getInstance();
+  }
+  
+  public StudentAPI getStudent() {
+    return new StudentAPI();
+  }
+  
+  public Handle getEmpty() {
+    return Handle.empty();
   }
 
 }

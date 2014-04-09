@@ -253,7 +253,7 @@
     <!-- Java Faker -->
 
     <dependency>
-      <groupId>com.github.javafaker</groupId>
+      <groupId>fi.otavanopisto</groupId>
       <artifactId>javafaker</artifactId>
     </dependency>
 </dependencies>
