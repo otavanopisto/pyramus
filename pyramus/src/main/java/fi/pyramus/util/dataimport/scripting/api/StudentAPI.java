@@ -23,7 +23,7 @@ import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 
 public class StudentAPI {
   
-  public Handle createAbstractStudent(Date birthday,
+  public Long createAbstractStudent(Date birthday,
                                       String socialSecurityNumber,
                                       String sex,
                                       String basicInfo,
@@ -43,95 +43,128 @@ public class StudentAPI {
     AbstractStudent abstractStudent = 
         abstractStudentDAO.create(birthday, socialSecurityNumber, sexEntity, basicInfo, secureInfo);
     
-    return new Handle(abstractStudent.getId());
+    return (abstractStudent.getId());
   }
   
-  public Handle createActivityType(String name) {
-    return new Handle(DAOFactory.getInstance().getStudentActivityTypeDAO().create(name).getId());
+  public Long createActivityType(String name) {
+    return (DAOFactory.getInstance().getStudentActivityTypeDAO().create(name).getId());
   }
   
-  public Handle createExaminationType(String name) {
-    return new Handle(DAOFactory.getInstance().getStudentExaminationTypeDAO().create(name).getId());
+  public Long createExaminationType(String name) {
+    return (DAOFactory.getInstance().getStudentExaminationTypeDAO().create(name).getId());
   }
   
-  public Handle createEducationalLevel(String name) {
-    return new Handle(DAOFactory.getInstance().getStudentEducationalLevelDAO().create(name).getId());
+  public Long createEducationalLevel(String name) {
+    return (DAOFactory.getInstance().getStudentEducationalLevelDAO().create(name).getId());
   }
   
-  public Handle createNationality(String name, String code) {
-    return new Handle(DAOFactory.getInstance().getNationalityDAO().create(name, code).getId());
+  public Long createNationality(String name, String code) {
+    return (DAOFactory.getInstance().getNationalityDAO().create(name, code).getId());
   }
   
-  public Handle createMunicipality(String name, String code) {
-    return new Handle(DAOFactory.getInstance().getMunicipalityDAO().create(name, code).getId());
+  public Long createLanguage(String name, String code) {
+    return (DAOFactory.getInstance().getLanguageDAO().create(name, code).getId());
   }
   
-  public Handle createSchoolField(String name) {
-    return new Handle(DAOFactory.getInstance().getSchoolFieldDAO().create(name).getId());
+  public Long createMunicipality(String name, String code) {
+    return (DAOFactory.getInstance().getMunicipalityDAO().create(name, code).getId());
   }
   
-  public Handle createSchool(String code, String name, Handle schoolField) {
-    SchoolField schoolFieldEntity = DAOFactory.getInstance().getSchoolFieldDAO().findById(schoolField.getId());
-    return new Handle(DAOFactory.getInstance().getSchoolDAO().create(code, name, schoolFieldEntity).getId());
+  public Long createSchoolField(String name) {
+    return (DAOFactory.getInstance().getSchoolFieldDAO().create(name).getId());
   }
   
-  public Handle createEducationType(String name, String code) {
-    return new Handle(DAOFactory.getInstance().getEducationTypeDAO().create(name, code).getId());
+  public Long createSchool(String code, String name, Long schoolField) {
+    SchoolField schoolFieldEntity = null;
+    if (schoolField != null) {
+      schoolFieldEntity = DAOFactory.getInstance().getSchoolFieldDAO().findById(schoolField);
+    }
+    return (DAOFactory.getInstance().getSchoolDAO().create(code, name, schoolFieldEntity).getId());
   }
   
-  public Handle createStudyProgrammeCategory(String name, Handle educationType) {
-    EducationType educationTypeEntity = DAOFactory.getInstance().getEducationTypeDAO().findById(educationType.getId());
-    return new Handle(DAOFactory.getInstance().getStudyProgrammeCategoryDAO().create(name, educationTypeEntity).getId());
+  public Long createEducationType(String name, String code) {
+    return (DAOFactory.getInstance().getEducationTypeDAO().create(name, code).getId());
   }
   
-  public Handle createStudyProgramme(String name, Handle category, String code) {
-    StudyProgrammeCategory categoryEntity = DAOFactory.getInstance().getStudyProgrammeCategoryDAO().findById(category.getId());
-    return new Handle(DAOFactory.getInstance().getStudyProgrammeDAO().create(name, categoryEntity, code).getId());
+  public Long createStudyProgrammeCategory(String name, Long educationType) {
+    EducationType educationTypeEntity = null;
+    if (educationType != null) {
+      educationTypeEntity = DAOFactory.getInstance().getEducationTypeDAO().findById(educationType);
+    }
+    return (DAOFactory.getInstance().getStudyProgrammeCategoryDAO().create(name, educationTypeEntity).getId());
   }
   
-  public Handle createStudent(Handle abstractStudent,
+  public Long createStudyProgramme(String name, Long category, String code) {
+    StudyProgrammeCategory categoryEntity = null;
+    if (category != null) {
+      categoryEntity = DAOFactory.getInstance().getStudyProgrammeCategoryDAO().findById(category);
+    }
+    return (DAOFactory.getInstance().getStudyProgrammeDAO().create(name, categoryEntity, code).getId());
+  }
+  
+  public Long createStudent(Long abstractStudent,
                               String firstName,
                               String lastName,
                               String nickname,
                               String additionalInfo,
                               Date studyTimeEnd,
-                              Handle activityType,
-                              Handle examinationType,
-                              Handle educationalLevel,
+                              Long activityType,
+                              Long examinationType,
+                              Long educationalLevel,
                               String education,
-                              Handle nationality,
-                              Handle municipality,
-                              Handle language,
-                              Handle school,
-                              Handle studyProgramme,
+                              Long nationality,
+                              Long municipality,
+                              Long language,
+                              Long school,
+                              Long studyProgramme,
                               double previousStudies,
                               Date studyStartDate,
                               Date studyEndDate,
-                              Handle studyEndReason,
+                              Long studyEndReason,
                               String studyEndText,
                               boolean lodging) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     
-    AbstractStudent abstractStudentEntity =
-        DAOFactory.getInstance().getAbstractStudentDAO().findById(abstractStudent.getId());
-    StudentActivityType activityTypeEntity =
-        DAOFactory.getInstance().getStudentActivityTypeDAO().findById(activityType.getId());
-    StudentExaminationType examinationTypeEntity =
-        DAOFactory.getInstance().getStudentExaminationTypeDAO().findById(examinationType.getId());
-    StudentEducationalLevel educationalLevelEntity =
-        DAOFactory.getInstance().getStudentEducationalLevelDAO().findById(educationalLevel.getId());
-    Nationality nationalityEntity =
-        DAOFactory.getInstance().getNationalityDAO().findById(nationality.getId());
-    Municipality municipalityEntity =
-        DAOFactory.getInstance().getMunicipalityDAO().findById(municipality.getId());
-    Language languageEntity =
-        DAOFactory.getInstance().getLanguageDAO().findById(language.getId());
-    School schoolEntity =
-        DAOFactory.getInstance().getSchoolDAO().findById(school.getId());
-    StudyProgramme studyProgrammeEntity =
-        DAOFactory.getInstance().getStudyProgrammeDAO().findById(studyProgramme.getId());
-    StudentStudyEndReason studyEndReasonEntity =
-        DAOFactory.getInstance().getStudentStudyEndReasonDAO().findById(studyEndReason.getId());
+    AbstractStudent abstractStudentEntity = null;
+    if (abstractStudent != null) {
+        abstractStudentEntity = DAOFactory.getInstance().getAbstractStudentDAO().findById(abstractStudent);
+    }
+    StudentActivityType activityTypeEntity = null;
+    if (activityType != null) {
+        activityTypeEntity = DAOFactory.getInstance().getStudentActivityTypeDAO().findById(activityType);
+    }
+    StudentExaminationType examinationTypeEntity = null;
+    if ( examinationType != null) {
+         examinationTypeEntity = DAOFactory.getInstance().getStudentExaminationTypeDAO().findById(examinationType);
+    }
+    StudentEducationalLevel educationalLevelEntity = null;
+    if (educationalLevel != null) {
+        educationalLevelEntity = DAOFactory.getInstance().getStudentEducationalLevelDAO().findById(educationalLevel);
+    }
+    Nationality nationalityEntity = null;
+    if (nationality != null) {
+        nationalityEntity = DAOFactory.getInstance().getNationalityDAO().findById(nationality);
+    }
+    Municipality municipalityEntity = null;
+    if (municipality != null) {
+        municipalityEntity = DAOFactory.getInstance().getMunicipalityDAO().findById(municipality);
+    }
+    Language languageEntity = null;
+    if (language != null) {
+        languageEntity = DAOFactory.getInstance().getLanguageDAO().findById(language);
+    }
+    School schoolEntity = null;
+    if (school != null) {
+        DAOFactory.getInstance().getSchoolDAO().findById(school);
+    }
+    StudyProgramme studyProgrammeEntity = null;
+    if (studyProgramme != null) {
+        DAOFactory.getInstance().getStudyProgrammeDAO().findById(studyProgramme);
+    }
+    StudentStudyEndReason studyEndReasonEntity = null;
+    if (studyEndReason != null) {
+        DAOFactory.getInstance().getStudentStudyEndReasonDAO().findById(studyEndReason);
+    }
     
     Student student = studentDAO.create(abstractStudentEntity,
                                         firstName,
@@ -154,7 +187,7 @@ public class StudentAPI {
                                         studyEndReasonEntity,
                                         studyEndText,
                                         lodging);
-    return new Handle(student.getId());
+    return (student.getId());
   }
 
 }

@@ -21,17 +21,8 @@ public class ImportAPI {
     return faker;
   }
   
-  // TODO: Maybe get rid of this?
-  public DAOFactory getDaoFactory() {
-    return DAOFactory.getInstance();
-  }
-  
   public StudentAPI getStudent() {
     return new StudentAPI();
-  }
-  
-  public Handle getEmpty() {
-    return Handle.empty();
   }
 
 }

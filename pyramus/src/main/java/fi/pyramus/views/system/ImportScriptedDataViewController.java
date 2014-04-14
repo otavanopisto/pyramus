@@ -1,13 +1,11 @@
 package fi.pyramus.views.system;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.framework.PyramusFormViewController;
 import fi.pyramus.framework.UserRole;
-import fi.pyramus.util.DataImporter;
 import fi.pyramus.util.dataimport.scripting.ScriptedImporter;
 
 public class ImportScriptedDataViewController extends PyramusFormViewController {
