@@ -18,7 +18,6 @@ public class ScriptedImporter {
     try {
       Object obj = se.eval(script);
       if (obj instanceof Map) {
-        Map<String, Object> map = (Map<String, Object>) obj;
         inv.invokeMethod(obj, "run", new Object[] {new ImportAPI()});
       } else {
         throw new InvalidScriptException("Invalid top-level object");
