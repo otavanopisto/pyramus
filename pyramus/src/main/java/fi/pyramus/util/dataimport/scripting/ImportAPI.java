@@ -15,8 +15,11 @@ public class ImportAPI {
   }
   
   public Faker getFaker() {
-    Faker faker = new Faker(Locale.forLanguageTag("fi"));
-    return faker;
+    return new Faker(Locale.forLanguageTag("fi"));
+  }
+  
+  public Faker getFakerEn() {
+    return new Faker(Locale.ENGLISH);
   }
   
   public StudentAPI getStudent() {

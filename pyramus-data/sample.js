@@ -10,16 +10,16 @@
         for (var i=0; i < 4; i++) {
             var schoolField = api.student.createSchoolField(lipsum());
             var educationType = api.student.createEducationType(lipsum(), ""+((Math.random()*1000) | 0));
-            var activityType =  api.student.createActivityType(lipsum());
-            var examinationType =  api.student.createExaminationType(lipsum());
-            var educationalLevel =  api.student.createEducationalLevel(lipsum());
-            var nationality =  api.student.createNationality(api.faker.country(), ""+((Math.random()*1000) | 0));
-            var language =  api.student.createLanguage(api.faker.country(), ""+((Math.random()*1000) | 0));
-            var municipality =  api.student.createMunicipality(city(), ""+((Math.random()*1000) | 0));
-            var school =  api.student.createSchool(""+(Math.random()*1000 | 0), lipsum(), schoolField);
-            var studyProgrammeCategory =  api.student.createStudyProgrammeCategory(lipsum(), educationType);
+            var activityType = api.student.createActivityType(lipsum());
+            var examinationType = api.student.createExaminationType(lipsum());
+            var educationalLevel = api.student.createEducationalLevel(lipsum());
+            var nationality = api.student.createNationality(api.faker.country(), ""+((Math.random()*1000) | 0));
+            var language = api.student.createLanguage(api.faker.country(), ""+((Math.random()*1000) | 0));
+            var municipality = api.student.createMunicipality(city(), ""+((Math.random()*1000) | 0));
+            var school = api.student.createSchool(""+(Math.random()*1000 | 0), lipsum(), schoolField);
+            var studyProgrammeCategory = api.student.createStudyProgrammeCategory(lipsum(), educationType);
             var studyProgramme = api.student.createStudyProgramme(lipsum(), studyProgrammeCategory, ""+((Math.random()*1000) | 0));
-            var studyEndReason =  null;
+            var studyEndReason = null;
             api.log(lipsum());
             api.log(activityType);
             api.log(examinationType);
