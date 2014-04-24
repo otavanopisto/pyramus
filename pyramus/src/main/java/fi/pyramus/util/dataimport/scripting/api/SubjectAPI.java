@@ -18,5 +18,11 @@ public class SubjectAPI {
       throw new InvalidScriptException("Education type doesn't exist for "+educationTypeCode);
     }
   }
-
+  
+  public Long createSubjectForEducationType(String code, String name, Long educationType) {
+    SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
+    EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();
+    EducationType educationTypeEntity = educationTypeDAO.findById(educationType);
+    return subjectDAO.create(code, name, educationTypeEntity).getId();
+  }
 }
