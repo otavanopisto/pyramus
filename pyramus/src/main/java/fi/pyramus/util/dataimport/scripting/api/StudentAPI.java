@@ -86,6 +86,10 @@ public class StudentAPI {
     return (DAOFactory.getInstance().getEducationTypeDAO().create(name, code).getId());
   }
   
+  public Long findEducationTypeByCode(String code) {
+    return (DAOFactory.getInstance().getEducationTypeDAO().findByCode(code).getId());
+  }
+  
   public Long createStudyProgrammeCategory(String name, Long educationType) {
     EducationType educationTypeEntity = null;
     if (educationType != null) {
