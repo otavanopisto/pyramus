@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import com.github.javafaker.Faker;
 
 import fi.pyramus.util.dataimport.scripting.api.StudentAPI;
+import fi.pyramus.util.dataimport.scripting.api.SubjectAPI;
 
 public class ImportAPI {
   
@@ -21,6 +22,10 @@ public class ImportAPI {
   
   public StudentAPI getStudent() {
     return new StudentAPI();
+  }
+  
+  public SubjectAPI getSubject() {
+    return new SubjectAPI();
   }
 
 }
