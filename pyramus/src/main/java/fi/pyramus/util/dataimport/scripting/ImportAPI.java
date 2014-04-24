@@ -6,8 +6,6 @@ import java.util.logging.Logger;
 
 import com.github.javafaker.Faker;
 
-import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.util.dataimport.scripting.api.Handle;
 import fi.pyramus.util.dataimport.scripting.api.StudentAPI;
 
 public class ImportAPI {
