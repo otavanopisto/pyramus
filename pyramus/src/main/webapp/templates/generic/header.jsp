@@ -143,6 +143,7 @@
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/initialdata.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importInitialData"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importcsv.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importCSV"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importdata.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importData"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importscripteddata.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importScriptedData"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/importreport.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.importReport"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/reindexhibernateobjects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.reindexHibernateEntities"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/elementcheatsheet.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.layoutElementsCheatSheet"/></a></li>
