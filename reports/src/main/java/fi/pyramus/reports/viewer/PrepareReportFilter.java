@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -60,7 +61,7 @@ public class PrepareReportFilter implements Filter {
           File reportFile = new File(getReportsFolder(), reportFileName);
           if (reportFile.exists()) {
             urlConnection.setRequestProperty("If-Modified-Since",
-                new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz").format(reportFile.lastModified())); // RFC 1123
+                new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ROOT).format(reportFile.lastModified())); // RFC 1123
           }
           
           switch (urlConnection.getResponseCode()) {
