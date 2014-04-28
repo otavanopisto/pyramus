@@ -154,7 +154,6 @@
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>1.6</version>
     </dependency>
 
     <dependency>
@@ -266,6 +265,16 @@
 	    <version>4.11</version>
 	    <scope>test</scope>
 	</dependency>
-    
+
 </dependencies>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>oss-sonatype-snapshots</id>
+      <name>OSS Sonatype snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    </snapshotRepository>
+</distributionManagement>
+    
 </project>
