@@ -253,8 +253,10 @@
     <!-- Java Faker -->
 
     <dependency>
-      <groupId>fi.otavanopisto</groupId>
+      <groupId>com.github.javafaker</groupId>
       <artifactId>javafaker</artifactId>
+      <!-- Update to 0.4 when it's released -->
+      <version>0.4-SNAPSHOT</version>
     </dependency>
     
     <!-- Tests -->
