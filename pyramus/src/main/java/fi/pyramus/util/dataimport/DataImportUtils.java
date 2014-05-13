@@ -188,7 +188,9 @@ public class DataImportUtils {
     
     interpreters.put(MonetaryAmount.class, new ValueInterpreter<MonetaryAmount>() {
       public MonetaryAmount interpret(Object o) {
-        return new MonetaryAmount(NumberUtils.createDouble((String) o));
+        MonetaryAmount monetaryAmount = new MonetaryAmount();
+        monetaryAmount.setAmount(NumberUtils.createDouble((String) o));
+        return monetaryAmount;
       }
     });
 

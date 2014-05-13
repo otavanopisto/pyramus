@@ -391,12 +391,14 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       if (hours == null) {
         hours = 0.0;
       }
-      MonetaryAmount hourlyCost = new MonetaryAmount(requestContext.getDouble(colPrefix + ".hourlyCost"));
+      MonetaryAmount hourlyCost = new MonetaryAmount();
+      hourlyCost.setAmount(requestContext.getDouble(colPrefix + ".hourlyCost"));
       Integer units = requestContext.getInteger(colPrefix + ".units");
       if (units == null) {
         units = 0;
       }
-      MonetaryAmount unitCost = new MonetaryAmount(requestContext.getDouble(colPrefix + ".unitCost"));
+      MonetaryAmount unitCost = new MonetaryAmount();
+      unitCost.setAmount(requestContext.getDouble(colPrefix + ".unitCost"));
       Long resourceId = requestContext.getLong(colPrefix + ".resourceId");
       Resource resource = resourceDAO.findById(resourceId);
       basicCourseResourceDAO.create(course, resource, hours, hourlyCost, units, unitCost);
@@ -411,8 +413,10 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       if (hours == null) {
         hours = 0.0;
       }
-      MonetaryAmount hourlyCost = new MonetaryAmount(requestContext.getDouble(colPrefix + ".hourlyCost"));
-      MonetaryAmount unitCost = new MonetaryAmount(requestContext.getDouble(colPrefix + ".unitCost"));
+      MonetaryAmount hourlyCost = new MonetaryAmount();
+      hourlyCost.setAmount(requestContext.getDouble(colPrefix + ".hourlyCost"));
+      MonetaryAmount unitCost = new MonetaryAmount();
+      unitCost.setAmount(requestContext.getDouble(colPrefix + ".unitCost"));
       Long resourceId = NumberUtils.createLong(requestContext.getRequest().getParameter(colPrefix + ".resourceId"));
       Resource resource = resourceDAO.findById(resourceId);
       studentCourseResourceDAO.create(course, resource, hours, hourlyCost, unitCost);
@@ -427,8 +431,10 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       if (hours == null) {
         hours = 0.0;
       }
-      MonetaryAmount hourlyCost = new MonetaryAmount(requestContext.getDouble(colPrefix + ".hourlyCost"));
-      MonetaryAmount unitCost = new MonetaryAmount(requestContext.getDouble(colPrefix + ".unitCost"));
+      MonetaryAmount hourlyCost = new MonetaryAmount();
+      hourlyCost.setAmount(requestContext.getDouble(colPrefix + ".hourlyCost"));
+      MonetaryAmount unitCost = new MonetaryAmount();
+      unitCost.setAmount(requestContext.getDouble(colPrefix + ".unitCost"));
       Long resourceId = requestContext.getLong(colPrefix + ".resourceId");
       Resource resource = resourceDAO.findById(resourceId);
       gradeCourseResourceDAO.create(course, resource, hours, hourlyCost, unitCost);
@@ -440,7 +446,8 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     for (int i = 0; i < otherCostsTableRowCount; i++) {
       String colPrefix = "otherCostsTable." + i;
       name = requestContext.getString(colPrefix + ".name");
-      MonetaryAmount cost = new MonetaryAmount(requestContext.getDouble(colPrefix + ".cost"));
+      MonetaryAmount cost = new MonetaryAmount();
+      cost.setAmount(requestContext.getDouble(colPrefix + ".cost"));
       otherCostDAO.create(course, name, cost);
     }
 

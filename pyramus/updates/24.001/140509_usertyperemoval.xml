@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  <alterTables>
+    <table name="BasicCourseResource">
+      <addFields>
+        <field name="hourlyCost_amount" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="hourlyCost_currency" type="java.lang.String" nullable="true" unique="false" />
+        <field name="unitCost_amount" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="unitCost_currency" type="java.lang.String" nullable="true" unique="false" />
+      </addFields>
+    </table>
+    <table name="GradeCourseResource">
+      <addFields>
+        <field name="hourlyCost_amount" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="hourlyCost_currency" type="java.lang.String" nullable="true" unique="false" />
+        <field name="unitCost_amount" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="unitCost_currency" type="java.lang.String" nullable="true" unique="false" />
+      </addFields>
+    </table>
+    <table name="MaterialResource">
+      <addFields>
+        <field name="unitCost_amount" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="unitCost_currency" type="java.lang.String" nullable="true" unique="false" />
+      </addFields>
+    </table>
+    <table name="OtherCost">
+      <addFields>
+        <field name="cost_amount" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="cost_currency" type="java.lang.String" nullable="true" unique="false" />
+      </addFields>
+    </table>
+    <table name="StudentCourseResource">
+      <addFields>
+        <field name="hourlyCost_amount" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="hourlyCost_currency" type="java.lang.String" nullable="true" unique="false" />
+        <field name="unitCost_amount" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="unitCost_currency" type="java.lang.String" nullable="true" unique="false" />
+      </addFields>
+    </table>
+    <table name="WorkResource">
+      <addFields>
+        <field name="costPerUse_amount" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="costPerUse_currency" type="java.lang.String" nullable="true" unique="false" />
+        <field name="hourlyCost_amount" type="java.lang.Double" nullable="true" unique="false" />
+        <field name="hourlyCost_currency" type="java.lang.String" nullable="true" unique="false" />
+      </addFields>
+    </table>
+  </alterTables>
+  
+  <sql>
+    update BasicCourseResource 
+    set 
+      unitCost_currency = 'EUR', 
+      unitCost_amount = unitCost, 
+      hourlyCost_currency = 'EUR', 
+      hourlyCost_amount = hourlyCost;
+  </sql>
+
+  <sql>
+    update GradeCourseResource 
+    set 
+      unitCost_currency = 'EUR', 
+      unitCost_amount = unitCost, 
+      hourlyCost_currency = 'EUR', 
+      hourlyCost_amount = hourlyCost;
+  </sql>
+
+  <sql>
+    update MaterialResource 
+    set 
+      unitCost_currency = 'EUR', 
+      unitCost_amount = unitCost; 
+  </sql>
+
+  <sql>
+    update OtherCost 
+    set 
+      cost_currency = 'EUR', 
+      cost_amount = cost;
+  </sql>
+
+  <sql>
+    update StudentCourseResource 
+    set 
+      unitCost_currency = 'EUR', 
+      unitCost_amount = unitCost, 
+      hourlyCost_currency = 'EUR', 
+      hourlyCost_amount = hourlyCost;
+  </sql>
+
+  <sql>
+    update WorkResource 
+    set 
+      costPerUse_currency = 'EUR', 
+      costPerUse_amount = costPerUse, 
+      hourlyCost_currency = 'EUR', 
+      hourlyCost_amount = hourlyCost;
+  </sql>
+
+  <alterTables>
+    <table name="BasicCourseResource">
+      <dropFields>
+        <field name="hourlyCost"/>
+        <field name="unitCost"/>
+      </dropFields>
+    </table>
+    <table name="GradeCourseResource">
+      <dropFields>
+        <field name="hourlyCost"/>
+        <field name="unitCost"/>
+      </dropFields>
+    </table>
+    <table name="MaterialResource">
+      <dropFields>
+        <field name="unitCost"/>
+      </dropFields>
+    </table>
+    <table name="OtherCost">
+      <dropFields>
+        <field name="cost"/>
+      </dropFields>
+    </table>
+    <table name="StudentCourseResource">
+      <dropFields>
+        <field name="hourlyCost"/>
+        <field name="unitCost"/>
+      </dropFields>
+    </table>
+    <table name="WorkResource">
+      <dropFields>
+        <field name="hourlyCost"/>
+        <field name="costPerUse"/>
+      </dropFields>
+    </table>
+  </alterTables>
+
+  
+</update>

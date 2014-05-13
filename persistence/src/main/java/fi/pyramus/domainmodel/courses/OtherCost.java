@@ -1,6 +1,9 @@
 package fi.pyramus.domainmodel.courses;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,18 +14,11 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.pyramus.persistence.usertypes.MonetaryAmount;
-import fi.pyramus.persistence.usertypes.MonetaryAmountUserType;
 
 @Entity
-@TypeDefs ({
-  @TypeDef (name="MonetaryAmount", typeClass=MonetaryAmountUserType.class)
-})
 public class OtherCost {
   
   protected OtherCost() {
@@ -85,7 +81,11 @@ public class OtherCost {
   
   @NotNull
   @Column (nullable = false)
-  @Type (type="MonetaryAmount")  
+  @Embedded  
+  @AttributeOverrides({
+    @AttributeOverride(name="amount", column = @Column(name="cost_amount") ),
+    @AttributeOverride(name="currency", column = @Column(name="cost_currency"))
+  })
   private MonetaryAmount cost;
   
   @Version
