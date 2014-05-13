@@ -12,7 +12,7 @@ function onLoad(event) {
       header : getLocale().getText("system.setupwizard.municipalities.municipalitiesTableCodeHeader"),
       left : 8,
       width: 75,
-      dataType : 'text',
+      dataType : 'number',
       paramName : 'code',
       required : true,
       editable: true

@@ -47,7 +47,7 @@ function onLoad(event) {
           header : getLocale().getText("settings.municipalities.municipalitiesTableCodeHeader"),
           left : 346,
           right : 44,
-          dataType : 'text',
+          dataType : 'number',
           editable : false,
           paramName : 'code',
           required : true
