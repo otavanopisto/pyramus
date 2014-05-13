@@ -54,7 +54,7 @@
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>bom</artifactId>
-        <version>${project.version}</version>
+        <version>0.6.5-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
