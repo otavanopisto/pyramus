@@ -83,7 +83,7 @@
                 <jsp:param name="titleLocale" value="resources.editMaterialResource.unitCostTitle"/>
                 <jsp:param name="helpLocale" value="resources.editMaterialResource.unitCostHelp"/>
               </jsp:include>
-              <input type="text" name="unitCost" value="${resource.unitCost}" class="numberField" size="15"/>
+              <input type="text" name="unitCost" value="${resource.unitCost.amount}" class="numberField" size="15"/>
             </div>
           </div>
   	    </div>

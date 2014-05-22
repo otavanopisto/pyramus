@@ -82,7 +82,7 @@
                 <jsp:param name="titleLocale" value="resources.editWorkResource.hourlyCostTitle"/>
                 <jsp:param name="helpLocale" value="resources.editWorkResource.hourlyCostHelp"/>
               </jsp:include>          
-              <input type="text" name="hourlyCost" value="${resource.hourlyCost}" class="numberField" size="15"/>
+              <input type="text" name="hourlyCost" value="${resource.hourlyCost.amount}" class="numberField" size="15"/>
             </div>
             
             <div class="genericFormSection">
@@ -90,7 +90,7 @@
                 <jsp:param name="titleLocale" value="resources.editWorkResource.costPerUseTitle"/>
                 <jsp:param name="helpLocale" value="resources.editWorkResource.costPerUseHelp"/>
               </jsp:include>          
-              <input type="text" name="costPerUse" value="${resource.costPerUse}" class="numberField" size="15"/>
+              <input type="text" name="costPerUse" value="${resource.costPerUse.amount}" class="numberField" size="15"/>
             </div>
           </div>
   	    </div>
