@@ -16,8 +16,16 @@ public class WorkResourceDAO extends PyramusEntityDAO<WorkResource> {
 
     WorkResource workResource = new WorkResource();
     workResource.setName(name);
-    workResource.setCostPerUse(costPerUse == null ? null : new MonetaryAmount(costPerUse));
-    workResource.setHourlyCost(hourlyCost == null ? null : new MonetaryAmount(hourlyCost));
+    if (costPerUse != null) {
+      MonetaryAmount monetaryAmount = new MonetaryAmount();
+      monetaryAmount.setAmount(costPerUse);
+      workResource.setCostPerUse(monetaryAmount);
+    }
+    if (hourlyCost != null) {
+      MonetaryAmount monetaryAmount = new MonetaryAmount();
+      monetaryAmount.setAmount(hourlyCost);
+      workResource.setHourlyCost(monetaryAmount);
+    }
     workResource.setCategory(category);
     entityManager.persist(workResource);
 
@@ -31,11 +39,17 @@ public class WorkResourceDAO extends PyramusEntityDAO<WorkResource> {
     workResource.setName(name);
     workResource.setCategory(category);
 
-    if (costPerUse != null)
-      workResource.setCostPerUse(new MonetaryAmount(costPerUse));
+    if (costPerUse != null) {
+      MonetaryAmount monetaryAmount = new MonetaryAmount();
+      monetaryAmount.setAmount(costPerUse);
+      workResource.setCostPerUse(monetaryAmount);
+    }
 
-    if (hourlyCost != null)
-      workResource.setHourlyCost(new MonetaryAmount(hourlyCost));
+    if (hourlyCost != null) {
+      MonetaryAmount monetaryAmount = new MonetaryAmount();
+      monetaryAmount.setAmount(hourlyCost);
+      workResource.setHourlyCost(monetaryAmount);
+    }
 
     entityManager.persist(workResource);
 

@@ -16,7 +16,11 @@ public class MaterialResourceDAO extends PyramusEntityDAO<MaterialResource> {
 
     MaterialResource materialResource = new MaterialResource();
     materialResource.setName(name);
-    materialResource.setUnitCost(unitCost == null ? null : new MonetaryAmount(unitCost));
+    if (unitCost != null) {
+      MonetaryAmount monetaryAmount = new MonetaryAmount();
+      monetaryAmount.setAmount(unitCost);
+      materialResource.setUnitCost(monetaryAmount);
+    }
     materialResource.setCategory(category);
     entityManager.persist(materialResource);
 
@@ -30,8 +34,11 @@ public class MaterialResourceDAO extends PyramusEntityDAO<MaterialResource> {
     materialResource.setName(name);
     materialResource.setCategory(category);
 
-    if (unitCost != null)
-      materialResource.setUnitCost(new MonetaryAmount(unitCost));
+    if (unitCost != null) {
+      MonetaryAmount monetaryAmount = new MonetaryAmount();
+      monetaryAmount.setAmount(unitCost);
+      materialResource.setUnitCost(monetaryAmount);
+    }
 
     entityManager.persist(materialResource);
 

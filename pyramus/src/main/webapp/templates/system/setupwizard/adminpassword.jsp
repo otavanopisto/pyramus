@@ -28,7 +28,7 @@
                 <jsp:param name="helpLocale"
 								value="system.setupwizard.adminpassword.passwordHelp" />
               </jsp:include>    
-              <input class="equals equals-password2" type="password" name="password1" class="required" size="25">
+              <input type="password" name="password1" class="required equals equals-password2" size="25">
             </div>
             <div class="genericFormSection">  
               <jsp:include
@@ -38,9 +38,29 @@
                 <jsp:param name="helpLocale"
 								value="system.setupwizard.adminpassword.password2Help" />
               </jsp:include>    
-              <input class="equals equals-password1" type="password" name="password2" class="required" size="25">
+              <input type="password" name="password2" class="required equals equals-password1" size="25">
             </div>
+            <div class="genericFormSection">  
+              <jsp:include
+							page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale"
+								value="system.setupwizard.adminpassword.firstNameTitle" />
+                <jsp:param name="helpLocale"
+								value="system.setupwizard.adminpassword.firstNameHelp" />
+              </jsp:include>    
+              <input type="text" name="firstName" class="required" size="25">
             </div>
+            <div class="genericFormSection">  
+              <jsp:include
+							page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale"
+								value="system.setupwizard.adminpassword.lastNameTitle" />
+                <jsp:param name="helpLocale"
+								value="system.setupwizard.adminpassword.lastNameHelp" />
+              </jsp:include>    
+              <input type="text" name="lastName" class="required" size="25">
+            </div>
+        </div>
     <div class="genericFormSubmitSectionOffTab">
         <input type="submit" class="formvalid" name="next"
 							value="<fmt:message key="system.setupwizard.next"/>">

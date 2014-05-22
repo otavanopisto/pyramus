@@ -7,7 +7,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -105,6 +107,7 @@ public class Municipality implements ArchivableEntity {
 
   @NotNull
   @NotEmpty
+  @Pattern(regexp="^\\d+$")
   @Column (nullable = false)
   @Field
   private String code;

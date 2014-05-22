@@ -8,6 +8,18 @@
   <display-name>pyramus</display-name>
   <description>Pyramus</description>
   <filter>
+    <filter-name>TransactionTimeoutFilter</filter-name>
+    <filter-class>fi.pyramus.util.TransactionTimeoutFilter</filter-class>
+    <init-param>
+      <param-name>timeout</param-name>
+      <param-value>6000</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>TransactionTimeoutFilter</filter-name>
+    <url-pattern>/system/importscripteddata.page</url-pattern>
+  </filter-mapping>
+  <filter>
     <filter-name>SessionFilter</filter-name>
     <filter-class>fi.pyramus.util.SessionFilter</filter-class>
   </filter>

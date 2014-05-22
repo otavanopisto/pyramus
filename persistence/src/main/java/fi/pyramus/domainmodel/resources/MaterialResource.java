@@ -1,23 +1,19 @@
 package fi.pyramus.domainmodel.resources;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 import org.hibernate.search.annotations.Indexed;
 
 import fi.pyramus.persistence.usertypes.MonetaryAmount;
-import fi.pyramus.persistence.usertypes.MonetaryAmountUserType;
 
 @Entity
-@TypeDefs ({
-  @TypeDef (name="MonetaryAmount", typeClass=MonetaryAmountUserType.class)
-})
 @Indexed
 @PrimaryKeyJoinColumn(name="id")
 public class MaterialResource extends Resource {
@@ -38,6 +34,10 @@ public class MaterialResource extends Resource {
   
   @NotNull
   @Column (nullable = false)
-  @Type (type="MonetaryAmount")  
+  @Embedded  
+  @AttributeOverrides({
+    @AttributeOverride(name="amount", column = @Column(name="unitCost_amount") ),
+    @AttributeOverride(name="currency", column = @Column(name="unitCost_currency"))
+  })
   private MonetaryAmount unitCost;
 }

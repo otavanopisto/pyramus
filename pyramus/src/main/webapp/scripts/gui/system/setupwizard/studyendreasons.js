@@ -19,7 +19,6 @@ function addStudyEndReasonsTableRow() {
     display : 'none'
   });
   updateParentDropdownBoxesAndDeleteButtons();
-  table.hideCell(rowIndex, table.getNamedColumnIndex('deleteButton'));
 }
 
 function updateParentDropdownBoxesAndDeleteButtons() {

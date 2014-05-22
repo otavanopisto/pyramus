@@ -1,21 +1,18 @@
 package fi.pyramus.domainmodel.resources;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 import org.hibernate.search.annotations.Indexed;
 
 import fi.pyramus.persistence.usertypes.MonetaryAmount;
-import fi.pyramus.persistence.usertypes.MonetaryAmountUserType;
 
 @Entity
-@TypeDefs ({
-  @TypeDef (name="MonetaryAmount", typeClass=MonetaryAmountUserType.class)
-})
 @Indexed
 @PrimaryKeyJoinColumn(name="id")
 public class WorkResource extends Resource {
@@ -42,9 +39,17 @@ public class WorkResource extends Resource {
     return ResourceType.WORK_RESOURCE;
   }
   
-  @Type (type="MonetaryAmount")  
+  @Embedded
+  @AttributeOverrides({
+    @AttributeOverride(name="amount", column = @Column(name="hourlyCost_amount") ),
+    @AttributeOverride(name="currency", column = @Column(name="hourlyCost_currency"))
+  })
   private MonetaryAmount hourlyCost;
   
-  @Type (type="MonetaryAmount")  
+  @Embedded
+  @AttributeOverrides({
+    @AttributeOverride(name="amount", column = @Column(name="costPerUse_amount") ),
+    @AttributeOverride(name="currency", column = @Column(name="costPerUse_currency"))
+  })
   private MonetaryAmount costPerUse;
 }
