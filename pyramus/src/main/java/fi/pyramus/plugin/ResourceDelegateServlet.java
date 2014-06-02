@@ -44,7 +44,7 @@ public class ResourceDelegateServlet extends HttpServlet {
       URLConnection connection = resource.openConnection();
       connection.setDoInput(true);
       connection.setDoOutput(true);
-      String contentType = connection.getContentType();
+//      String contentType = connection.getContentType();
       InputStream resourceStream = connection.getInputStream();
       int bytesRead = 0;
       byte[] buff = new byte[1024];
@@ -53,7 +53,7 @@ public class ResourceDelegateServlet extends HttpServlet {
       }
       resourceStream.close();
       
-      response.setContentType(contentType);
+//      response.setContentType(contentType);
       outputStream.flush();
       outputStream.close();
     } else {
