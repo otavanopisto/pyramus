@@ -95,29 +95,22 @@ public class PluginsViewController extends PyramusFormViewController {
 
       Long id = requestContext.getLong(colPrefix + ".id");
       String url = requestContext.getString(colPrefix + ".url");
+      String repositoryId = requestContext.getString(colPrefix + ".repositoryId");
       Boolean remove = "1".equals(requestContext.getString(colPrefix + ".remove"));
 
       if (id == null) {
-        pluginRepositoryDAO.create(url);
+        pluginRepositoryDAO.create(url, repositoryId);
       } else {
         PluginRepository repository = pluginRepositoryDAO.findById(id);
         if (remove == true) {
           pluginRepositoryDAO.delete(repository);
         } else {
-          pluginRepositoryDAO.updateUrl(repository, url);
+          pluginRepositoryDAO.update(repository, url, repositoryId);
         }
       }
     }
 
     processForm(requestContext);
-    
-//    List<PluginRepository> pluginRepositories = pluginRepositoryDAO.listAll();
-//    List<Plugin> plugins = pluginDAO.listAll();
-//
-//    requestContext.getRequest().setAttribute("repositories", pluginRepositories);
-//    requestContext.getRequest().setAttribute("plugins", plugins);
-//
-//    requestContext.setIncludeJSP("/templates/system/plugins.jsp");
   }
 
   public UserRole[] getAllowedRoles() {

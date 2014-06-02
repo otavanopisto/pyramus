@@ -30,6 +30,14 @@ public class PluginRepository {
     this.url = url;
   }
 
+  public String getRepositoryId() {
+    return repositoryId;
+  }
+
+  public void setRepositoryId(String repositoryId) {
+    this.repositoryId = repositoryId;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE, generator = "PluginRepository")
   @TableGenerator(name = "PluginRepository", allocationSize = 1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -39,4 +47,9 @@ public class PluginRepository {
   @NotEmpty
   @Column(nullable = false, unique = true)
   private String url;
+
+  @NotNull
+  @NotEmpty
+  @Column(nullable = false, unique = true)
+  private String repositoryId;
 }
