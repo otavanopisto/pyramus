@@ -23,9 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import fi.pyramus.domainmodel.reports.Report;
 import fi.pyramus.domainmodel.reports.ReportCategory;
 import fi.pyramus.rest.controller.ReportController;
-import fi.pyramus.rest.tranquil.reports.ReportCategoryEntity;
-import fi.pyramus.rest.tranquil.reports.ReportEntity;
-import fi.tranquil.TranquilityBuilderFactory;
 
 @Path("/reports")
 @Produces("application/json")
@@ -33,8 +30,7 @@ import fi.tranquil.TranquilityBuilderFactory;
 @Stateful
 @RequestScoped
 public class ReportRESTService extends AbstractRESTService{
-  @Inject
-  private TranquilityBuilderFactory tranquilityBuilderFactory;
+
   @Inject
   private ReportController reportController;
 
@@ -204,8 +200,4 @@ public class ReportRESTService extends AbstractRESTService{
     }
   }
   
-  @Override
-  protected TranquilityBuilderFactory getTranquilityBuilderFactory() {
-        return tranquilityBuilderFactory;
-  }
 }

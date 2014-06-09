@@ -50,22 +50,6 @@ import fi.pyramus.rest.controller.StudentGroupController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.controller.StudentVariableController;
 import fi.pyramus.rest.controller.TagController;
-import fi.pyramus.rest.tranquil.base.LanguageEntity;
-import fi.pyramus.rest.tranquil.base.MunicipalityEntity;
-import fi.pyramus.rest.tranquil.base.NationalityEntity;
-import fi.pyramus.rest.tranquil.base.StudyProgrammeCategoryEntity;
-import fi.pyramus.rest.tranquil.base.StudyProgrammeEntity;
-import fi.pyramus.rest.tranquil.base.TagEntity;
-import fi.pyramus.rest.tranquil.students.AbstractStudentEntity;
-import fi.pyramus.rest.tranquil.students.StudentActivityTypeEntity;
-import fi.pyramus.rest.tranquil.students.StudentContactLogEntryEntity;
-import fi.pyramus.rest.tranquil.students.StudentEducationalLevelEntity;
-import fi.pyramus.rest.tranquil.students.StudentEntity;
-import fi.pyramus.rest.tranquil.students.StudentExaminationTypeEntity;
-import fi.pyramus.rest.tranquil.students.StudentGroupEntity;
-import fi.pyramus.rest.tranquil.students.StudentStudyEndReasonEntity;
-import fi.pyramus.rest.tranquil.students.StudentVariableEntity;
-import fi.tranquil.TranquilityBuilderFactory;
 
 @Path("/students")
 @Produces("application/json")
@@ -73,8 +57,7 @@ import fi.tranquil.TranquilityBuilderFactory;
 @Stateful
 @RequestScoped
 public class StudentRESTService extends AbstractRESTService {
-  @Inject
-  private TranquilityBuilderFactory tranquilityBuilderFactory;
+  
   @Inject
   private AbstractStudentController abstractStudentController;
   @Inject
@@ -1233,9 +1216,5 @@ public class StudentRESTService extends AbstractRESTService {
     }
   }
   
-  @Override
-  protected TranquilityBuilderFactory getTranquilityBuilderFactory() {
-    return tranquilityBuilderFactory;
-  }
 
 }

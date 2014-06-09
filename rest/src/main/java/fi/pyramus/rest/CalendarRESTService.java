@@ -19,15 +19,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang3.StringUtils;
-
 import fi.pyramus.domainmodel.base.AcademicTerm;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.persistence.search.SearchTimeFilterMode;
 import fi.pyramus.rest.controller.CalendarController;
-import fi.pyramus.rest.tranquil.base.AcademicTermEntity;
-import fi.tranquil.TranquilityBuilderFactory;
 
 @Path("/calendar")
 @Produces("application/json")
@@ -35,9 +31,8 @@ import fi.tranquil.TranquilityBuilderFactory;
 @Stateful
 @RequestScoped
 public class CalendarRESTService extends AbstractRESTService {
-  @Inject
-  private TranquilityBuilderFactory tranquilityBuilderFactory;
-  @Inject
+  
+@Inject
   private CalendarController calendarController;
   
   @Path("/academicTerms")
@@ -133,11 +128,6 @@ public class CalendarRESTService extends AbstractRESTService {
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }
-  }
-  
-  @Override
-  protected TranquilityBuilderFactory getTranquilityBuilderFactory() {
-    return tranquilityBuilderFactory;
   }
 
 }

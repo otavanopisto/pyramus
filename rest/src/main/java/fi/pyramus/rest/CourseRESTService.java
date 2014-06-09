@@ -35,14 +35,6 @@ import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.TagController;
-import fi.pyramus.rest.tranquil.base.TagEntity;
-import fi.pyramus.rest.tranquil.courses.CourseComponentEntity;
-import fi.pyramus.rest.tranquil.courses.CourseDescriptionCategoryEntity;
-import fi.pyramus.rest.tranquil.courses.CourseEnrolmentTypeEntity;
-import fi.pyramus.rest.tranquil.courses.CourseEntity;
-import fi.pyramus.rest.tranquil.courses.CourseParticipationTypeEntity;
-import fi.pyramus.rest.tranquil.courses.CourseStateEntity;
-import fi.tranquil.TranquilityBuilderFactory;
 
 @Path("/courses")
 @Produces("application/json")
@@ -50,8 +42,7 @@ import fi.tranquil.TranquilityBuilderFactory;
 @Stateful
 @RequestScoped
 public class CourseRESTService extends AbstractRESTService {
-  @Inject
-  private TranquilityBuilderFactory tranquilityBuilderFactory;
+  
   @Inject
   private CourseController courseController;
   @Inject
@@ -617,11 +608,6 @@ public class CourseRESTService extends AbstractRESTService {
     } else {
       return Response.status(500).build();
     }
-  }
-  
-  @Override
-  protected TranquilityBuilderFactory getTranquilityBuilderFactory() {
-    return tranquilityBuilderFactory;
   }
 
 }

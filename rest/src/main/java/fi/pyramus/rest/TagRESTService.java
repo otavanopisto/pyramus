@@ -26,8 +26,6 @@ import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.rest.controller.TagController;
-import fi.pyramus.rest.tranquil.base.TagEntity;
-import fi.tranquil.TranquilityBuilderFactory;
 
 @Path("/tags")
 @Produces("application/json")
@@ -35,8 +33,7 @@ import fi.tranquil.TranquilityBuilderFactory;
 @Stateful
 @RequestScoped
 public class TagRESTService extends AbstractRESTService {
-  @Inject
-  private TranquilityBuilderFactory tranquilityBuilderFactory;
+  
   @Inject
   private TagController tagController;
   
@@ -159,11 +156,5 @@ public class TagRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
   }
-
-  @Override
-  protected TranquilityBuilderFactory getTranquilityBuilderFactory() {
-    return tranquilityBuilderFactory;
-  }
-  
 
 }

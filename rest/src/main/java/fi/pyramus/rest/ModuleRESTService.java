@@ -28,9 +28,6 @@ import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.TagController;
-import fi.pyramus.rest.tranquil.base.TagEntity;
-import fi.pyramus.rest.tranquil.modules.ModuleEntity;
-import fi.tranquil.TranquilityBuilderFactory;
 
 @Path("/modules")
 @Produces("application/json")
@@ -38,8 +35,7 @@ import fi.tranquil.TranquilityBuilderFactory;
 @Stateful
 @RequestScoped
 public class ModuleRESTService extends AbstractRESTService{
-  @Inject
-  private TranquilityBuilderFactory tranquilityBuilderFactory;
+
   @Inject
   private ModuleController moduleController;
   @Inject
@@ -235,8 +231,4 @@ public class ModuleRESTService extends AbstractRESTService{
     }
   }
   
-  @Override
-  protected TranquilityBuilderFactory getTranquilityBuilderFactory() {
-    return tranquilityBuilderFactory;
-  }
 }

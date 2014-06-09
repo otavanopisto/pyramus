@@ -26,20 +26,13 @@ import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.rest.controller.CommonController;
-import fi.pyramus.rest.tranquil.base.EducationTypeEntity;
-import fi.pyramus.rest.tranquil.base.EducationalTimeUnitEntity;
-import fi.pyramus.rest.tranquil.base.SubjectEntity;
-import fi.pyramus.rest.tranquil.grading.GradingScaleEntity;
-import fi.tranquil.TranquilityBuilderFactory;
-
 @Path("/common")
 @Produces("application/json")
 @Consumes("application/json")
 @Stateful
 @RequestScoped
 public class CommonRESTService extends AbstractRESTService {
-  @Inject
-  private TranquilityBuilderFactory tranquilityBuilderFactory;
+  
   @Inject
   private CommonController commonController;
   
@@ -392,11 +385,6 @@ public class CommonRESTService extends AbstractRESTService {
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }
-  }
-  
-  @Override
-  protected TranquilityBuilderFactory getTranquilityBuilderFactory() {
-    return tranquilityBuilderFactory;
   }
 
 }

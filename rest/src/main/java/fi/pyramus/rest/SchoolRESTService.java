@@ -25,10 +25,6 @@ import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariable;
 import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.rest.controller.SchoolController;
-import fi.pyramus.rest.tranquil.base.SchoolEntity;
-import fi.pyramus.rest.tranquil.base.SchoolFieldEntity;
-import fi.pyramus.rest.tranquil.base.SchoolVariableEntity;
-import fi.tranquil.TranquilityBuilderFactory;
 
 @Path("/schools")
 @Produces("application/json")
@@ -36,8 +32,7 @@ import fi.tranquil.TranquilityBuilderFactory;
 @Stateful
 @RequestScoped
 public class SchoolRESTService extends AbstractRESTService {
-  @Inject
-  private TranquilityBuilderFactory tranquilityBuilderFactory;
+  
   @Inject
   private SchoolController schoolController;
 
@@ -312,11 +307,6 @@ public class SchoolRESTService extends AbstractRESTService {
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }
-  }
-
-  @Override
-  protected TranquilityBuilderFactory getTranquilityBuilderFactory() {
-    return tranquilityBuilderFactory;
   }
 
 }

@@ -31,10 +31,6 @@ import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
-import fi.pyramus.rest.tranquil.base.TagEntity;
-import fi.pyramus.rest.tranquil.projects.ProjectEntity;
-import fi.pyramus.rest.tranquil.projects.ProjectModuleEntity;
-import fi.tranquil.TranquilityBuilderFactory;
 
 @Path("/projects")
 @Produces("application/json")
@@ -42,8 +38,7 @@ import fi.tranquil.TranquilityBuilderFactory;
 @Stateful
 @RequestScoped
 public class ProjectRESTService extends AbstractRESTService {
-  @Inject
-  private TranquilityBuilderFactory tranquilityBuilderFactory;
+
   @Inject
   private ProjectController projectController;
   @Inject
@@ -250,11 +245,6 @@ public class ProjectRESTService extends AbstractRESTService {
     } else {
         return Response.status(Status.NOT_FOUND).build();
     }
-  }
-
-  @Override
-  protected TranquilityBuilderFactory getTranquilityBuilderFactory() {
-    return tranquilityBuilderFactory;
   }
 
 }
