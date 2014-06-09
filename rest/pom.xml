@@ -61,50 +61,341 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.jboss.arquillian.junit</groupId>
-      <artifactId>arquillian-junit-container</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.arquillian.protocol</groupId>
-      <artifactId>arquillian-protocol-servlet</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpcore</artifactId>
-      <version>4.1.1</version>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.1.1</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <profiles>
     <profile>
-      <id>arq-jbossas-managed</id>
-      <dependencies>
+      <id>it</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      
+      <properties>
+        <h2.version>1.4.177</h2.version>
+        <it.port.http>8080</it.port.http>
+        <it.port.https>8443</it.port.https>
+        <it.host>dev.pyramus.fi</it.host>
+        <it.ctx>pyrit</it.ctx>
+        <it.jdbc.driver>org.h2.Driver</it.jdbc.driver>
+        <it.jdbc.url>jdbc:h2:file:${project.build.directory}/h2;AUTO_SERVER=TRUE</it.jdbc.url>
+        <it.jdbc.jndi>java:/jdbc/pyramus</it.jdbc.jndi>
+        <it.jdbc.username>sa</it.jdbc.username>
+        <it.jdbc.password>sa</it.jdbc.password>
+        <it.keystore.alias>pyrit</it.keystore.alias>
+        <it.keystore.pass>storepass</it.keystore.pass>
+        <it.keystore.file>${project.build.directory}/pyrit.keystore</it.keystore.file>
+      </properties>
+      
+      <dependencies>          
         <dependency>
-          <groupId>org.jboss.as</groupId>
-          <artifactId>jboss-as-arquillian-container-managed</artifactId>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <version>${h2.version}</version>
           <scope>test</scope>
-        </dependency>
+        </dependency> 
+        
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>pyramus</artifactId>
+          <version>${project.version}</version>
+          <type>war</type>
+        </dependency>        
       </dependencies>
+      
+      <build>
+        <plugins>
+        
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.14.1</version>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.16</version>
+            <configuration>
+              <includes>
+                <include>fi/foyt/fni/test/ui/chrome/**/*IT.java</include>
+              </includes>
+              <systemPropertyVariables>
+                <it.project.version>${project.version}</it.project.version>
+                <it.host>${it.host}</it.host>
+                <it.port.http>${it.port.http}</it.port.http>
+                <it.port.https>${it.port.https}</it.port.https>
+                <it.ctx>${it.ctx}</it.ctx>
+                <it.jdbc.driver>${it.jdbc.driver}</it.jdbc.driver>
+                <it.jdbc.url>${it.jdbc.url}</it.jdbc.url>
+                <it.jdbc.jndi>${it.jdbc.jndi}</it.jdbc.jndi>
+                <it.jdbc.username>${it.jdbc.username}</it.jdbc.username>
+                <it.jdbc.password>${it.jdbc.password}</it.jdbc.password>
+              </systemPropertyVariables>
+            </configuration>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>verify</id>
+                <goals>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>    
+          
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>sql-maven-plugin</artifactId>
+            <version>1.5</version>
+            <dependencies>
+              <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+              </dependency>
+            </dependencies>
+    
+            <configuration>
+              <driver>${it.jdbc.driver}</driver>
+              <url>${it.jdbc.url}</url>
+              <username>${it.jdbc.username}</username>
+              <password>${it.jdbc.password}</password>
+            </configuration>
+            <executions>
+              <execution>
+                <id>create-schema</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <configuration>
+                  <autocommit>true</autocommit>
+                  <srcFiles>
+                    <srcFile>src/test/resources/create.sql</srcFile>
+                    <srcFile>src/test/resources/data.sql</srcFile>
+                  </srcFiles>
+                </configuration>
+              </execution>
+              
+              <execution>
+                <id>drop-db-after-test</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <configuration>
+                  <autocommit>true</autocommit>
+                  <srcFiles>
+                    <srcFile>src/test/resources/drop.sql</srcFile>
+                  </srcFiles>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>keytool-maven-plugin</artifactId>
+            <version>1.4</version>
+            <executions>
+              <execution>
+                <phase>generate-resources</phase>
+                <id>keyclean</id>
+                <goals>
+                  <goal>clean</goal>
+                </goals>
+                <configuration>
+                  <keystore>${project.build.directory}/pyrit.keystore</keystore>
+                </configuration>
+              </execution>
+              <execution>
+                <phase>generate-resources</phase>
+                <id>genkey</id>
+                <goals>
+                  <goal>generateKeyPair</goal>
+                </goals>
+                <configuration>
+                  <keystore>${it.keystore.file}</keystore>
+                  <dname>cn=${it.host}, ou=None, L=Test, ST=Test, o=Test, c=TE</dname>
+                  <storepass>${it.keystore.pass}</storepass>
+                  <alias>${it.keystore.alias}</alias>
+                  <keyalg>RSA</keyalg>
+                  <keysize>2048</keysize>
+                </configuration>
+              </execution>
+              <execution>
+                <phase>generate-resources</phase>
+                <id>exportkey</id>
+                <goals>
+                  <goal>exportCertificate</goal>
+                </goals>
+                <configuration>
+                  <keystore>${it.keystore.file}</keystore>
+                  <alias>${it.keystore.alias}</alias>
+                  <file>${project.build.directory}/pyrit.crt</file>
+                  <storepass>${it.keystore.pass}</storepass>
+                </configuration>
+              </execution>
+              <execution>
+                <phase>generate-resources</phase>
+                <id>importkey</id>
+                <goals>
+                  <goal>importCertificate</goal>
+                </goals>
+                <configuration>
+                  <keystore>${it.keystore.file}</keystore>
+                  <alias>root</alias>
+                  <file>${project.build.directory}/pyrit.crt</file>
+                  <storepass>${it.keystore.pass}</storepass>
+                  <noprompt>true</noprompt>
+                  <trustcacerts>true</trustcacerts>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <version>1.4.8</version>
+            <configuration>
+              <container>
+                <containerId>jboss71x</containerId>
+                <log>${project.basedir}/target/cargo.log</log>
+                <output>${project.basedir}/target/jboss.log</output>
+                <zipUrlInstaller>
+                  <url>http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/jboss-as-7.1.1.Final.zip</url>
+                  <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
+                  <extractDir>${project.basedir}/.cargo/extracts</extractDir>
+                </zipUrlInstaller>
+                <dependencies>
+                  <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                  </dependency>
+                </dependencies>
+              </container>
+              <configuration>
+                <properties>
+                  <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
+                  <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
+                  <cargo.jvmargs>-Xms64m -Xmx1152m -XX:MaxPermSize=512m -XX:-UseSplitVerifier</cargo.jvmargs>
+                  <cargo.datasource.datasource.pyrit>
+                    cargo.datasource.driver=${it.jdbc.driver}|
+                    cargo.datasource.url=${it.jdbc.url}|
+                    cargo.datasource.jndi=${it.jdbc.jndi}|
+                    cargo.datasource.username=${it.jdbc.username}|
+                    cargo.datasource.password=${it.jdbc.password}|
+                    cargo.datasource.transactionsupport=LOCAL_TRANSACTION
+                  </cargo.datasource.datasource.pyrit>
+                </properties>
+              </configuration>
+
+              <deployables>
+                <dependency>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>pyramus</artifactId>
+                  <type>war</type>
+                  <properties>
+                    <context>${it.ctx}</context>
+                  </properties>
+                </dependency>                 
+              </deployables>
+
+            </configuration>
+            <executions>
+              <execution>
+                <id>start-cargo</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>stop-cargo</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.jboss.as.plugins</groupId>
+            <artifactId>jboss-as-maven-plugin</artifactId>
+            <version>7.5.Final</version>
+            <executions>
+              <execution>
+                <id>configure-jboss</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>execute-commands</goal>
+                </goals>
+                <configuration>
+                  <execute-commands>
+                    <batch>true</batch>
+                    <commands>
+                      <command>/system-property=PyramusWSAllowedIPs:add(value="127.0.0.1")</command>
+                      <command>/system-property=pyramus-url:add(value="${it.host}:${it.port.https}")</command>
+                      <command>/subsystem=web/virtual-server=default-host:write-attribute(name=enable-welcome-root,value=false)</command>
+                      <command>/subsystem=web/connector=http:write-attribute(name=redirect-port,value="${it.port.https}")</command>
+                      <command>/subsystem=web/connector=https:add(socket-binding=https,scheme=https,protocol="HTTP/1.1",enabled=true,secure=true)</command>
+                      <command>/subsystem=web/connector=https/ssl=configuration:add(name="ssl",certificate-key-file="${it.keystore.file}",password="${it.keystore.pass}", key-alias="${it.keystore.alias}", protocol="TLS", verify-client="false")</command>
+                      <command>/subsystem=security/security-domain=WebServices:add(cache-type=default)</command>
+                      <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=>"RealmUsersRoles","flag"=>"required","module-options"=>[("realm"=>"WebServices"),("password-stacking"=>"useFirstPass"),("rolesProperties"=>"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=>"\${jboss.server.config.dir}/application-users.properties")]}])</command>
+                    </commands>
+                  </execute-commands>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>reload-jboss</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>execute-commands</goal>
+                </goals>
+                <configuration>
+                  <execute-commands>
+                    <commands>
+                      <command>:reload</command>
+                    </commands>
+                  </execute-commands>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+                              
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>wait-maven-plugin</artifactId>
+            <version>1.0</version>
+            <executions>
+              <execution>
+                <id>wait</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>wait</goal>
+                </goals>
+                <configuration>
+                  <protocol>http</protocol>
+                  <host>${it.host}</host>
+                  <port>${it.port.http}</port>
+                  <file>/${it.ctx}</file>
+                  <maxcount>20</maxcount>
+                  <timeout>10000</timeout>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          
+        </plugins>
+      </build>
     </profile>
   </profiles>
   
