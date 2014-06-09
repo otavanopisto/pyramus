@@ -47,6 +47,7 @@
     <module>pyramus</module>
     <module>reports</module>
     <module>webservices-plugin</module>
+    <module>rest</module>
   </modules>
 
   <dependencyManagement>
