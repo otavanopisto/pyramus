@@ -19,8 +19,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang.StringUtils;
-
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.modules.Module;
@@ -38,213 +36,213 @@ import fi.pyramus.rest.controller.ProjectController;
 @Stateful
 @RequestScoped
 public class ProjectRESTService extends AbstractRESTService {
-
-  @Inject
-  private ProjectController projectController;
-  @Inject
-  private ModuleController moduleController;
-  @Inject
-  private CommonController commonController;
-
-  @Path("/projects")
-  @POST
-  public Response createProject(ProjectEntity projectEntity) {
-    EducationalTimeUnit timeUnit = null;
-    double optionalStudiesLength = 0;
-    String name = projectEntity.getName();
-    String description = projectEntity.getDescription();
-    Long optionalStudiesLengthId = projectEntity.getOptionalStudiesLength_id();
-    if(optionalStudiesLengthId != null) {
-      timeUnit = commonController.findEducationalTimeUnitById(optionalStudiesLengthId);
-      optionalStudiesLength = timeUnit.getBaseUnits();
-    }
-    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description) ) {
-      return Response.ok()
-          .entity(tranqualise(projectController.createProject(name, description, optionalStudiesLength, timeUnit, getUser())))
-          .build();
-    } else {
-      return Response.status(501).build();
-    }
-  }
-  
-  @Path("/projects/{ID:[0-9]*}/modules")
-  @POST
-  public Response createModule(@PathParam("ID") Long id, ProjectModuleEntity moduleEntity) {
-    try {
-      Project project = projectController.findProjectById(id);
-      Module module = moduleController.findModuleById(moduleEntity.getModule_id());
-      ProjectModuleOptionality optionality = moduleEntity.getOptionality();
-      if (project != null && module != null && optionality != null) {
-        return Response.ok()
-            .entity(tranqualise(projectController.createProjectModule(project, module, optionality)))
-            .build();
-      } else {
-        return Response.status(500).build();
-      }
-    } catch (NullPointerException e) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-  }
-  
-  @Path("/projects/{ID:[0-9]*}/tags")
-  @POST
-  public Response createTag(@PathParam("ID") Long id, TagEntity tagEntity) {
-    Project project = projectController.findProjectById(id);
-    String text = tagEntity.getText();
-    if (project != null && !StringUtils.isBlank(text)) {
-      return Response.ok()
-          .entity(tranqualise(projectController.createTag(project, text)))
-          .build();
-    } else {
-      return Response.status(501).build();
-    }
-  }
-  
-  @Path("/projects")
-  @GET
-  public Response findProjects(@QueryParam("name") String name,
-                              @QueryParam("desciprtion") String description,
-                              @QueryParam("tags") String tags,
-                              @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-    if (StringUtils.isBlank(name) && StringUtils.isBlank(description) && StringUtils.isBlank(tags)) {
-      List<Project> projects;
-      if (filterArchived) {
-        projects = projectController.findUnarchivedProjects();
-      } else {
-        projects = projectController.findProjects();
-      }
-      if (!projects.isEmpty()){
-        return Response.ok()
-            .entity(tranqualise(projects))
-            .build();
-      } else {
-        return Response.status(Status.NOT_FOUND).build();
-      }
-    } else {
-      SearchResult<Project> projects = projectController.searchProjects(100,0,name,description,tags,filterArchived);
-      if (!projects.getResults().isEmpty()) {
-        return Response.ok()
-          .entity(tranqualise(projects.getResults()))
-          .build();
-      } else {
-        return Response.status(Status.NOT_FOUND).build();
-      }
-    }
-  }
-
-  @Path("/projects/{ID:[0-9]*}")
-  @GET
-  public Response findProjectById(@PathParam("ID") Long id) {
-    Project project = projectController.findProjectById(id);
-    if (project != null) {
-      return Response.ok()
-          .entity(tranqualise(project))
-          .build();
-    } else {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-  }
-  
-  @Path("/projects/{ID:[0-9]*}/modules")
-  @GET
-  public Response findProjectModules(@PathParam("ID") Long id) {
-    Project project = projectController.findProjectById(id);
-    if (project != null) {
-      return Response.ok()
-          .entity(tranqualise(projectController.findProjectModules(project)))
-          .build();
-    } else {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-  }
-  
-  @Path ("/projects/{ID:[0-9]*}/tags")
-  @GET
-  public Response findTags(@PathParam("ID") Long id) {
-    Project project = projectController.findProjectById(id);
-    if (project != null) {
-      Set<Tag> tags = project.getTags();
-      return Response.ok()
-          .entity(tranqualise(tags))
-          .build();
-    } else {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-  }
-  
-  @Path("/projects/{ID:[0-9]*}")
-  @PUT
-  public Response updateProject(@PathParam("ID") Long id, ProjectEntity projectEntity) {
-    Project project = projectController.findProjectById(id);
-    String name = projectEntity.getName();
-    String description = projectEntity.getDescription();
-    double optionalStudiesLength = 0;
-    EducationalTimeUnit timeUnit = null;
-    if (project != null && !StringUtils.isBlank(name) && !StringUtils.isBlank(description)) {
-      return Response.ok()
-          .entity(tranqualise(projectController.updateProject(project, name, description, optionalStudiesLength, timeUnit, getUser())))
-          .build();
-    } else if (!projectEntity.getArchived()) {
-        return Response.ok()
-            .entity(tranqualise(projectController.unarchiveProject(project, getUser())))
-            .build();
-    } else {
-      return Response.status(501).build();
-    }
-  }
-  
-  @Path("/projects/{PID:[0-9]*}/modules/{ID:[0-9]*}")
-  @PUT
-  public Response updateProjectModule(@PathParam("ID") Long id, ProjectModuleEntity projectModuleEntity) {
-    ProjectModule projectModule = projectController.findProjectModuleById(id);
-    ProjectModuleOptionality optionality = projectModuleEntity.getOptionality();
-    if (projectModule != null) {
-      return Response.ok()
-          .entity(tranqualise(projectController.updateProjectModule(projectModule, optionality)))
-          .build();
-    } else {
-      return Response.status(500).build();
-    }
-  }
-
-  @Path("/projects/{ID:[0-9]*}")
-  @DELETE
-  public Response archiveProject(@PathParam("ID") Long id) {
-    Project project = projectController.findProjectById(id);
-    if (project != null) {
-      return Response.ok()
-          .entity(tranqualise(projectController.archiveProject(project, getUser())))
-          .build();
-    } else {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-  }
-  
-  @Path("/projects/{PID:[0-9]*}/modules/{ID:[0-9]*}")
-  @DELETE
-  public Response removeProjectModule(@PathParam("ID") Long id) {
-    ProjectModule projectModule = projectController.findProjectModuleById(id);
-    if (projectModule != null) {
-      projectController.deleteProjectModule(projectModule);
-      return Response.status(200).build();
-    } else {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-  }
-  
-  @Path("/projects/{PID:[0-9]*}/tags/{ID:[0-9]*}")
-  @DELETE
-  public Response removeTag(@PathParam("PID") Long projectId, @PathParam("ID") Long tagId) {
-    Project project = projectController.findProjectById(projectId);
-    Tag tag = projectController.findTagById(tagId);
-    if (project != null && tag != null) {
-      project.removeTag(tag);
-      return Response.ok()
-          .entity(tranqualise(project))
-          .build();
-    } else {
-        return Response.status(Status.NOT_FOUND).build();
-    }
-  }
+//
+//  @Inject
+//  private ProjectController projectController;
+//  @Inject
+//  private ModuleController moduleController;
+//  @Inject
+//  private CommonController commonController;
+//
+//  @Path("/projects")
+//  @POST
+//  public Response createProject(ProjectEntity projectEntity) {
+//    EducationalTimeUnit timeUnit = null;
+//    double optionalStudiesLength = 0;
+//    String name = projectEntity.getName();
+//    String description = projectEntity.getDescription();
+//    Long optionalStudiesLengthId = projectEntity.getOptionalStudiesLength_id();
+//    if(optionalStudiesLengthId != null) {
+//      timeUnit = commonController.findEducationalTimeUnitById(optionalStudiesLengthId);
+//      optionalStudiesLength = timeUnit.getBaseUnits();
+//    }
+//    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description) ) {
+//      return Response.ok()
+//          .entity(tranqualise(projectController.createProject(name, description, optionalStudiesLength, timeUnit, getUser())))
+//          .build();
+//    } else {
+//      return Response.status(501).build();
+//    }
+//  }
+//  
+//  @Path("/projects/{ID:[0-9]*}/modules")
+//  @POST
+//  public Response createModule(@PathParam("ID") Long id, ProjectModuleEntity moduleEntity) {
+//    try {
+//      Project project = projectController.findProjectById(id);
+//      Module module = moduleController.findModuleById(moduleEntity.getModule_id());
+//      ProjectModuleOptionality optionality = moduleEntity.getOptionality();
+//      if (project != null && module != null && optionality != null) {
+//        return Response.ok()
+//            .entity(tranqualise(projectController.createProjectModule(project, module, optionality)))
+//            .build();
+//      } else {
+//        return Response.status(500).build();
+//      }
+//    } catch (NullPointerException e) {
+//      return Response.status(Status.NOT_FOUND).build();
+//    }
+//  }
+//  
+//  @Path("/projects/{ID:[0-9]*}/tags")
+//  @POST
+//  public Response createTag(@PathParam("ID") Long id, TagEntity tagEntity) {
+//    Project project = projectController.findProjectById(id);
+//    String text = tagEntity.getText();
+//    if (project != null && !StringUtils.isBlank(text)) {
+//      return Response.ok()
+//          .entity(tranqualise(projectController.createTag(project, text)))
+//          .build();
+//    } else {
+//      return Response.status(501).build();
+//    }
+//  }
+//  
+//  @Path("/projects")
+//  @GET
+//  public Response findProjects(@QueryParam("name") String name,
+//                              @QueryParam("desciprtion") String description,
+//                              @QueryParam("tags") String tags,
+//                              @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+//    if (StringUtils.isBlank(name) && StringUtils.isBlank(description) && StringUtils.isBlank(tags)) {
+//      List<Project> projects;
+//      if (filterArchived) {
+//        projects = projectController.findUnarchivedProjects();
+//      } else {
+//        projects = projectController.findProjects();
+//      }
+//      if (!projects.isEmpty()){
+//        return Response.ok()
+//            .entity(tranqualise(projects))
+//            .build();
+//      } else {
+//        return Response.status(Status.NOT_FOUND).build();
+//      }
+//    } else {
+//      SearchResult<Project> projects = projectController.searchProjects(100,0,name,description,tags,filterArchived);
+//      if (!projects.getResults().isEmpty()) {
+//        return Response.ok()
+//          .entity(tranqualise(projects.getResults()))
+//          .build();
+//      } else {
+//        return Response.status(Status.NOT_FOUND).build();
+//      }
+//    }
+//  }
+//
+//  @Path("/projects/{ID:[0-9]*}")
+//  @GET
+//  public Response findProjectById(@PathParam("ID") Long id) {
+//    Project project = projectController.findProjectById(id);
+//    if (project != null) {
+//      return Response.ok()
+//          .entity(tranqualise(project))
+//          .build();
+//    } else {
+//      return Response.status(Status.NOT_FOUND).build();
+//    }
+//  }
+//  
+//  @Path("/projects/{ID:[0-9]*}/modules")
+//  @GET
+//  public Response findProjectModules(@PathParam("ID") Long id) {
+//    Project project = projectController.findProjectById(id);
+//    if (project != null) {
+//      return Response.ok()
+//          .entity(tranqualise(projectController.findProjectModules(project)))
+//          .build();
+//    } else {
+//      return Response.status(Status.NOT_FOUND).build();
+//    }
+//  }
+//  
+//  @Path ("/projects/{ID:[0-9]*}/tags")
+//  @GET
+//  public Response findTags(@PathParam("ID") Long id) {
+//    Project project = projectController.findProjectById(id);
+//    if (project != null) {
+//      Set<Tag> tags = project.getTags();
+//      return Response.ok()
+//          .entity(tranqualise(tags))
+//          .build();
+//    } else {
+//      return Response.status(Status.NOT_FOUND).build();
+//    }
+//  }
+//  
+//  @Path("/projects/{ID:[0-9]*}")
+//  @PUT
+//  public Response updateProject(@PathParam("ID") Long id, ProjectEntity projectEntity) {
+//    Project project = projectController.findProjectById(id);
+//    String name = projectEntity.getName();
+//    String description = projectEntity.getDescription();
+//    double optionalStudiesLength = 0;
+//    EducationalTimeUnit timeUnit = null;
+//    if (project != null && !StringUtils.isBlank(name) && !StringUtils.isBlank(description)) {
+//      return Response.ok()
+//          .entity(tranqualise(projectController.updateProject(project, name, description, optionalStudiesLength, timeUnit, getUser())))
+//          .build();
+//    } else if (!projectEntity.getArchived()) {
+//        return Response.ok()
+//            .entity(tranqualise(projectController.unarchiveProject(project, getUser())))
+//            .build();
+//    } else {
+//      return Response.status(501).build();
+//    }
+//  }
+//  
+//  @Path("/projects/{PID:[0-9]*}/modules/{ID:[0-9]*}")
+//  @PUT
+//  public Response updateProjectModule(@PathParam("ID") Long id, ProjectModuleEntity projectModuleEntity) {
+//    ProjectModule projectModule = projectController.findProjectModuleById(id);
+//    ProjectModuleOptionality optionality = projectModuleEntity.getOptionality();
+//    if (projectModule != null) {
+//      return Response.ok()
+//          .entity(tranqualise(projectController.updateProjectModule(projectModule, optionality)))
+//          .build();
+//    } else {
+//      return Response.status(500).build();
+//    }
+//  }
+//
+//  @Path("/projects/{ID:[0-9]*}")
+//  @DELETE
+//  public Response archiveProject(@PathParam("ID") Long id) {
+//    Project project = projectController.findProjectById(id);
+//    if (project != null) {
+//      return Response.ok()
+//          .entity(tranqualise(projectController.archiveProject(project, getUser())))
+//          .build();
+//    } else {
+//      return Response.status(Status.NOT_FOUND).build();
+//    }
+//  }
+//  
+//  @Path("/projects/{PID:[0-9]*}/modules/{ID:[0-9]*}")
+//  @DELETE
+//  public Response removeProjectModule(@PathParam("ID") Long id) {
+//    ProjectModule projectModule = projectController.findProjectModuleById(id);
+//    if (projectModule != null) {
+//      projectController.deleteProjectModule(projectModule);
+//      return Response.status(200).build();
+//    } else {
+//      return Response.status(Status.NOT_FOUND).build();
+//    }
+//  }
+//  
+//  @Path("/projects/{PID:[0-9]*}/tags/{ID:[0-9]*}")
+//  @DELETE
+//  public Response removeTag(@PathParam("PID") Long projectId, @PathParam("ID") Long tagId) {
+//    Project project = projectController.findProjectById(projectId);
+//    Tag tag = projectController.findTagById(tagId);
+//    if (project != null && tag != null) {
+//      project.removeTag(tag);
+//      return Response.ok()
+//          .entity(tranqualise(project))
+//          .build();
+//    } else {
+//        return Response.status(Status.NOT_FOUND).build();
+//    }
+//  }
 
 }
