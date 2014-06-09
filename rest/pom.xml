@@ -46,13 +46,6 @@
       <type>pom</type>
     </dependency>
 
-    <!-- Tranquil Model -->
-
-    <dependency>
-      <groupId>fi.tranquil-model</groupId>
-      <artifactId>tranquil-model</artifactId>
-    </dependency>
-
     <!-- Pyramus -->
 
     <dependency>

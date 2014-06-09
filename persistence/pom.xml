@@ -10,10 +10,6 @@
     <relativePath>../</relativePath>
   </parent>
   
-  <properties>
-    <tranquil-model-gen.version>1.0.3-SNAPSHOT</tranquil-model-gen.version>
-  </properties>
-  
   <dependencies>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -61,13 +57,6 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
       <scope>provided</scope>
-    </dependency>
-    
-    <!-- Tranquil Model -->
-      
-    <dependency>
-      <groupId>fi.tranquil-model</groupId>
-      <artifactId>tranquil-model</artifactId>
     </dependency>
   </dependencies>
   
@@ -186,49 +175,5 @@
       </plugin>
     </plugins>
   </build>
-  
-  <profiles>
-    <profile>
-      <id>generate-tranquil-model</id>
-      <build>
-        <plugins>
-           <plugin>
-            <groupId>org.bsc.maven</groupId>
-            <artifactId>maven-processor-plugin</artifactId>
-            <version>2.2.1</version>
-            <dependencies>
-              <dependency>
-                <groupId>fi.tranquil-model</groupId>
-                <artifactId>tranquil-model-gen</artifactId>
-                <version>${tranquil-model-gen.version}</version>
-              </dependency>
-            </dependencies>
-            <executions>
-              <execution>
-                <id>process-tranquilmodel</id>
-                <goals>
-                  <goal>process</goal>
-                </goals>
-                <phase>generate-sources</phase>
-                <configuration>
-                  <includes>
-                    <include>**fi/pyramus/domainmodel/**/*.java</include>
-                  </includes>
-    
-                  <outputDirectory>${basedir}/generated</outputDirectory>
-                  <processors>
-                    <processor>fi.tranquil.TranquilModelAnnotationProcessor</processor>
-                  </processors>
-                  <optionMap>
-                    <lookupPackage>fi.pyramus.rest.tranquil</lookupPackage>
-                  </optionMap>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>  
 
 </project>
