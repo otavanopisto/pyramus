@@ -1,13 +1,18 @@
 package fi.pyramus.taglib;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.DynamicAttributes;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang.StringUtils;
 
+import fi.pyramus.plugin.DynamicAttribute;
 import fi.pyramus.plugin.PageHookContext;
 import fi.pyramus.plugin.PageHookController;
 import fi.pyramus.plugin.PageHookVault;
@@ -31,7 +36,7 @@ import fi.pyramus.plugin.PageHookVault;
  *   plugin's <code>PluginDescriptor</code>.</li>
  * </ul>
  */
-public class ExtensionHookTag extends TagSupport {
+public class ExtensionHookTag extends TagSupport implements DynamicAttributes {
 
   private static final long serialVersionUID = 5603128082864676937L;
   /** The content substitution is done here.
@@ -41,14 +46,20 @@ public class ExtensionHookTag extends TagSupport {
     List<PageHookController> hookControllers = PageHookVault.getInstance().getPageHooks(getName());
     if (hookControllers != null) {
       for (PageHookController hookController : hookControllers) {
-        PageHookContext pageHookContext = new PageHookContext();
+        PageHookContext pageHookContext = new PageHookContext(pageContext, dynamicAttributes);
 
         hookController.execute(pageHookContext);
-
+        
         if (!StringUtils.isBlank(pageHookContext.getIncludeFtl())) {
           try {
             String includePath = pageHookContext.getIncludeFtl(); 
-            pageContext.include(includePath);
+            
+            pageContext.getRequest().setAttribute("extensionHookVariables", dynamicAttributes);
+            try {
+              pageContext.include(includePath);
+            } finally {
+              pageContext.getRequest().removeAttribute("extensionHookVariables");
+            }
           } catch (ServletException e) {
             throw new javax.servlet.jsp.JspTagException(e);
           } catch (IOException e) {
@@ -59,6 +70,11 @@ public class ExtensionHookTag extends TagSupport {
     }
 
     return SKIP_BODY;
+  }
+
+  @Override
+  public void setDynamicAttribute(String uri, String localName, Object value) throws JspException {
+    dynamicAttributes.put(localName, new DynamicAttribute(localName, value, uri));
   }
 
   /** Returns the name of the tag.
@@ -77,6 +93,6 @@ public class ExtensionHookTag extends TagSupport {
     this.name = name;
   }
 
+  private Map<String, DynamicAttribute> dynamicAttributes = new HashMap<String, DynamicAttribute>();
   private String name;
-
 }
