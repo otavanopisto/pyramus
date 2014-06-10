@@ -1,47 +1,50 @@
 package fi.pyramus.plugin;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-/** A loader class for plugin JARs fetched with Maven. */
-public class JarLoader {
+/**
+ * Class used for loading plugin libarries
+ */
+public class LibraryLoader {
 
   /** Creates a new class loader as a child of the given class loader.
    * 
    * @param parentClassLoader The parent class loader.
    */
-  public JarLoader(ClassLoader parentClassLoader) {
-    this.parentClassLoader = parentClassLoader;
+  public LibraryLoader(ClassLoader parentClassLoader) {
+    this.classLoader = new PluginClassLoader(parentClassLoader);
   }
 
-  /** Creates a new class loader as a child of the default class loader.
-   * 
+  /** 
+   * Creates a new class loader as a child of the default class loader.
    */
-  public JarLoader() {
-    this(JarLoader.class.getClassLoader());
+  public LibraryLoader() {
+    this(LibraryLoader.class.getClassLoader());
   }
 
-  /** Returns the class loader used for loading plugins.
+  /** 
+   * Returns the class loader used for loading plugins.
    * 
    * @return The class loader used for loading plugins.
    */
   public URLClassLoader getPluginsClassLoader() {
-    if (classLoader == null) {
-      classLoader = new URLClassLoader(new URL[] {}, parentClassLoader);
-    }
-
     return classLoader;
   }
+  
+  public void loadClassPath(URL classPath) {
+  	classLoader.addPath(classPath);
+  }
 
-  /** Loads the given JAR file.
+  /** 
+   * Loads the given JAR file.
    * 
    * @param jarFile The JAR file to load.
+   * @throws PluginManagerException 
    */
-  public void loadJar(File jarFile) {
+  public void loadJar(File jarFile) throws PluginManagerException {
     try {
       loadJar(jarFile.toURI().toURL());
     } catch (MalformedURLException e) {
@@ -51,27 +54,13 @@ public class JarLoader {
   /** Loads the JAR file located in the given URL.
    * 
    * @param jarUrl The URL of the JAR file.
+   * @throws PluginManagerException 
    */
-  public void loadJar(URL jarUrl) {
+  public void loadJar(URL jarUrl) throws PluginManagerException {
     if (isJarLoaded(jarUrl))
       return;
 
-    try {
-      // TODO: Miksi reflektio?
-      Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
-      method.setAccessible(true);
-      method.invoke(getPluginsClassLoader(), new Object[] { jarUrl });
-    } catch (SecurityException e) {
-      throw new PluginManagerException(e);
-    } catch (NoSuchMethodException e) {
-      throw new PluginManagerException(e);
-    } catch (IllegalArgumentException e) {
-      throw new PluginManagerException(e);
-    } catch (IllegalAccessException e) {
-      throw new PluginManagerException(e);
-    } catch (InvocationTargetException e) {
-      throw new PluginManagerException(e);
-    }
+    classLoader.addJar(jarUrl);
   }
   
   /** Returns <code>true</code> if the specified JAR file is already loaded,
@@ -104,6 +93,5 @@ public class JarLoader {
     return false;
   }
 
-  private ClassLoader parentClassLoader = null;
-  private URLClassLoader classLoader = null;
+  private PluginClassLoader classLoader = null;
 }

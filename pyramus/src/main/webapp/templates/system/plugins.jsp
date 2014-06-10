@@ -130,8 +130,16 @@
             dataType: 'hidden',
             paramName: "remove"
           }, {
-            header : '<fmt:message key="system.plugins.repositoriesTableUrlHeader"/>',
+            header : '<fmt:message key="system.plugins.repositoriesTableRepositoryIdHeader"/>',
             left : 8,
+            width: 150,
+            dataType: 'text',
+            editable: true,
+            paramName: 'repositoryId',
+            required: true
+          }, {
+            header : '<fmt:message key="system.plugins.repositoriesTableUrlHeader"/>',
+            left : 8 + 150 + 8,
             right: 8 + 22 + 8,
             dataType: 'text',
             editable: true,
@@ -176,6 +184,7 @@
           rows.push([
             ${repository.id},
             0,
+            '${fn:escapeXml(repository.repositoryId)}',
             '${fn:escapeXml(repository.url)}',
             null,
             null
@@ -223,7 +232,7 @@
           <div class="genericTableAddRowContainer">
             <span class="genericTableAddRowLinkContainer" onclick="addRepository();"><fmt:message key="system.plugins.addRepositoryLink"/></span>
           </div>
-          <div id="repositoriesTableContainer"><fmt:message key="system.plugins.addRepositoryLink"/></div>
+          <div id="repositoriesTableContainer"></div>
         </div>
         
         <div class="genericFormSubmitSectionOffTab">
