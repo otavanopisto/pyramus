@@ -6,6 +6,8 @@ import javax.persistence.PersistenceException;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.pyramus.dao.accesslog.AccessLogEntryDAO;
+import fi.pyramus.dao.accesslog.AccessLogEntryPathDAO;
 import fi.pyramus.dao.base.AcademicTermDAO;
 import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.BillingDetailsDAO;
@@ -601,6 +603,17 @@ public class DAOFactory {
   public PluginDAO getPluginDAO() {
     return (PluginDAO) findByClass(PluginDAO.class);
   }
+  
+  /* AccessLog */
+  
+  public AccessLogEntryDAO getAccessLogEntryDAO() {
+    return (AccessLogEntryDAO) findByClass(AccessLogEntryDAO.class);
+  }
+  
+  public AccessLogEntryPathDAO getAccessLogEntryPathDAO() {
+    return (AccessLogEntryPathDAO) findByClass(AccessLogEntryPathDAO.class);
+  }
+  
   
   private String getAppName() throws NamingException {
     String appName = "";
