@@ -246,13 +246,44 @@
         <version>${project.version}</version>
         <type>jar</type>
       </dependency>
+      
+      <!-- Java Faker -->
 
       <dependency>
-        <groupId>fi.otavanopisto</groupId>
+        <groupId>com.github.javafaker</groupId>
         <artifactId>javafaker</artifactId>
         <version>0.4-SNAPSHOT</version>
       </dependency>
+      
+      <!-- JUnit -->
 
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.11</version>
+      </dependency>
+      
+      <!-- Rest Assured -->
+  
+      <dependency>
+        <groupId>com.jayway.restassured</groupId>
+        <artifactId>rest-assured</artifactId>
+        <version>2.3.1</version>
+      </dependency>
+      
+      <!-- Hamcrest -->
+              
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-core</artifactId>
+        <version>1.3</version>
+      </dependency>
+              
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-library</artifactId>
+        <version>1.3</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
