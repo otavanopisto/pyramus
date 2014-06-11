@@ -28,6 +28,14 @@ public class AccessLogEntryPath {
     this.path = path;
   }
 
+  public Boolean getActive() {
+    return active;
+  }
+
+  public void setActive(Boolean active) {
+    this.active = active;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="AccessLogEntryPath")  
   @TableGenerator(name="AccessLogEntryPath", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -38,4 +46,8 @@ public class AccessLogEntryPath {
   @Column (nullable = false)
   @NotEmpty
   private String path;
+  
+  @NotNull
+  @Column(nullable = false)
+  private Boolean active = Boolean.TRUE;
 }

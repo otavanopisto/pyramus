@@ -1,13 +1,18 @@
 package fi.pyramus.domainmodel.accesslog;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.DocumentId;
@@ -56,6 +61,14 @@ public class AccessLogEntry {
     this.parameters = parameters;
   }
 
+  public Date getDate() {
+    return date;
+  }
+
+  public void setDate(Date date) {
+    this.date = date;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="AccessLogEntry")  
   @TableGenerator(name="AccessLogEntry", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -71,9 +84,15 @@ public class AccessLogEntry {
   @NotEmpty
   private String ip;
 
+  @NotNull
+  @Column (updatable=false, nullable=false)
+  @Temporal (value=TemporalType.TIMESTAMP)
+  private Date date;
+  
   @ManyToOne
   @JoinColumn (name = "path")
   private AccessLogEntryPath path;
 
+  @Lob
   private String parameters;
 }

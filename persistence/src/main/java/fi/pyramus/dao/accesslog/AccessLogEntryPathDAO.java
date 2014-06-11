@@ -13,12 +13,13 @@ import fi.pyramus.domainmodel.accesslog.AccessLogEntryPath_;
 @Stateless
 public class AccessLogEntryPathDAO extends PyramusEntityDAO<AccessLogEntryPath> {
 
-  public AccessLogEntryPath create(String path) {
+  public AccessLogEntryPath create(String path, boolean active) {
     EntityManager entityManager = getEntityManager();
 
     AccessLogEntryPath accessLogEntryPath = new AccessLogEntryPath();
     
     accessLogEntryPath.setPath(path);
+    accessLogEntryPath.setActive(active);
 
     entityManager.persist(accessLogEntryPath);
 

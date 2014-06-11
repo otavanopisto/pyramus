@@ -1,6 +1,7 @@
 package fi.pyramus.util;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -11,6 +12,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import fi.internetix.smvc.logging.Logging;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.accesslog.AccessLogEntryDAO;
 import fi.pyramus.dao.accesslog.AccessLogEntryPathDAO;
@@ -24,8 +26,9 @@ public class AccessLoggingFilter implements Filter {
    * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
    */
   public void init(FilterConfig fc) throws ServletException {
-    this.filterConfig = fc;
-//    this.encoding = filterConfig.getInitParameter("encoding");
+    String disabled = System.getProperty("pyramus.accessLoggingDisabled");
+    
+    this.disabled = Boolean.valueOf(disabled);
   }
 
   /**
@@ -35,18 +38,31 @@ public class AccessLoggingFilter implements Filter {
   public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException,
       ServletException {
 
-    HttpServletRequest request = (HttpServletRequest) req;
+    if (!disabled) {
+      try {
+        HttpServletRequest request = (HttpServletRequest) req;
+        
+        AccessLogEntryDAO accessLogEntryDAO = DAOFactory.getInstance().getAccessLogEntryDAO();
     
-    AccessLogEntryDAO accessLogEntryDAO = DAOFactory.getInstance().getAccessLogEntryDAO();
-
-    String requestURI = request.getRequestURI();
-
-    User user = getUser(request);
-    String ip = request.getRemoteAddr();
-    AccessLogEntryPath path = getPath(requestURI);
-    String parameters = request.getQueryString();
+        String requestURI = request.getRequestURI();
     
-    accessLogEntryDAO.create(user, ip, path, parameters);
+        if (requestURI != null) {
+          if (requestURI.endsWith(".page") || requestURI.endsWith(".json") || requestURI.endsWith(".binary")) {
+            AccessLogEntryPath path = getPath(requestURI);
+            
+            if (path.getActive()) {
+              User user = getUser(request);
+              String ip = request.getRemoteAddr();
+              String parameters = request.getQueryString();
+              
+              accessLogEntryDAO.create(user, ip, new Date(), path, parameters);
+            }
+          }
+        }
+      } catch (Exception ex) {
+        Logging.logException("AccessLoggingFilter exception", ex);
+      }
+    }
     
     chain.doFilter(req, resp);
   }
@@ -62,7 +78,7 @@ public class AccessLoggingFilter implements Filter {
         path = accessLogEntryPathDAO.findByPath(uri);
         
         if (path == null)
-          path = accessLogEntryPathDAO.create(uri);
+          path = accessLogEntryPathDAO.create(uri, true);
 
         return path;
       }
@@ -86,6 +102,5 @@ public class AccessLoggingFilter implements Filter {
   public void destroy() {
   }
 
-  private FilterConfig filterConfig;
-
+  private boolean disabled;
 }
