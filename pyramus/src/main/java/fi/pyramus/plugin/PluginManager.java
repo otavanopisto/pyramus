@@ -67,14 +67,6 @@ public class PluginManager {
     }
   }
   
-  /** Adds a repository to fetch plugins from.
-   * 
-   * @param url The URL of the repository to add.
-   */
-  public void addRepository(String url) {
-    mavenClient.addRepository(url, url);
-  }
-  
   /** Removes a plugin repository from the plugin manager.
    * 
    * @param url The URL of the repository to remove.

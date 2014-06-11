@@ -4,7 +4,7 @@
   <alterTables>
     <table name="PluginRepository">
       <addFields>
-        <field name="repositoryId" type="java.lang.String" nullable="true" unique="false" />
+        <field name="repositoryId" type="java.lang.String" nullable="false" unique="false" />
       </addFields>
     </table>
   </alterTables>

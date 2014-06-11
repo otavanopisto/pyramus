@@ -8,12 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
-@Indexed
 public class AccessLogEntryPath {
   
   public Long getId() {
@@ -39,7 +36,6 @@ public class AccessLogEntryPath {
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="AccessLogEntryPath")  
   @TableGenerator(name="AccessLogEntryPath", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
-  @DocumentId
   private Long id;
   
   @NotNull
@@ -49,5 +45,5 @@ public class AccessLogEntryPath {
   
   @NotNull
   @Column(nullable = false)
-  private Boolean active = Boolean.TRUE;
+  private Boolean active;
 }

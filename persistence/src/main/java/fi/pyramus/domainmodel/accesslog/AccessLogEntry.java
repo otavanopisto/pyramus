@@ -15,14 +15,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.pyramus.domainmodel.users.User;
 
 @Entity
-@Indexed
 public class AccessLogEntry {
   
   public Long getId() {
@@ -72,7 +69,6 @@ public class AccessLogEntry {
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="AccessLogEntry")  
   @TableGenerator(name="AccessLogEntry", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
-  @DocumentId
   private Long id;
   
   @ManyToOne
