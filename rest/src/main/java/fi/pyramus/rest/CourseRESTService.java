@@ -13,6 +13,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -57,11 +58,11 @@ public class CourseRESTService extends AbstractRESTService {
   @POST
   public Response createCourse(fi.pyramus.rest.model.Course courseEntity) {
     if (courseEntity.getModuleId() == null) {
-      return Response.status(400).entity("moduleId is required").build();
+      return Response.status(Status.BAD_REQUEST).entity("moduleId is required").build();
     }
 
     if (courseEntity.getStateId() == null) {
-      return Response.status(400).entity("stateId is required").build();
+      return Response.status(Status.BAD_REQUEST).entity("stateId is required").build();
     }
 
     Module module = moduleController.findModuleById(courseEntity.getModuleId());
@@ -73,7 +74,7 @@ public class CourseRESTService extends AbstractRESTService {
     if (courseEntity.getSubjectId() != null) {
       subject = commonController.findSubjectById(courseEntity.getSubjectId());
       if (subject == null) {
-        return Response.status(404).entity("specified subject does not exist").build();
+        return Response.status(Status.NOT_FOUND).entity("specified subject does not exist").build();
       }
     }
     
@@ -86,12 +87,12 @@ public class CourseRESTService extends AbstractRESTService {
     CourseLength length = courseEntity.getLength();
     if (length != null) {
       if (length.getUnitId() == null) {
-        return Response.status(400).entity("length unit is missing").build();
+        return Response.status(Status.BAD_REQUEST).entity("length unit is missing").build();
       }
       
       courseLengthTimeUnit = commonController.findEducationalTimeUnitById(length.getUnitId());
       if (courseLengthTimeUnit == null) {
-        return Response.status(400).entity("length unit is invalid").build();
+        return Response.status(Status.BAD_REQUEST).entity("length unit is invalid").build();
       }
       
       courseLength = length.getUnits();
@@ -118,6 +119,10 @@ public class CourseRESTService extends AbstractRESTService {
   public Response getCourse(@PathParam("ID") Long id) {
     Course course = courseController.findCourseById(id);
     if (course != null) {
+      if (course.getArchived()) {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+      
       return Response.ok().entity(createRestModel(course)).build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
@@ -140,6 +145,71 @@ public class CourseRESTService extends AbstractRESTService {
     } else {
       return Response.status(Status.NO_CONTENT).build();
     }
+  }
+  
+  @Path("/courses/{ID:[0-9]*}")
+  @PUT
+  public Response updateCourse(@PathParam("ID") Long id, fi.pyramus.rest.model.Course courseEntity) {
+    Course course = courseController.findCourseById(id);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (course.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!course.getId().equals(courseEntity.getId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Cannot change entity id in update request").build();
+    }
+    
+    String name = courseEntity.getName();
+    String nameExtension = courseEntity.getNameExtension();
+    CourseState state = courseController.findCourseStateById(courseEntity.getStateId());
+
+    Subject subject = null;
+    if (courseEntity.getSubjectId() != null) {
+      subject = commonController.findSubjectById(courseEntity.getSubjectId());
+      if (subject == null) {
+        return Response.status(Status.NOT_FOUND).entity("specified subject does not exist").build();
+      }
+    }
+    
+    Integer courseNumber = courseEntity.getCourseNumber();
+    Date beginDate = courseEntity.getBeginDate();
+    Date endDate = courseEntity.getEndDate();
+    Double courseLength = null;
+    EducationalTimeUnit courseLengthTimeUnit = null;
+    
+    CourseLength length = courseEntity.getLength();
+    if (length != null) {
+      if (length.getUnitId() == null) {
+        return Response.status(Status.BAD_REQUEST).entity("length unit is missing").build();
+      }
+      
+      courseLengthTimeUnit = commonController.findEducationalTimeUnitById(length.getUnitId());
+      if (courseLengthTimeUnit == null) {
+        return Response.status(Status.BAD_REQUEST).entity("length unit is invalid").build();
+      }
+      
+      courseLength = length.getUnits();
+    }
+    
+    Double distanceTeachingDays = courseEntity.getDistanceTeachingDays();
+    Double localTeachingDays = courseEntity.getLocalTeachingDays();
+    Double teachingHours = courseEntity.getTeachingHours();
+    Double planningHours = courseEntity.getPlanningHours();
+    Double assessingHours = courseEntity.getAssessingHours();
+    String description = courseEntity.getDescription();
+    Long maxParticipantCount = courseEntity.getMaxParticipantCount();
+    Date enrolmentTimeEnd = courseEntity.getEnrolmentTimeEnd();
+    User loggedUser = getLoggedUser();
+    
+    Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, subject, courseNumber, beginDate, endDate, courseLength,
+        courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, description,
+        maxParticipantCount, enrolmentTimeEnd, loggedUser);
+    
+    return Response.ok().entity(createRestModel(updatedCourse)).build();
   }
   
   @Path("/courses/{ID:[0-9]*}")
@@ -449,53 +519,6 @@ public class CourseRESTService extends AbstractRESTService {
 //      return Response.ok()
 //          .entity(tranqualise(courseController.findCourseTags(course)))
 //          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/courses/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateCourse(@PathParam("ID") Long id, CourseEntity courseEntity) {
-//    Course course = courseController.findCourseById(id);
-//    if (course != null) {
-//      try {
-//        if (courseEntity.getArchived() != null) {
-//          if(!courseEntity.getArchived()) {
-//            return Response.ok()
-//                .entity(tranqualise(courseController.unarchiveCourse(course, getUser())))
-//                .build();
-//          } else {
-//            return Response.status(500).build();
-//          } 
-//        } else {
-//          String name = courseEntity.getName();
-//          String nameExtension = courseEntity.getNameExtension();
-//          CourseState courseState = courseController.findCourseStateById(courseEntity.getState_id());
-//          Subject subject = commonController.findSubjectById(courseEntity.getSubject_id());
-//          Integer courseNumber = courseEntity.getCourseNumber();
-//          Date beginDate = courseEntity.getBeginDate();
-//          Date endDate = courseEntity.getEndDate();
-//          EducationalTimeUnit courseLengthTimeUnit = commonController.findEducationalTimeUnitById(courseEntity.getCourseLength_id());
-//          Double courseLength = courseEntity.getCourseLength();
-//          Double distanceTeachingDays = courseEntity.getDistanceTeachingDays();
-//          Double localTeachingDays = courseEntity.getLocalTeachingDays();
-//          Double teachingHours = courseEntity.getTeachingHours();
-//          Double planningHours = courseEntity.getPlanningHours();
-//          Double assessingHours = courseEntity.getAssessingHours();
-//          String description = courseEntity.getDescription();
-//          Long maxParticipantCount = courseEntity.getMaxParticipantCount();
-//          Date enrolmentTimeEnd = courseEntity.getEnrolmentTimeEnd();
-//          return Response.ok()
-//              .entity(
-//                  tranqualise(courseController.updateCourse(course, name, nameExtension, courseState, subject, courseNumber, beginDate, endDate, courseLength,
-//                  courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, description,
-//                  maxParticipantCount, enrolmentTimeEnd, getUser())))
-//              .build();
-//        }
-//      } catch (Exception e) {
-//        return Response.status(500).build();
-//      }
 //    } else {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
