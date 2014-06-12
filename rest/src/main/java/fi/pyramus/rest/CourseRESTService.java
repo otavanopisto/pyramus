@@ -11,6 +11,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -45,6 +46,17 @@ public class CourseRESTService extends AbstractRESTService {
   @Inject
   private TagController tagController;
   
+  @Path("/courses/{ID:[0-9]*}")
+  @GET
+  public Response getCourse(@PathParam("ID") Long id) {
+    Course course = courseController.findCourseById(id);
+    if (course != null) {
+      return Response.ok().entity(createRestModel(course)).build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+  
   @Path("/courses")
   @GET
   public Response listCourses(@DefaultValue("true") @QueryParam("filterArchived") boolean filterArchived) {
@@ -57,13 +69,13 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     if (!courses.isEmpty()) {
-      return Response.ok().entity(createRestModels(courses)).build();
+      return Response.ok().entity(createRestModel(courses)).build();
     } else {
       return Response.status(Status.NO_CONTENT).build();
     }
   }
   
-  private List<fi.pyramus.rest.model.Course> createRestModels(List<Course> courses) {
+  private List<fi.pyramus.rest.model.Course> createRestModel(List<Course> courses) {
     List<fi.pyramus.rest.model.Course> result = new ArrayList<fi.pyramus.rest.model.Course>();
     
     for (Course course : courses) {
@@ -226,19 +238,6 @@ public class CourseRESTService extends AbstractRESTService {
 //          .build();
 //    } else {
 //      return Response.status(500).build();
-//    }
-//  }
-//  
-//  @Path("/courses/{ID:[0-9]*}")
-//  @GET
-//  public Response findCourseById(@PathParam("ID") Long id) {
-//    Course course = courseController.findCourseById(id);
-//    if (course != null) {
-//      return Response.ok()
-//          .entity(tranqualise(course))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
 //  
