@@ -1,6 +1,7 @@
 package fi.pyramus.rest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -8,8 +9,10 @@ import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -18,9 +21,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import fi.pyramus.domainmodel.base.EducationalLength;
+import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
+import fi.pyramus.domainmodel.courses.CourseState;
+import fi.pyramus.domainmodel.modules.Module;
+import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
@@ -45,6 +52,66 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Inject
   private TagController tagController;
+  
+  @Path("/courses")
+  @POST
+  public Response createCourse(fi.pyramus.rest.model.Course courseEntity) {
+    if (courseEntity.getModuleId() == null) {
+      return Response.status(400).entity("moduleId is required").build();
+    }
+
+    if (courseEntity.getStateId() == null) {
+      return Response.status(400).entity("stateId is required").build();
+    }
+
+    Module module = moduleController.findModuleById(courseEntity.getModuleId());
+    String name = courseEntity.getName();
+    String nameExtension = courseEntity.getNameExtension();
+    CourseState state = courseController.findCourseStateById(courseEntity.getStateId());
+
+    Subject subject = null;
+    if (courseEntity.getSubjectId() != null) {
+      subject = commonController.findSubjectById(courseEntity.getSubjectId());
+      if (subject == null) {
+        return Response.status(404).entity("specified subject does not exist").build();
+      }
+    }
+    
+    Integer courseNumber = courseEntity.getCourseNumber();
+    Date beginDate = courseEntity.getBeginDate();
+    Date endDate = courseEntity.getEndDate();
+    Double courseLength = null;
+    EducationalTimeUnit courseLengthTimeUnit = null;
+    
+    CourseLength length = courseEntity.getLength();
+    if (length != null) {
+      if (length.getUnitId() == null) {
+        return Response.status(400).entity("length unit is missing").build();
+      }
+      
+      courseLengthTimeUnit = commonController.findEducationalTimeUnitById(length.getUnitId());
+      if (courseLengthTimeUnit == null) {
+        return Response.status(400).entity("length unit is invalid").build();
+      }
+      
+      courseLength = length.getUnits();
+    }
+    
+    Double distanceTeachingDays = courseEntity.getDistanceTeachingDays();
+    Double localTeachingDays = courseEntity.getLocalTeachingDays();
+    Double teachingHours = courseEntity.getTeachingHours();
+    Double planningHours = courseEntity.getPlanningHours();
+    Double assessingHours = courseEntity.getAssessingHours();
+    String description = courseEntity.getDescription();
+    Long maxParticipantCount = courseEntity.getMaxParticipantCount();
+    Date enrolmentTimeEnd = courseEntity.getEnrolmentTimeEnd();
+    
+    User loggedUser = getLoggedUser();
+    
+    return Response.ok().entity(createRestModel(courseController.createCourse(module, name, nameExtension, state, subject, courseNumber, 
+          beginDate, endDate, courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, 
+          planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, loggedUser))).build();
+  }
   
   @Path("/courses/{ID:[0-9]*}")
   @GET
@@ -75,6 +142,26 @@ public class CourseRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/courses/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteCourse(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    User loggedUser = getLoggedUser();
+    
+    Course course = courseController.findCourseById(id);
+    if (course != null) {
+      if (permanent) {
+        courseController.deleteCourse(course); 
+      } else {
+        courseController.archiveCourse(course, loggedUser);
+      }
+      
+      return Response.status(Status.NO_CONTENT).build();
+    } else {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  }
+
+  
   private List<fi.pyramus.rest.model.Course> createRestModel(List<Course> courses) {
     List<fi.pyramus.rest.model.Course> result = new ArrayList<fi.pyramus.rest.model.Course>();
     
@@ -86,18 +173,17 @@ public class CourseRESTService extends AbstractRESTService {
   }
 
   private fi.pyramus.rest.model.Course createRestModel(Course course) {
-    fi.pyramus.rest.model.Subject subject = null;
+    Long subjectId = null;
     Subject courseSubject = course.getSubject();
     if (courseSubject != null) {
-      subject = new fi.pyramus.rest.model.Subject(courseSubject.getId(), courseSubject.getCode(), courseSubject.getName(), 
-          courseSubject.getEducationType().getId(), courseSubject.getArchived(), courseSubject.getVersion());
+      subjectId = courseSubject.getId();
     }
     
     CourseLength length = null;
     
     EducationalLength courseLength = course.getCourseLength();
     if (courseLength != null) {
-      length = new CourseLength(courseLength.getId(), courseLength.getUnits(), courseLength.getUnit().getId(), courseLength.getVersion());
+      length = new CourseLength(courseLength.getId(), courseLength.getUnits(), courseLength.getUnit().getId());
     }
     
     List<String> tags = new ArrayList<String>();
@@ -110,48 +196,16 @@ public class CourseRESTService extends AbstractRESTService {
     
     return new fi.pyramus.rest.model.Course(course.getId(), course.getName(), course.getCreated(), 
         course.getLastModified(), course.getDescription(), course.getArchived(), course.getCourseNumber(), 
-        course.getVersion(), course.getMaxParticipantCount(), course.getBeginDate(), course.getEndDate(), 
-        course.getNameExtension(), course.getLocalTeachingDays(), course.getTeachingHours(), course.getDistanceTeachingDays(),
+        course.getMaxParticipantCount(), course.getBeginDate(), course.getEndDate(), course.getNameExtension(), 
+        course.getLocalTeachingDays(), course.getTeachingHours(), course.getDistanceTeachingDays(), 
         course.getAssessingHours(), course.getPlanningHours(), course.getEnrolmentTimeEnd(), course.getCreator().getId(), 
-        course.getLastModifier().getId(), subject, length, course.getModule().getId(), course.getState().getId(), tags);
+        course.getLastModifier().getId(), subjectId, length, course.getModule().getId(), course.getState().getId(), tags);
   }
   
   
   
   
-//  @Path("/courses")
-//  @POST
-//  public Response createCourse(CourseEntity courseEntity) {
-//    try{
-//      Module module = moduleController.findModuleById(courseEntity.getModule_id());
-//      String name = courseEntity.getName();
-//      String nameExtension = courseEntity.getNameExtension();
-//      CourseState state = courseController.findCourseStateById(courseEntity.getState_id());
-//      Subject subject = commonController.findSubjectById(courseEntity.getSubject_id());
-//      Integer courseNumber = courseEntity.getCourseNumber();
-//      Date beginDate = courseEntity.getBeginDate();
-//      Date endDate = courseEntity.getEndDate();
-//      EducationalTimeUnit courseLengthTimeUnit = commonController.findEducationalTimeUnitById(courseEntity.getCourseLength_id());
-//      Double courseLength = courseEntity.getCourseLength();
-//      Double distanceTeachingDays = courseEntity.getDistanceTeachingDays();
-//      Double localTeachingDays = courseEntity.getLocalTeachingDays();
-//      Double teachingHours = courseEntity.getTeachingHours();
-//      Double planningHours = courseEntity.getPlanningHours();
-//      Double assessingHours = courseEntity.getAssessingHours();
-//      String description = courseEntity.getDescription();
-//      Long maxParticipantCount = courseEntity.getMaxParticipantCount();
-//      Date enrolmentTimeEnd = courseEntity.getEnrolmentTimeEnd();
-//      
-//      return Response
-//          .ok()
-//          .entity(tranqualise(courseController.createCourse(module, name, nameExtension, state, subject, courseNumber, beginDate, endDate, courseLength,
-//                  courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, description, maxParticipantCount,
-//                  enrolmentTimeEnd, getUser())))
-//                  .build();
-//    } catch(NullPointerException e) {
-//      return Response.status(500).build();
-//    }
-//  }
+
 //  
 //  @Path("/courses/{ID:[0-9]*}/components")
 //  @POST
@@ -564,19 +618,6 @@ public class CourseRESTService extends AbstractRESTService {
 //      return Response.status(500).build();
 //    }
 //    return Response.status(Status.NOT_FOUND).build();
-//  }
-//  
-//  @Path("/courses/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveCourse(@PathParam("ID") Long id) {
-//    Course course = courseController.findCourseById(id);
-//    if (course != null) {
-//      return Response.ok()
-//          .entity(tranqualise(courseController.archiveCourse(course, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
 //  }
 //  
 //  @Path("/courses/{CID:[0-9]*}/components/{ID:[0-9]*}")
