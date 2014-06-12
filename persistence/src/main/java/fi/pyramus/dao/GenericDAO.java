@@ -76,7 +76,7 @@ public abstract class GenericDAO<T> {
     return (Integer) query.getSingleResult();
   }
 
-  protected void delete(T e) {
+  public void delete(T e) {
     getEntityManager().remove(e);
   }
   
