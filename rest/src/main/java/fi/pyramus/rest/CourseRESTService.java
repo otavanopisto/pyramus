@@ -1,38 +1,30 @@
 package fi.pyramus.rest;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import fi.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.pyramus.domainmodel.base.EducationalLength;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
-import fi.pyramus.domainmodel.courses.CourseComponent;
-import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
-import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
-import fi.pyramus.domainmodel.courses.CourseParticipationType;
-import fi.pyramus.domainmodel.courses.CourseState;
-import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.TagController;
+import fi.pyramus.rest.model.CourseLength;
 
 @Path("/courses")
 @Produces("application/json")
@@ -40,16 +32,81 @@ import fi.pyramus.rest.controller.TagController;
 @Stateful
 @RequestScoped
 public class CourseRESTService extends AbstractRESTService {
-//  
-//  @Inject
-//  private CourseController courseController;
-//  @Inject
-//  private ModuleController moduleController;
-//  @Inject
-//  private CommonController commonController;
-//  @Inject
-//  private TagController tagController;
-//  
+  
+  @Inject
+  private CourseController courseController;
+  
+  @Inject
+  private ModuleController moduleController;
+  
+  @Inject
+  private CommonController commonController;
+  
+  @Inject
+  private TagController tagController;
+  
+  @Path("/courses")
+  @GET
+  public Response listCourses(@DefaultValue("true") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Course> courses;
+    
+    if (filterArchived) {
+      courses = courseController.findUnarchivedCourses();
+    } else {
+      courses = courseController.findCourses();
+    }
+    
+    if (!courses.isEmpty()) {
+      return Response.ok().entity(createRestModels(courses)).build();
+    } else {
+      return Response.status(Status.NO_CONTENT).build();
+    }
+  }
+  
+  private List<fi.pyramus.rest.model.Course> createRestModels(List<Course> courses) {
+    List<fi.pyramus.rest.model.Course> result = new ArrayList<fi.pyramus.rest.model.Course>();
+    
+    for (Course course : courses) {
+      result.add(createRestModel(course));
+    }
+    
+    return result;
+  }
+
+  private fi.pyramus.rest.model.Course createRestModel(Course course) {
+    fi.pyramus.rest.model.Subject subject = null;
+    Subject courseSubject = course.getSubject();
+    if (courseSubject != null) {
+      subject = new fi.pyramus.rest.model.Subject(courseSubject.getId(), courseSubject.getCode(), courseSubject.getName(), 
+          courseSubject.getEducationType().getId(), courseSubject.getArchived(), courseSubject.getVersion());
+    }
+    
+    CourseLength length = null;
+    
+    EducationalLength courseLength = course.getCourseLength();
+    if (courseLength != null) {
+      length = new CourseLength(courseLength.getId(), courseLength.getUnits(), courseLength.getUnit().getId(), courseLength.getVersion());
+    }
+    
+    List<String> tags = new ArrayList<String>();
+    Set<Tag> courseTags = course.getTags();
+    if (courseTags != null) {
+      for (Tag courseTag : courseTags) {
+        tags.add(courseTag.getText());
+      }
+    }
+    
+    return new fi.pyramus.rest.model.Course(course.getId(), course.getName(), course.getCreated(), 
+        course.getLastModified(), course.getDescription(), course.getArchived(), course.getCourseNumber(), 
+        course.getVersion(), course.getMaxParticipantCount(), course.getBeginDate(), course.getEndDate(), 
+        course.getNameExtension(), course.getLocalTeachingDays(), course.getTeachingHours(), course.getDistanceTeachingDays(),
+        course.getAssessingHours(), course.getPlanningHours(), course.getEnrolmentTimeEnd(), course.getCreator().getId(), 
+        course.getLastModifier().getId(), subject, length, course.getModule().getId(), course.getState().getId(), tags);
+  }
+  
+  
+  
+  
 //  @Path("/courses")
 //  @POST
 //  public Response createCourse(CourseEntity courseEntity) {
@@ -169,24 +226,6 @@ public class CourseRESTService extends AbstractRESTService {
 //          .build();
 //    } else {
 //      return Response.status(500).build();
-//    }
-//  }
-//  
-//  @Path("/courses")
-//  @GET
-//  public Response findCourses(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<Course> courses;
-//    if (filterArchived) {
-//      courses = courseController.findUnarchivedCourses();
-//    } else {
-//      courses = courseController.findCourses();
-//    }
-//    if (!courses.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(courses))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
 //  
