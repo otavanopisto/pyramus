@@ -2,6 +2,7 @@ package fi.pyramus.rest;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
+import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.users.User;
@@ -109,7 +111,7 @@ public class CourseRESTService extends AbstractRESTService {
     
     User loggedUser = getLoggedUser();
     
-    return Response.ok().entity(createRestModel(courseController.createCourse(module, name, nameExtension, state, subject, courseNumber, 
+    return Response.ok().entity(createCourseRestModel(courseController.createCourse(module, name, nameExtension, state, subject, courseNumber, 
           beginDate, endDate, courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, 
           planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, loggedUser))).build();
   }
@@ -123,7 +125,7 @@ public class CourseRESTService extends AbstractRESTService {
         return Response.status(Status.NOT_FOUND).build();
       }
       
-      return Response.ok().entity(createRestModel(course)).build();
+      return Response.ok().entity(createCourseRestModel(course)).build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -141,7 +143,7 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     if (!courses.isEmpty()) {
-      return Response.ok().entity(createRestModel(courses)).build();
+      return Response.ok().entity(createCourseRestModel(courses)).build();
     } else {
       return Response.status(Status.NO_CONTENT).build();
     }
@@ -209,7 +211,7 @@ public class CourseRESTService extends AbstractRESTService {
         courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, description,
         maxParticipantCount, enrolmentTimeEnd, loggedUser);
     
-    return Response.ok().entity(createRestModel(updatedCourse)).build();
+    return Response.ok().entity(createCourseRestModel(updatedCourse)).build();
   }
   
   @Path("/courses/{ID:[0-9]*}")
@@ -231,18 +233,53 @@ public class CourseRESTService extends AbstractRESTService {
     }
   }
 
+  @Path("/courses/{ID:[0-9]*}/components")
+  @GET
+  public Response listCourseComponents(@PathParam("ID") Long courseId) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<CourseComponent> components = courseController.findCourseComponentsByCourse(course);
+    if (components.isEmpty()) {
+      return Response.status(Status.NO_CONTENT).build();
+    }
+    
+    return Response.status(Status.OK).entity(createCourseComponentRestModel(components)).build();
+  }
+
+  @Path("/courses/{CID:[0-9]*}/components/{ID:[0-9]*}")
+  @GET
+  public Response findCourseComponentById(@PathParam("CID") Long courseId, @PathParam("ID") Long componentId) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    CourseComponent component = courseController.findCourseComponentById(componentId);
+    if (component == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!component.getCourse().getId().equals(courseId)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.status(Status.OK).entity(createCourseComponentRestModel(component)).build();
+  }
   
-  private List<fi.pyramus.rest.model.Course> createRestModel(List<Course> courses) {
+  private List<fi.pyramus.rest.model.Course> createCourseRestModel(List<Course> courses) {
     List<fi.pyramus.rest.model.Course> result = new ArrayList<fi.pyramus.rest.model.Course>();
     
     for (Course course : courses) {
-      result.add(createRestModel(course));
+      result.add(createCourseRestModel(course));
     }
     
     return result;
   }
 
-  private fi.pyramus.rest.model.Course createRestModel(Course course) {
+  private fi.pyramus.rest.model.Course createCourseRestModel(Course course) {
     Long subjectId = null;
     Subject courseSubject = course.getSubject();
     if (courseSubject != null) {
@@ -272,6 +309,19 @@ public class CourseRESTService extends AbstractRESTService {
         course.getLastModifier().getId(), subjectId, length, course.getModule().getId(), course.getState().getId(), tags);
   }
   
+  private fi.pyramus.rest.model.CourseComponent createCourseComponentRestModel(CourseComponent component) {
+    return new fi.pyramus.rest.model.CourseComponent(component.getId(), component.getName(), component.getDescription(), component.getLength().getUnits(), component.getLength().getUnit().getId(), component.getArchived());
+  }
+  
+  private List<fi.pyramus.rest.model.CourseComponent> createCourseComponentRestModel(List<CourseComponent> components) {
+    List<fi.pyramus.rest.model.CourseComponent> result = new ArrayList<>();
+    
+    for (CourseComponent component : components) {
+      result.add(createCourseComponentRestModel(component));
+    }
+    
+    return result;
+  }
   
   
   
@@ -362,33 +412,6 @@ public class CourseRESTService extends AbstractRESTService {
 //          .build();
 //    } else {
 //      return Response.status(500).build();
-//    }
-//  }
-//  
-//  @Path("/courses/{ID:[0-9]*}/components")
-//  @GET
-//  public Response findCourseComponents(@PathParam("ID") Long id) {
-//    Course course = courseController.findCourseById(id);
-//    List<CourseComponent> components = courseController.findCourseComponentsByCourse(course);
-//    if (!components.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(components))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/courses/{CID:[0-9]*}/components/{ID:[0-9]*}")
-//  @GET
-//  public Response findCourseComponentById(@PathParam("CID") Long courseId, @PathParam("ID") Long componentId) {
-//    CourseComponent component = courseController.findCourseComponentById(componentId);
-//    if (component.getCourse().getId().equals(courseId)) {
-//      return Response.ok()
-//          .entity(tranqualise(component))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
 //  
