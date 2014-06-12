@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 
@@ -56,6 +57,7 @@ public class StudentImage {
   
   private String contentType;
   
-  @Column (length=1073741824)
+  @Lob
+  @Column
   private byte[] data;
 }

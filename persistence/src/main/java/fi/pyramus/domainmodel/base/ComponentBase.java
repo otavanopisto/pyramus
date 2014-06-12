@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
@@ -81,8 +82,9 @@ public abstract class ComponentBase implements ArchivableEntity {
   @Field
   private String name;
 
+  @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column (length=1073741824)
+  @Column 
   @Field
   private String description;
   

@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
@@ -105,7 +106,8 @@ public class HelpPageContent {
   @NotNull
   private Locale locale;
   
-  @Column (nullable=false, length=1073741824)
+  @Lob
+  @Column (nullable=false)
   @NotNull
   @NotEmpty  
   @Field

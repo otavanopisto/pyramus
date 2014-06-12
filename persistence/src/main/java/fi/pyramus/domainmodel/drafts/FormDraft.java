@@ -8,11 +8,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.pyramus.domainmodel.users.User;
@@ -81,7 +83,8 @@ public class FormDraft {
   @NotEmpty 
   private String url;
   
-  @Column (length=1073741824)
+  @Lob
+  @Column
   private String data;
   
   @ManyToOne  

@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
@@ -142,7 +143,8 @@ public class StudentContactLogEntryComment implements ArchivableEntity {
   @JoinColumn (name = "entry")
   private StudentContactLogEntry entry;
   
-  @Column (length=1073741824)
+  @Lob
+  @Column
   private String text;
   
   private String creatorName;

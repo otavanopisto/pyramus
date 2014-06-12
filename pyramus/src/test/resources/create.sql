@@ -1,6 +1,6 @@
     create table AbstractStudent (
         id bigint not null,
-        basicInfo varchar(1073741824),
+        basicInfo clob,
         birthday date,
         secureInfo boolean not null,
         sex varchar(255),
@@ -92,7 +92,7 @@
 
     create table ChangeLogEntryProperty (
         id bigint not null,
-        value varchar(1073741824),
+        value clob,
         entry bigint,
         property bigint,
         primary key (id)
@@ -101,7 +101,7 @@
     create table ComponentBase (
         id bigint not null,
         archived boolean not null,
-        description varchar(1073741824),
+        description clob,
         name varchar(255) not null,
         version bigint not null,
         length bigint,
@@ -110,7 +110,7 @@
 
     create table ContactInfo (
         id bigint not null,
-        additionalInfo varchar(1073741824),
+        additionalInfo clob,
         version bigint not null,
         primary key (id)
     );
@@ -167,7 +167,7 @@
         id bigint not null,
         archived boolean not null,
         created timestamp not null,
-        requestText varchar(1073741824),
+        requestText clob,
         courseStudent bigint,
         primary key (id)
     );
@@ -333,7 +333,7 @@
         archived boolean not null,
         creditType varchar(255) not null,
         date timestamp not null,
-        verbalAssessment varchar(1073741824),
+        verbalAssessment clob,
         version bigint not null,
         assessingUser bigint,
         grade bigint,
@@ -431,7 +431,7 @@
         archived boolean not null,
         contentType varchar(255),
         created timestamp not null,
-        data binary(1073741824),
+        data blob,
         fileName varchar(255),
         lastModified timestamp not null,
         name varchar(255),
@@ -451,7 +451,7 @@
     create table FormDraft (
         id bigint not null,
         created timestamp,
-        data varchar(1073741824),
+        data clob,
         modified timestamp,
         url varchar(255),
         version bigint not null,
@@ -489,7 +489,7 @@
     create table GradingScale (
         id bigint not null,
         archived boolean,
-        description varchar(1073741824),
+        description clob,
         name varchar(255) not null,
         version bigint not null,
         primary key (id)
@@ -530,7 +530,7 @@
 
     create table HelpPageContent (
         id bigint not null,
-        content varchar(1073741824) not null,
+        content clob not null,
         created timestamp not null,
         lastModified timestamp not null,
         locale varchar(255) not null,
@@ -643,7 +643,7 @@
         id bigint not null,
         archived boolean not null,
         created timestamp not null,
-        description varchar(1073741824),
+        description clob,
         lastModified timestamp not null,
         name varchar(255) not null,
         version bigint not null,
@@ -673,7 +673,7 @@
         id bigint not null,
         archived boolean not null,
         created timestamp not null,
-        data varchar(1073741824) not null,
+        data clob not null,
         lastModified timestamp not null,
         name varchar(255) not null,
         version bigint not null,
@@ -769,7 +769,7 @@
 
     create table Student (
         id bigint not null,
-        additionalInfo varchar(1073741824),
+        additionalInfo clob,
         archived boolean not null,
         education varchar(255),
         firstName varchar(255) not null,
@@ -809,7 +809,7 @@
         archived boolean not null,
         creatorName varchar(255),
         entryDate timestamp,
-        text varchar(1073741824),
+        text clob,
         type varchar(255),
         version bigint not null,
         student bigint not null,
@@ -821,7 +821,7 @@
         archived boolean not null,
         commentDate timestamp,
         creatorName varchar(255),
-        text varchar(1073741824),
+        text clob,
         version bigint not null,
         entry bigint,
         primary key (id)
@@ -867,7 +867,7 @@
         archived boolean not null,
         beginDate timestamp,
         created timestamp not null,
-        description varchar(1073741824),
+        description clob,
         lastModified timestamp not null,
         name varchar(255) not null,
         version bigint not null,
@@ -895,7 +895,7 @@
     create table StudentImage (
         id bigint not null,
         contentType varchar(255),
-        data binary(1073741824),
+        data blob,
         student bigint,
         primary key (id)
     );
@@ -904,7 +904,7 @@
         id bigint not null,
         archived boolean not null,
         created timestamp not null,
-        description varchar(1073741824),
+        description clob,
         lastModified timestamp not null,
         name varchar(255) not null,
         optionality varchar(255),
