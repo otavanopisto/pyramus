@@ -2298,6 +2298,8 @@
     </div>
   </div>
 
+  <ix:extensionHook name="students.viewStudent.footer"/>
+
   <jsp:include page="/templates/generic/footer.jsp"></jsp:include>
 </body>
 </html>
