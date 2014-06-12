@@ -7,11 +7,20 @@ public class Course {
 
   public Course() {
   }
-
-  public Course(Long id, String name, Date created, Date lastModified, String description, Boolean archived, Integer courseNumber, Long version,
+  
+  public Course(String name, Date created, Date lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, Date beginDate, Date endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingDays, Double assessingHours, Double planningHours, Date enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Subject subject, CourseLength length, Long moduleId, Long stateId, List<String> tags) {
+      Long lastModifierId, Long subjectId, CourseLength length, Long moduleId, Long stateId, List<String> tags) {
+    this(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
+        nameExtension, localTeachingDays, teachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
+        creatorId, lastModifierId, subjectId, length, moduleId, stateId, tags);
+  }
+
+  public Course(Long id, String name, Date created, Date lastModified, String description, Boolean archived, Integer courseNumber, 
+      Long maxParticipantCount, Date beginDate, Date endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
+      Double distanceTeachingDays, Double assessingHours, Double planningHours, Date enrolmentTimeEnd, Long creatorId,
+      Long lastModifierId, Long subjectId, CourseLength length, Long moduleId, Long stateId, List<String> tags) {
     super();
     this.id = id;
     this.name = name;
@@ -20,7 +29,6 @@ public class Course {
     this.description = description;
     this.archived = archived;
     this.courseNumber = courseNumber;
-    this.version = version;
     this.maxParticipantCount = maxParticipantCount;
     this.beginDate = beginDate;
     this.endDate = endDate;
@@ -33,7 +41,7 @@ public class Course {
     this.enrolmentTimeEnd = enrolmentTimeEnd;
     this.creatorId = creatorId;
     this.lastModifierId = lastModifierId;
-    this.subject = subject;
+    this.subjectId = subjectId;
     this.length = length;
     this.moduleId = moduleId;
     this.stateId = stateId;
@@ -94,14 +102,6 @@ public class Course {
 
   public void setCourseNumber(Integer courseNumber) {
     this.courseNumber = courseNumber;
-  }
-
-  public Long getVersion() {
-    return version;
-  }
-
-  public void setVersion(Long version) {
-    this.version = version;
   }
 
   public Long getMaxParticipantCount() {
@@ -200,14 +200,14 @@ public class Course {
     this.lastModifierId = lastModifierId;
   }
 
-  public Subject getSubject() {
-    return subject;
+  public Long getSubjectId() {
+    return subjectId;
   }
-
-  public void setSubject(Subject subject) {
-    this.subject = subject;
+  
+  public void setSubjectId(Long subjectId) {
+    this.subjectId = subjectId;
   }
-
+  
   public CourseLength getLength() {
     return length;
   }
@@ -247,7 +247,6 @@ public class Course {
   private String description;
   private Boolean archived;
   private Integer courseNumber;
-  private Long version;
   private Long maxParticipantCount;
   private Date beginDate;
   private Date endDate;
@@ -260,7 +259,7 @@ public class Course {
   private Date enrolmentTimeEnd;
   private Long creatorId;
   private Long lastModifierId;
-  private Subject subject;
+  private Long subjectId;
   private CourseLength length;
   private Long moduleId;
   private Long stateId;

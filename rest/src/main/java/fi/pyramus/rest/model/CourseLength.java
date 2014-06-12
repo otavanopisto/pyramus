@@ -3,14 +3,18 @@ package fi.pyramus.rest.model;
 public class CourseLength {
 
   public CourseLength() {
+    super();
   }
 
-  public CourseLength(Long id, Double units, Long unitId, Long version) {
-    super();
+  public CourseLength(Double units, Long unitId) {
+   this(null, units, unitId);
+  }
+
+  public CourseLength(Long id, Double units, Long unitId) {
+    this();
     this.id = id;
     this.units = units;
     this.unitId = unitId;
-    this.version = version;
   }
 
   public Long getId() {
@@ -37,16 +41,7 @@ public class CourseLength {
     this.unitId = unitId;
   }
 
-  public Long getVersion() {
-    return version;
-  }
-
-  public void setVersion(Long version) {
-    this.version = version;
-  }
-
   private Long id;
   private Double units;
   private Long unitId;
-  private Long version;
 }
