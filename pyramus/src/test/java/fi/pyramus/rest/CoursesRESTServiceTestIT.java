@@ -23,8 +23,6 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateCourse() {
-    // id, length id
-    
     CourseLength length = new CourseLength(777d, 1l);
     
     Course course = new Course(
@@ -155,4 +153,141 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
       .body("archived[1]", is( false ));
   }
   
+  @Test
+  public void testUpdateCourse() {
+    CourseLength length = new CourseLength(777d, 1l);
+    
+    Course course = new Course(
+        "Update test", 
+        new Date(), 
+        new Date(), 
+        "Course for testing course updating", 
+        Boolean.FALSE, 
+        111, 
+        222l,
+        new Date(),
+        new Date(),
+        "Extension",
+        333d,
+        444d,
+        555d,
+        666d,
+        777d,
+        new Date(),
+        1l, 
+        1l,
+        1l,
+        length, 
+        1l, 
+        1l, 
+        null);
+
+    Response response = given()
+      .contentType("application/json")
+      .body(course)
+      .post("/courses/courses/");
+    
+    response.then()
+      .body("id", not(is((Long) null)))
+      .body("name", is(course.getName()))
+      .body("courseNumber", is( course.getCourseNumber()))
+      .body("description", is( course.getDescription() ))
+      .body("length.units", is( course.getLength().getUnits().floatValue() ))
+      .body("length.unitId", is( course.getLength().getUnitId().intValue() ))
+      .body("creatorId", is( course.getCreatorId().intValue() ))
+      .body("lastModifierId", is( course.getLastModifierId().intValue() ))
+      .body("subjectId", is( course.getSubjectId().intValue() ))
+      .body("maxParticipantCount", is( course.getMaxParticipantCount().intValue() ))
+      .body("archived", is( course.getArchived() ));
+      
+    course.setId(new Long(response.body().jsonPath().getInt("id")));
+    course.setName("Updated name");
+    course.setCourseNumber(999);
+    course.setDescription("Updated description");
+    course.setLength(new CourseLength(888d, 1l));
+    course.setMaxParticipantCount(1234l);
+    
+    given()
+      .contentType("application/json")
+      .body(course)
+      .put("/courses/courses/{ID}", course.getId())
+      .then()
+      .statusCode(200)
+      .body("id", is(course.getId().intValue()))
+      .body("name", is(course.getName()))
+      .body("courseNumber", is( course.getCourseNumber()))
+      .body("description", is( course.getDescription() ))
+      .body("length.units", is( course.getLength().getUnits().floatValue() ))
+      .body("length.unitId", is( course.getLength().getUnitId().intValue() ))
+      .body("creatorId", is( course.getCreatorId().intValue() ))
+      .body("lastModifierId", is( course.getLastModifierId().intValue() ))
+      .body("subjectId", is( course.getSubjectId().intValue() ))
+      .body("maxParticipantCount", is( course.getMaxParticipantCount().intValue() ))
+      .body("archived", is( course.getArchived() ));
+    
+    given()
+      .delete("/courses/courses/{ID}?permanent=true", course.getId())
+      .then()
+      .statusCode(204);
+  }
+  
+  @Test
+  public void testDeleteCourse() {
+    CourseLength length = new CourseLength(777d, 1l);
+    
+    Course course = new Course(
+        "Update test", 
+        new Date(), 
+        new Date(), 
+        "Course for testing course updating", 
+        Boolean.FALSE, 
+        111, 
+        222l,
+        new Date(),
+        new Date(),
+        "Extension",
+        333d,
+        444d,
+        555d,
+        666d,
+        777d,
+        new Date(),
+        1l, 
+        1l,
+        1l,
+        length, 
+        1l, 
+        1l, 
+        null);
+
+    Response response = given()
+      .contentType("application/json")
+      .body(course)
+      .post("/courses/courses/");
+    
+    Long id = new Long(response.body().jsonPath().getInt("id"));
+    assertNotNull(id);
+    
+    given().get("/courses/courses/{ID}", id)
+      .then()
+      .statusCode(200);
+    
+    given()
+      .delete("/courses/courses/{ID}", id)
+      .then()
+      .statusCode(204);
+    
+    given().get("/courses/courses/{ID}", id)
+      .then()
+      .statusCode(404);
+    
+    given()
+      .delete("/courses/courses/{ID}?permanent=true", id)
+      .then()
+      .statusCode(204);
+    
+    given().get("/courses/courses/{ID}", id)
+      .then()
+      .statusCode(404);
+  }
 }
