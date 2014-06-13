@@ -48,10 +48,6 @@
       <artifactId>common</artifactId>
     </dependency>
     <dependency>
-      <groupId>fi.pyramus</groupId>
-      <artifactId>domainmodelextension</artifactId>
-    </dependency>
-    <dependency>
       <groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>
       <version>6.0</version>

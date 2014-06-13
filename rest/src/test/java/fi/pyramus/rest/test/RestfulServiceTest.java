@@ -58,13 +58,17 @@ public class RestfulServiceTest {
   }
 
   protected static Package[] getPersistencePackages() {
-    Package domainModelPackage = fi.pyramus.domainmodel.DomainModelExtensionDescriptor.class.getPackage();
-    Package daoPackage = fi.pyramus.dao.GenericDAO.class.getPackage();
-    Package persistenceSearchPackage = fi.pyramus.persistence.search.SearchResult.class.getPackage();
-    Package persistenceUserTypesPackage = fi.pyramus.persistence.usertypes.MonetaryAmount.class.getPackage();
-    Package tranquilPackage = fi.pyramus.rest.tranquil.EntityLookup.class.getPackage();
-
-    return new Package[] { domainModelPackage, daoPackage, persistenceSearchPackage, persistenceUserTypesPackage, tranquilPackage };
+    // TODO: DomainModelExtension does not exist
+    
+    return null;
+    
+//    Package domainModelPackage = fi.pyramus.domainmodel.DomainModelExtensionDescriptor.class.getPackage();
+//    Package daoPackage = fi.pyramus.dao.GenericDAO.class.getPackage();
+//    Package persistenceSearchPackage = fi.pyramus.persistence.search.SearchResult.class.getPackage();
+//    Package persistenceUserTypesPackage = fi.pyramus.persistence.usertypes.MonetaryAmount.class.getPackage();
+//    Package tranquilPackage = fi.pyramus.rest.tranquil.EntityLookup.class.getPackage();
+//
+//    return new Package[] { domainModelPackage, daoPackage, persistenceSearchPackage, persistenceUserTypesPackage, tranquilPackage };
   }
 
   protected static File[] getHibernateSearchFiles(MavenDependencyResolver resolver) {

@@ -195,13 +195,6 @@
 
       <dependency>
         <groupId>fi.pyramus</groupId>
-        <artifactId>domainmodelextension</artifactId>
-        <version>${project.version}</version>
-        <type>jar</type>
-      </dependency>
-
-      <dependency>
-        <groupId>fi.pyramus</groupId>
         <artifactId>framework</artifactId>
         <version>${project.version}</version>
         <type>jar</type>
