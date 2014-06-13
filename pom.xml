@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fi.pyramus</groupId>
   <artifactId>parent</artifactId>
-  <version>0.6.5</version>
+  <version>0.6.6-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus Parent POM</name>
   <url>https://github.com/otavanopisto/pyramus/</url>
@@ -54,7 +54,7 @@
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>bom</artifactId>
-        <version>0.6.5</version>
+        <version>0.6.6-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
