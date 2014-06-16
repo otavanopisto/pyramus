@@ -235,7 +235,7 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     if (StringUtils.isBlank(courseComponent.getName())) {
-      return Response.status(Status.BAD_REQUEST).entity("lengthUnitId is required").build();
+      return Response.status(Status.BAD_REQUEST).entity("name is required").build();
     }
     
     EducationalTimeUnit componentLengthTimeUnit = null;
@@ -291,6 +291,50 @@ public class CourseRESTService extends AbstractRESTService {
     }
 
     return Response.status(Status.OK).entity(createCourseComponentRestModel(component)).build();
+  }
+  
+  @Path("/courses/{COURSEID:[0-9]*}/components/{COMPONENTID:[0-9]*}")
+  @PUT
+  public Response updateCourseComponent(@PathParam("COURSEID") Long courseId, @PathParam("COMPONENTID") Long courseComponentId, fi.pyramus.rest.model.CourseComponent courseComponentEntity) {
+    if (courseComponentEntity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    CourseComponent courseComponent = courseController.findCourseComponentById(courseComponentId);
+    if (courseComponent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!courseComponent.getId().equals(courseComponentEntity.getId())) {
+      return Response.status(Status.BAD_REQUEST).entity(String.format("Cannot update id (%d !=%d)", courseComponent.getId(), courseComponentEntity.getId())).build();
+    }
+    
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (StringUtils.isBlank(courseComponent.getName())) {
+      return Response.status(Status.BAD_REQUEST).entity("name is required").build();
+    }
+    
+    EducationalTimeUnit componentLengthTimeUnit = null;
+      
+    if (courseComponentEntity.getLength() != null) {
+      if (courseComponentEntity.getLengthUnitId() == null) {
+        return Response.status(Status.BAD_REQUEST).entity("lengthUnitId is required when length is defined").build();
+      }
+      
+      componentLengthTimeUnit = commonController.findEducationalTimeUnitById(courseComponentEntity.getLengthUnitId());
+      if (componentLengthTimeUnit == null) {
+        return Response.status(Status.BAD_REQUEST).entity("lengthUnitId is required when length is defined").build();
+      }
+    }
+    
+    return Response
+      .status(Status.OK)
+      .entity(createCourseComponentRestModel(courseController.updateCourseComponent(courseComponent, courseComponentEntity.getLength(), componentLengthTimeUnit, courseComponentEntity.getName(), courseComponentEntity.getDescription())))
+      .build();
   }
   
   @Path("/courses/{COURSEID:[0-9]*}/components/{COMPONENTID:[0-9]*}")

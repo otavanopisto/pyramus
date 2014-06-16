@@ -13,7 +13,7 @@ import fi.pyramus.rest.model.CourseComponent;
 public class CourseComponentTestsIT extends AbstractRESTServiceTest {
 
   @Test
-  public void testCreateCourse() {
+  public void testCreateCourseComponent() {
     Long courseId = 1001l;
     
     CourseComponent courseComponent = new CourseComponent(
@@ -79,4 +79,61 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
       .body("archived", is( false ));
   }
   
+  @Test
+  public void testUpdateCourseComponent() {
+    Long courseId = 1001l;
+    
+    CourseComponent courseComponent = new CourseComponent(
+        "Create test component", 
+        "Component for testing creating of the component",
+        12d, 
+        1l, 
+        Boolean.FALSE);
+
+    Response response = given()
+      .contentType("application/json")
+      .body(courseComponent)
+      .post("/courses/courses/{COURSEID}/components", courseId);
+     
+    Long id = new Long(response.body().jsonPath().getInt("id"));
+    
+    System.out.println("Create component #"+ id);
+    
+    try {
+      response.then()
+        .body("id", not(is((Long) null)))
+        .body("name", is(courseComponent.getName()))
+        .body("description", is( courseComponent.getDescription() ))
+        .body("length", is( courseComponent.getLength().floatValue() ))
+        .body("lengthUnitId", is( courseComponent.getLengthUnitId().intValue() ))
+        .body("archived", is( courseComponent.getArchived() ));
+      
+      CourseComponent updateComponent = new CourseComponent(
+          id,
+          "Updated name", 
+          "Updated description",
+          132d, 
+          1l, 
+          Boolean.FALSE);
+
+      given()
+        .contentType("application/json")
+        .body(updateComponent)
+        .put("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
+        .then()
+        .statusCode(200)
+        .body("id", is(updateComponent.getId().intValue()))
+        .body("name", is(updateComponent.getName()))
+        .body("description", is( updateComponent.getDescription() ))
+        .body("length", is( updateComponent.getLength().floatValue() ))
+        .body("lengthUnitId", is( updateComponent.getLengthUnitId().intValue() ))
+        .body("archived", is( updateComponent.getArchived() ));  
+
+    } finally {
+      given()
+        .delete("/courses/courses/{COURSEID}/components/{COMPONENTID}?permanent=true", courseId, id)
+        .then()
+        .statusCode(204);
+    }
+  }
 }
