@@ -280,6 +280,10 @@ public class CourseController {
     courseParticipationTypeDAO.unarchive(courseParticipationType, user);
     return courseParticipationType;
   }
+
+  public void deleteCourseParticipationType(CourseParticipationType participationType) {
+    courseParticipationTypeDAO.delete(participationType);
+  }
   
   public void removeCourseTag(Course course, Tag tag) {
     course.removeTag(tag);
