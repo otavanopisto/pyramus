@@ -2,11 +2,48 @@ package fi.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 import org.junit.Test;
 
+import com.jayway.restassured.response.Response;
+
+import fi.pyramus.rest.model.CourseComponent;
+
 public class CourseComponentTestsIT extends AbstractRESTServiceTest {
 
+  @Test
+  public void testCreateCourse() {
+    Long courseId = 1001l;
+    
+    CourseComponent courseComponent = new CourseComponent(
+        "Create test component", 
+        "Component for testing creating of the component",
+        12d, 
+        1l, 
+        Boolean.FALSE);
+
+    Response response = given()
+      .contentType("application/json")
+      .body(courseComponent)
+      .post("/courses/courses/{COURSEID}/components", courseId);
+    
+    response.then()
+      .body("id", not(is((Long) null)))
+      .body("name", is(courseComponent.getName()))
+      .body("description", is( courseComponent.getDescription() ))
+      .body("length", is( courseComponent.getLength().floatValue() ))
+      .body("lengthUnitId", is( courseComponent.getLengthUnitId().intValue() ))
+      .body("archived", is( courseComponent.getArchived() ));
+      
+    int id = response.body().jsonPath().getInt("id");
+    
+    given()
+      .delete("/courses/courses/{COURSEID}/components/{COMPONENTID}?permanent=true", courseId, id)
+      .then()
+      .statusCode(204);
+  }
+  
   @Test
   public void testListCourseComponents() {
     given()
