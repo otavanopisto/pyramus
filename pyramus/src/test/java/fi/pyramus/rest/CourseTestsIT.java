@@ -18,7 +18,7 @@ import com.jayway.restassured.response.Response;
 
 import fi.pyramus.rest.model.Course;
 
-public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
+public class CourseTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateCourse() {
@@ -129,8 +129,8 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
       .body("created[0]", is( 1262296800000l ))
       .body("lastModified[0]", is( 1262296800000l ))
       .body("description[0]", is( "Course #1 for testing" ))
-      .body("length", is( 1.0f ))
-      .body("lengthUnitId", is( 1 ))
+      .body("length[0]", is( 1.0f ))
+      .body("lengthUnitId[0]", is( 1 ))
       .body("creatorId[0]", is( 1 ))
       .body("lastModifierId[0]", is( 1 ))
       .body("subjectId[0]", is( 1 ))
@@ -142,8 +142,8 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
       .body("created[1]", is( 1293832800000l ))
       .body("lastModified[1]", is( 1293832800000l ))
       .body("description[1]", is( "Course #2 for testing" ))
-      .body("length", is( 1.0f ))
-      .body("lengthUnitId", is( 1 ))
+      .body("length[1]", is( 1.0f ))
+      .body("lengthUnitId[1]", is( 1 ))
       .body("creatorId[1]", is( 1 ))
       .body("lastModifierId[1]", is( 1 ))
       .body("subjectId[1]", is( 1 ))
@@ -285,41 +285,6 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
     given().get("/courses/courses/{ID}", id)
       .then()
       .statusCode(404);
-  }
-  
-  @Test
-  public void testListCourseComponents() {
-    given()
-      .get("/courses/courses/1000/components")
-      .then()
-      .statusCode(200)
-      .body("id.size()", is(2))
-      .body("id[0]", is(1000) )
-      .body("name[0]", is("Test Course #1 component #1" ))
-      .body("description[0]", is( "Course component for testing" ))
-      .body("length[0]", is( 234f ))
-      .body("lengthUnitId[0]", is( 1 ))
-      .body("archived[0]", is( false ))
-      .body("id[1]", is(1001) )
-      .body("name[1]", is("Test Course #1 component #2" ))
-      .body("description[1]", is( "Course component for testing" ))
-      .body("length[1]", is( 345f ))
-      .body("lengthUnitId[1]", is( 1 ))
-      .body("archived[1]", is( false ));
-  }
-  
-  @Test
-  public void testFindCourseComponent() {
-    given()
-      .get("/courses/courses/1001/components/1003")
-      .then()
-      .statusCode(200)
-      .body("id", is(1003) )
-      .body("name", is("Test Course #2 component #2" ))
-      .body("description", is( "Course component for testing" ))
-      .body("length", is( 567f ))
-      .body("lengthUnitId", is( 1 ))
-      .body("archived", is( false ));
   }
   
 }
