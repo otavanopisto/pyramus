@@ -262,6 +262,10 @@ public class CourseController {
     courseStateDAO.unarchive(courseState, user);
     return courseState;
   }
+
+  public void deleteCourseState(CourseState courseState) {
+    courseStateDAO.delete(courseState);
+  }
   
   public CourseParticipationType archiveCourseParticipationType(CourseParticipationType courseParticipationType, User user) {
     courseParticipationTypeDAO.archive(courseParticipationType, user);

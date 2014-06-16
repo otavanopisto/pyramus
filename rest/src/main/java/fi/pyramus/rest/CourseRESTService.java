@@ -371,6 +371,109 @@ public class CourseRESTService extends AbstractRESTService {
     return Response.status(Status.NO_CONTENT).build();
   }
   
+  @Path("/courseStates")
+  @POST
+  public Response createCourseState(fi.pyramus.rest.model.CourseState entity) {
+    if (StringUtils.isBlank(entity.getName())) {
+      return Response.status(Status.BAD_REQUEST).entity("name is required").build();
+    }
+    
+    return Response
+      .status(Status.OK)
+      .entity(createCourseStateRestModel(courseController.createCourseState(entity.getName())))
+      .build();
+  }
+  
+  @Path("/courseStates")
+  @GET
+  public Response listCourseStates(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<CourseState> courseStates;
+    
+    if (filterArchived) {
+      courseStates = courseController.findUnarchivedCourseStates();
+    } else {
+      courseStates = courseController.findCourseStates();
+    }
+    
+    if (courseStates.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok().entity(createCourseStateRestModel(courseStates)).build();
+  }
+  
+  @Path("/courseStates/{ID:[0-9]*}")
+  @GET
+  public Response findCourseStateById(@PathParam("ID") Long id) {
+    CourseState courseState = courseController.findCourseStateById(id);
+    if (courseState == null) {
+      return Response.status(Status.NOT_FOUND).build(); 
+    }
+    
+    if (courseState.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build(); 
+    }    
+    
+    return Response.ok().entity(createCourseStateRestModel(courseState)).build();
+  }
+  
+  @Path("/courseStates/{ID:[0-9]*}")
+  @PUT
+  public Response updateCourseState(@PathParam("ID") Long id, fi.pyramus.rest.model.CourseState entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    CourseState courseState = courseController.findCourseStateById(id);
+    if (courseState == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (courseState.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (StringUtils.isBlank(entity.getName())) {
+      return Response.status(Status.BAD_REQUEST).entity("Name is required").build();
+    }
+    
+    return Response
+        .status(Status.OK)
+        .entity(createCourseStateRestModel(courseController.updateCourseState(courseState, entity.getName())))
+        .build();
+  }
+  
+  @Path("/courseStates/{ID:[0-9]*}") 
+  @DELETE
+  public Response archiveCourseState(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    CourseState courseState = courseController.findCourseStateById(id);
+    if (courseState == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      courseController.deleteCourseState(courseState);
+    } else {
+      courseController.archiveCourseState(courseState, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+  
+  private fi.pyramus.rest.model.CourseState createCourseStateRestModel(CourseState courseState) {
+    return new fi.pyramus.rest.model.CourseState(courseState.getId(), courseState.getName(), courseState.getArchived());
+  }
+  
+  private List<fi.pyramus.rest.model.CourseState> createCourseStateRestModel(List<CourseState> courseStates) {
+    List<fi.pyramus.rest.model.CourseState> result = new ArrayList<>();
+    
+    for (CourseState courseState : courseStates) {
+      result.add(createCourseStateRestModel(courseState));
+    }
+    
+    return result;
+  }
+  
   private List<fi.pyramus.rest.model.Course> createCourseRestModel(List<Course> courses) {
     List<fi.pyramus.rest.model.Course> result = new ArrayList<fi.pyramus.rest.model.Course>();
     
@@ -445,19 +548,6 @@ public class CourseRESTService extends AbstractRESTService {
 //    if (!StringUtils.isBlank(name)) {
 //      return Response.ok()
 //          .entity(tranqualise(courseController.createCourseEnrolmentType(name)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
-//  
-//  @Path("/courseStates")
-//  @POST
-//  public Response createCourseState(CourseStateEntity courseStateEntity) {
-//    String name = courseStateEntity.getName();
-//    if (!StringUtils.isBlank(name)) {
-//      return Response.ok()
-//          .entity(tranqualise(courseController.createCourseState(name)))
 //          .build();
 //    } else {
 //      return Response.status(500).build();
@@ -548,37 +638,6 @@ public class CourseRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
-//  @Path("/courseStates")
-//  @GET
-//  public Response findCourseStates(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<CourseState> courseStates;
-//    if (filterArchived) {
-//      courseStates = courseController.findUnarchivedCourseStates();
-//    } else {
-//      courseStates = courseController.findCourseStates();
-//    }
-//    if (!courseStates.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(courseStates))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
-//  
-//  @Path("/courseStates/{ID:[0-9]*}")
-//  @GET
-//  public Response findCourseStateById(@PathParam("ID") Long id) {
-//    CourseState courseState = courseController.findCourseStateById(id);
-//    if (courseState != null) {
-//      return Response.ok()
-//          .entity(tranqualise(courseState))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
 //  @Path("/participationTypes")
 //  @GET
 //  public Response findCourseParticipationTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -623,40 +682,6 @@ public class CourseRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
-//  @Path("/courses/{CID:[0-9]*}/components/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateCourseComponent(@PathParam("CID") Long courseId, @PathParam("ID") Long componentId, CourseComponentEntity componentEntity) {
-//    try {
-//      CourseComponent component = courseController.findCourseComponentById(componentId);
-//      if (component.getCourse().getId().equals(courseId)) {
-//        if (componentEntity.getArchived() != null) {
-//          if (!componentEntity.getArchived()) {
-//            return Response.ok()
-//                .entity(tranqualise(courseController.unarchiveCourseComponent(component, getUser())))
-//                .build();
-//          } else {
-//            return Response.status(500).build();
-//          }
-//        } else {
-//          Double length = componentEntity.getLength();
-//          EducationalTimeUnit lengthTimeUnit = commonController.findEducationalTimeUnitById(componentEntity.getLength_id());
-//          String name = componentEntity.getName();
-//          String description = componentEntity.getDescription();
-//          if (length != null && lengthTimeUnit != null && !StringUtils.isBlank(name) && !StringUtils.isBlank(description)) {
-//            return Response.ok()
-//                .entity(tranqualise(courseController.updateCourseComponent(component, length, lengthTimeUnit, name, description)))
-//                .build();
-//          } else {
-//            return Response.status(500).build();
-//          }
-//        }
-//      } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//      }
-//    } catch (NullPointerException e) {
-//      return Response.status(500).build();
-//    }
-//  }
 //  
 //  @Path("/descriptionCategories/{ID:[0-9]*}")
 //  @PUT
@@ -698,28 +723,6 @@ public class CourseRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
-//  @Path("/courseStates/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateCourseState(@PathParam("ID") Long id, CourseStateEntity courseStateEntity) {
-//    CourseState courseState = courseController.findCourseStateById(id);
-//    if (courseState != null) {
-//      String name = courseStateEntity.getName();
-//      if (!StringUtils.isBlank(name)) {
-//        return Response.ok()
-//            .entity(tranqualise(courseController.updateCourseState(courseState, name)))
-//            .build();
-//      } else if (courseStateEntity.getArchived() != null) {
-//        if (!courseStateEntity.getArchived()) {
-//          return Response.ok()
-//              .entity(tranqualise(courseController.unarchiveCourseState(courseState, getUser())))
-//              .build();
-//        }
-//      }
-//      return Response.status(500).build();
-//    }
-//    return Response.status(Status.NOT_FOUND).build();
-//  }
-//  
 //  @Path("/participationTypes/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateCourseParticipationType(@PathParam("ID") Long id, CourseParticipationTypeEntity participationTypeEntity) {
@@ -753,19 +756,6 @@ public class CourseRESTService extends AbstractRESTService {
 //    } else {
 //      return Response.status(500).build();
 //    }
-//  }
-//  
-//  @Path("/courseStates/{ID:[0-9]*}") 
-//  @DELETE
-//  public Response archiveCourseState(@PathParam("ID") Long id) {
-//    CourseState courseState = courseController.findCourseStateById(id);
-//    if (courseState != null) {
-//      return Response.ok()
-//          .entity(tranqualise(courseController.archiveCourseState(courseState, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    } 
 //  }
 //  
 //  @Path("/participationTypes/{ID:[0-9]*}")
