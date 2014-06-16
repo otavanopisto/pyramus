@@ -3,11 +3,15 @@ package fi.pyramus.rest;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.Date;
 
 import org.junit.Test;
 
 import com.jayway.restassured.response.Response;
 
+import fi.pyramus.rest.model.Course;
 import fi.pyramus.rest.model.CourseComponent;
 
 public class CourseComponentTestsIT extends AbstractRESTServiceTest {
@@ -97,8 +101,6 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
      
     Long id = new Long(response.body().jsonPath().getInt("id"));
     
-    System.out.println("Create component #"+ id);
-    
     try {
       response.then()
         .body("id", not(is((Long) null)))
@@ -135,5 +137,48 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
         .then()
         .statusCode(204);
     }
+  }
+  
+  @Test
+  public void testDeleteCourseComponent() {
+    Long courseId = 1001l;
+    
+    CourseComponent courseComponent = new CourseComponent(
+        "Create test component", 
+        "Component for testing creating of the component",
+        12d, 
+        1l, 
+        Boolean.FALSE);
+
+    Response response = given()
+      .contentType("application/json")
+      .body(courseComponent)
+      .post("/courses/courses/{COURSEID}/components", courseId);
+    
+    Long id = new Long(response.body().jsonPath().getInt("id"));
+    assertNotNull(id);
+    
+    given().get("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
+      .then()
+      .statusCode(200);
+    
+    given()
+      .delete("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
+      .then()
+      .statusCode(204);
+    
+    given().get("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
+      .then()
+      .statusCode(404);
+    
+    given()
+      .delete("/courses/courses/{COURSEID}/components/{COMPONENTID}?permanent=true", courseId, id)
+      .then()
+      .statusCode(204);
+    
+    
+    given().get("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
+      .then()
+      .statusCode(404);
   }
 }
