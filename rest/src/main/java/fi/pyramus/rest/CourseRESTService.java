@@ -286,6 +286,10 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
+    if (component.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
     if (!component.getCourse().getId().equals(courseId)) {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -354,8 +358,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    List<CourseComponent> courseComponents = courseController.findCourseComponentsByCourse(course);
-    if (!courseComponents.contains(courseComponent)) {
+    if (!courseComponent.getCourse().getId().equals(course.getId())) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
