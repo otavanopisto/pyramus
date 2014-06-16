@@ -135,7 +135,7 @@ public class CourseController {
     return courseDescriptionCategory;
   }
   
-  public List<CourseEnrolmentType> findCourseEnrolmentTypes() {
+  public List<CourseEnrolmentType> listCourseEnrolmentTypes() {
     List<CourseEnrolmentType> enrolmentTypes = courseEnrolmentTypeDAO.listAll();
     return enrolmentTypes;
   }
@@ -143,6 +143,10 @@ public class CourseController {
   public CourseEnrolmentType findCourseEnrolmentTypeById(Long id) {
     CourseEnrolmentType enrolmentType = courseEnrolmentTypeDAO.findById(id);
     return enrolmentType;
+  }
+
+  public void deleteCourseEnrolmentType(fi.pyramus.domainmodel.courses.CourseEnrolmentType enrolmentType) {
+    courseEnrolmentTypeDAO.delete(enrolmentType);
   }
   
   public List<CourseState> findCourseStates() {
