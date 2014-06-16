@@ -11,16 +11,16 @@ public class Course {
   public Course(String name, Date created, Date lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, Date beginDate, Date endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingDays, Double assessingHours, Double planningHours, Date enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Long subjectId, CourseLength length, Long moduleId, Long stateId, List<String> tags) {
+      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, List<String> tags) {
     this(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
-        creatorId, lastModifierId, subjectId, length, moduleId, stateId, tags);
+        creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, tags);
   }
 
   public Course(Long id, String name, Date created, Date lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, Date beginDate, Date endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingDays, Double assessingHours, Double planningHours, Date enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Long subjectId, CourseLength length, Long moduleId, Long stateId, List<String> tags) {
+      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, List<String> tags) {
     super();
     this.id = id;
     this.name = name;
@@ -43,6 +43,7 @@ public class Course {
     this.lastModifierId = lastModifierId;
     this.subjectId = subjectId;
     this.length = length;
+    this.lengthUnitId = lengthUnitId;
     this.moduleId = moduleId;
     this.stateId = stateId;
     this.tags = tags;
@@ -208,12 +209,20 @@ public class Course {
     this.subjectId = subjectId;
   }
   
-  public CourseLength getLength() {
+  public Double getLength() {
     return length;
   }
-
-  public void setLength(CourseLength length) {
+  
+  public void setLength(Double length) {
     this.length = length;
+  }
+  
+  public Long getLengthUnitId() {
+    return lengthUnitId;
+  }
+  
+  public void setLengthUnitId(Long lengthUnitId) {
+    this.lengthUnitId = lengthUnitId;
   }
 
   public Long getModuleId() {
@@ -260,7 +269,8 @@ public class Course {
   private Long creatorId;
   private Long lastModifierId;
   private Long subjectId;
-  private CourseLength length;
+  private Double length;
+  private Long lengthUnitId;
   private Long moduleId;
   private Long stateId;
   private List<String> tags;

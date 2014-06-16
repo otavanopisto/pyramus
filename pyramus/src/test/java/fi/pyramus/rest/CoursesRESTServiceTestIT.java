@@ -17,14 +17,11 @@ import org.junit.Test;
 import com.jayway.restassured.response.Response;
 
 import fi.pyramus.rest.model.Course;
-import fi.pyramus.rest.model.CourseLength;
 
 public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateCourse() {
-    CourseLength length = new CourseLength(777d, 1l);
-    
     Course course = new Course(
         "Create test", 
         new Date(), 
@@ -45,7 +42,8 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
         1l, 
         1l,
         1l,
-        length, 
+        777d,
+        1l,
         1l, 
         1l, 
         null);
@@ -60,8 +58,8 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
       .body("name", is(course.getName()))
       .body("courseNumber", is( course.getCourseNumber()))
       .body("description", is( course.getDescription() ))
-      .body("length.units", is( course.getLength().getUnits().floatValue() ))
-      .body("length.unitId", is( course.getLength().getUnitId().intValue() ))
+      .body("length", is( course.getLength().floatValue() ))
+      .body("lengthUnitId", is( course.getLengthUnitId().intValue() ))
       .body("creatorId", is( course.getCreatorId().intValue() ))
       .body("lastModifierId", is( course.getLastModifierId().intValue() ))
       .body("subjectId", is( course.getSubjectId().intValue() ))
@@ -87,8 +85,8 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
       .body("created", is( 1293832800000l ))
       .body("lastModified", is( 1293832800000l ))
       .body("description", is( "Course #2 for testing" ))
-      .body("length.units", is( 1.0f ))
-      .body("length.unitId", is( 1 ))
+      .body("length", is( 1.0f ))
+      .body("lengthUnitId", is( 1 ))
       .body("creatorId", is( 1 ))
       .body("lastModifierId", is( 1 ))
       .body("subjectId", is( 1 ))
@@ -131,8 +129,8 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
       .body("created[0]", is( 1262296800000l ))
       .body("lastModified[0]", is( 1262296800000l ))
       .body("description[0]", is( "Course #1 for testing" ))
-      .body("length[0].units", is( 1.0f ))
-      .body("length[0].unitId", is( 1 ))
+      .body("length", is( 1.0f ))
+      .body("lengthUnitId", is( 1 ))
       .body("creatorId[0]", is( 1 ))
       .body("lastModifierId[0]", is( 1 ))
       .body("subjectId[0]", is( 1 ))
@@ -144,8 +142,8 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
       .body("created[1]", is( 1293832800000l ))
       .body("lastModified[1]", is( 1293832800000l ))
       .body("description[1]", is( "Course #2 for testing" ))
-      .body("length[1].units", is( 1.0f ))
-      .body("length[1].unitId", is( 1 ))
+      .body("length", is( 1.0f ))
+      .body("lengthUnitId", is( 1 ))
       .body("creatorId[1]", is( 1 ))
       .body("lastModifierId[1]", is( 1 ))
       .body("subjectId[1]", is( 1 ))
@@ -155,8 +153,6 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateCourse() {
-    CourseLength length = new CourseLength(777d, 1l);
-    
     Course course = new Course(
         "Update test", 
         new Date(), 
@@ -177,7 +173,8 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
         1l, 
         1l,
         1l,
-        length, 
+        777d,
+        1l,
         1l, 
         1l, 
         null);
@@ -192,8 +189,8 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
       .body("name", is(course.getName()))
       .body("courseNumber", is( course.getCourseNumber()))
       .body("description", is( course.getDescription() ))
-      .body("length.units", is( course.getLength().getUnits().floatValue() ))
-      .body("length.unitId", is( course.getLength().getUnitId().intValue() ))
+      .body("length", is( course.getLength().floatValue() ))
+      .body("lengthUnitId", is( course.getLengthUnitId().intValue() ))
       .body("creatorId", is( course.getCreatorId().intValue() ))
       .body("lastModifierId", is( course.getLastModifierId().intValue() ))
       .body("subjectId", is( course.getSubjectId().intValue() ))
@@ -204,7 +201,7 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
     course.setName("Updated name");
     course.setCourseNumber(999);
     course.setDescription("Updated description");
-    course.setLength(new CourseLength(888d, 1l));
+    course.setLength(888d);
     course.setMaxParticipantCount(1234l);
     
     given()
@@ -217,8 +214,8 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
       .body("name", is(course.getName()))
       .body("courseNumber", is( course.getCourseNumber()))
       .body("description", is( course.getDescription() ))
-      .body("length.units", is( course.getLength().getUnits().floatValue() ))
-      .body("length.unitId", is( course.getLength().getUnitId().intValue() ))
+      .body("length", is( course.getLength().floatValue() ))
+      .body("lengthUnitId", is( course.getLengthUnitId().intValue() ))
       .body("creatorId", is( course.getCreatorId().intValue() ))
       .body("lastModifierId", is( course.getLastModifierId().intValue() ))
       .body("subjectId", is( course.getSubjectId().intValue() ))
@@ -233,8 +230,6 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteCourse() {
-    CourseLength length = new CourseLength(777d, 1l);
-    
     Course course = new Course(
         "Update test", 
         new Date(), 
@@ -255,7 +250,8 @@ public class CoursesRESTServiceTestIT extends AbstractRESTServiceTest {
         1l, 
         1l,
         1l,
-        length, 
+        777d,
+        1l,
         1l, 
         1l, 
         null);

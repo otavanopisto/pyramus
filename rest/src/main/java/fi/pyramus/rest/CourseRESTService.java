@@ -35,7 +35,6 @@ import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.TagController;
-import fi.pyramus.rest.model.CourseLength;
 
 @Path("/courses")
 @Produces("application/json")
@@ -83,21 +82,18 @@ public class CourseRESTService extends AbstractRESTService {
     Integer courseNumber = courseEntity.getCourseNumber();
     Date beginDate = courseEntity.getBeginDate();
     Date endDate = courseEntity.getEndDate();
-    Double courseLength = null;
+    Double courseLength = courseEntity.getLength();
     EducationalTimeUnit courseLengthTimeUnit = null;
     
-    CourseLength length = courseEntity.getLength();
-    if (length != null) {
-      if (length.getUnitId() == null) {
+    if (courseLength != null) {
+      if (courseEntity.getLengthUnitId() == null) {
         return Response.status(Status.BAD_REQUEST).entity("length unit is missing").build();
       }
       
-      courseLengthTimeUnit = commonController.findEducationalTimeUnitById(length.getUnitId());
+      courseLengthTimeUnit = commonController.findEducationalTimeUnitById(courseEntity.getLengthUnitId());
       if (courseLengthTimeUnit == null) {
         return Response.status(Status.BAD_REQUEST).entity("length unit is invalid").build();
       }
-      
-      courseLength = length.getUnits();
     }
     
     Double distanceTeachingDays = courseEntity.getDistanceTeachingDays();
@@ -180,21 +176,18 @@ public class CourseRESTService extends AbstractRESTService {
     Integer courseNumber = courseEntity.getCourseNumber();
     Date beginDate = courseEntity.getBeginDate();
     Date endDate = courseEntity.getEndDate();
-    Double courseLength = null;
+    Double courseLength = courseEntity.getLength();
     EducationalTimeUnit courseLengthTimeUnit = null;
     
-    CourseLength length = courseEntity.getLength();
-    if (length != null) {
-      if (length.getUnitId() == null) {
+    if (courseLength != null) {
+      if (courseEntity.getLengthUnitId() == null) {
         return Response.status(Status.BAD_REQUEST).entity("length unit is missing").build();
       }
       
-      courseLengthTimeUnit = commonController.findEducationalTimeUnitById(length.getUnitId());
+      courseLengthTimeUnit = commonController.findEducationalTimeUnitById(courseEntity.getLengthUnitId());
       if (courseLengthTimeUnit == null) {
         return Response.status(Status.BAD_REQUEST).entity("length unit is invalid").build();
       }
-      
-      courseLength = length.getUnits();
     }
     
     Double distanceTeachingDays = courseEntity.getDistanceTeachingDays();
@@ -286,13 +279,6 @@ public class CourseRESTService extends AbstractRESTService {
       subjectId = courseSubject.getId();
     }
     
-    CourseLength length = null;
-    
-    EducationalLength courseLength = course.getCourseLength();
-    if (courseLength != null) {
-      length = new CourseLength(courseLength.getId(), courseLength.getUnits(), courseLength.getUnit().getId());
-    }
-    
     List<String> tags = new ArrayList<String>();
     Set<Tag> courseTags = course.getTags();
     if (courseTags != null) {
@@ -300,13 +286,16 @@ public class CourseRESTService extends AbstractRESTService {
         tags.add(courseTag.getText());
       }
     }
+
+    Double length = course.getCourseLength() != null ? course.getCourseLength().getUnits() : null;
+    Long lengthUnitId = course.getCourseLength() != null ? course.getCourseLength().getUnit().getId() : null;
     
     return new fi.pyramus.rest.model.Course(course.getId(), course.getName(), course.getCreated(), 
         course.getLastModified(), course.getDescription(), course.getArchived(), course.getCourseNumber(), 
         course.getMaxParticipantCount(), course.getBeginDate(), course.getEndDate(), course.getNameExtension(), 
         course.getLocalTeachingDays(), course.getTeachingHours(), course.getDistanceTeachingDays(), 
         course.getAssessingHours(), course.getPlanningHours(), course.getEnrolmentTimeEnd(), course.getCreator().getId(), 
-        course.getLastModifier().getId(), subjectId, length, course.getModule().getId(), course.getState().getId(), tags);
+        course.getLastModifier().getId(), subjectId, length, lengthUnitId, course.getModule().getId(), course.getState().getId(), tags);
   }
   
   private fi.pyramus.rest.model.CourseComponent createCourseComponentRestModel(CourseComponent component) {
