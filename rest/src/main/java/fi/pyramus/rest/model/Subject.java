@@ -5,14 +5,13 @@ public class Subject {
   public Subject() {
   }
 
-  public Subject(Long id, String code, String name, Long educationTypeId, Boolean archived, Long version) {
+  public Subject(Long id, String code, String name, Long educationTypeId, Boolean archived) {
     super();
     this.id = id;
     this.code = code;
     this.name = name;
     this.educationTypeId = educationTypeId;
     this.archived = archived;
-    this.version = version;
   }
 
   public Long getId() {
@@ -55,18 +54,9 @@ public class Subject {
     this.archived = archived;
   }
 
-  public Long getVersion() {
-    return version;
-  }
-
-  public void setVersion(Long version) {
-    this.version = version;
-  }
-
   private Long id;
   private String code;
   private String name;
   private Long educationTypeId;
   private Boolean archived;
-  private Long version;
 }
