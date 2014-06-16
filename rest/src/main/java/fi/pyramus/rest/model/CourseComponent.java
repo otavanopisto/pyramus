@@ -6,13 +6,17 @@ public class CourseComponent {
   }
 
   public CourseComponent(Long id, String name, String description, Double length, Long lengthUnitId, Boolean archived) {
-    super();
+    this();
     this.id = id;
     this.name = name;
     this.description = description;
     this.length = length;
     this.lengthUnitId = lengthUnitId;
     this.archived = archived;
+  }
+
+  public CourseComponent(String name, String description, Double length, Long lengthUnitId, Boolean archived) {
+    this(null, name, description, length, lengthUnitId, archived);
   }
 
   public Long getId() {

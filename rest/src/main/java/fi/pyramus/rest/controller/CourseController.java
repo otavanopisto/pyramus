@@ -238,6 +238,10 @@ public class CourseController {
     courseComponentDAO.unarchive(courseComponent, user);
     return courseComponent;
   }
+
+  public void deleteCourseComponent(CourseComponent courseComponent) {
+    courseComponentDAO.delete(courseComponent);
+  }
   
   public CourseDescriptionCategory archiveCourseDescriptionCategory(CourseDescriptionCategory courseDescriptionCategory, User user) {
     courseDescriptionCategoryDAO.archive(courseDescriptionCategory, user);

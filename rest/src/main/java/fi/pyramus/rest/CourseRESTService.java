@@ -2,7 +2,6 @@ package fi.pyramus.rest;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +21,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import fi.pyramus.domainmodel.base.EducationalLength;
+import org.apache.commons.lang3.StringUtils;
+
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
@@ -225,6 +225,37 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
   }
+  
+  @Path("/courses/{COURSEID:[0-9]*}/components")
+  @POST
+  public Response createCourseComponent(@PathParam("COURSEID") Long courseId, fi.pyramus.rest.model.CourseComponent courseComponent) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (StringUtils.isBlank(courseComponent.getName())) {
+      return Response.status(Status.BAD_REQUEST).entity("lengthUnitId is required").build();
+    }
+    
+    EducationalTimeUnit componentLengthTimeUnit = null;
+      
+    if (courseComponent.getLength() != null) {
+      if (courseComponent.getLengthUnitId() == null) {
+        return Response.status(Status.BAD_REQUEST).entity("lengthUnitId is required when length is defined").build();
+      }
+      
+      componentLengthTimeUnit = commonController.findEducationalTimeUnitById(courseComponent.getLengthUnitId());
+      if (componentLengthTimeUnit == null) {
+        return Response.status(Status.BAD_REQUEST).entity("lengthUnitId is required when length is defined").build();
+      }
+    }
+    
+    return Response
+      .status(Status.OK)
+      .entity(createCourseComponentRestModel(courseController.createCourseComponent(course, courseComponent.getLength(), componentLengthTimeUnit, courseComponent.getName(), courseComponent.getDescription())))
+      .build();
+  }
 
   @Path("/courses/{ID:[0-9]*}/components")
   @GET
@@ -260,6 +291,37 @@ public class CourseRESTService extends AbstractRESTService {
     }
 
     return Response.status(Status.OK).entity(createCourseComponentRestModel(component)).build();
+  }
+  
+  @Path("/courses/{COURSEID:[0-9]*}/components/{COMPONENTID:[0-9]*}")
+  @DELETE
+  public Response deleteCourseComponent(@PathParam("COURSEID") Long courseId, @PathParam("COMPONENTID") Long componentId, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    if (courseId == null || componentId == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    CourseComponent courseComponent = courseController.findCourseComponentById(componentId);
+    if (courseComponent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<CourseComponent> courseComponents = courseController.findCourseComponentsByCourse(course);
+    if (!courseComponents.contains(courseComponent)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      courseController.deleteCourseComponent(courseComponent);
+    } else {
+      courseController.archiveCourseComponent(courseComponent, getLoggedUser());
+    }
+    
+    return Response.status(Status.NO_CONTENT).build();
   }
   
   private List<fi.pyramus.rest.model.Course> createCourseRestModel(List<Course> courses) {
@@ -315,28 +377,6 @@ public class CourseRESTService extends AbstractRESTService {
   
   
 
-//  
-//  @Path("/courses/{ID:[0-9]*}/components")
-//  @POST
-//  public Response createCourseComponent(@PathParam("ID") Long id, CourseComponentEntity componentEntity) {
-//    Course course = courseController.findCourseById(id);
-//    if (course != null) {
-//      try {
-//        Double componentLength = componentEntity.getLength();
-//        EducationalTimeUnit componentLengthTimeUnit = commonController.findEducationalTimeUnitById(componentEntity.getLength_id());
-//        String name = componentEntity.getName();
-//        String description = componentEntity.getDescription();
-//        if (componentLength != null && componentLengthTimeUnit != null && !StringUtils.isBlank(name) && !StringUtils.isBlank(description)) {
-//          return Response.ok()
-//              .entity(tranqualise(courseController.createCourseComponent(course, componentLength, componentLengthTimeUnit, name, description)))
-//              .build();
-//        }
-//      } catch(NullPointerException e) {
-//        return Response.status(500).build();
-//      }
-//    }
-//    return Response.status(Status.NOT_FOUND).build();
-//  }
 //  
 //  @Path("/descriptionCategories")
 //  @POST
@@ -653,21 +693,6 @@ public class CourseRESTService extends AbstractRESTService {
 //      return Response.status(500).build();
 //    }
 //    return Response.status(Status.NOT_FOUND).build();
-//  }
-//  
-//  @Path("/courses/{CID:[0-9]*}/components/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveCourseComponent(@PathParam("CID") Long courseId, @PathParam("ID") Long componentId) {
-//    Course course = courseController.findCourseById(courseId);
-//    CourseComponent component = courseController.findCourseComponentById(componentId);
-//    List<CourseComponent> courseComponents = courseController.findCourseComponentsByCourse(course);
-//    if (courseComponents.contains(component)) {
-//      return Response.ok()
-//          .entity(tranqualise(courseController.archiveCourseComponent(component, getUser())))
-//          .build();
-//    } else  {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
 //  }
 //  
 //  @Path("/descriptionCategories/{ID:[0-9]*}")
