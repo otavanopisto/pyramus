@@ -3,8 +3,11 @@ package fi.pyramus.binary.reports;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.BinaryRequestContext;
@@ -63,11 +66,24 @@ public class DownloadReportBinaryRequestController extends BinaryRequestControll
     String reportName = report.getName().toLowerCase().replaceAll("[^a-z0-9\\.]", "_");
     String reportsContextPath = System.getProperty("reports.contextPath");
     
+    String localeAdd = "";
+    Locale locale = binaryRequestContext.getRequest().getLocale();
+    if (locale != null) {
+      localeAdd = "&__locale=";
+      localeAdd += locale.getLanguage();
+
+      if (!StringUtils.isEmpty(locale.getCountry())) {
+        localeAdd += "_";
+        localeAdd += locale.getCountry();
+      }
+    }
+    
     StringBuilder urlBuilder = new StringBuilder()
       .append(reportsContextPath)
       .append("/preview")
       .append("?magicKey=")
       .append(magicKey.getName())
+      .append(localeAdd)
       .append("&__report=reports/")
       .append(reportId)
       .append(".rptdesign")

@@ -7,6 +7,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
@@ -45,15 +47,30 @@ public class ViewReportContentsViewController extends PyramusViewController impl
     
     MagicKey magicKey = magicKeyDAO.create(magicKeyBuilder.toString(), MagicKeyScope.REQUEST); 
     
+    String localeAdd = "";
+    Locale locale = pageRequestContext.getRequest().getLocale();
+    if (locale != null) {
+      localeAdd = "&__locale=";
+      localeAdd += locale.getLanguage();
+
+      if (!StringUtils.isEmpty(locale.getCountry())) {
+        localeAdd += "_";
+        localeAdd += locale.getCountry();
+      }
+    }
+    
     StringBuilder urlBuilder = new StringBuilder()
       .append(reportsContextPath)
       .append("/")
       .append(outputMethod)
       .append("?magicKey=")
       .append(magicKey.getName())
+      .append(localeAdd)
       .append("&__report=reports/")
       .append(reportId)
       .append(".rptdesign");
+    
+    // TODO: Report locale is wrong.
     
     Map<String, String[]> parameterMap = pageRequestContext.getRequest().getParameterMap();
     for (String parameterName : parameterMap.keySet()) {
