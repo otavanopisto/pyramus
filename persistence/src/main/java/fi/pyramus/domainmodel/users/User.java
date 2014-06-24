@@ -41,7 +41,7 @@ import fi.pyramus.domainmodel.base.Tag;
 @Entity
 @Indexed
 @Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class User {
+public class User implements fi.muikku.security.User {
 
   public Long getId() {
     return id;
