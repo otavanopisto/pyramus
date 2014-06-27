@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
@@ -176,6 +177,14 @@ public class User implements fi.muikku.security.User {
     }
   }
 
+  public EnvironmentRoleEntity getRoleEntity() {
+    return roleEntity;
+  }
+
+  public void setRoleEntity(EnvironmentRoleEntity roleEntity) {
+    this.roleEntity = roleEntity;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="User")  
   @TableGenerator(name="User", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -218,6 +227,9 @@ public class User implements fi.muikku.security.User {
   // TODO Some way to disallow Role.EVERYONE
   private Role role;
 
+  @ManyToOne
+  private EnvironmentRoleEntity roleEntity;
+  
   @ManyToMany (fetch = FetchType.LAZY)
   @JoinTable (name="__UserBillingDetails", joinColumns=@JoinColumn(name="user"), inverseJoinColumns=@JoinColumn(name="billingDetails"))
   @IndexedEmbedded 

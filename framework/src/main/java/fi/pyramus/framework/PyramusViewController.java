@@ -3,6 +3,7 @@ package fi.pyramus.framework;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,12 +17,34 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.security.impl.PyramusRights;
 
 public abstract class PyramusViewController implements PageController {
 
+  // TODO: Remove this and UserRole
   public abstract UserRole[] getAllowedRoles();
+
+  // TODO: Declare abstract
+  public String getPermission() {
+    return null;
+  }
   
   public void authorize(RequestContext requestContext) throws LoginRequiredException, AccessDeniedException {
+    
+    // TODO: Below for permission framework
+//    if (getPermission() != null) {
+//      try {
+//        if (!PyramusRights.hasPermission(getPermission())) {
+//          throw new AccessDeniedException(requestContext.getRequest().getLocale());
+//        }
+//      } catch (NamingException e) {
+//        e.printStackTrace();
+//        throw new AccessDeniedException(requestContext.getRequest().getLocale());
+//      }
+//    }
+ 
+    // TODO: Remove old rights code
+    
     UserRole[] roles = getAllowedRoles();
     if (!contains(roles, UserRole.EVERYONE)) {
       if (!requestContext.isLoggedIn()) {

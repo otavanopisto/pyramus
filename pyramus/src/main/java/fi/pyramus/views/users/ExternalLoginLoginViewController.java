@@ -3,6 +3,7 @@ package fi.pyramus.views.users;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -15,6 +16,7 @@ import fi.pyramus.framework.UserRole;
 import fi.pyramus.plugin.auth.AuthenticationException;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.ExternalAuthenticationProvider;
+import fi.pyramus.security.impl.PyramusRights;
 import fi.pyramus.security.impl.SessionController;
 
 public class ExternalLoginLoginViewController extends PyramusViewController {
@@ -48,7 +50,7 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
         session.setAttribute("loggedUserName", user.getFullName());
         session.setAttribute("loggedUserRole", UserRole.valueOf(user.getRole().name()));
         
-//        sessionController.login(user.getId());
+        PyramusRights.login(user.getId());
         
         // If the session contains a followup URL, redirect there and if not, redirect to the index page 
         
@@ -69,6 +71,8 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
         throw new SmvcRuntimeException(PyramusStatusCode.LOCAL_USER_MISSING, Messages.getInstance().getText(locale, "users.login.localUserMissing"));
       else 
         throw new SmvcRuntimeException(ae);
+    } catch (NamingException e) {
+      throw new SmvcRuntimeException(e);
     }
   }
 

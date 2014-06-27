@@ -19,6 +19,7 @@ import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.util.StringAttributeComparator;
+import fi.pyramus.views.PyramusViewPermissions;
 
 /**
  * ViewController to search for students.
@@ -27,6 +28,10 @@ import fi.pyramus.util.StringAttributeComparator;
  */
 public class SearchStudentsViewController extends PyramusViewController implements Breadcrumbable {
 
+  public String getPermission() {
+    return PyramusViewPermissions.SEARCH_STUDENTS;
+  }
+  
   /**
    * Returns roles that are allowed to use this resource.
    *  
