@@ -1,6 +1,7 @@
 package fi.pyramus.rest.controller;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -81,13 +82,33 @@ public class CourseController {
     return courseParticipationType;
   }
   
-  public Tag createCourseTag(Course course, String text) {
+  public synchronized Tag createCourseTag(Course course, String text) {
     Tag tag = tagDAO.findByText(text);
-    if(tag == null) {
+    if (tag == null) {
       tag = tagDAO.create(text);
     }
+
     course.addTag(tag);
     return tag;
+  }
+  
+  public synchronized Course updateCourseTags(Course course, List<String> tags) {
+    Set<String> newTags = new HashSet<>(tags);
+    Set<Tag> courseTags = new HashSet<>(course.getTags());
+    
+    for (Tag courseTag : courseTags) {
+      if (!newTags.contains(courseTag.getText())) {
+        removeCourseTag(course, courseTag);
+      }
+        
+      newTags.remove(courseTag.getText());
+    }
+    
+    for (String newTag : newTags) {
+      createCourseTag(course, newTag);
+    }
+    
+    return course;
   }
   
   public List<Course> findCourses() {
@@ -162,11 +183,6 @@ public class CourseController {
   public CourseState findCourseStateById(Long id) {
     CourseState state = courseStateDAO.findById(id);
     return state;
-  }
-  
-  public Set<Tag> findCourseTags(Course course) {
-    Set<Tag> tags= course.getTags();
-    return tags;
   }
   
   public List<CourseParticipationType> findCourseParticiPationTypes() {

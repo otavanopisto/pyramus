@@ -3,11 +3,14 @@ package fi.pyramus.rest;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.allOf;
 
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -64,6 +67,62 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body("lastModifierId", is( course.getLastModifierId().intValue() ))
       .body("subjectId", is( course.getSubjectId().intValue() ))
       .body("maxParticipantCount", is( course.getMaxParticipantCount().intValue() ))
+      .body("archived", is( course.getArchived() ));
+      
+    int id = response.body().jsonPath().getInt("id");
+    
+    given()
+      .delete("/courses/courses/{ID}?permanent=true", id)
+      .then()
+      .statusCode(204);
+  }
+  
+  @Test
+  public void testCreateCourseTags() {
+    Course course = new Course(
+        "Create test", 
+        new Date(), 
+        new Date(), 
+        "Course for testing course creation", 
+        Boolean.FALSE, 
+        111, 
+        222l,
+        new Date(),
+        new Date(),
+        "Extension",
+        333d,
+        444d,
+        555d,
+        666d,
+        777d,
+        new Date(),
+        1l, 
+        1l,
+        1l,
+        777d,
+        1l,
+        1l, 
+        1l, 
+        Arrays.asList("tag1", "tag2", "tag3"));
+
+    Response response = given()
+      .contentType("application/json")
+      .body(course)
+      .post("/courses/courses/");
+    
+    response.then()
+      .body("id", not(is((Long) null)))
+      .body("name", is(course.getName()))
+      .body("courseNumber", is( course.getCourseNumber()))
+      .body("description", is( course.getDescription() ))
+      .body("length", is( course.getLength().floatValue() ))
+      .body("lengthUnitId", is( course.getLengthUnitId().intValue() ))
+      .body("creatorId", is( course.getCreatorId().intValue() ))
+      .body("lastModifierId", is( course.getLastModifierId().intValue() ))
+      .body("subjectId", is( course.getSubjectId().intValue() ))
+      .body("maxParticipantCount", is( course.getMaxParticipantCount().intValue() ))
+      .body("tags.size()", is(3))
+      .body("tags", allOf(hasItem("tag1"), hasItem("tag2"), hasItem("tag3")))
       .body("archived", is( course.getArchived() ));
       
     int id = response.body().jsonPath().getInt("id");
@@ -220,6 +279,88 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body("lastModifierId", is( course.getLastModifierId().intValue() ))
       .body("subjectId", is( course.getSubjectId().intValue() ))
       .body("maxParticipantCount", is( course.getMaxParticipantCount().intValue() ))
+      .body("archived", is( course.getArchived() ));
+    
+    given()
+      .delete("/courses/courses/{ID}?permanent=true", course.getId())
+      .then()
+      .statusCode(204);
+  }
+  
+  @Test
+  public void testUpdateCourseTags() {
+    Course course = new Course(
+        "Update test", 
+        new Date(), 
+        new Date(), 
+        "Course for testing course updating", 
+        Boolean.FALSE, 
+        111, 
+        222l,
+        new Date(),
+        new Date(),
+        "Extension",
+        333d,
+        444d,
+        555d,
+        666d,
+        777d,
+        new Date(),
+        1l, 
+        1l,
+        1l,
+        777d,
+        1l,
+        1l, 
+        1l, 
+        Arrays.asList("tag1", "tag2", "tag3"));
+
+    Response response = given()
+      .contentType("application/json")
+      .body(course)
+      .post("/courses/courses/");
+    
+    response.then()
+      .body("id", not(is((Long) null)))
+      .body("name", is(course.getName()))
+      .body("courseNumber", is( course.getCourseNumber()))
+      .body("description", is( course.getDescription() ))
+      .body("length", is( course.getLength().floatValue() ))
+      .body("lengthUnitId", is( course.getLengthUnitId().intValue() ))
+      .body("creatorId", is( course.getCreatorId().intValue() ))
+      .body("lastModifierId", is( course.getLastModifierId().intValue() ))
+      .body("subjectId", is( course.getSubjectId().intValue() ))
+      .body("maxParticipantCount", is( course.getMaxParticipantCount().intValue() ))
+      .body("tags.size()", is(3))
+      .body("tags", allOf(hasItem("tag1"), hasItem("tag2"), hasItem("tag3")))
+      .body("archived", is( course.getArchived() ));
+      
+    course.setId(new Long(response.body().jsonPath().getInt("id")));
+    course.setName("Updated name");
+    course.setCourseNumber(999);
+    course.setDescription("Updated description");
+    course.setLength(888d);
+    course.setMaxParticipantCount(1234l);
+    course.setTags(Arrays.asList("tag1", "tag3", "tag4", "tag5"));
+    
+    given()
+      .contentType("application/json")
+      .body(course)
+      .put("/courses/courses/{ID}", course.getId())
+      .then()
+      .statusCode(200)
+      .body("id", is(course.getId().intValue()))
+      .body("name", is(course.getName()))
+      .body("courseNumber", is( course.getCourseNumber()))
+      .body("description", is( course.getDescription() ))
+      .body("length", is( course.getLength().floatValue() ))
+      .body("lengthUnitId", is( course.getLengthUnitId().intValue() ))
+      .body("creatorId", is( course.getCreatorId().intValue() ))
+      .body("lastModifierId", is( course.getLastModifierId().intValue() ))
+      .body("subjectId", is( course.getSubjectId().intValue() ))
+      .body("maxParticipantCount", is( course.getMaxParticipantCount().intValue() ))      
+      .body("tags.size()", is(4))
+      .body("tags", allOf(hasItem("tag1"), hasItem("tag3"), hasItem("tag4"), hasItem("tag5")))
       .body("archived", is( course.getArchived() ));
     
     given()

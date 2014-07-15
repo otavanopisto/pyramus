@@ -19,7 +19,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,9 +54,6 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Inject
   private CommonController commonController;
-  
-  @Inject
-  private TagController tagController;
   
   @Path("/courses")
   @POST
@@ -111,9 +107,17 @@ public class CourseRESTService extends AbstractRESTService {
     
     User loggedUser = getLoggedUser();
     
-    return Response.ok().entity(createCourseRestModel(courseController.createCourse(module, name, nameExtension, state, subject, courseNumber, 
-          beginDate, endDate, courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, 
-          planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, loggedUser))).build();
+    Course course = courseController.createCourse(module, name, nameExtension, state, subject, courseNumber, 
+        beginDate, endDate, courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, 
+        planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, loggedUser);
+    
+    if (courseEntity.getTags() != null) {
+      for (String tag : courseEntity.getTags()) {
+        courseController.createCourseTag(course, tag);
+      }
+    }
+    
+    return Response.ok().entity(createCourseRestModel(course)).build();
   }
   
   @Path("/courses/{ID:[0-9]*}")
@@ -207,6 +211,8 @@ public class CourseRESTService extends AbstractRESTService {
     Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, subject, courseNumber, beginDate, endDate, courseLength,
         courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, description,
         maxParticipantCount, enrolmentTimeEnd, loggedUser);
+    
+    courseController.updateCourseTags(updatedCourse, courseEntity.getTags() == null ? new ArrayList<String>() : courseEntity.getTags());
     
     return Response.ok().entity(createCourseRestModel(updatedCourse)).build();
   }
@@ -831,47 +837,5 @@ public class CourseRESTService extends AbstractRESTService {
     
     return result;
   }
-
-
-//  
-//  @Path("/courses/{ID:[0-9]*}/tags")
-//  @POST
-//  public Response createCourseTag(@PathParam("ID") Long id, TagEntity tagEntity) {
-//    Course course = courseController.findCourseById(id);
-//    String text = tagEntity.getText();
-//    if (course != null && !StringUtils.isBlank(text)) {
-//      return Response.ok()
-//          .entity(tranqualise(courseController.createCourseTag(course, text)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
-
-//  @Path("/courses/{ID:[0-9]*}/tags")
-//  @GET
-//  public Response findCourseTags(@PathParam("ID") Long id) {
-//    Course course = courseController.findCourseById(id);
-//    if (course != null) {
-//      return Response.ok()
-//          .entity(tranqualise(courseController.findCourseTags(course)))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/courses/{CID:[0-9]*}/tags/{ID:[0-9]*}")
-//  @DELETE
-//  public Response removeTag(@PathParam("CID") Long courseId, @PathParam("ID") Long tagId) {
-//    Course course = courseController.findCourseById(courseId);
-//    Tag tag = tagController.findTagById(tagId);
-//    if (course != null && tag != null) {
-//      courseController.removeCourseTag(course, tag);
-//      return Response.status(200).build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
 
 }
