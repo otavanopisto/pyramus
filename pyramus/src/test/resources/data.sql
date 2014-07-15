@@ -47,6 +47,12 @@ values
   (5, 456, 1, 1),
   (6, 567, 1, 1);
   
+insert into
+  CourseDescriptionCategory (id, name, archived)
+values
+  (1, 'Basic', false),
+  (2, 'Special', false);
+  
 insert into 
   CourseBase (id, name, archived, courseNumber, created, lastModified, description, courseLength, creator, lastModifier, subject, version, maxParticipantCount)
 values
@@ -107,6 +113,8 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseBase', max(id) + 1 from CourseBase;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationalLength', max(id) + 1 from EducationalLength;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ComponentBase', max(id) + 1 from ComponentBase;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseDescriptionCategory', max(id) + 1 from CourseDescriptionCategory;
+
 
 
 

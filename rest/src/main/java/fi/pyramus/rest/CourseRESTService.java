@@ -29,6 +29,7 @@ import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseComponent;
+import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
@@ -632,6 +633,98 @@ public class CourseRESTService extends AbstractRESTService {
     
     return Response.noContent().build();
   }
+  
+  @Path("/descriptionCategories")
+  @POST
+  public Response createCourseDescriptionCategory(fi.pyramus.rest.model.CourseDescriptionCategory entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    String name = entity.getName();
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok(createCourseDescriptionCategoryRestModel(courseController.createCourseDescriptionCategory(name)))
+       .build();
+  }
+  
+  @Path("/descriptionCategories")
+  @GET
+  public Response listCourseDescriptionCategories(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<CourseDescriptionCategory> categories;
+    if (filterArchived) {
+      categories = courseController.findUnarchivedCourseDescriptionCategories();
+    } else {
+      categories = courseController.findCourseDescriptionCategories();
+    }
+    
+    if (categories.isEmpty()) {
+      return Response.status(Status.NO_CONTENT).build();
+    }
+    
+    return Response.ok()
+        .entity(createCourseDescriptionCategoryRestModel(categories))
+        .build();
+  }
+  
+  @Path("/descriptionCategories/{ID:[0-9]*}")
+  @GET
+  public Response findCourseDescriptionCategoryById(@PathParam("ID") Long id) {
+    CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(id);
+    if (category == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (category.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok()
+        .entity(createCourseDescriptionCategoryRestModel(category))
+        .build();
+  }
+
+  @Path("/descriptionCategories/{ID:[0-9]*}")
+  @PUT
+  public Response updateCourseDescriptionCategory(@PathParam("ID") Long id, fi.pyramus.rest.model.CourseDescriptionCategory entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(id);
+    if (category == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (category.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (StringUtils.isBlank(entity.getName())) {
+      return Response.status(Status.BAD_REQUEST).entity("Name is required").build();
+    }
+    
+    return Response.ok(createCourseDescriptionCategoryRestModel(courseController.updateCourseDescriptionCategory(category, entity.getName()))).build();
+  }
+  
+  @Path("/descriptionCategories/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteCourseDescriptionCategory(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(id);
+    if (category == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      courseController.deleteCourseDescriptionCategory(category);
+    } else {
+      courseController.archiveCourseDescriptionCategory(category, getLoggedUser());
+    }
+
+    return Response.noContent().build();
+  }
 
   private fi.pyramus.rest.model.CourseParticipationType createCourseParticipationTypeRestModel(CourseParticipationType courseParticipationType) {
     return new fi.pyramus.rest.model.CourseParticipationType(courseParticipationType.getId(), courseParticipationType.getName(), courseParticipationType.getArchived());
@@ -725,22 +818,21 @@ public class CourseRESTService extends AbstractRESTService {
     return result;
   }
   
+  private fi.pyramus.rest.model.CourseDescriptionCategory createCourseDescriptionCategoryRestModel(CourseDescriptionCategory category) {
+    return new fi.pyramus.rest.model.CourseDescriptionCategory(category.getId(), category.getName(), category.getArchived());
+  }
   
-  
+  private List<fi.pyramus.rest.model.CourseDescriptionCategory> createCourseDescriptionCategoryRestModel(List<CourseDescriptionCategory> categories) {
+    List<fi.pyramus.rest.model.CourseDescriptionCategory> result = new ArrayList<>();
+    
+    for (CourseDescriptionCategory category : categories) {
+      result.add(createCourseDescriptionCategoryRestModel(category)); 
+    }
+    
+    return result;
+  }
 
-//  
-//  @Path("/descriptionCategories")
-//  @POST
-//  public Response createCourseDescriptionCategory(CourseDescriptionCategoryEntity categoryEntity) {
-//    String name = categoryEntity.getName();
-//    if (!StringUtils.isBlank(name)) {
-//      return Response.ok()
-//          .entity(tranqualise(courseController.createCourseDescriptionCategory(name)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
+
 //  
 //  @Path("/courses/{ID:[0-9]*}/tags")
 //  @POST
@@ -755,37 +847,6 @@ public class CourseRESTService extends AbstractRESTService {
 //      return Response.status(500).build();
 //    }
 //  }
-//  
-//  @Path("/descriptionCategories")
-//  @GET
-//  public Response findCourseDescriptionCategories(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<CourseDescriptionCategory> categories;
-//    if (filterArchived) {
-//      categories = courseController.findUnarchivedCourseDescriptionCategories();
-//    } else {
-//      categories = courseController.findCourseDescriptionCategories();
-//    }
-//    if (!categories.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(categories))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/descriptionCategories/{ID:[0-9]*}")
-//  @GET
-//  public Response findCourseDescriptionCategoryById(@PathParam("ID") Long id) {
-//    CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(id);
-//    if (category != null) {
-//      return Response.ok()
-//          .entity(tranqualise(category))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
 
 //  @Path("/courses/{ID:[0-9]*}/tags")
 //  @GET
@@ -797,42 +858,6 @@ public class CourseRESTService extends AbstractRESTService {
 //          .build();
 //    } else {
 //      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  
-//  @Path("/descriptionCategories/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateCourseDescriptionCategories(@PathParam("ID") Long id, CourseDescriptionCategoryEntity categoryEntity) {
-//    CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(id);
-//    if (category != null) {
-//      String name = categoryEntity.getName();
-//      if (!StringUtils.isBlank(name)) {
-//        return Response.ok()
-//            .entity(tranqualise(courseController.updateCourseDescriptionCategory(category, name)))
-//            .build();
-//      } else if (categoryEntity.getArchived() != null) {
-//        if (!categoryEntity.getArchived()) {
-//          return Response.ok()
-//              .entity(tranqualise(courseController.unarchiveCourseDescriptionCategory(category, getUser())))
-//              .build();
-//        }
-//      }
-//      return Response.status(500).build();
-//    }
-//    return Response.status(Status.NOT_FOUND).build();
-//  }
-//  
-//  @Path("/descriptionCategories/{ID:[0-9]*}")
-//  @DELETE
-//  public Response arciveCourseDescriptionCategory(@PathParam("ID") Long id) {
-//    CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(id);
-//    if (category != null) {
-//      return Response.ok()
-//          .entity(tranqualise(courseController.archiveCourseDescriptionCategory(category, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
 //    }
 //  }
 //  
