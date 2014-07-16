@@ -147,12 +147,12 @@ public class CommonController {
     return subject;
   }
   
-  public List<GradingScale> findGradingScales() {
+  public List<GradingScale> listGradingScales() {
     List<GradingScale> gradingScales = gradingScaleDAO.listAll();
     return gradingScales;
   }
   
-  public List<GradingScale> findUnarchivedGradingScales() {
+  public List<GradingScale> listUnarchivedGradingScales() {
     List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
     return gradingScales;
   }
@@ -219,6 +219,10 @@ public class CommonController {
   public GradingScale unarchiveGradingScale(GradingScale gradingScale, User user) {
     gradingScaleDAO.unarchive(gradingScale, user);
     return gradingScale;
+  }
+
+  public void deleteGradingScale(GradingScale gradingScale) {
+    gradingScaleDAO.delete(gradingScale);
   }
   
   public EducationalTimeUnit archiveEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, User user) {

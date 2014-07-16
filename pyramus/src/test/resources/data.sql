@@ -8,6 +8,12 @@ insert into
 values 
   (1, 1, 'it');
 
+insert into 
+  GradingScale (id, archived, name, description, version)
+values  
+  (1, false, 'test scale #1', 'grading scale for testing #1', 1),
+  (2, false, 'test scale #2', 'grading scale for testing #2', 1);
+  
 insert into
   User (id, authProvider, externalId, firstName, lastName, role, contactInfo, version, title)
 values 
@@ -145,6 +151,7 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SettingKey', max(id) + 1 from SettingKey;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Setting', max(id) + 1 from Setting;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationSubtype', max(id) + 1 from EducationSubtype;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'GradingScale', max(id) + 1 from GradingScale;
 
 
 

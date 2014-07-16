@@ -24,6 +24,7 @@ import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
+import fi.pyramus.domainmodel.grading.GradingScale;
 
 @ApplicationScoped
 @Stateful
@@ -128,6 +129,13 @@ public class ObjectFactory {
           public Object map(Subject entity) {
             Long educationTypeId = entity.getEducationType() != null ? entity.getEducationType().getId() : null;
             return new fi.pyramus.rest.model.Subject(entity.getId(), entity.getCode(), entity.getName(), educationTypeId, entity.getArchived());
+          }
+        }, 
+        
+        new Mapper<GradingScale>() {
+          @Override
+          public Object map(GradingScale entity) {
+            return new fi.pyramus.rest.model.GradingScale(entity.getId(), entity.getName(), entity.getDescription(), entity.getArchived());
           }
         }
 
