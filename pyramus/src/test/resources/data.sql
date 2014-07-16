@@ -3,6 +3,12 @@ insert into
 values 
   (1, 'TEST', 'TEST-GUEST-1', 'Test Guest', 'User #1', 'GUEST', null, 1, null);
   
+insert into 
+  AcademicTerm (id, name, startDate, endDate, archived, version)
+values 
+  (1, 'fall', PARSEDATETIME('1 8 2014', 'd M yyyy'), PARSEDATETIME('23 12 2014', 'd M yyyy'), false, 0),
+  (2, 'spring', PARSEDATETIME('4 1 2015', 'd M yyyy'), PARSEDATETIME('30 5 2015', 'd M yyyy'), false, 0);
+  
 insert into
   EducationType (id, archived, code, name, version)
 values
@@ -85,7 +91,7 @@ insert into
   Course (id, beginDate, endDate, localTeachingDays, nameExtension, module, state, teachingHours, distanceTeachingDays, planningHours, assessingHours, enrolmentTimeEnd)
 values 
   (1000, PARSEDATETIME('2 2 2010', 'd M yyyy'), PARSEDATETIME('3 3 2010', 'd M yyyy'), 10, 'Ext', 1, 1, 40, 30, 20, 10, PARSEDATETIME('1 1 2010', 'd M yyyy')),
-  (1001, PARSEDATETIME('2 2 2011', 'd M yyyy'), PARSEDATETIME('3 3 2011', 'd M yyyy'), 20, 'ABC', 1, 2, 15, 17, 20, 10, PARSEDATETIME('1 1 2010', 'd M yyyy'));
+  (1001, PARSEDATETIME('2 2 2011', 'd M yyyy'), PARSEDATETIME('3 3 2011', 'd M yyyy'), 20, 'ABC', 1, 2, 15, 17, 20, 10, PARSEDATETIME('1 1 2011', 'd M yyyy'));
 
 insert into 
   ComponentBase (id, name, description, length, archived, version) 
@@ -114,6 +120,7 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationalLength', max(id) + 1 from EducationalLength;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ComponentBase', max(id) + 1 from ComponentBase;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseDescriptionCategory', max(id) + 1 from CourseDescriptionCategory;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'AcademicTerm', max(id) + 1 from AcademicTerm;
 
 
 
