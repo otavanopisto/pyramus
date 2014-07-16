@@ -100,4 +100,22 @@ public class EducationSubtypeDAO extends PyramusEntityDAO<EducationSubtype> {
     return educationSubtype;
   }
 
+  public EducationSubtype updateEducationType(EducationSubtype educationSubtype, EducationType educationType) {
+    EntityManager entityManager = getEntityManager();
+    
+    EducationType originalType = educationSubtype.getEducationType();
+    
+    if (originalType != null) {
+      originalType.removeSubtype(educationSubtype);
+      entityManager.persist(originalType);
+    }
+    
+    if (educationType != null) {
+      educationType.addSubtype(educationSubtype);
+      entityManager.persist(educationType);
+    }
+    
+    return persist(educationSubtype);
+  }
+
 }
