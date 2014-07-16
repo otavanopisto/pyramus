@@ -25,6 +25,14 @@ values
   (1, false, 'TEST', 'Test Education Type', 1),
   (2, false, 'TST2', 'Test EduType 2', 1);
   
+insert into
+  EducationSubtype (id, archived, code, name, educationType, version)
+values
+  (1, false, 'TST1', 'Test Subtype #1', 1, 1),
+  (2, false, 'TST2', 'Test Subtype #2', 1, 1),
+  (3, false, 'TST3', 'Test Subtype #3', 2, 1),
+  (4, false, 'TST4', 'Test Subtype #4', 2, 1);
+  
 insert into 
   Subject (id, archived, code, name, version, educationType)
 values 
@@ -136,6 +144,7 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'AcademicTerm', max(id) + 1 from AcademicTerm;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SettingKey', max(id) + 1 from SettingKey;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Setting', max(id) + 1 from Setting;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationSubtype', max(id) + 1 from EducationSubtype;
 
 
 
