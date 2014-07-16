@@ -1,3 +1,13 @@
+insert into 
+  SettingKey (id, name)
+values 
+  (1, 'system.environment');
+  
+insert into 
+  Setting (id, settingKey, value)
+values 
+  (1, 1, 'it');
+
 insert into
   User (id, authProvider, externalId, firstName, lastName, role, contactInfo, version, title)
 values 
@@ -121,6 +131,8 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ComponentBase', max(id) + 1 from ComponentBase;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseDescriptionCategory', max(id) + 1 from CourseDescriptionCategory;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'AcademicTerm', max(id) + 1 from AcademicTerm;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SettingKey', max(id) + 1 from SettingKey;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Setting', max(id) + 1 from Setting;
 
 
 

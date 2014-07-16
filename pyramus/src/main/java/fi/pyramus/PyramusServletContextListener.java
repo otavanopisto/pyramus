@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.Resource;
 import javax.net.ssl.HttpsURLConnection;
@@ -24,6 +26,7 @@ import fi.internetix.smvc.controllers.RequestController;
 import fi.internetix.smvc.controllers.RequestControllerMapper;
 import fi.internetix.smvc.logging.Logging;
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.SystemDAO;
 import fi.pyramus.dao.base.MagicKeyDAO;
 import fi.pyramus.dao.plugins.PluginDAO;
 import fi.pyramus.dao.plugins.PluginRepositoryDAO;
@@ -134,6 +137,10 @@ public class PyramusServletContextListener implements ServletContextListener {
         trustSelfSignedCerts();
       }
       
+      if ("it".equals(System.getProperties().getProperty("system.environment"))) {
+        reindexHibernateEntities();
+      }
+      
       userTransaction.commit();
     } catch (Exception e) {
       try {
@@ -144,6 +151,19 @@ public class PyramusServletContextListener implements ServletContextListener {
       
       e.printStackTrace();
       throw new ExceptionInInitializerError(e);
+    }
+  }
+
+  private void reindexHibernateEntities() {
+    SystemDAO systemDAO = DAOFactory.getInstance().getSystemDAO();
+    
+    List<Class<?>> indexedEntities = systemDAO.getIndexedEntities();
+    for (Class<?> indexedEntity : indexedEntities) {
+      try {
+        systemDAO.reindexHibernateSearchObjects(indexedEntity, 200);
+      } catch (InterruptedException e) {
+        Logger.getGlobal().log(Level.SEVERE, "Hibernate entity indexing failed", e);
+      }
     }
   }
 
