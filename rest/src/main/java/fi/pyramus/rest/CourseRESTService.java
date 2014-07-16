@@ -3,7 +3,6 @@ package fi.pyramus.rest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -22,10 +21,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
-import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
@@ -36,8 +35,8 @@ import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
-import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.model.CourseEnrolmentType;
+import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/courses")
 @Produces("application/json")
@@ -51,9 +50,12 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Inject
   private ModuleController moduleController;
-  
+
   @Inject
   private CommonController commonController;
+
+  @Inject
+  private ObjectFactory objectFactory;
   
   @Path("/courses")
   @POST
@@ -80,8 +82,8 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     Integer courseNumber = courseEntity.getCourseNumber();
-    Date beginDate = courseEntity.getBeginDate();
-    Date endDate = courseEntity.getEndDate();
+    DateTime beginDate = courseEntity.getBeginDate();
+    DateTime endDate = courseEntity.getEndDate();
     Double courseLength = courseEntity.getLength();
     EducationalTimeUnit courseLengthTimeUnit = null;
     
@@ -103,12 +105,12 @@ public class CourseRESTService extends AbstractRESTService {
     Double assessingHours = courseEntity.getAssessingHours();
     String description = courseEntity.getDescription();
     Long maxParticipantCount = courseEntity.getMaxParticipantCount();
-    Date enrolmentTimeEnd = courseEntity.getEnrolmentTimeEnd();
+    Date enrolmentTimeEnd = toDate(courseEntity.getEnrolmentTimeEnd());
     
     User loggedUser = getLoggedUser();
     
     Course course = courseController.createCourse(module, name, nameExtension, state, subject, courseNumber, 
-        beginDate, endDate, courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, 
+        toDate(beginDate), toDate(endDate), courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, 
         planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, loggedUser);
     
     if (courseEntity.getTags() != null) {
@@ -117,7 +119,7 @@ public class CourseRESTService extends AbstractRESTService {
       }
     }
     
-    return Response.ok().entity(createCourseRestModel(course)).build();
+    return Response.ok().entity(objectFactory.createModel(course)).build();
   }
   
   @Path("/courses/{ID:[0-9]*}")
@@ -129,7 +131,7 @@ public class CourseRESTService extends AbstractRESTService {
         return Response.status(Status.NOT_FOUND).build();
       }
       
-      return Response.ok().entity(createCourseRestModel(course)).build();
+      return Response.ok().entity(objectFactory.createModel(course)).build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -147,7 +149,7 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     if (!courses.isEmpty()) {
-      return Response.ok().entity(createCourseRestModel(courses)).build();
+      return Response.ok().entity(objectFactory.createModel(courses)).build();
     } else {
       return Response.status(Status.NO_CONTENT).build();
     }
@@ -182,8 +184,8 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     Integer courseNumber = courseEntity.getCourseNumber();
-    Date beginDate = courseEntity.getBeginDate();
-    Date endDate = courseEntity.getEndDate();
+    DateTime beginDate = courseEntity.getBeginDate();
+    DateTime endDate = courseEntity.getEndDate();
     Double courseLength = courseEntity.getLength();
     EducationalTimeUnit courseLengthTimeUnit = null;
     
@@ -205,16 +207,16 @@ public class CourseRESTService extends AbstractRESTService {
     Double assessingHours = courseEntity.getAssessingHours();
     String description = courseEntity.getDescription();
     Long maxParticipantCount = courseEntity.getMaxParticipantCount();
-    Date enrolmentTimeEnd = courseEntity.getEnrolmentTimeEnd();
+    Date enrolmentTimeEnd = toDate(courseEntity.getEnrolmentTimeEnd());
     User loggedUser = getLoggedUser();
     
-    Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, subject, courseNumber, beginDate, endDate, courseLength,
+    Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, subject, courseNumber, toDate(beginDate), toDate(endDate), courseLength,
         courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, description,
         maxParticipantCount, enrolmentTimeEnd, loggedUser);
     
     courseController.updateCourseTags(updatedCourse, courseEntity.getTags() == null ? new ArrayList<String>() : courseEntity.getTags());
     
-    return Response.ok().entity(createCourseRestModel(updatedCourse)).build();
+    return Response.ok().entity(objectFactory.createModel(updatedCourse)).build();
   }
   
   @Path("/courses/{ID:[0-9]*}")
@@ -263,7 +265,7 @@ public class CourseRESTService extends AbstractRESTService {
     
     return Response
       .status(Status.OK)
-      .entity(createCourseComponentRestModel(courseController.createCourseComponent(course, courseComponent.getLength(), componentLengthTimeUnit, courseComponent.getName(), courseComponent.getDescription())))
+      .entity(objectFactory.createModel(courseController.createCourseComponent(course, courseComponent.getLength(), componentLengthTimeUnit, courseComponent.getName(), courseComponent.getDescription())))
       .build();
   }
 
@@ -280,7 +282,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NO_CONTENT).build();
     }
     
-    return Response.status(Status.OK).entity(createCourseComponentRestModel(components)).build();
+    return Response.status(Status.OK).entity(objectFactory.createModel(components)).build();
   }
 
   @Path("/courses/{CID:[0-9]*}/components/{ID:[0-9]*}")
@@ -304,7 +306,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    return Response.status(Status.OK).entity(createCourseComponentRestModel(component)).build();
+    return Response.status(Status.OK).entity(objectFactory.createModel(component)).build();
   }
   
   @Path("/courses/{COURSEID:[0-9]*}/components/{COMPONENTID:[0-9]*}")
@@ -347,7 +349,7 @@ public class CourseRESTService extends AbstractRESTService {
     
     return Response
       .status(Status.OK)
-      .entity(createCourseComponentRestModel(courseController.updateCourseComponent(courseComponent, courseComponentEntity.getLength(), componentLengthTimeUnit, courseComponentEntity.getName(), courseComponentEntity.getDescription())))
+      .entity(objectFactory.createModel(courseController.updateCourseComponent(courseComponent, courseComponentEntity.getLength(), componentLengthTimeUnit, courseComponentEntity.getName(), courseComponentEntity.getDescription())))
       .build();
   }
   
@@ -390,7 +392,7 @@ public class CourseRESTService extends AbstractRESTService {
     
     return Response
       .status(Status.OK)
-      .entity(createCourseStateRestModel(courseController.createCourseState(entity.getName())))
+      .entity(objectFactory.createModel(courseController.createCourseState(entity.getName())))
       .build();
   }
   
@@ -409,7 +411,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.noContent().build();
     }
     
-    return Response.ok().entity(createCourseStateRestModel(courseStates)).build();
+    return Response.ok().entity(objectFactory.createModel(courseStates)).build();
   }
   
   @Path("/courseStates/{ID:[0-9]*}")
@@ -424,7 +426,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build(); 
     }    
     
-    return Response.ok().entity(createCourseStateRestModel(courseState)).build();
+    return Response.ok().entity(objectFactory.createModel(courseState)).build();
   }
   
   @Path("/courseStates/{ID:[0-9]*}")
@@ -449,7 +451,7 @@ public class CourseRESTService extends AbstractRESTService {
     
     return Response
         .status(Status.OK)
-        .entity(createCourseStateRestModel(courseController.updateCourseState(courseState, entity.getName())))
+        .entity(objectFactory.createModel(courseController.updateCourseState(courseState, entity.getName())))
         .build();
   }
   
@@ -481,7 +483,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Name is required").build();
     }
     
-    return Response.ok().entity(createCourseEnrolmentTypeRestModel(courseController.createCourseEnrolmentType(entity.getName()))).build();
+    return Response.ok().entity(objectFactory.createModel(courseController.createCourseEnrolmentType(entity.getName()))).build();
   }
   
   @Path("/enrolmentTypes")
@@ -494,7 +496,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NO_CONTENT).build();
     }
     
-    return Response.ok().entity(createCourseEnrolmentTypeRestModel(courseEnrolmentTypes)).build();
+    return Response.ok().entity(objectFactory.createModel(courseEnrolmentTypes)).build();
   }
   
   @Path("/enrolmentTypes/{ID:[0-9]*}")
@@ -506,7 +508,7 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     return Response.ok()
-        .entity(createCourseEnrolmentTypeRestModel(enrolmentType))
+        .entity(objectFactory.createModel(enrolmentType))
         .build();
   }
   
@@ -531,7 +533,7 @@ public class CourseRESTService extends AbstractRESTService {
     }
 
     return Response.ok()
-        .entity(createCourseEnrolmentTypeRestModel(courseController.updateCourseEnrolmentType(enrolmentType, entity.getName())))
+        .entity(objectFactory.createModel(courseController.updateCourseEnrolmentType(enrolmentType, entity.getName())))
         .build();
   }
 
@@ -560,7 +562,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    return Response.ok().entity(createCourseParticipationTypeRestModel(courseController.createCourseParticipationType(name))).build();
+    return Response.ok().entity(objectFactory.createModel(courseController.createCourseParticipationType(name))).build();
   }
 
   @Path("/participationTypes")
@@ -579,7 +581,7 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     return Response.ok()
-        .entity(createCourseParticipationTypeRestModel(participationTypes))
+        .entity(objectFactory.createModel(participationTypes))
         .build();
   }
   
@@ -596,7 +598,7 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     return Response.ok()
-        .entity(createCourseParticipationTypeRestModel(participationType))
+        .entity(objectFactory.createModel(participationType))
         .build();
   }
 
@@ -620,7 +622,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Name is required").build();
     }
     
-    return Response.ok().entity(createCourseParticipationTypeRestModel(courseController.updateCourseParticipationType(participationType, entity.getName()))).build();
+    return Response.ok().entity(objectFactory.createModel(courseController.updateCourseParticipationType(participationType, entity.getName()))).build();
   }
   
   @Path("/participationTypes/{ID:[0-9]*}")
@@ -652,7 +654,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    return Response.ok(createCourseDescriptionCategoryRestModel(courseController.createCourseDescriptionCategory(name)))
+    return Response.ok(objectFactory.createModel(courseController.createCourseDescriptionCategory(name)))
        .build();
   }
   
@@ -671,7 +673,7 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     return Response.ok()
-        .entity(createCourseDescriptionCategoryRestModel(categories))
+        .entity(objectFactory.createModel(categories))
         .build();
   }
   
@@ -688,7 +690,7 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     return Response.ok()
-        .entity(createCourseDescriptionCategoryRestModel(category))
+        .entity(objectFactory.createModel(category))
         .build();
   }
 
@@ -712,7 +714,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Name is required").build();
     }
     
-    return Response.ok(createCourseDescriptionCategoryRestModel(courseController.updateCourseDescriptionCategory(category, entity.getName()))).build();
+    return Response.ok(objectFactory.createModel(courseController.updateCourseDescriptionCategory(category, entity.getName()))).build();
   }
   
   @Path("/descriptionCategories/{ID:[0-9]*}")
@@ -730,112 +732,6 @@ public class CourseRESTService extends AbstractRESTService {
     }
 
     return Response.noContent().build();
-  }
-
-  private fi.pyramus.rest.model.CourseParticipationType createCourseParticipationTypeRestModel(CourseParticipationType courseParticipationType) {
-    return new fi.pyramus.rest.model.CourseParticipationType(courseParticipationType.getId(), courseParticipationType.getName(), courseParticipationType.getArchived());
-  }
-  
-  private List<fi.pyramus.rest.model.CourseParticipationType> createCourseParticipationTypeRestModel(List<CourseParticipationType> participationTypes) {
-    List<fi.pyramus.rest.model.CourseParticipationType> result = new ArrayList<>();
-    
-    for (CourseParticipationType participationType : participationTypes) {
-      result.add(createCourseParticipationTypeRestModel(participationType));
-    }
-    
-    return result;
-  }
-  
-  private fi.pyramus.rest.model.CourseEnrolmentType createCourseEnrolmentTypeRestModel(fi.pyramus.domainmodel.courses.CourseEnrolmentType courseEnrolmentType) {
-    return new CourseEnrolmentType(courseEnrolmentType.getId(), courseEnrolmentType.getName());
-  }
-
-  private List<fi.pyramus.rest.model.CourseEnrolmentType> createCourseEnrolmentTypeRestModel(List<fi.pyramus.domainmodel.courses.CourseEnrolmentType> courseEnrolmentTypes) {
-    List<fi.pyramus.rest.model.CourseEnrolmentType> result = new ArrayList<>();
-    
-    for (fi.pyramus.domainmodel.courses.CourseEnrolmentType courseEnrolmentType : courseEnrolmentTypes) {
-      result.add(createCourseEnrolmentTypeRestModel(courseEnrolmentType));
-    }
-    
-    return result;
-  }
-
-  private fi.pyramus.rest.model.CourseState createCourseStateRestModel(CourseState courseState) {
-    return new fi.pyramus.rest.model.CourseState(courseState.getId(), courseState.getName(), courseState.getArchived());
-  }
-  
-  private List<fi.pyramus.rest.model.CourseState> createCourseStateRestModel(List<CourseState> courseStates) {
-    List<fi.pyramus.rest.model.CourseState> result = new ArrayList<>();
-    
-    for (CourseState courseState : courseStates) {
-      result.add(createCourseStateRestModel(courseState));
-    }
-    
-    return result;
-  }
-  
-  private List<fi.pyramus.rest.model.Course> createCourseRestModel(List<Course> courses) {
-    List<fi.pyramus.rest.model.Course> result = new ArrayList<fi.pyramus.rest.model.Course>();
-    
-    for (Course course : courses) {
-      result.add(createCourseRestModel(course));
-    }
-    
-    return result;
-  }
-
-  private fi.pyramus.rest.model.Course createCourseRestModel(Course course) {
-    Long subjectId = null;
-    Subject courseSubject = course.getSubject();
-    if (courseSubject != null) {
-      subjectId = courseSubject.getId();
-    }
-    
-    List<String> tags = new ArrayList<String>();
-    Set<Tag> courseTags = course.getTags();
-    if (courseTags != null) {
-      for (Tag courseTag : courseTags) {
-        tags.add(courseTag.getText());
-      }
-    }
-
-    Double length = course.getCourseLength() != null ? course.getCourseLength().getUnits() : null;
-    Long lengthUnitId = course.getCourseLength() != null ? course.getCourseLength().getUnit().getId() : null;
-    
-    return new fi.pyramus.rest.model.Course(course.getId(), course.getName(), course.getCreated(), 
-        course.getLastModified(), course.getDescription(), course.getArchived(), course.getCourseNumber(), 
-        course.getMaxParticipantCount(), course.getBeginDate(), course.getEndDate(), course.getNameExtension(), 
-        course.getLocalTeachingDays(), course.getTeachingHours(), course.getDistanceTeachingDays(), 
-        course.getAssessingHours(), course.getPlanningHours(), course.getEnrolmentTimeEnd(), course.getCreator().getId(), 
-        course.getLastModifier().getId(), subjectId, length, lengthUnitId, course.getModule().getId(), course.getState().getId(), tags);
-  }
-  
-  private fi.pyramus.rest.model.CourseComponent createCourseComponentRestModel(CourseComponent component) {
-    return new fi.pyramus.rest.model.CourseComponent(component.getId(), component.getName(), component.getDescription(), component.getLength().getUnits(), component.getLength().getUnit().getId(), component.getArchived());
-  }
-  
-  private List<fi.pyramus.rest.model.CourseComponent> createCourseComponentRestModel(List<CourseComponent> components) {
-    List<fi.pyramus.rest.model.CourseComponent> result = new ArrayList<>();
-    
-    for (CourseComponent component : components) {
-      result.add(createCourseComponentRestModel(component));
-    }
-    
-    return result;
-  }
-  
-  private fi.pyramus.rest.model.CourseDescriptionCategory createCourseDescriptionCategoryRestModel(CourseDescriptionCategory category) {
-    return new fi.pyramus.rest.model.CourseDescriptionCategory(category.getId(), category.getName(), category.getArchived());
-  }
-  
-  private List<fi.pyramus.rest.model.CourseDescriptionCategory> createCourseDescriptionCategoryRestModel(List<CourseDescriptionCategory> categories) {
-    List<fi.pyramus.rest.model.CourseDescriptionCategory> result = new ArrayList<>();
-    
-    for (CourseDescriptionCategory category : categories) {
-      result.add(createCourseDescriptionCategoryRestModel(category)); 
-    }
-    
-    return result;
   }
 
 }

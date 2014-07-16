@@ -2,6 +2,7 @@ package fi.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.certificate;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 
 import com.jayway.restassured.RestAssured;
@@ -48,4 +49,7 @@ public abstract class AbstractRESTServiceTest {
     return System.getProperty("it.keystore.storepass");
   }
   
+  protected DateTime getDate(int year, int monthOfYear, int dayOfMonth) {
+    return new DateTime(year, monthOfYear, dayOfMonth, 0, 0, 0, 0);
+  }
 }
