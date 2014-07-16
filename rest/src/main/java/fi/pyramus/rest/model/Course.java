@@ -1,25 +1,26 @@
 package fi.pyramus.rest.model;
 
-import java.util.Date;
 import java.util.List;
+
+import org.joda.time.DateTime;
 
 public class Course {
 
   public Course() {
   }
   
-  public Course(String name, Date created, Date lastModified, String description, Boolean archived, Integer courseNumber, 
-      Long maxParticipantCount, Date beginDate, Date endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
-      Double distanceTeachingDays, Double assessingHours, Double planningHours, Date enrolmentTimeEnd, Long creatorId,
+  public Course(String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
+      Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
+      Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, List<String> tags) {
     this(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
         creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, tags);
   }
 
-  public Course(Long id, String name, Date created, Date lastModified, String description, Boolean archived, Integer courseNumber, 
-      Long maxParticipantCount, Date beginDate, Date endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
-      Double distanceTeachingDays, Double assessingHours, Double planningHours, Date enrolmentTimeEnd, Long creatorId,
+  public Course(Long id, String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
+      Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
+      Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, List<String> tags) {
     super();
     this.id = id;
@@ -65,19 +66,19 @@ public class Course {
     this.name = name;
   }
 
-  public Date getCreated() {
+  public DateTime getCreated() {
     return created;
   }
 
-  public void setCreated(Date created) {
+  public void setCreated(DateTime created) {
     this.created = created;
   }
 
-  public Date getLastModified() {
+  public DateTime getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(Date lastModified) {
+  public void setLastModified(DateTime lastModified) {
     this.lastModified = lastModified;
   }
 
@@ -113,19 +114,19 @@ public class Course {
     this.maxParticipantCount = maxParticipantCount;
   }
 
-  public Date getBeginDate() {
+  public DateTime getBeginDate() {
     return beginDate;
   }
 
-  public void setBeginDate(Date beginDate) {
+  public void setBeginDate(DateTime beginDate) {
     this.beginDate = beginDate;
   }
 
-  public Date getEndDate() {
+  public DateTime getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(Date endDate) {
+  public void setEndDate(DateTime endDate) {
     this.endDate = endDate;
   }
 
@@ -177,11 +178,11 @@ public class Course {
     this.planningHours = planningHours;
   }
 
-  public Date getEnrolmentTimeEnd() {
+  public DateTime getEnrolmentTimeEnd() {
     return enrolmentTimeEnd;
   }
 
-  public void setEnrolmentTimeEnd(Date enrolmentTimeEnd) {
+  public void setEnrolmentTimeEnd(DateTime enrolmentTimeEnd) {
     this.enrolmentTimeEnd = enrolmentTimeEnd;
   }
 
@@ -251,21 +252,21 @@ public class Course {
 
   private Long id;
   private String name;
-  private Date created;
-  private Date lastModified;
+  private DateTime created;
+  private DateTime lastModified;
   private String description;
   private Boolean archived;
   private Integer courseNumber;
   private Long maxParticipantCount;
-  private Date beginDate;
-  private Date endDate;
+  private DateTime beginDate;
+  private DateTime endDate;
   private String nameExtension;
   private Double localTeachingDays;
   private Double teachingHours;
   private Double distanceTeachingDays;
   private Double assessingHours;
   private Double planningHours;
-  private Date enrolmentTimeEnd;
+  private DateTime enrolmentTimeEnd;
   private Long creatorId;
   private Long lastModifierId;
   private Long subjectId;
