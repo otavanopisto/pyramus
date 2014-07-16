@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.EducationType;
+import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.model.ObjectFactory;
 
@@ -123,38 +124,149 @@ public class CommonRESTService extends AbstractRESTService {
     
     return Response.noContent().build();
   }
-
   
-//  @Path("/educationTypes/{ID:[0-9]*}/subjects")
-//  @GET
-//  public Response findSubjectsByEducationType(@PathParam("ID") Long id) {
-//    EducationType educationType = commonController.findEducationTypeById(id);
-//    if (educationType != null) {
+  @Path("/educationTypes/{ID:[0-9]*}/subjects")
+  @GET
+  public Response findSubjectsByEducationType(@PathParam("ID") Long id) {
+    EducationType educationType = commonController.findEducationTypeById(id);
+    if (educationType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }   
+    
+    if (educationType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }   
+    
+    return Response.ok()
+        .entity(objectFactory.createModel(commonController.listSubjectsByEducationType(educationType)))
+        .build();
+  }
+  
+  @Path("/subjects")
+  @POST
+  public Response createSubject(fi.pyramus.rest.model.Subject entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    String name = entity.getName();
+    String code = entity.getCode();
+    
+    if (entity.getEducationTypeId() == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    EducationType educationType = commonController.findEducationTypeById(entity.getEducationTypeId());
+    if (educationType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(commonController.createSubject(code, name, educationType))).build();
+  }
+  
+  @Path("/subjects")
+  @GET
+  public Response listSubjects(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Subject> subjects;
+    
+    if (filterArchived) {
+      subjects = commonController.listUnarchivedSubjects();
+    } else {
+      subjects = commonController.listSubjects();
+    }
+    
+    if (subjects.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok()
+      .entity(objectFactory.createModel(subjects))
+      .build();
+  }
+  
+  @Path("/subjects/{ID:[0-9]*}")
+  @GET
+  public Response findSubject(@PathParam("ID") Long id) {
+    Subject subject = commonController.findSubjectById(id);
+    if (subject == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (subject.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok()
+        .entity(objectFactory.createModel(subject))
+        .build();
+  }
+
+  @Path("/subjects/{ID:[0-9]*}")
+  @PUT
+  public Response updateSubject(@PathParam("ID") Long id, fi.pyramus.rest.model.Subject entity) {
+    Subject subject = commonController.findSubjectById(id);
+    if (subject == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (subject.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    String name = entity.getName();
+    String code = entity.getCode();
+    
+    if (entity.getEducationTypeId() == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    EducationType educationType = commonController.findEducationTypeById(entity.getEducationTypeId());
+    if (educationType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(commonController.updateSubject(subject, code, name, educationType))).build();
+  }
+
+  @Path("/subjects/{ID:[0-9]*}")
+  @DELETE
+  public Response archiveSubject(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    Subject subject = commonController.findSubjectById(id);
+    if (subject == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      commonController.deleteSubject(subject);
+    } else {
+      commonController.archiveSubject(subject, getLoggedUser());
+    }
+
+    return Response.noContent().build();
+  }
+  
+//  @Path("/gradingScales/{ID:[0-9]*}")
+//  @DELETE
+//  public Response archiveGradingScale(@PathParam("ID") Long id)  {
+//    GradingScale gradingScale = commonController.findGradingScaleById(id);
+//    if (gradingScale != null) {
 //      return Response.ok()
-//          .entity(tranqualise(commonController.findSubjectsByEducationType(educationType)))
+//          .entity(tranqualise(commonController.archiveGradingScale(gradingScale, getUser())))
 //          .build();
 //    } else {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
   
-  
-//
-//  @Path("/subjects")
-//  @POST
-//  public Response createSubject(SubjectEntity subjectEntity) {
-//    String name = subjectEntity.getName();
-//    String code = subjectEntity.getCode();
-//    EducationType educationType = commonController.findEducationTypeById(subjectEntity.getEducationType_id());
-//    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code) && educationType != null) {
-//      return Response.ok()
-//          .entity(tranqualise(commonController.createSubject(code, name, educationType)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
-//  
+
 //  @Path("/gradingScales")
 //  @POST
 //  public Response createGradingScale(GradingScaleEntity gradingScaleEntity) {
@@ -183,44 +295,7 @@ public class CommonRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
-//  @Path("/subjects")
-//  @GET
-//  public Response findSubjects(@QueryParam("text") String text, @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    if(StringUtils.isBlank(text)) {
-//      List<Subject> subjects;
-//      if (filterArchived) {
-//        subjects = commonController.findUnarchivedSubjects();
-//      } else {
-//        subjects = commonController.findSubjects();
-//      }
-//      if (!subjects.isEmpty()) {
-//        return Response.ok()
-//            .entity(tranqualise(subjects))
-//            .build();
-//      } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//      }
-//    } else {
-//      SearchResult<Subject> subjects = commonController.searchSubjects(100, 0, text);
-//      return Response.ok()
-//          .entity(tranqualise(subjects.getResults()))
-//          .build();
-//    }
-//  }
-//  
-//  @Path("/subjects/{ID:[0-9]*}")
-//  @GET
-//  public Response findSubjectById(@PathParam("ID") Long id) {
-//    Subject subject = commonController.findSubjectById(id);
-//    if (subject != null) {
-//      return Response.ok()
-//          .entity(tranqualise(subject))
-//          .build();
-//    } else  {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+
 //  @Path("/gradingScales")
 //  @GET
 //  public Response findGradingScales(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -283,32 +358,7 @@ public class CommonRESTService extends AbstractRESTService {
 //    }
 //  }
 
-//  @Path("/subjects/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateSubject(@PathParam("ID") Long id, SubjectEntity subjectEntity) {
-//    Subject subject = commonController.findSubjectById(id);
-//    if (subject != null) {
-//      Long educationTypeId = subjectEntity.getEducationType_id();
-//      String name = subjectEntity.getName();
-//      String code = subjectEntity.getCode();
-//      if(!StringUtils.isBlank(name) && !StringUtils.isBlank(code) && educationTypeId != null) {
-//        EducationType educationType = commonController.findEducationTypeById(educationTypeId);
-//        return Response.ok()
-//            .entity(tranqualise(commonController.updateSubject(subject, code, name, educationType)))
-//            .build();
-//      }
-//      if (!subjectEntity.getArchived()) {
-//        return Response.ok()
-//            .entity(tranqualise(commonController.unarchiveSubject(subject, getUser())))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+
 //  @Path("/gradingScales/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateGradingScale(@PathParam("ID") Long id, GradingScaleEntity gradingScaleEntity) {
@@ -352,31 +402,6 @@ public class CommonRESTService extends AbstractRESTService {
 //      } else {
 //        return Response.status(500).build();
 //      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  @Path("/subjects/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveSubject(@PathParam("ID") Long id) {
-//    Subject subject = commonController.findSubjectById(id);
-//    if (subject != null) {
-//      return Response.ok()
-//          .entity(tranqualise(commonController.archiveSubject(subject, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/gradingScales/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveGradingScale(@PathParam("ID") Long id)  {
-//    GradingScale gradingScale = commonController.findGradingScaleById(id);
-//    if (gradingScale != null) {
-//      return Response.ok()
-//          .entity(tranqualise(commonController.archiveGradingScale(gradingScale, getUser())))
-//          .build();
 //    } else {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }

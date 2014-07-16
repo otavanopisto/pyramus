@@ -28,7 +28,9 @@ values
 insert into 
   Subject (id, archived, code, name, version, educationType)
 values 
-  (1, false, 'TEST', 'Test Subject', 1, 1);
+  (1, false, 'TEST', 'Test Subject', 1, 1),
+  (2, false, 'TST2', 'Test Subject #2', 1, 2),
+  (3, false, 'TST3', 'Test Subject #3', 1, 2);
   
 insert into
   CourseState (id, archived, name, version)

@@ -64,17 +64,17 @@ public class CommonController {
     return educationType;
   }
   
-  public List<Subject> findSubjects() {
+  public List<Subject> listSubjects() {
     List<Subject> subjects = subjectDAO.listAll();
     return subjects;
   }
   
-  public List<Subject> findUnarchivedSubjects() {
+  public List<Subject> listUnarchivedSubjects() {
     List<Subject> subjects = subjectDAO.listUnarchived();
     return subjects;
   }
   
-  public List<Subject> findSubjectsByEducationType(EducationType educationType) {
+  public List<Subject> listSubjectsByEducationType(EducationType educationType) {
     List<Subject> subjects = subjectDAO.listByEducationType(educationType);
     return subjects;
   }
@@ -161,6 +161,10 @@ public class CommonController {
   public Subject unarchiveSubject(Subject subject, User user) {
     subjectDAO.unarchive(subject, user);
     return subject;
+  }
+
+  public void deleteSubject(Subject subject) {
+    subjectDAO.delete(subject);
   }
   
   public GradingScale archiveGradingScale(GradingScale gradingScale, User user) {

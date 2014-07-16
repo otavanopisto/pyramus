@@ -66,6 +66,24 @@ public class EducationTypeTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
+  public void testListSubject() {
+    given()
+      .get("/common/educationTypes/{ID}/subjects", 2)
+      .then()
+      .statusCode(200)
+      .body("id[0]", is(2) )
+      .body("name[0]", is("Test Subject #2" ))
+      .body("code[0]", is("TST2"))
+      .body("educationTypeId[0]", is(2))
+      .body("archived[0]", is( false ))
+      .body("id[1]", is(3) )
+      .body("name[1]", is("Test Subject #3" ))
+      .body("code[1]", is("TST3"))
+      .body("educationTypeId[1]", is(2))
+      .body("archived[1]", is( false ));
+  }
+  
+  @Test
   public void testUpdateEducationType() {
     EducationType educationType = new EducationType(null, "Not Updated", "NOT", Boolean.FALSE);
     

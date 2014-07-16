@@ -112,7 +112,16 @@ public class ObjectFactory {
           public Object map(EducationType entity) {
             return new fi.pyramus.rest.model.EducationType(entity.getId(), entity.getName(), entity.getCode(), entity.getArchived());
           }
+        }, 
+        
+        new Mapper<Subject>() {
+          @Override
+          public Object map(Subject entity) {
+            Long educationTypeId = entity.getEducationType() != null ? entity.getEducationType().getId() : null;
+            return new fi.pyramus.rest.model.Subject(entity.getId(), entity.getCode(), entity.getName(), educationTypeId, entity.getArchived());
+          }
         }
+
     
     );
   }
