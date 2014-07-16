@@ -5,13 +5,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Date;
-
 import org.junit.Test;
 
 import com.jayway.restassured.response.Response;
 
-import fi.pyramus.rest.model.Course;
 import fi.pyramus.rest.model.CourseComponent;
 
 public class CourseComponentTestsIT extends AbstractRESTServiceTest {

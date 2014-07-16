@@ -1,20 +1,19 @@
 package fi.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.allOf;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
-import java.util.Date;
 
-import static org.junit.Assert.*;
-
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.jayway.restassured.response.Response;
@@ -27,21 +26,21 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   public void testCreateCourse() {
     Course course = new Course(
         "Create test", 
-        new Date(), 
-        new Date(), 
+        new DateTime(), 
+        new DateTime(), 
         "Course for testing course creation", 
         Boolean.FALSE, 
         111, 
         222l,
-        new Date(),
-        new Date(),
+        new DateTime(),
+        new DateTime(),
         "Extension",
         333d,
         444d,
         555d,
         666d,
         777d,
-        new Date(),
+        new DateTime(),
         1l, 
         1l,
         1l,
@@ -81,21 +80,21 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   public void testCreateCourseTags() {
     Course course = new Course(
         "Create test", 
-        new Date(), 
-        new Date(), 
+        new DateTime(), 
+        new DateTime(), 
         "Course for testing course creation", 
         Boolean.FALSE, 
         111, 
         222l,
-        new Date(),
-        new Date(),
+        new DateTime(),
+        new DateTime(),
         "Extension",
         333d,
         444d,
         555d,
         666d,
         777d,
-        new Date(),
+        new DateTime(),
         1l, 
         1l,
         1l,
@@ -135,14 +134,23 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testGetCourse() {
+    DateTime created = getDate(2011, 1, 1);
+    DateTime modified = getDate(2011, 1, 1);
+    DateTime beginDate = getDate(2011, 2, 2);
+    DateTime endDate = getDate(2011, 3, 3);
+    DateTime enrolmentTimeEnd = getDate(2011, 1, 1);
+
     given()
       .get("/courses/courses/1001")
       .then()
       .body("id", is(1001))
       .body("name", is("Test Course #2" ))
       .body("courseNumber", is( 2 ))
-      .body("created", is( 1293832800000l ))
-      .body("lastModified", is( 1293832800000l ))
+      .body("created", is( created.toString() ))
+      .body("lastModified", is( modified.toString() ))
+      .body("beginDate", is( beginDate.toString() ))
+      .body("endDate", is( endDate.toString() ))
+      .body("enrolmentTimeEnd", is( enrolmentTimeEnd.toString() ))
       .body("description", is( "Course #2 for testing" ))
       .body("length", is( 1.0f ))
       .body("lengthUnitId", is( 1 ))
@@ -178,6 +186,18 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
  
   @Test
   public void testListCourses() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException {
+    DateTime created1 = getDate(2010, 1, 1);
+    DateTime modified1 = getDate(2010, 1, 1);
+    DateTime beginDate1 = getDate(2010, 2, 2);
+    DateTime endDate1 = getDate(2010, 3, 3);
+    DateTime enrolmentTimeEnd1 = getDate(2010, 1, 1);
+    
+    DateTime created2 = getDate(2011, 1, 1);
+    DateTime modified2 = getDate(2011, 1, 1);
+    DateTime beginDate2 = getDate(2011, 2, 2);
+    DateTime endDate2 = getDate(2011, 3, 3);
+    DateTime enrolmentTimeEnd2 = getDate(2011, 1, 1);
+    
     given()
       .get("/courses/courses/")
       .then()
@@ -185,8 +205,11 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body("id[0]", is(1000) )
       .body("name[0]", is("Test Course #1" ))
       .body("courseNumber[0]", is( 1 ))
-      .body("created[0]", is( 1262296800000l ))
-      .body("lastModified[0]", is( 1262296800000l ))
+      .body("created[0]", is( created1.toString() ))
+      .body("lastModified[0]", is( modified1.toString() ))
+      .body("beginDate[0]", is( beginDate1.toString() ))
+      .body("endDate[0]", is( endDate1.toString() ))
+      .body("enrolmentTimeEnd[0]", is( enrolmentTimeEnd1.toString() ))
       .body("description[0]", is( "Course #1 for testing" ))
       .body("length[0]", is( 1.0f ))
       .body("lengthUnitId[0]", is( 1 ))
@@ -198,8 +221,11 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body("id[1]", is(1001) )
       .body("name[1]", is("Test Course #2" ))
       .body("courseNumber[1]", is( 2 ))
-      .body("created[1]", is( 1293832800000l ))
-      .body("lastModified[1]", is( 1293832800000l ))
+      .body("created[1]", is( created2.toString() ))
+      .body("lastModified[1]", is( modified2.toString() ))
+      .body("beginDate[1]", is( beginDate2.toString() ))
+      .body("endDate[1]", is( endDate2.toString() ))
+      .body("enrolmentTimeEnd[1]", is( enrolmentTimeEnd2.toString() ))
       .body("description[1]", is( "Course #2 for testing" ))
       .body("length[1]", is( 1.0f ))
       .body("lengthUnitId[1]", is( 1 ))
@@ -214,21 +240,21 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   public void testUpdateCourse() {
     Course course = new Course(
         "Update test", 
-        new Date(), 
-        new Date(), 
+        new DateTime(), 
+        new DateTime(), 
         "Course for testing course updating", 
         Boolean.FALSE, 
         111, 
         222l,
-        new Date(),
-        new Date(),
+        new DateTime(),
+        new DateTime(),
         "Extension",
         333d,
         444d,
         555d,
         666d,
         777d,
-        new Date(),
+        new DateTime(),
         1l, 
         1l,
         1l,
@@ -291,21 +317,21 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   public void testUpdateCourseTags() {
     Course course = new Course(
         "Update test", 
-        new Date(), 
-        new Date(), 
+        new DateTime(), 
+        new DateTime(), 
         "Course for testing course updating", 
         Boolean.FALSE, 
         111, 
         222l,
-        new Date(),
-        new Date(),
+        new DateTime(),
+        new DateTime(),
         "Extension",
         333d,
         444d,
         555d,
         666d,
         777d,
-        new Date(),
+        new DateTime(),
         1l, 
         1l,
         1l,
@@ -373,21 +399,21 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   public void testDeleteCourse() {
     Course course = new Course(
         "Update test", 
-        new Date(), 
-        new Date(), 
+        new DateTime(), 
+        new DateTime(), 
         "Course for testing course updating", 
         Boolean.FALSE, 
         111, 
         222l,
-        new Date(),
-        new Date(),
+        new DateTime(),
+        new DateTime(),
         "Extension",
         333d,
         444d,
         555d,
         666d,
         777d,
-        new Date(),
+        new DateTime(),
         1l, 
         1l,
         1l,
