@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.rest.controller.CommonController;
@@ -59,9 +60,9 @@ public class CommonRESTService extends AbstractRESTService {
   public Response listEducationTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<EducationType> educationTypes;
     if (filterArchived) {
-      educationTypes = commonController.findUnarchivedEducationTypes();
+      educationTypes = commonController.listUnarchivedEducationTypes();
     } else {
-      educationTypes = commonController.findEducationTypes();
+      educationTypes = commonController.listEducationTypes();
     }
     
     if (educationTypes.isEmpty()) {
@@ -110,7 +111,7 @@ public class CommonRESTService extends AbstractRESTService {
       
   @Path("/educationTypes/{ID:[0-9]*}")
   @DELETE
-  public Response archiveEducationType(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+  public Response deleteEducationType(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     EducationType educationType = commonController.findEducationTypeById(id);
     if (educationType == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -125,6 +126,159 @@ public class CommonRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
+  @Path("/educationTypes/{ID}/subtypes")
+  @POST
+  public Response createEducationSubtype(@PathParam ("ID") Long educationTypeId, fi.pyramus.rest.model.EducationSubtype entity) {
+    String name = entity.getName();
+    String code = entity.getCode();
+    
+    if (educationTypeId == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    EducationType educationType = commonController.findEducationTypeById(educationTypeId);
+    if (educationType == null) {
+      return Response.status(Status.NOT_FOUND).build(); 
+    }
+    
+    return Response
+        .ok(objectFactory.createModel(commonController.createEducationSubtype(educationType, name, code)))
+        .build();
+  }
+
+  @Path("/educationTypes/{ID}/subtypes")
+  @GET
+  public Response listEducationTypes(@PathParam ("ID") Long educationTypeId) {
+    if (educationTypeId == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    EducationType educationType = commonController.findEducationTypeById(educationTypeId);
+    if (educationType == null) {
+      return Response.status(Status.NOT_FOUND).build(); 
+    }
+    
+    List<EducationSubtype> educationSubtypes = commonController.listEducationSubtypesByEducationType(educationType);
+    if (educationSubtypes.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(educationSubtypes)).build();
+  }
+  
+  @Path("/educationTypes/{EDUCATIONTYPEID}/subtypes/{EDUCATIONSUBTYPEID:[0-9]*}")
+  @GET
+  public Response findEducationTypeById(@PathParam("EDUCATIONTYPEID") Long educationTypeId, @PathParam ("EDUCATIONSUBTYPEID") Long educationSubtypeId) {
+    if ((educationTypeId == null) || (educationSubtypeId == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    EducationType educationType = commonController.findEducationTypeById(educationTypeId);
+    if (educationType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (educationType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    EducationSubtype educationSubtype = commonController.findEducationSubtypeById(educationSubtypeId);
+    if (educationSubtype == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (educationSubtype.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (!educationSubtype.getEducationType().getId().equals(educationTypeId)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+
+    return Response.ok(objectFactory.createModel(educationSubtype)).build();
+  }
+
+  @Path("/educationTypes/{EDUCATIONTYPEID}/subtypes/{EDUCATIONSUBTYPEID:[0-9]*}")
+  @PUT
+  public Response updateEducationSubtype(@PathParam("EDUCATIONTYPEID") Long educationTypeId, @PathParam ("EDUCATIONSUBTYPEID") Long educationSubtypeId, fi.pyramus.rest.model.EducationSubtype entity) {
+    if ((educationTypeId == null) || (educationSubtypeId == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    String name = entity.getName();
+    String code = entity.getCode();
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    EducationSubtype educationSubtype = commonController.findEducationSubtypeById(educationSubtypeId);
+    if (educationSubtype == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (educationSubtype.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (!educationSubtype.getEducationType().getId().equals(educationTypeId)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    EducationType educationType = commonController.findEducationTypeById(entity.getEducationTypeId());
+    if (educationType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }    
+    
+    if (educationType.getArchived()) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }    
+    
+    return Response.ok().entity(objectFactory.createModel(commonController.updateEducationSubtype(educationSubtype, educationType, name, code))).build();
+  }
+      
+  @Path("/educationTypes/{EDUCATIONTYPEID}/subtypes/{EDUCATIONSUBTYPEID:[0-9]*}")
+  @DELETE
+  public Response deleteEducationSubtype(@PathParam("EDUCATIONTYPEID") Long educationTypeId, @PathParam ("EDUCATIONSUBTYPEID") Long educationSubtypeId, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    if ((educationTypeId == null) || (educationSubtypeId == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    EducationType educationType = commonController.findEducationTypeById(educationTypeId);
+    if (educationType == null) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find educationType").build();
+    }    
+    
+    if (educationType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find educationType/A").build();
+    }    
+    
+    EducationSubtype educationSubtype = commonController.findEducationSubtypeById(educationSubtypeId);
+    if (educationSubtype == null) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find subtype").build();
+    }    
+    
+    if (educationSubtype.getArchived()) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find subtype/2").build();
+    }    
+    
+    if (!educationSubtype.getEducationType().getId().equals(educationTypeId)) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find subtype/3 " + educationSubtype.getEducationType().getId() + " != " + educationTypeId).build();
+    }  
+    
+    if (permanent) {
+      commonController.deleteEducationSubtype(educationSubtype);
+    } else {
+      commonController.archiveEducationSubtype(educationSubtype, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+
   @Path("/educationTypes/{ID:[0-9]*}/subjects")
   @GET
   public Response findSubjectsByEducationType(@PathParam("ID") Long id) {

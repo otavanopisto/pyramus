@@ -6,10 +6,12 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.SubjectDAO;
 import fi.pyramus.dao.grading.GradingScaleDAO;
+import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
@@ -20,18 +22,94 @@ import fi.pyramus.persistence.search.SearchResult;
 @Dependent
 @Stateless
 public class CommonController {
+  
   @Inject
   private EducationTypeDAO educationTypeDAO;
+  
+  @Inject
+  private EducationSubtypeDAO educationSubtypeDAO;
+  
   @Inject
   private SubjectDAO subjectDAO;
+  
   @Inject
   private GradingScaleDAO gradingScaleDAO;
+  
   @Inject
   private EducationalTimeUnitDAO educationalTimeUnitDAO;
+  
+  /* EducationType */
   
   public EducationType createEducationType(String name, String code) {
     EducationType educationType = educationTypeDAO.create(name, code);
     return educationType;
+  }
+  
+  public List<EducationType> listEducationTypes() {
+    List<EducationType> educationTypes = educationTypeDAO.listAll();
+    return educationTypes;
+  }
+  
+  public List<EducationType> listUnarchivedEducationTypes() {
+    List<EducationType> educationTypes = educationTypeDAO.listUnarchived();
+    return educationTypes;
+  }
+  
+  public EducationType findEducationTypeById(Long id) {
+    EducationType educationType = educationTypeDAO.findById(id);
+    return educationType;
+  }
+  
+  public EducationType updateEducationType(EducationType educationType, String name, String code) {
+    educationTypeDAO.update(educationType, name, code);
+    return educationType;
+  }
+  
+  public EducationType archiveEducationType(EducationType educationType, User user) {
+    educationTypeDAO.archive(educationType, user);
+    return educationType;
+  }
+  
+  public EducationType unarchiveEducationType(EducationType educationType, User user) {
+    educationTypeDAO.unarchive(educationType, user);
+    return educationType;
+  }
+
+  public void deleteEducationType(EducationType educationType) {
+    educationTypeDAO.delete(educationType);
+  }
+  
+  /* EducationSubtype */
+
+  public EducationSubtype createEducationSubtype(EducationType educationType, String name, String code) {
+    return educationSubtypeDAO.create(educationType, name, code);
+  }
+  
+  public EducationSubtype findEducationSubtypeById(Long id) {
+    return educationSubtypeDAO.findById(id);
+  }
+  
+  public List<EducationSubtype> listEducationSubtypesByEducationType(EducationType educationType) {
+    return educationSubtypeDAO.listByEducationType(educationType);
+  }
+  
+  public EducationSubtype updateEducationSubtype(EducationSubtype educationSubtype, EducationType educationType, String name, String code) {
+    educationSubtype = educationSubtypeDAO.update(educationSubtype, name, code);
+
+    if (!educationType.getId().equals(educationSubtype.getEducationType().getId())) {
+      educationSubtype = educationSubtypeDAO.updateEducationType(educationSubtype, educationType);
+    }
+
+    return educationSubtype;
+  }
+  
+  public EducationSubtype archiveEducationSubtype(EducationSubtype educationSubtype, User user) {
+    educationSubtypeDAO.archive(educationSubtype, user);
+    return educationSubtype;
+  }
+  
+  public void deleteEducationSubtype(EducationSubtype educationSubtype) {
+    educationSubtypeDAO.delete(educationSubtype);
   }
   
   public Subject createSubject(String code, String name, EducationType educationType) {
@@ -47,21 +125,6 @@ public class CommonController {
   public EducationalTimeUnit createEducationalTimeUnit(Double baseUnits, String name) {
     EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.create(baseUnits, name);
     return educationalTimeUnit;
-  }
-  
-  public List<EducationType> findEducationTypes() {
-    List<EducationType> educationTypes = educationTypeDAO.listAll();
-    return educationTypes;
-  }
-  
-  public List<EducationType> findUnarchivedEducationTypes() {
-    List<EducationType> educationTypes = educationTypeDAO.listUnarchived();
-    return educationTypes;
-  }
-  
-  public EducationType findEducationTypeById(Long id) {
-    EducationType educationType = educationTypeDAO.findById(id);
-    return educationType;
   }
   
   public List<Subject> listSubjects() {
@@ -119,11 +182,6 @@ public class CommonController {
     return subjects;
   }
   
-  public EducationType updateEducationType(EducationType educationType, String name, String code) {
-    educationTypeDAO.update(educationType, name, code);
-    return educationType;
-  }
-  
   public Subject updateSubject(Subject subject, String code, String name, EducationType educationType) {
     subjectDAO.update(subject, code, name, educationType);
     return subject;
@@ -137,20 +195,6 @@ public class CommonController {
   public EducationalTimeUnit updateEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, Double baseUnits, String name) {
     educationalTimeUnitDAO.update(educationalTimeUnit, baseUnits, name);
     return educationalTimeUnit;
-  }
-  
-  public EducationType archiveEducationType(EducationType educationType, User user) {
-    educationTypeDAO.archive(educationType, user);
-    return educationType;
-  }
-  
-  public EducationType unarchiveEducationType(EducationType educationType, User user) {
-    educationTypeDAO.unarchive(educationType, user);
-    return educationType;
-  }
-
-  public void deleteEducationType(EducationType educationType) {
-    educationTypeDAO.delete(educationType);
   }
   
   public Subject archiveSubject(Subject subject, User user) {
