@@ -22,7 +22,8 @@ values
 insert into
   EducationType (id, archived, code, name, version)
 values
-  (1, false, 'TEST', 'Test Education Type', 1);
+  (1, false, 'TEST', 'Test Education Type', 1),
+  (2, false, 'TST2', 'Test EduType 2', 1);
   
 insert into 
   Subject (id, archived, code, name, version, educationType)

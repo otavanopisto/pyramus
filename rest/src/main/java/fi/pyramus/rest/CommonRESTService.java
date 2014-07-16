@@ -15,39 +15,130 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.pyramus.domainmodel.base.EducationType;
-import fi.pyramus.domainmodel.base.EducationalTimeUnit;
-import fi.pyramus.domainmodel.base.Subject;
-import fi.pyramus.domainmodel.grading.GradingScale;
-import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.rest.controller.CommonController;
+import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/common")
-@Produces("application/json")
-@Consumes("application/json")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 @Stateful
 @RequestScoped
 public class CommonRESTService extends AbstractRESTService {
-//  
-//  @Inject
-//  private CommonController commonController;
-//  
-//  @Path("/educationTypes")
-//  @POST
-//  public Response createEducationType(EducationTypeEntity educationTypeEntity) {
-//    String name = educationTypeEntity.getName();
-//    String code = educationTypeEntity.getCode();
-//    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
+
+  @Inject
+  private CommonController commonController;
+
+  @Inject
+  private ObjectFactory objectFactory;
+  
+  @Path("/educationTypes")
+  @POST
+  public Response createEducationType(EducationType educationTypeEntity) {
+    String name = educationTypeEntity.getName();
+    String code = educationTypeEntity.getCode();
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response
+        .ok(objectFactory.createModel(commonController.createEducationType(name, code)))
+        .build();
+  }
+
+  @Path("/educationTypes")
+  @GET
+  public Response listEducationTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<EducationType> educationTypes;
+    if (filterArchived) {
+      educationTypes = commonController.findUnarchivedEducationTypes();
+    } else {
+      educationTypes = commonController.findEducationTypes();
+    }
+    
+    if (educationTypes.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(educationTypes)).build();
+  }
+  
+  @Path("/educationTypes/{ID:[0-9]*}")
+  @GET
+  public Response findEducationTypeById(@PathParam("ID") Long id) {
+    EducationType educationType = commonController.findEducationTypeById(id);
+    if (educationType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (educationType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+
+    return Response.ok(objectFactory.createModel(educationType)).build();
+  }
+
+  @Path("/educationTypes/{ID:[0-9]*}")
+  @PUT
+  public Response updateEducationType(@PathParam("ID") Long id, fi.pyramus.rest.model.EducationType entity) {
+    EducationType educationType = commonController.findEducationTypeById(id);
+    if (educationType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (educationType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    String name = entity.getName();
+    String code = entity.getCode();
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(commonController.updateEducationType(educationType, name, code))).build();
+  }
+      
+  @Path("/educationTypes/{ID:[0-9]*}")
+  @DELETE
+  public Response archiveEducationType(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    EducationType educationType = commonController.findEducationTypeById(id);
+    if (educationType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (permanent) {
+      commonController.deleteEducationType(educationType);
+    } else {
+      commonController.archiveEducationType(educationType, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+
+  
+//  @Path("/educationTypes/{ID:[0-9]*}/subjects")
+//  @GET
+//  public Response findSubjectsByEducationType(@PathParam("ID") Long id) {
+//    EducationType educationType = commonController.findEducationTypeById(id);
+//    if (educationType != null) {
 //      return Response.ok()
-//          .entity(tranqualise(commonController.createEducationType(name, code)))
+//          .entity(tranqualise(commonController.findSubjectsByEducationType(educationType)))
 //          .build();
 //    } else {
-//      return Response.status(500).build();
+//      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
+  
+  
 //
 //  @Path("/subjects")
 //  @POST
@@ -89,50 +180,6 @@ public class CommonRESTService extends AbstractRESTService {
 //          .build();
 //    } else {
 //      return Response.status(500).build();
-//    }
-//  }
-//  
-//  @Path("/educationTypes")
-//  @GET
-//  public Response findEducationTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<EducationType> educationTypes;
-//    if (filterArchived) {
-//      educationTypes = commonController.findUnarchivedEducationTypes();
-//    } else {
-//      educationTypes = commonController.findEducationTypes();
-//    }
-//    if (!educationTypes.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(educationTypes))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/educationTypes/{ID:[0-9]*}")
-//  @GET
-//  public Response findEducationTypeById(@PathParam("ID") Long id) {
-//    EducationType educationType = commonController.findEducationTypeById(id);
-//    if (educationType != null) {
-//      return Response.ok()
-//          .entity(tranqualise(educationType))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/educationTypes/{ID:[0-9]*}/subjects")
-//  @GET
-//  public Response findSubjectsByEducationType(@PathParam("ID") Long id) {
-//    EducationType educationType = commonController.findEducationTypeById(id);
-//    if (educationType != null) {
-//      return Response.ok()
-//          .entity(tranqualise(commonController.findSubjectsByEducationType(educationType)))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
 //  
@@ -235,31 +282,7 @@ public class CommonRESTService extends AbstractRESTService {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
-//  
-//  @Path("/educationTypes/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateEducationType(@PathParam("ID") Long id, EducationTypeEntity educationTypeEntity) {
-//    EducationType educationType = commonController.findEducationTypeById(id);
-//    if (educationType != null) {
-//      String name = educationTypeEntity.getName();
-//      String code = educationTypeEntity.getCode();
-//      if(!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
-//        return Response.ok()
-//            .entity(tranqualise(commonController.updateEducationType(educationType, name, code)))
-//            .build();
-//      }
-//      if (!educationTypeEntity.getArchived()) {
-//        return Response.ok()
-//            .entity(tranqualise(commonController.unarchiveEducationType(educationType, getUser())))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+
 //  @Path("/subjects/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateSubject(@PathParam("ID") Long id, SubjectEntity subjectEntity) {
@@ -333,20 +356,6 @@ public class CommonRESTService extends AbstractRESTService {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
-//  
-//  @Path("/educationTypes/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveEducationType(@PathParam("ID") Long id) {
-//    EducationType educationType = commonController.findEducationTypeById(id);
-//    if (educationType != null) {
-//      return Response.ok()
-//          .entity(tranqualise(commonController.archiveEducationType(educationType, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
 //  @Path("/subjects/{ID:[0-9]*}")
 //  @DELETE
 //  public Response archiveSubject(@PathParam("ID") Long id) {

@@ -14,6 +14,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.joda.time.DateTime;
 
+import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
@@ -103,6 +104,13 @@ public class ObjectFactory {
           @Override
           public Object map(CourseDescriptionCategory entity) {
             return new fi.pyramus.rest.model.CourseDescriptionCategory(entity.getId(), entity.getName(), entity.getArchived());
+          }
+        }, 
+        
+        new Mapper<EducationType>() {
+          @Override
+          public Object map(EducationType entity) {
+            return new fi.pyramus.rest.model.EducationType(entity.getId(), entity.getName(), entity.getCode(), entity.getArchived());
           }
         }
     

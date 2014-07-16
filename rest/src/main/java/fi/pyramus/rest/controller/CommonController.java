@@ -148,6 +148,10 @@ public class CommonController {
     educationTypeDAO.unarchive(educationType, user);
     return educationType;
   }
+
+  public void deleteEducationType(EducationType educationType) {
+    educationTypeDAO.delete(educationType);
+  }
   
   public Subject archiveSubject(Subject subject, User user) {
     subjectDAO.archive(subject, user);
