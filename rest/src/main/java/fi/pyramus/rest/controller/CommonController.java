@@ -10,11 +10,13 @@ import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.SubjectDAO;
+import fi.pyramus.dao.grading.GradeDAO;
 import fi.pyramus.dao.grading.GradingScaleDAO;
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
+import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.persistence.search.SearchResult;
@@ -31,9 +33,12 @@ public class CommonController {
   
   @Inject
   private SubjectDAO subjectDAO;
-  
+
   @Inject
   private GradingScaleDAO gradingScaleDAO;
+  
+  @Inject
+  private GradeDAO gradeDAO;
   
   @Inject
   private EducationalTimeUnitDAO educationalTimeUnitDAO;
@@ -112,14 +117,74 @@ public class CommonController {
     educationSubtypeDAO.delete(educationSubtype);
   }
   
-  public Subject createSubject(String code, String name, EducationType educationType) {
-    Subject subject = subjectDAO.create(code, name, educationType);
-    return subject;
-  }
+  /* GradingScale */
   
   public GradingScale createGradingScale(String name, String description) {
     GradingScale gradingScale = gradingScaleDAO.create(name, description);
     return gradingScale;
+  }
+  
+  public List<GradingScale> listGradingScales() {
+    List<GradingScale> gradingScales = gradingScaleDAO.listAll();
+    return gradingScales;
+  }
+  
+  public List<GradingScale> listUnarchivedGradingScales() {
+    List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
+    return gradingScales;
+  }
+  
+  public GradingScale findGradingScaleById(Long id) {
+    GradingScale gradingScale = gradingScaleDAO.findById(id);
+    return gradingScale;
+  }
+  
+  public GradingScale archiveGradingScale(GradingScale gradingScale, User user) {
+    gradingScaleDAO.archive(gradingScale, user);
+    return gradingScale;
+  }
+  
+  public GradingScale unarchiveGradingScale(GradingScale gradingScale, User user) {
+    gradingScaleDAO.unarchive(gradingScale, user);
+    return gradingScale;
+  }
+
+  public void deleteGradingScale(GradingScale gradingScale) {
+    gradingScaleDAO.delete(gradingScale);
+  }
+  
+  /* Grade */
+  
+  public Grade createGrade(GradingScale gradingScale, String name, String description, Boolean passingGrade, Double gpa, String qualification) {
+    Grade grade = gradeDAO.create(gradingScale, name, description, passingGrade, gpa, qualification);
+    return grade;
+  }
+  
+  public Grade findGradeByIdId(Long id) {
+    return gradeDAO.findById(id);
+  }
+  
+  public Grade updateGrade(Grade grade, String name, String description, Boolean passingGrade, Double gpa, String qualification) {
+    return gradeDAO.update(grade, name, description, passingGrade, gpa, qualification);
+  }
+  
+  public Grade archiveGrade(Grade grade, User user) {
+    gradeDAO.archive(grade, user);
+    return grade;
+  }
+  
+  public Grade unarchiveGrade(Grade grade, User user) {
+    gradeDAO.unarchive(grade, user);
+    return grade;
+  }
+
+  public void deleteGrade(Grade grade) {
+    gradeDAO.delete(grade);
+  }
+  
+  public Subject createSubject(String code, String name, EducationType educationType) {
+    Subject subject = subjectDAO.create(code, name, educationType);
+    return subject;
   }
   
   public EducationalTimeUnit createEducationalTimeUnit(Double baseUnits, String name) {
@@ -145,21 +210,6 @@ public class CommonController {
   public Subject findSubjectById(Long id) {
     Subject subject = subjectDAO.findById(id);
     return subject;
-  }
-  
-  public List<GradingScale> listGradingScales() {
-    List<GradingScale> gradingScales = gradingScaleDAO.listAll();
-    return gradingScales;
-  }
-  
-  public List<GradingScale> listUnarchivedGradingScales() {
-    List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
-    return gradingScales;
-  }
-  
-  public GradingScale findGradingScaleById(Long id) {
-    GradingScale gradingScale = gradingScaleDAO.findById(id);
-    return gradingScale;
   }
   
   public List<EducationalTimeUnit> findEducationalTimeUnits() {
@@ -209,20 +259,6 @@ public class CommonController {
 
   public void deleteSubject(Subject subject) {
     subjectDAO.delete(subject);
-  }
-  
-  public GradingScale archiveGradingScale(GradingScale gradingScale, User user) {
-    gradingScaleDAO.archive(gradingScale, user);
-    return gradingScale;
-  }
-  
-  public GradingScale unarchiveGradingScale(GradingScale gradingScale, User user) {
-    gradingScaleDAO.unarchive(gradingScale, user);
-    return gradingScale;
-  }
-
-  public void deleteGradingScale(GradingScale gradingScale) {
-    gradingScaleDAO.delete(gradingScale);
   }
   
   public EducationalTimeUnit archiveEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, User user) {

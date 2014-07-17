@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Subject;
+import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.model.ObjectFactory;
@@ -497,8 +498,154 @@ public class CommonRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
+  @Path("/gradingScales/{SCALEID:[0-9]*}/grades")
+  @POST
+  public Response createGrade(@PathParam ("SCALEID") Long gradingScaleId, fi.pyramus.rest.model.Grade entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    GradingScale gradingScale = commonController.findGradingScaleById(gradingScaleId);
+    if (gradingScale == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (gradingScale.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    String name = entity.getName();
+    String description = entity.getDescription();
+    Boolean passingGrade = entity.getPassingGrade();
+    Double gpa = entity.getGpa();
+    String qualification = entity.getQualification();
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(description) || (passingGrade == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    return Response.ok(objectFactory.createModel(commonController.createGrade(gradingScale, name, description, passingGrade, gpa, qualification))).build();
+  }
   
+  @Path("/gradingScales/{SCALEID:[0-9]*}/grades")
+  @GET
+  public Response listGrades(@PathParam ("SCALEID") Long gradingScaleId) {
+    GradingScale gradingScale = commonController.findGradingScaleById(gradingScaleId);
+    if (gradingScale == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (gradingScale.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<Grade> grades = gradingScale.getGrades();
+    
+    if (grades.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(grades)).build();
+  }
   
+  @Path("/gradingScales/{SCALEID:[0-9]*}/grades/{ID:[0-9]*}")
+  @GET
+  public Response findGrade(@PathParam ("SCALEID") Long gradingScaleId, @PathParam("ID") Long id) {
+    GradingScale gradingScale = commonController.findGradingScaleById(gradingScaleId);
+    if (gradingScale == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (gradingScale.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Grade grade = commonController.findGradeByIdId(id);
+    if (grade == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (grade.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!grade.getGradingScale().getId().equals(gradingScale.getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(grade)).build();
+  }
+  
+  @Path("/gradingScales/{SCALEID:[0-9]*}/grades/{ID:[0-9]*}")
+  @PUT
+  public Response updateGrade(@PathParam ("SCALEID") Long gradingScaleId, @PathParam("ID") Long id, fi.pyramus.rest.model.Grade entity) {
+    GradingScale gradingScale = commonController.findGradingScaleById(gradingScaleId);
+    if (gradingScale == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (gradingScale.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Grade grade = commonController.findGradeByIdId(id);
+    if (grade == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (grade.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!grade.getGradingScale().getId().equals(gradingScale.getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    String name = entity.getName();
+    String description = entity.getDescription();
+    Boolean passingGrade = entity.getPassingGrade();
+    Double gpa = entity.getGpa();
+    String qualification = entity.getQualification();
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(description) || (passingGrade == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (!entity.getGradingScaleId().equals(gradingScaleId)) {
+      return Response.status(Status.BAD_REQUEST).entity("Cannot change grading scale of grade by updating").build();
+    }
+    
+    return Response
+        .ok(objectFactory.createModel(commonController.updateGrade(grade, name, description, passingGrade, gpa, qualification)))
+        .build();
+  }
+
+  @Path("/gradingScales/{SCALEID:[0-9]*}/grades/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteGrade(@PathParam ("SCALEID") Long gradingScaleId, @PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    GradingScale gradingScale = commonController.findGradingScaleById(gradingScaleId);
+    if (gradingScale == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (gradingScale.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Grade grade = commonController.findGradeByIdId(id);
+    if (grade == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      commonController.deleteGrade(grade);
+    } else {
+      commonController.archiveGrade(grade, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+
   
 //  @Path("/educationalTimeUnits") 
 //  @POST
