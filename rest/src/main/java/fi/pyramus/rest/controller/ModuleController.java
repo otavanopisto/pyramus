@@ -1,6 +1,8 @@
 package fi.pyramus.rest.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,8 +38,8 @@ public class ModuleController {
   private CourseDAO courseDAO;
 
   public Module createModule(String name, Subject subject, Integer courseNumber, Double moduleLength, EducationalTimeUnit moduleLengthTimeUnit,
-      String description, Long maxParticipantCount, User user) {
-    Module module = moduleDAO.create(name, subject, courseNumber, moduleLength, moduleLengthTimeUnit, description, maxParticipantCount, user);
+      String description, Long maxParticipantCount, User creator) {
+    Module module = moduleDAO.create(name, subject, courseNumber, moduleLength, moduleLengthTimeUnit, description, maxParticipantCount, creator);
     return module;
   }
   
@@ -97,9 +99,32 @@ public class ModuleController {
   }
 
   public Module updateModule(Module module, String name, Subject subject, Integer courseNumber, Double length, EducationalTimeUnit lengthTimeUnit,
-      String description, Long maxParticipantCount, User user) {
-    Module moduleUpdated = moduleDAO.update(module, name, subject, courseNumber, length, lengthTimeUnit, description, maxParticipantCount, user);
+      String description, Long maxParticipantCount, User modifier) {
+    Module moduleUpdated = moduleDAO.update(module, name, subject, courseNumber, length, lengthTimeUnit, description, maxParticipantCount, modifier);
     return moduleUpdated;
+  }
+
+  public Module updateModuleTags(Module module, List<String> tags) {
+    Set<String> newTags = new HashSet<>(tags);
+    Set<Tag> moduleTags = new HashSet<>(module.getTags());
+    
+    for (Tag courseTag : moduleTags) {
+      if (!newTags.contains(courseTag.getText())) {
+        removeModuleTag(module, courseTag);
+      }
+        
+      newTags.remove(courseTag.getText());
+    }
+    
+    for (String newTag : newTags) {
+      createModuleTag(module, newTag);
+    }
+    
+    return module;
+  }
+  
+  public void removeModuleTag(Module module, Tag tag) {
+    module.removeTag(tag);
   }
 
   public Module archiveModule(Module module, User user) {
@@ -112,7 +137,7 @@ public class ModuleController {
     return module;
   }
   
-  public void removeTag(Module module, Tag tag) {
-    module.removeTag(tag);
+  public void deleteModule(Module module) {
+    moduleDAO.delete(module);
   }
 }

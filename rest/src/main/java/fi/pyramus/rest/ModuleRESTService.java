@@ -1,7 +1,7 @@
 package fi.pyramus.rest;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -19,13 +19,14 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
-import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
-import fi.pyramus.rest.controller.TagController;
+import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/modules")
 @Produces("application/json")
@@ -33,200 +34,183 @@ import fi.pyramus.rest.controller.TagController;
 @Stateful
 @RequestScoped
 public class ModuleRESTService extends AbstractRESTService{
+
+  @Inject
+  private ModuleController moduleController;
+  
+  @Inject
+  private CommonController commonController;
+  
+  @Inject
+  private ObjectFactory objectFactory;
+  
+  @Path("/modules")
+  @POST
+  public Response createModule(fi.pyramus.rest.model.Module entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    String name = entity.getName();
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Subject subject = entity.getSubjectId() != null ? commonController.findSubjectById(entity.getSubjectId()) : null;
+    Integer courseNumber = entity.getCourseNumber();
+    EducationalTimeUnit lengthUnit = entity.getLengthUnitId() != null ? commonController.findEducationalTimeUnitById(entity.getLengthUnitId()) : null;
+    Double length = entity.getLength();
+    String description = entity.getDescription();
+    Long maxParticipantCount = entity.getMaxParticipantCount();
+    Module module = moduleController.createModule(name, subject, courseNumber, length, lengthUnit, description, maxParticipantCount, getLoggedUser());
+    
+    if (entity.getTags() != null) {
+      for (String tag : entity.getTags()) {
+        moduleController.createModuleTag(module, tag); 
+      }
+    }
+    
+    return Response
+        .ok(objectFactory.createModel(module))
+        .build();
+  }
+
+  @Path("/modules")
+  @GET
+  public Response listModules(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Module> modules;
+    if (filterArchived) {
+      modules = moduleController.findUnarchivedModules();
+    } else {
+      modules = moduleController.findModules();
+    }
+    
+    if (modules.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(modules)).build();
+  }
+  
+  @Path("/modules/{ID:[0-9]*}")
+  @GET
+  public Response findModuleById(@PathParam("ID") Long id) {
+    Module module = moduleController.findModuleById(id);
+    if (module == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (module.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok()
+        .entity(objectFactory.createModel(module))
+        .build();
+  }
+  
+  @Path("/modules/{ID:[0-9]*}")
+  @PUT
+  public Response updateModule(@PathParam("ID") Long id, fi.pyramus.rest.model.Module entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    String name = entity.getName();
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Module module = moduleController.findModuleById(id);
+    if (module == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (module.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Subject subject = entity.getSubjectId() != null ? commonController.findSubjectById(entity.getSubjectId()) : null;
+    Integer courseNumber = entity.getCourseNumber();
+    EducationalTimeUnit lengthUnit = entity.getLengthUnitId() != null ? commonController.findEducationalTimeUnitById(entity.getLengthUnitId()) : null;
+    Double length = entity.getLength();
+    String description = entity.getDescription();
+    Long maxParticipantCount = entity.getMaxParticipantCount();
+    
+    module = moduleController.updateModuleTags(module, entity.getTags() == null ? new ArrayList<String>() : entity.getTags());
+    module = moduleController.updateModule(module, name, subject, courseNumber, length, lengthUnit, description, maxParticipantCount, getLoggedUser());
+    
+    return Response.ok(objectFactory.createModel(module)).build();
+  }
+  
+  @Path("/modules/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteModule(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    Module module = moduleController.findModuleById(id);
+    if (module == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      moduleController.deleteModule(module);
+    } else {
+      moduleController.archiveModule(module, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+
+  
+//@Path("/modules/{ID:[0-9]*}/components")
+//@GET
+//public Response findComponents(@PathParam("ID") Long id) {
+//  Module module = moduleController.findModuleById(id);
+//  if (module != null) {
+//    return Response.ok()
+//        .entity(tranqualise(moduleController.findComponents(module)))
+//        .build();
+//  } else {
+//    return Response.status(Status.NOT_FOUND).build();
+//  }
+//}
 //
-//  @Inject
-//  private ModuleController moduleController;
-//  @Inject
-//  private CommonController commonController;
-//  @Inject
-//  private TagController tagController;
-//  
-//  @Path("/modules")
-//  @POST
-//  public Response createModule(ModuleEntity moduleEntity) {
-//    try {
-//      String name = moduleEntity.getName();
-//      Subject subject = commonController.findSubjectById(moduleEntity.getSubject_id());
-//      Integer courseNumber = moduleEntity.getCourseNumber();
-//      EducationalTimeUnit moduleLengthTimeUnit = commonController.findEducationalTimeUnitById(moduleEntity.getCourseLength_id());
-//      Double moduleLength = moduleLengthTimeUnit.getBaseUnits();
-//      String description = moduleEntity.getDescription();
-//      Long maxParticipantCount = moduleEntity.getMaxParticipantCount();
-//      if (!StringUtils.isBlank(name) && courseNumber != null && !StringUtils.isBlank(description) && maxParticipantCount != null){
-//        return Response.ok()
-//            .entity(tranqualise(moduleController.createModule(name, subject, courseNumber, moduleLength, moduleLengthTimeUnit, description, maxParticipantCount, getUser())))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } catch (NullPointerException e) {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
+//@Path("/modules/{ID:[0-9]*}/courses")
+//@GET
+//public Response findCourses(@PathParam("ID") Long id) {
+//  Module module = moduleController.findModuleById(id);
+//  if (module != null) {
+//    return Response.ok()
+//        .entity(tranqualise(moduleController.findCourses(module)))
+//        .build();
+//  } else {
+//    return Response.status(Status.NOT_FOUND).build();
 //  }
-//  
-//  @Path("/modules/{ID:[0-9]*}/tags")
-//  @POST
-//  public Response createTag(@PathParam("ID") Long id, TagEntity tagEntity) {
-//    Module module = moduleController.findModuleById(id);
-//    String text = tagEntity.getText();
-//    if (module != null && !StringUtils.isBlank(text)) {
-//      return Response.ok()
-//          .entity(tranqualise(moduleController.createModuleTag(module, text)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
+//}
+//
+//@Path("/modules/{ID:[0-9]*}/projects")
+//@GET
+//public Response findProjects(@PathParam("ID") Long id) {
+//  Module module = moduleController.findModuleById(id);
+//  if( module != null) {
+//    return Response.ok()
+//        .entity(tranqualise(moduleController.findProjects(module)))
+//        .build();
+//  } else {
+//    return Response.status(Status.NOT_FOUND).build();
 //  }
-//  
-//  @Path("/modules")
-//  @GET
-//  public Response findModules(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<Module> modules;
-//    if (filterArchived) {
-//      modules = moduleController.findUnarchivedModules();
-//    } else {
-//      modules = moduleController.findModules();
-//    }
-//    if (!modules.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(modules))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
+//}
+//
+//@Path("/modules/{ID:[0-9]*}/variables")
+//@GET
+//public Response findVariables(@PathParam("ID") Long id) {
+//  Module module = moduleController.findModuleById(id);
+//  if (module != null) {
+//    return Response.ok()
+//        .entity(tranqualise(moduleController.findVariables(module)))
+//        .build();
+//  } else {
+//    return Response.status(Status.NOT_FOUND).build();
 //  }
-//  
-//  @Path("/modules/{ID:[0-9]*}")
-//  @GET
-//  public Response findModuleById(@PathParam("ID") Long id) {
-//    Module module = moduleController.findModuleById(id);
-//    if (module != null) {
-//      return Response.ok()
-//          .entity(tranqualise(module))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/modules/{ID:[0-9]*}/components")
-//  @GET
-//  public Response findComponents(@PathParam("ID") Long id) {
-//    Module module = moduleController.findModuleById(id);
-//    if (module != null) {
-//      return Response.ok()
-//          .entity(tranqualise(moduleController.findComponents(module)))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/modules/{ID:[0-9]*}/courses")
-//  @GET
-//  public Response findCourses(@PathParam("ID") Long id) {
-//    Module module = moduleController.findModuleById(id);
-//    if (module != null) {
-//      return Response.ok()
-//          .entity(tranqualise(moduleController.findCourses(module)))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/modules/{ID:[0-9]*}/projects")
-//  @GET
-//  public Response findProjects(@PathParam("ID") Long id) {
-//    Module module = moduleController.findModuleById(id);
-//    if( module != null) {
-//      return Response.ok()
-//          .entity(tranqualise(moduleController.findProjects(module)))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/modules/{ID:[0-9]*}/variables")
-//  @GET
-//  public Response findVariables(@PathParam("ID") Long id) {
-//    Module module = moduleController.findModuleById(id);
-//    if (module != null) {
-//      return Response.ok()
-//          .entity(tranqualise(moduleController.findVariables(module)))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/modules/{ID:[0-9]*}/tags")
-//  @GET
-//  public Response findTags(@PathParam("ID") Long id) {
-//    Module module = moduleController.findModuleById(id);
-//    if (module != null) {
-//      Set<Tag> tags = moduleController.findModuleTags(module);
-//      return Response.ok()
-//          .entity(tranqualise(tags))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/modules/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateModule(@PathParam("ID") Long id, ModuleEntity moduleEntity) {
-//    Module module = moduleController.findModuleById(id);
-//    try {
-//      String name = moduleEntity.getName();
-//      Integer courseNumber = moduleEntity.getCourseNumber();
-//      String description = moduleEntity.getDescription();
-//      Long maxParticipantCount = moduleEntity.getMaxParticipantCount();
-//      if (module != null && !StringUtils.isBlank(name) && courseNumber != null && !StringUtils.isBlank(description) && maxParticipantCount != null ){
-//        Subject subject = commonController.findSubjectById(moduleEntity.getSubject_id());
-//        EducationalTimeUnit lengthTimeUnit = commonController.findEducationalTimeUnitById(moduleEntity.getCourseLength_id());
-//        Double length = lengthTimeUnit.getBaseUnits();
-//        return Response.ok()
-//            .entity(tranqualise(moduleController.updateModule(module, name, subject, courseNumber, length, lengthTimeUnit, description, maxParticipantCount, getUser())))
-//            .build();
-//      } else if (!moduleEntity.getArchived() && module != null) {
-//        return Response.ok()
-//            .entity(tranqualise(moduleController.unarchiveModule(module, getUser())))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } catch (NullPointerException e) {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/modules/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveModule(@PathParam("ID") Long id) {
-//    Module module = moduleController.findModuleById(id);
-//    if (module != null){
-//      return Response.ok()
-//          .entity(tranqualise(moduleController.archiveModule(module, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/modules/{MID:[0-9]*}/tags/{ID:[0-9]*}")
-//  @DELETE
-//  public Response removeTag(@PathParam("MID") Long moduleId, @PathParam("ID") Long tagId) {
-//    Module module = moduleController.findModuleById(moduleId);
-//    Tag tag = tagController.findTagById(tagId);
-//    if (module != null && tag != null) {
-//      moduleController.removeTag(module, tag);
-//      return Response.status(200).build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+//}
+
 }

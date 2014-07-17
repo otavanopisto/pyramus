@@ -23,7 +23,8 @@ values
 insert into
   User (id, authProvider, externalId, firstName, lastName, role, contactInfo, version, title)
 values 
-  (1, 'TEST', 'TEST-GUEST-1', 'Test Guest', 'User #1', 'GUEST', null, 1, null);
+  (1, 'TEST', 'TEST-GUEST-1', 'Test Guest', 'User #1', 'GUEST', null, 1, null),
+  (2, 'TEST', 'TEST-GUEST-2', 'Test Guest', 'User #2', 'GUEST', null, 1, null);
   
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
