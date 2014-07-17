@@ -7,10 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 
@@ -25,10 +28,14 @@ import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.grading.GradingScale;
+import fi.pyramus.domainmodel.grading.Grade;
 
 @ApplicationScoped
 @Stateful
 public class ObjectFactory {
+  
+  @Inject
+  private Logger logger;
   
   @PostConstruct
   public void init() {
@@ -137,6 +144,14 @@ public class ObjectFactory {
           public Object map(GradingScale entity) {
             return new fi.pyramus.rest.model.GradingScale(entity.getId(), entity.getName(), entity.getDescription(), entity.getArchived());
           }
+        }, 
+        
+        new Mapper<Grade>() {
+          @Override
+          public Object map(Grade entity) {
+            Long gradingScaleId = entity.getGradingScale() != null ? entity.getGradingScale().getId() : null;
+            return new fi.pyramus.rest.model.Grade(entity.getId(), entity.getName(), entity.getDescription(), gradingScaleId, entity.getPassingGrade(), entity.getQualification(), entity.getGPA(), entity.getArchived());
+          }
         }
 
     
@@ -145,6 +160,11 @@ public class ObjectFactory {
 
   @SuppressWarnings("unchecked")
   public Object createModel(Object object) {
+    if (object == null) {
+      logger.log(Level.WARNING, "Null object was passed to createModel");
+      return null;
+    }
+    
     if (object instanceof List) {
       List<Object> result = new ArrayList<>();
       
@@ -154,6 +174,12 @@ public class ObjectFactory {
       
       return result;
     }
+    
+    Mapper<Object> mapper = mappers.get(object.getClass());
+    if (mapper == null) {
+      logger.log(Level.SEVERE, "Could not find a mapper for " + object.getClass());
+      return null;
+    } 
     
     return mappers.get(object.getClass()).map(object);
   }
