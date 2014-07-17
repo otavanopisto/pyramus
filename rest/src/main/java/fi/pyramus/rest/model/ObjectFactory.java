@@ -30,6 +30,7 @@ import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.grading.Grade;
+import fi.pyramus.domainmodel.modules.Module;
 
 @ApplicationScoped
 @Stateful
@@ -159,6 +160,29 @@ public class ObjectFactory {
           @Override
           public Object map(EducationalTimeUnit entity) {
             return new fi.pyramus.rest.model.EducationalTimeUnit(entity.getId(), entity.getName(), entity.getBaseUnits(), entity.getArchived());
+          }
+        }, 
+        
+        new Mapper<Module>() {
+          @Override
+          public Object map(Module entity) {
+            Long creatorId = entity.getCreator().getId();
+            Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
+            Long subjectId = entity.getSubject() != null ? entity.getSubject().getId() : null;
+            Double length = entity.getCourseLength() != null ? entity.getCourseLength().getUnits() : null; 
+            Long lenghtUnitId = entity.getCourseLength() != null ? entity.getCourseLength().getUnit().getId() : null; 
+            List<String> tags = new ArrayList<>();
+            
+            Set<Tag> moduleTags = entity.getTags();
+            if (moduleTags != null) {
+              for (Tag courseTag : moduleTags) {
+                tags.add(courseTag.getText());
+              }
+            }
+            
+            return new fi.pyramus.rest.model.Module(entity.getId(), entity.getName(), toDateTime(entity.getCreated()),
+                toDateTime(entity.getLastModified()), entity.getDescription(), entity.getArchived(), entity.getCourseNumber(), 
+                entity.getMaxParticipantCount(), creatorId, lastModifierId, subjectId, length, lenghtUnitId, tags);
           }
         }    
     );
