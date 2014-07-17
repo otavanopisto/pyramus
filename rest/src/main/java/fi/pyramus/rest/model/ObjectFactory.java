@@ -21,6 +21,7 @@ import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
@@ -152,9 +153,14 @@ public class ObjectFactory {
             Long gradingScaleId = entity.getGradingScale() != null ? entity.getGradingScale().getId() : null;
             return new fi.pyramus.rest.model.Grade(entity.getId(), entity.getName(), entity.getDescription(), gradingScaleId, entity.getPassingGrade(), entity.getQualification(), entity.getGPA(), entity.getArchived());
           }
-        }
-
-    
+        }, 
+        
+        new Mapper<EducationalTimeUnit>() {
+          @Override
+          public Object map(EducationalTimeUnit entity) {
+            return new fi.pyramus.rest.model.EducationalTimeUnit(entity.getId(), entity.getName(), entity.getBaseUnits(), entity.getArchived());
+          }
+        }    
     );
   }
 

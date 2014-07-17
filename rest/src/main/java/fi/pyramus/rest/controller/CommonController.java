@@ -182,14 +182,50 @@ public class CommonController {
     gradeDAO.delete(grade);
   }
   
-  public Subject createSubject(String code, String name, EducationType educationType) {
-    Subject subject = subjectDAO.create(code, name, educationType);
-    return subject;
-  }
+  /* EducationalTimeUnit */
   
   public EducationalTimeUnit createEducationalTimeUnit(Double baseUnits, String name) {
     EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.create(baseUnits, name);
     return educationalTimeUnit;
+  }  
+  
+  public EducationalTimeUnit findEducationalTimeUnitById(Long id) {
+    EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.findById(id);
+    return educationalTimeUnit;
+  }
+
+  public List<EducationalTimeUnit> listEducationalTimeUnits() {
+    List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listAll();
+    return educationalTimeUnits;
+  }
+  
+  public List<EducationalTimeUnit> listUnarchivedEducationalTimeUnits() {
+    List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listUnarchived();
+    return educationalTimeUnits;
+  }
+  
+  public EducationalTimeUnit updateEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, Double baseUnits, String name) {
+    educationalTimeUnitDAO.update(educationalTimeUnit, baseUnits, name);
+    return educationalTimeUnit;
+  }
+  
+  public EducationalTimeUnit archiveEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, User user) {
+    educationalTimeUnitDAO.archive(educationalTimeUnit, user);
+    return educationalTimeUnit;
+  }
+  
+  public EducationalTimeUnit unarchiveEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, User user) {
+    educationalTimeUnitDAO.unarchive(educationalTimeUnit, user);
+    return educationalTimeUnit;
+  }
+  
+  public void deleteEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit) {
+    educationalTimeUnitDAO.delete(educationalTimeUnit);
+  }
+  
+  public Subject createSubject(String code, String name, EducationType educationType) {
+    Subject subject = subjectDAO.create(code, name, educationType);
+    return subject;
   }
   
   public List<Subject> listSubjects() {
@@ -212,21 +248,6 @@ public class CommonController {
     return subject;
   }
   
-  public List<EducationalTimeUnit> findEducationalTimeUnits() {
-    List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listAll();
-    return educationalTimeUnits;
-  }
-  
-  public List<EducationalTimeUnit> findUnarchivedEducationalTimeUnits() {
-    List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listUnarchived();
-    return educationalTimeUnits;
-  }
-  
-  public EducationalTimeUnit findEducationalTimeUnitById(Long id) {
-    EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.findById(id);
-    return educationalTimeUnit;
-  }
-  
   public SearchResult<Subject> searchSubjects(int resultsPerPage, int page, String text) {
     SearchResult<Subject> subjects = subjectDAO.searchSubjectsBasic(resultsPerPage, page, text);
     return subjects;
@@ -242,11 +263,6 @@ public class CommonController {
     return gradingScale;
   }
   
-  public EducationalTimeUnit updateEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, Double baseUnits, String name) {
-    educationalTimeUnitDAO.update(educationalTimeUnit, baseUnits, name);
-    return educationalTimeUnit;
-  }
-  
   public Subject archiveSubject(Subject subject, User user) {
     subjectDAO.archive(subject, user);
     return subject;
@@ -260,14 +276,6 @@ public class CommonController {
   public void deleteSubject(Subject subject) {
     subjectDAO.delete(subject);
   }
-  
-  public EducationalTimeUnit archiveEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, User user) {
-    educationalTimeUnitDAO.archive(educationalTimeUnit, user);
-    return educationalTimeUnit;
-  }
-  
-  public EducationalTimeUnit unarchiveEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, User user) {
-    educationalTimeUnitDAO.unarchive(educationalTimeUnit, user);
-    return educationalTimeUnit;
-  }
+
+
 }

@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
+import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
@@ -645,93 +646,117 @@ public class CommonRESTService extends AbstractRESTService {
     
     return Response.noContent().build();
   }
-
   
-//  @Path("/educationalTimeUnits") 
-//  @POST
-//  public Response createEducationalTimeUnit(EducationalTimeUnitEntity educationalTimeUnitEntity) {
-//    Double baseUnits = educationalTimeUnitEntity.getBaseUnits();
-//    String name = educationalTimeUnitEntity.getName();
-//    if (!StringUtils.isBlank(name) && baseUnits != null) {
-//      return Response.ok()
-//          .entity(tranqualise(commonController.createEducationalTimeUnit(baseUnits, name)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
-//  
+  @Path("/educationalTimeUnits") 
+  @POST
+  public Response createEducationalTimeUnit(fi.pyramus.rest.model.EducationalTimeUnit entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    String name = entity.getName();
+    Double baseUnits = entity.getBaseUnits();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (baseUnits == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok()
+      .entity(objectFactory.createModel(commonController.createEducationalTimeUnit(baseUnits, name)))
+      .build();
+  }
+    
+  @Path("/educationalTimeUnits")
+  @GET
+  public Response listEducationalTimeUnits(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    
+    List<EducationalTimeUnit> educationalTimeUnits;
+    if (filterArchived) {
+      educationalTimeUnits = commonController.listUnarchivedEducationalTimeUnits();
+    } else {
+      educationalTimeUnits = commonController.listEducationalTimeUnits();
+    }
+    
+    if (educationalTimeUnits.isEmpty()) {
+      return Response.status(Status.NO_CONTENT).build();
+    }
+    
+    return Response.ok()
+        .entity(objectFactory.createModel(educationalTimeUnits))
+        .build();
+  }
+    
+  @Path("/educationalTimeUnits/{ID:[0-9]*}")
+  @GET
+  public Response findEducationalTimeUnitsById(@PathParam("ID") Long id) {
+    EducationalTimeUnit educationalTimeUnit = commonController.findEducationalTimeUnitById(id);
+    
+    if (educationalTimeUnit == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (educationalTimeUnit.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok()
+        .entity(objectFactory.createModel(educationalTimeUnit))
+        .build();
+  }
 
+  @Path("/educationalTimeUnits/{ID:[0-9]*}")
+  @PUT
+  public Response updateEducationalTimeUnit(@PathParam("ID") Long id, fi.pyramus.rest.model.EducationalTimeUnit entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    EducationalTimeUnit educationalTimeUnit = commonController.findEducationalTimeUnitById(id);
+    
+    if (educationalTimeUnit == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (educationalTimeUnit.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    String name = entity.getName();
+    Double baseUnits = entity.getBaseUnits();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
 
-//  
-//  @Path("/educationalTimeUnits")
-//  @GET
-//  public Response findEducationalTimeUnits(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<EducationalTimeUnit> educationalTimeUnits;
-//    if (filterArchived) {
-//      educationalTimeUnits = commonController.findUnarchivedEducationalTimeUnits();
-//    } else {
-//      educationalTimeUnits = commonController.findEducationalTimeUnits();
-//    }
-//    if (!educationalTimeUnits.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(educationalTimeUnits))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/educationalTimeUnits/{ID:[0-9]*}")
-//  @GET
-//  public Response findEducationalTimeUnitsById(@PathParam("ID") Long id) {
-//    EducationalTimeUnit educationalTimeUnit = commonController.findEducationalTimeUnitById(id);
-//    if (educationalTimeUnit != null) {
-//      return Response.ok()
-//          .entity(tranqualise(educationalTimeUnit))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-
-
-
-//  @Path("/educationalTimeUnits/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateEducationalTimeUnit(@PathParam("ID") Long id, EducationalTimeUnitEntity educationalTimeUnitEntity) {
-//    EducationalTimeUnit educationalTimeUnit = commonController.findEducationalTimeUnitById(id);
-//    if (educationalTimeUnit != null) {
-//      Double baseUnits = educationalTimeUnitEntity.getBaseUnits();
-//      String name = educationalTimeUnitEntity.getName();
-//      if (!StringUtils.isBlank(name) && baseUnits != null) {
-//        return Response.ok()
-//            .entity(tranqualise(commonController.updateEducationalTimeUnit(educationalTimeUnit, baseUnits, name)))
-//            .build();
-//      }
-//      if (!educationalTimeUnitEntity.getArchived()) {
-//        return Response.ok()
-//            .entity(tranqualise(commonController.unarchiveEducationalTimeUnit(educationalTimeUnit, getUser())))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/educationalTimeUnits/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveEducationalTimeUnit(@PathParam("ID") Long id) {
-//    EducationalTimeUnit educationalTimeUnit = commonController.findEducationalTimeUnitById(id);
-//    if (educationalTimeUnit != null) {
-//      return Response.ok()
-//          .entity(tranqualise(commonController.archiveEducationalTimeUnit(educationalTimeUnit, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
+    if (baseUnits == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok()
+      .entity(objectFactory.createModel(commonController.updateEducationalTimeUnit(educationalTimeUnit, baseUnits, name)))
+      .build();
+  }
+  
+  @Path("/educationalTimeUnits/{ID:[0-9]*}")
+  @DELETE
+  public Response archiveEducationalTimeUnit(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    EducationalTimeUnit educationalTimeUnit = commonController.findEducationalTimeUnitById(id);
+    
+    if (educationalTimeUnit == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      commonController.deleteEducationalTimeUnit(educationalTimeUnit);
+    } else {
+      commonController.archiveEducationalTimeUnit(educationalTimeUnit, getLoggedUser());
+    }
+    
+    return Response.status(Status.NO_CONTENT).build();
+  }
 
 }

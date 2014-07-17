@@ -74,7 +74,8 @@ values
 insert into 
   EducationalTimeUnit (id, archived, baseUnits, name, version)
 values 
-  (1, false, 1, 'Hour', 1);
+  (1, false, 1, 'Hour', 1),
+  (2, false, 168, 'Week', 1);
 
 insert into
   EducationalLength (id, units, unit, version)
