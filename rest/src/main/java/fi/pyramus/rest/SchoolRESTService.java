@@ -18,11 +18,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
-import fi.pyramus.domainmodel.base.SchoolVariable;
-import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.rest.controller.SchoolController;
+import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/schools")
 @Produces("application/json")
@@ -30,25 +31,163 @@ import fi.pyramus.rest.controller.SchoolController;
 @Stateful
 @RequestScoped
 public class SchoolRESTService extends AbstractRESTService {
+  
+  @Inject
+  private SchoolController schoolController;
+
+  @Inject
+  private ObjectFactory objectFactory;
+  
+  @Path("/schools")
+  @POST
+  public Response createSchool(fi.pyramus.rest.model.School entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (entity.getFieldId() == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    String code = entity.getCode();
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(code) || StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    SchoolField schoolField = schoolController.findSchoolFieldById(entity.getFieldId());
+    if (schoolField == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }      
+    
+    School school = schoolController.createSchool(code, name, schoolField);
+    if (entity.getTags() != null) {
+      for (String tag : entity.getTags()) {
+        schoolController.createSchoolTag(school, tag);
+      }
+    }
+
+    return Response.ok(objectFactory.createModel(school)).build();
+  }
+
+  @Path("/schools")
+  @GET
+  public Response listSchools(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<School> schools;
+    
+    if (filterArchived) {
+      schools = schoolController.listUnarchivedSchools();
+    } else {
+      schools = schoolController.listSchools();
+    }
+    
+    if (schools.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(schools)).build();
+  }
+  
+  @Path("/schools/{ID:[0-9]*}")
+  @GET
+  public Response findSchool(@PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(id);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(school)).build();
+  }
+
+  @Path("/schools/{ID:[0-9]*}")
+  @PUT
+  public Response updateSchool(@PathParam("ID") Long id, fi.pyramus.rest.model.School entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    School school = schoolController.findSchoolById(id);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (entity.getFieldId() == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    String code = entity.getCode();
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(code) || StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    SchoolField schoolField = schoolController.findSchoolFieldById(entity.getFieldId());
+    if (schoolField == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }      
+    
+    schoolController.updateSchool(school, code, name, schoolField);
+    schoolController.updateSchoolTags(school, entity.getTags());
+    
+    return Response.ok(objectFactory.createModel(school)).build();
+  }
+  
+  @Path("/schools/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteSchool(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    School school = schoolController.findSchoolById(id);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+  
+    if (permanent) {
+      schoolController.deleteSchool(school);
+    } else {
+      schoolController.archiveSchool(school, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+  
 //  
-//  @Inject
-//  private SchoolController schoolController;
-//
-//  @Path("/schools")
-//  @POST
-//  public Response createSchool(SchoolEntity schoolEntity) {
-//    SchoolField schoolField = schoolController.findSchoolFieldById(schoolEntity.getField_id());
-//    String schoolCode = schoolEntity.getCode();
-//    String schoolName = schoolEntity.getName();
-//    if (!StringUtils.isBlank(schoolCode) && !StringUtils.isBlank(schoolName) && schoolField != null) {
+//  @Path("/schoolFields/{ID:[0-9]*}")
+//  @DELETE
+//  public Response archiveSchoolField(@PathParam("ID") Long id) {
+//    SchoolField schoolField = schoolController.findSchoolFieldById(id);
+//    if (schoolField != null) {
 //      return Response.ok()
-//          .entity(tranqualise(schoolController.createSchool(schoolCode, schoolName, schoolField)))
+//          .entity(tranqualise(schoolController.archiveSchoolField(schoolField, getUser())))
 //          .build();
 //    } else {
-//      return Response.status(501).build();
+//      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
 //  
+//  @Path("/variables/{ID:[0-9]*}")
+//  @DELETE
+//  public Response archiveSchoolVariable(@PathParam("ID") Long id) {
+//    SchoolVariable schoolVariable = schoolController.findSchoolVariableById(id);
+//    if (schoolVariable != null) {
+//      return Response.ok()
+//          .entity(tranqualise(schoolController.archiveSchoolVariable(schoolVariable, getUser())))
+//          .build();
+//    } else {
+//      return Response.status(Status.NOT_FOUND).build();
+//    }
+//  }
+
+  
+
 //  @Path("/schoolFields")
 //  @POST
 //  public Response createSchoolField(SchoolFieldEntity schoolFieldEntity) {
@@ -77,51 +216,7 @@ public class SchoolRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
-//  @Path("/schools")
-//  @GET
-//  public Response findSchools(@QueryParam("code") String code,
-//                              @QueryParam("name") String name,
-//                              @QueryParam("tags") String tags,
-//                              @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    if (StringUtils.isBlank(code) && StringUtils.isBlank(name) && StringUtils.isBlank(tags)) {
-//      List<School> schools;
-//      if (filterArchived) {
-//        schools = schoolController.findUnarchivedSchools();
-//      } else {
-//        schools = schoolController.findSchools();
-//      }
-//      if (!schools.isEmpty()){
-//        return Response.ok()
-//            .entity(tranqualise(schools))
-//            .build();
-//      } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//      }
-//    } else {
-//      SearchResult<School> schools = schoolController.searchSchools(100,0,code,name,tags,filterArchived);
-//      if (!schools.getResults().isEmpty()) {
-//        return Response.ok()
-//          .entity(tranqualise(schools.getResults()))
-//          .build();
-//      } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//      }
-//    }
-//  }
-//
-//  @Path("/schools/{ID:[0-9]*}")
-//  @GET
-//  public Response findSchoolById(@PathParam("ID") Long id) {
-//    School school = schoolController.findSchoolById(id);
-//    if (school != null) {
-//      return Response.ok()
-//          .entity(tranqualise(school))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//
+
 //  @Path("/schoolFields")
 //  @GET
 //  public Response findSchoolFields() {
@@ -210,28 +305,6 @@ public class SchoolRESTService extends AbstractRESTService {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
-//
-//  @Path("/schools/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateSchool(@PathParam("ID") Long id, SchoolEntity schoolEntity) {
-//    School school = schoolController.findSchoolById(id);
-//    SchoolField schoolField = school.getField();
-//    String schoolCode = schoolEntity.getCode();
-//    String schoolName = schoolEntity.getName();
-//    if (school != null && !StringUtils.isBlank(schoolCode) && !StringUtils.isBlank(schoolName) && schoolField != null) {
-//      schoolField = schoolController.findSchoolFieldById(schoolEntity.getField_id());
-//      return Response.ok()
-//          .entity(tranqualise(schoolController.updateSchool(school, schoolCode, schoolName, schoolField)))
-//          .build();
-//    } else if (!schoolEntity.getArchived()) {
-//        return Response.ok()
-//            .entity(tranqualise(schoolController.unarchiveSchool(school, getUser())))
-//            .build();
-//    } else {
-//      return Response.status(501).build();
-//    }
-//  }
-//  
 //  @Path("/schoolFields/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateSchoolField(@PathParam("ID") Long id, SchoolFieldEntity schoolFieldEntity) {
@@ -265,45 +338,6 @@ public class SchoolRESTService extends AbstractRESTService {
 //          .build();
 //    }  else {
 //      return Response.status(501).build();
-//    }
-//  }
-//  
-//  @Path("/schools/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveSchool(@PathParam("ID") Long id) {
-//    School school = schoolController.findSchoolById(id);
-//       if (school != null) {
-//         return Response.ok()
-//           .entity(tranqualise(schoolController.archiveSchool(school, getUser())))
-//           .build();
-//       } else {
-//         return Response.status(Status.NOT_FOUND).build();
-//       }
-//  }
-//  
-//  @Path("/schoolFields/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveSchoolField(@PathParam("ID") Long id) {
-//    SchoolField schoolField = schoolController.findSchoolFieldById(id);
-//    if (schoolField != null) {
-//      return Response.ok()
-//          .entity(tranqualise(schoolController.archiveSchoolField(schoolField, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/variables/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveSchoolVariable(@PathParam("ID") Long id) {
-//    SchoolVariable schoolVariable = schoolController.findSchoolVariableById(id);
-//    if (schoolVariable != null) {
-//      return Response.ok()
-//          .entity(tranqualise(schoolController.archiveSchoolVariable(schoolVariable, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
 

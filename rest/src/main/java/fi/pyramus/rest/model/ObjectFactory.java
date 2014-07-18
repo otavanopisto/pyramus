@@ -34,6 +34,8 @@ import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.domainmodel.projects.ProjectModule;
+import fi.pyramus.domainmodel.base.School;
+import fi.pyramus.domainmodel.base.SchoolField;
 
 @ApplicationScoped
 @Stateful
@@ -236,6 +238,31 @@ public class ObjectFactory {
             Long moduleId = entity.getModule() != null ? entity.getModule().getId() : null;
             
             return new fi.pyramus.rest.model.ProjectModule(entity.getId(), moduleId, optionality);
+          }
+        },
+        
+        new Mapper<School>() {
+          @Override
+          public Object map(School entity) {
+            Long fieldId = entity.getField() != null ? entity.getField().getId() : null;
+            
+            List<String> tags = new ArrayList<>();
+            
+            Set<Tag> entityTags = entity.getTags();
+            if (entityTags != null) {
+              for (Tag entityTag : entityTags) {
+                tags.add(entityTag.getText());
+              }
+            }
+            
+            return new fi.pyramus.rest.model.School(entity.getId(), entity.getCode(), entity.getName(), tags, fieldId, entity.getArchived());
+          }
+        }, 
+        
+        new Mapper<SchoolField>() {
+          @Override
+          public Object map(SchoolField entity) {
+            return new fi.pyramus.rest.model.SchoolField(entity.getId(), entity.getName(), entity.getArchived());
           }
         }
         
