@@ -22,6 +22,10 @@
       <property name="hibernate.search.default.optimizer.transaction_limit.max" value="100" />
       <property name="hibernate.search.default.exclusive_index_use" value="true"/>
  
+      <!-- Byte code instrumentation -->
+ 
+      <property name="hibernate.ejb.use_class_enhancer" value="true"/>
+      
     </properties>
   </persistence-unit>
 </persistence>
