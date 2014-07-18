@@ -157,7 +157,59 @@ insert into
 values 
   (1, 'OPTIONAL', 1, 1, 0, 1),
   (2, 'OPTIONAL', 1, 2, 0, 1);
+ 
+insert into 
+  SchoolField (id, name, archived)
+values 
+  (1, 'Field #1', false),
+  (2, 'Field #2', false);
   
+insert into 
+  ContactInfo (id, additionalInfo, version)
+values   
+  (1, 'For test school #1', 1),
+  (2, 'For test school #2', 1);
+  
+insert into 
+  ContactType (id, name, version, archived)
+values 
+  (1, 'Home', 1, false);
+
+insert into 
+  Address (id, city, country, postalCode, streetAddress, name, contactInfo, contactType, indexColumn, defaultAddress, version)
+values 
+  (1, 'Eastbury', 'Senegal', '76763-3962', '2636 Johnston Harbors', null, 1, 1, 0, true, 1),
+  (2, 'Zambia', 'Portborough', '02531-1064', '430 Vesta Inlet', null, 2, 1, 0, true, 1);
+  
+insert into 
+  Email (id, address, defaultAddress, contactInfo, contactType, indexColumn, version)
+values 
+  (1, 'school1@bogusmail.com', true, 1, 1, 0, 1),
+  (2, 'school2@bogusmail.com', true, 2, 1, 0, 1);
+  
+insert into 
+  PhoneNumber (id, number, defaultNumber, contactInfo, contactType, indexColumn, version)
+values 
+  (1, '+123 45 678 9012', true, 1, 1, 0, 1),
+  (2, '+234 56 789 0123', true, 2, 1, 0, 1);
+  
+insert into
+  ContactURLType (id, name, version, archived)
+values 
+  (1, 'WWW', 1, false);
+    
+insert into 
+  ContactURL (id, url, contactInfo, contactURLType, indexColumn, version)
+values 
+  (1, 'http://www.school1webpage.com', 1, 1, 0, 1),
+  (2, 'http://www.school2webpage.com', 2, 1, 0, 1);
+  
+insert into 
+  School (id, name, code, contactInfo, version, field, archived)
+values 
+  (1, 'School #1', 'TST1', 1, 1, 1, false),
+  (2, 'School #2', 'TST2', 2, 1, 1, false);
+
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
@@ -177,4 +229,13 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Grade', max(id) + 1 from Grade;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Project', max(id) + 1 from Project;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ProjectModule', max(id) + 1 from ProjectModule;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SchoolField', max(id) + 1 from SchoolField;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ContactInfo', max(id) + 1 from ContactInfo;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ContactType', max(id) + 1 from ContactType;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Address', max(id) + 1 from Address;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Email', max(id) + 1 from Email;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'PhoneNumber', max(id) + 1 from PhoneNumber;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ContactURLType', max(id) + 1 from ContactURLType;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ContactURL', max(id) + 1 from ContactURL;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'School', max(id) + 1 from School;
 
