@@ -33,6 +33,7 @@ import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.projects.Project;
+import fi.pyramus.domainmodel.projects.ProjectModule;
 
 @ApplicationScoped
 @Stateful
@@ -216,6 +217,25 @@ public class ObjectFactory {
             }
             
             return new fi.pyramus.rest.model.Project(entity.getId(), entity.getName(), entity.getDescription(), optionalStudiesLength, optionalStudiesLengthUnitId, toDateTime(entity.getCreated()), creatorId, toDateTime(entity.getLastModified()), lastModifierId, tags, entity.getArchived());
+          }
+        },
+        
+        new Mapper<ProjectModule>() {
+          @Override
+          public Object map(ProjectModule entity) {
+            ProjectModuleOptionality optionality = null;
+            switch (entity.getOptionality()) {
+              case MANDATORY:
+                optionality = ProjectModuleOptionality.MANDATORY;
+              break;
+              case OPTIONAL:
+                optionality = ProjectModuleOptionality.OPTIONAL;
+              break;
+            }
+            
+            Long moduleId = entity.getModule() != null ? entity.getModule().getId() : null;
+            
+            return new fi.pyramus.rest.model.ProjectModule(entity.getId(), moduleId, optionality);
           }
         }
         

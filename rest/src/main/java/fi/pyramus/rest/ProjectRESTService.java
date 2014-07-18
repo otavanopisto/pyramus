@@ -22,8 +22,12 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.projects.Project;
+import fi.pyramus.domainmodel.projects.ProjectModule;
+import fi.pyramus.domainmodel.projects.ProjectModuleOptionality;
 import fi.pyramus.rest.controller.CommonController;
+import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
 import fi.pyramus.rest.model.ObjectFactory;
 
@@ -39,6 +43,9 @@ public class ProjectRESTService extends AbstractRESTService {
   
   @Inject
   private CommonController commonController;
+  
+  @Inject
+  private ModuleController moduleController;
 
   @Inject
   private ObjectFactory objectFactory;
@@ -124,124 +131,165 @@ public class ProjectRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(projectController.updateProject(project, name, description, optionalStudiesLength, optionalStudiesLengthUnit, getLoggedUser()))).build();
   }
   
-    @Path("/projects/{ID:[0-9]*}")
-    @DELETE
-    public Response deleteProject(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
-      Project project = projectController.findProjectById(id);
-      if (project == null) {
-        return Response.status(Status.NOT_FOUND).build();
-      }    
-      
-      if (permanent) {
-        projectController.deleteProject(project);
-      } else {
-        projectController.archiveProject(project, getLoggedUser());
-      }
-      
+  @Path("/projects/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteProject(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    Project project = projectController.findProjectById(id);
+    if (project == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (permanent) {
+      projectController.deleteProject(project);
+    } else {
+      projectController.archiveProject(project, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+    
+  @Path("/projects/{ID:[0-9]*}/modules")
+  @POST
+  public Response createProjectModule(@PathParam("ID") Long id, fi.pyramus.rest.model.ProjectModule moduleEntity) {
+    Project project = projectController.findProjectById(id);
+    if (project == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (project.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if ((moduleEntity.getModuleId() == null) || (moduleEntity.getOptionality() == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Module module = moduleController.findModuleById(moduleEntity.getModuleId());
+    if (module == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    ProjectModuleOptionality optionality = null;
+    switch (moduleEntity.getOptionality()) {
+      case MANDATORY:
+        optionality = ProjectModuleOptionality.MANDATORY;
+      break;
+      case OPTIONAL:
+        optionality = ProjectModuleOptionality.OPTIONAL;
+      break;
+    }
+    
+    ProjectModule projectModule = projectController.createProjectModule(project, module, optionality);
+    
+    return Response.ok(objectFactory.createModel(projectModule)).build();
+  }
+  
+  @Path("/projects/{PROJECTID:[0-9]*}/modules")
+  @GET
+  public Response listProjectModules(@PathParam("PROJECTID") Long projectId) {
+    Project project = projectController.findProjectById(projectId);
+    if (project == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (project.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<ProjectModule> projectModules = projectController.listProjectModules(project);
+    if (projectModules.isEmpty()) {
       return Response.noContent().build();
     }
-//  
-//  @Path("/projects/{PID:[0-9]*}/modules/{ID:[0-9]*}")
-//  @DELETE
-//  public Response removeProjectModule(@PathParam("ID") Long id) {
-//    ProjectModule projectModule = projectController.findProjectModuleById(id);
-//    if (projectModule != null) {
-//      projectController.deleteProjectModule(projectModule);
-//      return Response.status(200).build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/projects/{PID:[0-9]*}/tags/{ID:[0-9]*}")
-//  @DELETE
-//  public Response removeTag(@PathParam("PID") Long projectId, @PathParam("ID") Long tagId) {
-//    Project project = projectController.findProjectById(projectId);
-//    Tag tag = projectController.findTagById(tagId);
-//    if (project != null && tag != null) {
-//      project.removeTag(tag);
-//      return Response.ok()
-//          .entity(tranqualise(project))
-//          .build();
-//    } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
+    
+    return Response.ok(objectFactory.createModel(projectModules)).build();
+  }
   
-//  @Path("/projects/{ID:[0-9]*}/modules")
-//  @POST
-//  public Response createModule(@PathParam("ID") Long id, ProjectModuleEntity moduleEntity) {
-//    try {
-//      Project project = projectController.findProjectById(id);
-//      Module module = moduleController.findModuleById(moduleEntity.getModule_id());
-//      ProjectModuleOptionality optionality = moduleEntity.getOptionality();
-//      if (project != null && module != null && optionality != null) {
-//        return Response.ok()
-//            .entity(tranqualise(projectController.createProjectModule(project, module, optionality)))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } catch (NullPointerException e) {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/projects/{ID:[0-9]*}/tags")
-//  @POST
-//  public Response createTag(@PathParam("ID") Long id, TagEntity tagEntity) {
-//    Project project = projectController.findProjectById(id);
-//    String text = tagEntity.getText();
-//    if (project != null && !StringUtils.isBlank(text)) {
-//      return Response.ok()
-//          .entity(tranqualise(projectController.createTag(project, text)))
-//          .build();
-//    } else {
-//      return Response.status(501).build();
-//    }
-//  }
-//  
+  @Path("/projects/{PROJECTID:[0-9]*}/modules/{ID:[0-9]*}")
+  @GET
+  public Response listProjectModules(@PathParam("PROJECTID") Long projectId, @PathParam("ID") Long id) {
+    Project project = projectController.findProjectById(projectId);
+    if (project == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (project.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ProjectModule projectModule = projectController.findProjectModuleById(id);
+    if (projectModule == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!projectModule.getProject().getId().equals(projectId)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (projectModule.getProject().getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(projectModule)).build();
+  }
+  
+  @Path("/projects/{PROJECTID:[0-9]*}/modules/{ID:[0-9]*}")
+  @PUT
+  public Response updateProjectModule(@PathParam("PROJECTID") Long projectId, @PathParam("ID") Long id, fi.pyramus.rest.model.ProjectModule entity) {
+    Project project = projectController.findProjectById(projectId);
+    if (project == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (project.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ProjectModule projectModule = projectController.findProjectModuleById(id);
+    if (projectModule == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!projectModule.getProject().getId().equals(projectId)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (projectModule.getProject().getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ProjectModuleOptionality optionality = null;
+    switch (entity.getOptionality()) {
+      case MANDATORY:
+        optionality = ProjectModuleOptionality.MANDATORY;
+      break;
+      case OPTIONAL:
+        optionality = ProjectModuleOptionality.OPTIONAL;
+      break;
+    }
+    
+    return Response.ok(objectFactory.createModel(projectController.updateProjectModule(projectModule, optionality))).build();
+  }
 
-//  @Path("/projects/{ID:[0-9]*}/modules")
-//  @GET
-//  public Response findProjectModules(@PathParam("ID") Long id) {
-//    Project project = projectController.findProjectById(id);
-//    if (project != null) {
-//      return Response.ok()
-//          .entity(tranqualise(projectController.findProjectModules(project)))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path ("/projects/{ID:[0-9]*}/tags")
-//  @GET
-//  public Response findTags(@PathParam("ID") Long id) {
-//    Project project = projectController.findProjectById(id);
-//    if (project != null) {
-//      Set<Tag> tags = project.getTags();
-//      return Response.ok()
-//          .entity(tranqualise(tags))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/projects/{PID:[0-9]*}/modules/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateProjectModule(@PathParam("ID") Long id, ProjectModuleEntity projectModuleEntity) {
-//    ProjectModule projectModule = projectController.findProjectModuleById(id);
-//    ProjectModuleOptionality optionality = projectModuleEntity.getOptionality();
-//    if (projectModule != null) {
-//      return Response.ok()
-//          .entity(tranqualise(projectController.updateProjectModule(projectModule, optionality)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
-//
-
+  @Path("/projects/{PROJECTID:[0-9]*}/modules/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteProjectModule(@PathParam("PROJECTID") Long projectId, @PathParam("ID") Long id) {
+    Project project = projectController.findProjectById(projectId);
+    if (project == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ProjectModule projectModule = projectController.findProjectModuleById(id);
+    if (projectModule == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!projectModule.getProject().getId().equals(projectId)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    projectController.deleteProjectModule(projectModule);
+    
+    return Response.noContent().build();
+  }
+  
 }
