@@ -152,6 +152,12 @@ values
   (1, 'Test Project #1', 'Project for testing', 7, 1, PARSEDATETIME('6 6 2010', 'd M yyyy'), PARSEDATETIME('6 6 2010', 'd M yyyy'), 1, false, 1),
   (2, 'Test Project #2', 'Project for testing', 8, 1, PARSEDATETIME('6 6 2011', 'd M yyyy'), PARSEDATETIME('6 6 2011', 'd M yyyy'), 1, false, 1);
   
+insert into 
+  ProjectModule (id, optionality, module, project, indexColumn, version)
+values 
+  (1, 'OPTIONAL', 1, 1, 0, 1),
+  (2, 'OPTIONAL', 1, 2, 0, 1);
+  
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
@@ -170,4 +176,5 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'GradingScale', max(id) + 1 from GradingScale;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Grade', max(id) + 1 from Grade;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Project', max(id) + 1 from Project;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ProjectModule', max(id) + 1 from ProjectModule;
 

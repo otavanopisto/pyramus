@@ -253,4 +253,31 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
       .body("maxParticipantCount[1]", is( 200 ))
       .body("archived[1]", is( false ));
   }
+  
+  @Test
+  public void testListProjects() {
+    given()
+      .get("/modules/modules/{MODULEID}/projects", 1l)
+      .then()
+      .statusCode(200)
+      .body("id.size()", is(2))
+      .body("id[0]", is(1) )
+      .body("name[0]", is("Test Project #1"))
+      .body("description[0]", is("Project for testing"))
+      .body("created[0]", is(getDate(2010, 6, 6).toString()))
+      .body("lastModified[0]", is(getDate(2010, 6, 6).toString()))
+      .body("creatorId[0]", is(1))
+      .body("lastModifierId[0]", is(1))
+      .body("optionalStudiesLength[0]", is(678f))
+      .body("optionalStudiesLengthUnitId[0]", is(1))
+      .body("id[1]", is(2) )
+      .body("name[1]", is("Test Project #2"))
+      .body("description[1]", is("Project for testing"))
+      .body("created[1]", is(getDate(2011, 6, 6).toString()))
+      .body("lastModified[1]", is(getDate(2011, 6, 6).toString()))
+      .body("creatorId[1]", is(1))
+      .body("lastModifierId[1]", is(1))
+      .body("optionalStudiesLength[1]", is(910f))
+      .body("optionalStudiesLengthUnitId[1]", is(1));
+  }
 }

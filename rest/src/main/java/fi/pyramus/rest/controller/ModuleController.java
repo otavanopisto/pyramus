@@ -1,6 +1,5 @@
 package fi.pyramus.rest.controller;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +20,6 @@ import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.projects.Project;
-import fi.pyramus.domainmodel.projects.ProjectModule;
 import fi.pyramus.domainmodel.users.User;
 
 @Dependent
@@ -157,15 +155,8 @@ public class ModuleController {
   
   /* Projects */
   
-  public List<Project> findProjectsByModule(Module module) {
-    List<Project> projects = new ArrayList<Project>();
-    List<ProjectModule> projectModules = projectModuleDAO.listAll();
-    for (ProjectModule projectModule : projectModules) {
-      if(projectModule.getModule().equals(module)) {
-        projects.add(projectModule.getProject());
-      }
-    }
-    return projects;
+  public List<Project> listProjectsByModule(Module module) {
+    return projectModuleDAO.listProjectsByModule(module);
   }
   
 }

@@ -26,6 +26,7 @@ import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.modules.Module;
+import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.model.ObjectFactory;
@@ -321,7 +322,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/modules/{ID:[0-9]*}/courses")
   @GET
-  public Response findCourses(@PathParam("ID") Long id) {
+  public Response listCourses(@PathParam("ID") Long id) {
     Module module = moduleController.findModuleById(id);
     if (module == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -338,19 +339,27 @@ public class ModuleRESTService extends AbstractRESTService{
     
     return Response.ok(objectFactory.createModel(courses)).build();
   }
+  
+  @Path("/modules/{ID:[0-9]*}/projects")
+  @GET
+  public Response listProjects(@PathParam("ID") Long id) {
+    Module module = moduleController.findModuleById(id);
+    if (module == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (module.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<Project> projects = moduleController.listProjectsByModule(module);
+    if (projects.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(projects)).build();
+  }
 
-//@Path("/modules/{ID:[0-9]*}/projects")
-//@GET
-//public Response findProjects(@PathParam("ID") Long id) {
-//  Module module = moduleController.findModuleById(id);
-//  if( module != null) {
-//    return Response.ok()
-//        .entity(tranqualise(moduleController.findProjects(module)))
-//        .build();
-//  } else {
-//    return Response.status(Status.NOT_FOUND).build();
-//  }
-//}
 //
 //@Path("/modules/{ID:[0-9]*}/variables")
 //@GET
