@@ -31,6 +31,7 @@ import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.modules.Module;
+import fi.pyramus.domainmodel.modules.ModuleComponent;
 
 @ApplicationScoped
 @Stateful
@@ -107,7 +108,9 @@ public class ObjectFactory {
         new Mapper<CourseComponent>() {
           @Override
           public Object map(CourseComponent entity) {
-            return new fi.pyramus.rest.model.CourseComponent(entity.getId(), entity.getName(), entity.getDescription(), entity.getLength().getUnits(), entity.getLength().getUnit().getId(), entity.getArchived());
+            Long lengthUnitId = entity.getLength() != null ? entity.getLength().getUnit().getId() : null;
+            Double length = entity.getLength() != null ? entity.getLength().getUnits() : null;
+            return new fi.pyramus.rest.model.CourseComponent(entity.getId(), entity.getName(), entity.getDescription(), length, lengthUnitId, entity.getArchived());
           }
         }, 
         
@@ -184,7 +187,16 @@ public class ObjectFactory {
                 toDateTime(entity.getLastModified()), entity.getDescription(), entity.getArchived(), entity.getCourseNumber(), 
                 entity.getMaxParticipantCount(), creatorId, lastModifierId, subjectId, length, lenghtUnitId, tags);
           }
-        }    
+        }, 
+        
+        new Mapper<ModuleComponent>() {
+          @Override
+          public Object map(ModuleComponent entity) {
+            Long lengthUnitId = entity.getLength() != null ? entity.getLength().getUnit().getId() : null;
+            Double length = entity.getLength() != null ? entity.getLength().getUnits() : null;
+            return new fi.pyramus.rest.model.ModuleComponent(entity.getId(), entity.getName(), entity.getDescription(), length, lengthUnitId, entity.getArchived());
+          }
+        }
     );
   }
 

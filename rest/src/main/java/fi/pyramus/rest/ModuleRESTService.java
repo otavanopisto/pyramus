@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
+import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
@@ -80,9 +81,9 @@ public class ModuleRESTService extends AbstractRESTService{
   public Response listModules(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<Module> modules;
     if (filterArchived) {
-      modules = moduleController.findUnarchivedModules();
+      modules = moduleController.listUnarchivedModules();
     } else {
-      modules = moduleController.findModules();
+      modules = moduleController.listModules();
     }
     
     if (modules.isEmpty()) {
@@ -159,21 +160,164 @@ public class ModuleRESTService extends AbstractRESTService{
     
     return Response.noContent().build();
   }
-
   
-//@Path("/modules/{ID:[0-9]*}/components")
-//@GET
-//public Response findComponents(@PathParam("ID") Long id) {
-//  Module module = moduleController.findModuleById(id);
-//  if (module != null) {
-//    return Response.ok()
-//        .entity(tranqualise(moduleController.findComponents(module)))
-//        .build();
-//  } else {
-//    return Response.status(Status.NOT_FOUND).build();
-//  }
-//}
-//
+  @Path("/modules/{MODULEID:[0-9]*}/components")
+  @POST
+  public Response createModuleComponent(@PathParam("MODULEID") Long moduleId, fi.pyramus.rest.model.ModuleComponent entity) {
+    Module module = moduleController.findModuleById(moduleId);
+    if (module == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (module.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (StringUtils.isBlank(entity.getName())) {
+      return Response.status(Status.BAD_REQUEST).entity("name is required").build();
+    }
+    
+    EducationalTimeUnit componentLengthTimeUnit = null;
+      
+    if (entity.getLength() != null) {
+      if (entity.getLengthUnitId() == null) {
+        return Response.status(Status.BAD_REQUEST).entity("lengthUnitId is required when length is defined").build();
+      }
+      
+      componentLengthTimeUnit = commonController.findEducationalTimeUnitById(entity.getLengthUnitId());
+      if (componentLengthTimeUnit == null) {
+        return Response.status(Status.BAD_REQUEST).entity("lengthUnitId is required when length is defined").build();
+      }
+    }
+    
+    return Response
+      .status(Status.OK)
+      .entity(objectFactory.createModel(moduleController.createModuleComponent(module, entity.getLength(), componentLengthTimeUnit, entity.getName(), entity.getDescription())))
+      .build();
+  }
+
+  @Path("/modules/{ID:[0-9]*}/components")
+  @GET
+  public Response listModuleComponents(@PathParam("ID") Long moduleId) {
+    Module module = moduleController.findModuleById(moduleId);
+    if (module == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (module.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<ModuleComponent> components = module.getModuleComponents();
+    if (components.isEmpty()) {
+      return Response.status(Status.NO_CONTENT).build();
+    }
+    
+    return Response.status(Status.OK).entity(objectFactory.createModel(components)).build();
+  }
+
+  @Path("/modules/{MODULEID:[0-9]*}/components/{ID:[0-9]*}")
+  @GET
+  public Response findModuleComponentById(@PathParam("MODULEID") Long moduleId, @PathParam("ID") Long componentId) {
+    Module module = moduleController.findModuleById(moduleId);
+    if (module == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (module.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ModuleComponent component = moduleController.findModuleComponentById(componentId);
+    if (component == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (component.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!component.getModule().getId().equals(moduleId)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.status(Status.OK).entity(objectFactory.createModel(component)).build();
+  }
+  
+  @Path("/modules/{MODULEID:[0-9]*}/components/{COMPONENTID:[0-9]*}")
+  @PUT
+  public Response updateModuleComponent(@PathParam("MODULEID") Long moduleId, @PathParam("COMPONENTID") Long courseComponentId, fi.pyramus.rest.model.ModuleComponent entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    ModuleComponent moduleComponent = moduleController.findModuleComponentById(courseComponentId);
+    if (moduleComponent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Module module = moduleController.findModuleById(moduleId);
+    if (module == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (module.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (StringUtils.isBlank(moduleComponent.getName())) {
+      return Response.status(Status.BAD_REQUEST).entity("name is required").build();
+    }
+    
+    EducationalTimeUnit componentLengthTimeUnit = null;
+      
+    if (entity.getLength() != null) {
+      if (entity.getLengthUnitId() == null) {
+        return Response.status(Status.BAD_REQUEST).entity("lengthUnitId is required when length is defined").build();
+      }
+      
+      componentLengthTimeUnit = commonController.findEducationalTimeUnitById(entity.getLengthUnitId());
+      if (componentLengthTimeUnit == null) {
+        return Response.status(Status.BAD_REQUEST).entity("lengthUnitId is required when length is defined").build();
+      }
+    }
+    
+    return Response
+      .status(Status.OK)
+      .entity(objectFactory.createModel(moduleController.updateModuleComponent(moduleComponent, entity.getLength(), componentLengthTimeUnit, entity.getName(), entity.getDescription())))
+      .build();
+  }
+  
+  @Path("/modules/{MODULEID:[0-9]*}/components/{COMPONENTID:[0-9]*}")
+  @DELETE
+  public Response deleteModuleComponent(@PathParam("MODULEID") Long moduleId, @PathParam("COMPONENTID") Long componentId, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    if (moduleId == null || componentId == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Module module = moduleController.findModuleById(moduleId);
+    if (module == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+   
+    ModuleComponent moduleComponent = moduleController.findModuleComponentById(componentId);
+    if (moduleComponent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!moduleComponent.getModule().getId().equals(module.getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      moduleController.deleteModuleComponent(moduleComponent);
+    } else {
+      moduleController.archiveModuleComponent(moduleComponent, getLoggedUser());
+    }
+    
+    return Response.status(Status.NO_CONTENT).build();
+  }
+  
 //@Path("/modules/{ID:[0-9]*}/courses")
 //@GET
 //public Response findCourses(@PathParam("ID") Long id) {

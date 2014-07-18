@@ -1,7 +1,6 @@
 package fi.pyramus.rest.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,9 +11,9 @@ import javax.inject.Inject;
 
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.courses.CourseDAO;
+import fi.pyramus.dao.modules.ModuleComponentDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.projects.ProjectModuleDAO;
-import fi.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
@@ -28,80 +27,102 @@ import fi.pyramus.domainmodel.users.User;
 @Dependent
 @Stateless
 public class ModuleController {
+  
   @Inject
   private ModuleDAO moduleDAO;
+  
+  @Inject
+  private ModuleComponentDAO moduleComponentDAO;
+  
   @Inject
   private ProjectModuleDAO projectModuleDAO;
+  
   @Inject
   private TagDAO tagDAO;
+  
   @Inject
   private CourseDAO courseDAO;
+  
+  /* Module */
 
   public Module createModule(String name, Subject subject, Integer courseNumber, Double moduleLength, EducationalTimeUnit moduleLengthTimeUnit,
       String description, Long maxParticipantCount, User creator) {
     Module module = moduleDAO.create(name, subject, courseNumber, moduleLength, moduleLengthTimeUnit, description, maxParticipantCount, creator);
     return module;
   }
-  
-  public Tag createModuleTag(Module module, String text) {
-    Tag tag = tagDAO.findByText(text);
-    if(tag == null) {
-      tag = tagDAO.create(text);
-    }
-    module.addTag(tag);
-    return tag;
-  }
-
-  public List<Module> findModules() {
-    List<Module> modules = moduleDAO.listAll();
-    return modules;
-  }
-
-  public List<Module> findUnarchivedModules() {
-    List<Module> modules = moduleDAO.listUnarchived();
-    return modules;
-  }
 
   public Module findModuleById(Long id) {
     Module module = moduleDAO.findById(id);
     return module;
   }
-  
-  public List<ModuleComponent> findComponents(Module module) {
-    List<ModuleComponent> components = module.getModuleComponents();
-    return components;
+
+  public List<Module> listModules() {
+    List<Module> modules = moduleDAO.listAll();
+    return modules;
   }
-  
-  public List<Course> findCourses(Module module) {
-    List<Course> courses = courseDAO.listByModule(module);
-    return courses;
-  }
-  
-  public List<Project> findProjects(Module module) {
-    List<Project> projects = new ArrayList<Project>();
-    List<ProjectModule> projectModules = projectModuleDAO.listAll();
-    for (ProjectModule projectModule : projectModules) {
-      if(projectModule.getModule().equals(module)) {
-        projects.add(projectModule.getProject());
-      }
-    }
-    return projects;
-  }
-  
-  public List<CourseBaseVariable> findVariables(Module module) {
-    List<CourseBaseVariable> variables = module.getVariables();
-    return variables;
-  }
-  
-  public Set<Tag> findModuleTags(Module module) {
-    Set<Tag> tags = module.getTags();
-    return tags;
+
+  public List<Module> listUnarchivedModules() {
+    List<Module> modules = moduleDAO.listUnarchived();
+    return modules;
   }
 
   public Module updateModule(Module module, String name, Subject subject, Integer courseNumber, Double length, EducationalTimeUnit lengthTimeUnit,
       String description, Long maxParticipantCount, User modifier) {
     Module moduleUpdated = moduleDAO.update(module, name, subject, courseNumber, length, lengthTimeUnit, description, maxParticipantCount, modifier);
     return moduleUpdated;
+  }
+
+  public Module archiveModule(Module module, User user) {
+    moduleDAO.archive(module, user);
+    return module;
+  }
+
+  public Module unarchiveModule(Module module, User user) {
+    moduleDAO.unarchive(module, user);
+    return module;
+  }
+  
+  public void deleteModule(Module module) {
+    moduleDAO.delete(module);
+  }
+  
+  /* Components */
+  
+  public ModuleComponent createModuleComponent(Module module, Double length, EducationalTimeUnit lengthTimeUnit, String name, String description) {
+    return moduleComponentDAO.create(module, length, lengthTimeUnit, name, description);
+  }
+  
+  public ModuleComponent findModuleComponentById(Long id) {
+    return moduleComponentDAO.findById(id);
+  }
+  
+  public List<ModuleComponent> listModuleComponentsByModule(Module module) {
+    return moduleComponentDAO.listByModule(module);
+  }
+  
+  public ModuleComponent updateModuleComponent(ModuleComponent moduleComponent, Double length, EducationalTimeUnit lengthTimeUnit, String name, String description) {
+    return moduleComponentDAO.update(moduleComponent, length, lengthTimeUnit, name, description);
+  }
+  
+  public ModuleComponent archiveModuleComponent(ModuleComponent moduleComponent, User user) {
+    moduleComponentDAO.archive(moduleComponent, user);
+    return moduleComponent;
+  }
+  
+  public void deleteModuleComponent(ModuleComponent moduleComponent) {
+    moduleComponentDAO.delete(moduleComponent);;
+  }
+  
+  /* Tags */
+  
+  public Tag createModuleTag(Module module, String text) {
+    Tag tag = tagDAO.findByText(text);
+    if(tag == null) {
+      tag = tagDAO.create(text);
+    }
+    
+    module.addTag(tag);
+    return tag;
   }
 
   public Module updateModuleTags(Module module, List<String> tags) {
@@ -126,18 +147,25 @@ public class ModuleController {
   public void removeModuleTag(Module module, Tag tag) {
     module.removeTag(tag);
   }
+  
+  /* Courses */
 
-  public Module archiveModule(Module module, User user) {
-    moduleDAO.archive(module, user);
-    return module;
-  }
-
-  public Module unarchiveModule(Module module, User user) {
-    moduleDAO.unarchive(module, user);
-    return module;
+  public List<Course> listCoursesByModule(Module module) {
+    List<Course> courses = courseDAO.listByModule(module);
+    return courses;
   }
   
-  public void deleteModule(Module module) {
-    moduleDAO.delete(module);
+  /* Projects */
+  
+  public List<Project> findProjectsByModule(Module module) {
+    List<Project> projects = new ArrayList<Project>();
+    List<ProjectModule> projectModules = projectModuleDAO.listAll();
+    for (ProjectModule projectModule : projectModules) {
+      if(projectModule.getModule().equals(module)) {
+        projects.add(projectModule.getProject());
+      }
+    }
+    return projects;
   }
+  
 }

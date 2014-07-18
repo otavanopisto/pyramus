@@ -1,22 +1,18 @@
 package fi.pyramus.rest.model;
 
-public class CourseComponent {
+public class ModuleComponent {
   
-  public CourseComponent() {
+  public ModuleComponent() {
   }
 
-  public CourseComponent(Long id, String name, String description, Double length, Long lengthUnitId, Boolean archived) {
+  public ModuleComponent(Long id, String name, String description, Double length, Long lengthUnitId, Boolean archived) {
     this();
     this.id = id;
     this.name = name;
     this.description = description;
+    this.archived = archived;
     this.length = length;
     this.lengthUnitId = lengthUnitId;
-    this.archived = archived;
-  }
-
-  public CourseComponent(String name, String description, Double length, Long lengthUnitId, Boolean archived) {
-    this(null, name, description, length, lengthUnitId, archived);
   }
 
   public Long getId() {
@@ -26,7 +22,7 @@ public class CourseComponent {
   public void setId(Long id) {
     this.id = id;
   }
-  
+
   public String getName() {
     return name;
   }
