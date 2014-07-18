@@ -223,4 +223,34 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(404);
   }
+  
+  @Test
+  public void testListCourses() {
+    given()
+      .get("/modules/modules/{MODULEID}/courses", 1l)
+      .then()
+      .body("id.size()", is(2))
+      .body("id[0]", is(1000) )
+      .body("name[0]", is("Test Course #1" ))
+      .body("courseNumber[0]", is( 1 ))
+      .body("description[0]", is( "Course #1 for testing" ))
+      .body("length[0]", is( 1.0f ))
+      .body("lengthUnitId[0]", is( 1 ))
+      .body("creatorId[0]", is( 1 ))
+      .body("lastModifierId[0]", is( 1 ))
+      .body("subjectId[0]", is( 1 ))
+      .body("maxParticipantCount[0]", is( 100 ))
+      .body("archived[0]", is( false ))
+      .body("id[1]", is(1001) )
+      .body("name[1]", is("Test Course #2" ))
+      .body("courseNumber[1]", is( 2 ))
+      .body("description[1]", is( "Course #2 for testing" ))
+      .body("length[1]", is( 1.0f ))
+      .body("lengthUnitId[1]", is( 1 ))
+      .body("creatorId[1]", is( 1 ))
+      .body("lastModifierId[1]", is( 1 ))
+      .body("subjectId[1]", is( 1 ))
+      .body("maxParticipantCount[1]", is( 200 ))
+      .body("archived[1]", is( false ));
+  }
 }
