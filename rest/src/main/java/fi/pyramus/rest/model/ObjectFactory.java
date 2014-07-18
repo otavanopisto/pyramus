@@ -32,6 +32,7 @@ import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
+import fi.pyramus.domainmodel.projects.Project;
 
 @ApplicationScoped
 @Stateful
@@ -196,7 +197,29 @@ public class ObjectFactory {
             Double length = entity.getLength() != null ? entity.getLength().getUnits() : null;
             return new fi.pyramus.rest.model.ModuleComponent(entity.getId(), entity.getName(), entity.getDescription(), length, lengthUnitId, entity.getArchived());
           }
+        },
+        
+        new Mapper<Project>() {
+          @Override
+          public Object map(Project entity) {
+            Double optionalStudiesLength = entity.getOptionalStudiesLength() != null ? entity.getOptionalStudiesLength().getUnits() : null;
+            Long optionalStudiesLengthUnitId = entity.getOptionalStudiesLength() != null ? entity.getOptionalStudiesLength().getUnit().getId() : null;
+            Long creatorId = entity.getCreator().getId();
+            Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
+            List<String> tags = new ArrayList<>();
+            
+            Set<Tag> entityTags = entity.getTags();
+            if (entityTags != null) {
+              for (Tag entityTag : entityTags) {
+                tags.add(entityTag.getText());
+              }
+            }
+            
+            return new fi.pyramus.rest.model.Project(entity.getId(), entity.getName(), entity.getDescription(), optionalStudiesLength, optionalStudiesLengthUnitId, toDateTime(entity.getCreated()), creatorId, toDateTime(entity.getLastModified()), lastModifierId, tags, entity.getArchived());
+          }
         }
+        
+        
     );
   }
 

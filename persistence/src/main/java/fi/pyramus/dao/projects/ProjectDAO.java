@@ -199,4 +199,9 @@ public class ProjectDAO extends PyramusEntityDAO<Project> {
     }
   }
 
+  public Project removeTag(Project project, Tag tag) {
+    project.removeTag(tag);
+    return persist(project);
+  }
+
 }

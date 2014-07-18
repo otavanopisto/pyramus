@@ -86,7 +86,9 @@ values
   (3, 234, 1, 1),
   (4, 345, 1, 1),
   (5, 456, 1, 1),
-  (6, 567, 1, 1);
+  (6, 567, 1, 1),
+  (7, 678, 1, 1),
+  (8, 910, 1, 1);
   
 insert into
   CourseDescriptionCategory (id, name, archived)
@@ -144,6 +146,12 @@ values
   (1002, 1001, 0),
   (1003, 1001, 1);
   
+insert into 
+  Project (id, name, description, optionalStudies, creator, created, lastModified, lastModifier, archived, version)
+values 
+  (1, 'Test Project #1', 'Project for testing', 7, 1, PARSEDATETIME('6 6 2010', 'd M yyyy'), PARSEDATETIME('6 6 2010', 'd M yyyy'), 1, false, 1),
+  (2, 'Test Project #2', 'Project for testing', 8, 1, PARSEDATETIME('6 6 2011', 'd M yyyy'), PARSEDATETIME('6 6 2011', 'd M yyyy'), 1, false, 1);
+  
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
@@ -161,4 +169,5 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationSubtype', max(id) + 1 from EducationSubtype;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'GradingScale', max(id) + 1 from GradingScale;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Grade', max(id) + 1 from Grade;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Project', max(id) + 1 from Project;
 

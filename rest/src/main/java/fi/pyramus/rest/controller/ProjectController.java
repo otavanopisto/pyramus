@@ -1,5 +1,6 @@
 package fi.pyramus.rest.controller;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,38 +23,29 @@ import fi.pyramus.persistence.search.SearchResult;
 @Dependent
 @Stateless
 public class ProjectController {
+  
   @Inject
   private ProjectDAO projectDAO;
+  
   @Inject
   private TagDAO tagDAO;
+  
   @Inject
   private ProjectModuleDAO projectModuleDAO;
+  
+  /* Projects */
 
   public Project createProject(String name, String description, double optionalStudiesLength, EducationalTimeUnit optionalStudiesLengthTimeUnit, User user) {
     Project project = projectDAO.create(name, description, optionalStudiesLength, optionalStudiesLengthTimeUnit, user);
     return project;
   }
-  
-  public ProjectModule createProjectModule(Project project, Module module, ProjectModuleOptionality optionality) {
-    ProjectModule projectModule = projectModuleDAO.create(project, module, optionality);
-    return projectModule;
-  }
-  
-  public Tag createTag(Project project, String text) {
-    Tag tag = tagDAO.findByText(text);
-    if (tag == null) {
-      tag = tagDAO.create(text);
-    }
-    project.addTag(tag);
-    return tag;
-  }
 
-  public List<Project> findProjects() {
+  public List<Project> listProjects() {
     List<Project> projects = projectDAO.listAll();
     return projects;
   }
   
-  public List<Project> findUnarchivedProjects() {
+  public List<Project> listUnarchivedProjects() {
     List<Project> projects = projectDAO.listUnarchived();
     return projects;
   }
@@ -62,41 +54,11 @@ public class ProjectController {
     Project project = projectDAO.findById(id);
     return project;
   }
-  
-  public SearchResult<Project> searchProjects(int resultsPerPage, int page,String name, String description,  String tags, boolean filterArchived) {
-    SearchResult<Project> projects = projectDAO.searchProjects(resultsPerPage, page, name, description, tags, filterArchived);
-    return projects;
-  }
-  
-  public List<ProjectModule> findProjectModules(Project project) {
-    List<ProjectModule> modules = projectModuleDAO.listByProject(project);
-    return modules;
-  }
-  
-  public ProjectModule findProjectModuleById(Long id) {
-    ProjectModule projectModule = projectModuleDAO.findById(id);
-    return projectModule;
-  }
-  
-  public Set<Tag> findTags(Project project) {
-    Set<Tag> tags = project.getTags();
-    return tags;
-  }
-  
-  public Tag findTagById(Long id) {
-    Tag tag = tagDAO.findById(id);
-    return tag;
-  }
 
   public Project updateProject(Project project, String name, String description, double optionalStudiesLength,
       EducationalTimeUnit optionalStudiesLengthTimeUnit, User user) {
     Project updatedProject = projectDAO.update(project, name, description, optionalStudiesLength, optionalStudiesLengthTimeUnit, user);
     return updatedProject;
-  }
-  
-  public ProjectModule updateProjectModule(ProjectModule projectModule, ProjectModuleOptionality optionality) {
-    projectModuleDAO.update(projectModule, optionality);
-    return projectModule;
   }
 
   public Project archiveProject(Project project, User user) {
@@ -108,8 +70,73 @@ public class ProjectController {
     projectDAO.unarchive(project, user);
     return project;
   }
+
+  public void deleteProject(Project project) {
+    projectDAO.delete(project);
+  }
+  
+  public SearchResult<Project> searchProjects(int resultsPerPage, int page,String name, String description,  String tags, boolean filterArchived) {
+    SearchResult<Project> projects = projectDAO.searchProjects(resultsPerPage, page, name, description, tags, filterArchived);
+    return projects;
+  }
+  
+  /* ProjectModule */
+  
+  public ProjectModule createProjectModule(Project project, Module module, ProjectModuleOptionality optionality) {
+    ProjectModule projectModule = projectModuleDAO.create(project, module, optionality);
+    return projectModule;
+  }
+  
+  public List<ProjectModule> listProjectModules(Project project) {
+    List<ProjectModule> modules = projectModuleDAO.listByProject(project);
+    return modules;
+  }
+  
+  public ProjectModule findProjectModuleById(Long id) {
+    ProjectModule projectModule = projectModuleDAO.findById(id);
+    return projectModule;
+  }
+  
+  public ProjectModule updateProjectModule(ProjectModule projectModule, ProjectModuleOptionality optionality) {
+    projectModuleDAO.update(projectModule, optionality);
+    return projectModule;
+  }
   
   public void deleteProjectModule(ProjectModule projectModule) {
     projectModuleDAO.delete(projectModule);
+  }
+
+  /* Tags */
+  
+  public Tag createProjectTag(Project project, String text) {
+    Tag tag = tagDAO.findByText(text);
+    if (tag == null) {
+      tag = tagDAO.create(text);
+    }
+    project.addTag(tag);
+    return tag;
+  }
+  
+  public Project removeProjectTag(Project project, Tag tag) {
+    return projectDAO.removeTag(project, tag);
+  }
+
+  public Project updateProjectTags(Project project, List<String> tags) {
+    Set<String> newTags = new HashSet<>(tags);
+    Set<Tag> projectTags = new HashSet<>(project.getTags());
+    
+    for (Tag projectTag : projectTags) {
+      if (!newTags.contains(projectTag.getText())) {
+        removeProjectTag(project, projectTag);
+      }
+        
+      newTags.remove(projectTag.getText());
+    }
+    
+    for (String newTag : newTags) {
+      createProjectTag(project, newTag);
+    }
+    
+    return project;
   }
 }

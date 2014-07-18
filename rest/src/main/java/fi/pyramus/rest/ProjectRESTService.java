@@ -1,7 +1,7 @@
 package fi.pyramus.rest;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -19,16 +19,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
-import fi.pyramus.domainmodel.base.Tag;
-import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.projects.Project;
-import fi.pyramus.domainmodel.projects.ProjectModule;
-import fi.pyramus.domainmodel.projects.ProjectModuleOptionality;
-import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.rest.controller.CommonController;
-import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
+import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/projects")
 @Produces("application/json")
@@ -36,35 +33,141 @@ import fi.pyramus.rest.controller.ProjectController;
 @Stateful
 @RequestScoped
 public class ProjectRESTService extends AbstractRESTService {
-//
-//  @Inject
-//  private ProjectController projectController;
-//  @Inject
-//  private ModuleController moduleController;
-//  @Inject
-//  private CommonController commonController;
-//
-//  @Path("/projects")
-//  @POST
-//  public Response createProject(ProjectEntity projectEntity) {
-//    EducationalTimeUnit timeUnit = null;
-//    double optionalStudiesLength = 0;
-//    String name = projectEntity.getName();
-//    String description = projectEntity.getDescription();
-//    Long optionalStudiesLengthId = projectEntity.getOptionalStudiesLength_id();
-//    if(optionalStudiesLengthId != null) {
-//      timeUnit = commonController.findEducationalTimeUnitById(optionalStudiesLengthId);
-//      optionalStudiesLength = timeUnit.getBaseUnits();
-//    }
-//    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description) ) {
-//      return Response.ok()
-//          .entity(tranqualise(projectController.createProject(name, description, optionalStudiesLength, timeUnit, getUser())))
-//          .build();
+
+  @Inject
+  private ProjectController projectController;
+  
+  @Inject
+  private CommonController commonController;
+
+  @Inject
+  private ObjectFactory objectFactory;
+  
+  @Path("/projects")
+  @POST
+  public Response createProject(fi.pyramus.rest.model.Project entity) {
+    EducationalTimeUnit optionalStudiesLengthUnit = entity.getOptionalStudiesLengthUnitId() != null ? commonController.findEducationalTimeUnitById(entity.getOptionalStudiesLengthUnitId()) : null;
+    Double optionalStudiesLength = entity.getOptionalStudiesLength();
+    String name = entity.getName();
+    String description = entity.getDescription();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Project project = projectController.createProject(name, description, optionalStudiesLength, optionalStudiesLengthUnit, getLoggedUser());
+    
+    if (entity.getTags() != null) {
+      for (String tag : entity.getTags()) {
+        projectController.createProjectTag(project, tag); 
+      }
+    }
+    
+    return Response.ok(objectFactory.createModel(project)).build();
+  }
+
+  @Path("/projects")
+  @GET
+  public Response listProjects(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Project> projects;
+    if (filterArchived) {
+      projects = projectController.listUnarchivedProjects();
+    } else {
+      projects = projectController.listProjects();
+    }
+    
+    if (projects.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(projects)).build();
+  }
+  
+  @Path("/projects/{ID:[0-9]*}")
+  @GET
+  public Response findProjectById(@PathParam("ID") Long id) {
+    Project project = projectController.findProjectById(id);
+    if (project == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (project.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(project)).build();
+  }
+
+  @Path("/projects/{ID:[0-9]*}")
+  @PUT
+  public Response updateProject(@PathParam("ID") Long id, fi.pyramus.rest.model.Project entity) {
+    Project project = projectController.findProjectById(id);
+    if (project == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (project.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    EducationalTimeUnit optionalStudiesLengthUnit = entity.getOptionalStudiesLengthUnitId() != null ? commonController.findEducationalTimeUnitById(entity.getOptionalStudiesLengthUnitId()) : null;
+    Double optionalStudiesLength = entity.getOptionalStudiesLength();
+    String name = entity.getName();
+    String description = entity.getDescription();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    project = projectController.updateProjectTags(project, entity.getTags() == null ? new ArrayList<String>() : entity.getTags());
+    
+    return Response.ok(objectFactory.createModel(projectController.updateProject(project, name, description, optionalStudiesLength, optionalStudiesLengthUnit, getLoggedUser()))).build();
+  }
+  
+    @Path("/projects/{ID:[0-9]*}")
+    @DELETE
+    public Response deleteProject(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+      Project project = projectController.findProjectById(id);
+      if (project == null) {
+        return Response.status(Status.NOT_FOUND).build();
+      }    
+      
+      if (permanent) {
+        projectController.deleteProject(project);
+      } else {
+        projectController.archiveProject(project, getLoggedUser());
+      }
+      
+      return Response.noContent().build();
+    }
+//  
+//  @Path("/projects/{PID:[0-9]*}/modules/{ID:[0-9]*}")
+//  @DELETE
+//  public Response removeProjectModule(@PathParam("ID") Long id) {
+//    ProjectModule projectModule = projectController.findProjectModuleById(id);
+//    if (projectModule != null) {
+//      projectController.deleteProjectModule(projectModule);
+//      return Response.status(200).build();
 //    } else {
-//      return Response.status(501).build();
+//      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
 //  
+//  @Path("/projects/{PID:[0-9]*}/tags/{ID:[0-9]*}")
+//  @DELETE
+//  public Response removeTag(@PathParam("PID") Long projectId, @PathParam("ID") Long tagId) {
+//    Project project = projectController.findProjectById(projectId);
+//    Tag tag = projectController.findTagById(tagId);
+//    if (project != null && tag != null) {
+//      project.removeTag(tag);
+//      return Response.ok()
+//          .entity(tranqualise(project))
+//          .build();
+//    } else {
+//        return Response.status(Status.NOT_FOUND).build();
+//    }
+//  }
+  
 //  @Path("/projects/{ID:[0-9]*}/modules")
 //  @POST
 //  public Response createModule(@PathParam("ID") Long id, ProjectModuleEntity moduleEntity) {
@@ -98,51 +201,7 @@ public class ProjectRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
-//  @Path("/projects")
-//  @GET
-//  public Response findProjects(@QueryParam("name") String name,
-//                              @QueryParam("desciprtion") String description,
-//                              @QueryParam("tags") String tags,
-//                              @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    if (StringUtils.isBlank(name) && StringUtils.isBlank(description) && StringUtils.isBlank(tags)) {
-//      List<Project> projects;
-//      if (filterArchived) {
-//        projects = projectController.findUnarchivedProjects();
-//      } else {
-//        projects = projectController.findProjects();
-//      }
-//      if (!projects.isEmpty()){
-//        return Response.ok()
-//            .entity(tranqualise(projects))
-//            .build();
-//      } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//      }
-//    } else {
-//      SearchResult<Project> projects = projectController.searchProjects(100,0,name,description,tags,filterArchived);
-//      if (!projects.getResults().isEmpty()) {
-//        return Response.ok()
-//          .entity(tranqualise(projects.getResults()))
-//          .build();
-//      } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//      }
-//    }
-//  }
-//
-//  @Path("/projects/{ID:[0-9]*}")
-//  @GET
-//  public Response findProjectById(@PathParam("ID") Long id) {
-//    Project project = projectController.findProjectById(id);
-//    if (project != null) {
-//      return Response.ok()
-//          .entity(tranqualise(project))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+
 //  @Path("/projects/{ID:[0-9]*}/modules")
 //  @GET
 //  public Response findProjectModules(@PathParam("ID") Long id) {
@@ -170,27 +229,6 @@ public class ProjectRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
-//  @Path("/projects/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateProject(@PathParam("ID") Long id, ProjectEntity projectEntity) {
-//    Project project = projectController.findProjectById(id);
-//    String name = projectEntity.getName();
-//    String description = projectEntity.getDescription();
-//    double optionalStudiesLength = 0;
-//    EducationalTimeUnit timeUnit = null;
-//    if (project != null && !StringUtils.isBlank(name) && !StringUtils.isBlank(description)) {
-//      return Response.ok()
-//          .entity(tranqualise(projectController.updateProject(project, name, description, optionalStudiesLength, timeUnit, getUser())))
-//          .build();
-//    } else if (!projectEntity.getArchived()) {
-//        return Response.ok()
-//            .entity(tranqualise(projectController.unarchiveProject(project, getUser())))
-//            .build();
-//    } else {
-//      return Response.status(501).build();
-//    }
-//  }
-//  
 //  @Path("/projects/{PID:[0-9]*}/modules/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateProjectModule(@PathParam("ID") Long id, ProjectModuleEntity projectModuleEntity) {
@@ -205,44 +243,5 @@ public class ProjectRESTService extends AbstractRESTService {
 //    }
 //  }
 //
-//  @Path("/projects/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveProject(@PathParam("ID") Long id) {
-//    Project project = projectController.findProjectById(id);
-//    if (project != null) {
-//      return Response.ok()
-//          .entity(tranqualise(projectController.archiveProject(project, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/projects/{PID:[0-9]*}/modules/{ID:[0-9]*}")
-//  @DELETE
-//  public Response removeProjectModule(@PathParam("ID") Long id) {
-//    ProjectModule projectModule = projectController.findProjectModuleById(id);
-//    if (projectModule != null) {
-//      projectController.deleteProjectModule(projectModule);
-//      return Response.status(200).build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/projects/{PID:[0-9]*}/tags/{ID:[0-9]*}")
-//  @DELETE
-//  public Response removeTag(@PathParam("PID") Long projectId, @PathParam("ID") Long tagId) {
-//    Project project = projectController.findProjectById(projectId);
-//    Tag tag = projectController.findTagById(tagId);
-//    if (project != null && tag != null) {
-//      project.removeTag(tag);
-//      return Response.ok()
-//          .entity(tranqualise(project))
-//          .build();
-//    } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
 
 }
