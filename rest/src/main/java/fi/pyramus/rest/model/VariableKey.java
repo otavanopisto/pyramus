@@ -1,12 +1,12 @@
 package fi.pyramus.rest.model;
 
-public class SchoolVariableKey {
+public class VariableKey {
 
-  public SchoolVariableKey() {
+  public VariableKey() {
     super();
   }
 
-  public SchoolVariableKey(String key, String name, Boolean userEditable, VariableType type) {
+  public VariableKey(String key, String name, Boolean userEditable, VariableType type) {
     this();
     this.key = key;
     this.name = name;

@@ -7,14 +7,14 @@ import org.junit.Test;
 
 import com.jayway.restassured.response.Response;
 
-import fi.pyramus.rest.model.SchoolVariableKey;
+import fi.pyramus.rest.model.VariableKey;
 import fi.pyramus.rest.model.VariableType;
 
 public class SchoolVariableTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateSchoolVariables() {
-    SchoolVariableKey schoolVariable = new SchoolVariableKey("crevar", "variable to be created", false, VariableType.TEXT);
+    VariableKey schoolVariable = new VariableKey("crevar", "variable to be created", false, VariableType.TEXT);
     
     Response response = given()
       .contentType("application/json")
@@ -65,7 +65,7 @@ public class SchoolVariableTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateSchoolVariable() {
-    SchoolVariableKey schoolVariable = new SchoolVariableKey("upd", "not updated", false, VariableType.TEXT);
+    VariableKey schoolVariable = new VariableKey("upd", "not updated", false, VariableType.TEXT);
     
     Response response = given()
       .contentType("application/json")
@@ -80,7 +80,7 @@ public class SchoolVariableTestsIT extends AbstractRESTServiceTest {
       .body("type", is(schoolVariable.getType().toString()));
     
     try {
-      SchoolVariableKey updateVariable = new SchoolVariableKey("upd", "updated", true, VariableType.NUMBER);
+      VariableKey updateVariable = new VariableKey("upd", "updated", true, VariableType.NUMBER);
       
       given()
         .contentType("application/json")
@@ -104,7 +104,7 @@ public class SchoolVariableTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteSchoolVariable() {
-    SchoolVariableKey schoolVariable = new SchoolVariableKey("delete", "variable to be deleted", false, VariableType.TEXT);
+    VariableKey schoolVariable = new VariableKey("delete", "variable to be deleted", false, VariableType.TEXT);
     
     Response response = given()
       .contentType("application/json")

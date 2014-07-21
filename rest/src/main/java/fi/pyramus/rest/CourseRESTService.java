@@ -23,8 +23,10 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
+import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
+import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
@@ -46,8 +48,7 @@ import fi.pyramus.rest.model.ObjectFactory;
 public class CourseRESTService extends AbstractRESTService {
   
   // TODO: EducationTypes
-  // TODO: Variables
-  
+
   @Inject
   private CourseController courseController;
   
@@ -736,5 +737,107 @@ public class CourseRESTService extends AbstractRESTService {
 
     return Response.noContent().build();
   }
-
+  
+  @Path("/variables")
+  @POST
+  public Response createVariable(fi.pyramus.rest.model.VariableKey entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(entity.getKey())||StringUtils.isBlank(entity.getName())||(entity.getType() == null)||(entity.getUserEditable() == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    VariableType variableType = null;
+    switch (entity.getType()) {
+      case BOOLEAN:
+        variableType = VariableType.BOOLEAN;
+      break;
+      case DATE:
+        variableType = VariableType.DATE;
+      break;
+      case NUMBER:
+        variableType = VariableType.NUMBER;
+      break;
+      case TEXT:
+        variableType = VariableType.TEXT;
+      break;
+    }
+    
+    CourseBaseVariableKey courseBaseVariableKey = commonController.createCourseBaseVariableKey(entity.getKey(), entity.getName(), variableType, entity.getUserEditable());
+    return Response.ok(objectFactory.createModel(courseBaseVariableKey)).build();
+  }
+  
+  @Path("/variables")
+  @GET
+  public Response listVariables() {
+    List<CourseBaseVariableKey> variableKeys = commonController.listCourseBaseVariableKeys();
+    if (variableKeys.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(variableKeys)).build();
+  }
+  
+  @Path("/variables/{KEY}")
+  @GET
+  public Response findVariable(@PathParam ("KEY") String key) {
+    CourseBaseVariableKey courseBaseVariableKey = commonController.findCourseBaseVariableKeyByVariableKey(key);
+    if (courseBaseVariableKey == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(courseBaseVariableKey)).build();
+  }
+  
+  @Path("/variables/{KEY}")
+  @PUT
+  public Response updateVariable(@PathParam ("KEY") String key, fi.pyramus.rest.model.VariableKey entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(entity.getName())||(entity.getType() == null)||(entity.getUserEditable() == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    CourseBaseVariableKey courseBaseVariableKey = commonController.findCourseBaseVariableKeyByVariableKey(key);
+    if (courseBaseVariableKey == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    VariableType variableType = null;
+    switch (entity.getType()) {
+      case BOOLEAN:
+        variableType = VariableType.BOOLEAN;
+      break;
+      case DATE:
+        variableType = VariableType.DATE;
+      break;
+      case NUMBER:
+        variableType = VariableType.NUMBER;
+      break;
+      case TEXT:
+        variableType = VariableType.TEXT;
+      break;
+    }
+    
+    commonController.updateCourseBaseVariableKey(courseBaseVariableKey, entity.getName(), variableType, entity.getUserEditable());
+    
+    return Response.ok(objectFactory.createModel(courseBaseVariableKey)).build();
+  }
+  
+  @Path("/variables/{KEY}")
+  @DELETE
+  public Response deleteVariable(@PathParam ("KEY") String key) {
+    CourseBaseVariableKey courseBaseVariableKey = commonController.findCourseBaseVariableKeyByVariableKey(key);
+    if (courseBaseVariableKey == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    commonController.deleteCourseBaseVariableKey(courseBaseVariableKey);
+    
+    return Response.noContent().build();
+  }
 }

@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 
+import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.SchoolVariable;
@@ -277,14 +278,21 @@ public class ObjectFactory {
         new Mapper<SchoolVariableKey>() {
           @Override
           public Object map(SchoolVariableKey entity) {
-            return new fi.pyramus.rest.model.SchoolVariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), toVariableType(entity.getVariableType()));
+            return new fi.pyramus.rest.model.VariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), toVariableType(entity.getVariableType()));
           }
         }, 
         
         new Mapper<StudentVariableKey>() {
           @Override
           public Object map(StudentVariableKey entity) {
-            return new fi.pyramus.rest.model.StudentVariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), toVariableType(entity.getVariableType()));
+            return new fi.pyramus.rest.model.VariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), toVariableType(entity.getVariableType()));
+          }
+        }, 
+        
+        new Mapper<CourseBaseVariableKey>() {
+          @Override
+          public Object map(CourseBaseVariableKey entity) {
+            return new fi.pyramus.rest.model.VariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), toVariableType(entity.getVariableType()));
           }
         }
 

@@ -1229,7 +1229,7 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/variables")
   @POST
-  public Response createVariable(fi.pyramus.rest.model.StudentVariableKey entity) {
+  public Response createVariable(fi.pyramus.rest.model.VariableKey entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
@@ -1282,7 +1282,7 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/variables/{KEY}")
   @PUT
-  public Response updateVariable(@PathParam ("KEY") String key, fi.pyramus.rest.model.StudentVariableKey entity) {
+  public Response updateVariable(@PathParam ("KEY") String key, fi.pyramus.rest.model.VariableKey entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }

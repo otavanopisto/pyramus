@@ -10,34 +10,34 @@ import com.jayway.restassured.response.Response;
 import fi.pyramus.rest.model.VariableKey;
 import fi.pyramus.rest.model.VariableType;
 
-public class StudentVariableTestsIT extends AbstractRESTServiceTest {
+public class ModuleVariableTestsIT extends AbstractRESTServiceTest {
 
   @Test
-  public void testCreateStudentVariables() {
-    VariableKey studentVariable = new VariableKey("crevar", "variable to be created", false, VariableType.TEXT);
+  public void testCreateModuleVariables() {
+    VariableKey moduleVariable = new VariableKey("crevar", "variable to be created", false, VariableType.TEXT);
     
     Response response = given()
       .contentType("application/json")
-      .body(studentVariable)
-      .post("/students/variables");
+      .body(moduleVariable)
+      .post("/modules/variables");
     
     response.then()
       .statusCode(200)
-      .body("name", is(studentVariable.getName()))
-      .body("key", is(studentVariable.getKey()))
-      .body("userEditable", is(studentVariable.getUserEditable()))
-      .body("type", is(studentVariable.getType().toString()));
+      .body("name", is(moduleVariable.getName()))
+      .body("key", is(moduleVariable.getKey()))
+      .body("userEditable", is(moduleVariable.getUserEditable()))
+      .body("type", is(moduleVariable.getType().toString()));
 
     given()
-      .delete("/students/variables/{KEY}", studentVariable.getKey())
+      .delete("/modules/variables/{KEY}", moduleVariable.getKey())
       .then()
       .statusCode(204);
   }
 
   @Test
-  public void testListStudentVariables() {
+  public void testListModuleVariables() {
     given()
-      .get("/students/variables")
+      .get("/modules/variables")
       .then()
       .statusCode(200)
       .body("id.size()", is(3))
@@ -53,9 +53,9 @@ public class StudentVariableTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
-  public void testFindStudentVariable() {
+  public void testFindModuleVariable() {
     given()
-    .get("/students/variables/TV1")
+    .get("/modules/variables/TV1")
     .then()
     .statusCode(200)
     .body("key", is("TV1"))
@@ -64,20 +64,20 @@ public class StudentVariableTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
-  public void testUpdateStudentVariable() {
-    VariableKey studentVariable = new VariableKey("upd", "not updated", false, VariableType.TEXT);
+  public void testUpdateModuleVariable() {
+    VariableKey moduleVariable = new VariableKey("upd", "not updated", false, VariableType.TEXT);
     
     Response response = given()
       .contentType("application/json")
-      .body(studentVariable)
-      .post("/students/variables");
+      .body(moduleVariable)
+      .post("/modules/variables");
     
     response.then()
       .statusCode(200)
-      .body("name", is(studentVariable.getName()))
-      .body("key", is(studentVariable.getKey()))
-      .body("userEditable", is(studentVariable.getUserEditable()))
-      .body("type", is(studentVariable.getType().toString()));
+      .body("name", is(moduleVariable.getName()))
+      .body("key", is(moduleVariable.getKey()))
+      .body("userEditable", is(moduleVariable.getUserEditable()))
+      .body("type", is(moduleVariable.getType().toString()));
     
     try {
       VariableKey updateVariable = new VariableKey("upd", "updated", true, VariableType.NUMBER);
@@ -85,7 +85,7 @@ public class StudentVariableTestsIT extends AbstractRESTServiceTest {
       given()
         .contentType("application/json")
         .body(updateVariable)
-        .put("/students/variables/{KEY}", updateVariable.getKey())
+        .put("/modules/variables/{KEY}", updateVariable.getKey())
         .then()
         .statusCode(200)
         .body("name", is(updateVariable.getName()))
@@ -96,38 +96,38 @@ public class StudentVariableTestsIT extends AbstractRESTServiceTest {
 
     } finally {
       given()
-        .delete("/students/variables/{KEY}", studentVariable.getKey())
+        .delete("/modules/variables/{KEY}", moduleVariable.getKey())
         .then()
         .statusCode(204);
     }
   }
   
   @Test
-  public void testDeleteStudentVariable() {
-    VariableKey studentVariable = new VariableKey("delete", "variable to be deleted", false, VariableType.TEXT);
+  public void testDeleteModuleVariable() {
+    VariableKey moduleVariable = new VariableKey("delete", "variable to be deleted", false, VariableType.TEXT);
     
     Response response = given()
       .contentType("application/json")
-      .body(studentVariable)
-      .post("/students/variables");
+      .body(moduleVariable)
+      .post("/modules/variables");
     
     response.then()
       .statusCode(200)
-      .body("name", is(studentVariable.getName()))
-      .body("key", is(studentVariable.getKey()))
-      .body("userEditable", is(studentVariable.getUserEditable()))
-      .body("type", is(studentVariable.getType().toString()));
+      .body("name", is(moduleVariable.getName()))
+      .body("key", is(moduleVariable.getKey()))
+      .body("userEditable", is(moduleVariable.getUserEditable()))
+      .body("type", is(moduleVariable.getType().toString()));
     
-    given().get("/students/variables/{KEY}", studentVariable.getKey())
+    given().get("/modules/variables/{KEY}", moduleVariable.getKey())
       .then()
       .statusCode(200);
     
     given()
-      .delete("/students/variables/{KEY}", studentVariable.getKey())
+      .delete("/modules/variables/{KEY}", moduleVariable.getKey())
       .then()
       .statusCode(204);
     
-    given().get("/students/variables/{KEY}", studentVariable.getKey())
+    given().get("/modules/variables/{KEY}", moduleVariable.getKey())
       .then()
       .statusCode(404);
   }

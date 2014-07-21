@@ -9,9 +9,19 @@ import javax.persistence.criteria.Root;
 import fi.pyramus.dao.PyramusEntityDAO;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey_;
+import fi.pyramus.domainmodel.base.VariableType;
 
 @Stateless
 public class CourseBaseVariableKeyDAO extends PyramusEntityDAO<CourseBaseVariableKey> {
+
+  public CourseBaseVariableKey create(String variableKey, String variableName, VariableType variableType, Boolean userEditable) {
+    CourseBaseVariableKey courseBaseVariableKey = new CourseBaseVariableKey();
+    courseBaseVariableKey.setUserEditable(userEditable);
+    courseBaseVariableKey.setVariableKey(variableKey);
+    courseBaseVariableKey.setVariableName(variableName);
+    courseBaseVariableKey.setVariableType(variableType);
+    return persist(courseBaseVariableKey);
+  }
 
   public CourseBaseVariableKey findByVariableKey(String key) {
     EntityManager entityManager = getEntityManager(); 
@@ -27,5 +37,24 @@ public class CourseBaseVariableKeyDAO extends PyramusEntityDAO<CourseBaseVariabl
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
+  public CourseBaseVariableKey updateVariableKey(CourseBaseVariableKey courseBaseVariableKey, String variableKey) {
+    courseBaseVariableKey.setVariableKey(variableKey);
+    return persist(courseBaseVariableKey);
+  }
 
+  public CourseBaseVariableKey updateVariableName(CourseBaseVariableKey courseBaseVariableKey, String variableName) {
+    courseBaseVariableKey.setVariableName(variableName);
+    return persist(courseBaseVariableKey);
+  }
+
+  public CourseBaseVariableKey updateVariableType(CourseBaseVariableKey courseBaseVariableKey, VariableType variableType) {
+    courseBaseVariableKey.setVariableType(variableType);
+    return persist(courseBaseVariableKey);
+  }
+
+  public CourseBaseVariableKey updateUserEditable(CourseBaseVariableKey courseBaseVariableKey, Boolean userEditable) {
+    courseBaseVariableKey.setUserEditable(userEditable);
+    return persist(courseBaseVariableKey);
+  }
+  
 }

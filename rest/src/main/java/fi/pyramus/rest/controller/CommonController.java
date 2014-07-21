@@ -6,16 +6,19 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.CourseBaseVariableKeyDAO;
 import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.SubjectDAO;
 import fi.pyramus.dao.grading.GradeDAO;
 import fi.pyramus.dao.grading.GradingScaleDAO;
+import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
+import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.users.User;
@@ -39,9 +42,12 @@ public class CommonController {
   
   @Inject
   private GradeDAO gradeDAO;
-  
+
   @Inject
   private EducationalTimeUnitDAO educationalTimeUnitDAO;
+
+  @Inject
+  private CourseBaseVariableKeyDAO courseBaseVariableKeyDAO;
   
   /* EducationType */
   
@@ -276,6 +282,30 @@ public class CommonController {
   public void deleteSubject(Subject subject) {
     subjectDAO.delete(subject);
   }
+  
+  /* CourseBaseVariableKey */
 
+  public CourseBaseVariableKey createCourseBaseVariableKey(String key, String name, VariableType variableType, Boolean userEditable) {
+    return courseBaseVariableKeyDAO.create(key, name, variableType, userEditable);
+  }
+  
+  public CourseBaseVariableKey findCourseBaseVariableKeyByVariableKey(String variableKey) {
+    return courseBaseVariableKeyDAO.findByVariableKey(variableKey);
+  }
+  
+  public List<CourseBaseVariableKey> listCourseBaseVariableKeys() {
+    return courseBaseVariableKeyDAO.listAll();
+  }
 
+  public CourseBaseVariableKey updateCourseBaseVariableKey(CourseBaseVariableKey courseBaseVariableKey, String variableName, VariableType variableType, Boolean userEditable) {
+    return 
+        courseBaseVariableKeyDAO.updateUserEditable(
+            courseBaseVariableKeyDAO.updateVariableName(
+                courseBaseVariableKeyDAO.updateVariableType(courseBaseVariableKey, variableType), variableName), userEditable);
+  }
+
+  public void deleteCourseBaseVariableKey(CourseBaseVariableKey courseBaseVariableKey) {
+    courseBaseVariableKeyDAO.delete(courseBaseVariableKey);
+  }
+  
 }
