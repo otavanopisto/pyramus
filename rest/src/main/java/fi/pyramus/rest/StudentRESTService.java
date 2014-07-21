@@ -447,19 +447,6 @@ public class StudentRESTService extends AbstractRESTService {
 //  private StudentContactLogEntryController contactLogEntryController;
 //  
 //  
-//  @Path("/studentActivityTypes")
-//  @POST
-//  public Response createStudentActivityType(StudentActivityTypeEntity activityTypeEntity) {
-//    String name = activityTypeEntity.getName();
-//    if (!StringUtils.isBlank(name)) {
-//      return Response.ok()
-//          .entity(tranqualise(studentSubController.createStudentActivityType(name)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
-//  
 //  @Path("/educationalLevels")
 //  @POST
 //  public Response createStudentEducationalLevel(StudentEducationalLevelEntity educationalLevelEntity) {
@@ -689,38 +676,6 @@ public class StudentRESTService extends AbstractRESTService {
 //  }
 //  
 
-
-//  @Path("/studentActivityTypes")
-//  @GET
-//  public Response findStudentActivityTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<StudentActivityType> activityTypes;
-//    if (filterArchived) {
-//      activityTypes = studentSubController.findUnarchivedStudentActivityTypes();
-//    } else {
-//      activityTypes = studentSubController.findStudentActivityTypes();
-//    }
-//    if (!activityTypes.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(activityTypes))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/studentActivityTypes/{ID:[0-9]*}")
-//  @GET
-//  public Response findStudentActivityTypeById(@PathParam("ID") Long id) {
-//    StudentActivityType activityType = studentSubController.findStudentActivityTypeById(id);
-//    if (activityType != null) {
-//      return Response.ok()
-//          .entity(tranqualise(activityType))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
 //  @Path("/educationalLevels")
 //  @GET
 //  public Response findStudentEducationalLevels(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -1078,24 +1033,7 @@ public class StudentRESTService extends AbstractRESTService {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
-//  @Path("/studentActivityTypes/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateStudentActivityType(@PathParam("ID") Long id, StudentActivityTypeEntity activityTypeEntity) {
-//    StudentActivityType activityType = studentSubController.findStudentActivityTypeById(id);
-//    if (activityType != null) {
-//      String name = activityTypeEntity.getName();
-//      if (!StringUtils.isBlank(name)) {
-//        return Response.ok()
-//            .entity(tranqualise(studentSubController.updateStudentActivityType(activityType, name)))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+
 //  @Path("/educationalLevels/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateStudentEducationalLevel(@PathParam("ID") Long id, StudentEducationalLevelEntity educationalLevelEntity) {
