@@ -40,6 +40,8 @@ import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.pyramus.domainmodel.students.StudentVariableKey;
+import fi.pyramus.domainmodel.base.Language;
+import fi.pyramus.domainmodel.base.Municipality;
 
 @ApplicationScoped
 @Stateful
@@ -293,6 +295,20 @@ public class ObjectFactory {
           @Override
           public Object map(CourseBaseVariableKey entity) {
             return new fi.pyramus.rest.model.VariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), toVariableType(entity.getVariableType()));
+          }
+        }, 
+        
+        new Mapper<Language>() {
+          @Override
+          public Object map(Language entity) {
+            return new fi.pyramus.rest.model.Language(entity.getId(), entity.getCode(), entity.getName(), entity.getArchived());
+          }
+        }, 
+        
+        new Mapper<Municipality>() {
+          @Override
+          public Object map(Municipality entity) {
+            return new fi.pyramus.rest.model.Municipality(entity.getId(), entity.getCode(), entity.getName(), entity.getArchived());
           }
         }
 

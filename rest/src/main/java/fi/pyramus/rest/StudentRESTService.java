@@ -44,6 +44,8 @@ import fi.pyramus.domainmodel.students.StudentVariable;
 import fi.pyramus.domainmodel.students.StudentVariableKey;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
+import fi.pyramus.rest.controller.LanguageController;
+import fi.pyramus.rest.controller.MunicipalityController;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.StudentContactLogEntryController;
 import fi.pyramus.rest.controller.StudentController;
@@ -64,7 +66,191 @@ public class StudentRESTService extends AbstractRESTService {
   private StudentVariableController studentVariableController;
 
   @Inject
+  private CommonController commonController;
+
+  @Inject
+  private StudentController studentController;
+
+  @Inject
+  private LanguageController languageController;
+
+  @Inject
+  private MunicipalityController municipalityController;
+  
+  @Inject
   private ObjectFactory objectFactory;
+
+  @Path("/languages")
+  @POST
+  public Response createLanguage(fi.pyramus.rest.model.Language entity) {
+    String name = entity.getName();
+    String code = entity.getCode();
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response
+        .ok(objectFactory.createModel(languageController.createLanguage(name, code)))
+        .build();
+  }
+
+  @Path("/languages")
+  @GET
+  public Response listLanguages(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Language> languages;
+    if (filterArchived) {
+      languages = languageController.listUnarchivedLanguages();
+    } else {
+      languages = languageController.listLanguages();
+    }
+    
+    if (languages.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(languages)).build();
+  }
+  
+  @Path("/languages/{ID:[0-9]*}")
+  @GET
+  public Response findLanguageById(@PathParam("ID") Long id) {
+    Language language = languageController.findLanguageById(id);
+    if (language == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (language.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+
+    return Response.ok(objectFactory.createModel(language)).build();
+  }
+
+  @Path("/languages/{ID:[0-9]*}")
+  @PUT
+  public Response updateLanguage(@PathParam("ID") Long id, fi.pyramus.rest.model.EducationType entity) {
+    Language language = languageController.findLanguageById(id);
+    if (language == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (language.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    String name = entity.getName();
+    String code = entity.getCode();
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(languageController.updateLanguage(language, name, code))).build();
+  }
+      
+  @Path("/languages/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteLanguage(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    Language language = languageController.findLanguageById(id);
+    if (language == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (permanent) {
+      languageController.deleteLanguage(language);
+    } else {
+      languageController.archiveLanguage(language, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+
+  @Path("/municipalities")
+  @POST
+  public Response createMunicipality(fi.pyramus.rest.model.Municipality entity) {
+    String name = entity.getName();
+    String code = entity.getCode();
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response
+        .ok(objectFactory.createModel(municipalityController.createMunicipality(name, code)))
+        .build();
+  }
+
+  @Path("/municipalities")
+  @GET
+  public Response listMunicipalities(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Municipality> municipalities;
+    if (filterArchived) {
+      municipalities = municipalityController.listUnarchivedMunicipalities();
+    } else {
+      municipalities = municipalityController.listMunicipalities();
+    }
+    
+    if (municipalities.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(municipalities)).build();
+  }
+  
+  @Path("/municipalities/{ID:[0-9]*}")
+  @GET
+  public Response findMunicipalityById(@PathParam("ID") Long id) {
+    Municipality municipality = municipalityController.findMunicipalityById(id);
+    if (municipality == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (municipality.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+
+    return Response.ok(objectFactory.createModel(municipality)).build();
+  }
+
+  @Path("/municipalities/{ID:[0-9]*}")
+  @PUT
+  public Response updateMunicipality(@PathParam("ID") Long id, fi.pyramus.rest.model.EducationType entity) {
+    Municipality municipality = municipalityController.findMunicipalityById(id);
+    if (municipality == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (municipality.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    String name = entity.getName();
+    String code = entity.getCode();
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(municipalityController.updateMunicipality(municipality, name, code))).build();
+  }
+      
+  @Path("/municipalities/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteMunicipality(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    Municipality municipality = municipalityController.findMunicipalityById(id);
+    if (municipality == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (permanent) {
+      municipalityController.deleteMunicipality(municipality);
+    } else {
+      municipalityController.archiveMunicipality(municipality, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
 
   
 //  
@@ -72,8 +258,6 @@ public class StudentRESTService extends AbstractRESTService {
 //  private AbstractStudentController abstractStudentController;
 //  @Inject
 //  private StudentSubResourceController studentSubController;
-//  @Inject
-//  private CommonController commonController;
 //  @Inject
 //  private StudentController studentController;
 //  @Inject
@@ -85,33 +269,7 @@ public class StudentRESTService extends AbstractRESTService {
 //  @Inject
 //  private StudentContactLogEntryController contactLogEntryController;
 //  
-//  @Path("/languages")
-//  @POST
-//  public Response createLanguage(LanguageEntity languageEntity) {
-//    String name = languageEntity.getName();
-//    String code = languageEntity.getCode();
-//    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
-//      return Response.ok()
-//          .entity(tranqualise(studentSubController.createLanguage(name, code)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
 //  
-//  @Path("/municipalities")
-//  @POST
-//  public Response createMunicipality(MunicipalityEntity municipalityEntity) {
-//    String name = municipalityEntity.getName();
-//    String code = municipalityEntity.getCode();
-//    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
-//      return Response.ok()
-//          .entity(tranqualise(studentSubController.createMunicipality(name, code)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
 //  
 //  @Path("/nationalities")
 //  @POST
@@ -368,67 +526,7 @@ public class StudentRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
-//  @Path("/languages")
-//  @GET
-//  public Response findLanguages(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<Language> languages;
-//    if (filterArchived) {
-//      languages = studentSubController.findUnarchivedLanguages();
-//    } else {
-//      languages = studentSubController.findLanguages();
-//    }
-//    if (!languages.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(languages))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/languages/{ID:[0-9]*}")
-//  @GET
-//  public Response findLanguageByID(@PathParam("ID") Long id) {
-//    Language language = studentSubController.findLanguageById(id);
-//    if (language != null) {
-//      return Response.ok()
-//          .entity(tranqualise(language))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/municipalities")
-//  @GET
-//  public Response findMunicipalities(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<Municipality> municipalities;
-//    if (filterArchived) {
-//      municipalities = studentSubController.findUnarchivedMunicipalities();
-//    } else {
-//      municipalities = studentSubController.findMunicipalities();
-//    }
-//    if (!municipalities.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(municipalities))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/municipalities/{ID:[0-9]*}")
-//  @GET
-//  public Response findMunicipalityById(@PathParam("ID") Long id) {
-//    Municipality municipality = studentSubController.findMunicipalityById(id);
-//    if (municipality != null) {
-//      return Response.ok()
-//          .entity(tranqualise(municipality))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
+
 //  
 //  @Path("/nationalities")
 //  @GET
@@ -849,45 +947,7 @@ public class StudentRESTService extends AbstractRESTService {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
-//  
-//  @Path("/languages/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateLanguage(@PathParam("ID") Long id, LanguageEntity languageEntity) {
-//    Language language = studentSubController.findLanguageById(id);
-//    if (language != null) {
-//      String name = languageEntity.getName();
-//      String code = languageEntity.getCode();
-//      if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
-//        return Response.ok()
-//            .entity(tranqualise(studentSubController.updateLanguage(language, name, code)))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/municipalities/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateMunicipality(@PathParam("ID") Long id, MunicipalityEntity municipalityEntity) {
-//    Municipality municipality = studentSubController.findMunicipalityById(id);
-//    if (municipality != null) {
-//      String name = municipalityEntity.getName();
-//      String code = municipalityEntity.getCode();
-//      if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
-//        return Response.ok()
-//            .entity(tranqualise(studentSubController.updateMunicipality(municipality, name, code)))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+
 //  @Path("/nationalities/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateNationality(@PathParam("ID") Long id, NationalityEntity nationalityEntity) {

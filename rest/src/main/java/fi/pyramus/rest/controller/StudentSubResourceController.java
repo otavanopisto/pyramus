@@ -29,34 +29,27 @@ import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 @Dependent
 @Stateless
 public class StudentSubResourceController {
+  
   @Inject
   private StudentStudyEndReasonDAO endReasonDAO;
+  
   @Inject
   private StudyProgrammeCategoryDAO studyProgrammeCategoryDAO;
+  
   @Inject
   private StudyProgrammeDAO studyProgrammeDAO;
-  @Inject
-  private MunicipalityDAO municipalityDAO;
-  @Inject
-  private LanguageDAO languageDAO;
+  
   @Inject
   private NationalityDAO nationalityDAO;
+  
   @Inject
   private StudentActivityTypeDAO activityTypeDAO;
+  
   @Inject
   private StudentEducationalLevelDAO educationalLevelDAO;
+  
   @Inject
   private StudentExaminationTypeDAO examinationTypeDAO;
-  
-  public Language createLanguage(String name, String code) {
-    Language language = languageDAO.create(code, name);
-    return language;
-  }
-  
-  public Municipality createMunicipality(String name, String code) {
-    Municipality municipality = municipalityDAO.create(name, code);
-    return municipality;
-  }
   
   public Nationality createNationality(String name, String code) {
     Nationality nationality = nationalityDAO.create(name, code);
@@ -91,36 +84,6 @@ public class StudentSubResourceController {
   public StudyProgramme createStudyProgramme(String name, StudyProgrammeCategory category, String code) {
     StudyProgramme studyProgramme = studyProgrammeDAO.create(name, category, code);
     return studyProgramme;
-  }
-  
-  public List<Language> findLanguages() {
-    List<Language> languages = languageDAO.listAll();
-    return languages;
-  }
-  
-  public List<Language> findUnarchivedLanguages() {
-    List<Language> languages = languageDAO.listUnarchived();
-    return languages;
-  }
-  
-  public Language findLanguageById(Long id) {
-    Language language = languageDAO.findById(id);
-    return language;
-  }
-  
-  public List<Municipality> findMunicipalities() {
-    List<Municipality> municipalities = municipalityDAO.listAll();
-    return municipalities;
-  }
-
-  public List<Municipality> findUnarchivedMunicipalities() {
-    List<Municipality> municipalities = municipalityDAO.listUnarchived();
-    return municipalities;
-  }
-  
-  public Municipality findMunicipalityById(Long id) {
-    Municipality municipality = municipalityDAO.findById(id);
-    return municipality;
   }
   
   public List<Nationality> findNationalities() {
@@ -226,16 +189,6 @@ public class StudentSubResourceController {
   public StudyProgramme findStudyProgrammeById(Long id) {
     StudyProgramme studyProgramme = studyProgrammeDAO.findById(id);
     return studyProgramme;
-  }
-  
-  public Language updateLanguage(Language language, String name, String code) {
-    Language updated = languageDAO.update(language, name, code);
-    return updated;
-  }
-  
-  public Municipality updateMunicipality(Municipality municipality, String name, String code) {
-    Municipality updated = municipalityDAO.update(municipality, name, code);
-    return updated;
   }
   
   public Nationality updateNationality(Nationality nationality, String name, String code) {

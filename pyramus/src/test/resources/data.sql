@@ -235,7 +235,18 @@ values
   (1, false, 'TV1', 'Test Variable #1 - text', 'TEXT', 1),
   (2, false, 'TV2', 'Test Variable #2 - number', 'NUMBER', 1),
   (3, false, 'TV3', 'Test Variable #3 - boolean', 'BOOLEAN', 1);
-  
+
+insert into 
+  Language (id, code, name, version, archived)
+values 
+  (1, 'TST1', 'Language #1', 1, false),
+  (2, 'TST2', 'Language #2', 1, false);  
+
+insert into 
+  Municipality (id, code, name, version, archived)
+values 
+  (1, 'TST1', 'Municipality #1', 1, false),
+  (2, 'TST2', 'Municipality #2', 1, false);  
 
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
@@ -269,5 +280,7 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SchoolVariable', max(id) + 1 from SchoolVariable;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentVariableKey', max(id) + 1 from StudentVariableKey;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseBaseVariableKey', max(id) + 1 from CourseBaseVariableKey;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Language', max(id) + 1 from Language;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Municipality', max(id) + 1 from Municipality;
 
 
