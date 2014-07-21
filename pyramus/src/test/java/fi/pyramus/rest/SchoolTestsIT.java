@@ -2,12 +2,16 @@ package fi.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -19,7 +23,11 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateSchool() {
-    School school = new School(null, "TST", "to be created", Arrays.asList("tag1", "tag2"), 1l, Boolean.FALSE);
+    Map<String, String> variables = new HashMap<String, String>();
+    variables.put("TV1", "text");
+    variables.put("TV2", "123");
+    
+    School school = new School(null, "TST", "to be created", Arrays.asList("tag1", "tag2"), 1l, Boolean.FALSE, variables);
     
     Response response = given()
       .contentType("application/json")
@@ -34,6 +42,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
       .body("fieldId", is(school.getFieldId().intValue()))
       .body("tags.size()", is(2))
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2") ))
+      .body("variables", allOf(hasEntry("TV1", "text"), hasEntry("TV2", "123")))
       .body("archived", is( school.getArchived() ));
       
     int id = response.body().jsonPath().getInt("id");
@@ -74,7 +83,11 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateSchool() {
-    School school = new School(null, "TST", "not updated", Arrays.asList("tag1", "tag2"), 1l, Boolean.FALSE);
+    Map<String, String> variables = new HashMap<String, String>();
+    variables.put("TV1", "text");
+    variables.put("TV2", "123");
+    
+    School school = new School(null, "TST", "not updated", Arrays.asList("tag1", "tag2"), 1l, Boolean.FALSE, variables);
     
     Response response = given()
       .contentType("application/json")
@@ -87,11 +100,16 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
       .body("code", is(school.getCode()))
       .body("tags.size()", is(2))
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2") ))
+      .body("variables", allOf(hasEntry("TV1", "text"), hasEntry("TV2", "123")))
       .body("archived", is( school.getArchived() ));
       
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      School updateSchool = new School(id, "UPD", "updated", Arrays.asList("tag2", "tag3"), 2l, Boolean.FALSE);
+      Map<String, String> updateVariables = new HashMap<String, String>();
+      updateVariables.put("TV2", "234");
+      updateVariables.put("TV3", "1");
+
+      School updateSchool = new School(id, "UPD", "updated", Arrays.asList("tag2", "tag3"), 2l, Boolean.FALSE, updateVariables);
 
       given()
         .contentType("application/json")
@@ -104,6 +122,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
         .body("code", is(updateSchool.getCode()))
         .body("tags.size()", is(2))
         .body("tags", allOf(hasItem("tag2"), hasItem("tag3") ))
+        .body("variables", allOf(hasEntry("TV2", "234"), hasEntry("TV3", "1"), not(hasKey("TV1"))))
         .body("archived", is( updateSchool.getArchived() ));
 
     } finally {
@@ -116,7 +135,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteSchool() {
-    School school = new School(null, "TST", "to be deleted", Arrays.asList("tag1", "tag2"), 1l, Boolean.FALSE);
+    School school = new School(null, "TST", "to be deleted", Arrays.asList("tag1", "tag2"), 1l, Boolean.FALSE, null);
     
     Response response = given()
       .contentType("application/json")

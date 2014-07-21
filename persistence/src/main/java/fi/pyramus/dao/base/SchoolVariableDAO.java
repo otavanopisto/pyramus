@@ -34,7 +34,7 @@ public class SchoolVariableDAO extends PyramusEntityDAO<SchoolVariable> {
     return schoolVariable;
   }
 
-  private SchoolVariable findBySchoolAndVariableKey(School school, SchoolVariableKey key) {
+  public SchoolVariable findBySchoolAndVariableKey(School school, SchoolVariableKey key) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -90,4 +90,10 @@ public class SchoolVariableDAO extends PyramusEntityDAO<SchoolVariable> {
     }
   }
 
+  public void delete(SchoolVariable schoolVariable) {
+    School school = schoolVariable.getSchool();
+    school.getVariables().remove(schoolVariable);
+    super.delete(schoolVariable);
+  }
+  
 }

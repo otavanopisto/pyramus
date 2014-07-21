@@ -1,6 +1,7 @@
 package fi.pyramus.rest;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -22,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
+import fi.pyramus.domainmodel.base.SchoolVariableKey;
+import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.model.ObjectFactory;
 
@@ -65,6 +68,18 @@ public class SchoolRESTService extends AbstractRESTService {
     if (entity.getTags() != null) {
       for (String tag : entity.getTags()) {
         schoolController.createSchoolTag(school, tag);
+      }
+    }
+    
+    if (entity.getVariables() != null) {
+      Set<String> variableKeys = entity.getVariables().keySet();
+      for (String variableKey : variableKeys) {
+        SchoolVariableKey schoolVariableKey = schoolController.findSchoolVariableKeyByVariableKey(variableKey);
+        if (schoolVariableKey == null) {
+          return Response.status(Status.BAD_REQUEST).build();
+        }
+        
+        schoolController.createSchoolVariable(school, schoolVariableKey, entity.getVariables().get(variableKey));
       }
     }
 
@@ -138,6 +153,7 @@ public class SchoolRESTService extends AbstractRESTService {
     
     schoolController.updateSchool(school, code, name, schoolField);
     schoolController.updateSchoolTags(school, entity.getTags());
+    schoolController.updateSchoolVariables(school, entity.getVariables());
     
     return Response.ok(objectFactory.createModel(school)).build();
   }
@@ -233,119 +249,108 @@ public class SchoolRESTService extends AbstractRESTService {
     
     return Response.noContent().build();
   }
-//  
-//  @Path("/variables/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveSchoolVariable(@PathParam("ID") Long id) {
-//    SchoolVariable schoolVariable = schoolController.findSchoolVariableById(id);
-//    if (schoolVariable != null) {
-//      return Response.ok()
-//          .entity(tranqualise(schoolController.archiveSchoolVariable(schoolVariable, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-
   
-
-//  
-//  @Path("/variables")
-//  @POST
-//  public Response createSchoolVariable(SchoolVariableEntity schoolVariableEntity) {
-//    School school = schoolController.findSchoolById(schoolVariableEntity.getSchool_id());
-//    Long keyId = schoolVariableEntity.getKey_id();
-//    String value = schoolVariableEntity.getValue();
-//    if (school != null && keyId != null && !StringUtils.isBlank(value)) {
-//      return Response.ok()
-//          .entity(tranqualise(schoolController.createSchoolVariable(school, keyId, value)))
-//          .build();
-//    } else {
-//      return Response.status(501).build();
-//    }
-//  }
-//  
-
-
-//  @Path("/variables")
-//  @GET
-//  public Response findSchoolVariables() {
-//    List<SchoolVariable> schoolVariables = schoolController.findSchoolVariables();
-//    if (!schoolVariables.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(schoolController.findSchoolVariables()))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/variables/{ID:[0-9]*}")
-//  @GET
-//  public Response findScoolVariableByID(@PathParam("ID") Long id) {
-//    SchoolVariable schoolVariable = schoolController.findSchoolVariableById(id);
-//    if (schoolVariable != null) {
-//      return Response.ok()
-//          .entity(tranqualise(schoolVariable))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/schools/{ID:[0-9]*}/variables")
-//  @GET
-//  public Response findSchoolVariablesBySchool(@PathParam("ID") Long id) {
-//    School school = schoolController.findSchoolById(id);
-//    if(school != null)  {
-//      List<SchoolVariable> schoolVariables = school.getVariables();
-//      if (schoolVariables != null) {
-//        return Response.ok()
-//            .entity(tranqualise(schoolVariables))
-//            .build();
-//      } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/schools/{SID:[0-9]*}/variables/{ID:[0-9]*}")
-//  @GET
-//  public Response findSchoolVariableBySchool(@PathParam("SID") Long schoolId, @PathParam("ID") Long id) {
-//    School school = schoolController.findSchoolById(schoolId);
-//    SchoolVariable schoolVariable = schoolController.findSchoolVariableById(id);
-//    if (school != null && schoolVariable != null) {
-//      List<SchoolVariable> schoolVariables = school.getVariables();
-//      if (schoolVariables.contains(schoolVariable)) {
-//        return Response.ok()
-//            .entity(tranqualise(schoolVariable))
-//            .build();
-//      } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
+  @Path("/variables")
+  @POST
+  public Response createVariable(fi.pyramus.rest.model.SchoolVariableKey entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(entity.getKey())||StringUtils.isBlank(entity.getName())||(entity.getType() == null)||(entity.getUserEditable() == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    VariableType variableType = null;
+    switch (entity.getType()) {
+      case BOOLEAN:
+        variableType = VariableType.BOOLEAN;
+      break;
+      case DATE:
+        variableType = VariableType.DATE;
+      break;
+      case NUMBER:
+        variableType = VariableType.NUMBER;
+      break;
+      case TEXT:
+        variableType = VariableType.TEXT;
+      break;
+    }
+    
+    SchoolVariableKey schoolVariableKey = schoolController.createSchoolVariableKey(entity.getKey(), entity.getName(), variableType, entity.getUserEditable());
+    return Response.ok(objectFactory.createModel(schoolVariableKey)).build();
+  }
   
-//  @Path("/variables/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateSchoolVariable(@PathParam("ID") Long id, SchoolVariableEntity schoolVariableEntity) {
-//    SchoolVariable schoolVariable = schoolController.findSchoolVariableById(id);
-//    String value = schoolVariableEntity.getValue();
-//    if (schoolVariable != null && !StringUtils.isBlank(value)) {
-//      return Response.ok()
-//          .entity(tranqualise(schoolController.updateSchoolVariable(schoolVariable, value)))
-//          .build();
-//    } else if (!schoolVariableEntity.getArchived()) {
-//      return Response.ok()
-//          .entity(tranqualise(schoolController.unarchiveSchoolVariable(schoolVariable, getUser())))
-//          .build();
-//    }  else {
-//      return Response.status(501).build();
-//    }
-//  }
-
+  @Path("/variables")
+  @GET
+  public Response listVariables() {
+    List<SchoolVariableKey> variableKeys = schoolController.listSchoolVariableKeys();
+    if (variableKeys.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(variableKeys)).build();
+  }
+  
+  @Path("/variables/{KEY}")
+  @GET
+  public Response findVariable(@PathParam ("KEY") String key) {
+    SchoolVariableKey schoolVariableKey = schoolController.findSchoolVariableKeyByVariableKey(key);
+    if (schoolVariableKey == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(schoolVariableKey)).build();
+  }
+  
+  @Path("/variables/{KEY}")
+  @PUT
+  public Response updateVariable(@PathParam ("KEY") String key, fi.pyramus.rest.model.SchoolVariableKey entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(entity.getName())||(entity.getType() == null)||(entity.getUserEditable() == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    SchoolVariableKey schoolVariableKey = schoolController.findSchoolVariableKeyByVariableKey(key);
+    if (schoolVariableKey == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    VariableType variableType = null;
+    switch (entity.getType()) {
+      case BOOLEAN:
+        variableType = VariableType.BOOLEAN;
+      break;
+      case DATE:
+        variableType = VariableType.DATE;
+      break;
+      case NUMBER:
+        variableType = VariableType.NUMBER;
+      break;
+      case TEXT:
+        variableType = VariableType.TEXT;
+      break;
+    }
+    
+    schoolController.updateSchoolVariableKey(schoolVariableKey, entity.getName(), variableType, entity.getUserEditable());
+    
+    return Response.ok(objectFactory.createModel(schoolVariableKey)).build();
+  }
+  
+  @Path("/variables/{KEY}")
+  @DELETE
+  public Response deleteVariable(@PathParam ("KEY") String key) {
+    SchoolVariableKey schoolVariableKey = schoolController.findSchoolVariableKeyByVariableKey(key);
+    if (schoolVariableKey == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    schoolController.deleteSchoolVariableKey(schoolVariableKey);
+    
+    return Response.noContent().build();
+  }
+  
 }

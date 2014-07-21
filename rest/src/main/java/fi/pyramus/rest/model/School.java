@@ -1,6 +1,7 @@
 package fi.pyramus.rest.model;
 
 import java.util.List;
+import java.util.Map;
 
 public class School {
 
@@ -8,7 +9,7 @@ public class School {
     super();
   }
 
-  public School(Long id, String code, String name, List<String> tags, Long fieldId, Boolean archived) {
+  public School(Long id, String code, String name, List<String> tags, Long fieldId, Boolean archived, Map<String, String> variables) {
     super();
     this.id = id;
     this.code = code;
@@ -16,6 +17,7 @@ public class School {
     this.archived = archived;
     this.tags = tags;
     this.fieldId = fieldId;
+    this.variables = variables;
   }
 
   public Long getId() {
@@ -65,6 +67,14 @@ public class School {
   public void setFieldId(Long fieldId) {
     this.fieldId = fieldId;
   }
+ 
+  public Map<String, String> getVariables() {
+    return variables;
+  }
+  
+  public void setVariables(Map<String, String> variables) {
+    this.variables = variables;
+  }
 
   private Long id;
   private String code;
@@ -72,4 +82,5 @@ public class School {
   private Boolean archived;
   private List<String> tags;
   private Long fieldId;
+  private Map<String, String> variables;
 }

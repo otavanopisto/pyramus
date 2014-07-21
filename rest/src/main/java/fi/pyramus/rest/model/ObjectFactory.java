@@ -19,6 +19,7 @@ import org.joda.time.DateTime;
 
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationSubtype;
+import fi.pyramus.domainmodel.base.SchoolVariable;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -36,6 +37,7 @@ import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.domainmodel.projects.ProjectModule;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
+import fi.pyramus.domainmodel.base.SchoolVariableKey;
 
 @ApplicationScoped
 @Stateful
@@ -255,7 +257,12 @@ public class ObjectFactory {
               }
             }
             
-            return new fi.pyramus.rest.model.School(entity.getId(), entity.getCode(), entity.getName(), tags, fieldId, entity.getArchived());
+            Map<String, String> variables = new HashMap<>();
+            for (SchoolVariable entityVariable : entity.getVariables()) {
+              variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
+            }
+            
+            return new fi.pyramus.rest.model.School(entity.getId(), entity.getCode(), entity.getName(), tags, fieldId, entity.getArchived(), variables);
           }
         }, 
         
@@ -263,6 +270,29 @@ public class ObjectFactory {
           @Override
           public Object map(SchoolField entity) {
             return new fi.pyramus.rest.model.SchoolField(entity.getId(), entity.getName(), entity.getArchived());
+          }
+        }, 
+        
+        new Mapper<SchoolVariableKey>() {
+          @Override
+          public Object map(SchoolVariableKey entity) {
+            VariableType type = null;
+            switch (entity.getVariableType()) {
+              case BOOLEAN:
+                type = VariableType.BOOLEAN;
+              break;
+              case DATE:
+                type = VariableType.DATE;
+              break;
+              case NUMBER:
+                type = VariableType.NUMBER;
+              break;
+              case TEXT:
+                type = VariableType.TEXT;
+              break;
+            }
+            
+            return new fi.pyramus.rest.model.SchoolVariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), type);
           }
         }
         

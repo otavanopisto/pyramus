@@ -2,6 +2,7 @@ package fi.pyramus.rest.controller;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -18,6 +19,7 @@ import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariable;
 import fi.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.persistence.search.SearchResult;
 
@@ -124,6 +126,43 @@ public class SchoolController {
     
     return school;
   }
+
+  public synchronized School updateSchoolVariables(School school, Map<String, String> variables) {
+    Set<String> newKeys = new HashSet<>(variables.keySet());
+    Set<String> oldKeys = new HashSet<>();
+    Set<String> updateKeys = new HashSet<>();
+    
+    for (SchoolVariable variable : school.getVariables()) {
+      oldKeys.add(variable.getKey().getVariableKey());
+    }
+
+    for (String oldKey : oldKeys) {
+      if (!newKeys.contains(oldKey)) {
+        SchoolVariableKey key = findSchoolVariableKeyByVariableKey(oldKey);
+        SchoolVariable schoolVariable = findSchoolVariableBySchoolAndKey(school, key);
+        deleteSchoolVariable(schoolVariable);
+      } else {
+        updateKeys.add(oldKey);
+      }
+      
+      newKeys.remove(oldKey);
+    }
+    
+    for (String newKey : newKeys) {
+      String value = variables.get(newKey);
+      SchoolVariableKey key = findSchoolVariableKeyByVariableKey(newKey);
+      createSchoolVariable(school, key, value);
+    }
+    
+    for (String updateKey : updateKeys) {
+      String value = variables.get(updateKey);
+      SchoolVariableKey key = findSchoolVariableKeyByVariableKey(updateKey);
+      SchoolVariable schoolVariable = findSchoolVariableBySchoolAndKey(school, key);
+      updateSchoolVariable(schoolVariable, value);
+    }
+    
+    return school;
+  }
   
   /* SchoolField */
 
@@ -162,15 +201,21 @@ public class SchoolController {
   
   /* SchoolVariable */
 
-  public SchoolVariable createSchoolVariable(School school, Long keyId, String value) {
-    SchoolVariableKey key = schoolVariableKeyDAO.findById(keyId);
-    SchoolVariable schoolVariable = schoolVariableDAO.create(school, key, value);
-    return schoolVariable;
+  public SchoolVariable createSchoolVariable(School school, SchoolVariableKey key, String value) {
+    return schoolVariableDAO.create(school, key, value);
   }
 
   public SchoolVariable findSchoolVariableById(Long id) {
     SchoolVariable schoolVariable = schoolVariableDAO.findById(id);
     return schoolVariable;
+  }
+
+  public SchoolVariable findSchoolVariableBySchoolAndKey(School school, SchoolVariableKey key) {
+    return schoolVariableDAO.findBySchoolAndVariableKey(school, key);
+  }
+
+  public void deleteSchoolVariable(SchoolVariable variable) {
+    schoolVariableDAO.delete(variable);
   }
   
   public List<SchoolVariable> listSchoolVariables() {
@@ -192,4 +237,29 @@ public class SchoolController {
     return schoolVariable;
   }
 
+  /* SchoolVariableKey */
+  
+  public SchoolVariableKey createSchoolVariableKey(String key, String name, VariableType variableType, Boolean userEditable) {
+    return schoolVariableKeyDAO.create(key, name, variableType, userEditable);
+  }
+
+  public SchoolVariableKey findSchoolVariableKeyByVariableKey(String variableKey) {
+    return schoolVariableKeyDAO.findVariableKey(variableKey);
+  }
+  
+  public List<SchoolVariableKey> listSchoolVariableKeys() {
+    return schoolVariableKeyDAO.listAll();
+  }
+
+  public SchoolVariableKey updateSchoolVariableKey(SchoolVariableKey schoolVariableKey, String variableName, VariableType variableType, Boolean userEditable) {
+    return 
+      schoolVariableKeyDAO.updateUserEditable(
+        schoolVariableKeyDAO.updateVariableName(
+            schoolVariableKeyDAO.updateVariableType(schoolVariableKey, variableType), variableName), userEditable);
+  }
+
+  public void deleteSchoolVariableKey(SchoolVariableKey schoolVariableKey) {
+    schoolVariableKeyDAO.delete(schoolVariableKey);
+  }
+  
 }
