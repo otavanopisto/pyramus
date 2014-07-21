@@ -40,9 +40,6 @@ public class StudentSubResourceController {
   private StudyProgrammeDAO studyProgrammeDAO;
   
   @Inject
-  private NationalityDAO nationalityDAO;
-  
-  @Inject
   private StudentActivityTypeDAO activityTypeDAO;
   
   @Inject
@@ -50,11 +47,6 @@ public class StudentSubResourceController {
   
   @Inject
   private StudentExaminationTypeDAO examinationTypeDAO;
-  
-  public Nationality createNationality(String name, String code) {
-    Nationality nationality = nationalityDAO.create(name, code);
-    return nationality;
-  }
   
   public StudentActivityType createStudentActivityType(String name) {
     StudentActivityType activityType = activityTypeDAO.create(name);
@@ -85,22 +77,7 @@ public class StudentSubResourceController {
     StudyProgramme studyProgramme = studyProgrammeDAO.create(name, category, code);
     return studyProgramme;
   }
-  
-  public List<Nationality> findNationalities() {
-    List<Nationality> nationalities = nationalityDAO.listAll();
-    return nationalities;
-  }
-  
-  public List<Nationality> findUnarchivedNationalities() {
-    List<Nationality> nationalities = nationalityDAO.listUnarchived();
-    return nationalities;
-  }
-  
-  public Nationality findNationalityById(Long id) {
-    Nationality nationality = nationalityDAO.findById(id);
-    return nationality;
-  }
-  
+
   public List<StudentActivityType> findStudentActivityTypes() {
     List<StudentActivityType> activityTypes = activityTypeDAO.listAll();
     return activityTypes;
@@ -189,10 +166,6 @@ public class StudentSubResourceController {
   public StudyProgramme findStudyProgrammeById(Long id) {
     StudyProgramme studyProgramme = studyProgrammeDAO.findById(id);
     return studyProgramme;
-  }
-  
-  public Nationality updateNationality(Nationality nationality, String name, String code) {
-    return nationalityDAO.updateCode(nationalityDAO.updateName(nationality, name), code);
   }
   
   public StudentActivityType updateStudentActivityType(StudentActivityType activityType, String name) {

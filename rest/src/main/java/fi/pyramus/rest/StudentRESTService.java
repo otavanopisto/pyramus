@@ -46,6 +46,7 @@ import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.LanguageController;
 import fi.pyramus.rest.controller.MunicipalityController;
+import fi.pyramus.rest.controller.NationalityController;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.StudentContactLogEntryController;
 import fi.pyramus.rest.controller.StudentController;
@@ -76,6 +77,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private MunicipalityController municipalityController;
+
+  @Inject
+  private NationalityController nationalityController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -252,7 +256,92 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
 
+  @Path("/nationalities")
+  @POST
+  public Response createNationality(fi.pyramus.rest.model.Nationality entity) {
+    String name = entity.getName();
+    String code = entity.getCode();
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response
+        .ok(objectFactory.createModel(nationalityController.createNationality(name, code)))
+        .build();
+  }
+
+  @Path("/nationalities")
+  @GET
+  public Response listNationalities(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Nationality> nationalities;
+    if (filterArchived) {
+      nationalities = nationalityController.listUnarchivedNationalities();
+    } else {
+      nationalities = nationalityController.listNationalities();
+    }
+    
+    if (nationalities.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(nationalities)).build();
+  }
   
+  @Path("/nationalities/{ID:[0-9]*}")
+  @GET
+  public Response findNationalityById(@PathParam("ID") Long id) {
+    Nationality nationality = nationalityController.findNationalityById(id);
+    if (nationality == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (nationality.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+
+    return Response.ok(objectFactory.createModel(nationality)).build();
+  }
+
+  @Path("/nationalities/{ID:[0-9]*}")
+  @PUT
+  public Response updateNationality(@PathParam("ID") Long id, fi.pyramus.rest.model.EducationType entity) {
+    Nationality nationality = nationalityController.findNationalityById(id);
+    if (nationality == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (nationality.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    String name = entity.getName();
+    String code = entity.getCode();
+    
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(nationalityController.updateNationality(nationality, name, code))).build();
+  }
+      
+  @Path("/nationalities/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteNationality(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    Nationality nationality = nationalityController.findNationalityById(id);
+    if (nationality == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (permanent) {
+      nationalityController.deleteNationality(nationality);
+    } else {
+      nationalityController.archiveNationality(nationality, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+
 //  
 //  @Inject
 //  private AbstractStudentController abstractStudentController;
@@ -269,21 +358,6 @@ public class StudentRESTService extends AbstractRESTService {
 //  @Inject
 //  private StudentContactLogEntryController contactLogEntryController;
 //  
-//  
-//  
-//  @Path("/nationalities")
-//  @POST
-//  public Response createNationalities(NationalityEntity nationalityEntity) {
-//    String name = nationalityEntity.getName();
-//    String code = nationalityEntity.getCode();
-//    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
-//      return Response.ok()
-//          .entity(tranqualise(studentSubController.createNationality(name, code)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
 //  
 //  @Path("/studentActivityTypes")
 //  @POST
@@ -527,38 +601,7 @@ public class StudentRESTService extends AbstractRESTService {
 //  }
 //  
 
-//  
-//  @Path("/nationalities")
-//  @GET
-//  public Response findNationalities(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<Nationality> nationalities;
-//    if (filterArchived) {
-//      nationalities = studentSubController.findUnarchivedNationalities();
-//    } else {
-//      nationalities = studentSubController.findNationalities();
-//    }
-//    if (!nationalities.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(nationalities))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/nationalities/{ID:[0-9]*}")
-//  @GET
-//  public Response findNationalityById(@PathParam("ID") Long id) {
-//    Nationality nationality = studentSubController.findNationalityById(id);
-//    if (nationality != null) {
-//      return Response.ok()
-//          .entity(tranqualise(nationality))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+
 //  @Path("/studentActivityTypes")
 //  @GET
 //  public Response findStudentActivityTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -947,26 +990,6 @@ public class StudentRESTService extends AbstractRESTService {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
-
-//  @Path("/nationalities/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateNationality(@PathParam("ID") Long id, NationalityEntity nationalityEntity) {
-//    Nationality nationality = studentSubController.findNationalityById(id);
-//    if (nationality != null) {
-//      String name = nationalityEntity.getName();
-//      String code = nationalityEntity.getCode();
-//      if (!StringUtils.isBlank(name) && !StringUtils.isBlank(code)) {
-//        return Response.ok()
-//            .entity(tranqualise(studentSubController.updateNationality(nationality, name, code)))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
 //  @Path("/studentActivityTypes/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateStudentActivityType(@PathParam("ID") Long id, StudentActivityTypeEntity activityTypeEntity) {

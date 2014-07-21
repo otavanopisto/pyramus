@@ -248,6 +248,12 @@ values
   (1, 'TST1', 'Municipality #1', 1, false),
   (2, 'TST2', 'Municipality #2', 1, false);  
 
+insert into 
+  Nationality (id, code, name, version, archived)
+values 
+  (1, 'TST1', 'Nationality #1', 1, false),
+  (2, 'TST2', 'Nationality #2', 1, false);  
+  
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
@@ -282,5 +288,6 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseBaseVariableKey', max(id) + 1 from CourseBaseVariableKey;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Language', max(id) + 1 from Language;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Municipality', max(id) + 1 from Municipality;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Nationality', max(id) + 1 from Nationality;
 
 
