@@ -155,6 +155,10 @@ public class SchoolController {
     schoolFieldDAO.unarchive(schoolField, user);
     return schoolField;
   }
+
+  public void deleteSchoolField(SchoolField schoolField) {
+    schoolFieldDAO.delete(schoolField);
+  }
   
   /* SchoolVariable */
 
