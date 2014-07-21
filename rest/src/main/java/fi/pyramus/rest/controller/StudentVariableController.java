@@ -16,40 +16,65 @@ import fi.pyramus.domainmodel.students.StudentVariableKey;
 @Dependent
 @Stateless
 public class StudentVariableController {
+  
   @Inject
   private StudentVariableDAO studentVariableDAO;
+  
   @Inject
-  private StudentVariableKeyDAO variableKeyDAO;
+  private StudentVariableKeyDAO studentVariableKeyDAO;
+  
+  /* StudentVariable */
   
   public StudentVariable createStudentVariable(Student student, StudentVariableKey key, String value) {
     StudentVariable studentVariable = studentVariableDAO.create(student, key, value);
     return studentVariable;
   }
   
-  public StudentVariableKey createStudentVariableKey(boolean userEditable, String key, String variableName, VariableType variableType) {
-    StudentVariableKey variableKey = variableKeyDAO.create(userEditable, key, variableName, variableType);
-    return variableKey;
-  }
-  
-  public List<StudentVariable> findStudentVariables() {
-    List<StudentVariable> studentVariables = studentVariableDAO.listAll();
-    return studentVariables;
-  }
-  
-  public StudentVariable findStudentVariableById(Long id) {
+  public StudentVariable finddStudentVariableById(Long id) {
     StudentVariable studentVariable = studentVariableDAO.findById(id);
     return studentVariable;
   }
   
-  public StudentVariableKey findStudentVariableKeyById(Long id) {
-    StudentVariableKey variableKey = variableKeyDAO.findById(id);
-    return variableKey;
+  public List<StudentVariable> listStudentVariables() {
+    List<StudentVariable> studentVariables = studentVariableDAO.listAll();
+    return studentVariables;
   }
   
   public StudentVariable updateStudentVariable(StudentVariable studentVariable, String value) {
     StudentVariable updated = studentVariableDAO.update(studentVariable, value);
     return updated;
   }
-  
 
+  
+  /* StudentVariableKey */
+  
+  public StudentVariableKey createStudentVariableKey(String key, String variableName, VariableType variableType, Boolean userEditable) {
+    StudentVariableKey variableKey = studentVariableKeyDAO.create(userEditable, key, variableName, variableType);
+    return variableKey;
+  }
+  
+  public StudentVariableKey findStudentVariableKeyById(Long id) {
+    StudentVariableKey variableKey = studentVariableKeyDAO.findById(id);
+    return variableKey;
+  }  
+  
+  public StudentVariableKey findStudentVariableKeyByVariableKey(String key) {
+    return studentVariableKeyDAO.findByKey(key);
+  }  
+
+  public List<StudentVariableKey> listStudentVariableKeys() {
+    return studentVariableKeyDAO.listAll();
+  }
+  
+  public StudentVariableKey updateStudentVariableKey(StudentVariableKey studentVariableKey, String variableName, VariableType variableType, Boolean userEditable) {
+    return 
+      studentVariableKeyDAO.updateUserEditable(
+        studentVariableKeyDAO.updateVariableName(
+            studentVariableKeyDAO.updateVariableType(studentVariableKey, variableType), variableName), userEditable);
+  }
+
+  public void deleteStudentVariableKey(StudentVariableKey studentVariableKey) {
+    studentVariableKeyDAO.delete(studentVariableKey);
+  }
+  
 }

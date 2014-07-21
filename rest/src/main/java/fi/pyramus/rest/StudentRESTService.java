@@ -19,6 +19,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
@@ -27,6 +29,7 @@ import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
@@ -48,6 +51,7 @@ import fi.pyramus.rest.controller.StudentGroupController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.controller.StudentVariableController;
 import fi.pyramus.rest.controller.TagController;
+import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/students")
 @Produces("application/json")
@@ -55,6 +59,14 @@ import fi.pyramus.rest.controller.TagController;
 @Stateful
 @RequestScoped
 public class StudentRESTService extends AbstractRESTService {
+
+  @Inject
+  private StudentVariableController studentVariableController;
+
+  @Inject
+  private ObjectFactory objectFactory;
+
+  
 //  
 //  @Inject
 //  private AbstractStudentController abstractStudentController;
@@ -70,8 +82,6 @@ public class StudentRESTService extends AbstractRESTService {
 //  private TagController tagController;
 //  @Inject
 //  private StudentGroupController studentGroupController;
-//  @Inject
-//  private StudentVariableController variableController;
 //  @Inject
 //  private StudentContactLogEntryController contactLogEntryController;
 //  
@@ -1214,5 +1224,110 @@ public class StudentRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
+  
+
+  
+  @Path("/variables")
+  @POST
+  public Response createVariable(fi.pyramus.rest.model.StudentVariableKey entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(entity.getKey())||StringUtils.isBlank(entity.getName())||(entity.getType() == null)||(entity.getUserEditable() == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    VariableType variableType = null;
+    switch (entity.getType()) {
+      case BOOLEAN:
+        variableType = VariableType.BOOLEAN;
+      break;
+      case DATE:
+        variableType = VariableType.DATE;
+      break;
+      case NUMBER:
+        variableType = VariableType.NUMBER;
+      break;
+      case TEXT:
+        variableType = VariableType.TEXT;
+      break;
+    }
+    
+    StudentVariableKey studentVariableKey = studentVariableController.createStudentVariableKey(entity.getKey(), entity.getName(), variableType, entity.getUserEditable());
+    return Response.ok(objectFactory.createModel(studentVariableKey)).build();
+  }
+  
+  @Path("/variables")
+  @GET
+  public Response listVariables() {
+    List<StudentVariableKey> variableKeys = studentVariableController.listStudentVariableKeys();
+    if (variableKeys.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(variableKeys)).build();
+  }
+  
+  @Path("/variables/{KEY}")
+  @GET
+  public Response findVariable(@PathParam ("KEY") String key) {
+    StudentVariableKey studentVariableKey = studentVariableController.findStudentVariableKeyByVariableKey(key);
+    if (studentVariableKey == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studentVariableKey)).build();
+  }
+  
+  @Path("/variables/{KEY}")
+  @PUT
+  public Response updateVariable(@PathParam ("KEY") String key, fi.pyramus.rest.model.StudentVariableKey entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(entity.getName())||(entity.getType() == null)||(entity.getUserEditable() == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    StudentVariableKey studentVariableKey = studentVariableController.findStudentVariableKeyByVariableKey(key);
+    if (studentVariableKey == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    VariableType variableType = null;
+    switch (entity.getType()) {
+      case BOOLEAN:
+        variableType = VariableType.BOOLEAN;
+      break;
+      case DATE:
+        variableType = VariableType.DATE;
+      break;
+      case NUMBER:
+        variableType = VariableType.NUMBER;
+      break;
+      case TEXT:
+        variableType = VariableType.TEXT;
+      break;
+    }
+    
+    studentVariableController.updateStudentVariableKey(studentVariableKey, entity.getName(), variableType, entity.getUserEditable());
+    
+    return Response.ok(objectFactory.createModel(studentVariableKey)).build();
+  }
+  
+  @Path("/variables/{KEY}")
+  @DELETE
+  public Response deleteVariable(@PathParam ("KEY") String key) {
+    StudentVariableKey studentVariableKey = studentVariableController.findStudentVariableKeyByVariableKey(key);
+    if (studentVariableKey == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    studentVariableController.deleteStudentVariableKey(studentVariableKey);
+    
+    return Response.noContent().build();
+  }
 
 }

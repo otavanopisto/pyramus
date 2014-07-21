@@ -221,6 +221,14 @@ insert into
   SchoolVariable (id, value, school, variableKey, version, archived)
 values 
   (1, 'test', 1, 1, 1, false);
+  
+insert into 
+  StudentVariableKey (id, userEditable, variableKey, variableName, variableType, version)
+values 
+  (1, false, 'TV1', 'Test Variable #1 - text', 'TEXT', 1),
+  (2, false, 'TV2', 'Test Variable #2 - number', 'NUMBER', 1),
+  (3, false, 'TV3', 'Test Variable #3 - boolean', 'BOOLEAN', 1);
+  
 
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
@@ -252,5 +260,6 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'School', max(id) + 1 from School;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SchoolVariableKey', max(id) + 1 from SchoolVariableKey;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SchoolVariable', max(id) + 1 from SchoolVariable;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentVariableKey', max(id) + 1 from StudentVariableKey;
 
 

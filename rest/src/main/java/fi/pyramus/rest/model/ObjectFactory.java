@@ -38,6 +38,7 @@ import fi.pyramus.domainmodel.projects.ProjectModule;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariableKey;
+import fi.pyramus.domainmodel.students.StudentVariableKey;
 
 @ApplicationScoped
 @Stateful
@@ -276,27 +277,17 @@ public class ObjectFactory {
         new Mapper<SchoolVariableKey>() {
           @Override
           public Object map(SchoolVariableKey entity) {
-            VariableType type = null;
-            switch (entity.getVariableType()) {
-              case BOOLEAN:
-                type = VariableType.BOOLEAN;
-              break;
-              case DATE:
-                type = VariableType.DATE;
-              break;
-              case NUMBER:
-                type = VariableType.NUMBER;
-              break;
-              case TEXT:
-                type = VariableType.TEXT;
-              break;
-            }
-            
-            return new fi.pyramus.rest.model.SchoolVariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), type);
+            return new fi.pyramus.rest.model.SchoolVariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), toVariableType(entity.getVariableType()));
+          }
+        }, 
+        
+        new Mapper<StudentVariableKey>() {
+          @Override
+          public Object map(StudentVariableKey entity) {
+            return new fi.pyramus.rest.model.StudentVariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), toVariableType(entity.getVariableType()));
           }
         }
-        
-        
+
     );
   }
 
@@ -332,6 +323,21 @@ public class ObjectFactory {
     }
     
     return new DateTime(date.getTime());
+  }
+ 
+  private VariableType toVariableType(fi.pyramus.domainmodel.base.VariableType variableType) {
+    switch (variableType) {
+      case BOOLEAN:
+        return VariableType.BOOLEAN;
+      case DATE:
+        return VariableType.DATE;
+      case NUMBER:
+        return VariableType.NUMBER;
+      case TEXT:
+        return VariableType.TEXT;
+    }
+    
+    return null;
   }
   
   private static interface Mapper <T> {

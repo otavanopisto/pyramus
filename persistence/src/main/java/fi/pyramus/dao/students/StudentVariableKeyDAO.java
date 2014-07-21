@@ -61,5 +61,20 @@ public class StudentVariableKeyDAO extends PyramusEntityDAO<StudentVariableKey> 
     
     return entityManager.createQuery(criteria).getResultList();
   }
+
+  public StudentVariableKey updateVariableType(StudentVariableKey studentVariableKey, VariableType variableType) {
+    studentVariableKey.setVariableType(variableType);
+    return persist(studentVariableKey);
+  }
+
+  public StudentVariableKey updateUserEditable(StudentVariableKey studentVariableKey, Boolean userEditable) {
+    studentVariableKey.setUserEditable(userEditable);
+    return persist(studentVariableKey);
+  }
+
+  public StudentVariableKey updateVariableName(StudentVariableKey studentVariableKey, String variableName) {
+    studentVariableKey.setVariableName(variableName);
+    return persist(studentVariableKey);
+  }
   
 }
