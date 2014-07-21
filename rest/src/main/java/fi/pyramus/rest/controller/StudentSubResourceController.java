@@ -40,18 +40,10 @@ public class StudentSubResourceController {
   private StudyProgrammeDAO studyProgrammeDAO;
   
   @Inject
-  private StudentActivityTypeDAO activityTypeDAO;
-  
-  @Inject
   private StudentEducationalLevelDAO educationalLevelDAO;
   
   @Inject
   private StudentExaminationTypeDAO examinationTypeDAO;
-  
-  public StudentActivityType createStudentActivityType(String name) {
-    StudentActivityType activityType = activityTypeDAO.create(name);
-    return activityType;
-  }
   
   public StudentEducationalLevel createStudentEducationalLevel(String name) {
     StudentEducationalLevel educationalLevel = educationalLevelDAO.create(name);
@@ -76,21 +68,6 @@ public class StudentSubResourceController {
   public StudyProgramme createStudyProgramme(String name, StudyProgrammeCategory category, String code) {
     StudyProgramme studyProgramme = studyProgrammeDAO.create(name, category, code);
     return studyProgramme;
-  }
-
-  public List<StudentActivityType> findStudentActivityTypes() {
-    List<StudentActivityType> activityTypes = activityTypeDAO.listAll();
-    return activityTypes;
-  }
-
-  public List<StudentActivityType> findUnarchivedStudentActivityTypes() {
-    List<StudentActivityType> activityTypes = activityTypeDAO.listUnarchived();
-    return activityTypes;
-  }
-  
-  public StudentActivityType findStudentActivityTypeById(Long id) {
-    StudentActivityType activityType = activityTypeDAO.findById(id);
-    return activityType;
   }
   
   public List<StudentEducationalLevel> findStudentEducationalLevels() {
@@ -166,11 +143,6 @@ public class StudentSubResourceController {
   public StudyProgramme findStudyProgrammeById(Long id) {
     StudyProgramme studyProgramme = studyProgrammeDAO.findById(id);
     return studyProgramme;
-  }
-  
-  public StudentActivityType updateStudentActivityType(StudentActivityType activityType, String name) {
-    StudentActivityType updated = activityTypeDAO.updateName(activityType, name);
-    return updated;
   }
   
   public StudentEducationalLevel updateStudentEducationalLevel(StudentEducationalLevel educationalLevel, String name) {

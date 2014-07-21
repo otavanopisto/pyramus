@@ -48,6 +48,7 @@ import fi.pyramus.rest.controller.LanguageController;
 import fi.pyramus.rest.controller.MunicipalityController;
 import fi.pyramus.rest.controller.NationalityController;
 import fi.pyramus.rest.controller.SchoolController;
+import fi.pyramus.rest.controller.StudentActivityTypeController;
 import fi.pyramus.rest.controller.StudentContactLogEntryController;
 import fi.pyramus.rest.controller.StudentController;
 import fi.pyramus.rest.controller.StudentGroupController;
@@ -80,6 +81,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private NationalityController nationalityController;
+
+  @Inject
+  private StudentActivityTypeController studentActivityTypeController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -133,7 +137,7 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/languages/{ID:[0-9]*}")
   @PUT
-  public Response updateLanguage(@PathParam("ID") Long id, fi.pyramus.rest.model.EducationType entity) {
+  public Response updateLanguage(@PathParam("ID") Long id, fi.pyramus.rest.model.Language entity) {
     Language language = languageController.findLanguageById(id);
     if (language == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -219,7 +223,7 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/municipalities/{ID:[0-9]*}")
   @PUT
-  public Response updateMunicipality(@PathParam("ID") Long id, fi.pyramus.rest.model.EducationType entity) {
+  public Response updateMunicipality(@PathParam("ID") Long id, fi.pyramus.rest.model.Municipality entity) {
     Municipality municipality = municipalityController.findMunicipalityById(id);
     if (municipality == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -305,7 +309,7 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/nationalities/{ID:[0-9]*}")
   @PUT
-  public Response updateNationality(@PathParam("ID") Long id, fi.pyramus.rest.model.EducationType entity) {
+  public Response updateNationality(@PathParam("ID") Long id, fi.pyramus.rest.model.Nationality entity) {
     Nationality nationality = nationalityController.findNationalityById(id);
     if (nationality == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -337,6 +341,90 @@ public class StudentRESTService extends AbstractRESTService {
       nationalityController.deleteNationality(nationality);
     } else {
       nationalityController.archiveNationality(nationality, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+
+  @Path("/activityTypes")
+  @POST
+  public Response createStudentActivityType(fi.pyramus.rest.model.StudentActivityType entity) {
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response
+        .ok(objectFactory.createModel(studentActivityTypeController.createStudentActivityType(name)))
+        .build();
+  }
+
+  @Path("/activityTypes")
+  @GET
+  public Response listStudentActivityTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<StudentActivityType> studentActivityTypes;
+    if (filterArchived) {
+      studentActivityTypes = studentActivityTypeController.listUnarchivedStudentActivityTypes();
+    } else {
+      studentActivityTypes = studentActivityTypeController.listStudentActivityTypes();
+    }
+    
+    if (studentActivityTypes.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studentActivityTypes)).build();
+  }
+  
+  @Path("/activityTypes/{ID:[0-9]*}")
+  @GET
+  public Response findStudentActivityTypeById(@PathParam("ID") Long id) {
+    StudentActivityType studentActivityType = studentActivityTypeController.findStudentActivityTypeById(id);
+    if (studentActivityType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (studentActivityType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+
+    return Response.ok(objectFactory.createModel(studentActivityType)).build();
+  }
+
+  @Path("/activityTypes/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudentActivityType(@PathParam("ID") Long id, fi.pyramus.rest.model.StudentActivityType entity) {
+    StudentActivityType studentActivityType = studentActivityTypeController.findStudentActivityTypeById(id);
+    if (studentActivityType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (studentActivityType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(studentActivityTypeController.updateStudentActivityType(studentActivityType, name))).build();
+  }
+      
+  @Path("/activityTypes/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteStudentActivityType(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    StudentActivityType studentActivityType = studentActivityTypeController.findStudentActivityTypeById(id);
+    if (studentActivityType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (permanent) {
+      studentActivityTypeController.deleteStudentActivityType(studentActivityType);
+    } else {
+      studentActivityTypeController.archiveStudentActivityType(studentActivityType, getLoggedUser());
     }
     
     return Response.noContent().build();
