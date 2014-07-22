@@ -6,23 +6,12 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import fi.pyramus.dao.base.LanguageDAO;
-import fi.pyramus.dao.base.MunicipalityDAO;
-import fi.pyramus.dao.base.NationalityDAO;
 import fi.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
-import fi.pyramus.dao.students.StudentActivityTypeDAO;
-import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.pyramus.domainmodel.base.EducationType;
-import fi.pyramus.domainmodel.base.Language;
-import fi.pyramus.domainmodel.base.Municipality;
-import fi.pyramus.domainmodel.base.Nationality;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
-import fi.pyramus.domainmodel.students.StudentActivityType;
-import fi.pyramus.domainmodel.students.StudentEducationalLevel;
-import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 
 @Dependent
@@ -38,14 +27,6 @@ public class StudentSubResourceController {
   @Inject
   private StudyProgrammeDAO studyProgrammeDAO;
   
-  @Inject
-  private StudentExaminationTypeDAO examinationTypeDAO;
-  
-  public StudentExaminationType createStudentExaminationType(String name) {
-    StudentExaminationType examinationType = examinationTypeDAO.create(name);
-    return examinationType;
-  }
-  
   public StudentStudyEndReason createStudentStudyEndReason(StudentStudyEndReason parentReason, String name) {
     StudentStudyEndReason studentStudyEndReason = endReasonDAO.create(parentReason, name);
     return studentStudyEndReason;
@@ -59,21 +40,6 @@ public class StudentSubResourceController {
   public StudyProgramme createStudyProgramme(String name, StudyProgrammeCategory category, String code) {
     StudyProgramme studyProgramme = studyProgrammeDAO.create(name, category, code);
     return studyProgramme;
-  }
-  
-  public List<StudentExaminationType> findStudentExaminationTypes() {
-    List<StudentExaminationType> examinationTypes = examinationTypeDAO.listAll();
-    return examinationTypes;
-  }
-  
-  public List<StudentExaminationType> findUnarchivedStudentExaminationTypes() {
-    List<StudentExaminationType> examinationTypes = examinationTypeDAO.listUnarchived();
-    return examinationTypes;
-  }
-  
-  public StudentExaminationType findStudentExaminationTypeById(Long id) {
-    StudentExaminationType examinationType = examinationTypeDAO.findById(id);
-    return examinationType;
   }
   
   public List<StudentStudyEndReason> findStudentStudyEndReasons() {
@@ -119,11 +85,6 @@ public class StudentSubResourceController {
   public StudyProgramme findStudyProgrammeById(Long id) {
     StudyProgramme studyProgramme = studyProgrammeDAO.findById(id);
     return studyProgramme;
-  }
-  
-  public StudentExaminationType updateStudentExaminationType(StudentExaminationType examinationType, String name) {
-    StudentExaminationType updated = examinationTypeDAO.updateName(examinationType, name);
-    return updated;
   }
   
   public StudentStudyEndReason updateStudentStudyEndReason(StudentStudyEndReason endReason, String name) {

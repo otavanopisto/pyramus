@@ -42,6 +42,7 @@ import fi.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.pyramus.domainmodel.students.StudentVariableKey;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
+import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
@@ -333,6 +334,13 @@ public class ObjectFactory {
           @Override
           public Object map(StudentEducationalLevel entity) {
             return new fi.pyramus.rest.model.StudentEducationalLevel(entity.getId(), entity.getName(), entity.getArchived());
+          }
+        },
+        
+        new Mapper<StudentExaminationType>() {
+          @Override
+          public Object map(StudentExaminationType entity) {
+            return new fi.pyramus.rest.model.StudentExaminationType(entity.getId(), entity.getName(), entity.getArchived());
           }
         }
 

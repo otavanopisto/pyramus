@@ -52,6 +52,7 @@ import fi.pyramus.rest.controller.StudentActivityTypeController;
 import fi.pyramus.rest.controller.StudentContactLogEntryController;
 import fi.pyramus.rest.controller.StudentController;
 import fi.pyramus.rest.controller.StudentEducationalLevelController;
+import fi.pyramus.rest.controller.StudentExaminationTypeController;
 import fi.pyramus.rest.controller.StudentGroupController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.controller.StudentVariableController;
@@ -88,6 +89,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private StudentEducationalLevelController studentEducationalLevelController;
+
+  @Inject
+  private StudentExaminationTypeController studentExaminationTypeController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -518,6 +522,90 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
 
+  @Path("/examinationTypes")
+  @POST
+  public Response createStudentExaminationType(fi.pyramus.rest.model.StudentExaminationType entity) {
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response
+        .ok(objectFactory.createModel(studentExaminationTypeController.createStudentExaminationType(name)))
+        .build();
+  }
+
+  @Path("/examinationTypes")
+  @GET
+  public Response listStudentExaminationTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<StudentExaminationType> studentExaminationTypes;
+    if (filterArchived) {
+      studentExaminationTypes = studentExaminationTypeController.listUnarchivedStudentExaminationTypes();
+    } else {
+      studentExaminationTypes = studentExaminationTypeController.listStudentExaminationTypes();
+    }
+    
+    if (studentExaminationTypes.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studentExaminationTypes)).build();
+  }
+  
+  @Path("/examinationTypes/{ID:[0-9]*}")
+  @GET
+  public Response findStudentExaminationTypeById(@PathParam("ID") Long id) {
+    StudentExaminationType studentExaminationType = studentExaminationTypeController.findStudentExaminationTypeById(id);
+    if (studentExaminationType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (studentExaminationType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+
+    return Response.ok(objectFactory.createModel(studentExaminationType)).build();
+  }
+
+  @Path("/examinationTypes/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudentExaminationType(@PathParam("ID") Long id, fi.pyramus.rest.model.StudentExaminationType entity) {
+    StudentExaminationType studentExaminationType = studentExaminationTypeController.findStudentExaminationTypeById(id);
+    if (studentExaminationType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (studentExaminationType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(studentExaminationTypeController.updateStudentExaminationType(studentExaminationType, name))).build();
+  }
+      
+  @Path("/examinationTypes/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteStudentExaminationType(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    StudentExaminationType studentExaminationType = studentExaminationTypeController.findStudentExaminationTypeById(id);
+    if (studentExaminationType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (permanent) {
+      studentExaminationTypeController.deleteStudentExaminationType(studentExaminationType);
+    } else {
+      studentExaminationTypeController.archiveStudentExaminationType(studentExaminationType, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+
 //  
 //  @Inject
 //  private AbstractStudentController abstractStudentController;
@@ -534,19 +622,6 @@ public class StudentRESTService extends AbstractRESTService {
 //  @Inject
 //  private StudentContactLogEntryController contactLogEntryController;
 //  
-//  
-//  @Path("/examinationTypes")
-//  @POST
-//  public Response createStudentExaminationType(StudentExaminationTypeEntity examinationTypeEntity) {
-//    String name = examinationTypeEntity.getName();
-//    if (!StringUtils.isBlank(name)) {
-//      return Response.ok()
-//          .entity(tranqualise(studentSubController.createStudentExaminationType(name)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
 //  
 //  @Path("/endReasons")
 //  @POST
@@ -747,37 +822,6 @@ public class StudentRESTService extends AbstractRESTService {
 //          .build();
 //    } else {
 //      return Response.status(500).build();
-//    }
-//  }
-//  
-//  @Path("/examinationTypes")
-//  @GET
-//  public Response findStudentExaminationTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<StudentExaminationType> examinationTypes;
-//    if (filterArchived) {
-//      examinationTypes = studentSubController.findUnarchivedStudentExaminationTypes();
-//    } else {
-//      examinationTypes = studentSubController.findStudentExaminationTypes();
-//    }
-//    if (!examinationTypes.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(examinationTypes))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/examinationTypes/{ID:[0-9]*}")
-//  @GET
-//  public Response findStudentExaminationTypes(@PathParam("ID") Long id) {
-//    StudentExaminationType studentExaminationType = studentSubController.findStudentExaminationTypeById(id);
-//    if (studentExaminationType != null) {
-//      return Response.ok()
-//          .entity(tranqualise(studentExaminationType))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
 //  
@@ -1076,24 +1120,7 @@ public class StudentRESTService extends AbstractRESTService {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
-//  @Path("/examinationTypes/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateStudentExaminationType(@PathParam("ID") Long id, StudentExaminationTypeEntity examinationTypeEntity) {
-//    StudentExaminationType examinationType = studentSubController.findStudentExaminationTypeById(id);
-//    if (examinationType != null) {
-//      String name = examinationTypeEntity.getName();
-//      if (!StringUtils.isBlank(name)) {
-//        return Response.ok()
-//            .entity(tranqualise(studentSubController.updateStudentExaminationType(examinationType, name)))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+
 //  @Path("/endReasons/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateStudentStudyEndReason(@PathParam("ID") Long id, StudentStudyEndReasonEntity endReasonEntity) {
