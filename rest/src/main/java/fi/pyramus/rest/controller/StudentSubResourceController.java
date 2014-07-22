@@ -12,7 +12,6 @@ import fi.pyramus.dao.base.NationalityDAO;
 import fi.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
-import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.pyramus.domainmodel.base.EducationType;
@@ -40,15 +39,7 @@ public class StudentSubResourceController {
   private StudyProgrammeDAO studyProgrammeDAO;
   
   @Inject
-  private StudentEducationalLevelDAO educationalLevelDAO;
-  
-  @Inject
   private StudentExaminationTypeDAO examinationTypeDAO;
-  
-  public StudentEducationalLevel createStudentEducationalLevel(String name) {
-    StudentEducationalLevel educationalLevel = educationalLevelDAO.create(name);
-    return educationalLevel;
-  }
   
   public StudentExaminationType createStudentExaminationType(String name) {
     StudentExaminationType examinationType = examinationTypeDAO.create(name);
@@ -68,21 +59,6 @@ public class StudentSubResourceController {
   public StudyProgramme createStudyProgramme(String name, StudyProgrammeCategory category, String code) {
     StudyProgramme studyProgramme = studyProgrammeDAO.create(name, category, code);
     return studyProgramme;
-  }
-  
-  public List<StudentEducationalLevel> findStudentEducationalLevels() {
-    List<StudentEducationalLevel> educationalLevels = educationalLevelDAO.listAll();
-    return educationalLevels;
-  }
-  
-  public List<StudentEducationalLevel> findUnarchivedStudentEducationalLevels() {
-    List<StudentEducationalLevel> educationalLevels = educationalLevelDAO.listUnarchived();
-    return educationalLevels;
-  }
-  
-  public StudentEducationalLevel findStudentEducationalLevelById(Long id) {
-    StudentEducationalLevel educationalLevel = educationalLevelDAO.findById(id);
-    return educationalLevel;
   }
   
   public List<StudentExaminationType> findStudentExaminationTypes() {
@@ -143,11 +119,6 @@ public class StudentSubResourceController {
   public StudyProgramme findStudyProgrammeById(Long id) {
     StudyProgramme studyProgramme = studyProgrammeDAO.findById(id);
     return studyProgramme;
-  }
-  
-  public StudentEducationalLevel updateStudentEducationalLevel(StudentEducationalLevel educationalLevel, String name) {
-    StudentEducationalLevel updated = educationalLevelDAO.updateName(educationalLevel, name);
-    return updated;
   }
   
   public StudentExaminationType updateStudentExaminationType(StudentExaminationType examinationType, String name) {

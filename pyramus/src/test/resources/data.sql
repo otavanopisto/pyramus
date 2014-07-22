@@ -258,7 +258,13 @@ insert into
   StudentActivityType (id, name, version, archived)
 values 
   (1, 'StudentActivityType #1', 1, false),
-  (2, 'StudentActivityType #2', 1, false);  
+  (2, 'StudentActivityType #2', 1, false); 
+
+insert into 
+  StudentEducationalLevel (id, name, version, archived)
+values 
+  (1, 'StudentEducationalLevel #1', 1, false),
+  (2, 'StudentEducationalLevel #2', 1, false);   
   
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
@@ -296,5 +302,6 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Municipality', max(id) + 1 from Municipality;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Nationality', max(id) + 1 from Nationality;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentActivityType', max(id) + 1 from StudentActivityType;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentEducationalLevel', max(id) + 1 from StudentEducationalLevel;
 
 

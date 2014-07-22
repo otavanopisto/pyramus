@@ -51,6 +51,7 @@ import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.StudentActivityTypeController;
 import fi.pyramus.rest.controller.StudentContactLogEntryController;
 import fi.pyramus.rest.controller.StudentController;
+import fi.pyramus.rest.controller.StudentEducationalLevelController;
 import fi.pyramus.rest.controller.StudentGroupController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.controller.StudentVariableController;
@@ -84,6 +85,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private StudentActivityTypeController studentActivityTypeController;
+
+  @Inject
+  private StudentEducationalLevelController studentEducationalLevelController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -430,6 +434,90 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
 
+  @Path("/educationalLevels")
+  @POST
+  public Response createStudentEducationalLevel(fi.pyramus.rest.model.StudentEducationalLevel entity) {
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response
+        .ok(objectFactory.createModel(studentEducationalLevelController.createStudentEducationalLevel(name)))
+        .build();
+  }
+
+  @Path("/educationalLevels")
+  @GET
+  public Response listStudentEducationalLevels(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<StudentEducationalLevel> studentEducationalLevels;
+    if (filterArchived) {
+      studentEducationalLevels = studentEducationalLevelController.listUnarchivedStudentEducationalLevels();
+    } else {
+      studentEducationalLevels = studentEducationalLevelController.listStudentEducationalLevels();
+    }
+    
+    if (studentEducationalLevels.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studentEducationalLevels)).build();
+  }
+  
+  @Path("/educationalLevels/{ID:[0-9]*}")
+  @GET
+  public Response findStudentEducationalLevelById(@PathParam("ID") Long id) {
+    StudentEducationalLevel studentEducationalLevel = studentEducationalLevelController.findStudentEducationalLevelById(id);
+    if (studentEducationalLevel == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (studentEducationalLevel.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+
+    return Response.ok(objectFactory.createModel(studentEducationalLevel)).build();
+  }
+
+  @Path("/educationalLevels/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudentEducationalLevel(@PathParam("ID") Long id, fi.pyramus.rest.model.StudentEducationalLevel entity) {
+    StudentEducationalLevel studentEducationalLevel = studentEducationalLevelController.findStudentEducationalLevelById(id);
+    if (studentEducationalLevel == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (studentEducationalLevel.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(studentEducationalLevelController.updateStudentEducationalLevel(studentEducationalLevel, name))).build();
+  }
+      
+  @Path("/educationalLevels/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteStudentEducationalLevel(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    StudentEducationalLevel studentEducationalLevel = studentEducationalLevelController.findStudentEducationalLevelById(id);
+    if (studentEducationalLevel == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (permanent) {
+      studentEducationalLevelController.deleteStudentEducationalLevel(studentEducationalLevel);
+    } else {
+      studentEducationalLevelController.archiveStudentEducationalLevel(studentEducationalLevel, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+
 //  
 //  @Inject
 //  private AbstractStudentController abstractStudentController;
@@ -446,19 +534,6 @@ public class StudentRESTService extends AbstractRESTService {
 //  @Inject
 //  private StudentContactLogEntryController contactLogEntryController;
 //  
-//  
-//  @Path("/educationalLevels")
-//  @POST
-//  public Response createStudentEducationalLevel(StudentEducationalLevelEntity educationalLevelEntity) {
-//    String name = educationalLevelEntity.getName();
-//    if (!StringUtils.isBlank(name)) {
-//      return Response.ok()
-//          .entity(tranqualise(studentSubController.createStudentEducationalLevel(name)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
 //  
 //  @Path("/examinationTypes")
 //  @POST
@@ -672,38 +747,6 @@ public class StudentRESTService extends AbstractRESTService {
 //          .build();
 //    } else {
 //      return Response.status(500).build();
-//    }
-//  }
-//  
-
-//  @Path("/educationalLevels")
-//  @GET
-//  public Response findStudentEducationalLevels(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<StudentEducationalLevel> educationalLevels;
-//    if (filterArchived) {
-//      educationalLevels = studentSubController.findUnarchivedStudentEducationalLevels();
-//    } else {
-//      educationalLevels = studentSubController.findStudentEducationalLevels();
-//    }
-//    if (!educationalLevels.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(educationalLevels))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/educationalLevels/{ID:[0-9]*}")
-//  @GET
-//  public Response findStudentEducationalLevelById(@PathParam("ID") Long id) {
-//    StudentEducationalLevel educationalLevel = studentSubController.findStudentEducationalLevelById(id);
-//    if (educationalLevel != null) {
-//      return Response.ok()
-//          .entity(tranqualise(educationalLevel))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
 //  
@@ -1033,25 +1076,6 @@ public class StudentRESTService extends AbstractRESTService {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
-
-//  @Path("/educationalLevels/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateStudentEducationalLevel(@PathParam("ID") Long id, StudentEducationalLevelEntity educationalLevelEntity) {
-//    StudentEducationalLevel educationalLevel = studentSubController.findStudentEducationalLevelById(id);
-//    if (educationalLevel != null) {
-//      String name = educationalLevelEntity.getName();
-//      if (!StringUtils.isBlank(name)) {
-//        return Response.ok()
-//            .entity(tranqualise(studentSubController.updateStudentEducationalLevel(educationalLevel, name)))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
 //  @Path("/examinationTypes/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateStudentExaminationType(@PathParam("ID") Long id, StudentExaminationTypeEntity examinationTypeEntity) {
