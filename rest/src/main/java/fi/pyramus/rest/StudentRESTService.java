@@ -60,6 +60,7 @@ import fi.pyramus.rest.controller.StudentController;
 import fi.pyramus.rest.controller.StudentEducationalLevelController;
 import fi.pyramus.rest.controller.StudentExaminationTypeController;
 import fi.pyramus.rest.controller.StudentGroupController;
+import fi.pyramus.rest.controller.StudentStudyEndReasonController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.controller.StudentVariableController;
 import fi.pyramus.rest.controller.StudyProgrammeCategoryController;
@@ -109,6 +110,9 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Inject
   private StudentGroupController studentGroupController;
+
+  @Inject
+  private StudentStudyEndReasonController studentStudyEndReasonController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -968,55 +972,104 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.status(501).build();
   }
   
-  // TODO: ActivityTypes
+  @Path("/studyEndReasons")
+  @POST
+  public Response createStudentStudyEndReason(fi.pyramus.rest.model.StudentStudyEndReason entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    StudentStudyEndReason parentReason = null;
+    
+    String name = entity.getName();
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (entity.getParentReasonId() != null) {
+      parentReason = studentStudyEndReasonController.findStudentStudyEndReasonById(entity.getParentReasonId());
+      if (parentReason == null) {
+        return Response.status(Status.BAD_REQUEST).build();
+      }
+    }
+    
+    return Response.ok(objectFactory.createModel(studentStudyEndReasonController.createStudentStudyEndReason(parentReason, name))).build();
+  }
+
+  @Path("/studyEndReasons")
+  @GET
+  public Response listStudentStudyEndReasons(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<StudentStudyEndReason> endReasons;
+    if (filterArchived) {
+      endReasons = studentStudyEndReasonController.listUnarchivedStudentStudyEndReasons();
+    } else {
+      endReasons = studentStudyEndReasonController.listStudentStudyEndReasons();
+    }
+    
+    if (endReasons.isEmpty()) {
+      return Response.noContent().build();
+    }
+
+    return Response.ok(objectFactory.createModel(endReasons)).build();
+  }
+
+  @Path("/studyEndReasons/{ID:[0-9]*}")
+  @GET
+  public Response findStudentStudyEndReasonById(@PathParam("ID") Long id) {
+    StudentStudyEndReason endReason = studentStudyEndReasonController.findStudentStudyEndReasonById(id);
+    if (endReason == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok(objectFactory.createModel(endReason)).build();
+  }
+
+  @Path("/studyEndReasons/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudentStudyEndReason(@PathParam("ID") Long id, fi.pyramus.rest.model.StudentStudyEndReason entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    StudentStudyEndReason parentReason = null;
+    
+    String name = entity.getName();
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    StudentStudyEndReason studyEndReason = studentStudyEndReasonController.findStudentStudyEndReasonById(id);
+    if (studyEndReason == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (entity.getParentReasonId() != null) {
+      parentReason = studentStudyEndReasonController.findStudentStudyEndReasonById(entity.getParentReasonId());
+      if (parentReason == null) {
+        return Response.status(Status.BAD_REQUEST).build();
+      }
+    }
+    
+    studentStudyEndReasonController.updateStudentStudyEndReason(studyEndReason, name);
+    studentStudyEndReasonController.updateStudentStudyEndReasonParent(studyEndReason, parentReason);
+    
+    return Response.ok(objectFactory.createModel(studyEndReason)).build();
+  }
+
+  @Path("/studyEndReasons/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteStudentStudyEndReason(@PathParam("ID") Long id) {
+    StudentStudyEndReason studyEndReason = studentStudyEndReasonController.findStudentStudyEndReasonById(id);
+    if (studyEndReason == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    studentStudyEndReasonController.deleteStudentStudyEndReason(studyEndReason);
+    
+    return Response.noContent().build();
+  }
   
-//  @Path("/endReasons")
-//  @POST
-//  public Response createStudentStudyEndReason(StudentStudyEndReasonEntity endReasonEntity) {
-//      Long parentId = endReasonEntity.getParentReason_id();
-//      if (parentId != null) {
-//        StudentStudyEndReason parentReason = studentSubController.findStudentStudyEndReasonById(parentId);
-//        String name = endReasonEntity.getName();
-//        if (parentReason != null && !StringUtils.isBlank(name)) {
-//          return Response.ok()
-//              .entity(tranqualise(studentSubController.createStudentStudyEndReason(parentReason, name)))
-//              .build();
-//        } else {
-//          return Response.status(500).build();
-//        }
-//      } else {
-//        String name = endReasonEntity.getName();
-//        if (!StringUtils.isBlank(name)) {
-//          return Response.ok()
-//              .entity(tranqualise(studentSubController.createStudentStudyEndReason(null, name)))
-//              .build();
-//        } else {
-//          return Response.status(500).build();
-//        }
-//      }
-//  }
-//  
-//  @Path("/variables")
-//  @POST
-//  public Response createStudentVariable(StudentVariableEntity studentVariableEntity) {
-//    String value = studentVariableEntity.getValue();
-//    Long studentId = studentVariableEntity.getStudent_id();
-//    Long keyId = studentVariableEntity.getKey_id();
-//    if (!StringUtils.isBlank(value) && studentId != null && keyId != null) {
-//      Student student = studentController.findStudentById(studentId);
-//      StudentVariableKey variableKey = variableController.findStudentVariableKeyById(keyId);
-//      if (student != null) {
-//        return Response.ok()
-//            .entity(tranqualise(variableController.createStudentVariable(student, variableKey, value)))
-//            .build();
-//      } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//      }
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
-//  
+//
 //  @Path("/abstractStudents")
 //  @POST
 //  public Response createAbstractStudent(AbstractStudentEntity abstractStudentEntity) {
@@ -1103,69 +1156,7 @@ public class StudentRESTService extends AbstractRESTService {
 //      return Response.status(500).build();
 //    }
 //  }
-//  
-//  @Path("/endReasons")
-//  @GET
-//  public Response findStudentStudyEndReasons(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<StudentStudyEndReason> endReasons;
-//    if (filterArchived) {
-//      endReasons = studentSubController.findUnarchivedStudentStudyEndReasons();
-//    } else {
-//      endReasons = studentSubController.findStudentStudyEndReasons();
-//    }
-//    if (!endReasons.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(endReasons))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//
-//  @Path("/endReasons/{ID:[0-9]*}")
-//  @GET
-//  public Response findStudentStudyEndReasonById(@PathParam("ID") Long id) {
-//    StudentStudyEndReason endReason = studentSubController.findStudentStudyEndReasonById(id);
-//    if (endReason != null) {
-//      return Response.ok()
-//          .entity(tranqualise(endReason))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
 
-//  @Path("/variables")
-//  @GET
-//  public Response findStudentVariables() {
-//    List<StudentVariable> studentVariables = variableController.findStudentVariables();
-//    if (!studentVariables.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(studentVariables))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("students/{SID:[0-9]*}/variables/{ID:[0-9]*}")
-//  @GET
-//  public Response findStudentVariableById(@PathParam("SID") Long studentId, @PathParam("ID") Long variableId) {
-//    StudentVariable studentVariable = variableController.findStudentVariableById(variableId);
-//    if (studentVariable != null) {
-//      if (studentId.equals(studentVariable.getStudent().getId())) {
-//        return Response.ok()
-//            .entity(tranqualise(studentVariable))
-//            .build();
-//      } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
 //  @Path("/abstractStudents")
 //  @GET
 //  public Response findAbstractStudents(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -1254,19 +1245,6 @@ public class StudentRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
-//  @Path("/students/{ID:[0-9]*}/tags")
-//  @GET
-//  public Response findStudentTags(@PathParam("ID") Long id) {
-//    Student student = studentController.findStudentById(id);
-//    if (student != null) {
-//      return Response.ok()
-//          .entity(tranqualise(studentController.findStudentTags(student)))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
 //  @Path("/students/{ID:[0-9]*}/contactLogEntries")
 //  @GET
 //  public Response findStudentContactLogEntriesByStudent(@PathParam("ID") Long id) {
@@ -1297,48 +1275,6 @@ public class StudentRESTService extends AbstractRESTService {
 //  
 //
 
-//  @Path("/endReasons/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateStudentStudyEndReason(@PathParam("ID") Long id, StudentStudyEndReasonEntity endReasonEntity) {
-//    StudentStudyEndReason endReason = studentSubController.findStudentStudyEndReasonById(id);
-//    if (endReason != null) {
-//      String name = endReasonEntity.getName();
-//      Long parentReasonId = endReasonEntity.getParentReason_id();
-//      if (!StringUtils.isBlank(name)) {
-//        return Response.ok()
-//            .entity(tranqualise(studentSubController.updateStudentStudyEndReason(endReason, name)))
-//            .build();
-//      } else if (parentReasonId != null) {
-//        StudentStudyEndReason parentReason = studentSubController.findStudentStudyEndReasonById(parentReasonId);
-//        return Response.ok()
-//            .entity(tranqualise(studentSubController.updateStudentStudyEndReasonParent(endReason, parentReason)))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-// 
-//  @Path("students/{SID:[0-9]*}/variables/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateStudentVariable(@PathParam("SID") Long studentId, @PathParam("ID") Long variableId, StudentVariableEntity studentVariableEntity) {
-//    String value = studentVariableEntity.getValue();
-//    StudentVariable studentVariable = variableController.findStudentVariableById(variableId);
-//    if (!StringUtils.isBlank(value) && studentVariable != null) {
-//      if(studentId.equals(studentVariable.getStudent().getId())) {
-//        return Response.ok()
-//            .entity(tranqualise(variableController.updateStudentVariable(studentVariable, value)))
-//            .build();
-//      } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//      }
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
-//  
 //  @Path("/abstractStudents/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateAbstractStudent(@PathParam("ID") Long id, AbstractStudentEntity abstractStudentEntity) {
@@ -1443,20 +1379,9 @@ public class StudentRESTService extends AbstractRESTService {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
-//  
-//  @Path("/students/{SID:[0-9]*}/tags/{TID:[0-9]*}")
-//  @DELETE
-//  public Response deleteStudentTag(@PathParam("SID") Long studentId, @PathParam("TID") Long tagId) {
-//    Student student = studentController.findStudentById(studentId);
-//    Tag tag = tagController.findTagById(tagId);
-//    if (student != null && tag != null) {
-//      studentController.removeStudentTag(student, tag);
-//      return Response.status(200).build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
 
+  
+  // TODO: ActivityTypes
   
   @Path("/variables")
   @POST

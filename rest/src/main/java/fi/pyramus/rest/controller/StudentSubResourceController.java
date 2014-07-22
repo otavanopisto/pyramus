@@ -19,18 +19,10 @@ import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 public class StudentSubResourceController {
   
   @Inject
-  private StudentStudyEndReasonDAO endReasonDAO;
-  
-  @Inject
   private StudyProgrammeCategoryDAO studyProgrammeCategoryDAO;
   
   @Inject
   private StudyProgrammeDAO studyProgrammeDAO;
-  
-  public StudentStudyEndReason createStudentStudyEndReason(StudentStudyEndReason parentReason, String name) {
-    StudentStudyEndReason studentStudyEndReason = endReasonDAO.create(parentReason, name);
-    return studentStudyEndReason;
-  }
   
   public StudyProgrammeCategory createStudyProgrammeCategory(String name, EducationType educationType) {
     StudyProgrammeCategory studyProgrammeCategory = studyProgrammeCategoryDAO.create(name, educationType);
@@ -40,21 +32,6 @@ public class StudentSubResourceController {
   public StudyProgramme createStudyProgramme(String name, StudyProgrammeCategory category, String code) {
     StudyProgramme studyProgramme = studyProgrammeDAO.create(name, category, code);
     return studyProgramme;
-  }
-  
-  public List<StudentStudyEndReason> findStudentStudyEndReasons() {
-    List<StudentStudyEndReason> endReasons = endReasonDAO.listAll();
-    return endReasons;
-  }
-  
-  public List<StudentStudyEndReason> findUnarchivedStudentStudyEndReasons() {
-    List<StudentStudyEndReason> endReasons = endReasonDAO.listUnarchived();
-    return endReasons;
-  }
-  
-  public StudentStudyEndReason findStudentStudyEndReasonById(Long id) {
-    StudentStudyEndReason studentStudyEndReason = endReasonDAO.findById(id);
-    return studentStudyEndReason;
   }
   
   public List<StudyProgrammeCategory> findStudyProgrammeCategories() {
@@ -85,16 +62,6 @@ public class StudentSubResourceController {
   public StudyProgramme findStudyProgrammeById(Long id) {
     StudyProgramme studyProgramme = studyProgrammeDAO.findById(id);
     return studyProgramme;
-  }
-  
-  public StudentStudyEndReason updateStudentStudyEndReason(StudentStudyEndReason endReason, String name) {
-    StudentStudyEndReason studentStudyEndReason = endReasonDAO.updateName(endReason, name);
-    return studentStudyEndReason;
-  }
-  
-  public StudentStudyEndReason updateStudentStudyEndReasonParent(StudentStudyEndReason endReason, StudentStudyEndReason newParentReason) {
-    StudentStudyEndReason studentStudyEndReason = endReasonDAO.updateParentReason(endReason, newParentReason);
-    return studentStudyEndReason;
   }
   
   public StudyProgrammeCategory updateStudyProgrammeCategory(StudyProgrammeCategory studyProgrammeCategory, String name, EducationType educationType) {

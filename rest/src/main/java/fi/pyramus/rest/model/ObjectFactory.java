@@ -47,6 +47,7 @@ import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
+import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
@@ -421,7 +422,16 @@ public class ObjectFactory {
                 entity.getEducation(), entity.getLodging(), toDateTime(entity.getStudyStartDate()), toDateTime(entity.getStudyEndDate()), 
                 studyEndReasonId, entity.getStudyEndText(), variables, tags, entity.getArchived());
           }
+        },
+        
+        new Mapper<StudentStudyEndReason>() {
+          @Override
+          public Object map(StudentStudyEndReason entity) {
+            Long parentReasonId = entity.getParentReason() != null ? entity.getParentReason().getId() : null;
+            return new fi.pyramus.rest.model.StudentStudyEndReason(entity.getId(), entity.getName(), parentReasonId);
+          }
         }
+        
   
     );
   }
