@@ -282,7 +282,13 @@ insert into
   StudyProgramme (id, code, name, category, version, archived)
 values 
   (1, 'TST1', 'StudyProgramme #1', 1, 1, false),
-  (2, 'TST2', 'StudyProgramme #2', 2, 1, false);   
+  (2, 'TST2', 'StudyProgramme #2', 2, 1, false);     
+   
+insert into 
+  StudentGroup (id, name, description, creator, lastModifier, beginDate, created, lastModified, version, archived)
+values 
+  (1, 'StudentGroup #1', 'Group of students #1', 1, 1, PARSEDATETIME('1 1 2010', 'd M yyyy'), PARSEDATETIME('2 2 2010', 'd M yyyy'), PARSEDATETIME('3 3 2010', 'd M yyyy'), 1, false),
+  (2, 'StudentGroup #2', 'Group of students #2', 1, 1, PARSEDATETIME('4 4 2010', 'd M yyyy'), PARSEDATETIME('5 5 2010', 'd M yyyy'), PARSEDATETIME('6 6 2010', 'd M yyyy'), 1, false);  
    
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
@@ -324,5 +330,6 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentExaminationType', max(id) + 1 from StudentExaminationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgrammeCategory', max(id) + 1 from StudyProgrammeCategory;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgramme', max(id) + 1 from StudyProgramme;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroup', max(id) + 1 from StudentGroup;
 
 

@@ -1,6 +1,7 @@
 package fi.pyramus.rest.controller;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,8 +18,10 @@ import fi.pyramus.domainmodel.users.User;
 @Dependent
 @Stateless
 public class StudentGroupController {
+  
   @Inject
   private StudentGroupDAO studentGroupDAO;
+  
   @Inject
   private TagDAO tagDAO;
   
@@ -36,12 +39,12 @@ public class StudentGroupController {
     return tag;
   }
   
-  public List<StudentGroup> findStudentGroups() {
+  public List<StudentGroup> listStudentGroups() {
     List<StudentGroup> studentGroups = studentGroupDAO.listAll();
     return studentGroups;
   }
   
-  public List<StudentGroup> findUnarchivedStudentGroups() {
+  public List<StudentGroup> listUnarchivedStudentGroups() {
     List<StudentGroup> studentGroups = studentGroupDAO.listUnarchived();
     return studentGroups;
   }
@@ -70,8 +73,32 @@ public class StudentGroupController {
     studentGroupDAO.unarchive(studentGroup, user);
     return studentGroup;
   }
-  
+
+  public StudentGroup updateStudentGroupTags(StudentGroup studentGroup, List<String> tags) {
+    Set<String> newTags = new HashSet<>(tags);
+    Set<Tag> studentGroupTags = new HashSet<>(studentGroup.getTags());
+    
+    for (Tag studentGroupTag : studentGroupTags) {
+      if (!newTags.contains(studentGroupTag.getText())) {
+        removeStudentGroupTag(studentGroup, studentGroupTag);
+      }
+        
+      newTags.remove(studentGroupTag.getText());
+    }
+    
+    for (String newTag : newTags) {
+      createStudentGroupTag(studentGroup, newTag);
+    }
+    
+    return studentGroup;
+  }
+
   public void removeStudentGroupTag(StudentGroup studentGroup, Tag tag) {
     studentGroup.removeTag(tag);
   }
+
+  public void deleteStudentGroup(StudentGroup studentGroup) {
+    studentGroupDAO.delete(studentGroup);
+  }
+
 }

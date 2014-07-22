@@ -45,6 +45,7 @@ import fi.pyramus.domainmodel.students.StudentVariableKey;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
+import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
@@ -360,6 +361,28 @@ public class ObjectFactory {
             Long categoryId = entity.getCategory() != null ? entity.getCategory().getId() : null;
             return new fi.pyramus.rest.model.StudyProgramme(entity.getId(), entity.getCode(), entity.getName(), categoryId, entity.getArchived());
           }
+        },
+        
+        new Mapper<StudentGroup>() {
+          
+          public Object map(StudentGroup entity) {
+            Long creatorId = entity.getCreator().getId();
+            Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
+
+            List<String> tags = new ArrayList<>();
+            
+            Set<Tag> entityTags = entity.getTags();
+            if (entityTags != null) {
+              for (Tag entityTag : entityTags) {
+                tags.add(entityTag.getText());
+              }
+            }    
+
+            return new fi.pyramus.rest.model.StudentGroup(entity.getId(), entity.getName(), entity.getDescription(), 
+              toDateTime(entity.getBeginDate()), creatorId, toDateTime(entity.getCreated()), lastModifierId, 
+              toDateTime(entity.getLastModified()), tags, entity.getArchived() 
+            );
+          };
         }
 
     );

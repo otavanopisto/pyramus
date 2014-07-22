@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.Language;
@@ -100,6 +101,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private StudyProgrammeController studyProgrammeController;
+  
+  @Inject
+  private StudentGroupController studentGroupController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -814,6 +818,106 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
 
+  @Path("/studentGroups")
+  @POST
+  public Response createStudentGroup(fi.pyramus.rest.model.StudentGroup entity) {
+    String name = entity.getName();
+    String description = entity.getDescription();
+    DateTime beginDate = entity.getBeginDate();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    StudentGroup studentGroup = studentGroupController.createStudentGroup(name, description, toDate(beginDate), getLoggedUser());
+    
+    for (String tag : entity.getTags()) {
+      studentGroupController.createStudentGroupTag(studentGroup, tag);
+    }
+    
+    return Response.ok(objectFactory.createModel(studentGroup)).build();
+  }
+  
+  @Path("/studentGroups")
+  @GET
+  public Response findStudentGroups(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<StudentGroup> studentGroups;
+    if (filterArchived) {
+      studentGroups = studentGroupController.listUnarchivedStudentGroups();
+    } else {
+      studentGroups = studentGroupController.listStudentGroups();
+    }
+    
+    
+    if (studentGroups.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studentGroups)).build();
+  }
+  
+  @Path("/studentGroups/{ID:[0-9]*}")
+  @GET
+  public Response findStudentGroup(@PathParam("ID") Long id) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (studentGroup.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok(objectFactory.createModel(studentGroup)).build();
+  }
+
+  @Path("/studentGroups/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudentGroup(@PathParam("ID") Long id, fi.pyramus.rest.model.StudentGroup entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    String name = entity.getName();
+    String description = entity.getDescription();
+    DateTime beginDate = entity.getBeginDate();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (studentGroup.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    studentGroupController.updateStudentGroup(studentGroup, name, description, toDate(beginDate), getLoggedUser());
+    studentGroupController.updateStudentGroupTags(studentGroup, entity.getTags());
+    
+    return Response.ok(objectFactory.createModel(studentGroup)).build();
+  }
+  
+  @Path("/studentGroups/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteStudentGroup(@PathParam("ID") Long id, @DefaultValue("false") @QueryParam("permanent") Boolean permanent) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (permanent) {
+      studentGroupController.deleteStudentGroup(studentGroup);
+    } else {
+      studentGroupController.archiveStudentGroup(studentGroup, getLoggedUser());
+    }
+
+    return Response.noContent().build();
+  }
+  
 //  @Path("/endReasons")
 //  @POST
 //  public Response createStudentStudyEndReason(StudentStudyEndReasonEntity endReasonEntity) {
@@ -942,35 +1046,6 @@ public class StudentRESTService extends AbstractRESTService {
 //    if (student != null && type != null && !StringUtils.isBlank(text) && entryDate != null &&!StringUtils.isBlank(creator)) {
 //      return Response.ok()
 //          .entity(tranqualise(contactLogEntryController.createContactLogEntry(student, type, text, entryDate, creator)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
-//  
-//  @Path("/studentGroups")
-//  @POST
-//  public Response createStudentGroup(StudentGroupEntity studentGroupEntity) {
-//    String name = studentGroupEntity.getName();
-//    String description = studentGroupEntity.getDescription();
-//    Date beginDate = studentGroupEntity.getBeginDate();
-//    if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description) && beginDate != null) {
-//      return Response.ok()
-//          .entity(tranqualise(studentGroupController.createStudentGroup(name, description, beginDate, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
-//  
-//  @Path("/studentGroups/{ID:[0-9]*}/tags")
-//  @POST
-//  public Response createStudentGroupTag(@PathParam("ID") Long id, TagEntity tagEntity) {
-//    String text = tagEntity.getText();
-//    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
-//    if (!StringUtils.isBlank(text) && studentGroup != null) {
-//      return Response.ok()
-//          .entity(tranqualise(studentGroupController.createStudentGroupTag(studentGroup, text)))
 //          .build();
 //    } else {
 //      return Response.status(500).build();
@@ -1168,49 +1243,7 @@ public class StudentRESTService extends AbstractRESTService {
 //    return Response.status(Status.NOT_FOUND).build();
 //  }
 //  
-//  @Path("/studentGroups")
-//  @GET
-//  public Response findStudentGroups(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<StudentGroup> studentGroups;
-//    if (filterArchived) {
-//      studentGroups = studentGroupController.findUnarchivedStudentGroups();
-//    } else {
-//      studentGroups = studentGroupController.findStudentGroups();
-//    }
-//    if (!studentGroups.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(studentGroups))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/studentGroups/{ID:[0-9]*}")
-//  @GET
-//  public Response findStudentGroupById(@PathParam("ID") Long id) {
-//    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
-//    if (studentGroup != null) {
-//      return Response.ok()
-//          .entity(tranqualise(studentGroup))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/studentGroups/{ID:[0-9]*}/tags")
-//  @GET
-//  public Response findStudentGroupTags(@PathParam("ID") Long id) {
-//    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
-//    if (studentGroup != null) {
-//      return Response.ok()
-//          .entity(tranqualise(studentGroupController.findStudentGroupTags(studentGroup)))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
+//
 
 //  @Path("/endReasons/{ID:[0-9]*}")
 //  @PUT
@@ -1346,34 +1379,6 @@ public class StudentRESTService extends AbstractRESTService {
 //    return Response.status(Status.NOT_FOUND).build();
 //  }
 //  
-//  @Path("/studentGroups/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateStudentGroup(@PathParam("ID") Long id, StudentGroupEntity studentGroupEntity) {
-//    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
-//    if (studentGroup != null) {
-//      if (studentGroupEntity.getArchived() == null) {
-//        String name = studentGroupEntity.getName();
-//        String description = studentGroupEntity.getDescription();
-//        Date beginDate = studentGroupEntity.getBeginDate();
-//        if (!StringUtils.isBlank(name) && !StringUtils.isBlank(description) && beginDate != null) {
-//          return Response.ok()
-//              .entity(tranqualise(studentGroupController.updateStudentGroup(studentGroup,name, description, beginDate, getUser())))
-//              .build();
-//        } else {
-//          return Response.status(500).build();
-//        }
-//      } else if (!studentGroupEntity.getArchived()) {
-//        return Response.ok()
-//            .entity(tranqualise(studentGroupController.unarchiveStudentGroup(studentGroup, getUser())))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
 //  @Path("/students/{ID:[0-9]*}")
 //  @DELETE
 //  public Response archiveStudent(@PathParam("ID") Long id) {
@@ -1381,19 +1386,6 @@ public class StudentRESTService extends AbstractRESTService {
 //    if (student != null) {
 //      return Response.ok()
 //          .entity(tranqualise(studentController.archiveStudent(student, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/studentGroups/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveStudentGroup(@PathParam("ID") Long id) {
-//    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
-//    if (studentGroup != null) {
-//      return Response.ok()
-//          .entity(tranqualise(studentGroupController.archiveStudentGroup(studentGroup, getUser())))
 //          .build();
 //    } else {
 //      return Response.status(Status.NOT_FOUND).build();
@@ -1412,21 +1404,6 @@ public class StudentRESTService extends AbstractRESTService {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
-//  
-//  @Path("/studentGroups/{SID:[0-9]*}/tags/{TID:[0-9]*}")
-//  @DELETE
-//  public Response deleteStudentGroupTag(@PathParam("SID") Long studentGroupId, @PathParam("TID") Long tagId) {
-//    StudentGroup studentGroup = studentGroupController.findStudentGroupById(studentGroupId);
-//    Tag tag = tagController.findTagById(tagId);
-//    if (studentGroup != null && tag != null) {
-//      studentGroupController.removeStudentGroupTag(studentGroup, tag);
-//      return Response.status(200).build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-  
 
   
   @Path("/variables")
