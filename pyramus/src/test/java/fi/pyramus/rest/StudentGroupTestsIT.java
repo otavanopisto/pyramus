@@ -224,4 +224,19 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(404);
   }
+  
+  @Test
+  public void testListStudentGroupStudents() {
+    given()
+      .get("/students/studentGroups/{ID}/students", 1)
+      .then()
+      .statusCode(200)
+      .body("id.size()", is(2))
+      .body("id[0]", is(1) )
+      .body("firstName[0]", is("Tanya"))
+      .body("lastName[0]", is("Test #1"))
+      .body("id[1]", is(2) )
+      .body("firstName[1]", is("David"))
+      .body("lastName[1]", is("Test #2"));
+  }
 }

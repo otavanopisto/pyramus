@@ -41,11 +41,13 @@ import fi.pyramus.domainmodel.projects.ProjectModule;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariableKey;
+import fi.pyramus.domainmodel.students.StudentVariable;
 import fi.pyramus.domainmodel.students.StudentVariableKey;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
+import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
@@ -382,9 +384,45 @@ public class ObjectFactory {
               toDateTime(entity.getBeginDate()), creatorId, toDateTime(entity.getCreated()), lastModifierId, 
               toDateTime(entity.getLastModified()), tags, entity.getArchived() 
             );
-          };
-        }
+          }
+        },
+          
+        new Mapper<Student>() {
+          
+          public Object map(Student entity) {
+            Long abstractStudentId = entity.getAbstractStudent() != null ? entity.getAbstractStudent().getId() : null;
+            Long nationalityId = entity.getNationality()  != null ? entity.getNationality().getId() : null;
+            Long languageId = entity.getLanguage()  != null ? entity.getLanguage().getId() : null;
+            Long municipalityId = entity.getMunicipality()  != null ? entity.getMunicipality().getId() : null;
+            Long schoolId = entity.getSchool() != null ? entity.getSchool().getId() : null;
+            Long activityTypeId = entity.getActivityType() != null ? entity.getActivityType().getId() : null;
+            Long examinationTypeId = entity.getExaminationType() != null ? entity.getExaminationType().getId() : null;
+            Long educationalLevelId = entity.getEducationalLevel() != null ? entity.getEducationalLevel().getId() : null;
+            Long studyProgrammeId = entity.getStudyProgramme() != null ? entity.getStudyProgramme().getId() : null;
+            Long studyEndReasonId = entity.getStudyEndReason() != null ? entity.getStudyEndReason().getId() : null;
+            
+            List<String> tags = new ArrayList<>();
+            
+            Set<Tag> entityTags = entity.getTags();
+            if (entityTags != null) {
+              for (Tag entityTag : entityTags) {
+                tags.add(entityTag.getText());
+              }
+            }    
+            
+            Map<String, String> variables = new HashMap<>();
+            for (StudentVariable entityVariable : entity.getVariables()) {
+              variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
+            };
 
+            return new fi.pyramus.rest.model.Student(entity.getId(), abstractStudentId, entity.getFirstName(), entity.getLastName(), 
+                entity.getNickname(), entity.getAdditionalInfo(), nationalityId, languageId, municipalityId, schoolId, activityTypeId, 
+                examinationTypeId, educationalLevelId, toDateTime(entity.getStudyTimeEnd()), studyProgrammeId, entity.getPreviousStudies(), 
+                entity.getEducation(), entity.getLodging(), toDateTime(entity.getStudyStartDate()), toDateTime(entity.getStudyEndDate()), 
+                studyEndReasonId, entity.getStudyEndText(), variables, tags, entity.getArchived());
+          }
+        }
+  
     );
   }
 

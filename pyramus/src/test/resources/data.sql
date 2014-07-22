@@ -168,7 +168,9 @@ insert into
   ContactInfo (id, additionalInfo, version)
 values   
   (1, 'For test school #1', 1),
-  (2, 'For test school #2', 1);
+  (2, 'For test school #2', 1),
+  (3, 'For test student #1', 1),
+  (4, 'For test student #2', 1);
   
 insert into 
   ContactType (id, name, version, archived)
@@ -255,12 +257,6 @@ values
   (2, 'TST2', 'Nationality #2', 1, false);  
 
 insert into 
-  StudentActivityType (id, name, version, archived)
-values 
-  (1, 'StudentActivityType #1', 1, false),
-  (2, 'StudentActivityType #2', 1, false); 
-
-insert into 
   StudentEducationalLevel (id, name, version, archived)
 values 
   (1, 'StudentEducationalLevel #1', 1, false),
@@ -289,7 +285,33 @@ insert into
 values 
   (1, 'StudentGroup #1', 'Group of students #1', 1, 1, PARSEDATETIME('1 1 2010', 'd M yyyy'), PARSEDATETIME('2 2 2010', 'd M yyyy'), PARSEDATETIME('3 3 2010', 'd M yyyy'), 1, false),
   (2, 'StudentGroup #2', 'Group of students #2', 1, 1, PARSEDATETIME('4 4 2010', 'd M yyyy'), PARSEDATETIME('5 5 2010', 'd M yyyy'), PARSEDATETIME('6 6 2010', 'd M yyyy'), 1, false);  
-   
+  
+insert into
+  StudentActivityType (id, name, version, archived)
+values  
+  (1, 'StudentActivityType #1', 1, false),
+  (2, 'StudentActivityType #2', 1, false);
+
+insert into 
+  AbstractStudent (id, birthday, sex, socialSecurityNumber, basicInfo, secureInfo, version)
+values 
+  (1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'FEMALE', '123456-7890', 'Test student #1', false, 1),
+  (2, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false, 1);
+  
+insert into 
+  Student (id, abstractStudent, studyProgramme, firstName, lastName,  nickname, previousStudies, studyStartDate, 
+    additionalInfo, activityType, educationalLevel, language, municipality, nationality, school, 
+    examinationType, education, lodging, contactInfo, version, archived)
+values 
+  (1, 1, 1, 'Tanya', 'Test #1', 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false, 3, 1, false),
+  (2, 2, 1, 'David', 'Test #2', 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false, 4, 1, false);
+  
+insert into StudentGroupStudent
+  (id, studentGroup, student, version)
+values 
+  (1, 1, 1, 1),
+  (2, 1, 2, 1);
+  
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
@@ -331,5 +353,7 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgrammeCategory', max(id) + 1 from StudyProgrammeCategory;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgramme', max(id) + 1 from StudyProgramme;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroup', max(id) + 1 from StudentGroup;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'AbstractStudent', max(id) + 1 from AbstractStudent;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Student', max(id) + 1 from Student;
 
 

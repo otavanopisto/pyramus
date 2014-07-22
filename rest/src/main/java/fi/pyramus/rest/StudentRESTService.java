@@ -1,7 +1,11 @@
 package fi.pyramus.rest;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -40,6 +44,7 @@ import fi.pyramus.domainmodel.students.StudentContactLogEntryType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
+import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.domainmodel.students.StudentVariable;
 import fi.pyramus.domainmodel.students.StudentVariableKey;
@@ -917,6 +922,53 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Response.noContent().build();
   }
+  
+  @Path("/studentGroups/{ID:[0-9]*}/students")
+  @POST
+  public Response createStudentGroupStudent(@PathParam("ID") Long id) {
+    // TODO: Implement
+    return Response.status(501).build();
+  }
+
+  @Path("/studentGroups/{ID:[0-9]*}/students")
+  @GET
+  public Response listStudentGroupStudents(@PathParam("ID") Long id) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (studentGroup.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<Student> students = new ArrayList<>();
+
+    Set<StudentGroupStudent> studentGroupStudents = studentGroup.getStudents();
+    for (StudentGroupStudent studentGroupStudent : studentGroupStudents) {
+      if (!studentGroupStudent.getStudent().getArchived()) {
+        students.add(studentGroupStudent.getStudent());
+      }
+    }
+    
+    Collections.sort(students, new Comparator<Student>() {
+      @Override
+      public int compare(Student o1, Student o2) {
+        return o1.getId().compareTo(o2.getId());
+      }
+    });
+    
+    return Response.ok(objectFactory.createModel(students)).build();
+  }
+  
+  @Path("/studentGroups/{ID:[0-9]*}/students")
+  @DELETE
+  public Response deleteStudentGroupStudent(@PathParam("ID") Long id) {
+    // TODO: Implement
+    return Response.status(501).build();
+  }
+  
+  // TODO: ActivityTypes
   
 //  @Path("/endReasons")
 //  @POST
