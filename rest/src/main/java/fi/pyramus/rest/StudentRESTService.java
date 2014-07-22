@@ -56,6 +56,7 @@ import fi.pyramus.rest.controller.StudentExaminationTypeController;
 import fi.pyramus.rest.controller.StudentGroupController;
 import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.controller.StudentVariableController;
+import fi.pyramus.rest.controller.StudyProgrammeCategoryController;
 import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.model.ObjectFactory;
 
@@ -92,6 +93,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private StudentExaminationTypeController studentExaminationTypeController;
+
+  @Inject
+  private StudyProgrammeCategoryController studyProgrammeCategoryController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -606,23 +610,108 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
 
-//  
-//  @Inject
-//  private AbstractStudentController abstractStudentController;
-//  @Inject
-//  private StudentSubResourceController studentSubController;
-//  @Inject
-//  private StudentController studentController;
-//  @Inject
-//  private SchoolController schoolController;
-//  @Inject
-//  private TagController tagController;
-//  @Inject
-//  private StudentGroupController studentGroupController;
-//  @Inject
-//  private StudentContactLogEntryController contactLogEntryController;
-//  
-//  
+  @Path("/studyProgrammeCategories")
+  @POST
+  public Response createStudyProgrammeCategory(fi.pyramus.rest.model.StudyProgrammeCategory entity) {
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (entity.getEducationTypeId() == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    EducationType educationType = commonController.findEducationTypeById(entity.getEducationTypeId());
+    if (educationType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response
+        .ok(objectFactory.createModel(studyProgrammeCategoryController.createStudyProgrammeCategory(name, educationType)))
+        .build();
+  }
+
+  @Path("/studyProgrammeCategories")
+  @GET
+  public Response listStudyProgrammeCategories(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<StudyProgrammeCategory> studyProgrammeCategories;
+    if (filterArchived) {
+      studyProgrammeCategories = studyProgrammeCategoryController.listUnarchivedStudyProgrammeCategories();
+    } else {
+      studyProgrammeCategories = studyProgrammeCategoryController.listStudyProgrammeCategories();
+    }
+    
+    if (studyProgrammeCategories.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studyProgrammeCategories)).build();
+  }
+  
+  @Path("/studyProgrammeCategories/{ID:[0-9]*}")
+  @GET
+  public Response findStudyProgrammeCategoryById(@PathParam("ID") Long id) {
+    StudyProgrammeCategory studyProgrammeCategory = studyProgrammeCategoryController.findStudyProgrammeCategoryById(id);
+    if (studyProgrammeCategory == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (studyProgrammeCategory.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+
+    return Response.ok(objectFactory.createModel(studyProgrammeCategory)).build();
+  }
+
+  @Path("/studyProgrammeCategories/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudyProgrammeCategory(@PathParam("ID") Long id, fi.pyramus.rest.model.StudyProgrammeCategory entity) {
+    StudyProgrammeCategory studyProgrammeCategory = studyProgrammeCategoryController.findStudyProgrammeCategoryById(id);
+    if (studyProgrammeCategory == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (studyProgrammeCategory.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (entity.getEducationTypeId() == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    EducationType educationType = commonController.findEducationTypeById(entity.getEducationTypeId());
+    if (educationType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(studyProgrammeCategoryController.updateStudyProgrammeCategory(studyProgrammeCategory, name, educationType))).build();
+  }
+      
+  @Path("/studyProgrammeCategories/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteStudyProgrammeCategory(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    StudyProgrammeCategory studyProgrammeCategory = studyProgrammeCategoryController.findStudyProgrammeCategoryById(id);
+    if (studyProgrammeCategory == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }    
+    
+    if (permanent) {
+      studyProgrammeCategoryController.deleteStudyProgrammeCategory(studyProgrammeCategory);
+    } else {
+      studyProgrammeCategoryController.archiveStudyProgrammeCategory(studyProgrammeCategory, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
+
 //  @Path("/endReasons")
 //  @POST
 //  public Response createStudentStudyEndReason(StudentStudyEndReasonEntity endReasonEntity) {
@@ -647,25 +736,6 @@ public class StudentRESTService extends AbstractRESTService {
 //          return Response.status(500).build();
 //        }
 //      }
-//  }
-//  
-//  @Path("/studyProgrammeCategories")
-//  @POST
-//  public Response createStudyProgrammeCategory(StudyProgrammeCategoryEntity studyProgrammeCategoryEntity) {
-//    String name = studyProgrammeCategoryEntity.getName();
-//    Long educationTypeId = studyProgrammeCategoryEntity.getEducationType_id();
-//    if (educationTypeId != null && !StringUtils.isBlank(name)) {
-//      EducationType educationType = commonController.findEducationTypeById(educationTypeId);
-//      if (educationType != null) {
-//        return Response.ok()
-//            .entity(tranqualise(studentSubController.createStudyProgrammeCategory(name, educationType)))
-//            .build();
-//      } else {
-//        return Response.status(Status.NOT_FOUND).build();
-//      }
-//    } else {
-//      return Response.status(500).build();
-//    }
 //  }
 //  
 //  @Path("/studyProgrammes")
@@ -856,37 +926,7 @@ public class StudentRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
-//  @Path("/studyProgrammeCategories")
-//  @GET
-//  public Response findStudyProgrammeCategories(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<StudyProgrammeCategory> studyProgrammeCategories;
-//    if (filterArchived) {
-//      studyProgrammeCategories = studentSubController.findUnarchivedStudyProgrammeCategories();
-//    } else {
-//      studyProgrammeCategories = studentSubController.findStudyProgrammeCategories();
-//    }
-//    if (!studyProgrammeCategories.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(studyProgrammeCategories))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/studyProgrammeCategories/{ID:[0-9]*}")
-//  @GET
-//  public Response findStudyProgrammeCategoryById(@PathParam("ID") Long id) {
-//    StudyProgrammeCategory studyProgrammeCategory = studentSubController.findStudyProgrammeCategoryById(id);
-//    if (studyProgrammeCategory != null) {
-//      return Response.ok()
-//          .entity(tranqualise(studyProgrammeCategory))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+
 //  @Path("/studyProgrammes")
 //  @GET
 //  public Response findStudyProgrammes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
@@ -1145,29 +1185,6 @@ public class StudentRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
-//  @Path("/studyProgrammeCategories/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateStudyProgrammeCategory(@PathParam("ID") Long id, StudyProgrammeCategoryEntity studyProgrammeCategoryEntity) {
-//    StudyProgrammeCategory studyProgrammeCategory = studentSubController.findStudyProgrammeCategoryById(id);
-//    if (studyProgrammeCategory != null) {
-//      String name = studyProgrammeCategoryEntity.getName();
-//      Long educationTypeId = studyProgrammeCategoryEntity.getEducationType_id();
-//      if (educationTypeId != null && !StringUtils.isBlank(name)) {
-//        EducationType educationType = commonController.findEducationTypeById(educationTypeId);
-//        if (educationType != null) {
-//          return Response.ok()
-//              .entity(tranqualise(studentSubController.updateStudyProgrammeCategory(studyProgrammeCategory, name, educationType)))
-//              .build();
-//        } else {
-//          return Response.status(Status.NOT_FOUND).build();
-//        }
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
 //  
 //  @Path("/studyProgrammes/{ID:[0-9]*}")
 //  @PUT
