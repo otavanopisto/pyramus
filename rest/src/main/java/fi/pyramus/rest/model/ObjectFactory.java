@@ -25,6 +25,7 @@ import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
+import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
@@ -350,6 +351,14 @@ public class ObjectFactory {
           public Object map(StudyProgrammeCategory entity) {
             Long educationTypeId = entity.getEducationType() != null ? entity.getEducationType().getId() : null;
             return new fi.pyramus.rest.model.StudyProgrammeCategory(entity.getId(), entity.getName(), educationTypeId, entity.getArchived());
+          }
+        },
+        
+        new Mapper<StudyProgramme>() {
+          @Override
+          public Object map(StudyProgramme entity) {
+            Long categoryId = entity.getCategory() != null ? entity.getCategory().getId() : null;
+            return new fi.pyramus.rest.model.StudyProgramme(entity.getId(), entity.getCode(), entity.getName(), categoryId, entity.getArchived());
           }
         }
 

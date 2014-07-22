@@ -278,6 +278,12 @@ values
   (1, 'StudyProgrammeCategory #1', 1, 1, false),
   (2, 'StudyProgrammeCategory #2', 2, 1, false);   
    
+insert into 
+  StudyProgramme (id, code, name, category, version, archived)
+values 
+  (1, 'TST1', 'StudyProgramme #1', 1, 1, false),
+  (2, 'TST2', 'StudyProgramme #2', 2, 1, false);   
+   
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
@@ -317,5 +323,6 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentEducationalLevel', max(id) + 1 from StudentEducationalLevel;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentExaminationType', max(id) + 1 from StudentExaminationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgrammeCategory', max(id) + 1 from StudyProgrammeCategory;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgramme', max(id) + 1 from StudyProgramme;
 
 
