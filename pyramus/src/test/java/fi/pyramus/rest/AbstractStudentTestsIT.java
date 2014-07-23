@@ -144,4 +144,38 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(404);
   }
+  
+  @Test
+  public void testListStudents() {
+    given()
+      .get("/students/abstractStudents/{ID}/students", 1l)
+      .then()
+      .statusCode(200)
+      .body("id.size()", is(1))
+      .body("id[0]", is(1) )
+      .body("abstractStudentId[0]", is(1))
+      .body("firstName[0]", is("Tanya"))
+      .body("lastName[0]", is("Test #1"))
+      .body("nickname[0]", is("Tanya-T"))
+      .body("additionalInfo[0]", is("Testing #1"))
+      .body("nationalityId[0]", is(1))
+      .body("languageId[0]", is(1))
+      .body("municipalityId[0]", is(1))
+      .body("schoolId[0]", is(1))
+      .body("activityTypeId[0]", is(1))
+      .body("examinationTypeId[0]", is(1))
+      .body("educationalLevelId[0]", is(1))
+      .body("studyTimeEnd[0]", is((String) null))
+      .body("studyProgrammeId[0]", is(1))
+      .body("previousStudies[0]", is(0f))
+      .body("education[0]", is("Education #1"))
+      .body("lodging[0]", is(false))
+      .body("studyStartDate[0]", is(getDate(2010, 1, 1).toString()))
+      .body("studyEndDate[0]", is((String) null))
+      .body("studyEndReasonId[0]", is((Integer) null))
+      .body("studyEndText[0]", is((String) null))
+      .body("variables[0].size()", is(0))
+      .body("tags[0].size", is(0))
+      .body("archived[0]", is(Boolean.FALSE));
+  }
 }

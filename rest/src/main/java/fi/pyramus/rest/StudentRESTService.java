@@ -1170,6 +1170,17 @@ public class StudentRESTService extends AbstractRESTService {
     
     return Response.noContent().build();
   }
+
+  @Path("/abstractStudents/{ID:[0-9]*}/students")
+  @GET
+  public Response listStudentsByAbstractStudent(@PathParam("ID") Long id) {
+    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(id);
+    if (abstractStudent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studentController.listStudentByAbstractStudent(abstractStudent))).build();
+  }
   
   @Path("/students")
   @POST
@@ -1329,7 +1340,7 @@ public class StudentRESTService extends AbstractRESTService {
     
     return Response.noContent().build();
   }
-  
+
   @Path("/students/{ID:[0-9]*}/contactLogEntries")
   @POST
   public Response createStudentContactLogEntry(@PathParam("ID") Long id, fi.pyramus.rest.model.StudentContactLogEntry entity) {
@@ -1459,33 +1470,7 @@ public class StudentRESTService extends AbstractRESTService {
       
     return Response.noContent().build();
   }
-
-//  @Path("/abstractStudents/{ID:[0-9]*}/students")
-//  @GET
-//  public Response findStudentsByAbstractStudent(@PathParam("ID") Long id) {
-//    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(id);
-//    if (abstractStudent != null) {
-//      return Response.ok()
-//          .entity(tranqualise(studentController.findStudentByAbstractStudent(abstractStudent)))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-
-//  @Path("/students/{ID:[0-9]*}/abstractStudents")
-//  @GET
-//  public Response findAbstractStudentByStudent(@PathParam("ID") Long id) {
-//    Student student = studentController.findStudentById(id);
-//    if (student != null) {
-//      return Response.ok()
-//          .entity(tranqualise(student.getAbstractStudent()))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
+  
   @Path("/variables")
   @POST
   public Response createVariable(fi.pyramus.rest.model.VariableKey entity) {
