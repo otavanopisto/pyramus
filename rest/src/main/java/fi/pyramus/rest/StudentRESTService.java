@@ -110,6 +110,9 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Inject
   private StudentGroupController studentGroupController;
+  
+  @Inject
+  private AbstractStudentController abstractStudentController;
 
   @Inject
   private StudentStudyEndReasonController studentStudyEndReasonController;
@@ -1069,24 +1072,103 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
+  @Path("/abstractStudents")
+  @POST
+  public Response createAbstractStudent(fi.pyramus.rest.model.AbstractStudent entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if ((entity.getSex() == null) || (entity.getSecureInfo() == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Sex sex = null;
+    
+    switch (entity.getSex()) {
+      case FEMALE:
+        sex = Sex.FEMALE;
+      break;
+      case MALE:
+        sex = Sex.MALE;
+      break;
+    }
+    
+    return Response.ok(objectFactory.createModel(abstractStudentController.createAbstractStudent(toDate(entity.getBirthday()), 
+        entity.getSocialSecurityNumber(), sex, entity.getBasicInfo(), entity.getSecureInfo()))).build();
+  }
+  
+  @Path("/abstractStudents")
+  @GET
+  public Response findAbstractStudents(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<AbstractStudent> abstractStudents;
+    if (filterArchived) {
+      abstractStudents = abstractStudentController.findUnarchivedAbstractStudents();
+    } else {
+      abstractStudents = abstractStudentController.findAbstractStudents();
+    }
+    
+    return Response.ok(objectFactory.createModel(abstractStudents)).build();
+  }
+
+  @Path("/abstractStudents/{ID:[0-9]*}")
+  @GET
+  public Response findAbstractStudentById(@PathParam("ID") Long id) {
+    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(id);
+    if (abstractStudent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(abstractStudent)).build();
+  }
+
+  @Path("/abstractStudents/{ID:[0-9]*}")
+  @PUT
+  public Response updateAbstractStudent(@PathParam("ID") Long id, fi.pyramus.rest.model.AbstractStudent entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if ((entity.getSex() == null) || (entity.getSecureInfo() == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Sex sex = null;
+    
+    switch (entity.getSex()) {
+      case FEMALE:
+        sex = Sex.FEMALE;
+      break;
+      case MALE:
+        sex = Sex.MALE;
+      break;
+    }
+    
+    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(id);
+    if (abstractStudent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(abstractStudentController.updateAbstractStudent(abstractStudent, toDate(entity.getBirthday()), 
+        entity.getSocialSecurityNumber(), sex, entity.getBasicInfo(), entity.getSecureInfo()))).build();
+  }
+
+  @Path("/abstractStudents/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteAbstractStudent(@PathParam("ID") Long id) {
+    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(id);
+    if (abstractStudent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    abstractStudentController.deleteAbstractStudent(abstractStudent);
+    
+    return Response.noContent().build();
+  }
+
+  
 //
-//  @Path("/abstractStudents")
-//  @POST
-//  public Response createAbstractStudent(AbstractStudentEntity abstractStudentEntity) {
-//    Date birthday = abstractStudentEntity.getBirthday();
-//    String socialSecurityNumber = abstractStudentEntity.getSocialSecurityNumber();
-//    Sex sex = abstractStudentEntity.getSex();
-//    String basicInfo = abstractStudentEntity.getBasicInfo();
-//    boolean secureInfo = abstractStudentEntity.getSecureInfo();
-//    
-//    if (birthday != null && !StringUtils.isBlank(socialSecurityNumber) && sex != null && !StringUtils.isBlank(basicInfo)) {
-//      return Response.ok()
-//          .entity(tranqualise(abstractStudentController.createAbstractStudent(birthday, socialSecurityNumber, sex, basicInfo, secureInfo)))
-//          .build();
-//    } else  {
-//      return Response.status(500).build();
-//    }
-//  }
+  
 //  
 //  @Path("/students")
 //  @POST
@@ -1157,37 +1239,7 @@ public class StudentRESTService extends AbstractRESTService {
 //    }
 //  }
 
-//  @Path("/abstractStudents")
-//  @GET
-//  public Response findAbstractStudents(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<AbstractStudent> abstractStudents;
-//    if (filterArchived) {
-//      abstractStudents = abstractStudentController.findUnarchivedAbstractStudents();
-//    } else {
-//      abstractStudents = abstractStudentController.findAbstractStudents();
-//    }
-//    if (!abstractStudents.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(abstractStudents))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/abstractStudents/{ID:[0-9]*}")
-//  @GET
-//  public Response findAbstractStudentById(@PathParam("ID") Long id) {
-//    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(id);
-//    if (abstractStudent != null) {
-//      return Response.ok()
-//          .entity(tranqualise(abstractStudent))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+
 //  @Path("/abstractStudents/{ID:[0-9]*}/students")
 //  @GET
 //  public Response findStudentsByAbstractStudent(@PathParam("ID") Long id) {
@@ -1274,26 +1326,6 @@ public class StudentRESTService extends AbstractRESTService {
 //  }
 //  
 //
-
-//  @Path("/abstractStudents/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateAbstractStudent(@PathParam("ID") Long id, AbstractStudentEntity abstractStudentEntity) {
-//    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(id);
-//    Date birthday = abstractStudentEntity.getBirthday();
-//    String socialSecurityNumber = abstractStudentEntity.getSocialSecurityNumber();
-//    Sex sex = abstractStudentEntity.getSex();
-//    String basicInfo = abstractStudentEntity.getBasicInfo();
-//    boolean secureInfo = abstractStudentEntity.getSecureInfo();
-//    
-//    if (abstractStudent != null &&birthday != null && !StringUtils.isBlank(socialSecurityNumber) && sex != null && !StringUtils.isBlank(basicInfo)) {
-//      return Response.ok()
-//          .entity(tranqualise(abstractStudentController.updateAbstractStudent(abstractStudent, birthday, socialSecurityNumber, sex, basicInfo, secureInfo)))
-//          .build();
-//    } else  {
-//      return Response.status(500).build();
-//    }
-//  }
-//  
 //  @Path("/students/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateStudent(@PathParam("ID") Long id, StudentEntity studentEntity) {
@@ -1380,9 +1412,6 @@ public class StudentRESTService extends AbstractRESTService {
 //    }
 //  }
 
-  
-  // TODO: ActivityTypes
-  
   @Path("/variables")
   @POST
   public Response createVariable(fi.pyramus.rest.model.VariableKey entity) {

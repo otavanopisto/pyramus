@@ -41,4 +41,8 @@ public class AbstractStudentController {
     abstractStudentDAO.update(abstractStudent, birthday, socialSecurityNumber, sex, basicInfo, secureInfo);
     return abstractStudent;
   }
+
+  public void deleteAbstractStudent(AbstractStudent abstractStudent) {
+    abstractStudentDAO.delete(abstractStudent);
+  }
 }

@@ -49,6 +49,7 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.domainmodel.students.Student;
+import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
@@ -385,6 +386,23 @@ public class ObjectFactory {
               toDateTime(entity.getBeginDate()), creatorId, toDateTime(entity.getCreated()), lastModifierId, 
               toDateTime(entity.getLastModified()), tags, entity.getArchived() 
             );
+          }
+        },
+        
+        new Mapper<AbstractStudent>() {
+          
+          public Object map(AbstractStudent entity) {
+            Sex sex = null;
+            switch (entity.getSex()) {
+              case FEMALE:
+                sex = Sex.FEMALE;
+              break;
+              case MALE:
+                sex = Sex.MALE;
+              break;
+            }
+            
+            return new fi.pyramus.rest.model.AbstractStudent(entity.getId(), toDateTime(entity.getBirthday()), entity.getSocialSecurityNumber(), sex, entity.getSecureInfo(), entity.getBasicInfo());
           }
         },
           
