@@ -327,4 +327,29 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     
     return entityManager.createQuery(criteria).getResultList();
   }
+
+  public Student updateAbstractStudent(Student student, AbstractStudent abstractStudent) {
+    AbstractStudent oldAbstractStudent = student.getAbstractStudent();
+    if (oldAbstractStudent != null) {
+      oldAbstractStudent.removeStudent(student);
+      getEntityManager().persist(oldAbstractStudent);
+    }
+    
+    if (abstractStudent != null) {
+      abstractStudent.addStudent(student);
+      getEntityManager().persist(abstractStudent);
+    }
+    
+    return persist(student);
+  }
+
+  public Student removeTag(Student student, Tag tag) {
+    student.removeTag(tag);
+    return persist(student);
+  }
+
+  public Student addTag(Student student, Tag tag) {
+    student.addTag(tag);
+    return persist(student);
+  }
 }

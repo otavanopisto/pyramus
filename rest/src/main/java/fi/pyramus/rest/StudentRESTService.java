@@ -61,7 +61,6 @@ import fi.pyramus.rest.controller.StudentEducationalLevelController;
 import fi.pyramus.rest.controller.StudentExaminationTypeController;
 import fi.pyramus.rest.controller.StudentGroupController;
 import fi.pyramus.rest.controller.StudentStudyEndReasonController;
-import fi.pyramus.rest.controller.StudentSubResourceController;
 import fi.pyramus.rest.controller.StudentVariableController;
 import fi.pyramus.rest.controller.StudyProgrammeCategoryController;
 import fi.pyramus.rest.controller.StudyProgrammeController;
@@ -116,6 +115,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private StudentStudyEndReasonController studentStudyEndReasonController;
+
+  @Inject
+  private SchoolController schoolController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -1165,61 +1167,165 @@ public class StudentRESTService extends AbstractRESTService {
     
     return Response.noContent().build();
   }
+  
+  @Path("/students")
+  @POST
+  public Response createStudent(fi.pyramus.rest.model.Student entity) {
+    Long abstractStudentId = entity.getAbstractStudentId();
+    Long studyProgrammeId = entity.getStudyProgrammeId();
+    String firstName = entity.getFirstName();
+    String lastName = entity.getLastName();
+    Boolean lodging = entity.getLodging();
+    
+    if ((abstractStudentId == null)||(studyProgrammeId == null)||(lodging == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(firstName)||StringUtils.isBlank(lastName)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(abstractStudentId);
+    if (abstractStudent == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    StudyProgramme studyProgramme = studyProgrammeController.findStudyProgrammeById(studyProgrammeId);
+    if (studyProgramme == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    StudentActivityType activityType = entity.getActivityTypeId() != null ? studentActivityTypeController.findStudentActivityTypeById(entity.getActivityTypeId()) : null;
+    StudentExaminationType examinationType = entity.getExaminationTypeId() != null ? studentExaminationTypeController.findStudentExaminationTypeById(entity.getExaminationTypeId()) : null;
+    StudentEducationalLevel educationalLevel = entity.getEducationalLevelId() != null ? studentEducationalLevelController.findStudentEducationalLevelById(entity.getEducationalLevelId()) : null;
+    Nationality nationality = entity.getNationalityId() != null ? nationalityController.findNationalityById(entity.getNationalityId()) : null;
+    Municipality municipality = entity.getMunicipalityId() != null ? municipalityController.findMunicipalityById(entity.getMunicipalityId()) : null;
+    Language language = entity.getLanguageId() != null ? languageController.findLanguageById(entity.getLanguageId()) : null;
+    School school = entity.getSchoolId() != null ? schoolController.findSchoolById(entity.getSchoolId()) : null;
+    StudentStudyEndReason studyEndReason = entity.getStudyEndReasonId() != null ? studentStudyEndReasonController.findStudentStudyEndReasonById(entity.getStudyEndReasonId()) : null;
+    
+    Student student = studentController.createStudent(abstractStudent, firstName, lastName, entity.getNickname(), entity.getAdditionalInfo(), 
+        toDate(entity.getStudyTimeEnd()), activityType, examinationType, educationalLevel, entity.getEducation(), nationality,
+        municipality, language, school, studyProgramme, entity.getPreviousStudies(), toDate(entity.getStudyStartDate()),
+        toDate(entity.getStudyEndDate()), studyEndReason, entity.getStudyEndText(), lodging);
+    studentController.updateStudentVariables(student, entity.getVariables());
+    studentController.updateStudentTags(student, entity.getTags());
 
+    return Response.ok(objectFactory.createModel(student)).build();
+  }
   
-//
+  @Path("/students")
+  @GET
+  public Response findStudents(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Student> students;
+    
+    if (filterArchived) {
+      students = studentController.listUnarchivedStudents();
+    } else {
+      students = studentController.listStudents();
+    }
+    
+    if (students.isEmpty()) {
+      return Response.noContent().build();
+    }
+
+    return Response.ok(objectFactory.createModel(students)).build();
+  }
   
-//  
-//  @Path("/students")
-//  @POST
-//  public Response createStudent(StudentEntity studentEntity) {
-//    try {
-//      AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(studentEntity.getAbstractStudent_id());
-//      String firstName = studentEntity.getFirstName();
-//      String lastName = studentEntity.getLastName();
-//      String nickname = studentEntity.getNickname();
-//      String additionalInfo = studentEntity.getAdditionalInfo();
-//      Date studyTimeEnd = studentEntity.getStudyTimeEnd();
-//      StudentActivityType activityType = studentSubController.findStudentActivityTypeById(studentEntity.getActivityType_id());
-//      StudentExaminationType examinationType = studentSubController.findStudentExaminationTypeById(studentEntity.getExaminationType_id());
-//      StudentEducationalLevel educationalLevel = studentSubController.findStudentEducationalLevelById(studentEntity.getEducationalLevel_id());
-//      String education = studentEntity.getEducation();
-//      Nationality nationality = studentSubController.findNationalityById(studentEntity.getNationality_id());
-//      Municipality municipality = studentSubController.findMunicipalityById(studentEntity.getMunicipality_id());
-//      Language language = studentSubController.findLanguageById(studentEntity.getLanguage_id());
-//      School school = schoolController.findSchoolById(studentEntity.getSchool_id());
-//      StudyProgramme studyProgramme = studentSubController.findStudyProgrammeById(studentEntity.getStudyProgramme_id());
-//      Double previousStudies = studentEntity.getPreviousStudies();
-//      Date studyStartDate = studentEntity.getStudyStartDate();
-//      Date studyEndDate = studentEntity.getStudyEndDate();
-//      StudentStudyEndReason studyEndReason = studentSubController.findStudentStudyEndReasonById(studentEntity.getStudyEndReason_id());
-//      String studyEndText = studentEntity.getStudyEndText();
-//      boolean lodging = studentEntity.getLodging();
-//      
-//      return Response.ok()
-//          .entity(tranqualise(studentController.createStudent(abstractStudent, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType,
-//                  examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies, studyStartDate,
-//                  studyEndDate, studyEndReason, studyEndText, lodging)))
-//          .build();
-//    } catch (Exception e) {
-//      return Response.status(500).build();
-//    }
-//    
-//  }
-//  
-//  @Path("/students/{ID:[0-9]*}/tags")
-//  @POST
-//  public Response createStudentTag(@PathParam("ID") Long id, TagEntity tagEntity) {
-//    String text = tagEntity.getText();
-//    Student student = studentController.findStudentById(id);
-//    if (!StringUtils.isBlank(text) && student != null) {
-//      return Response.ok()
-//          .entity(tranqualise(studentController.createStudentTag(student, text)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
+  
+  @Path("/students/{ID:[0-9]*}")
+  @GET
+  public Response findStudentById(@PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(id);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok(objectFactory.createModel(student)).build();
+  }
+
+
+  @Path("/students/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudent(@PathParam("ID") Long id, fi.pyramus.rest.model.Student entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    Long abstractStudentId = entity.getAbstractStudentId();
+    Long studyProgrammeId = entity.getStudyProgrammeId();
+    String firstName = entity.getFirstName();
+    String lastName = entity.getLastName();
+    Boolean lodging = entity.getLodging();
+    
+    if ((abstractStudentId == null)||(studyProgrammeId == null)||(lodging == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(firstName)||StringUtils.isBlank(lastName)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Student student = studentController.findStudentById(id);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(abstractStudentId);
+    if (abstractStudent == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    StudyProgramme studyProgramme = studyProgrammeController.findStudyProgrammeById(studyProgrammeId);
+    if (studyProgramme == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    StudentActivityType activityType = entity.getActivityTypeId() != null ? studentActivityTypeController.findStudentActivityTypeById(entity.getActivityTypeId()) : null;
+    StudentExaminationType examinationType = entity.getExaminationTypeId() != null ? studentExaminationTypeController.findStudentExaminationTypeById(entity.getExaminationTypeId()) : null;
+    StudentEducationalLevel educationalLevel = entity.getEducationalLevelId() != null ? studentEducationalLevelController.findStudentEducationalLevelById(entity.getEducationalLevelId()) : null;
+    Nationality nationality = entity.getNationalityId() != null ? nationalityController.findNationalityById(entity.getNationalityId()) : null;
+    Municipality municipality = entity.getMunicipalityId() != null ? municipalityController.findMunicipalityById(entity.getMunicipalityId()) : null;
+    Language language = entity.getLanguageId() != null ? languageController.findLanguageById(entity.getLanguageId()) : null;
+    School school = entity.getSchoolId() != null ? schoolController.findSchoolById(entity.getSchoolId()) : null;
+    StudentStudyEndReason studyEndReason = entity.getStudyEndReasonId() != null ? studentStudyEndReasonController.findStudentStudyEndReasonById(entity.getStudyEndReasonId()) : null;
+    
+    studentController.updateStudent(student, firstName, lastName, entity.getNickname(), entity.getAdditionalInfo(), 
+        toDate(entity.getStudyTimeEnd()), activityType, examinationType, educationalLevel, entity.getEducation(), nationality,
+        municipality, language, school, studyProgramme, entity.getPreviousStudies(), toDate(entity.getStudyStartDate()),
+        toDate(entity.getStudyEndDate()), studyEndReason, entity.getStudyEndText(), lodging);
+    
+    studentController.updateStudentAbstractStudent(student, abstractStudent);
+    studentController.updateStudentVariables(student, entity.getVariables());
+    studentController.updateStudentTags(student, entity.getTags());
+    
+    return Response.ok(objectFactory.createModel(student)).build();
+}
+
+  @Path("/students/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteStudent(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    Student student = studentController.findStudentById(id);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      studentController.deleteStudent(student);
+    } else {
+      studentController.archiveStudent(student, getLoggedUser());
+    }
+    
+    return Response.noContent().build();
+  }
 //  
 //  @Path("/students/{ID:[0-9]*}/contactLogEntries")
 //  @POST
@@ -1253,37 +1359,7 @@ public class StudentRESTService extends AbstractRESTService {
 //    }
 //  }
 //  
-//  @Path("/students")
-//  @GET
-//  public Response findStudents(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-//    List<Student> students;
-//    if (filterArchived) {
-//      students = studentController.findUnarchivedStudents();
-//    } else {
-//      students = studentController.findStudents();
-//    }
-//    if (!students.isEmpty()) {
-//      return Response.ok()
-//          .entity(tranqualise(students))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/students/{ID:[0-9]*}")
-//  @GET
-//  public Response findStudentById(@PathParam("ID") Long id) {
-//    Student student = studentController.findStudentById(id);
-//    if (student != null) {
-//      return Response.ok()
-//          .entity(tranqualise(student))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+
 //  @Path("/students/{ID:[0-9]*}/abstractStudents")
 //  @GET
 //  public Response findAbstractStudentByStudent(@PathParam("ID") Long id) {
@@ -1326,55 +1402,7 @@ public class StudentRESTService extends AbstractRESTService {
 //  }
 //  
 //
-//  @Path("/students/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateStudent(@PathParam("ID") Long id, StudentEntity studentEntity) {
-//    Student student = studentController.findStudentById(id);
-//    if (student != null) {
-//      if (studentEntity.getArchived() == null) {
-//        try {
-//          String firstName = studentEntity.getFirstName();
-//          String lastName = studentEntity.getLastName();
-//          String nickname = studentEntity.getNickname();
-//          String additionalInfo = studentEntity.getAdditionalInfo();
-//          Date studyTimeEnd = studentEntity.getStudyTimeEnd();
-//          StudentActivityType activityType = studentSubController.findStudentActivityTypeById(studentEntity.getActivityType_id());
-//          StudentExaminationType examinationType = studentSubController.findStudentExaminationTypeById(studentEntity.getExaminationType_id());
-//          StudentEducationalLevel educationalLevel = studentSubController.findStudentEducationalLevelById(studentEntity.getEducationalLevel_id());
-//          String education = studentEntity.getEducation();
-//          Nationality nationality = studentSubController.findNationalityById(studentEntity.getNationality_id());
-//          Municipality municipality = studentSubController.findMunicipalityById(studentEntity.getMunicipality_id());
-//          Language language = studentSubController.findLanguageById(studentEntity.getLanguage_id());
-//          School school = schoolController.findSchoolById(studentEntity.getSchool_id());
-//          StudyProgramme studyProgramme = studentSubController.findStudyProgrammeById(studentEntity.getStudyProgramme_id());
-//          Double previousStudies = studentEntity.getPreviousStudies();
-//          Date studyStartDate = studentEntity.getStudyStartDate();
-//          Date studyEndDate = studentEntity.getStudyEndDate();
-//          StudentStudyEndReason studyEndReason = studentSubController.findStudentStudyEndReasonById(studentEntity.getStudyEndReason_id());
-//          String studyEndText = studentEntity.getStudyEndText();
-//          boolean lodging = studentEntity.getLodging();
-//          
-//          return Response.ok()
-//              .entity(tranqualise(studentController.updateStudent(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType,
-//                      examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies,
-//                      studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging)))
-//              .build();
-//          
-//        } catch (Exception e) {
-//          return Response.status(500).build();
-//        }
-//      } else if (!studentEntity.getArchived()){ 
-//        return Response.ok()
-//            .entity(tranqualise(studentController.unarchiveStudent(student, getUser())))
-//            .build();
-//      } else {
-//        return Response.status(500).build();
-//      }
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
+
 //  @Path("/students/{SID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
 //  @PUT
 //  public Response updateStudentContactLogEntry(@PathParam("SID") Long studentId, @PathParam("ID") Long id, StudentContactLogEntryEntity contactLogEntryEntity) {
@@ -1397,19 +1425,6 @@ public class StudentRESTService extends AbstractRESTService {
 //      }
 //    }
 //    return Response.status(Status.NOT_FOUND).build();
-//  }
-//  
-//  @Path("/students/{ID:[0-9]*}")
-//  @DELETE
-//  public Response archiveStudent(@PathParam("ID") Long id) {
-//    Student student = studentController.findStudentById(id);
-//    if (student != null) {
-//      return Response.ok()
-//          .entity(tranqualise(studentController.archiveStudent(student, getUser())))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
 //  }
 
   @Path("/variables")
