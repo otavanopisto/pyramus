@@ -318,6 +318,13 @@ values
   (1, 'StudentStudyEndReason #1', null ,1),
   (2, 'StudentStudyEndReason #2', 1 ,1);
   
+insert into 
+  StudentContactLogEntry (id, creatorName, entryDate, text, type, student, version, archived)
+values
+  (1, 'Tester #1', PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test text #1', 'LETTER', 1, 1, false),
+  (2, 'Tester #2', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'Test text #2', 'PHONE', 1, 1, false);
+
+  
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
@@ -362,4 +369,5 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'AbstractStudent', max(id) + 1 from AbstractStudent;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Student', max(id) + 1 from Student;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentStudyEndReason', max(id) + 1 from StudentStudyEndReason;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentContactLogEntry', max(id) + 1 from StudentContactLogEntry;
 

@@ -50,6 +50,7 @@ import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.AbstractStudent;
+import fi.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
@@ -448,8 +449,15 @@ public class ObjectFactory {
             Long parentReasonId = entity.getParentReason() != null ? entity.getParentReason().getId() : null;
             return new fi.pyramus.rest.model.StudentStudyEndReason(entity.getId(), entity.getName(), parentReasonId);
           }
-        }
+        },
         
+        new Mapper<StudentContactLogEntry>() {
+          @Override
+          public Object map(StudentContactLogEntry entity) {
+            StudentContactLogEntryType type = StudentContactLogEntryType.valueOf(entity.getType().name());
+            return new fi.pyramus.rest.model.StudentContactLogEntry(entity.getId(), entity.getText(), entity.getCreatorName(), toDateTime(entity.getEntryDate()), type, entity.getArchived());
+          }
+        }
   
     );
   }

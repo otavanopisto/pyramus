@@ -117,6 +117,9 @@ public class StudentRESTService extends AbstractRESTService {
   private StudentStudyEndReasonController studentStudyEndReasonController;
 
   @Inject
+  private StudentContactLogEntryController studentContactLogEntryController;
+  
+  @Inject
   private SchoolController schoolController;
   
   @Inject
@@ -1326,25 +1329,136 @@ public class StudentRESTService extends AbstractRESTService {
     
     return Response.noContent().build();
   }
-//  
-//  @Path("/students/{ID:[0-9]*}/contactLogEntries")
-//  @POST
-//  public Response createStudentContactLogEntry(@PathParam("ID") Long id, StudentContactLogEntryEntity contactLogEntryEntity) {
-//    Student student = studentController.findStudentById(id);
-//    StudentContactLogEntryType type = contactLogEntryEntity.getType();
-//    String text = contactLogEntryEntity.getText();
-//    Date entryDate = contactLogEntryEntity.getEntryDate();
-//    String creator = getUser().getFullName();
-//    
-//    if (student != null && type != null && !StringUtils.isBlank(text) && entryDate != null &&!StringUtils.isBlank(creator)) {
-//      return Response.ok()
-//          .entity(tranqualise(contactLogEntryController.createContactLogEntry(student, type, text, entryDate, creator)))
-//          .build();
-//    } else {
-//      return Response.status(500).build();
-//    }
-//  }
+  
+  @Path("/students/{ID:[0-9]*}/contactLogEntries")
+  @POST
+  public Response createStudentContactLogEntry(@PathParam("ID") Long id, fi.pyramus.rest.model.StudentContactLogEntry entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
 
+    Student student = studentController.findStudentById(id);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    StudentContactLogEntryType type = entity.getType() != null ? StudentContactLogEntryType.valueOf(entity.getType().name()) : null;
+    StudentContactLogEntry contactLogEntry = studentContactLogEntryController.createContactLogEntry(student, type, entity.getText(), toDate(entity.getEntryDate()), entity.getCreatorName());
+    
+    return Response.ok(objectFactory.createModel(contactLogEntry)).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries")
+  @GET
+  public Response findStudentContactLogEntriesByStudent(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studentContactLogEntryController.listContactLogEntriesByStudent(student))).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
+  @GET
+  public Response findStudentContactLogEntryById(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    StudentContactLogEntry contactLogEntry = studentContactLogEntryController.findContactLogEntryById(id);
+    if (contactLogEntry == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (contactLogEntry.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok(objectFactory.createModel(contactLogEntry)).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
+  @PUT
+  public Response updateStudentContactLogEntry(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id, fi.pyramus.rest.model.StudentContactLogEntry entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    StudentContactLogEntry contactLogEntry = studentContactLogEntryController.findContactLogEntryById(id);
+    if (contactLogEntry == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (contactLogEntry.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    StudentContactLogEntryType type = entity.getType() != null ? StudentContactLogEntryType.valueOf(entity.getType().name()) : null;
+    studentContactLogEntryController.updateContactLogEntry(contactLogEntry, type, entity.getText(), toDate(entity.getEntryDate()), entity.getCreatorName());
+    
+    return Response.ok(objectFactory.createModel(contactLogEntry)).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteStudentContactLogEntry(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    StudentContactLogEntry contactLogEntry = studentContactLogEntryController.findContactLogEntryById(id);
+    if (contactLogEntry == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!contactLogEntry.getStudent().getId().equals(contactLogEntry.getStudent().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (permanent) {
+      studentContactLogEntryController.deleteStudentContactLogEntry(contactLogEntry);
+    } else {
+      studentContactLogEntryController.archiveStudentContactLogEntry(contactLogEntry, getLoggedUser());
+    }
+      
+    return Response.noContent().build();
+  }
 
 //  @Path("/abstractStudents/{ID:[0-9]*}/students")
 //  @GET
@@ -1372,61 +1486,6 @@ public class StudentRESTService extends AbstractRESTService {
 //      return Response.status(Status.NOT_FOUND).build();
 //    }
 //  }
-//  
-//  @Path("/students/{ID:[0-9]*}/contactLogEntries")
-//  @GET
-//  public Response findStudentContactLogEntriesByStudent(@PathParam("ID") Long id) {
-//    Student student = studentController.findStudentById(id);
-//    if (student != null) {
-//      return Response.ok()
-//          .entity(tranqualise(contactLogEntryController.findContactLogEntriesByStudent(student)))
-//          .build();
-//    } else {
-//      return Response.status(Status.NOT_FOUND).build();
-//    }
-//  }
-//  
-//  @Path("/students/{SID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
-//  @GET
-//  public Response findStudentContactLogEntryById(@PathParam("SID") Long studentId, @PathParam("ID") Long id) {
-//    Student student = studentController.findStudentById(studentId);
-//    if (student != null) {
-//      StudentContactLogEntry contactLogEntry = contactLogEntryController.findContactLogEntryByIdAndStudent(id, student);
-//      if (contactLogEntry != null) {
-//        return Response.ok()
-//            .entity(tranqualise(contactLogEntry))
-//            .build();
-//      }
-//    }
-//    return Response.status(Status.NOT_FOUND).build();
-//  }
-//  
-//
-
-//  @Path("/students/{SID:[0-9]*}/contactLogEntries/{ID:[0-9]*}")
-//  @PUT
-//  public Response updateStudentContactLogEntry(@PathParam("SID") Long studentId, @PathParam("ID") Long id, StudentContactLogEntryEntity contactLogEntryEntity) {
-//    Student student = studentController.findStudentById(studentId);
-//    if (student != null) {
-//      StudentContactLogEntry contactLogEntry = contactLogEntryController.findContactLogEntryByIdAndStudent(id, student);
-//      if (contactLogEntry != null) {
-//        StudentContactLogEntryType type = contactLogEntryEntity.getType();
-//        String text = contactLogEntryEntity.getText();
-//        Date entryDate = contactLogEntryEntity.getEntryDate();
-//        String creator = getUser().getFullName();
-//        
-//        if (student != null && type != null && !StringUtils.isBlank(text) && entryDate != null &&!StringUtils.isBlank(creator)) {
-//          return Response.ok()
-//              .entity(tranqualise(contactLogEntryController.updateContactLogEntry(contactLogEntry, type, text, entryDate, creator)))
-//              .build();
-//        } else {
-//          return Response.status(500).build();
-//        }
-//      }
-//    }
-//    return Response.status(Status.NOT_FOUND).build();
-//  }
-
   @Path("/variables")
   @POST
   public Response createVariable(fi.pyramus.rest.model.VariableKey entity) {
