@@ -937,9 +937,32 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/studentGroups/{ID:[0-9]*}/students")
   @POST
-  public Response createStudentGroupStudent(@PathParam("ID") Long id) {
-    // TODO: Implement
-    return Response.status(501).build();
+  public Response createStudentGroupStudent(@PathParam("ID") Long id, fi.pyramus.rest.model.StudentGroupStudent entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (entity.getStudentId() == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (studentGroup.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Student student = studentController.findStudentById(entity.getStudentId());
+    if (student == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    StudentGroupStudent studentGroupStudent = studentGroupController.createStudentGroupStudent(studentGroup, student, getLoggedUser());
+    
+    return Response.ok(objectFactory.createModel(studentGroupStudent)).build();
   }
 
   @Path("/studentGroups/{ID:[0-9]*}/students")
@@ -953,31 +976,70 @@ public class StudentRESTService extends AbstractRESTService {
     if (studentGroup.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    
-    List<Student> students = new ArrayList<>();
 
-    Set<StudentGroupStudent> studentGroupStudents = studentGroup.getStudents();
-    for (StudentGroupStudent studentGroupStudent : studentGroupStudents) {
-      if (!studentGroupStudent.getStudent().getArchived()) {
-        students.add(studentGroupStudent.getStudent());
-      }
+    List<StudentGroupStudent> studentGroupStudents = new ArrayList<>(studentGroup.getStudents());
+    if (studentGroupStudents.isEmpty()) {
+      return Response.noContent().build();
     }
     
-    Collections.sort(students, new Comparator<Student>() {
+    Collections.sort(studentGroupStudents, new Comparator<StudentGroupStudent>() {
       @Override
-      public int compare(Student o1, Student o2) {
+      public int compare(StudentGroupStudent o1, StudentGroupStudent o2) {
         return o1.getId().compareTo(o2.getId());
       }
     });
     
-    return Response.ok(objectFactory.createModel(students)).build();
+    return Response.ok(objectFactory.createModel(studentGroupStudents)).build();
   }
   
-  @Path("/studentGroups/{ID:[0-9]*}/students")
+  @Path("/studentGroups/{GROUPID:[0-9]*}/students/{ID:[0-9]*}")
+  @GET
+  public Response findStudentGroupStudent(@PathParam("GROUPID") Long studentGroupId, @PathParam("ID") Long id) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(studentGroupId);
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (studentGroup.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    StudentGroupStudent studentGroupStudent = studentGroupController.findStudentGroupStudentById(id);
+    if (studentGroupStudent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!studentGroupStudent.getStudentGroup().getId().equals(studentGroup.getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studentGroupStudent)).build();
+  }
+  
+  @Path("/studentGroups/{GROUPID:[0-9]*}/students/{ID:[0-9]*}")
   @DELETE
-  public Response deleteStudentGroupStudent(@PathParam("ID") Long id) {
-    // TODO: Implement
-    return Response.status(501).build();
+  public Response deleteStudentGroupStudent(@PathParam("GROUPID") Long studentGroupId, @PathParam("ID") Long id) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(studentGroupId);
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (studentGroup.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    StudentGroupStudent studentGroupStudent = studentGroupController.findStudentGroupStudentById(id);
+    if (studentGroupStudent == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!studentGroupStudent.getStudentGroup().getId().equals(studentGroup.getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    studentGroupController.deleteStudentGroupStudent(studentGroupStudent);
+    
+    return Response.noContent().build();
   }
   
   @Path("/studyEndReasons")

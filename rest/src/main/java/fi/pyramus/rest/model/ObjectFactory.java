@@ -41,6 +41,7 @@ import fi.pyramus.domainmodel.projects.ProjectModule;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariableKey;
+import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentVariable;
 import fi.pyramus.domainmodel.students.StudentVariableKey;
 import fi.pyramus.domainmodel.students.StudentActivityType;
@@ -456,6 +457,14 @@ public class ObjectFactory {
           public Object map(StudentContactLogEntry entity) {
             StudentContactLogEntryType type = StudentContactLogEntryType.valueOf(entity.getType().name());
             return new fi.pyramus.rest.model.StudentContactLogEntry(entity.getId(), entity.getText(), entity.getCreatorName(), toDateTime(entity.getEntryDate()), type, entity.getArchived());
+          }
+        },
+        
+        new Mapper<StudentGroupStudent>() {
+          @Override
+          public Object map(StudentGroupStudent entity) {
+            Long studentId = entity.getStudent() != null ? entity.getStudent().getId() : null;
+            return new fi.pyramus.rest.model.StudentGroupStudent(entity.getId(), studentId);
           }
         }
   
