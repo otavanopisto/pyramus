@@ -3,9 +3,7 @@ package fi.pyramus.rest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -39,7 +37,6 @@ import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
-import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
@@ -52,7 +49,6 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
-import fi.pyramus.domainmodel.students.StudentVariable;
 import fi.pyramus.domainmodel.students.StudentVariableKey;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
@@ -70,7 +66,6 @@ import fi.pyramus.rest.controller.StudentStudyEndReasonController;
 import fi.pyramus.rest.controller.StudentVariableController;
 import fi.pyramus.rest.controller.StudyProgrammeCategoryController;
 import fi.pyramus.rest.controller.StudyProgrammeController;
-import fi.pyramus.rest.controller.TagController;
 import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/students")
