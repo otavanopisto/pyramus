@@ -45,6 +45,7 @@ import fi.pyramus.domainmodel.base.ContactURL;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.SchoolVariableKey;
+import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentVariable;
 import fi.pyramus.domainmodel.students.StudentVariableKey;
@@ -503,6 +504,13 @@ public class ObjectFactory {
             Long contactTypeId = entity.getContactType() != null ? entity.getContactType().getId() : null;
             return new fi.pyramus.rest.model.Address(entity.getId(), contactTypeId, entity.getDefaultAddress(), entity.getName(), 
                 entity.getStreetAddress(), entity.getPostalCode(), entity.getCity(), entity.getCountry());
+          }
+        }, 
+        
+        new Mapper<ContactType>() {
+          @Override
+          public Object map(ContactType entity) {
+            return new fi.pyramus.rest.model.ContactType(entity.getId(), entity.getName(), entity.getArchived());
           }
         }
   

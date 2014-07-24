@@ -354,9 +354,33 @@ public class CommonController {
   }
   
   /* ContactType */
+  
+  public ContactType createContactType(String name) {
+    return contactTypeDAO.create(name);
+  }
 
   public ContactType findContactTypeById(Long contactTypeId) {
     return contactTypeDAO.findById(contactTypeId);
+  }
+
+  public ContactType updateContactType(ContactType contactType, String name) {
+    return contactTypeDAO.update(contactType, name);
+  }
+
+  public void archiveContactType(ContactType contactType, User user) {
+    contactTypeDAO.archive(contactType, user);
+  }
+
+  public List<ContactType> listUnarchivedContactTypes() {
+    return contactTypeDAO.listUnarchived();
+  }
+
+  public List<ContactType> listContactTypes() {
+    return contactTypeDAO.listAll();
+  }
+
+  public void deleteContactType(ContactType contactType) {
+    contactTypeDAO.delete(contactType);
   }
   
   /* Address */
