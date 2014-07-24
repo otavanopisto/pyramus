@@ -10,13 +10,23 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.AddressDAO;
+import fi.pyramus.dao.base.ContactURLDAO;
+import fi.pyramus.dao.base.EmailDAO;
+import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentVariableDAO;
 import fi.pyramus.dao.students.StudentVariableKeyDAO;
+import fi.pyramus.domainmodel.base.Address;
+import fi.pyramus.domainmodel.base.ContactType;
+import fi.pyramus.domainmodel.base.ContactURL;
+import fi.pyramus.domainmodel.base.ContactURLType;
+import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.Tag;
@@ -45,6 +55,18 @@ public class StudentController {
 
   @Inject
   private StudentVariableKeyDAO studentVariableKeyDAO;
+
+  @Inject
+  private EmailDAO emailDAO;
+
+  @Inject
+  private PhoneNumberDAO phoneNumberDAO;
+  
+  @Inject
+  private AddressDAO addressDAO;
+  
+  @Inject
+  private ContactURLDAO contactURLDAO;
 
   public Student createStudent(AbstractStudent abstractStudent, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
@@ -212,6 +234,30 @@ public class StudentController {
   
   public StudentVariableKey findStudentVariableKeyByVariableKey(String variableKey) {
     return studentVariableKeyDAO.findByKey(variableKey);
+  }
+
+  /* Email */
+
+  public Email addStudentEmail(Student student, ContactType contactType, String address, Boolean defaultAddress) {
+    return emailDAO.create(student.getContactInfo(), contactType, defaultAddress, address);
+  }
+  
+  /* Address */
+
+  public Address addStudentAddress(Student student, ContactType contactType, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
+    return addressDAO.create(student.getContactInfo(), contactType, name ,streetAddress, postalCode, city, country, defaultAddress);
+  }
+
+  /* PhoneNumber */
+
+  public PhoneNumber addStudentPhoneNumber(Student student, ContactType contactType, String number, Boolean defaultNumber) {
+    return phoneNumberDAO.create(student.getContactInfo(), contactType, defaultNumber, number);
+  }
+  
+  /* ContactURL */
+
+  public ContactURL addStudentContactURL(Student student, ContactURLType contactURLType, String url) {
+    return contactURLDAO.create(student.getContactInfo(), contactURLType, url);
   }
 
 }

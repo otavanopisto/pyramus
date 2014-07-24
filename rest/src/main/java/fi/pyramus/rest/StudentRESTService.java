@@ -26,10 +26,16 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
+import fi.pyramus.domainmodel.base.Address;
+import fi.pyramus.domainmodel.base.ContactType;
+import fi.pyramus.domainmodel.base.ContactURL;
+import fi.pyramus.domainmodel.base.ContactURLType;
 import fi.pyramus.domainmodel.base.EducationType;
+import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
@@ -1635,5 +1641,417 @@ public class StudentRESTService extends AbstractRESTService {
     
     return Response.noContent().build();
   }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/emails")
+  @GET
+  public Response listStudentEmails(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<Email> emails = student.getContactInfo().getEmails();
+    if (emails.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(emails)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/emails")
+  @POST
+  public Response createStudentEmail(@PathParam("STUDENTID") Long studentId, fi.pyramus.rest.model.Email email) {
+    if (email == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Long contactTypeId = email.getContactTypeId();
+    Boolean defaultAddress = email.getDefaultAddress();
+    String address = email.getAddress();
+    
+    if ((contactTypeId == null) || (defaultAddress == null) || StringUtils.isBlank(address)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactType contactType = commonController.findContactTypeById(contactTypeId);
+    if (contactType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studentController.addStudentEmail(student, contactType, address, defaultAddress))).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/emails/{ID:[0-9]*}")
+  @GET
+  public Response findStudentEmail(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Email email = commonController.findEmailById(id);
+    if (email == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!email.getContactInfo().getId().equals(student.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(email)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/emails/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteStudentEmail(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Email email = commonController.findEmailById(id);
+    if (email == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!email.getContactInfo().getId().equals(student.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    commonController.deleteEmail(email);
+    
+    return Response.noContent().build(); 
+  } 
+  
+  @Path("/students/{STUDENTID:[0-9]*}/addresses")
+  @GET
+  public Response listStudentAddresses(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<Address> addresses = student.getContactInfo().getAddresses();
+    if (addresses.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(addresses)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/addresses")
+  @POST
+  public Response createStudentAddress(@PathParam("STUDENTID") Long studentId, fi.pyramus.rest.model.Address address) {
+    if (address == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Long contactTypeId = address.getContactTypeId();
+    Boolean defaultAddress = address.getDefaultAddress();
+    String name = address.getName();
+    String streetAddress = address.getStreetAddress();
+    String postalCode = address.getPostalCode();
+    String country = address.getCountry();
+    String city = address.getCity();
+    
+    if ((contactTypeId == null) || (defaultAddress == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactType contactType = commonController.findContactTypeById(contactTypeId);
+    if (contactType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studentController.addStudentAddress(student, contactType, defaultAddress, name, streetAddress, postalCode, city, country))).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/addresses/{ID:[0-9]*}")
+  @GET
+  public Response findStudentAddress(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Address address = commonController.findAddressById(id);
+    if (address == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!address.getContactInfo().getId().equals(student.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(address)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/addresses/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteStudentAddress(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Address address = commonController.findAddressById(id);
+    if (address == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!address.getContactInfo().getId().equals(student.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    commonController.deleteAddress(address);
+    
+    return Response.noContent().build(); 
+  } 
+  
+  @Path("/students/{STUDENTID:[0-9]*}/phoneNumbers")
+  @GET
+  public Response listStudentPhoneNumbers(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<PhoneNumber> phoneNumbers = student.getContactInfo().getPhoneNumbers();
+    if (phoneNumbers.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(phoneNumbers)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/phoneNumbers")
+  @POST
+  public Response createStudentPhoneNumber(@PathParam("STUDENTID") Long studentId, fi.pyramus.rest.model.PhoneNumber phoneNumber) {
+    if (phoneNumber == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Long contactTypeId = phoneNumber.getContactTypeId();
+    Boolean defaultNumber = phoneNumber.getDefaultNumber();
+    String number = phoneNumber.getNumber();
+    
+    if ((contactTypeId == null) || (defaultNumber == null) || StringUtils.isBlank(number)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactType contactType = commonController.findContactTypeById(contactTypeId);
+    if (contactType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studentController.addStudentPhoneNumber(student, contactType, number, defaultNumber))).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/phoneNumbers/{ID:[0-9]*}")
+  @GET
+  public Response findStudentPhoneNumber(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    PhoneNumber phoneNumber = commonController.findPhoneNumberById(id);
+    if (phoneNumber == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!phoneNumber.getContactInfo().getId().equals(student.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(phoneNumber)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/phoneNumbers/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteStudentPhoneNumber(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    PhoneNumber phoneNumber = commonController.findPhoneNumberById(id);
+    if (phoneNumber == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!phoneNumber.getContactInfo().getId().equals(student.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    commonController.deletePhoneNumber(phoneNumber);
+    
+    return Response.noContent().build(); 
+  } 
+  
+  @Path("/students/{STUDENTID:[0-9]*}/contactURLs")
+  @GET
+  public Response listStudentContactURLs(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<ContactURL> contactUrls = student.getContactInfo().getContactURLs();
+    if (contactUrls.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(contactUrls)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/contactURLs")
+  @POST
+  public Response createStudentContactURL(@PathParam("STUDENTID") Long studentId, fi.pyramus.rest.model.ContactURL contactURL) {
+    if (contactURL == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Long contactURLTypeId = contactURL.getContactURLTypeId();
+    String url = contactURL.getUrl();
+    
+    if ((contactURLTypeId == null) || StringUtils.isBlank(url)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactURLType contactURLType = commonController.findContactURLTypeById(contactURLTypeId);
+    if (contactURLType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(studentController.addStudentContactURL(student, contactURLType, url))).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/contactURLs/{ID:[0-9]*}")
+  @GET
+  public Response findStudentContactURL(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactURL contactURL = commonController.findContactURLById(id);
+    if (contactURL == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!contactURL.getContactInfo().getId().equals(student.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(contactURL)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/contactURLs/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteStudentContactURL(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactURL contactURL = commonController.findContactURLById(id);
+    if (contactURL == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!contactURL.getContactInfo().getId().equals(student.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    commonController.deleteContactURL(contactURL);
+    
+    return Response.noContent().build(); 
+  } 
+  
 
 }
