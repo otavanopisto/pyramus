@@ -9,12 +9,14 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.SchoolDAO;
 import fi.pyramus.dao.base.SchoolFieldDAO;
 import fi.pyramus.dao.base.SchoolVariableDAO;
 import fi.pyramus.dao.base.SchoolVariableKeyDAO;
 import fi.pyramus.dao.base.TagDAO;
+import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.School;
@@ -47,6 +49,9 @@ public class SchoolController {
 
   @Inject
   private EmailDAO emailDAO;
+  
+  @Inject
+  private AddressDAO addressDAO;
   
   /* School */
 
@@ -274,6 +279,10 @@ public class SchoolController {
     return emailDAO.create(school.getContactInfo(), contactType, defaultAddress, address);
   }
   
-  
+  /* Address */
 
+  public Address addSchoolAddress(School school, ContactType contactType, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
+    return addressDAO.create(school.getContactInfo(), contactType, name ,streetAddress, postalCode, city, country, defaultAddress);
+  }
+  
 }

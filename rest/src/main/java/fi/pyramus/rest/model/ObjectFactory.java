@@ -40,7 +40,8 @@ import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.domainmodel.projects.ProjectModule;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
-import fi.pyramus.domainmodel.base.Email;;
+import fi.pyramus.domainmodel.base.Email;
+import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentVariable;
@@ -474,6 +475,15 @@ public class ObjectFactory {
           public Object map(Email entity) {
             Long contactTypeId = entity.getContactType() != null ? entity.getContactType().getId() : null;
             return new fi.pyramus.rest.model.Email(entity.getId(), contactTypeId, entity.getDefaultAddress(), entity.getAddress());
+          }
+        },
+        
+        new Mapper<Address>() {
+          @Override
+          public Object map(Address entity) {
+            Long contactTypeId = entity.getContactType() != null ? entity.getContactType().getId() : null;
+            return new fi.pyramus.rest.model.Address(entity.getId(), contactTypeId, entity.getDefaultAddress(), entity.getName(), 
+                entity.getStreetAddress(), entity.getPostalCode(), entity.getCity(), entity.getCountry());
           }
         }
   

@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.School;
@@ -279,6 +280,112 @@ public class SchoolRESTService extends AbstractRESTService {
     }
     
     commonController.deleteEmail(email);
+    
+    return Response.noContent().build(); 
+  } 
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/addresses")
+  @GET
+  public Response listSchoolAddresses(@PathParam("SCHOOLID") Long schoolId) {
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<Address> addresses = school.getContactInfo().getAddresses();
+    if (addresses.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(addresses)).build();
+  }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/addresses")
+  @POST
+  public Response createSchoolAddress(@PathParam("SCHOOLID") Long schoolId, fi.pyramus.rest.model.Address address) {
+    if (address == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Long contactTypeId = address.getContactTypeId();
+    Boolean defaultAddress = address.getDefaultAddress();
+    String name = address.getName();
+    String streetAddress = address.getStreetAddress();
+    String postalCode = address.getPostalCode();
+    String country = address.getCountry();
+    String city = address.getCity();
+    
+    if ((contactTypeId == null) || (defaultAddress == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactType contactType = commonController.findContactTypeById(contactTypeId);
+    if (contactType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(schoolController.addSchoolAddress(school, contactType, defaultAddress, name, streetAddress, postalCode, city, country))).build();
+  }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/addresses/{ID:[0-9]*}")
+  @GET
+  public Response findSchoolAddress(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Address address = commonController.findAddressById(id);
+    if (address == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!address.getContactInfo().getId().equals(school.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(address)).build();
+  }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/addresses/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteSchoolAddress(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Address address = commonController.findAddressById(id);
+    if (address == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!address.getContactInfo().getId().equals(school.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    commonController.deleteAddress(address);
     
     return Response.noContent().build(); 
   } 

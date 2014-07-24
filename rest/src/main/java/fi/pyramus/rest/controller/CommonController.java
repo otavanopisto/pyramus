@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.ContactTypeDAO;
 import fi.pyramus.dao.base.CourseBaseVariableKeyDAO;
 import fi.pyramus.dao.base.EducationSubtypeDAO;
@@ -15,6 +16,7 @@ import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.SubjectDAO;
 import fi.pyramus.dao.grading.GradeDAO;
 import fi.pyramus.dao.grading.GradingScaleDAO;
+import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactInfo;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
@@ -56,6 +58,9 @@ public class CommonController {
 
   @Inject
   private EmailDAO emailDAO;
+
+  @Inject
+  private AddressDAO addressDAO;
 
   @Inject
   private ContactTypeDAO contactTypeDAO;
@@ -337,5 +342,19 @@ public class CommonController {
 
   public ContactType findContactTypeById(Long contactTypeId) {
     return contactTypeDAO.findById(contactTypeId);
+  }
+  
+  /* Address */
+
+  public Address createAddress(ContactInfo contactInfo, ContactType contactType, String name, String streetAddress, String postalCode, String city, String country, Boolean defaultAddress) {
+    return addressDAO.create(contactInfo, contactType, name, streetAddress, postalCode, city, country, defaultAddress);
+  }
+  
+  public Address findAddressById(Long id) {
+    return addressDAO.findById(id);
+  }
+  
+  public void deleteAddress(Address address) {
+    addressDAO.delete(address);
   }
 }
