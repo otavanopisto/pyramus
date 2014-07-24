@@ -441,10 +441,11 @@ public class ObjectFactory {
             };
 
             return new fi.pyramus.rest.model.Student(entity.getId(), abstractStudentId, entity.getFirstName(), entity.getLastName(), 
-                entity.getNickname(), entity.getAdditionalInfo(), nationalityId, languageId, municipalityId, schoolId, activityTypeId, 
-                examinationTypeId, educationalLevelId, toDateTime(entity.getStudyTimeEnd()), studyProgrammeId, entity.getPreviousStudies(), 
-                entity.getEducation(), entity.getLodging(), toDateTime(entity.getStudyStartDate()), toDateTime(entity.getStudyEndDate()), 
-                studyEndReasonId, entity.getStudyEndText(), variables, tags, entity.getArchived());
+                entity.getNickname(), entity.getAdditionalInfo(), entity.getContactInfo().getAdditionalInfo(), nationalityId, 
+                languageId, municipalityId, schoolId, activityTypeId, examinationTypeId, educationalLevelId, 
+                toDateTime(entity.getStudyTimeEnd()), studyProgrammeId, entity.getPreviousStudies(), entity.getEducation(), 
+                entity.getLodging(), toDateTime(entity.getStudyStartDate()), toDateTime(entity.getStudyEndDate()),  studyEndReasonId, 
+                entity.getStudyEndText(), variables, tags, entity.getArchived());
           }
         },
         

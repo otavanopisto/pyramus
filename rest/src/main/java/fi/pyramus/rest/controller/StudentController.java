@@ -11,6 +11,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.pyramus.dao.base.AddressDAO;
+import fi.pyramus.dao.base.ContactInfoDAO;
 import fi.pyramus.dao.base.ContactURLDAO;
 import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
@@ -68,6 +69,9 @@ public class StudentController {
   @Inject
   private ContactURLDAO contactURLDAO;
 
+  @Inject
+  private ContactInfoDAO contactInfoDAO;
+
   public Student createStudent(AbstractStudent abstractStudent, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
       Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Double previousStudies,
@@ -120,6 +124,11 @@ public class StudentController {
     return student;
   }
   
+  public Student updateStudentAdditionalContactInfo(Student student, String additionalContactInfo) {
+    contactInfoDAO.update(student.getContactInfo(), additionalContactInfo);
+    return student;
+  }
+
   public Student archiveStudent(Student student, User user) {
     studentDAO.archive(student, user);
     return student;

@@ -11,7 +11,7 @@ public class Student {
     super();
   }
 
-  public Student(Long id, Long abstractStudentId, String firstName, String lastName, String nickname, String additionalInfo, Long nationalityId,
+  public Student(Long id, Long abstractStudentId, String firstName, String lastName, String nickname, String additionalInfo, String additionalContactInfo, Long nationalityId,
       Long languageId, Long municipalityId, Long schoolId, Long activityTypeId, Long examinationTypeId, Long educationalLevelId, DateTime studyTimeEnd,
       Long studyProgrammeId, Double previousStudies, String education, Boolean lodging, DateTime studyStartDate, DateTime studyEndDate, Long studyEndReasonId,
       String studyEndText, Map<String, String> variables, List<String> tags, Boolean archived) {
@@ -22,6 +22,7 @@ public class Student {
     this.lastName = lastName;
     this.nickname = nickname;
     this.additionalInfo = additionalInfo;
+    this.additionalContactInfo = additionalContactInfo;
     this.nationalityId = nationalityId;
     this.languageId = languageId;
     this.municipalityId = municipalityId;
@@ -89,6 +90,14 @@ public class Student {
 
   public void setAdditionalInfo(String additionalInfo) {
     this.additionalInfo = additionalInfo;
+  }
+  
+  public String getAdditionalContactInfo() {
+    return additionalContactInfo;
+  }
+  
+  public void setAdditionalContactInfo(String additionalContactInfo) {
+    this.additionalContactInfo = additionalContactInfo;
   }
 
   public Long getNationalityId() {
@@ -249,6 +258,7 @@ public class Student {
   private String lastName;
   private String nickname;
   private String additionalInfo;
+  private String additionalContactInfo;
   private Long nationalityId;
   private Long languageId;
   private Long municipalityId;

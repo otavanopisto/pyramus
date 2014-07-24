@@ -1292,6 +1292,7 @@ public class StudentRESTService extends AbstractRESTService {
         toDate(entity.getStudyEndDate()), studyEndReason, entity.getStudyEndText(), lodging);
     studentController.updateStudentVariables(student, entity.getVariables());
     studentController.updateStudentTags(student, entity.getTags());
+    studentController.updateStudentAdditionalContactInfo(student, entity.getAdditionalContactInfo());
 
     return Response.ok(objectFactory.createModel(student)).build();
   }
@@ -1388,6 +1389,7 @@ public class StudentRESTService extends AbstractRESTService {
     studentController.updateStudentAbstractStudent(student, abstractStudent);
     studentController.updateStudentVariables(student, entity.getVariables());
     studentController.updateStudentTags(student, entity.getTags());
+    studentController.updateStudentAdditionalContactInfo(student, entity.getAdditionalContactInfo());
     
     return Response.ok(objectFactory.createModel(student)).build();
 }

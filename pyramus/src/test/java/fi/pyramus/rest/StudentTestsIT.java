@@ -31,7 +31,8 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       "to be", // firstName
       "created", // lastName
       "cretest", // nickname
-      "additional", // additionalInfo 
+      "additional", // additionalInfo
+      "additional contact info", // additionalContactInfo
       1l, // nationalityId 
       1l, //languageId
       1l, //municipalityId
@@ -65,6 +66,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .body("lastName", is(student.getLastName()))
       .body("nickname", is(student.getNickname()))
       .body("additionalInfo", is(student.getAdditionalInfo()))
+      .body("additionalContactInfo", is(student.getAdditionalContactInfo()))
       .body("nationalityId", is(student.getNationalityId().intValue()))
       .body("languageId", is(student.getLanguageId().intValue()))
       .body("municipalityId", is(student.getMunicipalityId().intValue()))
@@ -198,6 +200,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       "not updated lastName", // lastName
       "not updated nickname", // nickname
       "not updated additional", // additionalInfo 
+      "not updated additional contact info", // additionalContactInfo
       1l, // nationalityId 
       1l, //languageId
       1l, //municipalityId
@@ -230,7 +233,8 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .body("firstName", is(student.getFirstName()))
       .body("lastName", is(student.getLastName()))
       .body("nickname", is(student.getNickname()))
-      .body("additionalInfo", is(student.getAdditionalInfo()))
+      .body("additionalInfo", is(student.getAdditionalInfo()))      
+      .body("additionalContactInfo", is(student.getAdditionalContactInfo()))
       .body("nationalityId", is(student.getNationalityId().intValue()))
       .body("languageId", is(student.getLanguageId().intValue()))
       .body("municipalityId", is(student.getMunicipalityId().intValue()))
@@ -263,6 +267,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
         "updated lastName", // lastName
         "updated nickname", // nickname
         "updated additional", // additionalInfo 
+        "updated additional contact info", // additionalInfo 
         2l, // nationalityId 
         2l, //languageId
         2l, //municipalityId
@@ -295,6 +300,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
         .body("lastName", is(updateStudent.getLastName()))
         .body("nickname", is(updateStudent.getNickname()))
         .body("additionalInfo", is(updateStudent.getAdditionalInfo()))
+        .body("additionalContactInfo", is(updateStudent.getAdditionalContactInfo()))
         .body("nationalityId", is(updateStudent.getNationalityId().intValue()))
         .body("languageId", is(updateStudent.getLanguageId().intValue()))
         .body("municipalityId", is(updateStudent.getMunicipalityId().intValue()))
@@ -334,7 +340,8 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       "to be deleted", // firstName
       "to be deleted", // lastName
       "to be deleted", // nickname
-      "to be deleted", // additionalInfo 
+      "to be deleted", // additionalInfo,
+      "to be deleted", // additionalContactInfo
       1l, // nationalityId 
       1l, //languageId
       1l, //municipalityId
