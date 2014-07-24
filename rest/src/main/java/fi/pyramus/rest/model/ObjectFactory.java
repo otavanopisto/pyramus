@@ -283,7 +283,7 @@ public class ObjectFactory {
               variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
             }
             
-            return new fi.pyramus.rest.model.School(entity.getId(), entity.getCode(), entity.getName(), tags, fieldId, entity.getArchived(), variables);
+            return new fi.pyramus.rest.model.School(entity.getId(), entity.getCode(), entity.getName(), tags, fieldId, entity.getContactInfo().getAdditionalInfo(), entity.getArchived(), variables);
           }
         }, 
         

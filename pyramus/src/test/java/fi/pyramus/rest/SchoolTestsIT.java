@@ -27,7 +27,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
     variables.put("TV1", "text");
     variables.put("TV2", "123");
     
-    School school = new School(null, "TST", "to be created", Arrays.asList("tag1", "tag2"), 1l, Boolean.FALSE, variables);
+    School school = new School(null, "TST", "to be created", Arrays.asList("tag1", "tag2"), 1l, "additional info", Boolean.FALSE, variables);
     
     Response response = given()
       .contentType("application/json")
@@ -39,6 +39,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
       .body("id", not(is((Long) null)))
       .body("name", is(school.getName()))
       .body("code", is(school.getCode()))
+      .body("additionalContactInfo", is(school.getAdditionalContactInfo()))
       .body("fieldId", is(school.getFieldId().intValue()))
       .body("tags.size()", is(2))
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2") ))
@@ -87,7 +88,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
     variables.put("TV1", "text");
     variables.put("TV2", "123");
     
-    School school = new School(null, "TST", "not updated", Arrays.asList("tag1", "tag2"), 1l, Boolean.FALSE, variables);
+    School school = new School(null, "TST", "not updated", Arrays.asList("tag1", "tag2"), 1l, "not updated info", Boolean.FALSE, variables);
     
     Response response = given()
       .contentType("application/json")
@@ -98,6 +99,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
       .body("id", not(is((Long) null)))
       .body("name", is(school.getName()))
       .body("code", is(school.getCode()))
+      .body("additionalContactInfo", is(school.getAdditionalContactInfo()))
       .body("tags.size()", is(2))
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2") ))
       .body("variables", allOf(hasEntry("TV1", "text"), hasEntry("TV2", "123")))
@@ -109,7 +111,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
       updateVariables.put("TV2", "234");
       updateVariables.put("TV3", "1");
 
-      School updateSchool = new School(id, "UPD", "updated", Arrays.asList("tag2", "tag3"), 2l, Boolean.FALSE, updateVariables);
+      School updateSchool = new School(id, "UPD", "updated", Arrays.asList("tag2", "tag3"), 2l, "updated info", Boolean.FALSE, updateVariables);
 
       given()
         .contentType("application/json")
@@ -120,6 +122,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
         .body("id", is(updateSchool.getId().intValue() ))
         .body("name", is(updateSchool.getName()))
         .body("code", is(updateSchool.getCode()))
+        .body("additionalContactInfo", is(updateSchool.getAdditionalContactInfo()))
         .body("tags.size()", is(2))
         .body("tags", allOf(hasItem("tag2"), hasItem("tag3") ))
         .body("variables", allOf(hasEntry("TV2", "234"), hasEntry("TV3", "1"), not(hasKey("TV1"))))
@@ -135,7 +138,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteSchool() {
-    School school = new School(null, "TST", "to be deleted", Arrays.asList("tag1", "tag2"), 1l, Boolean.FALSE, null);
+    School school = new School(null, "TST", "to be deleted", Arrays.asList("tag1", "tag2"), 1l, "additional info", Boolean.FALSE, null);
     
     Response response = given()
       .contentType("application/json")
@@ -147,6 +150,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
       .body("id", not(is((Long) null)))
       .body("name", is(school.getName()))
       .body("code", is(school.getCode()))
+      .body("additionalContactInfo", is(school.getAdditionalContactInfo()))
       .body("fieldId", is(school.getFieldId().intValue()))
       .body("tags.size()", is(2))
       .body("tags", allOf(hasItem("tag1"), hasItem("tag2") ))

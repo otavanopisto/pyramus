@@ -92,6 +92,8 @@ public class SchoolRESTService extends AbstractRESTService {
         schoolController.createSchoolVariable(school, schoolVariableKey, entity.getVariables().get(variableKey));
       }
     }
+    
+    schoolController.updateSchoolAdditionalContactInfo(school, entity.getAdditionalContactInfo());
 
     return Response.ok(objectFactory.createModel(school)).build();
   }
@@ -164,6 +166,7 @@ public class SchoolRESTService extends AbstractRESTService {
     schoolController.updateSchool(school, code, name, schoolField);
     schoolController.updateSchoolTags(school, entity.getTags());
     schoolController.updateSchoolVariables(school, entity.getVariables());
+    schoolController.updateSchoolAdditionalContactInfo(school, entity.getAdditionalContactInfo());
     
     return Response.ok(objectFactory.createModel(school)).build();
   }

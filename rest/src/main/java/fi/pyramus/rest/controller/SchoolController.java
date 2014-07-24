@@ -10,6 +10,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.pyramus.dao.base.AddressDAO;
+import fi.pyramus.dao.base.ContactInfoDAO;
 import fi.pyramus.dao.base.ContactURLDAO;
 import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
@@ -60,9 +61,12 @@ public class SchoolController {
   
   @Inject
   private AddressDAO addressDAO;
-  
+
   @Inject
   private ContactURLDAO contactURLDAO;
+
+  @Inject
+  private ContactInfoDAO contactInfoDAO;
   
   /* School */
 
@@ -128,6 +132,11 @@ public class SchoolController {
 
   public School removeSchoolTag(School school, Tag tag) {
     return schoolDAO.removeTag(school, tag);
+  }
+  
+  public School updateSchoolAdditionalContactInfo(School school, String additionalContactInfo) {
+    contactInfoDAO.update(school.getContactInfo(), additionalContactInfo);
+    return school;
   }
 
   public School updateSchoolTags(School school, List<String> tags) {
