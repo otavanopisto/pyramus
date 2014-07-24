@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.ContactType;
+import fi.pyramus.domainmodel.base.ContactURLType;
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -846,6 +847,97 @@ public class CommonRESTService extends AbstractRESTService {
       commonController.deleteContactType(contactType);
     } else {
       commonController.archiveContactType(contactType, getLoggedUser());
+    }
+
+    return Response.noContent().build();
+  }
+
+  @Path("/contactURLTypes")
+  @POST
+  public Response createContactURLType(fi.pyramus.rest.model.ContactURLType entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    return Response.ok().entity(objectFactory.createModel(commonController.createContactURLType(name))).build();
+  }
+  
+  @Path("/contactURLTypes")
+  @GET
+  public Response listContactURLTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<ContactURLType> contactURLTypes;
+    
+    if (filterArchived) {
+      contactURLTypes = commonController.listUnarchivedContactURLTypes();
+    } else {
+      contactURLTypes = commonController.listContactURLTypes();
+    }
+    
+    if (contactURLTypes.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok()
+      .entity(objectFactory.createModel(contactURLTypes))
+      .build();
+  }
+  
+  @Path("/contactURLTypes/{ID:[0-9]*}")
+  @GET
+  public Response findContactURLType(@PathParam("ID") Long id) {
+    ContactURLType contactURLType = commonController.findContactURLTypeById(id);
+    if (contactURLType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (contactURLType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok()
+        .entity(objectFactory.createModel(contactURLType))
+        .build();
+  }
+
+  @Path("/contactURLTypes/{ID:[0-9]*}")
+  @PUT
+  public Response updateContactURLType(@PathParam("ID") Long id, fi.pyramus.rest.model.ContactURLType entity) {
+    ContactURLType contactURLType = commonController.findContactURLTypeById(id);
+    if (contactURLType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (contactURLType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    return Response.ok(objectFactory.createModel(commonController.updateContactURLType(contactURLType, name))).build();
+  }
+
+  @Path("/contactURLTypes/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteContactURLType(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    ContactURLType contactURLType = commonController.findContactURLTypeById(id);
+    if (contactURLType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      commonController.deleteContactURLType(contactURLType);
+    } else {
+      commonController.archiveContactURLType(contactURLType, getLoggedUser());
     }
 
     return Response.noContent().build();

@@ -413,8 +413,32 @@ public class CommonController {
   
   /* ContactURLType */
 
-  public ContactURLType findContactURLTypeById(Long id) {
-    return contactURLTypeDAO.findById(id);
+  public ContactURLType createContactURLType(String name) {
+    return contactURLTypeDAO.create(name);
+  }
+
+  public ContactURLType findContactURLTypeById(Long contactURLTypeId) {
+    return contactURLTypeDAO.findById(contactURLTypeId);
+  }
+
+  public ContactURLType updateContactURLType(ContactURLType contactURLType, String name) {
+    return contactURLTypeDAO.update(contactURLType, name);
+  }
+
+  public void archiveContactURLType(ContactURLType contactURLType, User user) {
+    contactURLTypeDAO.archive(contactURLType, user);
+  }
+
+  public List<ContactURLType> listUnarchivedContactURLTypes() {
+    return contactURLTypeDAO.listUnarchived();
+  }
+
+  public List<ContactURLType> listContactURLTypes() {
+    return contactURLTypeDAO.listAll();
+  }
+
+  public void deleteContactURLType(ContactURLType contactURLType) {
+    contactURLTypeDAO.delete(contactURLType);
   }
   
   /* ContactURL */
