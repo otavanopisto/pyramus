@@ -41,6 +41,7 @@ import fi.pyramus.domainmodel.projects.ProjectModule;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.Email;
+import fi.pyramus.domainmodel.base.ContactURL;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.SchoolVariableKey;
@@ -484,6 +485,14 @@ public class ObjectFactory {
           public Object map(PhoneNumber entity) {
             Long contactTypeId = entity.getContactType() != null ? entity.getContactType().getId() : null;
             return new fi.pyramus.rest.model.PhoneNumber(entity.getId(), contactTypeId, entity.getDefaultNumber(), entity.getNumber());
+          }
+        },
+        
+        new Mapper<ContactURL>() {
+          @Override
+          public Object map(ContactURL entity) {
+            Long contactURLTypeId = entity.getContactURLType() != null ? entity.getContactURLType().getId() : null;
+            return new fi.pyramus.rest.model.ContactURL(entity.getId(), contactURLTypeId, entity.getURL());
           }
         },
         

@@ -10,6 +10,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.pyramus.dao.base.AddressDAO;
+import fi.pyramus.dao.base.ContactURLDAO;
 import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.SchoolDAO;
@@ -19,6 +20,8 @@ import fi.pyramus.dao.base.SchoolVariableKeyDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
+import fi.pyramus.domainmodel.base.ContactURL;
+import fi.pyramus.domainmodel.base.ContactURLType;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
@@ -57,6 +60,9 @@ public class SchoolController {
   
   @Inject
   private AddressDAO addressDAO;
+  
+  @Inject
+  private ContactURLDAO contactURLDAO;
   
   /* School */
 
@@ -294,6 +300,12 @@ public class SchoolController {
 
   public PhoneNumber addSchoolPhoneNumber(School school, ContactType contactType, String number, Boolean defaultNumber) {
     return phoneNumberDAO.create(school.getContactInfo(), contactType, defaultNumber, number);
+  }
+  
+  /* ContactURL */
+
+  public ContactURL addSchoolContactURL(School school, ContactURLType contactURLType, String url) {
+    return contactURLDAO.create(school.getContactInfo(), contactURLType, url);
   }
   
 }

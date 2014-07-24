@@ -23,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
+import fi.pyramus.domainmodel.base.ContactURL;
+import fi.pyramus.domainmodel.base.ContactURLType;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
@@ -489,6 +491,107 @@ public class SchoolRESTService extends AbstractRESTService {
     }
     
     commonController.deletePhoneNumber(phoneNumber);
+    
+    return Response.noContent().build(); 
+  } 
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/contactURLs")
+  @GET
+  public Response listSchoolContactURLs(@PathParam("SCHOOLID") Long schoolId) {
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<ContactURL> contactUrls = school.getContactInfo().getContactURLs();
+    if (contactUrls.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(contactUrls)).build();
+  }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/contactURLs")
+  @POST
+  public Response createSchoolContactURL(@PathParam("SCHOOLID") Long schoolId, fi.pyramus.rest.model.ContactURL contactURL) {
+    if (contactURL == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Long contactURLTypeId = contactURL.getContactURLTypeId();
+    String url = contactURL.getUrl();
+    
+    if ((contactURLTypeId == null) || StringUtils.isBlank(url)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactURLType contactURLType = commonController.findContactURLTypeById(contactURLTypeId);
+    if (contactURLType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(schoolController.addSchoolContactURL(school, contactURLType, url))).build();
+  }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/contactURLs/{ID:[0-9]*}")
+  @GET
+  public Response findSchoolContactURL(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactURL contactURL = commonController.findContactURLById(id);
+    if (contactURL == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!contactURL.getContactInfo().getId().equals(school.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(contactURL)).build();
+  }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/contactURLs/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteSchoolContactURL(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactURL contactURL = commonController.findContactURLById(id);
+    if (contactURL == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!contactURL.getContactInfo().getId().equals(school.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    commonController.deleteContactURL(contactURL);
     
     return Response.noContent().build(); 
   } 

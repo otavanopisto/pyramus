@@ -8,6 +8,8 @@ import javax.inject.Inject;
 
 import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.ContactTypeDAO;
+import fi.pyramus.dao.base.ContactURLDAO;
+import fi.pyramus.dao.base.ContactURLTypeDAO;
 import fi.pyramus.dao.base.CourseBaseVariableKeyDAO;
 import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
@@ -20,6 +22,8 @@ import fi.pyramus.dao.grading.GradingScaleDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactInfo;
 import fi.pyramus.domainmodel.base.ContactType;
+import fi.pyramus.domainmodel.base.ContactURL;
+import fi.pyramus.domainmodel.base.ContactURLType;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
@@ -66,6 +70,12 @@ public class CommonController {
 
   @Inject
   private PhoneNumberDAO phoneNumberDAO;
+  
+  @Inject
+  private ContactURLTypeDAO contactURLTypeDAO;
+  
+  @Inject
+  private ContactURLDAO contactURLDAO;
 
   @Inject
   private ContactTypeDAO contactTypeDAO;
@@ -375,5 +385,21 @@ public class CommonController {
   
   public void deletePhoneNumber(PhoneNumber phoneNumber) {
     phoneNumberDAO.delete(phoneNumber); 
+  }
+  
+  /* ContactURLType */
+
+  public ContactURLType findContactURLTypeById(Long id) {
+    return contactURLTypeDAO.findById(id);
+  }
+  
+  /* ContactURL */
+
+  public ContactURL findContactURLById(Long id) {
+    return contactURLDAO.findById(id);
+  }
+
+  public void deleteContactURL(ContactURL contactURL) {
+    contactURLDAO.delete(contactURL);
   }
 }
