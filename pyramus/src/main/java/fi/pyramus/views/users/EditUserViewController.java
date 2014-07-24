@@ -2,12 +2,9 @@ package fi.pyramus.views.users;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;

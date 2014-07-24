@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import com.jayway.restassured.response.Response;
 
-import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.rest.model.StudentGroup;
 
 public class StudentGroupTestsIT extends AbstractRESTServiceTest {
