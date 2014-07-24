@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Email;
+import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariableKey;
@@ -386,6 +387,108 @@ public class SchoolRESTService extends AbstractRESTService {
     }
     
     commonController.deleteAddress(address);
+    
+    return Response.noContent().build(); 
+  } 
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/phoneNumbers")
+  @GET
+  public Response listSchoolPhoneNumbers(@PathParam("SCHOOLID") Long schoolId) {
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<PhoneNumber> phoneNumbers = school.getContactInfo().getPhoneNumbers();
+    if (phoneNumbers.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(phoneNumbers)).build();
+  }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/phoneNumbers")
+  @POST
+  public Response createSchoolPhoneNumber(@PathParam("SCHOOLID") Long schoolId, fi.pyramus.rest.model.PhoneNumber phoneNumber) {
+    if (phoneNumber == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Long contactTypeId = phoneNumber.getContactTypeId();
+    Boolean defaultNumber = phoneNumber.getDefaultNumber();
+    String number = phoneNumber.getNumber();
+    
+    if ((contactTypeId == null) || (defaultNumber == null) || StringUtils.isBlank(number)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactType contactType = commonController.findContactTypeById(contactTypeId);
+    if (contactType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(schoolController.addSchoolPhoneNumber(school, contactType, number, defaultNumber))).build();
+  }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/phoneNumbers/{ID:[0-9]*}")
+  @GET
+  public Response findSchoolPhoneNumber(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    PhoneNumber phoneNumber = commonController.findPhoneNumberById(id);
+    if (phoneNumber == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!phoneNumber.getContactInfo().getId().equals(school.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(phoneNumber)).build();
+  }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/phoneNumbers/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteSchoolPhoneNumber(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    PhoneNumber phoneNumber = commonController.findPhoneNumberById(id);
+    if (phoneNumber == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!phoneNumber.getContactInfo().getId().equals(school.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    commonController.deletePhoneNumber(phoneNumber);
     
     return Response.noContent().build(); 
   } 

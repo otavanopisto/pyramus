@@ -13,6 +13,7 @@ import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.EmailDAO;
+import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.SubjectDAO;
 import fi.pyramus.dao.grading.GradeDAO;
 import fi.pyramus.dao.grading.GradingScaleDAO;
@@ -24,6 +25,7 @@ import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Email;
+import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.grading.Grade;
@@ -61,6 +63,9 @@ public class CommonController {
 
   @Inject
   private AddressDAO addressDAO;
+
+  @Inject
+  private PhoneNumberDAO phoneNumberDAO;
 
   @Inject
   private ContactTypeDAO contactTypeDAO;
@@ -356,5 +361,19 @@ public class CommonController {
   
   public void deleteAddress(Address address) {
     addressDAO.delete(address);
+  }
+  
+  /* PhoneNumber */
+  
+  public PhoneNumber createPhoneNumber(ContactInfo contactInfo, ContactType contactType, Boolean defaultNumber, String number) {
+    return phoneNumberDAO.create(contactInfo, contactType, defaultNumber, number);
+  }
+  
+  public PhoneNumber findPhoneNumberById(Long id) {
+    return phoneNumberDAO.findById(id);
+  }
+  
+  public void deletePhoneNumber(PhoneNumber phoneNumber) {
+    phoneNumberDAO.delete(phoneNumber); 
   }
 }
