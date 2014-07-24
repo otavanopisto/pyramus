@@ -181,19 +181,25 @@ insert into
   Address (id, city, country, postalCode, streetAddress, name, contactInfo, contactType, indexColumn, defaultAddress, version)
 values 
   (1, 'Eastbury', 'Senegal', '76763-3962', '2636 Johnston Harbors', null, 1, 1, 0, true, 1),
-  (2, 'Zambia', 'Portborough', '02531-1064', '430 Vesta Inlet', null, 2, 1, 0, true, 1);
+  (2, 'Zambia', 'Portborough', '02531-1064', '430 Vesta Inlet', null, 2, 1, 0, true, 1),
+  (3, 'Southshire', 'Yemen', '17298', '6967 Bailee Mission', null, 3, 1, 0, true, 1),
+  (4, 'Northchester', 'Cuba', '97733', '556 Lupe Mountains', null, 4, 1, 0, true, 1);
   
 insert into 
   Email (id, address, defaultAddress, contactInfo, contactType, indexColumn, version)
 values 
   (1, 'school1@bogusmail.com', true, 1, 1, 0, 1),
-  (2, 'school2@bogusmail.com', true, 2, 1, 0, 1);
+  (2, 'school2@bogusmail.com', true, 2, 1, 0, 1),
+  (3, 'student1@bogusmail.com', true, 3, 1, 0, 1),
+  (4, 'student2@bogusmail.com', true, 4, 1, 0, 1);
   
 insert into 
   PhoneNumber (id, number, defaultNumber, contactInfo, contactType, indexColumn, version)
 values 
   (1, '+123 45 678 9012', true, 1, 1, 0, 1),
-  (2, '+234 56 789 0123', true, 2, 1, 0, 1);
+  (2, '+234 56 789 0123', true, 2, 1, 0, 1),
+  (3, '+456 78 901 2345', true, 3, 1, 0, 1),
+  (4, '+567 89 012 3456', true, 4, 1, 0, 1);
   
 insert into
   ContactURLType (id, name, version, archived)
@@ -204,7 +210,9 @@ insert into
   ContactURL (id, url, contactInfo, contactURLType, indexColumn, version)
 values 
   (1, 'http://www.school1webpage.com', 1, 1, 0, 1),
-  (2, 'http://www.school2webpage.com', 2, 1, 0, 1);
+  (2, 'http://www.school2webpage.com', 2, 1, 0, 1),
+  (3, 'http://www.student1webpage.com', 3, 1, 0, 1),
+  (4, 'http://www.student2webpage.com', 4, 1, 0, 1);
   
 insert into 
   School (id, name, code, contactInfo, version, field, archived)
