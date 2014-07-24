@@ -6,17 +6,22 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.ContactTypeDAO;
 import fi.pyramus.dao.base.CourseBaseVariableKeyDAO;
 import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
+import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.SubjectDAO;
 import fi.pyramus.dao.grading.GradeDAO;
 import fi.pyramus.dao.grading.GradingScaleDAO;
+import fi.pyramus.domainmodel.base.ContactInfo;
+import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.grading.Grade;
@@ -48,6 +53,12 @@ public class CommonController {
 
   @Inject
   private CourseBaseVariableKeyDAO courseBaseVariableKeyDAO;
+
+  @Inject
+  private EmailDAO emailDAO;
+
+  @Inject
+  private ContactTypeDAO contactTypeDAO;
   
   /* EducationType */
   
@@ -308,4 +319,23 @@ public class CommonController {
     courseBaseVariableKeyDAO.delete(courseBaseVariableKey);
   }
   
+  /* Email */
+  
+  public Email createEmail(ContactInfo contactInfo, ContactType contactType, Boolean defaultAddress, String address) {
+    return emailDAO.create(contactInfo, contactType, defaultAddress, address);
+  }
+  
+  public Email findEmailById(Long id) {
+    return emailDAO.findById(id);
+  }
+  
+  public void deleteEmail(Email email) {
+    emailDAO.delete(email); 
+  }
+  
+  /* ContactType */
+
+  public ContactType findContactTypeById(Long contactTypeId) {
+    return contactTypeDAO.findById(contactTypeId);
+  }
 }

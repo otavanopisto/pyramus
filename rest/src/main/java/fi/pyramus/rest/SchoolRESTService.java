@@ -21,10 +21,13 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.pyramus.domainmodel.base.ContactType;
+import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.pyramus.domainmodel.base.VariableType;
+import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.model.ObjectFactory;
 
@@ -37,6 +40,9 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Inject
   private SchoolController schoolController;
+  
+  @Inject
+  private CommonController commonController;
 
   @Inject
   private ObjectFactory objectFactory;
@@ -174,6 +180,108 @@ public class SchoolRESTService extends AbstractRESTService {
     
     return Response.noContent().build();
   }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/emails")
+  @GET
+  public Response listSchoolEmails(@PathParam("SCHOOLID") Long schoolId) {
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<Email> emails = school.getContactInfo().getEmails();
+    if (emails.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(emails)).build();
+  }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/emails")
+  @POST
+  public Response createSchoolEmail(@PathParam("SCHOOLID") Long schoolId, fi.pyramus.rest.model.Email email) {
+    if (email == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    Long contactTypeId = email.getContactTypeId();
+    Boolean defaultAddress = email.getDefaultAddress();
+    String address = email.getAddress();
+    
+    if ((contactTypeId == null) || (defaultAddress == null) || StringUtils.isBlank(address)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactType contactType = commonController.findContactTypeById(contactTypeId);
+    if (contactType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(schoolController.addSchoolEmail(school, contactType, address, defaultAddress))).build();
+  }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/emails/{ID:[0-9]*}")
+  @GET
+  public Response findSchoolEmail(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Email email = commonController.findEmailById(id);
+    if (email == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!email.getContactInfo().getId().equals(school.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(email)).build();
+  }
+  
+  @Path("/schools/{SCHOOLID:[0-9]*}/emails/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteSchoolEmail(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
+    School school = schoolController.findSchoolById(schoolId);
+    if (school == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (school.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    Email email = commonController.findEmailById(id);
+    if (email == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!email.getContactInfo().getId().equals(school.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    commonController.deleteEmail(email);
+    
+    return Response.noContent().build(); 
+  } 
   
   @Path("/schoolFields")
   @POST
