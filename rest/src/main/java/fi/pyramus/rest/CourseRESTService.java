@@ -47,8 +47,6 @@ import fi.pyramus.rest.model.ObjectFactory;
 @RequestScoped
 public class CourseRESTService extends AbstractRESTService {
   
-  // TODO: EducationTypes
-
   @Inject
   private CourseController courseController;
   
