@@ -6,13 +6,18 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.sonatype.aether.graph.Dependency;
-import org.sonatype.aether.resolution.ArtifactDescriptorException;
-import org.sonatype.aether.resolution.ArtifactDescriptorResult;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
+import org.sonatype.aether.artifact.Artifact;
+import org.sonatype.aether.collection.DependencyCollectionException;
+import org.sonatype.aether.graph.Exclusion;
+import org.sonatype.aether.repository.RemoteRepository;
+import org.sonatype.aether.resolution.ArtifactResult;
+import org.sonatype.aether.resolution.DependencyResolutionException;
+import org.sonatype.aether.util.artifact.ArtifacIdUtils;
+import org.sonatype.aether.util.artifact.DefaultArtifact;
 
 import sun.misc.Service;
 import fi.internetix.smvc.logging.Logging;
+import fi.pyramus.domainmodel.plugins.PluginRepository;
 import fi.pyramus.plugin.maven.MavenClient;
 import fi.pyramus.plugin.scheduler.ScheduledPluginDescriptor;
 import fi.pyramus.plugin.scheduler.ScheduledPluginTask;
@@ -36,34 +41,30 @@ public class PluginManager {
    * any other methods.
    * 
    * @param parentClassLoader The parent class loader of the plugin manager.
-   * @param repositories The URL:s of the repositories containing the plugins.
+   * @param pluginRepositories The URL:s of the repositories containing the plugins.
    * @return The plugin manager instance.
    */
-  public static final synchronized PluginManager initialize(ClassLoader parentClassLoader, List<String> repositories) {
+  public static final synchronized PluginManager initialize(ClassLoader parentClassLoader, List<PluginRepository> pluginRepositories) {
     if (INSTANCE != null)
       throw new PluginManagerException("Plugin manger is already initialized");
       
-    INSTANCE = new PluginManager(parentClassLoader, repositories);
+    INSTANCE = new PluginManager(parentClassLoader, pluginRepositories);
     
     return INSTANCE;
   }
   
   private static PluginManager INSTANCE = null;
   
-  PluginManager(ClassLoader parentClassLoader, List<String> repositories) {
-    this.jarLoader = new JarLoader(parentClassLoader);
+  PluginManager(ClassLoader parentClassLoader, List<PluginRepository> pluginRepositories) {
+    this.libraryLoader = new LibraryLoader(parentClassLoader);
     mavenClient = new MavenClient(getPluginDirectory(), System.getProperty("pyramus.workspace"));
-    for (String repository : repositories) {
-      mavenClient.addRepository(repository);
+    
+    // Maven Central repository is always present
+    mavenClient.addRepository(new RemoteRepository("central", "default", "http://repo.maven.apache.org/maven2"));
+
+    for (PluginRepository repository : pluginRepositories) {
+      mavenClient.addRepository(repository.getRepositoryId(), repository.getUrl());
     }
-  }
-  
-  /** Adds a repository to fetch plugins from.
-   * 
-   * @param url The URL of the repository to add.
-   */
-  public void addRepository(String url) {
-    mavenClient.addRepository(url);
   }
   
   /** Removes a plugin repository from the plugin manager.
@@ -110,26 +111,37 @@ public class PluginManager {
    * @param version The version of the plugin to load.
    */
   public void loadPlugin(String groupId, String artifactId, String version) {
+//    String groupId = loadInfo.getGroupId();
+//    String artifactId = loadInfo.getArtifactId();
+//    String version = loadInfo.getVersion();
+    
+//    loadedPluginLibraryInfos.add(loadInfo);
+    
     try {
-      ArtifactDescriptorResult descriptorResult = mavenClient.describeLocalArtifact(groupId, artifactId, version);
-      if (descriptorResult == null) {
-        descriptorResult = mavenClient.describeArtifact(groupId, artifactId, version);
-      }
+      Artifact libraryArtifact = new DefaultArtifact(groupId, artifactId, "jar", version);
+      List<Exclusion> applicationProvidedArtifacts = new ArrayList<>();
       
-      for (Dependency dependency : descriptorResult.getDependencies()) {
-        if ("compile".equals(dependency.getScope())) {
-          File file = mavenClient.getArtifactJarFile(dependency.getArtifact());
-          Logging.logInfo("Loading " + groupId + "." + artifactId + ":" + version + " dependecy: " + file);
-          jarLoader.loadJar(file);
+      List<ArtifactResult> resolvedDependencies = mavenClient.resolveDependencies(libraryArtifact, "compile", applicationProvidedArtifacts);
+      for (ArtifactResult resolvedDependency : resolvedDependencies) {
+        if (resolvedDependency.isResolved()) {
+          File artifactFile = mavenClient.getArtifactJarFile(resolvedDependency.getArtifact());
+          
+          if (artifactFile.isDirectory()) {
+            Logging.logInfo("Loading " + ArtifacIdUtils.toId(resolvedDependency.getArtifact()) + " plugin folder: " + artifactFile);
+            try {
+              libraryLoader.loadClassPath(artifactFile.toURI().toURL());          
+            } catch (Exception e) {
+              Logging.logException("Error occurred while loading plugin folder " + artifactFile, e);
+            }
+          } else {
+            Logging.logInfo("Loading " + ArtifacIdUtils.toId(resolvedDependency.getArtifact()) + " plugin library jar: " + artifactFile);
+            libraryLoader.loadJar(artifactFile);
+          }
+        } else {
+          Logging.logError("Could not resolve " + ArtifacIdUtils.toId(libraryArtifact) + " -plugin dependency: " + ArtifacIdUtils.toId(resolvedDependency.getArtifact()));
         }
       }
-      
-      File jarFile = mavenClient.getArtifactJarFile(descriptorResult.getArtifact());
-      Logging.logInfo("Loading " + groupId + "." + artifactId + ":" + version + " plugin jar: " + jarFile);
-      jarLoader.loadJar(jarFile);
-    } catch (ArtifactResolutionException e) {
-      throw new PluginManagerException(e);
-    } catch (ArtifactDescriptorException e) {
+    } catch (DependencyCollectionException | DependencyResolutionException e) {
       throw new PluginManagerException(e);
     }
   }
@@ -145,9 +157,11 @@ public class PluginManager {
    */
   public boolean isLoaded(String groupId, String artifactId, String version) {
     try {
-      ArtifactDescriptorResult descriptorResult = mavenClient.describeArtifact(groupId, artifactId, version);
-      File jarFile = mavenClient.getArtifactJarFile(descriptorResult.getArtifact());
-      return jarLoader.isJarLoaded(jarFile);
+      Artifact libraryArtifact = new DefaultArtifact(groupId, artifactId, "jar", version);
+      File jarFile = mavenClient.getArtifactJarFile(libraryArtifact);
+//      ArtifactDescriptorResult descriptorResult = mavenClient.describeArtifact(groupId, artifactId, version);
+//      File jarFile = mavenClient.getArtifactJarFile(descriptorResult.getArtifact());
+      return libraryLoader.isJarLoaded(jarFile);
     } catch (Exception e) {
       return false;
     }
@@ -158,7 +172,7 @@ public class PluginManager {
    */
   public void registerPlugins() {
     @SuppressWarnings("unchecked")
-    Iterator<PluginDescriptor> pluginDescriptors = Service.providers(PluginDescriptor.class, jarLoader.getPluginsClassLoader());
+    Iterator<PluginDescriptor> pluginDescriptors = Service.providers(PluginDescriptor.class, libraryLoader.getPluginsClassLoader());
     while (pluginDescriptors.hasNext()) {
       PluginDescriptor pluginDescriptor = pluginDescriptors.next();
       registerPlugin(pluginDescriptor);
@@ -170,7 +184,7 @@ public class PluginManager {
    * @return the class loader that loads the plugins. 
    */
   public ClassLoader getPluginsClassLoader() {
-    return jarLoader.getPluginsClassLoader();
+    return libraryLoader.getPluginsClassLoader();
   }
   
   /** Returns the currently loaded plugins.
@@ -223,7 +237,8 @@ public class PluginManager {
     return Collections.unmodifiableList(result);
   }
 
-  private JarLoader jarLoader;
+//  private List<Exclusion> applicationProvidedArtifacts = new ArrayList<>();
+  private LibraryLoader libraryLoader;
   private MavenClient mavenClient;
   private List<PluginDescriptor> plugins = new ArrayList<PluginDescriptor>();
 }

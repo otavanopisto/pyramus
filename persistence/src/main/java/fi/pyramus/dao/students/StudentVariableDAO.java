@@ -97,4 +97,5 @@ public class StudentVariableDAO extends PyramusEntityDAO<StudentVariable> {
     student.getVariables().remove(studentVariable);
     super.delete(studentVariable);
   }
+  
 }

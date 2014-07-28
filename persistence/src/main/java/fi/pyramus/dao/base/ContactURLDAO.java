@@ -45,5 +45,4 @@ public class ContactURLDAO extends PyramusEntityDAO<ContactURL> {
     super.delete(contactURL);
   }
 
-
 }

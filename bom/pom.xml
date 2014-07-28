@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fi.pyramus</groupId>
   <artifactId>bom</artifactId>
-  <version>0.6.5-SNAPSHOT</version>
+  <version>0.6.7-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus BOM</name>
   <url>https://github.com/otavanopisto/pyramus/</url>
@@ -193,13 +193,6 @@
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>common</artifactId>
-        <version>${project.version}</version>
-        <type>jar</type>
-      </dependency>
-
-      <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>domainmodelextension</artifactId>
         <version>${project.version}</version>
         <type>jar</type>
       </dependency>

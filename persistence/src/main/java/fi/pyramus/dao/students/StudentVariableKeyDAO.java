@@ -76,5 +76,5 @@ public class StudentVariableKeyDAO extends PyramusEntityDAO<StudentVariableKey> 
     studentVariableKey.setVariableName(variableName);
     return persist(studentVariableKey);
   }
-  
+
 }

@@ -289,7 +289,7 @@ public class Project implements ArchivableEntity {
   @IndexedEmbedded
   private List<ProjectModule> projectModules = new Vector<ProjectModule>();
 
-  @ManyToOne 
+  @ManyToOne
   @JoinColumn(name="creator")
   @IndexedEmbedded (depth = 1)
   private User creator;

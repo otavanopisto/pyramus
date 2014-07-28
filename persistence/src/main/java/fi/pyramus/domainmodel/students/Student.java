@@ -592,7 +592,7 @@ public class Student implements ArchivableEntity {
 
   @ManyToMany (fetch = FetchType.LAZY)
   @JoinTable (name="__StudentTags", joinColumns=@JoinColumn(name="student"), inverseJoinColumns=@JoinColumn(name="tag"))
-  @IndexedEmbedded 
+  @IndexedEmbedded
   private Set<Tag> tags = new HashSet<Tag>();
   
   @Version

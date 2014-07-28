@@ -6,9 +6,28 @@
   <parent>
     <groupId>fi.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.6.5-SNAPSHOT</version>
+    <version>0.6.7-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Define the version of JBoss' Java EE 6 APIs we want to import. 
+        Any dependencies from org.jboss.spec will have their version defined by this 
+        BOM -->
+      <!-- JBoss distributes a complete set of Java EE 6 APIs including a 
+        Bill of Materials (BOM). A BOM specifies the versions of a "stack" (or a 
+        collection) of artifacts. We use this here so that we always get the correct 
+        versions of artifacts. -->
+      <dependency>
+        <groupId>org.jboss.spec</groupId>
+        <artifactId>jboss-javaee-web-6.0</artifactId>
+        <version>2.0.0.Final</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -22,6 +41,11 @@
     <dependency>
       <groupId>fi.pyramus</groupId>
       <artifactId>framework</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
+      <artifactId>jboss-jsp-api_2.2_spec</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   

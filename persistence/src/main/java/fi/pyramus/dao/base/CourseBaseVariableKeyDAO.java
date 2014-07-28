@@ -56,5 +56,5 @@ public class CourseBaseVariableKeyDAO extends PyramusEntityDAO<CourseBaseVariabl
     courseBaseVariableKey.setUserEditable(userEditable);
     return persist(courseBaseVariableKey);
   }
-  
+
 }

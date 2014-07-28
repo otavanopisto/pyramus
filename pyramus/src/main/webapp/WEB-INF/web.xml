@@ -56,6 +56,14 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
   <filter>
+    <filter-name>AccessLoggingFilter</filter-name>
+    <filter-class>fi.pyramus.util.AccessLoggingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AccessLoggingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
     <filter-name>IpFilter</filter-name>
     <filter-class>fi.pyramus.services.utils.IpFilter</filter-class>
   </filter>

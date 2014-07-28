@@ -352,4 +352,5 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.addTag(tag);
     return persist(student);
   }
+  
 }

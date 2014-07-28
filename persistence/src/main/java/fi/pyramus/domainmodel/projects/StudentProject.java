@@ -359,7 +359,7 @@ public class StudentProject implements ArchivableEntity {
   @IndexedEmbedded 
   private Set<Tag> tags = new HashSet<Tag>();
   
-  @ManyToOne 
+  @ManyToOne
   @JoinColumn(name="project")
   private Project project;
 

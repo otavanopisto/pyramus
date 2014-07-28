@@ -1355,6 +1355,9 @@
       }
       
     </script>
+    
+    <ix:extensionHook name="students.viewStudent.head" />
+    
 </head>
 
 <body onload="onLoad(event);">
@@ -1425,6 +1428,7 @@
                   <fmt:message
                     key="students.viewStudent.studentFilesTabLabel" />
                 </a>
+                <ix:extensionHook name="students.viewStudent.tabLabels" studentId="${student.id}"/>
               </div>
 
               <div id="basic.${student.id}" class="tabContent">
@@ -2286,12 +2290,15 @@
                 </div>
               </div>
 
+              <ix:extensionHook name="students.viewStudent.tabs" studentId="${student.id}"/>
             </div>
           </div>
         </div>
       </c:forEach>
     </div>
   </div>
+
+  <ix:extensionHook name="students.viewStudent.footer"/>
 
   <jsp:include page="/templates/generic/footer.jsp"></jsp:include>
 </body>

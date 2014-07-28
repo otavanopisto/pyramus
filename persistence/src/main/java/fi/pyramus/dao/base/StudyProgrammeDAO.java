@@ -60,5 +60,5 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
     studyProgramme.setCode(code);
     return persist(studyProgramme);
   }
-
+  
 }

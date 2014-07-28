@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -193,12 +192,8 @@ public class PyramusServletContextListener implements ServletContextListener {
     try {
       PluginRepositoryDAO pluginRepositoryDAO = DAOFactory.getInstance().getPluginRepositoryDAO();
       List<PluginRepository> pluginRepositories = pluginRepositoryDAO.listAll();
-      List<String> repositoryUrls = new ArrayList<String>(pluginRepositories.size());
-      for (PluginRepository pluginRepository : pluginRepositories) {
-        repositoryUrls.add(pluginRepository.getUrl());
-      }
       
-      PluginManager pluginManager = PluginManager.initialize(getClass().getClassLoader(), repositoryUrls);
+      PluginManager pluginManager = PluginManager.initialize(getClass().getClassLoader(), pluginRepositories);
       
       PluginDAO pluginDAO = DAOFactory.getInstance().getPluginDAO();
       List<Plugin> enabledPlugins = pluginDAO.listByEnabled(Boolean.TRUE);

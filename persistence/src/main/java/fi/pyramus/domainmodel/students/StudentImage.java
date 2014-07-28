@@ -46,7 +46,7 @@ public class StudentImage {
     return student;
   }
 
-  @Id 
+  @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="StudentImage")  
   @TableGenerator(name="StudentImage", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   private Long id;
