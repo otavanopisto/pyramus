@@ -76,6 +76,10 @@
     
     <freemarker.version>2.3.20</freemarker.version>
     
+    <!-- Lucene -->
+    
+    <lucene-queries.version>3.6.2</lucene-queries.version>
+    
     <!-- Pyramus -->
     
     <pyramus.version>0.7.0-SNAPSHOT</pyramus.version>
@@ -189,6 +193,12 @@
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-library</artifactId>
         <version>${hamcrest.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-queries</artifactId>
+        <version>${lucene-queries.version}</version>
       </dependency>
        
       <!-- Pyramus -->
