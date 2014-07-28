@@ -1,6 +1,7 @@
 package fi.internetix.smvc.logging;
 
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /** Collection of methods for logging. */
 public class Logging {
@@ -19,7 +20,7 @@ public class Logging {
    * @param e The exception that produced the message.
    */
   public static void logException(String message, Exception e) {
-    logger.error(message, e);
+    logger.log(Level.SEVERE, message, e);
   } 
   
   /** Log a debug message.
@@ -27,7 +28,7 @@ public class Logging {
    * @param msg The debug message.
    */
   public static void logDebug(String msg) {
-    logger.debug(msg);
+    logger.log(Level.FINEST, msg);
   }
   
   /** Log an informative message.
@@ -43,7 +44,7 @@ public class Logging {
    * @param msg The error message.
    */
   public static void logError(String msg) {
-    logger.error(msg);
+    logger.log(Level.SEVERE, msg);
   } 
   
   private static Logger logger = Logger.getLogger("smvcj");
