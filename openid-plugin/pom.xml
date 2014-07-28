@@ -6,42 +6,39 @@
   <parent>
     <groupId>fi.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.6.7-SNAPSHOT</version>
+    <version>0.7.0-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   
   <dependencies>
+  
+    <!-- OpenId -->
+    
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
+      <groupId>org.openid4java</groupId>
+      <artifactId>openid4java-nodeps</artifactId>
+    </dependency>
+  
+    <!-- Pyramus -->
+    
+    <dependency>
+      <groupId>fi.pyramus</groupId>
+      <artifactId>smvcj</artifactId>
       <scope>provided</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>fi.pyramus</groupId>
+      <artifactId>persistence</artifactId>
+      <scope>provided</scope>
+    </dependency>    
+    
     <dependency>
       <groupId>fi.pyramus</groupId>
       <artifactId>plugin-core</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.0.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openid4java</groupId>
-      <artifactId>openid4java-nodeps</artifactId>
-      <version>0.9.6</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpcore</artifactId>
-      <version>4.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.1.1</version>
-    </dependency>
+      
   </dependencies>
   
 </project>

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fi.pyramus</groupId>
   <artifactId>parent</artifactId>
-  <version>0.6.7-SNAPSHOT</version>
+  <version>0.7.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus Parent POM</name>
   <url>https://github.com/otavanopisto/pyramus/</url>
@@ -48,6 +48,7 @@
     <module>pyramus</module>
     <module>reports</module>
     <module>webservices-plugin</module>
+    <module>smvcj</module>
   </modules>
 
   <dependencyManagement>
@@ -56,107 +57,6 @@
         <groupId>fi.pyramus</groupId>
         <artifactId>bom</artifactId>
         <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-  <repositories>
-    <repository>
-      <id>otavanopisto-releases</id>
-      <name>Otavan Opisto Releases</name>
-      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/releases</url>
-    </repository>
-    <repository>
-      <id>otavanopisto-snapshots</id>
-      <name>Otavan Opisto Snapshots</name>
-      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>repository.jboss.org-public</id>
-      <name>JBoss repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public</url>
-    </repository>
-  </repositories>
-  
-  <distributionManagement>
-    <snapshotRepository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>otavanopisto-snapshots</id>
-      <name>Otavan Opisto Snapshots</name>
-      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>otavanopisto-releases</id>
-      <name>Otavan Opisto Releases</name>
-      <url>http://maven.otavanopisto.fi:7070/nexus/content/repositories/releases</url>
-    </repository>
-  </distributionManagement>
-  
-</project>
-=======
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>fi.pyramus</groupId>
-  <artifactId>parent</artifactId>
-  <version>0.6.7-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>Pyramus Parent POM</name>
-  <url>https://github.com/otavanopisto/pyramus/</url>
-  
-  <licenses>
-    <license>
-      <name>GNU LGPL v3</name>
-      <url>http://www.gnu.org/licenses/lgpl.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  
-  <issueManagement>
-    <system>GitHub</system>
-    <url>https://github.com/otavanopisto/pyramus/issues</url>
-  </issueManagement>
-  
-  <scm>
-    <developerConnection>scm:git:git@github.com:otavanopisto/pyramus.git</developerConnection>
-    <url>git@github.com:otavanopisto/pyramus.git</url>
-    <connection>scm:git:git@github.com:otavanopisto/pyramus.git</connection>
-  </scm>
-  
-  <organization>
-    <name>Internetix / Otava Folk High School</name>
-    <url>http://www.otavanopisto.fi</url>
-  </organization>
-  
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
-  </properties>
-  
-  <modules>
-    <module>bom</module>
-    <module>common</module>
-    <module>framework</module>
-    <module>openid-plugin</module>
-    <module>persistence</module>
-    <module>plugin-core</module>
-    <module>pyramus</module>
-    <module>reports</module>
-    <module>webservices-plugin</module>
-  </modules>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>bom</artifactId>
-        <version>0.6.7-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

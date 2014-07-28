@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fi.pyramus</groupId>
   <artifactId>bom</artifactId>
-  <version>0.6.7-SNAPSHOT</version>
+  <version>0.7.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus BOM</name>
   <url>https://github.com/otavanopisto/pyramus/</url>
@@ -33,248 +33,148 @@
   </organization>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <hibernate.version>4.0.1.Final</hibernate.version>
-    <hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
-    <jboss-ejb-api_3.1_spec.version>1.0.1.Final</jboss-ejb-api_3.1_spec.version>
-    <jboss-javaee6-spec.version>1.0.0.Final</jboss-javaee6-spec.version>
-    <resteasy-jaxrs.version>2.3.2.Final</resteasy-jaxrs.version>
-    <commons-lang3.versiopn>3.1</commons-lang3.versiopn>
-    <commons-lang.version>2.6</commons-lang.version>
-    <commons-codec.version>1.6</commons-codec.version>
-    <commons-io>1.3.2</commons-io>
-    <commons-logging>1.1.1</commons-logging>
-    <joda-time.version>1.6.2</joda-time.version>
-  </properties>
+    <!-- WildFly -->
 
+    <wildfly-spec-api.version>8.1.0.Final</wildfly-spec-api.version>
+    
+    <!-- REST-assured -->
+    
+    <rest-assured.version>2.3.1</rest-assured.version>
+    
+    <!-- Hamcrest -->
+    
+    <hamcrest.version>1.3</hamcrest.version>
+    
+    <!-- OpenId -->
+    
+    <openid4java.version>0.9.6</openid4java.version>
+    
+    <!-- Commons -->
+    
+    <commons-fileupload.version>1.3.1</commons-fileupload.version>
+    <commons-lang3.version>3.2.1</commons-lang3.version>  
+    
+    <!-- OpenCSV -->
+    
+    <opencsv.version>2.3</opencsv.version>
+    
+    <!-- Maven Aether -->
+    
+    <maven-aether-provider.version>3.0.4</maven-aether-provider.version>
+    <aether-connector-wagon.version>1.13.1</aether-connector-wagon.version>
+    <wagon-http-lightweight.version>2.3</wagon-http-lightweight.version>
+    
+    <!-- JavaFaker -->
+    
+    <javafaker.version>0.4</javafaker.version>
+    
+    <!-- JSON -->
+    
+    <json-lib.version>2.4</json-lib.version>
+   
+    <!-- Freemarker -->
+    
+    <freemarker.version>2.3.20</freemarker.version>
+    
+    <!-- Pyramus -->
+    
+    <pyramus.version>0.7.0-SNAPSHOT</pyramus.version>
+  </properties>
+  
   <dependencyManagement>
     <dependencies>
-
-      <!-- JBoss -->
-
+    
+      <!-- WildFly -->
+    
       <dependency>
-        <groupId>org.jboss.spec</groupId>
-        <artifactId>jboss-javaee-6.0</artifactId>
+        <groupId>org.wildfly</groupId>
+        <artifactId>wildfly-spec-api</artifactId>
+        <version>${wildfly-spec-api.version}</version>
         <type>pom</type>
-        <version>${jboss-javaee6-spec.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.spec.javax.ejb</groupId>
-        <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-        <version>${jboss-ejb-api_3.1_spec.version}</version>
-      </dependency>
-
-      <!-- JBoss RESTEasy -->
-
-      <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-jaxrs</artifactId>
-        <version>${resteasy-jaxrs.version}</version>
-      </dependency>
-    
-      <dependency>
-        <groupId>org.codehaus.jackson</groupId>
-        <artifactId>jackson-jaxrs</artifactId>
-        <version>1.9.2</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>async-http-servlet-3.0</artifactId>
-        <version>${resteasy-jaxrs.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-oauth</artifactId>
-        <version>${resteasy-jaxrs.version}</version>
-      </dependency>
- 
-      <!-- Hibernate -->
-
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
-        <version>${hibernate.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-entitymanager</artifactId>
-        <version>${hibernate.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.hibernate.common</groupId>
-        <artifactId>hibernate-commons-annotations</artifactId>
-        <version>${hibernate.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-validator</artifactId>
-        <version>${hibernate-validator.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-jpamodelgen</artifactId>
-        <version>1.1.1.Final</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-search</artifactId>
-        <version>4.1.1.Final</version>
-      </dependency>
-    
-      <dependency>
-        <groupId>joda-time</groupId>
-        <artifactId>joda-time</artifactId>
-        <version>${joda-time.version}</version>
-      </dependency>   
-
-      <!-- Apache Commons -->
-
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>${commons-lang3.versiopn}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
-        <version>${commons-codec.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>${commons-io}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-logging</groupId>
-        <artifactId>commons-logging</artifactId>
-        <version>${commons-logging}</version>
-      </dependency>
-
-      <!-- SMVCJ -->
-
-      <dependency>
-        <groupId>fi.internetix.smvcj</groupId>
-        <artifactId>smvcj</artifactId>
-        <version>0.0.3</version>
+        <scope>import</scope>
       </dependency>
       
-      <!-- Pyramus -->
-
+      <!-- OpenId -->
+        
       <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>pyramus</artifactId>
-        <version>${project.version}</version>
-        <type>war</type>
-      </dependency>
-
-      <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>common</artifactId>
-        <version>${project.version}</version>
-        <type>jar</type>
-      </dependency>
-
-      <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>framework</artifactId>
-        <version>${project.version}</version>
-        <type>jar</type>
-      </dependency>
-
-      <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>ldap-plugin</artifactId>
-        <version>${project.version}</version>
-        <type>jar</type>
-      </dependency>
-
-      <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>openid-plugin</artifactId>
-        <version>${project.version}</version>
-        <type>jar</type>
-      </dependency>
-
-      <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>persistence</artifactId>
-        <version>${project.version}</version>
-        <type>jar</type>
-      </dependency>
-
-      <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>plugin-core</artifactId>
-        <version>${project.version}</version>
-        <type>jar</type>
-      </dependency>
-
-      <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>reports</artifactId>
-        <version>${project.version}</version>
-        <type>war</type>
-      </dependency>
-
-      <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>simple-plugin</artifactId>
-        <version>${project.version}</version>
-        <type>jar</type>
-      </dependency>
-
-      <dependency>
-        <groupId>fi.pyramus</groupId>
-        <artifactId>webservices-plugin</artifactId>
-        <version>${project.version}</version>
-        <type>jar</type>
+        <groupId>org.openid4java</groupId>
+        <artifactId>openid4java-nodeps</artifactId>
+        <version>${openid4java.version}</version>
       </dependency>
       
-      <!-- Java Faker -->
-
+      <!-- Commons -->
+      
+      <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>${commons-fileupload.version}</version>
+      </dependency>
+    
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3.version}</version>
+    </dependency>
+    
+      <!-- OpenCSV -->
+  
+      <dependency>
+        <groupId>net.sf.opencsv</groupId>
+        <artifactId>opencsv</artifactId>
+        <version>${opencsv.version}</version>
+      </dependency>
+      
+      <!-- Maven Aether -->
+  
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-aether-provider</artifactId>
+        <version>${maven-aether-provider.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.sonatype.aether</groupId>
+        <artifactId>aether-connector-wagon</artifactId>
+        <version>${aether-connector-wagon.version}</version>
+      </dependency>
+  
+      <dependency>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-http-lightweight</artifactId>
+        <version>${wagon-http-lightweight.version}</version>
+      </dependency>
+    
+      <!-- JavaFaker -->
+    
       <dependency>
         <groupId>com.github.javafaker</groupId>
         <artifactId>javafaker</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>${javafaker.version}</version>
       </dependency>
-      
-      <!-- JUnit -->
-
+    
+      <!-- Freemarker -->
+  
       <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.11</version>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>${freemarker.version}</version>
       </dependency>
-      
+        
+      <!-- JSON -->
+  
+      <dependency>
+        <groupId>net.sf.json-lib</groupId>
+        <artifactId>json-lib</artifactId>
+        <version>${json-lib.version}</version>
+        <classifier>jdk15</classifier>
+      </dependency>
+            
       <!-- Rest Assured -->
   
       <dependency>
         <groupId>com.jayway.restassured</groupId>
         <artifactId>rest-assured</artifactId>
-        <version>2.3.1</version>
+        <version>${rest-assured.version}</version>
       </dependency>
       
       <!-- Hamcrest -->
@@ -282,13 +182,75 @@
       <dependency>
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-core</artifactId>
-        <version>1.3</version>
+        <version>${hamcrest.version}</version>
       </dependency>
               
       <dependency>
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-library</artifactId>
-        <version>1.3</version>
+        <version>${hamcrest.version}</version>
+      </dependency>
+       
+      <!-- Pyramus -->
+  
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>persistence</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>rest</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>common</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>framework</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>openid-plugin</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>plugin-core</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>pyramus</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>reports</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>webservices-plugin</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>smvcj</artifactId>
+        <version>${pyramus.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
