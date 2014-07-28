@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
-import javax.persistence.PersistenceContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -126,7 +123,6 @@ public class Servlet extends HttpServlet {
 
     try {
       userTransaction.begin();
-      entityManager.setFlushMode(FlushModeType.AUTO);
     } catch (Exception e) {
       Logging.logException(e);
       throw new ServletException(e);
@@ -320,8 +316,5 @@ public class Servlet extends HttpServlet {
   
   @Resource
   private UserTransaction userTransaction;
-
-  @PersistenceContext
-  private EntityManager entityManager;
   
 }
