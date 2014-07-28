@@ -635,6 +635,7 @@
 
     create table PluginRepository (
         id bigint not null,
+        repositoryId varchar(255) not null unique,
         url varchar(255) not null unique,
         primary key (id)
     );
