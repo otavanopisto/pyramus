@@ -46,7 +46,6 @@ public abstract class RequestContext {
    * @param servletResponse The HTTP servlet response
    * @throws FileUploadException 
    */
-  @SuppressWarnings("unchecked")
   protected RequestContext(RequestDispatchContext requestDispatchContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, ServletContext servletContext) {
     this.servletRequest = servletRequest;
     this.servletResponse = servletResponse;
