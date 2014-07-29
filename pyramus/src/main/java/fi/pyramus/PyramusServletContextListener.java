@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -104,11 +105,11 @@ public class PyramusServletContextListener implements ServletContextListener {
       loadSystemSettings(System.getProperties());
       
       // Load default page mappings from properties file
-      loadPropertiesFile(ctx, pageControllers, "pagemapping.properties");
+      loadPropertiesFile(pageControllers, "pagemapping.properties");
       // Load default JSON mappings from properties file
-      loadPropertiesFile(ctx, jsonControllers, "jsonmapping.properties");
+      loadPropertiesFile(jsonControllers, "jsonmapping.properties");
       // Load default binary mappings from properties file
-      loadPropertiesFile(ctx, binaryControllers, "binarymapping.properties");
+      loadPropertiesFile(binaryControllers, "binarymapping.properties");
       
       // Initialize the page mapper in order to serve page requests 
       RequestControllerMapper.mapControllers(pageControllers, ".page");
@@ -166,13 +167,13 @@ public class PyramusServletContextListener implements ServletContextListener {
     }
   }
 
-  private void loadPropertiesFile(ServletContext servletContext, Properties properties, String filename)
-      throws FileNotFoundException, IOException {
-    String webappPath = servletContext.getRealPath("/");
-    File settingsFile = new File(webappPath + "WEB-INF/" + filename);
-    if (settingsFile.canRead()) {
-      properties.load(new FileReader(settingsFile));
+  private void loadPropertiesFile(Properties properties, String filename) throws FileNotFoundException, IOException {
+    InputStream resourceStream = getClass().getClassLoader().getResourceAsStream(filename);
+    if (resourceStream == null) {
+      throw new FileNotFoundException("Could not find properties file: " + filename);
     }
+    
+    properties.load(resourceStream);
   }
   
   private void loadSystemSettings(Properties properties) {
