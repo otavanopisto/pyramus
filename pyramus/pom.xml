@@ -13,7 +13,81 @@
   </parent>
   
   <dependencies>
-      
+
+    <!-- Servlet -->
+
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- RESTEasy -->
+
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>jaxrs-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  
+    <!-- CDI -->
+
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.jboss.spec.javax.interceptor</groupId>
+      <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- Hibernate -->
+  
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-infinispan</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-orm</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-analyzers</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-infinispan</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <scope>provided</scope>
+    </dependency>    
+       
     <!-- Transactions -->
     
     <dependency>
@@ -45,7 +119,53 @@
       <artifactId>jboss-jms-api_2.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
+
+    <!-- EJB -->
+
+    <dependency>
+      <groupId>org.jboss.spec.javax.ejb</groupId>
+      <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Commons -->
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <scope>provided</scope>
+    </dependency>
     
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <scope>provided</scope>
+    </dependency> 
+    
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <scope>provided</scope>
+    </dependency> 
+    
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <scope>provided</scope>
+    </dependency> 
+        
     <!-- OpenCSV -->
 
     <dependency>
@@ -59,6 +179,20 @@
       <groupId>net.sf.json-lib</groupId>
       <artifactId>json-lib</artifactId>
       <classifier>jdk15</classifier>
+    </dependency>
+    
+    <!-- SLF4J -->
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <scope>provided</scope>
     </dependency>
     
     <!-- Maven Aether -->
@@ -84,6 +218,14 @@
       <groupId>com.github.javafaker</groupId>
       <artifactId>javafaker</artifactId>
     </dependency>
+    
+    <!-- SnakeYAML -->
+    
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <scope>provided</scope>
+    </dependency>
   
     <!-- Freemarker -->
 
@@ -97,6 +239,23 @@
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- jsoup -->
+
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- JodaTime -->
+    
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Pyramus -->
@@ -161,7 +320,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Dependencies>org.joda.time</Dependencies>
+              <Dependencies>org.hibernate.search.orm services,org.joda.time,org.apache.httpcomponents,org.apache.commons.beanutils,org.apache.commons.collections,org.apache.commons.io,org.apache.commons.lang,org.jsoup,org.apache.xerces,org.slf4j,org.slf4j.impl</Dependencies>
             </manifestEntries>
           </archive>
         </configuration>
