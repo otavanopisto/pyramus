@@ -1,531 +1,541 @@
-    alter table Address 
-        drop constraint FK1ED033D4C0329886;
+    alter table AccessLogEntry 
+        drop constraint FK_r031kiolhx2sg7hpdngdn026l if exists;
+
+    alter table AccessLogEntry 
+        drop constraint FK_pqnvv7lafgjgne4uxm2vqvqiu if exists;
 
     alter table Address 
-        drop constraint FK1ED033D4C028436E;
+        drop constraint FK_p90qwaeto30hrsskrw3vddgup if exists;
+
+    alter table Address 
+        drop constraint FK_o4ui1nisxpnjicn3ift35lawt if exists;
 
     alter table BasicCourseResource 
-        drop constraint FK87983CF75475C87B;
+        drop constraint FK_6vyqcfts1vlur0nv0d05e4td2 if exists;
 
     alter table BasicCourseResource 
-        drop constraint FK87983CF7A7C0C394;
+        drop constraint FK_gk3t0um3tiddm2goieocsqe3 if exists;
 
     alter table ChangeLogEntry 
-        drop constraint FK29D7737E2D667C2D;
+        drop constraint FK_trl3pu52yuhr6jlus9epa7ild if exists;
 
     alter table ChangeLogEntry 
-        drop constraint FK29D7737E62D248B;
+        drop constraint FK_kdh12wtrq0966fpwyjylcbwh1 if exists;
 
     alter table ChangeLogEntryEntityProperty 
-        drop constraint FKE9F8DDF62D667C2D;
+        drop constraint FK_cf3qvc4k2fuqw17mo37kijm28 if exists;
 
     alter table ChangeLogEntryProperty 
-        drop constraint FKE30B57733DEECE14;
+        drop constraint FK_bd33yidoqd2jxs8n99p6tkpge if exists;
 
     alter table ChangeLogEntryProperty 
-        drop constraint FKE30B57735D7A51F9;
+        drop constraint FK_qgkacalwos2pvununsghx60j if exists;
 
     alter table ComponentBase 
-        drop constraint FK954D014E6270F1B1;
+        drop constraint FK_n3636lg4sxh0jvounesk7wec8 if exists;
 
     alter table ContactURL 
-        drop constraint FK7F280D4F58FFEF20;
+        drop constraint FK_2s7xt7s92jscrxgn1x6lxp3t4 if exists;
 
     alter table ContactURL 
-        drop constraint FK7F280D4FC028436E;
+        drop constraint FK_b6cur2odxtvui687f979t3xoh if exists;
 
     alter table Course 
-        drop constraint FK78A7CC3BB33F86B5;
+        drop constraint FK_hvlfik6l3xul7nju5i6mvr5pt if exists;
 
     alter table Course 
-        drop constraint FK78A7CC3B5D81ECA2;
+        drop constraint FK_4gv69tpplv1tn5l3caog1joy4 if exists;
 
     alter table Course 
-        drop constraint FK78A7CC3BD7113A6E;
+        drop constraint FK_1djmp3hn9iwd9ad4m58qtv3mw if exists;
 
     alter table CourseAssessment 
-        drop constraint FK9833115D6EEA9BD;
+        drop constraint FK_h2uf2bqevk8mcg4c209iimiii if exists;
 
     alter table CourseAssessment 
-        drop constraint FK9833115D55F637B;
+        drop constraint FK_fh8tfbpjnxx2vv360mjycnkl4 if exists;
 
     alter table CourseAssessmentRequest 
-        drop constraint FKADBCA67255F637B;
+        drop constraint FK_8q7qimj1fjafgipdlghx21ihe if exists;
 
     alter table CourseBase 
-        drop constraint FKB40B1AC977F310A;
+        drop constraint FK_8n3d8qk4nbhisror3fa56mysa if exists;
 
     alter table CourseBase 
-        drop constraint FKB40B1AC76DFD82D;
+        drop constraint FK_qdbp18pq48wyynl5ckj9t3bg2 if exists;
 
     alter table CourseBase 
-        drop constraint FKB40B1AC4344B8EC;
+        drop constraint FK_5mf6i7k6y5kag8g3aovixs38y if exists;
 
     alter table CourseBase 
-        drop constraint FKB40B1AC2054118C;
+        drop constraint FK_f7792dwjjlr8yt0r7mgkpirrd if exists;
 
     alter table CourseBaseVariable 
-        drop constraint FK73597C4847BCDB06;
+        drop constraint FK_20wssfclcmxxxobjutc6o4mfw if exists;
 
     alter table CourseBaseVariable 
-        drop constraint FK73597C48322966AC;
+        drop constraint FK_g1q49gtou9k3jso650k5r37yc if exists;
 
     alter table CourseComponent 
-        drop constraint FK4A4C03025F7117BB;
+        drop constraint FK_lt90xbqly93wnxsjdqolp83vn if exists;
 
     alter table CourseComponent 
-        drop constraint FK4A4C03025475C87B;
+        drop constraint FK_87f9ovvi3hy4roxtebo6hy5al if exists;
 
     alter table CourseComponentResource 
-        drop constraint FK23A809306F64EBBF;
+        drop constraint FK_iirdnay0h9fc63st5atv9i1ur if exists;
 
     alter table CourseComponentResource 
-        drop constraint FK23A80930A7C0C394;
+        drop constraint FK_jyfucsejwcj8hbxbl3v8b2rno if exists;
 
     alter table CourseDescription 
-        drop constraint FKBB50FCC147BCDB06;
+        drop constraint FK_d3gaxsqdh05g53olhgjl99eij if exists;
 
     alter table CourseDescription 
-        drop constraint FKBB50FCC18177E998;
+        drop constraint FK_77le1nirxo5yighwd96fyjxqf if exists;
 
     alter table CourseEducationSubtype 
-        drop constraint FK102A2B0DC9842B12;
+        drop constraint FK_kt290qaxkhotm9jo7wb6hv0aj if exists;
 
     alter table CourseEducationSubtype 
-        drop constraint FK102A2B0DED033D00;
+        drop constraint FK_409elphhj1xbcuqo57tmypn96 if exists;
 
     alter table CourseEducationType 
-        drop constraint FK5F27B287A5E07316;
+        drop constraint FK_hq2hbvq3f81dmyymqa2j07bcb if exists;
 
     alter table CourseEducationType 
-        drop constraint FK5F27B28747BCDB06;
+        drop constraint FK_70hkwva11c9btj1r8xdflt6y4 if exists;
 
     alter table CourseStudent 
-        drop constraint FK21572580EE2B836F;
+        drop constraint FK_990n0w0581m3h4n0pvxyo09gs if exists;
 
     alter table CourseStudent 
-        drop constraint FK215725805475C87B;
+        drop constraint FK_tdsd2ykmt3gl8al74vhvetp5p if exists;
 
     alter table CourseStudent 
-        drop constraint FK2157258023DFBF96;
+        drop constraint FK_joq4rus28ls505so74el2sne2 if exists;
 
     alter table CourseStudent 
-        drop constraint FK21572580D2B417DC;
+        drop constraint FK_6b304h022160fuidrq2n1l7g9 if exists;
 
     alter table CourseStudent 
-        drop constraint FK2157258075F2C3BC;
+        drop constraint FK_6syti63mb3rf5ohusl6hhxm1l if exists;
 
     alter table CourseStudentVariable 
-        drop constraint FK99F8DC1C55F637B;
+        drop constraint FK_fdew52if7kx4x8t433jtwjbw8 if exists;
 
     alter table CourseStudentVariable 
-        drop constraint FK99F8DC1CEDFABEB;
+        drop constraint FK_g1rwycwb6g3lm68lrpg0k3rbs if exists;
 
     alter table CourseUser 
-        drop constraint FKB4996A65475C87B;
+        drop constraint FK_8m1wdnkvu7f4w38jxpb0pf7n6 if exists;
 
     alter table CourseUser 
-        drop constraint FKB4996A657C009DE;
+        drop constraint FK_d71yo025tyvtm7sm6c8b33c7k if exists;
 
     alter table CourseUser 
-        drop constraint FKB4996A6D5977E22;
+        drop constraint FK_gesju89o5caq9d5ics49nkmda if exists;
 
     alter table Credit 
-        drop constraint FK78CA9719D709AF89;
+        drop constraint FK_qeujhkfa3cpfwvb48646agdch if exists;
 
     alter table Credit 
-        drop constraint FK78CA971979EF34E5;
+        drop constraint FK_fpl517x4owb3qt2nhit9oy8e7 if exists;
 
     alter table CreditLink 
-        drop constraint FK552B86B3B654479B;
+        drop constraint FK_6idi337xbuq6w5wk75w8kwad9 if exists;
 
     alter table CreditLink 
-        drop constraint FK552B86B3EE2B836F;
+        drop constraint FK_gmdwo9i5q09mbxs4idwgqfvxt if exists;
 
     alter table CreditLink 
-        drop constraint FK552B86B34344B8EC;
+        drop constraint FK_ju2x5va5e7votkdlghnmdc2gq if exists;
 
     alter table CreditVariable 
-        drop constraint FKA051A4B5B654479B;
+        drop constraint FK_iqmfjcic2boxjciqgamihkppj if exists;
 
     alter table CreditVariable 
-        drop constraint FKA051A4B592438EA4;
+        drop constraint FK_inaneefcy0mnigltdmt4fobdr if exists;
 
     alter table Defaults 
-        drop constraint FK2A415672531DE567;
+        drop constraint FK_dnkpit0q6wlkfl0b66akw84pt if exists;
 
     alter table Defaults 
-        drop constraint FK2A41567221BB8DB;
+        drop constraint FK_g86nby8edvpbde88tdeyb851 if exists;
 
     alter table Defaults 
-        drop constraint FK2A41567261817BA1;
+        drop constraint FK_23wxeog8g1fyee0982ubptj3f if exists;
 
     alter table Defaults 
-        drop constraint FK2A415672572F2D3A;
+        drop constraint FK_s9uv5jk1xxljge95mksp4tfx0 if exists;
 
     alter table EducationSubtype 
-        drop constraint FKD17434D2A5E07316;
+        drop constraint FK_ljkp7gmuy3wgdl2nkxs316ow1 if exists;
 
     alter table EducationalLength 
-        drop constraint FK8E7A679278A621A;
+        drop constraint FK_9i3s1om3re3kf4sciv2ay719f if exists;
 
     alter table Email 
-        drop constraint FK3FF5B7CC0329886;
+        drop constraint FK_9beti0nhdq60m9llr30r7xrbk if exists;
 
     alter table Email 
-        drop constraint FK3FF5B7CC028436E;
+        drop constraint FK_98itl0gnxl42v33d8wtim00ny if exists;
 
     alter table File 
-        drop constraint FK21699C76DFD82D;
+        drop constraint FK_p39k3e3t8kff359g2rkhjjovt if exists;
 
     alter table File 
-        drop constraint FK21699C4344B8EC;
+        drop constraint FK_6nyh3x9yrffgiau2lbkbxbl3k if exists;
 
     alter table File 
-        drop constraint FK21699CDCDEF2CF;
+        drop constraint FK_i4xo8fnijunrxpmrslpsggjld if exists;
 
     alter table FormDraft 
-        drop constraint FKE1D2F71D4344B8EC;
+        drop constraint FK_ubrbpijc1j5magqtp2davuyw if exists;
 
     alter table Grade 
-        drop constraint FK41DCFB7146934B5;
+        drop constraint FK_amgg5818eisglvsplo3vt68yj if exists;
 
     alter table GradeCourseResource 
-        drop constraint FK39880CE05475C87B;
+        drop constraint FK_pr4wqos0fajw1wuqboieu8fmm if exists;
 
     alter table GradeCourseResource 
-        drop constraint FK39880CE0A7C0C394;
+        drop constraint FK_3vhbap3vceorw22x4mh994n8g if exists;
 
     alter table HelpFolder 
-        drop constraint FKA9227F2F42CE482D;
+        drop constraint FK_nuaikofqxx36tbnqva5w30dkr if exists;
 
     alter table HelpItem 
-        drop constraint FKD4C29A1476DFD82D;
+        drop constraint FK_4rajwxh9isb1hj1i0r51i77jk if exists;
 
     alter table HelpItem 
-        drop constraint FKD4C29A144344B8EC;
+        drop constraint FK_gxcqfqdc3twretfmsbo5xg4we if exists;
 
     alter table HelpItem 
-        drop constraint FKD4C29A148774E157;
+        drop constraint FK_kqa3kt0f5n4c6d50docm62tho if exists;
 
     alter table HelpItemTitle 
-        drop constraint FKC5BFC4A442FFB625;
+        drop constraint FK_a6mow7m5ul7cer67yf3i4xc8c if exists;
 
     alter table HelpItemTitle 
-        drop constraint FKC5BFC4A476DFD82D;
+        drop constraint FK_2xxynq0ppm8ou0o3dcwkhxawq if exists;
 
     alter table HelpItemTitle 
-        drop constraint FKC5BFC4A44344B8EC;
+        drop constraint FK_i1a0pr6j0cbeghcnv5qdlf6nc if exists;
 
     alter table HelpPage 
-        drop constraint FKD4C5819042CE482D;
+        drop constraint FK_9awkdrimomfve3wo73o7x9lrq if exists;
 
     alter table HelpPageContent 
-        drop constraint FKB5D068C94305851D;
+        drop constraint FK_7aq0keo8uon28osm3biuxrxhd if exists;
 
     alter table HelpPageContent 
-        drop constraint FKB5D068C976DFD82D;
+        drop constraint FK_qg5cfmrofk6kve7ffgpgm2nn if exists;
 
     alter table HelpPageContent 
-        drop constraint FKB5D068C94344B8EC;
+        drop constraint FK_skw5bpma7gi8pm1i2yih5hsch if exists;
 
     alter table MaterialResource 
-        drop constraint FKE255BA75BC150CA1;
+        drop constraint FK_pi7v6ltxwjfung4vhoricynqx if exists;
 
     alter table Module 
-        drop constraint FK89B0928CB33F86B5;
+        drop constraint FK_8qdxvhwj9bps8ktupfem3m53j if exists;
 
     alter table ModuleComponent 
-        drop constraint FKFAFEC7D15F7117BB;
+        drop constraint FK_tmd3hat9f93c34cxhvagf7b0f if exists;
 
     alter table ModuleComponent 
-        drop constraint FKFAFEC7D1D7113A6E;
+        drop constraint FK_r6r3bnkfpar0lqq1diqetqbac if exists;
 
     alter table OtherCost 
-        drop constraint FK36EBADD5475C87B;
+        drop constraint FK_6f2p8ujs7cleagmwfy226acqe if exists;
 
     alter table PhoneNumber 
-        drop constraint FK1C4E6237C0329886;
+        drop constraint FK_awul8v1e7o1lwrxpofjfyh4a0 if exists;
 
     alter table PhoneNumber 
-        drop constraint FK1C4E6237C028436E;
+        drop constraint FK_cxyslapwd99ifu2b4nv79pxtf if exists;
 
     alter table Project 
-        drop constraint FK50C8E2F9BE6D6F92;
+        drop constraint FK_1aik7d4w4m941okf0qa6i9uw8 if exists;
 
     alter table Project 
-        drop constraint FK50C8E2F976DFD82D;
+        drop constraint FK_kmrhsrdppvcr99du224dr82qp if exists;
 
     alter table Project 
-        drop constraint FK50C8E2F94344B8EC;
+        drop constraint FK_gifnakb4oeswbkdfj2j73yxym if exists;
 
     alter table ProjectAssessment 
-        drop constraint FKA42D529B6EEA9BD;
+        drop constraint FK_4o00eth6ajsmkruwvjx2qwwnl if exists;
 
     alter table ProjectAssessment 
-        drop constraint FKA42D529B22B70CA1;
+        drop constraint FK_2edqobatxcdbfqmy418e9m781 if exists;
 
     alter table ProjectModule 
-        drop constraint FKD8B796C536EE660D;
+        drop constraint FK_lrt13xbhvibxnp1i60handpmr if exists;
 
     alter table ProjectModule 
-        drop constraint FKD8B796C5D7113A6E;
+        drop constraint FK_fklaynsnhmwilbwdpul0tykfu if exists;
 
     alter table Report 
-        drop constraint FK91B1415476DFD82D;
+        drop constraint FK_37x7inqemxi63kf9knphcemt7 if exists;
 
     alter table Report 
-        drop constraint FK91B141544344B8EC;
+        drop constraint FK_nd95h1smw61bqoq7y1rknjvhr if exists;
 
     alter table Report 
-        drop constraint FK91B1415426DDD5AE;
+        drop constraint FK_8hw8ykuibh000vu6qtllv67ps if exists;
 
     alter table ReportContext 
-        drop constraint FK336625BB47FBFEC6;
+        drop constraint FK_crg8up29hxw2njcbgureswxch if exists;
 
     alter table Resource 
-        drop constraint FKEF86282E3857F7A2;
+        drop constraint FK_t58ubqwynff69fm5tpco4ye47 if exists;
 
     alter table School 
-        drop constraint FK93464794C028436E;
+        drop constraint FK_5wwaivsnowvhspfqdmqjrtrxj if exists;
 
     alter table School 
-        drop constraint FK93464794ECFDC92;
+        drop constraint FK_jy0pdno5q9b79t2yg3ng3sn4q if exists;
 
     alter table SchoolVariable 
-        drop constraint FK58FEAA301BB391F6;
+        drop constraint FK_g478tf5sv2iie0uf25ahblw89 if exists;
 
     alter table SchoolVariable 
-        drop constraint FK58FEAA3092C708C4;
+        drop constraint FK_niktl5fwc9i5hmk0rwvqu8dny if exists;
 
     alter table Setting 
-        drop constraint FKD997A6301C9B8DAE;
+        drop constraint FK_i4lfreu085sgpg9qjjhesr2vi if exists;
 
     alter table Student 
-        drop constraint FKF3371A1BEF70A856;
+        drop constraint FK_jkly5h0o7bfv241wftfpj5mh6 if exists;
 
     alter table Student 
-        drop constraint FKF3371A1B30ED0CC0;
+        drop constraint FK_moxdtidtiop0frxnxal9unpt if exists;
 
     alter table Student 
-        drop constraint FKF3371A1BFDB61D8B;
+        drop constraint FK_6xxj4ek0nlfmtckd6u8hct201 if exists;
 
     alter table Student 
-        drop constraint FKF3371A1BC655592A;
+        drop constraint FK_h8ypmoc31ra5j40x74esdy6x2 if exists;
 
     alter table Student 
-        drop constraint FKF3371A1BC028436E;
+        drop constraint FK_3yckb2qkc56r4by902wwci0n8 if exists;
 
     alter table Student 
-        drop constraint FKF3371A1B9F140BD4;
+        drop constraint FK_d97pguoxqr7ame3qnip13ekp1 if exists;
 
     alter table Student 
-        drop constraint FKF3371A1B29206186;
+        drop constraint FK_ahq5fxxqkhcolav50hq9nh0q if exists;
 
     alter table Student 
-        drop constraint FKF3371A1B8ECB763E;
+        drop constraint FK_jdov17i07kqm1v2dyvey648xq if exists;
 
     alter table Student 
-        drop constraint FKF3371A1B44566106;
+        drop constraint FK_bj6b1k4s9p44hqsrobb36tr86 if exists;
 
     alter table Student 
-        drop constraint FKF3371A1B1BB391F6;
+        drop constraint FK_6civiuvxkr0mt0xdewlk1p209 if exists;
 
     alter table Student 
-        drop constraint FKF3371A1B7CB521A2;
+        drop constraint FK_jos3vl724h8ln4toi52mn5b6f if exists;
 
     alter table StudentContactLogEntry 
-        drop constraint FKEBB80C33EE2B836F;
+        drop constraint FK_gnx1l8oymwaqxbl4hlownd4s2 if exists;
 
     alter table StudentContactLogEntryComment 
-        drop constraint FKD11CEAAC4458F86C;
+        drop constraint FK_5cbk5okc1c4j3rbhgu8u5u0vm if exists;
 
     alter table StudentCourseResource 
-        drop constraint FKCF4D58445475C87B;
+        drop constraint FK_1wfh045c1ajeqiyuedcs1w8jo if exists;
 
     alter table StudentCourseResource 
-        drop constraint FKCF4D5844A7C0C394;
+        drop constraint FK_8swnhosc1ckobku19m5vvqohr if exists;
 
     alter table StudentFile 
-        drop constraint FKEFB7FE373EE7CD5A;
+        drop constraint FK_rf3myt039nl5b85a5vftd0ry8 if exists;
 
     alter table StudentFile 
-        drop constraint FKEFB7FE37EE2B836F;
+        drop constraint FK_4p3ib0d8up3g526m3etu4x5jh if exists;
 
     alter table StudentGroup 
-        drop constraint FK75A052476DFD82D;
+        drop constraint FK_4d8ydne169e6ueqyj0jtwlpmm if exists;
 
     alter table StudentGroup 
-        drop constraint FK75A05244344B8EC;
+        drop constraint FK_7idqmgs5v42cv13kosncuo0fe if exists;
 
     alter table StudentGroupStudent 
-        drop constraint FKD427C477EE2B836F;
+        drop constraint FK_5l4cr2cte8wyiug3x0mkmpr6t if exists;
 
     alter table StudentGroupStudent 
-        drop constraint FKD427C47786F746CF;
+        drop constraint FK_9l0e8ewb1nfi1vxsr4anqnjbj if exists;
 
     alter table StudentGroupUser 
-        drop constraint FK12F3330F86F746CF;
+        drop constraint FK_7qmfe5ac665syeij5k3x3vb7o if exists;
 
     alter table StudentGroupUser 
-        drop constraint FK12F3330F62D248B;
+        drop constraint FK_a0t3yelwll2bbm4m123bs7int if exists;
 
     alter table StudentImage 
-        drop constraint FK773B800EE2B836F;
+        drop constraint FK_a4fvsbpg1wd2fq74f8xqcwb6s if exists;
 
     alter table StudentProject 
-        drop constraint FK7500447EBE6D6F92;
+        drop constraint FK_3piais5t058ytt7hjlvm2yixh if exists;
 
     alter table StudentProject 
-        drop constraint FK7500447EEE2B836F;
+        drop constraint FK_87nxxdtnf8dyn2x1e3h86b5rh if exists;
 
     alter table StudentProject 
-        drop constraint FK7500447E36EE660D;
+        drop constraint FK_ke85ke770aj7jcbmjcoku5la2 if exists;
 
     alter table StudentProject 
-        drop constraint FK7500447E76DFD82D;
+        drop constraint FK_m0xgkc8vsti9bpb8j7hpg62kt if exists;
 
     alter table StudentProject 
-        drop constraint FK7500447E4344B8EC;
+        drop constraint FK_cac2lntddk7blosrxr9xofjsj if exists;
 
     alter table StudentProjectModule 
-        drop constraint FK6FBF008A22B70CA1;
+        drop constraint FK_dd1wmb18pl0s2d07y0oyoynbq if exists;
 
     alter table StudentProjectModule 
-        drop constraint FK6FBF008A15319894;
+        drop constraint FK_aqcxytl2yuj8xnjrvlm6xu3i4 if exists;
 
     alter table StudentProjectModule 
-        drop constraint FK6FBF008AD7113A6E;
+        drop constraint FK_p4slb9gh4okk9uttkw09jwn7u if exists;
 
     alter table StudentStudyEndReason 
-        drop constraint FK9136D6316227D0F8;
+        drop constraint FK_2f8xkyc4p4muk488tcnc6gpqr if exists;
 
     alter table StudentVariable 
-        drop constraint FK1C1405B7EE2B836F;
+        drop constraint FK_napjy06rvnne36aluoi0ayjfr if exists;
 
     alter table StudentVariable 
-        drop constraint FK1C1405B7B02EFAD2;
+        drop constraint FK_fvw9n1unc74nwjp64w9aml70w if exists;
 
     alter table StudyProgramme 
-        drop constraint FKB037EB733296F97D;
+        drop constraint FK_9ro57ucpum3wqatybrefu71it if exists;
 
     alter table StudyProgrammeCategory 
-        drop constraint FKFCB7E991A5E07316;
+        drop constraint FK_lkbg43l77aimbt60q5tk1kdfm if exists;
 
     alter table Subject 
-        drop constraint FKF3E2ED0CA5E07316;
+        drop constraint FK_2jvjpbje8i7rifw2cq5uhsplo if exists;
 
     alter table TransferCredit 
-        drop constraint FKB1D3EE4977F310A;
+        drop constraint FK_9n6pwvfm0okxfwsiyf6fpx1p8 if exists;
 
     alter table TransferCredit 
-        drop constraint FKB1D3EE46EEA9BD;
+        drop constraint FK_rk9k9w0b5oqlxohfnn5pgm146 if exists;
 
     alter table TransferCredit 
-        drop constraint FKB1D3EE4EE2B836F;
+        drop constraint FK_hyn393ws6p0x42tnd9kw9d0ar if exists;
 
     alter table TransferCredit 
-        drop constraint FKB1D3EE42054118C;
+        drop constraint FK_5hw59qfrdyj1pg8xl6ipjed87 if exists;
 
     alter table TransferCredit 
-        drop constraint FKB1D3EE41BB391F6;
+        drop constraint FK_3kvav953yf312os4409cgmpqi if exists;
 
     alter table TransferCreditTemplateCourse 
-        drop constraint FK471C0139977F310A;
+        drop constraint FK_4g5726qoakm5036sjyj0xm58 if exists;
 
     alter table TransferCreditTemplateCourse 
-        drop constraint FK471C013931068E25;
+        drop constraint FK_sqrxc1ecwi5ukroe3aesq4shw if exists;
 
     alter table TransferCreditTemplateCourse 
-        drop constraint FK471C01392054118C;
+        drop constraint FK_ifciewbdasfs7ko6falijugdi if exists;
 
     alter table User 
-        drop constraint FK285FEBC028436E;
+        drop constraint FK_riou196egia4li7tw37luek46 if exists;
 
     alter table UserVariable 
-        drop constraint FK918A7B87E073D3C6;
+        drop constraint FK_qaiiydgi6aj0x9exdsxf0st2d if exists;
 
     alter table UserVariable 
-        drop constraint FK918A7B8762D248B;
+        drop constraint FK_spn3atobymho400p1sn47vira if exists;
 
     alter table WorkResource 
-        drop constraint FKDD5DA25FBC150CA1;
+        drop constraint FK_2twof1hru8qnoib84e8h4ubmc if exists;
 
     alter table __CourseTags 
-        drop constraint FK271392D45475C87B;
+        drop constraint FK_tioxjjt07nmxu8d3wj7myco0k if exists;
 
     alter table __CourseTags 
-        drop constraint FK271392D4F8D12EE6;
+        drop constraint FK_9jy0h9af4687ay9t3syd8n1tm if exists;
 
     alter table __HelpItemTags 
-        drop constraint FK7314542DF8D12EE6;
+        drop constraint FK_mo6ixudlv35ltqe396cfdgxb5 if exists;
 
     alter table __HelpItemTags 
-        drop constraint FK7314542D13C4FCE6;
+        drop constraint FK_r4j6p1twifvgvbq7fd3er8m1o if exists;
 
     alter table __ModuleTags 
-        drop constraint FK5EBEC8A5F8D12EE6;
+        drop constraint FK_inga9109o64j42q32s2cainpt if exists;
 
     alter table __ModuleTags 
-        drop constraint FK5EBEC8A5D7113A6E;
+        drop constraint FK_3si3vhxd8bam4tqkxmlga9r45 if exists;
 
     alter table __ProjectTags 
-        drop constraint FK88F02ED236EE660D;
+        drop constraint FK_p4oey2c9m9iujqgjc3cskvi86 if exists;
 
     alter table __ProjectTags 
-        drop constraint FK88F02ED2F8D12EE6;
+        drop constraint FK_p4bwrib9jhu1mx7ww2b9hop3o if exists;
 
     alter table __ResourceTags 
-        drop constraint FK46CF4547F8D12EE6;
+        drop constraint FK_nxqiot7237rkexinkncrvufe1 if exists;
 
     alter table __ResourceTags 
-        drop constraint FK46CF4547A7C0C394;
+        drop constraint FK_dft9for4owmie0uc1npd17gs6 if exists;
 
     alter table __SchoolTags 
-        drop constraint FK8CE2B9ADF8D12EE6;
+        drop constraint FK_7v02ry618vqfi225egm7ag2r8 if exists;
 
     alter table __SchoolTags 
-        drop constraint FK8CE2B9AD1BB391F6;
+        drop constraint FK_lbkqqkavgltyrrcjatg5eqh6w if exists;
 
     alter table __StudentBillingDetails 
-        drop constraint FK4F787262EE2B836F;
+        drop constraint FK_g03t04lpvdnt3j81fo53cbjqq if exists;
 
     alter table __StudentBillingDetails 
-        drop constraint FK4F78726275F2C3BC;
+        drop constraint FK_8s693eljni5o9vjboyg8rdbpa if exists;
 
     alter table __StudentGroupTags 
-        drop constraint FKF41EC73DF8D12EE6;
+        drop constraint FK_44ub49nfa8oleq5fg66ur4fc0 if exists;
 
     alter table __StudentGroupTags 
-        drop constraint FKF41EC73D86F746CF;
+        drop constraint FK_iobxoo1vl9qll999oui4744xv if exists;
 
     alter table __StudentProjectTags 
-        drop constraint FK19E519722B70CA1;
+        drop constraint FK_dtx3jka5ns3h5ntixwifloqc2 if exists;
 
     alter table __StudentProjectTags 
-        drop constraint FK19E5197F8D12EE6;
+        drop constraint FK_16emgsigygw6th8y8indckbjv if exists;
 
     alter table __StudentTags 
-        drop constraint FK4D4A04F4EE2B836F;
+        drop constraint FK_7pip1b30oq902tv535xbor8n4 if exists;
 
     alter table __StudentTags 
-        drop constraint FK4D4A04F4F8D12EE6;
+        drop constraint FK_4bbesi5caq54wpx5ivjx23mco if exists;
 
     alter table __UserBillingDetails 
-        drop constraint FK5BD3FFF275F2C3BC;
+        drop constraint FK_bj58cvcye8yvguabaacs0fw71 if exists;
 
     alter table __UserBillingDetails 
-        drop constraint FK5BD3FFF262D248B;
+        drop constraint FK_51scxf6eoh95igh7qsvi083dp if exists;
 
     alter table __UserTags 
-        drop constraint FKA09E4684F8D12EE6;
+        drop constraint FK_r2nt0vyhb81p3a677ls3rskn5 if exists;
 
     alter table __UserTags 
-        drop constraint FKA09E468462D248B;
+        drop constraint FK_cd49dr1pn4dybqibkwedyfl77 if exists;
 
     drop table AbstractStudent if exists;
 
     drop table AcademicTerm if exists;
+
+    drop table AccessLogEntry if exists;
+
+    drop table AccessLogEntryPath if exists;
 
     drop table Address if exists;
 
