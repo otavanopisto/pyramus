@@ -523,11 +523,11 @@
             <version>1.4.8</version>
             <configuration>
               <container>
-                <containerId>jboss71x</containerId>
+                <containerId>wildfly8x</containerId>
                 <log>${project.basedir}/target/cargo.log</log>
                 <output>${project.basedir}/target/jboss.log</output>
                 <zipUrlInstaller>
-                  <url>http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/jboss-as-7.1.1.Final.zip</url>
+                  <url>http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip</url>
                   <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
                   <extractDir>${project.basedir}/.cargo/extracts</extractDir>
                 </zipUrlInstaller>
@@ -578,12 +578,12 @@
           </plugin>
           
           <plugin>
-            <groupId>org.jboss.as.plugins</groupId>
-            <artifactId>jboss-as-maven-plugin</artifactId>
-            <version>7.5.Final</version>
+            <groupId>org.wildfly.plugins</groupId>
+            <artifactId>wildfly-maven-plugin</artifactId>
+            <version>1.0.1.Final</version>
             <executions>
               <execution>
-                <id>configure-jboss</id>
+                <id>configure-wildfly</id>
                 <phase>pre-integration-test</phase>
                 <goals>
                   <goal>execute-commands</goal>
@@ -594,10 +594,9 @@
                     <commands>
                       <command>/system-property=PyramusWSAllowedIPs:add(value="127.0.0.1")</command>
                       <command>/system-property=pyramus-url:add(value="${it.host}:${it.port.https}")</command>
-                      <command>/subsystem=web/virtual-server=default-host:write-attribute(name=enable-welcome-root,value=false)</command>
-                      <command>/subsystem=web/connector=http:write-attribute(name=redirect-port,value="${it.port.https}")</command>
-                      <command>/subsystem=web/connector=https:add(socket-binding=https,scheme=https,protocol="HTTP/1.1",enabled=true,secure=true)</command>
-                      <command>/subsystem=web/connector=https/ssl=configuration:add(name="ssl",certificate-key-file="${it.keystore.file}",password="${it.keystore.pass}", key-alias="${it.keystore.alias}", protocol="TLS", verify-client="false")</command>
+                      <command>/core-service=management/security-realm=ssl-realm:add()</command>
+                      <command>/core-service=management/security-realm=ssl-realm/server-identity=ssl:add(keystore-path="${it.keystore.file}",keystore-password="${it.keystore.pass}",alias="${it.keystore.alias}")</command>
+                      <command>/subsystem=undertow/server=default-server/https-listener=https:add(socket-binding="https",security-realm="ssl-realm")</command>
                       <command>/subsystem=security/security-domain=WebServices:add(cache-type=default)</command>
                       <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=>"RealmUsersRoles","flag"=>"required","module-options"=>[("realm"=>"WebServices"),("password-stacking"=>"useFirstPass"),("rolesProperties"=>"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=>"\${jboss.server.config.dir}/application-users.properties")]}])</command>
                     </commands>
@@ -606,7 +605,7 @@
               </execution>
 
               <execution>
-                <id>reload-jboss</id>
+                <id>reload-wildfly</id>
                 <phase>pre-integration-test</phase>
                 <goals>
                   <goal>execute-commands</goal>
