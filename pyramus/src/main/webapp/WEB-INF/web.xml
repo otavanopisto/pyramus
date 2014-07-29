@@ -5,6 +5,14 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
 	id="WebApp_ID" 
 	version="3.0">
+  
+  <session-config>
+    <cookie-config>
+      <path>/</path>
+    </cookie-config>
+    <tracking-mode>COOKIE</tracking-mode>
+  </session-config>
+  
   <display-name>pyramus</display-name>
   <description>Pyramus</description>
   <filter>
