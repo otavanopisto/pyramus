@@ -127,6 +127,20 @@
       <artifactId>jboss-ejb-api_3.2_spec</artifactId>
       <scope>provided</scope>
     </dependency>
+    
+    <!-- Jackson -->
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-core-asl</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- Commons -->
 
@@ -201,10 +215,16 @@
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-aether-provider</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-connector-wagon</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>sisu-inject-plexus</artifactId>
+          <groupId>org.sonatype.sisu</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -262,27 +282,44 @@
 
     <dependency>
       <groupId>fi.pyramus</groupId>
-      <artifactId>rest</artifactId>
+      <artifactId>common</artifactId>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>fi.pyramus</groupId>
       <artifactId>framework</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>fi.pyramus</groupId>
+      <artifactId>persistence</artifactId>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>fi.pyramus</groupId>
       <artifactId>plugin-core</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>fi.pyramus</groupId>
+      <artifactId>rest</artifactId>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>fi.pyramus</groupId>
       <artifactId>smvcj</artifactId>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>fi.pyramus</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>webservices-plugin</artifactId>
+      <scope>compile</scope>
     </dependency>
     
     <!-- Test Dependecies -->
@@ -320,7 +357,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Dependencies>org.hibernate.search.orm services,org.joda.time,org.apache.httpcomponents,org.apache.commons.beanutils,org.apache.commons.collections,org.apache.commons.io,org.apache.commons.lang,org.jsoup,org.apache.xerces,org.slf4j,org.slf4j.impl</Dependencies>
+              <Dependencies>org.hibernate,org.hibernate.search.orm services,org.hibernate.validator,org.joda.time,org.apache.httpcomponents,org.apache.commons.beanutils,org.apache.commons.collections,org.apache.commons.io,org.apache.commons.lang,org.jsoup,org.apache.xerces,org.slf4j,org.slf4j.impl,org.codehaus.jackson.jackson-core-asl,org.codehaus.jackson.jackson-mapper-asl</Dependencies>
             </manifestEntries>
           </archive>
         </configuration>
