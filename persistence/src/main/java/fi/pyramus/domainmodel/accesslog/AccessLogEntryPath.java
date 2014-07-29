@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
@@ -41,6 +42,7 @@ public class AccessLogEntryPath {
   @NotNull
   @Column (nullable = false)
   @NotEmpty
+  @Lob
   private String path;
   
   @NotNull
