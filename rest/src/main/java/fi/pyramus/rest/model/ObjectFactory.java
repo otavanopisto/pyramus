@@ -61,13 +61,17 @@ import fi.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.rest.controller.SchoolController;
 
 @ApplicationScoped
 @Stateful
 public class ObjectFactory {
-  
+
   @Inject
   private Logger logger;
+
+  @Inject
+  private SchoolController schoolController;
   
   @PostConstruct
   public void init() {
@@ -280,8 +284,10 @@ public class ObjectFactory {
               }
             }
             
+            List<SchoolVariable> entityVariables = schoolController.listSchoolVariablesBySchool(entity);
+            
             Map<String, String> variables = new HashMap<>();
-            for (SchoolVariable entityVariable : entity.getVariables()) {
+            for (SchoolVariable entityVariable : entityVariables) {
               variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
             }
             

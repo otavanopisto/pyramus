@@ -163,7 +163,7 @@ public class SchoolController {
     Set<String> oldKeys = new HashSet<>();
     Set<String> updateKeys = new HashSet<>();
     
-    for (SchoolVariable variable : school.getVariables()) {
+    for (SchoolVariable variable : listSchoolVariablesBySchool(school)) {
       oldKeys.add(variable.getKey().getVariableKey());
     }
 
@@ -249,8 +249,8 @@ public class SchoolController {
     schoolVariableDAO.delete(variable);
   }
   
-  public List<SchoolVariable> listSchoolVariables() {
-    List<SchoolVariable> schoolVariables = schoolVariableDAO.listAll();
+  public List<SchoolVariable> listSchoolVariablesBySchool(School school) {
+    List<SchoolVariable> schoolVariables = schoolVariableDAO.listBySchool(school);
     return schoolVariables;
   }
 
