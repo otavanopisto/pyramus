@@ -662,7 +662,7 @@
             <version>1.0</version>
             <executions>
               <execution>
-                <id>wait</id>
+                <id>wait-webapp</id>
                 <phase>pre-integration-test</phase>
                 <goals>
                   <goal>wait</goal>
@@ -672,7 +672,23 @@
                   <host>${it.host}</host>
                   <port>${it.port.http}</port>
                   <file>/</file>
-                  <maxcount>20</maxcount>
+                  <maxcount>10</maxcount>
+                  <timeout>10000</timeout>
+                </configuration>
+              </execution>
+              
+              <execution>
+                <id>wait-rest</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>wait</goal>
+                </goals>
+                <configuration>
+                  <protocol>http</protocol>
+                  <host>${it.host}</host>
+                  <port>${it.port.http}</port>
+                  <file>/1/system/ping</file>
+                  <maxcount>10</maxcount>
                   <timeout>10000</timeout>
                 </configuration>
               </execution>
