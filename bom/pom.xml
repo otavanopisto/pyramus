@@ -80,6 +80,14 @@
     
     <lucene-queries.version>3.6.2</lucene-queries.version>
     
+    <!-- Jackson -->
+    
+    <jackson-datatype-joda.version>2.3.0</jackson-datatype-joda.version>
+    
+    <!-- JodaTime -->
+    
+    <jodatime.version>2.1</jodatime.version>
+    
     <!-- Pyramus -->
     
     <pyramus.version>0.7.0-SNAPSHOT</pyramus.version>
@@ -172,6 +180,22 @@
         <version>${json-lib.version}</version>
         <classifier>jdk15</classifier>
       </dependency>
+      
+      <!-- Jackson -->
+      
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-joda</artifactId>
+        <version>${jackson-datatype-joda.version}</version>
+      </dependency>  
+      
+      <!-- JodaTime -->
+      
+      <dependency>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>${jodatime.version}</version>
+      </dependency>  
             
       <!-- Rest Assured -->
   

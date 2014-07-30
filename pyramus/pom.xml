@@ -29,7 +29,13 @@
       <artifactId>jaxrs-api</artifactId>
       <scope>provided</scope>
     </dependency>
-  
+
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jackson2-provider</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
     <!-- CDI -->
 
     <dependency>
@@ -125,20 +131,6 @@
     <dependency>
       <groupId>org.jboss.spec.javax.ejb</groupId>
       <artifactId>jboss-ejb-api_3.2_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <!-- Jackson -->
-
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-core-asl</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-mapper-asl</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -275,8 +267,14 @@
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-      <scope>provided</scope>
     </dependency>
+    
+    <!-- Jackson -->
+    
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-joda</artifactId>
+    </dependency>  
 
     <!-- Pyramus -->
 
@@ -357,7 +355,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Dependencies>org.hibernate,org.hibernate.search.orm services,org.hibernate.validator,org.joda.time,org.apache.httpcomponents,org.apache.commons.beanutils,org.apache.commons.collections,org.apache.commons.io,org.apache.commons.lang,org.jsoup,org.apache.xerces,org.slf4j,org.slf4j.impl,org.codehaus.jackson.jackson-core-asl,org.codehaus.jackson.jackson-mapper-asl</Dependencies>
+              <Dependencies>org.hibernate,org.hibernate.search.orm services,org.hibernate.validator,org.apache.httpcomponents,org.apache.commons.beanutils,org.apache.commons.collections,org.apache.commons.io,org.apache.commons.lang,org.jsoup,org.apache.xerces,org.slf4j,org.slf4j.impl,org.jboss.resteasy.resteasy-jackson2-provider</Dependencies>
             </manifestEntries>
           </archive>
         </configuration>
