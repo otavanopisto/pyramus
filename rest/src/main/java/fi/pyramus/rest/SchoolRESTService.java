@@ -76,9 +76,7 @@ public class SchoolRESTService extends AbstractRESTService {
     
     School school = schoolController.createSchool(code, name, schoolField);
     if (entity.getTags() != null) {
-      for (String tag : entity.getTags()) {
-        schoolController.createSchoolTag(school, tag);
-      }
+      schoolController.updateSchoolTags(school, entity.getTags());
     }
     
     if (entity.getVariables() != null) {

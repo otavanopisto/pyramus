@@ -110,12 +110,17 @@ public class SchoolController {
   }
 
   public void deleteSchool(School school) {
+    List<SchoolVariable> variables = schoolVariableDAO.listBySchool(school);
+    for (SchoolVariable variable : variables) {
+      schoolVariableDAO.delete(variable);
+    }
+    
     schoolDAO.delete(school);
   }
   
   /* Tags */
   
-  public Tag createSchoolTag(School school, String text) {
+  public synchronized Tag createSchoolTag(School school, String text) {
     Tag tag = tagDAO.findByText(text);
     if (tag == null) {
       tag = tagDAO.create(text);
@@ -139,7 +144,7 @@ public class SchoolController {
     return school;
   }
 
-  public School updateSchoolTags(School school, List<String> tags) {
+  public synchronized School updateSchoolTags(School school, List<String> tags) {
     Set<String> newTags = new HashSet<>(tags);
     Set<Tag> schoolTags = new HashSet<>(school.getTags());
     
