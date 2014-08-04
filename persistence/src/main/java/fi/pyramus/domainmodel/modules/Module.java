@@ -87,7 +87,7 @@ public class Module extends CourseBase implements ArchivableEntity {
   @IndexedEmbedded
   private List<ModuleComponent> moduleComponents = new Vector<ModuleComponent>();
 
-  @ManyToMany (fetch = FetchType.LAZY)
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__ModuleTags", joinColumns=@JoinColumn(name="module"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
   private Set<Tag> tags = new HashSet<Tag>();

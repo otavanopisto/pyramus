@@ -354,7 +354,7 @@ public class StudentProject implements ArchivableEntity {
   @Field
   private Boolean archived = Boolean.FALSE;
 
-  @ManyToMany (fetch = FetchType.LAZY)
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__StudentProjectTags", joinColumns=@JoinColumn(name="studentProject"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
   private Set<Tag> tags = new HashSet<Tag>();

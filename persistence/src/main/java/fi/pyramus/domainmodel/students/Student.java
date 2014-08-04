@@ -590,7 +590,7 @@ public class Student implements ArchivableEntity {
   @IndexedEmbedded 
   private List<BillingDetails> billingDetails = new ArrayList<BillingDetails>();
 
-  @ManyToMany (fetch = FetchType.LAZY)
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__StudentTags", joinColumns=@JoinColumn(name="student"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded
   private Set<Tag> tags = new HashSet<Tag>();

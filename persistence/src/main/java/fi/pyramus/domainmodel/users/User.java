@@ -223,7 +223,7 @@ public class User {
   @IndexedEmbedded 
   private List<BillingDetails> billingDetails = new ArrayList<BillingDetails>();
 
-  @ManyToMany (fetch = FetchType.LAZY)
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__UserTags", joinColumns=@JoinColumn(name="user"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
   private Set<Tag> tags = new HashSet<Tag>();

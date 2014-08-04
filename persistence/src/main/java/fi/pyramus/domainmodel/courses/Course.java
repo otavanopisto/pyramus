@@ -373,7 +373,7 @@ public class Course extends CourseBase implements ArchivableEntity {
   @JoinColumn (name="course")
   private List<OtherCost> otherCosts = new Vector<OtherCost>();
 
-  @ManyToMany (fetch = FetchType.LAZY)
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__CourseTags", joinColumns=@JoinColumn(name="course"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
   private Set<Tag> tags = new HashSet<Tag>();

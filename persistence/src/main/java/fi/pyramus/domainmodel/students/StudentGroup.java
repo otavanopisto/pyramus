@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -270,7 +271,7 @@ public class StudentGroup implements ArchivableEntity {
   @JoinColumn (name="studentGroup")
   private Set<StudentGroupStudent> students = new HashSet<StudentGroupStudent>();
 
-  @ManyToMany (fetch = FetchType.LAZY)
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__StudentGroupTags", joinColumns=@JoinColumn(name="studentGroup"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
   private Set<Tag> tags = new HashSet<Tag>();
