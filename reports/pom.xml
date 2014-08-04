@@ -35,6 +35,60 @@
       <artifactId>commons-lang3</artifactId>
     </dependency>
     
+    <!-- Axis -->
+    
+    <dependency>
+      <groupId>axis</groupId>
+      <artifactId>axis</artifactId>
+      <version>1.4</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-discovery</artifactId>
+          <groupId>commons-discovery</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+    <!-- BIRT -->
+    
+    <dependency>
+      <groupId>org.eclipse.birt.runtime</groupId>
+      <artifactId>viewservlets</artifactId>
+      <version>4.3.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>axis</artifactId>
+          <groupId>commons-discovery</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>org.eclipse.birt.runtime</artifactId>
+          <groupId>org.eclipse.birt.runtime</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.eclipse.birt.runtime</groupId>
+      <artifactId>org.eclipse.birt.runtime</artifactId>
+      <version>4.3.1</version>
+    </dependency>
+    
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Dependencies>org.apache.commons.io</Dependencies>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
