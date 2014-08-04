@@ -117,7 +117,7 @@ public class PrepareReportFilter implements Filter {
   }
 
   private File getReportsFolder() {
-    File reportsFolder = new File(rootPath + "reports/");
+    File reportsFolder = new File(rootPath, "reports");
     if (!reportsFolder.exists())
       reportsFolder.mkdirs();
 
