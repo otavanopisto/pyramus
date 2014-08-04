@@ -2,10 +2,8 @@ package fi.pyramus.domainmodel.reports;
 
 import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -133,7 +131,6 @@ public class Report implements ArchivableEntity{
   private String name;
 
   @Lob
-  @Basic (fetch = FetchType.LAZY)
   @Column (nullable = false)
   @NotEmpty
   private String data;
