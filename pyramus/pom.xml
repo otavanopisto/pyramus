@@ -254,6 +254,20 @@
       <scope>provided</scope>
     </dependency>
     
+    <!-- Xalan -->
+  
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>serializer</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  
     <!-- jsoup -->
 
     <dependency>
@@ -355,7 +369,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Dependencies>org.hibernate,org.hibernate.search.orm services,org.hibernate.validator,org.apache.httpcomponents,org.apache.commons.beanutils,org.apache.commons.collections,org.apache.commons.io,org.apache.commons.lang,org.jsoup,org.apache.xerces,org.slf4j,org.slf4j.impl,org.jboss.resteasy.resteasy-jackson2-provider</Dependencies>
+              <Dependencies>org.hibernate,org.hibernate.search.orm services,org.hibernate.validator,org.apache.httpcomponents,org.apache.commons.beanutils,org.apache.commons.collections,org.apache.commons.io,org.apache.commons.lang,org.jsoup,org.apache.xerces,org.apache.xalan,org.slf4j,org.slf4j.impl,org.jboss.resteasy.resteasy-jackson2-provider</Dependencies>
             </manifestEntries>
           </archive>
         </configuration>
