@@ -16,6 +16,7 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.MagicKeyDAO;
 import fi.pyramus.dao.reports.ReportDAO;
 import fi.pyramus.domainmodel.base.MagicKey;
+import fi.pyramus.domainmodel.base.MagicKeyScope;
 import fi.pyramus.domainmodel.reports.Report;
 import fi.pyramus.framework.BinaryRequestController;
 import fi.pyramus.framework.UserRole;
@@ -60,7 +61,10 @@ public class GetDesignFileBinaryRequestController extends BinaryRequestControlle
         MagicKeyDAO magicKeyDAO = DAOFactory.getInstance().getMagicKeyDAO();
         MagicKey magicKey = magicKeyDAO.findByName(headerKey);
         if (magicKey != null) {
-          magicKeyDAO.delete(magicKey);
+          // Delete Request scoped MagicKeys automatically
+          if (MagicKeyScope.REQUEST.equals(magicKey.getScope()))
+            magicKeyDAO.delete(magicKey);
+
           return;
         }
       }
