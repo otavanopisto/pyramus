@@ -69,6 +69,11 @@ public abstract class GenericDAO<T> {
     entityManager.persist(entity);
   }
 
+  protected T persist(T object) {
+    getEntityManager().persist(object);
+    return object;
+  }
+
   public Integer count() {
     EntityManager entityManager = getEntityManager();
     Class<?> genericTypeClass = getGenericTypeClass();
@@ -76,7 +81,7 @@ public abstract class GenericDAO<T> {
     return (Integer) query.getSingleResult();
   }
 
-  protected void delete(T e) {
+  public void delete(T e) {
     getEntityManager().remove(e);
   }
   

@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
@@ -128,7 +129,8 @@ public class File implements ArchivableEntity, ModificationTrackedEntity {
 
   private String contentType;
   
-  @Column (length=1073741824)
+  @Lob
+  @Column
   private byte[] data;
   
   @NotNull

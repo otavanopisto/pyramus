@@ -229,12 +229,22 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
 
   public School updateTags(School school, Set<Tag> tags) {
     EntityManager entityManager = getEntityManager();
-
+    
     school.setTags(tags);
 
     entityManager.persist(school);
 
     return school;
+  }
+
+  public School addTag(School school, Tag tag) {
+    school.addTag(tag);
+    return persist(school);
+  }
+
+  public School removeTag(School school, Tag tag) {
+    school.removeTag(tag);
+    return persist(school);
   }
 
 }

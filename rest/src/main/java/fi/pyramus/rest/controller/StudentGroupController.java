@@ -1,6 +1,7 @@
 package fi.pyramus.rest.controller;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -10,15 +11,23 @@ import javax.inject.Inject;
 
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.students.StudentGroupDAO;
+import fi.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentGroup;
+import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.users.User;
 
 @Dependent
 @Stateless
 public class StudentGroupController {
+
   @Inject
   private StudentGroupDAO studentGroupDAO;
+
+  @Inject
+  private StudentGroupStudentDAO studentGroupStudentDAO;
+  
   @Inject
   private TagDAO tagDAO;
   
@@ -36,12 +45,12 @@ public class StudentGroupController {
     return tag;
   }
   
-  public List<StudentGroup> findStudentGroups() {
+  public List<StudentGroup> listStudentGroups() {
     List<StudentGroup> studentGroups = studentGroupDAO.listAll();
     return studentGroups;
   }
   
-  public List<StudentGroup> findUnarchivedStudentGroups() {
+  public List<StudentGroup> listUnarchivedStudentGroups() {
     List<StudentGroup> studentGroups = studentGroupDAO.listUnarchived();
     return studentGroups;
   }
@@ -70,8 +79,46 @@ public class StudentGroupController {
     studentGroupDAO.unarchive(studentGroup, user);
     return studentGroup;
   }
-  
+
+  public StudentGroup updateStudentGroupTags(StudentGroup studentGroup, List<String> tags) {
+    Set<String> newTags = new HashSet<>(tags);
+    Set<Tag> studentGroupTags = new HashSet<>(studentGroup.getTags());
+    
+    for (Tag studentGroupTag : studentGroupTags) {
+      if (!newTags.contains(studentGroupTag.getText())) {
+        removeStudentGroupTag(studentGroup, studentGroupTag);
+      }
+        
+      newTags.remove(studentGroupTag.getText());
+    }
+    
+    for (String newTag : newTags) {
+      createStudentGroupTag(studentGroup, newTag);
+    }
+    
+    return studentGroup;
+  }
+
   public void removeStudentGroupTag(StudentGroup studentGroup, Tag tag) {
     studentGroup.removeTag(tag);
   }
+
+  public void deleteStudentGroup(StudentGroup studentGroup) {
+    studentGroupDAO.delete(studentGroup);
+  }
+  
+  /* StudentGroupStudents */
+
+  public StudentGroupStudent findStudentGroupStudentById(Long id) {
+    return studentGroupStudentDAO.findById(id);
+  }
+
+  public void deleteStudentGroupStudent(StudentGroupStudent studentGroupStudent) {
+    studentGroupStudentDAO.delete(studentGroupStudent);
+  }
+
+  public StudentGroupStudent createStudentGroupStudent(StudentGroup studentGroup, Student student, User updatingUser) {
+    return studentGroupStudentDAO.create(studentGroup, student, updatingUser);
+  }
+
 }

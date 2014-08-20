@@ -3,6 +3,7 @@ package fi.pyramus.domainmodel.resources;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -155,7 +156,7 @@ public class Resource implements ArchivableEntity {
   @Field
   private Boolean archived = Boolean.FALSE;
 
-  @ManyToMany (fetch = FetchType.LAZY)
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__ResourceTags", joinColumns=@JoinColumn(name="resource"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
   private Set<Tag> tags = new HashSet<Tag>();

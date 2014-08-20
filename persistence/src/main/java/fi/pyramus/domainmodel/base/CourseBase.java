@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -147,8 +148,9 @@ public abstract class CourseBase implements ArchivableEntity {
    * 
    * @return The description of this entity
    */
+  @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column (length=1073741824)
+  @Column
   @Field
   // Annotations in getter for a reason; see the property comment
   public String getDescription() {

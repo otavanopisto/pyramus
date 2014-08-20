@@ -18,6 +18,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -510,8 +511,9 @@ public class Student implements ArchivableEntity {
   
   private String nickname;
     
+  @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column (length=1073741824)
+  @Column
   private String additionalInfo;
   
   @ManyToOne
@@ -588,9 +590,9 @@ public class Student implements ArchivableEntity {
   @IndexedEmbedded 
   private List<BillingDetails> billingDetails = new ArrayList<BillingDetails>();
 
-  @ManyToMany (fetch = FetchType.LAZY)
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__StudentTags", joinColumns=@JoinColumn(name="student"), inverseJoinColumns=@JoinColumn(name="tag"))
-  @IndexedEmbedded 
+  @IndexedEmbedded
   private Set<Tag> tags = new HashSet<Tag>();
   
   @Version

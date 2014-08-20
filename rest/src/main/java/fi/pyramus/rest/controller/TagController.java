@@ -36,7 +36,7 @@ public class TagController {
     return tag;
   }
 
-  public List<Tag> findTags() {
+  public List<Tag> listTags() {
     List<Tag> tags = tagDAO.listAll();
     return tags;
   }

@@ -1,6 +1,7 @@
 package fi.pyramus.views.settings;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -16,11 +17,13 @@ import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.SchoolDAO;
+import fi.pyramus.dao.base.SchoolVariableDAO;
 import fi.pyramus.dao.base.SchoolVariableKeyDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
+import fi.pyramus.domainmodel.base.SchoolVariable;
 import fi.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.framework.PyramusViewController;
@@ -42,6 +45,7 @@ public class ViewSchoolViewController extends PyramusViewController implements B
    */
   public void process(PageRequestContext pageRequestContext) {
     SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
+    SchoolVariableDAO schoolVariableDAO = DAOFactory.getInstance().getSchoolVariableDAO();
     SchoolVariableKeyDAO schoolVariableKeyDAO = DAOFactory.getInstance().getSchoolVariableKeyDAO();
 
     Long schoolId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("school"));
@@ -94,7 +98,12 @@ public class ViewSchoolViewController extends PyramusViewController implements B
     JSONArray jsonVariableKeys = new JSONArrayExtractor("variableName", "variableKey", "variableType").extract(schoolUserEditableVariableKeys);
     for (int i=0; i<schoolUserEditableVariableKeys.size(); i++) {
       JSONObject jsonVariableKey = jsonVariableKeys.getJSONObject(i);
-      Map<String,String> variables = school.getVariablesAsStringMap();
+
+      Map<String,String> variables = new HashMap<String, String>();
+      for (SchoolVariable schoolVariable : schoolVariableDAO.listBySchool(school)) {
+        variables.put(schoolVariable.getKey().getVariableKey(), schoolVariable.getValue());
+      }
+
       jsonVariableKey.put("variableValue", variables.get(jsonVariableKey.getString("variableKey")));
     }
 

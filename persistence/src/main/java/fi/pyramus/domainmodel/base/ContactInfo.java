@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.TableGenerator;
@@ -164,8 +165,9 @@ public class ContactInfo {
   @IndexedEmbedded
   private List<ContactURL> contactURLs = new Vector<ContactURL>();
 
+  @Lob  
   @Basic (fetch = FetchType.LAZY)
-  @Column (length=1073741824)
+  @Column
   private String additionalInfo;
  
   @Version

@@ -15,6 +15,14 @@
       <property name="hibernate.cache.use_second_level_cache" value="true" />
       <property name="hibernate.cache.use_query_cache" value="true" />
       <property name="hibernate.cache.infinispan.statistics" value="true"/>
+      
+      <!-- Statistics and Debugging -->
+
+      <property name="hibernate.format_sql" value="false" />
+      <property name="hibernate.show_sql" value="false" />
+      <property name="hibernate.generate_statistics" value="true" />
+      <property name="hibernate.session.events.log" value="false" />
+      <property name="hibernate.hbm2ddl.auto" value="validate" />
 
       <!-- Search -->
 
@@ -22,6 +30,10 @@
       <property name="hibernate.search.default.optimizer.transaction_limit.max" value="100" />
       <property name="hibernate.search.default.exclusive_index_use" value="true"/>
  
+      <!-- Byte code instrumentation -->
+ 
+      <property name="hibernate.ejb.use_class_enhancer" value="true"/>
+      
     </properties>
   </persistence-unit>
 </persistence>

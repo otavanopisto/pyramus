@@ -54,12 +54,11 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
-  public void update(StudyProgramme studyProgramme, String name, StudyProgrammeCategory category, String code) {
-    EntityManager entityManager = getEntityManager();
+  public StudyProgramme update(StudyProgramme studyProgramme, String name, StudyProgrammeCategory category, String code) {
     studyProgramme.setName(name);
     studyProgramme.setCategory(category);
     studyProgramme.setCode(code);
-    entityManager.persist(studyProgramme);
+    return persist(studyProgramme);
   }
-
+  
 }

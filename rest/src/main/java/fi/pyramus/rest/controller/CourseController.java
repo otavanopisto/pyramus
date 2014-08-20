@@ -1,6 +1,7 @@
 package fi.pyramus.rest.controller;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -81,13 +82,33 @@ public class CourseController {
     return courseParticipationType;
   }
   
-  public Tag createCourseTag(Course course, String text) {
+  public synchronized Tag createCourseTag(Course course, String text) {
     Tag tag = tagDAO.findByText(text);
-    if(tag == null) {
+    if (tag == null) {
       tag = tagDAO.create(text);
     }
+
     course.addTag(tag);
     return tag;
+  }
+  
+  public synchronized Course updateCourseTags(Course course, List<String> tags) {
+    Set<String> newTags = new HashSet<>(tags);
+    Set<Tag> courseTags = new HashSet<>(course.getTags());
+    
+    for (Tag courseTag : courseTags) {
+      if (!newTags.contains(courseTag.getText())) {
+        removeCourseTag(course, courseTag);
+      }
+        
+      newTags.remove(courseTag.getText());
+    }
+    
+    for (String newTag : newTags) {
+      createCourseTag(course, newTag);
+    }
+    
+    return course;
   }
   
   public List<Course> findCourses() {
@@ -135,7 +156,7 @@ public class CourseController {
     return courseDescriptionCategory;
   }
   
-  public List<CourseEnrolmentType> findCourseEnrolmentTypes() {
+  public List<CourseEnrolmentType> listCourseEnrolmentTypes() {
     List<CourseEnrolmentType> enrolmentTypes = courseEnrolmentTypeDAO.listAll();
     return enrolmentTypes;
   }
@@ -143,6 +164,10 @@ public class CourseController {
   public CourseEnrolmentType findCourseEnrolmentTypeById(Long id) {
     CourseEnrolmentType enrolmentType = courseEnrolmentTypeDAO.findById(id);
     return enrolmentType;
+  }
+
+  public void deleteCourseEnrolmentType(fi.pyramus.domainmodel.courses.CourseEnrolmentType enrolmentType) {
+    courseEnrolmentTypeDAO.delete(enrolmentType);
   }
   
   public List<CourseState> findCourseStates() {
@@ -158,11 +183,6 @@ public class CourseController {
   public CourseState findCourseStateById(Long id) {
     CourseState state = courseStateDAO.findById(id);
     return state;
-  }
-  
-  public Set<Tag> findCourseTags(Course course) {
-    Set<Tag> tags= course.getTags();
-    return tags;
   }
   
   public List<CourseParticipationType> findCourseParticiPationTypes() {
@@ -224,6 +244,10 @@ public class CourseController {
     courseDAO.unarchive(course, user);
     return course;
   }
+
+  public void deleteCourse(Course course) {
+    courseDAO.delete(course);
+  }
   
   public CourseComponent archiveCourseComponent(CourseComponent courseComponent, User user) {
     courseComponentDAO.archive(courseComponent, user);
@@ -233,6 +257,10 @@ public class CourseController {
   public CourseComponent unarchiveCourseComponent(CourseComponent courseComponent, User user) {
     courseComponentDAO.unarchive(courseComponent, user);
     return courseComponent;
+  }
+
+  public void deleteCourseComponent(CourseComponent courseComponent) {
+    courseComponentDAO.delete(courseComponent);
   }
   
   public CourseDescriptionCategory archiveCourseDescriptionCategory(CourseDescriptionCategory courseDescriptionCategory, User user) {
@@ -244,6 +272,10 @@ public class CourseController {
     courseDescriptionCategoryDAO.unarchive(courseDescriptionCategory, user);
     return courseDescriptionCategory;
   }
+
+  public void deleteCourseDescriptionCategory(CourseDescriptionCategory category) {
+    courseDescriptionCategoryDAO.delete(category);;
+  }
   
   public CourseState archiveCourseState(CourseState courseState, User user) {
     courseStateDAO.archive(courseState, user);
@@ -254,6 +286,10 @@ public class CourseController {
     courseStateDAO.unarchive(courseState, user);
     return courseState;
   }
+
+  public void deleteCourseState(CourseState courseState) {
+    courseStateDAO.delete(courseState);
+  }
   
   public CourseParticipationType archiveCourseParticipationType(CourseParticipationType courseParticipationType, User user) {
     courseParticipationTypeDAO.archive(courseParticipationType, user);
@@ -263,6 +299,10 @@ public class CourseController {
   public CourseParticipationType unarchiveCourseParticipationType(CourseParticipationType courseParticipationType, User user) {
     courseParticipationTypeDAO.unarchive(courseParticipationType, user);
     return courseParticipationType;
+  }
+
+  public void deleteCourseParticipationType(CourseParticipationType participationType) {
+    courseParticipationTypeDAO.delete(participationType);
   }
   
   public void removeCourseTag(Course course, Tag tag) {

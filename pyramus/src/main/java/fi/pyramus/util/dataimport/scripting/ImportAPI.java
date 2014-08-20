@@ -4,6 +4,8 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.LocaleUtils;
+
 import com.github.javafaker.Faker;
 
 import fi.pyramus.util.dataimport.scripting.api.StudentAPI;
@@ -16,7 +18,7 @@ public class ImportAPI {
   }
   
   public Faker getFaker() {
-    return new Faker(Locale.forLanguageTag("fi"));
+    return new Faker(LocaleUtils.toLocale("fi"));
   }
   
   public Faker getFakerEn() {

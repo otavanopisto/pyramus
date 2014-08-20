@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
@@ -109,8 +110,9 @@ public class Credit implements ArchivableEntity {
   @JoinColumn(name="grade")
   private Grade grade;
   
+  @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column (length=1073741824)
+  @Column
   private String verbalAssessment;
   
   @ManyToOne  

@@ -1,38 +1,34 @@
 package fi.pyramus.rest;
 
-import java.util.Collection;
+import java.util.Date;
 
 import javax.inject.Inject;
 
+import org.joda.time.DateTime;
+
 import fi.pyramus.dao.users.UserDAO;
-import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.User;
-import fi.tranquil.TranquilModelEntity;
-import fi.tranquil.TranquilityBuilderFactory;
 
 public abstract class AbstractRESTService {
-
-  protected abstract TranquilityBuilderFactory getTranquilityBuilderFactory();
+  
   @Inject
-  UserDAO userDAO;
-  protected TranquilModelEntity tranqualise(Object object) {
-    return getTranquilityBuilderFactory()
-        .createBuilder()
-        .createTranquility()
-        .entity(object);
-  }
+  private UserDAO userDAO;
 
-  protected Collection<TranquilModelEntity> tranqualise(Collection<?> collection) {
-    return getTranquilityBuilderFactory()
-        .createBuilder()
-        .createTranquility()
-        .entities(collection);
+  // TODO: Implement this
+  protected Long getLoggedUserId() {
+    return 1l;
   }
-
-  protected User getUser() {
-    Role role = Role.getRole(4);
-    User user = userDAO.create("Master", "Splinter", "Hamato Yoshi", "Turtles", role);
-    return user;
+  
+  protected User getLoggedUser() {
+    return userDAO.findById(getLoggedUserId());
+  }
+  
+  protected Date toDate(DateTime dateTime) {
+    if (dateTime != null) {
+      return dateTime.toDate();
+    }
+    
+    return null;
   }
 
 }

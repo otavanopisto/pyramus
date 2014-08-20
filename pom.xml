@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fi.pyramus</groupId>
   <artifactId>parent</artifactId>
-  <version>0.6.7-SNAPSHOT</version>
+  <version>0.7.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus Parent POM</name>
   <url>https://github.com/otavanopisto/pyramus/</url>
@@ -44,9 +44,11 @@
     <module>openid-plugin</module>
     <module>persistence</module>
     <module>plugin-core</module>
+    <module>rest</module>
     <module>pyramus</module>
     <module>reports</module>
     <module>webservices-plugin</module>
+    <module>smvcj</module>
   </modules>
 
   <dependencyManagement>
@@ -54,7 +56,7 @@
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>bom</artifactId>
-        <version>0.6.7-SNAPSHOT</version>
+        <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
