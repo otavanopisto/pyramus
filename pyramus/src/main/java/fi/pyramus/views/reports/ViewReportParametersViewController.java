@@ -3,6 +3,8 @@ package fi.pyramus.views.reports;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
@@ -45,10 +47,23 @@ public class ViewReportParametersViewController extends PyramusViewController im
     
     MagicKey magicKey = magicKeyDAO.create(magicKeyBuilder.toString(), MagicKeyScope.REQUEST); 
     
+    String localeAdd = "";
+    Locale locale = pageRequestContext.getRequest().getLocale();
+    if (locale != null) {
+      localeAdd = "&__locale=";
+      localeAdd += locale.getLanguage();
+
+      if (!StringUtils.isEmpty(locale.getCountry())) {
+        localeAdd += "_";
+        localeAdd += locale.getCountry();
+      }
+    }
+    
     StringBuilder urlBuilder = new StringBuilder()
       .append(reportsContextPath)
       .append("/parameter?magicKey=")
       .append(magicKey.getName())
+      .append(localeAdd)
       .append("&__report=reports/").append(reportId).append(".rptdesign")
       .append("&__masterpage=true&__nocache");
     handleContextParameters(pageRequestContext, report, urlBuilder);
