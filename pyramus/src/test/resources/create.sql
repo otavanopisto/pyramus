@@ -220,7 +220,7 @@
         archived boolean not null,
         courseNumber integer,
         created timestamp not null,
-        description varchar(255),
+        description longtext,
         lastModified timestamp not null,
         maxParticipantCount bigint,
         name varchar(255) not null,
