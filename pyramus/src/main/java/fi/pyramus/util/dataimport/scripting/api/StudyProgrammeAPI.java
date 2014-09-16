@@ -1,5 +1,8 @@
 package fi.pyramus.util.dataimport.scripting.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.domainmodel.base.StudyProgramme;
@@ -29,6 +32,19 @@ public class StudyProgrammeAPI {
     
     StudyProgramme studyProgramme = studyProgrammeDAO.findByCode(code);
     return studyProgramme != null ? studyProgramme.getId() : null;
+  }
+  
+  public Long[] listIds() {
+    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
+        
+    List<Long> result = new ArrayList<>();
+    
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
+    for (StudyProgramme studyProgramme : studyProgrammes) {
+      result.add(studyProgramme.getId());
+    }
+    
+    return result.toArray(new Long[0]); 
   }
 
   @SuppressWarnings("unused")
