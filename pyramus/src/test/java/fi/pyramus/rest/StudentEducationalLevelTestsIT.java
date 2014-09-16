@@ -17,7 +17,7 @@ public class StudentEducationalLevelTestsIT extends AbstractRESTServiceTest {
   public void testCreateStudentEducationalLevel() {
     StudentEducationalLevel studentEducationalLevel = new StudentEducationalLevel(null, "create", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentEducationalLevel)
       .post("/students/educationalLevels");
@@ -29,7 +29,7 @@ public class StudentEducationalLevelTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/educationalLevels/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -37,7 +37,7 @@ public class StudentEducationalLevelTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void listStudentEducationalLevels() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/educationalLevels")
       .then()
       .statusCode(200)
@@ -52,7 +52,7 @@ public class StudentEducationalLevelTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindStudentEducationalLevel() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/educationalLevels/{ID}", 1)
       .then()
       .statusCode(200)
@@ -65,7 +65,7 @@ public class StudentEducationalLevelTestsIT extends AbstractRESTServiceTest {
   public void testUpdateStudentEducationalLevel() {
     StudentEducationalLevel studentEducationalLevel = new StudentEducationalLevel(null, "Not Updated", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentEducationalLevel)
       .post("/students/educationalLevels");
@@ -79,7 +79,7 @@ public class StudentEducationalLevelTestsIT extends AbstractRESTServiceTest {
     try {
       StudentEducationalLevel updateStudentEducationalLevel = new StudentEducationalLevel(id, "Updated", Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateStudentEducationalLevel)
         .put("/students/educationalLevels/{ID}", id)
@@ -90,7 +90,7 @@ public class StudentEducationalLevelTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateStudentEducationalLevel.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/students/educationalLevels/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -101,7 +101,7 @@ public class StudentEducationalLevelTestsIT extends AbstractRESTServiceTest {
   public void testDeleteStudentEducationalLevel() {
     StudentEducationalLevel studentEducationalLevel = new StudentEducationalLevel(null, "create type", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentEducationalLevel)
       .post("/students/educationalLevels");
@@ -109,25 +109,25 @@ public class StudentEducationalLevelTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/students/educationalLevels/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/educationalLevels/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/educationalLevels/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/educationalLevels/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/educationalLevels/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/educationalLevels/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/educationalLevels/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/educationalLevels/{ID}", id)
       .then()
       .statusCode(404);
   }

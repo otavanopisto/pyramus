@@ -17,7 +17,7 @@ public class SchoolFieldTestsIT extends AbstractRESTServiceTest {
   public void testCreateSchoolField() {
     SchoolField schoolField = new SchoolField(null, "to be created", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(schoolField)
       .post("/schools/schoolFields");
@@ -30,7 +30,7 @@ public class SchoolFieldTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/schools/schoolFields/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -38,7 +38,7 @@ public class SchoolFieldTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testListSchoolFields() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/schools/schoolFields")
       .then()
       .statusCode(200)
@@ -53,7 +53,7 @@ public class SchoolFieldTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindSchoolField() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/schools/schoolFields/{ID}", 1)
       .then()
       .statusCode(200)
@@ -66,7 +66,7 @@ public class SchoolFieldTestsIT extends AbstractRESTServiceTest {
   public void testUpdateSchoolField() {
     SchoolField schoolField = new SchoolField(null, "not updated", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(schoolField)
       .post("/schools/schoolFields");
@@ -80,7 +80,7 @@ public class SchoolFieldTestsIT extends AbstractRESTServiceTest {
     try {
       SchoolField updateSchoolField = new SchoolField(id, "updated", Boolean.FALSE);
       
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateSchoolField)
         .put("/schools/schoolFields/{ID}", id)
@@ -91,7 +91,7 @@ public class SchoolFieldTestsIT extends AbstractRESTServiceTest {
         .body("archived", is(updateSchoolField.getArchived()));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/schools/schoolFields/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -102,7 +102,7 @@ public class SchoolFieldTestsIT extends AbstractRESTServiceTest {
   public void testDeleteSchoolField() {
     SchoolField schoolField = new SchoolField(null, "to be deleted", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(schoolField)
       .post("/schools/schoolFields");
@@ -115,25 +115,25 @@ public class SchoolFieldTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/schools/schoolFields/{ID}", id)
+    given().headers(getAuthHeaders()).get("/schools/schoolFields/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/schools/schoolFields/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/schools/schoolFields/{ID}", id)
+    given().headers(getAuthHeaders()).get("/schools/schoolFields/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/schools/schoolFields/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/schools/schoolFields/{ID}", id)
+    given().headers(getAuthHeaders()).get("/schools/schoolFields/{ID}", id)
       .then()
       .statusCode(404);
   }

@@ -24,7 +24,7 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
         1l, 
         Boolean.FALSE);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(courseComponent)
       .post("/courses/courses/{COURSEID}/components", courseId);
@@ -39,7 +39,7 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/courses/{COURSEID}/components/{COMPONENTID}?permanent=true", courseId, id)
       .then()
       .statusCode(204);
@@ -47,7 +47,7 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListCourseComponents() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/courses/1000/components")
       .then()
       .statusCode(200)
@@ -68,7 +68,7 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindCourseComponent() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/courses/1001/components/1003")
       .then()
       .statusCode(200)
@@ -91,7 +91,7 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
         1l, 
         Boolean.FALSE);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(courseComponent)
       .post("/courses/courses/{COURSEID}/components", courseId);
@@ -115,7 +115,7 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
           1l, 
           Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateComponent)
         .put("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
@@ -129,7 +129,7 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateComponent.getArchived() ));  
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/courses/courses/{COURSEID}/components/{COMPONENTID}?permanent=true", courseId, id)
         .then()
         .statusCode(204);
@@ -147,7 +147,7 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
         1l, 
         Boolean.FALSE);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(courseComponent)
       .post("/courses/courses/{COURSEID}/components", courseId);
@@ -155,26 +155,26 @@ public class CourseComponentTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
+    given().headers(getAuthHeaders()).get("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
       .then()
       .statusCode(204);
     
-    given().get("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
+    given().headers(getAuthHeaders()).get("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/courses/{COURSEID}/components/{COMPONENTID}?permanent=true", courseId, id)
       .then()
       .statusCode(204);
     
     
-    given().get("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
+    given().headers(getAuthHeaders()).get("/courses/courses/{COURSEID}/components/{COMPONENTID}", courseId, id)
       .then()
       .statusCode(404);
   }

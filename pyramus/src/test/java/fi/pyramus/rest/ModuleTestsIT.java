@@ -31,7 +31,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
         1l, 
         null);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(module)
       .post("/modules/modules/");
@@ -53,7 +53,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/modules/modules/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -61,7 +61,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListModules() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/gradingScales")
       .then()
       .statusCode(200)
@@ -78,7 +78,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindModule() {
-     given()
+     given().headers(getAuthHeaders())
       .get("/modules/modules/{ID}", 1)
       .then()
       .statusCode(200)
@@ -112,7 +112,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
         1l, 
         null);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(module)
       .post("/modules/modules");
@@ -145,7 +145,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
           2l, 
           null);
       
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateModule)
         .put("/modules/modules/{ID}", id)
@@ -160,7 +160,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
         .body("maxParticipantCount", is(updateModule.getMaxParticipantCount().intValue() ) );
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/modules/modules/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -184,7 +184,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
         1l, 
         null);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(module)
       .post("/modules/modules");
@@ -201,32 +201,32 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/modules/modules/{ID}", id)
+    given().headers(getAuthHeaders()).get("/modules/modules/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/modules/modules/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/modules/modules/{ID}", id)
+    given().headers(getAuthHeaders()).get("/modules/modules/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/modules/modules/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/modules/modules/{ID}", id)
+    given().headers(getAuthHeaders()).get("/modules/modules/{ID}", id)
       .then()
       .statusCode(404);
   }
   
   @Test
   public void testListCourses() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/modules/modules/{MODULEID}/courses", 1l)
       .then()
       .body("id.size()", is(2))
@@ -256,7 +256,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListProjects() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/modules/modules/{MODULEID}/projects", 1l)
       .then()
       .statusCode(200)

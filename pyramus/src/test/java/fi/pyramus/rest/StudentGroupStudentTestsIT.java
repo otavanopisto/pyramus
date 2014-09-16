@@ -12,14 +12,14 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateStudentGroupStudent() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/studentGroups/{ID}/students", 2)
       .then()
       .statusCode(204);
     
     fi.pyramus.rest.model.StudentGroupStudent entity = new fi.pyramus.rest.model.StudentGroupStudent(null, 1l);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(entity)
       .post("/students/studentGroups/{ID}/students", 2l);
@@ -30,7 +30,7 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
       
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      given()
+      given().headers(getAuthHeaders())
         .get("/students/studentGroups/{ID}/students", 2)
         .then()
         .statusCode(200)
@@ -38,7 +38,7 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
         .body("id[0]", is(id.intValue()) )
         .body("studentId[0]", is(1));
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/students/studentGroups/{GROUPID}/students/{ID}", 2l, id)
         .then()
         .statusCode(204);
@@ -47,7 +47,7 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListStudentGroupStudents() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/studentGroups/{ID}/students", 1)
       .then()
       .statusCode(200)
@@ -60,7 +60,7 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindStudentGroupStudent() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/studentGroups/{GROUPID}/students/{ID}", 1l, 1l)
       .then()
       .statusCode(200)
@@ -72,7 +72,7 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
   public void testDeleteStudentGroupStudent() {
     fi.pyramus.rest.model.StudentGroupStudent entity = new fi.pyramus.rest.model.StudentGroupStudent(null, 1l);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(entity)
       .post("/students/studentGroups/{ID}/students", 2l);
@@ -83,17 +83,17 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
       
     Long id = new Long(response.body().jsonPath().getInt("id"));
     
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/studentGroups/{GROUPID}/students/{ID}", 2l, id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/studentGroups/{GROUPID}/students/{ID}", 2l, id)
       .then()
       .statusCode(204);
     
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/studentGroups/{GROUPID}/students/{ID}", 2l, id)
       .then()
       .statusCode(404);

@@ -17,7 +17,7 @@ public class EducationSubtypeTestsIT extends AbstractRESTServiceTest {
   public void testCreateEducationSubtype() {
     EducationSubtype educationSubtype = new EducationSubtype(null, "create sub type", "TST", 1l, Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(educationSubtype)
       .post("/common/educationTypes/{EDUCATIONTYPE}/subtypes", educationSubtype.getEducationTypeId());
@@ -31,7 +31,7 @@ public class EducationSubtypeTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}?permanent=true", educationSubtype.getEducationTypeId(), id)
       .then()
       .statusCode(204);
@@ -39,7 +39,7 @@ public class EducationSubtypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListEducationSubtypes() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/educationTypes/{EDUCATIONTYPE}/subtypes", 1)
       .then()
       .statusCode(200)
@@ -56,7 +56,7 @@ public class EducationSubtypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindEducationSubtype() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", 1, 1)
       .then()
       .statusCode(200)
@@ -71,7 +71,7 @@ public class EducationSubtypeTestsIT extends AbstractRESTServiceTest {
     Long updateEducationTypeId = 1l;
     EducationSubtype educationSubtype = new EducationSubtype(null, "Not Updated", "NOT", 2l, Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(educationSubtype)
       .post("/common/educationTypes/{EDUCATIONTYPE}/subtypes", educationSubtype.getEducationTypeId());
@@ -87,7 +87,7 @@ public class EducationSubtypeTestsIT extends AbstractRESTServiceTest {
     try {
       EducationSubtype updateSubtype = new EducationSubtype(id, "Updated", "UPD", updateEducationTypeId, Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateSubtype)
         .put("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), updateSubtype.getId())
@@ -100,7 +100,7 @@ public class EducationSubtypeTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateSubtype.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}?permanent=true", updateEducationTypeId, id)
         .then()
         .statusCode(204);
@@ -111,7 +111,7 @@ public class EducationSubtypeTestsIT extends AbstractRESTServiceTest {
   public void testDeleteEducationSubtype() {
     EducationSubtype educationSubtype = new EducationSubtype(null, "create subtype", "TST", 1l, Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(educationSubtype)
       .post("/common/educationTypes/{EDUCATIONTYPE}/subtypes", educationSubtype.getEducationTypeId());
@@ -119,16 +119,16 @@ public class EducationSubtypeTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), id)
+    given().headers(getAuthHeaders()).get("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), id)
       .then()
       .statusCode(204);
     
-    given().get("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), id)
+    given().headers(getAuthHeaders()).get("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), id)
       .then()
       .statusCode(404);
   }
