@@ -30,7 +30,19 @@
 
     alter table ChangeLogEntryProperty 
         drop constraint FK_qgkacalwos2pvununsghx60j if exists;
-
+    
+    alter table ClientApplicationAuthorizationCode 
+        drop constraint FK781DD821F7635B15 if exists;
+        
+    alter table ClientApplicationAuthorizationCode
+        drop constraint FK781DD821A23C0179 if exists;
+        
+    alter table ClientApplicationAccessToken
+        drop constraint FK4E64FD50A23C0179 if exists;
+        
+    alter table ClientApplicationAccessToken
+        drop constraint FK4E64FJE23JKR0CR3 if exists;
+        
     alter table ComponentBase 
         drop constraint FK_n3636lg4sxh0jvounesk7wec8 if exists;
 
@@ -551,6 +563,12 @@
 
     drop table ChangeLogEntryProperty if exists;
 
+    drop table ClientApplicationAuthorizationCode if exists;
+        
+    drop table ClientApplicationAuthorizationCode if exists;
+        
+    drop table ClientApplicationAccessToken if exists;
+    
     drop table ComponentBase if exists;
 
     drop table ContactInfo if exists;

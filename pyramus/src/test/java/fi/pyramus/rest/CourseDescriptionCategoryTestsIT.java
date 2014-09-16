@@ -17,7 +17,7 @@ public class CourseDescriptionCategoryTestsIT extends AbstractRESTServiceTest {
   public void testCreateCourseDescriptionCategories() {
     CourseDescriptionCategory category = new CourseDescriptionCategory("New Category", Boolean.FALSE);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(category)
       .post("/courses/descriptionCategories");
@@ -29,7 +29,7 @@ public class CourseDescriptionCategoryTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/descriptionCategories/{CATEGORYID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -37,7 +37,7 @@ public class CourseDescriptionCategoryTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListCourseDescriptionCategories() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/descriptionCategories")
       .then()
       .statusCode(200)
@@ -52,7 +52,7 @@ public class CourseDescriptionCategoryTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindCourseDescriptionCategory() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/descriptionCategories/1")
       .then()
       .statusCode(200)
@@ -60,12 +60,12 @@ public class CourseDescriptionCategoryTestsIT extends AbstractRESTServiceTest {
       .body("name", is("Basic"))
       .body("archived", is( false ));
     
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/descriptionCategories/123")
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/descriptionCategories/abc")
       .then()
       .statusCode(404);
@@ -75,7 +75,7 @@ public class CourseDescriptionCategoryTestsIT extends AbstractRESTServiceTest {
   public void testUpdateCourseDescriptionCategory() {
     CourseDescriptionCategory category = new CourseDescriptionCategory("Not Updated", Boolean.FALSE);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(category)
       .post("/courses/descriptionCategories");
@@ -91,7 +91,7 @@ public class CourseDescriptionCategoryTestsIT extends AbstractRESTServiceTest {
       
       CourseDescriptionCategory updateCategory = new CourseDescriptionCategory(id, "Updated", Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateCategory)
         .put("/courses/descriptionCategories/{ID}", id)
@@ -102,7 +102,7 @@ public class CourseDescriptionCategoryTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateCategory.getArchived() ));  
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/courses/descriptionCategories/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -113,7 +113,7 @@ public class CourseDescriptionCategoryTestsIT extends AbstractRESTServiceTest {
   public void testDeleteCourseDescriptionCategory() {
     CourseDescriptionCategory category = new CourseDescriptionCategory("To be deleted", Boolean.FALSE);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(category)
       .post("/courses/descriptionCategories");
@@ -122,25 +122,25 @@ public class CourseDescriptionCategoryTestsIT extends AbstractRESTServiceTest {
     
     assertNotNull(id);
     
-    given().get("/courses/descriptionCategories/{ID}", id)
+    given().headers(getAuthHeaders()).get("/courses/descriptionCategories/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/descriptionCategories/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/courses/descriptionCategories/{ID}", id)
+    given().headers(getAuthHeaders()).get("/courses/descriptionCategories/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/descriptionCategories/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/courses/descriptionCategories/{ID}", id)
+    given().headers(getAuthHeaders()).get("/courses/descriptionCategories/{ID}", id)
       .then()
       .statusCode(404);
   }

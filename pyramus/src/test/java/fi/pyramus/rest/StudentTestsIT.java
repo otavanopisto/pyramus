@@ -54,7 +54,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       Boolean.FALSE //archived
     );
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(student)
       .post("/students/students");
@@ -89,7 +89,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/students/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -97,7 +97,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListStudents() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/students")
       .then()
       .statusCode(200)
@@ -157,7 +157,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindStudent() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/students/{ID}", 1)
       .then()
       .statusCode(200)
@@ -222,7 +222,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       Boolean.FALSE //archived
     );
       
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(student)
       .post("/students/students");
@@ -289,7 +289,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
         Boolean.FALSE //archived
       );
       
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateStudent)
         .put("/students/students/{ID}", id)
@@ -322,7 +322,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
         .body("archived", is(updateStudent.getArchived()));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/students/students/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -363,7 +363,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       Boolean.FALSE //archived
     );
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(student)
       .post("/students/students");
@@ -371,25 +371,25 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/students/students/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/students/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/students/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/students/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/students/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/students/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/students/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/students/{ID}", id)
       .then()
       .statusCode(404);
   }

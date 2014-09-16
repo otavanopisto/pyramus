@@ -17,7 +17,7 @@ public class CourseEnrolmentTypeTestsIT extends AbstractRESTServiceTest {
   public void testCreateCourseEnrolmentType() {
     CourseEnrolmentType courseEnrolmentType = new CourseEnrolmentType("Test Enrolment Type");
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(courseEnrolmentType)
       .post("/courses/enrolmentTypes");
@@ -29,7 +29,7 @@ public class CourseEnrolmentTypeTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/enrolmentTypes/{ID}", id)
       .then()
       .statusCode(204);
@@ -37,7 +37,7 @@ public class CourseEnrolmentTypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListCourseEnrolmentTypes() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/enrolmentTypes")
       .then()
       .statusCode(200)
@@ -50,7 +50,7 @@ public class CourseEnrolmentTypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindCourseEnrolmentType() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/enrolmentTypes/{ID}", 1)
       .then()
       .statusCode(200)
@@ -62,7 +62,7 @@ public class CourseEnrolmentTypeTestsIT extends AbstractRESTServiceTest {
   public void testUpdateCourseState() {
     CourseEnrolmentType enrolmentType = new CourseEnrolmentType("Update test");
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(enrolmentType)
       .post("/courses/enrolmentTypes");
@@ -75,7 +75,7 @@ public class CourseEnrolmentTypeTestsIT extends AbstractRESTServiceTest {
 
     CourseEnrolmentType updateEnrolmentType = new CourseEnrolmentType(id, "Updated name");
 
-    given()
+    given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(updateEnrolmentType)
       .put("/courses/enrolmentTypes/{ID}", id)
@@ -84,7 +84,7 @@ public class CourseEnrolmentTypeTestsIT extends AbstractRESTServiceTest {
       .body("id", is(updateEnrolmentType.getId().intValue()))
       .body("name", is(updateEnrolmentType.getName()));
 
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/enrolmentTypes/{ID}", id)
       .then()
       .statusCode(204);
@@ -94,7 +94,7 @@ public class CourseEnrolmentTypeTestsIT extends AbstractRESTServiceTest {
   public void testDeleteCourseEnrolmentType() {
     CourseEnrolmentType courseEnrolmentType = new CourseEnrolmentType("Delete Test");
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(courseEnrolmentType)
       .post("/courses/enrolmentTypes");
@@ -106,16 +106,16 @@ public class CourseEnrolmentTypeTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/courses/enrolmentTypes/{ID}", id)
+    given().headers(getAuthHeaders()).get("/courses/enrolmentTypes/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/enrolmentTypes/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/courses/enrolmentTypes/{ID}", id)
+    given().headers(getAuthHeaders()).get("/courses/enrolmentTypes/{ID}", id)
       .then()
       .statusCode(404);
   }

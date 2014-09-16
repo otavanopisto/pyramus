@@ -17,7 +17,7 @@ public class NationalityTestsIT extends AbstractRESTServiceTest {
   public void testCreateNationality() {
     Nationality nationality = new Nationality(null, "TST", "create", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(nationality)
       .post("/students/nationalities");
@@ -30,7 +30,7 @@ public class NationalityTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/nationalities/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -38,7 +38,7 @@ public class NationalityTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void listLangauegs() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/nationalities")
       .then()
       .statusCode(200)
@@ -55,7 +55,7 @@ public class NationalityTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindNationality() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/nationalities/{ID}", 1)
       .then()
       .statusCode(200)
@@ -69,7 +69,7 @@ public class NationalityTestsIT extends AbstractRESTServiceTest {
   public void testUpdateNationality() {
     Nationality nationality = new Nationality(null, "Not Updated", "NOT", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(nationality)
       .post("/students/nationalities");
@@ -84,7 +84,7 @@ public class NationalityTestsIT extends AbstractRESTServiceTest {
     try {
       Nationality updateNationality = new Nationality(id, "Updated", "UPD", Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateNationality)
         .put("/students/nationalities/{ID}", id)
@@ -96,7 +96,7 @@ public class NationalityTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateNationality.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/students/nationalities/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -107,7 +107,7 @@ public class NationalityTestsIT extends AbstractRESTServiceTest {
   public void testDeleteNationality() {
     Nationality nationality = new Nationality(null, "create type", "TST", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(nationality)
       .post("/students/nationalities");
@@ -115,25 +115,25 @@ public class NationalityTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/students/nationalities/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/nationalities/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/nationalities/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/nationalities/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/nationalities/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/nationalities/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/nationalities/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/nationalities/{ID}", id)
       .then()
       .statusCode(404);
   }

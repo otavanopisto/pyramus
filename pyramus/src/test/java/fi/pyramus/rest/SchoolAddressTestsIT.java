@@ -17,7 +17,7 @@ public class SchoolAddressTestsIT extends AbstractRESTServiceTest {
   public void testCreateSchoolAddress() {
     Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(address)
       .post("/schools/schools/{ID}/addresses", 1l);
@@ -34,7 +34,7 @@ public class SchoolAddressTestsIT extends AbstractRESTServiceTest {
     
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/schools/schools/{SCHOOLID}/addresses/{ID}", 1l, id)
       .then()
       .statusCode(204);
@@ -42,7 +42,7 @@ public class SchoolAddressTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListSchoolAddresses() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/schools/schools/{ID}/addresses", 1l)
       .then()
       .statusCode(200)
@@ -58,7 +58,7 @@ public class SchoolAddressTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindSchoolAddress() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/schools/schools/{SCHOOLID}/addresses/{ID}", 1l, 1l)
       .then()
       .statusCode(200)
@@ -76,7 +76,7 @@ public class SchoolAddressTestsIT extends AbstractRESTServiceTest {
   public void testDeleteSchoolAddress() {
     Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(address)
       .post("/schools/schools/{SCHOOLID}/addresses", 1l);
@@ -94,16 +94,16 @@ public class SchoolAddressTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/schools/schools/{SCHOOLID}/addresses/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/schools/schools/{SCHOOLID}/addresses/{ID}", 1l, id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/schools/schools/{SCHOOLID}/addresses/{ID}", 1l, id)
       .then()
       .statusCode(204);
     
-    given().get("/schools/schools/{SCHOOLID}/addresses/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/schools/schools/{SCHOOLID}/addresses/{ID}", 1l, id)
       .then()
       .statusCode(404);
   }

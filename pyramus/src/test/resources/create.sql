@@ -84,6 +84,32 @@
         primary key (id)
     );
 
+    create table ClientApplication (
+        id bigint not null,
+        clientName varchar(255) not null,
+        clientId varchar(255) not null,
+        clientSecret varchar(255) not null,
+        primary key (id)
+    );
+    
+    create table ClientApplicationAuthorizationCode (
+        id bigint not null,
+        authorizationCode varchar(255) not null,
+        redirectUrl varchar(255) not null,
+        user_id bigint not null,
+        app_id bigint not null,
+        primary key (id)
+    );
+    
+    create table ClientApplicationAccessToken (
+        id bigint not null,
+        accessToken varchar(255) not null,
+        expires bigint not null,
+        app_id bigint not null,
+        clientApplicationAuthorizationCode bigint not null,
+        primary key (id)
+    );
+    
     create table ChangeLogEntry (
         id bigint not null,
         entityId varchar(255),
@@ -1159,8 +1185,14 @@
         primary key (user, tag)
     );
 
+    alter table ClientApplicationAccessToken 
+        add constraint UK_2ivsxlmh3g4yaho41jt13r30j  unique (accessToken);
+        
+    alter table ClientApplication 
+        add constraint UK_kehc26jk1kjsajf423t19r20i  unique (clientId);
+    
     alter table ChangeLogEntryEntity 
-        add constraint UK_3ivxxlmh3gjyajo41lt19r30j  unique (name);
+        add constraint UK_3ivxxlmh3gjyal4jsioehjtu0  unique (name);
 
     alter table CourseAssessment 
         add constraint UK_h2uf2bqevk8mcg4c209iimiii  unique (courseStudent);
@@ -1213,6 +1245,26 @@
         foreign key (resource) 
         references Resource;
 
+    alter table ClientApplicationAuthorizationCode 
+        add constraint FK781DD821F7635B15
+        foreign key (user_id)
+        references User (id);
+        
+    alter table ClientApplicationAuthorizationCode
+        add constraint FK781DD821A23C0179
+        foreign key (app_id)
+        references ClientApplication (id);
+        
+    alter table ClientApplicationAccessToken
+        add constraint FK4E64FD50A23C0179
+        foreign key (app_id)
+        references ClientApplication (id);
+      
+    alter table ClientApplicationAccessToken
+        add constraint FK4E64FJE23JKR0CR3
+        foreign key (clientApplicationAuthorizationCode)
+        references ClientApplicationAuthorizationCode (id);
+        
     alter table ChangeLogEntry 
         add constraint FK_trl3pu52yuhr6jlus9epa7ild 
         foreign key (entity) 

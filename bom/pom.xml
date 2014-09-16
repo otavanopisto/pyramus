@@ -92,6 +92,10 @@
     
     <jodatime.version>2.1</jodatime.version>
     
+    <!-- Apache Oltu -->
+    
+    <apache-oltu.version>1.0.0</apache-oltu.version>
+    
     <!-- Pyramus -->
     
     <pyramus.version>0.7.0-SNAPSHOT</pyramus.version>
@@ -192,6 +196,32 @@
         <artifactId>jackson-datatype-joda</artifactId>
         <version>${jackson-datatype-joda.version}</version>
       </dependency>  
+      
+      <!-- Apache Oltu -->
+      
+      <dependency>
+       <groupId>org.apache.oltu.oauth2</groupId>
+       <artifactId>org.apache.oltu.oauth2.common</artifactId>
+       <version>${apache-oltu.version}</version>
+     </dependency>
+     
+     <dependency>
+         <groupId>org.apache.oltu.oauth2</groupId>
+         <artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+         <version>${apache-oltu.version}</version>
+     </dependency>
+     
+     <dependency>
+         <groupId>org.apache.oltu.oauth2</groupId>
+         <artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
+         <version>${apache-oltu.version}</version>
+     </dependency>
+      
+     <dependency>
+      <groupId>org.apache.oltu.oauth2</groupId>
+      <artifactId>org.apache.oltu.oauth2.client</artifactId>
+      <version>${apache-oltu.version}</version>
+    </dependency>
       
       <!-- JodaTime -->
       

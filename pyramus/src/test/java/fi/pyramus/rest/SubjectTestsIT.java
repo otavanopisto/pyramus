@@ -17,7 +17,7 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
   public void testCreateSubject() {
     Subject subject = new Subject(null, "TST", "create subject", 1l, Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(subject)
       .post("/common/subjects");
@@ -31,7 +31,7 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/subjects/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -39,7 +39,7 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListSubject() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/subjects")
       .then()
       .statusCode(200)
@@ -63,7 +63,7 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindSubject() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/subjects/{ID}", 1)
       .then()
       .statusCode(200)
@@ -78,7 +78,7 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
   public void testUpdateSubject() {
     Subject subject = new Subject(null, "NUPD", "not updated", 1l, Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(subject)
       .post("/common/subjects");
@@ -94,7 +94,7 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
     try {
       Subject updateSubject = new Subject(id, "UPD", "updated", 2l, Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateSubject)
         .put("/common/subjects/{ID}", id)
@@ -107,7 +107,7 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateSubject.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/common/subjects/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -118,7 +118,7 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
   public void testDeleteSubject() {
     Subject subject = new Subject(null, "DEL", "to be deleted", 1l, Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(subject)
       .post("/common/subjects");
@@ -126,25 +126,25 @@ public class SubjectTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/common/subjects/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/subjects/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/subjects/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/common/subjects/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/subjects/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/subjects/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/common/subjects/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/subjects/{ID}", id)
       .then()
       .statusCode(404);
   }
