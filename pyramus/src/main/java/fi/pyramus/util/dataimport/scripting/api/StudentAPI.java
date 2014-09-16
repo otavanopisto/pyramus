@@ -23,6 +23,10 @@ import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 
 public class StudentAPI {
   
+  public StudentAPI(Long loggedUserId) {
+    this.loggedUserId = loggedUserId;
+  }
+  
   public Long createAbstractStudent(Date birthday,
                                       String socialSecurityNumber,
                                       String sex,
@@ -194,4 +198,6 @@ public class StudentAPI {
     return (student.getId());
   }
 
+  @SuppressWarnings("unused")
+  private Long loggedUserId;
 }

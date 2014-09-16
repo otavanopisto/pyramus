@@ -10,7 +10,7 @@ import javax.script.ScriptException;
 
 public class ScriptedImporter {
 
-  public void importDataFromReader(Reader script) throws InvalidScriptException {
+  public void importDataFromReader(Long loggedUserId, Reader script) throws InvalidScriptException {
     ScriptEngineManager sem = new ScriptEngineManager();
     ScriptEngine se = sem.getEngineByName("JavaScript");
     Invocable inv = (Invocable) se;
@@ -18,7 +18,7 @@ public class ScriptedImporter {
     try {
       Object obj = se.eval(script);
       if (obj instanceof Map) {
-        inv.invokeMethod(obj, "run", new Object[] {new ImportAPI()});
+        inv.invokeMethod(obj, "run", new Object[] { new ImportAPI(loggedUserId) });
       } else {
         throw new InvalidScriptException("Invalid top-level object");
       }

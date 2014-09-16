@@ -8,10 +8,16 @@ import org.apache.commons.lang3.LocaleUtils;
 
 import com.github.javafaker.Faker;
 
-import fi.pyramus.util.dataimport.scripting.api.StudentAPI;
+import fi.pyramus.util.dataimport.scripting.api.CourseAPI;
+import fi.pyramus.util.dataimport.scripting.api.EducationTypeAPI;
+import fi.pyramus.util.dataimport.scripting.api.ModuleAPI;
 import fi.pyramus.util.dataimport.scripting.api.SubjectAPI;
 
 public class ImportAPI {
+  
+  public ImportAPI(Long loggedUserId) {
+    this.loggedUserId = loggedUserId;
+  }
   
   public void log(String arg) {
     Logger.getLogger(getClass().getName()).log(Level.INFO, arg);
@@ -25,12 +31,21 @@ public class ImportAPI {
     return new Faker(Locale.ENGLISH);
   }
   
-  public StudentAPI getStudent() {
-    return new StudentAPI();
+  public SubjectAPI getSubjects() {
+    return new SubjectAPI(loggedUserId);
   }
   
-  public SubjectAPI getSubject() {
-    return new SubjectAPI();
+  public EducationTypeAPI getEducationTypes() {
+    return new EducationTypeAPI(loggedUserId);
+  }
+  
+  public ModuleAPI getModules() {
+    return new ModuleAPI(loggedUserId);
+  }
+  
+  public CourseAPI getCourses() {
+    return new CourseAPI(loggedUserId);
   }
 
+  private Long loggedUserId;
 }

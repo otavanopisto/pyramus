@@ -14,12 +14,13 @@ public class ImportScriptedDataViewController extends PyramusFormViewController 
   public void processForm(PageRequestContext requestContext) {
     requestContext.setIncludeJSP("/templates/system/importscripteddata.jsp");
   }
+
   
   @Override
   public void processSend(PageRequestContext requestContext) {
     ScriptedImporter dataImporter = new ScriptedImporter();
     try {
-      dataImporter.importDataFromReader(new InputStreamReader(requestContext.getFile("file").getInputStream()));
+      dataImporter.importDataFromReader(requestContext.getLoggedUserId(), new InputStreamReader(requestContext.getFile("file").getInputStream(), "UTF-8"));
     } catch (Exception e) {
       throw new SmvcRuntimeException(e);
     }
