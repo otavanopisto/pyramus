@@ -11,6 +11,8 @@ import com.github.javafaker.Faker;
 import fi.pyramus.util.dataimport.scripting.api.CourseAPI;
 import fi.pyramus.util.dataimport.scripting.api.EducationTypeAPI;
 import fi.pyramus.util.dataimport.scripting.api.ModuleAPI;
+import fi.pyramus.util.dataimport.scripting.api.StudyProgrammeAPI;
+import fi.pyramus.util.dataimport.scripting.api.StudyProgrammeCategoryAPI;
 import fi.pyramus.util.dataimport.scripting.api.SubjectAPI;
 
 public class ImportAPI {
@@ -45,6 +47,14 @@ public class ImportAPI {
   
   public CourseAPI getCourses() {
     return new CourseAPI(loggedUserId);
+  }
+  
+  public StudyProgrammeCategoryAPI getStudyProgrammeCategories() {
+    return new StudyProgrammeCategoryAPI(loggedUserId);
+  }
+  
+  public StudyProgrammeAPI getStudyProgrammes() {
+    return new StudyProgrammeAPI(loggedUserId);
   }
 
   private Long loggedUserId;
