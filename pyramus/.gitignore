@@ -5,3 +5,4 @@
 /.factorypath
 /target
 /.cargo
+/.tern-project
