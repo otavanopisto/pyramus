@@ -14,6 +14,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.SubjectDAO;
@@ -30,6 +31,7 @@ import fi.pyramus.dao.courses.CourseUserRoleDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.pyramus.domainmodel.base.CourseEducationType;
+import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
@@ -72,6 +74,7 @@ public class EditCourseViewController extends PyramusViewController implements B
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();    
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
+    EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();    
 
     // The course to be edited
     
@@ -156,6 +159,15 @@ public class EditCourseViewController extends PyramusViewController implements B
       }
     });
     
+    Map<Long, List<EducationSubtype>> educationSubtypes = new HashMap<>();
+    
+    for (EducationType educationType : educationTypes) {
+      List<EducationSubtype> subtypes = educationSubtypeDAO.listByEducationType(educationType);
+      Collections.sort(subtypes, new StringAttributeComparator("getName"));
+      educationSubtypes.put(educationType.getId(), subtypes);
+    }
+
+    pageRequestContext.getRequest().setAttribute("educationSubtypes", educationSubtypes);
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());
     pageRequestContext.getRequest().setAttribute("states", courseStateDAO.listUnarchived());
     pageRequestContext.getRequest().setAttribute("roles", courseUserRoleDAO.listAll());

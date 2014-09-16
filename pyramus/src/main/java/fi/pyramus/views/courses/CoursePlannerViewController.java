@@ -1,9 +1,12 @@
 package fi.pyramus.views.courses;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,15 +15,18 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.pyramus.domainmodel.base.CourseEducationType;
+import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.util.StringAttributeComparator;
 
 /**
  * The controller responsible of the Create Course view of the application.
@@ -37,6 +43,7 @@ public class CoursePlannerViewController extends PyramusViewController implement
   public void process(PageRequestContext pageRequestContext) {
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();    
+    EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();    
 
     List<CourseBean> courseBeans = new ArrayList<CoursePlannerViewController.CourseBean>();
     for (Course course : courseDAO.listUnarchived()) {
@@ -44,6 +51,16 @@ public class CoursePlannerViewController extends PyramusViewController implement
     }
     
     List<EducationType> educationTypes = educationTypeDAO.listUnarchived();
+    
+    Map<Long, List<EducationSubtype>> educationSubtypes = new HashMap<>();
+    
+    for (EducationType educationType : educationTypes) {
+      List<EducationSubtype> subtypes = educationSubtypeDAO.listByEducationType(educationType);
+      Collections.sort(subtypes, new StringAttributeComparator("getName"));
+      educationSubtypes.put(educationType.getId(), subtypes);
+    }
+    
+    pageRequestContext.getRequest().setAttribute("educationSubtypes", educationSubtypes);
     pageRequestContext.getRequest().setAttribute("educationTypes", educationTypes);
     pageRequestContext.getRequest().setAttribute("courseBeans", courseBeans);
     

@@ -157,7 +157,7 @@
 	                    <div class="coursePlannerEducationTypeFilterTitleContainer">
 	                      <div class="coursePlannerEducationTypeFilterTitle">${educationType.name}</div>
 	                    </div>
-	                    <c:forEach var="educationSubtype" items="${educationType.unarchivedSubtypes}">
+	                    <c:forEach var="educationSubtype" items="${educationSubtypes[educationType.id]}">
 	                      <input type="checkbox" value="${educationSubtype.id}" name="educationSubtype" checked="checked"/> <span>${educationSubtype.name}</span> <br/>
 	                    </c:forEach>
 	                  </div>

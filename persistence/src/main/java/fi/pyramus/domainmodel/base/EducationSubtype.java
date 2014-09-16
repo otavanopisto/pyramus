@@ -25,21 +25,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class EducationSubtype implements ArchivableEntity {
   
   /**
-   * Default constructor.
-   */
-  protected EducationSubtype() {
-  }
-
-  /**
-   * Constructor defining the education type this subtype belongs to.
-   * 
-   * @param educationType The education type of this subtype
-   */
-  public EducationSubtype(EducationType educationType) {
-    setEducationType(educationType);
-  }
-
-  /**
    * Returns the unique identifier of this object.
    * 
    * @return The unique identifier of this object
@@ -98,7 +83,7 @@ public class EducationSubtype implements ArchivableEntity {
    * 
    * @param educationType The education type of this subtype
    */
-  protected void setEducationType(EducationType educationType) {
+  public void setEducationType(EducationType educationType) {
     this.educationType = educationType;
   }
 
