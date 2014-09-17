@@ -11,6 +11,7 @@ import fi.pyramus.util.dataimport.scripting.api.AbstractStudentAPI;
 import fi.pyramus.util.dataimport.scripting.api.ActivityTypeAPI;
 import fi.pyramus.util.dataimport.scripting.api.ContactTypeAPI;
 import fi.pyramus.util.dataimport.scripting.api.CourseAPI;
+import fi.pyramus.util.dataimport.scripting.api.CourseStudentAPI;
 import fi.pyramus.util.dataimport.scripting.api.EducationTypeAPI;
 import fi.pyramus.util.dataimport.scripting.api.EducationalLevelAPI;
 import fi.pyramus.util.dataimport.scripting.api.ExaminationTypeAPI;
@@ -115,6 +116,10 @@ public class ImportAPI {
   
   public StudentGroupStudentAPI getStudentGroupStudents() {
     return new StudentGroupStudentAPI(loggedUserId);
+  }
+  
+  public CourseStudentAPI getCourseStudents() {
+    return new CourseStudentAPI(loggedUserId);
   }
   
   private Long loggedUserId;
