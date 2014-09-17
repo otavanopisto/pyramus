@@ -31,7 +31,7 @@ public class ProjectTestsIT extends AbstractRESTServiceTest {
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(project)
       .post("/projects/projects");
@@ -51,7 +51,7 @@ public class ProjectTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/projects/projects/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -59,7 +59,7 @@ public class ProjectTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListProjects() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/projects/projects")
       .then()
       .statusCode(200)
@@ -86,7 +86,7 @@ public class ProjectTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindProject() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/projects/projects/{ID}", 1)
       .then()
       .statusCode(200)
@@ -115,7 +115,7 @@ public class ProjectTestsIT extends AbstractRESTServiceTest {
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(project)
       .post("/projects/projects");
@@ -147,7 +147,7 @@ public class ProjectTestsIT extends AbstractRESTServiceTest {
         Arrays.asList("tag2", "tag3"), 
         Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateProject)
         .put("/projects/projects/{ID}", id)
@@ -166,7 +166,7 @@ public class ProjectTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateProject.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/projects/projects/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -187,7 +187,7 @@ public class ProjectTestsIT extends AbstractRESTServiceTest {
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(project)
       .post("/projects/projects");
@@ -208,25 +208,25 @@ public class ProjectTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/projects/projects/{ID}", id)
+    given().headers(getAuthHeaders()).get("/projects/projects/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/projects/projects/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/projects/projects/{ID}", id)
+    given().headers(getAuthHeaders()).get("/projects/projects/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/projects/projects/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/projects/projects/{ID}", id)
+    given().headers(getAuthHeaders()).get("/projects/projects/{ID}", id)
       .then()
       .statusCode(404);
   }

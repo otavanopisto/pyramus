@@ -17,7 +17,7 @@ public class StudentContactURLTestsIT extends AbstractRESTServiceTest {
   public void testCreateStudentContactURL() {
     ContactURL contactURL = new ContactURL(null, 1l, "http://www.myfakehomepage.org");
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(contactURL)
       .post("/students/students/{ID}/contactURLs", 1l);
@@ -29,7 +29,7 @@ public class StudentContactURLTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/students/{STUDENTID}/contactURLs/{ID}", 1l, id)
       .then()
       .statusCode(204);
@@ -37,7 +37,7 @@ public class StudentContactURLTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListStudentContactURLs() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/students/{ID}/contactURLs", 1l)
       .then()
       .statusCode(200)
@@ -49,7 +49,7 @@ public class StudentContactURLTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindStudentContactURL() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/contactURLs/{ID}", 1l, 3l)
       .then()
       .statusCode(200)
@@ -62,7 +62,7 @@ public class StudentContactURLTestsIT extends AbstractRESTServiceTest {
   public void testDeleteStudentContactURL() {
     ContactURL contactURL = new ContactURL(null, 1l, "http://www.myfakehomepage.org");
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(contactURL)
       .post("/students/students/{STUDENTID}/contactURLs", 1l);
@@ -75,16 +75,16 @@ public class StudentContactURLTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/students/students/{STUDENTID}/contactURLs/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactURLs/{ID}", 1l, id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/students/{STUDENTID}/contactURLs/{ID}", 1l, id)
       .then()
       .statusCode(204);
     
-    given().get("/students/students/{STUDENTID}/contactURLs/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactURLs/{ID}", 1l, id)
       .then()
       .statusCode(404);
   }

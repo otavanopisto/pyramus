@@ -17,7 +17,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
   public void testCreateContactType() {
     ContactType contactType = new ContactType(null, "create", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(contactType)
       .post("/common/contactTypes");
@@ -29,7 +29,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/contactTypes/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -37,7 +37,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void listContactTypes() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/contactTypes")
       .then()
       .statusCode(200)
@@ -49,7 +49,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindContactType() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/contactTypes/{ID}", 1)
       .then()
       .statusCode(200)
@@ -62,7 +62,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
   public void testUpdateContactType() {
     ContactType contactType = new ContactType(null, "Not Updated", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(contactType)
       .post("/common/contactTypes");
@@ -76,7 +76,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
     try {
       ContactType updateContactType = new ContactType(id, "Updated", Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateContactType)
         .put("/common/contactTypes/{ID}", id)
@@ -87,7 +87,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateContactType.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/common/contactTypes/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -98,7 +98,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
   public void testDeleteContactType() {
     ContactType contactType = new ContactType(null, "create type", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(contactType)
       .post("/common/contactTypes");
@@ -106,25 +106,25 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/common/contactTypes/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/contactTypes/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/contactTypes/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/common/contactTypes/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/contactTypes/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/contactTypes/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/common/contactTypes/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/contactTypes/{ID}", id)
       .then()
       .statusCode(404);
   }

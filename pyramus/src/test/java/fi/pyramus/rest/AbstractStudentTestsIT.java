@@ -18,7 +18,7 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
   public void testCreateAbstractStudent() {
     AbstractStudent abstractStudent = new AbstractStudent(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be created");
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(abstractStudent)
       .post("/students/abstractStudents");
@@ -33,7 +33,7 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/abstractStudents/{ID}", id)
       .then()
       .statusCode(204);
@@ -41,7 +41,7 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListAbstractStudents() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/abstractStudents")
       .then()
       .statusCode(200)
@@ -60,7 +60,7 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindAbstractStudent() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/abstractStudents/{ID}", 1)
       .then()
       .statusCode(200)
@@ -75,7 +75,7 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
   public void testUpdateAbstractStudent() {
     AbstractStudent abstractStudent = new AbstractStudent(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "not updated");
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(abstractStudent)
       .post("/students/abstractStudents");
@@ -91,7 +91,7 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
     try {
       AbstractStudent updateStudent = new AbstractStudent(id, getDate(1991, 7, 7), "1234567-9876", Sex.MALE, true, "updated");
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateStudent)
         .put("/students/abstractStudents/{ID}", id)
@@ -105,7 +105,7 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
         .body("sex", is(updateStudent.getSex().toString() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/students/abstractStudents/{ID}", id)
         .then()
         .statusCode(204);
@@ -116,7 +116,7 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
   public void testDeleteAbstractStudent() {
     AbstractStudent abstractStudent = new AbstractStudent(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be deleted");
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(abstractStudent)
       .post("/students/abstractStudents");
@@ -131,23 +131,25 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
     int id = response.body().jsonPath().getInt("id");
     assertNotNull(id);
     
-    given().get("/students/abstractStudents/{ID}", id)
+    given().headers(getAuthHeaders())
+      .get("/students/abstractStudents/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/abstractStudents/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/abstractStudents/{ID}", id)
+    given().headers(getAuthHeaders())
+      .get("/students/abstractStudents/{ID}", id)
       .then()
       .statusCode(404);
   }
   
   @Test
   public void testListStudents() {
-    given()
+    given().headers(getAuthHeaders())   
       .get("/students/abstractStudents/{ID}/students", 1l)
       .then()
       .statusCode(200)

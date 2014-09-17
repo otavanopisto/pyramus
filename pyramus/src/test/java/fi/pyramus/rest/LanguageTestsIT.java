@@ -17,7 +17,7 @@ public class LanguageTestsIT extends AbstractRESTServiceTest {
   public void testCreateLanguage() {
     Language language = new Language(null, "TST", "create", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(language)
       .post("/students/languages");
@@ -30,7 +30,7 @@ public class LanguageTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/languages/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -38,7 +38,7 @@ public class LanguageTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void listLangauegs() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/languages")
       .then()
       .statusCode(200)
@@ -55,7 +55,7 @@ public class LanguageTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindLanguage() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/languages/{ID}", 1)
       .then()
       .statusCode(200)
@@ -69,7 +69,7 @@ public class LanguageTestsIT extends AbstractRESTServiceTest {
   public void testUpdateLanguage() {
     Language language = new Language(null, "Not Updated", "NOT", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(language)
       .post("/students/languages");
@@ -84,7 +84,7 @@ public class LanguageTestsIT extends AbstractRESTServiceTest {
     try {
       Language updateLanguage = new Language(id, "Updated", "UPD", Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateLanguage)
         .put("/students/languages/{ID}", id)
@@ -96,7 +96,7 @@ public class LanguageTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateLanguage.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/students/languages/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -107,7 +107,7 @@ public class LanguageTestsIT extends AbstractRESTServiceTest {
   public void testDeleteLanguage() {
     Language language = new Language(null, "create type", "TST", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(language)
       .post("/students/languages");
@@ -115,25 +115,25 @@ public class LanguageTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/students/languages/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/languages/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/languages/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/languages/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/languages/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/languages/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/languages/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/languages/{ID}", id)
       .then()
       .statusCode(404);
   }

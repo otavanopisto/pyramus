@@ -17,7 +17,7 @@ public class EducationTypeTestsIT extends AbstractRESTServiceTest {
   public void testCreateEducationType() {
     EducationType educationType = new EducationType(null, "create type", "TST", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(educationType)
       .post("/common/educationTypes");
@@ -30,7 +30,7 @@ public class EducationTypeTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/educationTypes/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -38,7 +38,7 @@ public class EducationTypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindEducationTypes() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/educationTypes")
       .then()
       .statusCode(200)
@@ -55,7 +55,7 @@ public class EducationTypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindEducationType() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/educationTypes/{ID}", 1)
       .then()
       .statusCode(200)
@@ -67,7 +67,7 @@ public class EducationTypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListSubject() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/educationTypes/{ID}/subjects", 2)
       .then()
       .statusCode(200)
@@ -87,7 +87,7 @@ public class EducationTypeTestsIT extends AbstractRESTServiceTest {
   public void testUpdateEducationType() {
     EducationType educationType = new EducationType(null, "Not Updated", "NOT", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(educationType)
       .post("/common/educationTypes");
@@ -102,7 +102,7 @@ public class EducationTypeTestsIT extends AbstractRESTServiceTest {
     try {
       EducationType updateEducationType = new EducationType(id, "Updated", "UPD", Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateEducationType)
         .put("/common/educationTypes/{ID}", id)
@@ -114,7 +114,7 @@ public class EducationTypeTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateEducationType.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/common/educationTypes/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -125,7 +125,7 @@ public class EducationTypeTestsIT extends AbstractRESTServiceTest {
   public void testEducationType() {
     EducationType educationType = new EducationType(null, "create type", "TST", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(educationType)
       .post("/common/educationTypes");
@@ -133,25 +133,25 @@ public class EducationTypeTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/common/educationTypes/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/educationTypes/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/educationTypes/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/common/educationTypes/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/educationTypes/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/educationTypes/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/common/educationTypes/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/educationTypes/{ID}", id)
       .then()
       .statusCode(404);
   }

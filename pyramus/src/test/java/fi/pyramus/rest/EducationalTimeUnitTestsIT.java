@@ -17,7 +17,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
   public void testCreateEducationalTimeUnit() {
     EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "create unit", 1d, Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(educationalTimeUnit)
       .post("/common/educationalTimeUnits");
@@ -30,7 +30,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/educationalTimeUnits/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -38,7 +38,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListEducationalTimeUnits() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/educationalTimeUnits")
       .then()
       .statusCode(200)
@@ -55,7 +55,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindEducationalTimeUnit() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/educationalTimeUnits/{ID}", 1)
       .then()
       .statusCode(200)
@@ -69,7 +69,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
   public void testUpdateEducationalTimeUnit() {
     EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "not updated unit", 1d, Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(educationalTimeUnit)
       .post("/common/educationalTimeUnits");
@@ -84,7 +84,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
     try {
       EducationalTimeUnit updateTimeUnit = new EducationalTimeUnit(id, "updated unit", 2d, Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateTimeUnit)
         .put("/common/educationalTimeUnits/{ID}", id)
@@ -96,7 +96,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateTimeUnit.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/common/educationalTimeUnits/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -107,7 +107,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
   public void testDeleteEducationalTimeUnit() {
     EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "not updated unit", 1d, Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(educationalTimeUnit)
       .post("/common/educationalTimeUnits");
@@ -121,25 +121,25 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/common/educationalTimeUnits/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/educationalTimeUnits/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/educationalTimeUnits/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/common/educationalTimeUnits/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/educationalTimeUnits/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/educationalTimeUnits/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/common/educationalTimeUnits/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/educationalTimeUnits/{ID}", id)
       .then()
       .statusCode(404);
   }

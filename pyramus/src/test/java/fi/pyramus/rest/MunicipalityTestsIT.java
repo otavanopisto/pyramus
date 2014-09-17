@@ -17,7 +17,7 @@ public class MunicipalityTestsIT extends AbstractRESTServiceTest {
   public void testCreateMunicipality() {
     Municipality municipality = new Municipality(null, "TST", "create", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(municipality)
       .post("/students/municipalities");
@@ -30,7 +30,7 @@ public class MunicipalityTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/municipalities/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -38,7 +38,7 @@ public class MunicipalityTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void listLangauegs() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/municipalities")
       .then()
       .statusCode(200)
@@ -55,7 +55,7 @@ public class MunicipalityTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindMunicipality() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/municipalities/{ID}", 1)
       .then()
       .statusCode(200)
@@ -69,7 +69,7 @@ public class MunicipalityTestsIT extends AbstractRESTServiceTest {
   public void testUpdateMunicipality() {
     Municipality municipality = new Municipality(null, "Not Updated", "NOT", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(municipality)
       .post("/students/municipalities");
@@ -84,7 +84,7 @@ public class MunicipalityTestsIT extends AbstractRESTServiceTest {
     try {
       Municipality updateMunicipality = new Municipality(id, "Updated", "UPD", Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateMunicipality)
         .put("/students/municipalities/{ID}", id)
@@ -96,7 +96,7 @@ public class MunicipalityTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateMunicipality.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/students/municipalities/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -107,7 +107,7 @@ public class MunicipalityTestsIT extends AbstractRESTServiceTest {
   public void testDeleteMunicipality() {
     Municipality municipality = new Municipality(null, "create type", "TST", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(municipality)
       .post("/students/municipalities");
@@ -115,25 +115,25 @@ public class MunicipalityTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/students/municipalities/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/municipalities/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/municipalities/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/municipalities/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/municipalities/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/municipalities/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/municipalities/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/municipalities/{ID}", id)
       .then()
       .statusCode(404);
   }

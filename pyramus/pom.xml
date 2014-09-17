@@ -170,7 +170,14 @@
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <scope>provided</scope>
-    </dependency> 
+    </dependency>
+    
+    <dependency> <!-- Wildfly, why not work without? -->
+      <groupId>commons-codec</groupId>
+	  <artifactId>commons-codec</artifactId>
+	  <version>1.9</version>
+    </dependency>
+    
         
     <!-- OpenCSV -->
 
@@ -283,6 +290,21 @@
       <artifactId>joda-time</artifactId>
     </dependency>
     
+     <!-- Oltu -->
+  
+     <dependency>
+         <groupId>org.apache.oltu.oauth2</groupId>
+         <artifactId>org.apache.oltu.oauth2.common</artifactId>
+     </dependency>
+     <dependency>
+         <groupId>org.apache.oltu.oauth2</groupId>
+         <artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+     </dependency>
+     <dependency>
+         <groupId>org.apache.oltu.oauth2</groupId>
+         <artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
+     </dependency>
+    
     <!-- Jackson -->
     
     <dependency>
@@ -357,6 +379,12 @@
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-library</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.oltu.oauth2</groupId>
+      <artifactId>org.apache.oltu.oauth2.client</artifactId>
       <scope>test</scope>
     </dependency>
             

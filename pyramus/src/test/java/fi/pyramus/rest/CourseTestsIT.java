@@ -50,7 +50,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l, 
         null);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(course)
       .post("/courses/courses/");
@@ -70,7 +70,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/courses/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -104,7 +104,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l, 
         Arrays.asList("tag1", "tag2", "tag3"));
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(course)
       .post("/courses/courses/");
@@ -126,7 +126,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/courses/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -140,7 +140,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
     DateTime endDate = getDate(2011, 3, 3);
     DateTime enrolmentTimeEnd = getDate(2011, 1, 1);
 
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/courses/1001")
       .then()
       .body("id", is(1001))
@@ -163,22 +163,22 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testGetCourseNotFound() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/courses/bogus")
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/courses/12345")
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/courses/-12356")
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/courses/לְנַסוֹת")
       .then()
       .statusCode(404);
@@ -198,7 +198,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
     DateTime endDate2 = getDate(2011, 3, 3);
     DateTime enrolmentTimeEnd2 = getDate(2011, 1, 1);
     
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/courses/")
       .then()
       .body("id.size()", is(2))
@@ -264,7 +264,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l, 
         null);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(course)
       .post("/courses/courses/");
@@ -289,7 +289,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
     course.setLength(888d);
     course.setMaxParticipantCount(1234l);
     
-    given()
+    given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(course)
       .put("/courses/courses/{ID}", course.getId())
@@ -307,7 +307,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body("maxParticipantCount", is( course.getMaxParticipantCount().intValue() ))
       .body("archived", is( course.getArchived() ));
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/courses/{ID}?permanent=true", course.getId())
       .then()
       .statusCode(204);
@@ -341,7 +341,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l, 
         Arrays.asList("tag1", "tag2", "tag3"));
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(course)
       .post("/courses/courses/");
@@ -369,7 +369,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
     course.setMaxParticipantCount(1234l);
     course.setTags(Arrays.asList("tag1", "tag3", "tag4", "tag5"));
     
-    given()
+    given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(course)
       .put("/courses/courses/{ID}", course.getId())
@@ -389,7 +389,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .body("tags", allOf(hasItem("tag1"), hasItem("tag3"), hasItem("tag4"), hasItem("tag5")))
       .body("archived", is( course.getArchived() ));
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/courses/{ID}?permanent=true", course.getId())
       .then()
       .statusCode(204);
@@ -423,7 +423,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l, 
         null);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(course)
       .post("/courses/courses/");
@@ -431,25 +431,25 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/courses/courses/{ID}", id)
+    given().headers(getAuthHeaders()).get("/courses/courses/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/courses/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/courses/courses/{ID}", id)
+    given().headers(getAuthHeaders()).get("/courses/courses/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/courses/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/courses/courses/{ID}", id)
+    given().headers(getAuthHeaders()).get("/courses/courses/{ID}", id)
       .then()
       .statusCode(404);
   }

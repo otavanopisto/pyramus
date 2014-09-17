@@ -17,7 +17,7 @@ public class StudentExaminationTypeTestsIT extends AbstractRESTServiceTest {
   public void testCreateStudentExaminationType() {
     StudentExaminationType studentExaminationType = new StudentExaminationType(null, "create", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentExaminationType)
       .post("/students/examinationTypes");
@@ -29,7 +29,7 @@ public class StudentExaminationTypeTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/examinationTypes/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -37,7 +37,7 @@ public class StudentExaminationTypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void listStudentExaminationTypes() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/examinationTypes")
       .then()
       .statusCode(200)
@@ -52,7 +52,7 @@ public class StudentExaminationTypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindStudentExaminationType() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/examinationTypes/{ID}", 1)
       .then()
       .statusCode(200)
@@ -65,7 +65,7 @@ public class StudentExaminationTypeTestsIT extends AbstractRESTServiceTest {
   public void testUpdateStudentExaminationType() {
     StudentExaminationType studentExaminationType = new StudentExaminationType(null, "Not Updated", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentExaminationType)
       .post("/students/examinationTypes");
@@ -79,7 +79,7 @@ public class StudentExaminationTypeTestsIT extends AbstractRESTServiceTest {
     try {
       StudentExaminationType updateStudentExaminationType = new StudentExaminationType(id, "Updated", Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateStudentExaminationType)
         .put("/students/examinationTypes/{ID}", id)
@@ -90,7 +90,7 @@ public class StudentExaminationTypeTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateStudentExaminationType.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/students/examinationTypes/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -101,7 +101,7 @@ public class StudentExaminationTypeTestsIT extends AbstractRESTServiceTest {
   public void testDeleteStudentExaminationType() {
     StudentExaminationType studentExaminationType = new StudentExaminationType(null, "create type", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentExaminationType)
       .post("/students/examinationTypes");
@@ -109,25 +109,25 @@ public class StudentExaminationTypeTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/students/examinationTypes/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/examinationTypes/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/examinationTypes/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/examinationTypes/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/examinationTypes/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/examinationTypes/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/examinationTypes/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/examinationTypes/{ID}", id)
       .then()
       .statusCode(404);
   }
