@@ -81,5 +81,18 @@ public class CourseAPI {
     return result.toArray(new Long[0]);
   }
   
+  public Long[] listIds() throws InvalidScriptException {
+    CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
+    
+    List<Long> result = new ArrayList<>();
+    
+    List<Course> courses = courseDAO.listUnarchived();
+    for (Course course : courses) {
+      result.add(course.getId());
+    }
+    
+    return result.toArray(new Long[0]);
+  }
+  
   private Long loggedUserId;
 }
