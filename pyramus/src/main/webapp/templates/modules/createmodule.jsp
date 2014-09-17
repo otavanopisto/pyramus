@@ -185,7 +185,7 @@
                       <div class="createModuleFormSectionEducationTypeTitleText">${educationType.name}</div>
                     </div>
                         
-    	              <c:forEach var="educationSubtype" items="${educationType.unarchivedSubtypes}">
+    	              <c:forEach var="educationSubtype" items="${educationSubtypes[educationType.id]}">
     	                <c:set var="key" value="${educationType.id}.${educationSubtype.id}"/>
     	                <input type="checkbox" name="educationType.${key}"/>                      
     	                ${educationSubtype.name}<br/>

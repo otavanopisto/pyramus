@@ -4,11 +4,15 @@ import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import fi.pyramus.dao.PyramusEntityDAO;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
+import fi.pyramus.domainmodel.students.StudentGroupStudent_;
 import fi.pyramus.domainmodel.users.User;
 
 @Stateless
@@ -28,6 +32,23 @@ public class StudentGroupStudentDAO extends PyramusEntityDAO<StudentGroupStudent
     entityManager.persist(studentGroup);
     
     return sgs;
+  }
+
+  public StudentGroupStudent findByStudentGroupAndStudent(StudentGroup studentGroup, Student student) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StudentGroupStudent> criteria = criteriaBuilder.createQuery(StudentGroupStudent.class);
+    Root<StudentGroupStudent> root = criteria.from(StudentGroupStudent.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(StudentGroupStudent_.student), student),
+        criteriaBuilder.equal(root.get(StudentGroupStudent_.studentGroup), studentGroup)
+      )
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
   }
   
   public void update(StudentGroupStudent studentGroupStudent, Student student, User updatingUser) {

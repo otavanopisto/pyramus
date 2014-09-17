@@ -22,7 +22,7 @@ import fi.pyramus.rest.model.School;
 public class SchoolTestsIT extends AbstractRESTServiceTest {
 
  //FIXME: find out why i break all tests that run after me
- /* @Test
+  @Test
   public void testCreateSchool() {
     Map<String, String> variables = new HashMap<String, String>();
     variables.put("TV1", "text");
@@ -181,6 +181,6 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
     given().headers(getAuthHeaders()).get("/schools/schools/{ID}", id)
       .then()
       .statusCode(404);
-  }*/
+  }
   
 }

@@ -44,18 +44,18 @@ import fi.pyramus.persistence.search.SearchResult;
 public class UserDAO extends PyramusEntityDAO<User> {
   
   public User create(String firstName, String lastName, String externalId, String authProvider, Role role) {
-    EntityManager entityManager = getEntityManager();
+    ContactInfo contactInfo = new ContactInfo();
     
     User newUser = new User();
+    
     newUser.setFirstName(firstName);
     newUser.setLastName(lastName);
     newUser.setAuthProvider(authProvider);
     newUser.setExternalId(externalId);
     newUser.setRole(role);
+    newUser.setContactInfo(contactInfo);
 
-    entityManager.persist(newUser);
-
-    return newUser;
+    return persist(newUser);
   }
 
   public List<User> listByUserVariable(String key, String value) {

@@ -1,5 +1,9 @@
 package fi.pyramus.services.entities.base;
 
+import java.util.List;
+
+import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.services.entities.EntityFactory;
 import fi.pyramus.services.entities.EntityFactoryVault;
@@ -11,7 +15,9 @@ public class EducationTypeEntityFactory implements EntityFactory<EducationTypeEn
       return null;
     
     EducationType educationType = (EducationType) domainObject; 
-    EducationSubtypeEntity[] subtypes = (EducationSubtypeEntity[]) EntityFactoryVault.buildFromDomainObjects(educationType.getSubtypes());
+    List<EducationSubtype> educationSubtypes = DAOFactory.getInstance().getEducationSubtypeDAO().listByEducationType(educationType);
+    
+    EducationSubtypeEntity[] subtypes = (EducationSubtypeEntity[]) EntityFactoryVault.buildFromDomainObjects(educationSubtypes);
     return new EducationTypeEntity(educationType.getId(), educationType.getName(), educationType.getCode(), subtypes,educationType.getArchived());
   }
 

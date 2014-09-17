@@ -15,6 +15,7 @@ import fi.pyramus.dao.PyramusEntityDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.domainmodel.base.ArchivableEntity;
 import fi.pyramus.domainmodel.base.BillingDetails;
+import fi.pyramus.domainmodel.base.ContactInfo;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
@@ -97,6 +98,8 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
 
     EntityManager entityManager = getEntityManager();
 
+    ContactInfo contactInfo = new ContactInfo();
+    
     Student student = new Student();
     student.setFirstName(firstName);
     student.setLastName(lastName);
@@ -118,6 +121,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setStudyEndReason(studyEndReason);
     student.setStudyEndText(studyEndText);
     student.setLodging(lodging);
+    student.setContactInfo(contactInfo);
 
     entityManager.persist(student);
 

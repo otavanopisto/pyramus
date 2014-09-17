@@ -17,6 +17,7 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.CourseEducationSubtypeDAO;
 import fi.pyramus.dao.base.CourseEducationTypeDAO;
 import fi.pyramus.dao.base.DefaultsDAO;
+import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.SubjectDAO;
@@ -53,10 +54,11 @@ public class EditModuleJSONRequestController extends JSONRequestController {
     CourseDescriptionDAO courseDescriptionDAO = DAOFactory.getInstance().getCourseDescriptionDAO();
     CourseDescriptionCategoryDAO descriptionCategoryDAO = DAOFactory.getInstance().getCourseDescriptionCategoryDAO();
     CourseEducationTypeDAO courseEducationTypeDAO = DAOFactory.getInstance().getCourseEducationTypeDAO();
-    CourseEducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getCourseEducationSubtypeDAO();
+    CourseEducationSubtypeDAO courseEducationSubtypeDAO = DAOFactory.getInstance().getCourseEducationSubtypeDAO();
     ModuleComponentDAO moduleComponentDAO = DAOFactory.getInstance().getModuleComponentDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();    
+    EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
@@ -150,9 +152,9 @@ public class EditModuleJSONRequestController extends JSONRequestController {
         courseEducationType = module.getCourseEducationTypeByEducationTypeId(educationTypeId);
       }
       for (Long educationSubtypeId : chosenEducationTypes.get(educationTypeId)) {
-        EducationSubtype educationSubtype = educationType.getEducationSubtypeById(educationSubtypeId);
+        EducationSubtype educationSubtype = educationSubtypeDAO.findById(educationSubtypeId);
         if (!courseEducationType.contains(educationSubtype)) {
-          educationSubtypeDAO.create(courseEducationType, educationSubtype);
+          courseEducationSubtypeDAO.create(courseEducationType, educationSubtype);
         }
       }
     }

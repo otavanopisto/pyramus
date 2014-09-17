@@ -25,6 +25,7 @@ import org.hibernate.search.jpa.Search;
 
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.PyramusEntityDAO;
+import fi.pyramus.domainmodel.base.ContactInfo;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariable;
@@ -48,13 +49,13 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
    * @return The created school
    */
   public School create(String code, String name, SchoolField schoolField) {
-    EntityManager entityManager = getEntityManager();
+    ContactInfo contactInfo = new ContactInfo();
     School school = new School();
     school.setCode(code);
     school.setName(name);
     school.setField(schoolField);
-    entityManager.persist(school);
-    return school;
+    school.setContactInfo(contactInfo);
+    return persist(school);
   }
 
   /**

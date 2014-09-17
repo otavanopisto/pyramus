@@ -29,12 +29,13 @@ public class EducationSubtypeDAO extends PyramusEntityDAO<EducationSubtype> {
    * @return The created education subtype
    */
   public EducationSubtype create(EducationType educationType, String name, String code) {
-    EntityManager entityManager = getEntityManager();
-    EducationSubtype educationSubtype = new EducationSubtype(educationType);
+    EducationSubtype educationSubtype = new EducationSubtype();
+    
+    educationSubtype.setEducationType(educationType);
     educationSubtype.setName(name);
     educationSubtype.setCode(code);
-    entityManager.persist(educationSubtype);
-    return educationSubtype;
+
+    return persist(educationSubtype);
   }
 
   /**
@@ -101,20 +102,7 @@ public class EducationSubtypeDAO extends PyramusEntityDAO<EducationSubtype> {
   }
 
   public EducationSubtype updateEducationType(EducationSubtype educationSubtype, EducationType educationType) {
-    EntityManager entityManager = getEntityManager();
-    
-    EducationType originalType = educationSubtype.getEducationType();
-    
-    if (originalType != null) {
-      originalType.removeSubtype(educationSubtype);
-      entityManager.persist(originalType);
-    }
-    
-    if (educationType != null) {
-      educationType.addSubtype(educationSubtype);
-      entityManager.persist(educationType);
-    }
-    
+    educationSubtype.setEducationType(educationType);
     return persist(educationSubtype);
   }
 
