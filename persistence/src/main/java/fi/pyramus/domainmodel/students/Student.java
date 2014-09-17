@@ -497,7 +497,7 @@ public class Student implements ArchivableEntity {
   
   @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="contactInfo")
-  private ContactInfo contactInfo = new ContactInfo();
+  private ContactInfo contactInfo;
   
   @NotNull
   @Column (nullable = false)
