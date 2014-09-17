@@ -24,7 +24,7 @@ public class ModuleComponentTestsIT extends AbstractRESTServiceTest {
         1l, 
         Boolean.FALSE);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(component)
       .post("/modules/modules/{MODULEID}/components", moduleId);
@@ -39,7 +39,7 @@ public class ModuleComponentTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/modules/modules/{MODULEID}/components/{COMPONENTID}?permanent=true", moduleId, id)
       .then()
       .statusCode(204);
@@ -47,7 +47,7 @@ public class ModuleComponentTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testListModuleComponents() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/modules/modules/1/components")
       .then()
       .statusCode(200)
@@ -68,7 +68,7 @@ public class ModuleComponentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindModuleComponent() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/modules/modules/1/components/1")
       .then()
       .statusCode(200)
@@ -91,7 +91,7 @@ public class ModuleComponentTestsIT extends AbstractRESTServiceTest {
         1l, 
         Boolean.FALSE);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(moduleComponent)
       .post("/modules/modules/{MODULEID}/components", moduleId);
@@ -115,7 +115,7 @@ public class ModuleComponentTestsIT extends AbstractRESTServiceTest {
           1l, 
           Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateComponent)
         .put("/modules/modules/{MODULEID}/components/{COMPONENTID}", moduleId, id)
@@ -129,7 +129,7 @@ public class ModuleComponentTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateComponent.getArchived() ));  
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/modules/modules/{MODULEID}/components/{COMPONENTID}?permanent=true", moduleId, id)
         .then()
         .statusCode(204);
@@ -147,7 +147,7 @@ public class ModuleComponentTestsIT extends AbstractRESTServiceTest {
         1l, 
         Boolean.FALSE);
 
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(moduleComponent)
       .post("/modules/modules/{MODULEID}/components", moduleId);
@@ -155,26 +155,26 @@ public class ModuleComponentTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/modules/modules/{MODULEID}/components/{COMPONENTID}", moduleId, id)
+    given().headers(getAuthHeaders()).get("/modules/modules/{MODULEID}/components/{COMPONENTID}", moduleId, id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/modules/modules/{MODULEID}/components/{COMPONENTID}", moduleId, id)
       .then()
       .statusCode(204);
     
-    given().get("/modules/modules/{MODULEID}/components/{COMPONENTID}", moduleId, id)
+    given().headers(getAuthHeaders()).get("/modules/modules/{MODULEID}/components/{COMPONENTID}", moduleId, id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/modules/modules/{MODULEID}/components/{COMPONENTID}?permanent=true", moduleId, id)
       .then()
       .statusCode(204);
     
     
-    given().get("/modules/modules/{MODULEID}/components/{COMPONENTID}", moduleId, id)
+    given().headers(getAuthHeaders()).get("/modules/modules/{MODULEID}/components/{COMPONENTID}", moduleId, id)
       .then()
       .statusCode(404);
   }

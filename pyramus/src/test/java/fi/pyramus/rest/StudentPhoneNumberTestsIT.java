@@ -17,7 +17,7 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
   public void testCreateStudentPhoneNumber() {
     PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(phoneNumber)
       .post("/students/students/{ID}/phoneNumbers", 1l);
@@ -30,7 +30,7 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", 1l, id)
       .then()
       .statusCode(204);
@@ -38,7 +38,7 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListStudentPhoneNumbers() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/students/{ID}/phoneNumbers", 1l)
       .then()
       .statusCode(200)
@@ -51,7 +51,7 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindStudentPhoneNumber() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/phoneNumbers/{ID}", 1l, 3l)
       .then()
       .statusCode(200)
@@ -65,7 +65,7 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
   public void testDeleteStudentPhoneNumber() {
     PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(phoneNumber)
       .post("/students/students/{STUDENTID}/phoneNumbers", 1l);
@@ -79,16 +79,16 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/students/students/{STUDENTID}/phoneNumbers/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/phoneNumbers/{ID}", 1l, id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", 1l, id)
       .then()
       .statusCode(204);
     
-    given().get("/students/students/{STUDENTID}/phoneNumbers/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/phoneNumbers/{ID}", 1l, id)
       .then()
       .statusCode(404);
   }

@@ -9,6 +9,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fi.pyramus.rest.annotation.Unsecure;
+
 @Path("/system")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -17,6 +19,7 @@ import javax.ws.rs.core.Response;
 public class SystemRESTService extends AbstractRESTService {
   
   @GET
+  @Unsecure
   @Path ("/ping")
   @Produces (MediaType.TEXT_PLAIN)
   public Response getPing() {

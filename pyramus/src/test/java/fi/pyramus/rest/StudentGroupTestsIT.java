@@ -30,7 +30,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(entity)
       .post("/students/studentGroups");
@@ -50,7 +50,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/studentGroups/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -58,7 +58,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListStudentGroups() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/studentGroups")
       .then()
       .statusCode(200)
@@ -85,7 +85,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindStudentGroup() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/studentGroups/{ID}", 1)
       .then()
       .statusCode(200)
@@ -113,7 +113,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(entity)
       .post("/students/studentGroups");
@@ -144,7 +144,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
           Arrays.asList("tag2", "tag3"), 
           Boolean.FALSE);
       
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateEntity)
         .put("/students/studentGroups/{ID}", id)
@@ -162,7 +162,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         .body("tags", allOf(hasItem("tag2"), hasItem("tag3") ))
         .body("archived", is( updateEntity.getArchived()));
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/students/studentGroups/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -182,7 +182,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(entity)
       .post("/students/studentGroups");
@@ -202,25 +202,25 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/students/studentGroups/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/studentGroups/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/studentGroups/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/studentGroups/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/studentGroups/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/studentGroups/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/studentGroups/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/studentGroups/{ID}", id)
       .then()
       .statusCode(404);
   }

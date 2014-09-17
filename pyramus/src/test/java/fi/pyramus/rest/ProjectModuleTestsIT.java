@@ -17,7 +17,7 @@ public class ProjectModuleTestsIT extends AbstractRESTServiceTest {
   public void testCreateProjectModule() {
     ProjectModule projectModule = new ProjectModule(null, 1l, ProjectModuleOptionality.OPTIONAL);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(projectModule)
       .post("/projects/projects/{PROJECTID}/modules", 1l);
@@ -29,7 +29,7 @@ public class ProjectModuleTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id)
       .then()
       .statusCode(204);
@@ -37,7 +37,7 @@ public class ProjectModuleTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListProjectModules() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/projects/projects/{PROJECTID}/modules", 1l)
       .then()
       .statusCode(200)
@@ -49,7 +49,7 @@ public class ProjectModuleTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testFindProjectModule() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/projects/projects/{PROJECTID}/modules/{ID}", 1l, 1l)
       .then()
       .statusCode(200)
@@ -62,7 +62,7 @@ public class ProjectModuleTestsIT extends AbstractRESTServiceTest {
   public void testUpdateProjectModule() {
     ProjectModule projectModule = new ProjectModule(null, 1l, ProjectModuleOptionality.OPTIONAL);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(projectModule)
       .post("/projects/projects/{PROJECTID}/modules", 1l);
@@ -76,7 +76,7 @@ public class ProjectModuleTestsIT extends AbstractRESTServiceTest {
     try {
       ProjectModule updateProjectModule = new ProjectModule(id, 1l, ProjectModuleOptionality.MANDATORY);
       
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateProjectModule)
         .put("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id)
@@ -87,7 +87,7 @@ public class ProjectModuleTestsIT extends AbstractRESTServiceTest {
         .body("optionality", is(updateProjectModule.getOptionality().toString() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id)
         .then()
         .statusCode(204);
@@ -98,7 +98,7 @@ public class ProjectModuleTestsIT extends AbstractRESTServiceTest {
   public void testDeleteProjectModule() {
     ProjectModule projectModule = new ProjectModule(null, 1l, ProjectModuleOptionality.OPTIONAL);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(projectModule)
       .post("/projects/projects/{PROJECTID}/modules", 1l);
@@ -110,16 +110,16 @@ public class ProjectModuleTestsIT extends AbstractRESTServiceTest {
       
     Long id = new Long(response.body().jsonPath().getInt("id"));
     
-    given().get("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id)
       .then()
       .statusCode(204);
     
-    given().get("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/projects/projects/{PROJECTID}/modules/{ID}", 1l, id)
       .then()
       .statusCode(404);
   }

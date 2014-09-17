@@ -17,7 +17,7 @@ public class StudyProgrammeCategoryTestsIT extends AbstractRESTServiceTest {
   public void testCreateStudyProgrammeCategory() {
     StudyProgrammeCategory studyProgrammeCategory = new StudyProgrammeCategory(null, "create", 1l, Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studyProgrammeCategory)
       .post("/students/studyProgrammeCategories");
@@ -30,7 +30,7 @@ public class StudyProgrammeCategoryTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/studyProgrammeCategories/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -38,7 +38,7 @@ public class StudyProgrammeCategoryTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void listStudyProgrammeCategories() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/studyProgrammeCategories")
       .then()
       .statusCode(200)
@@ -55,7 +55,7 @@ public class StudyProgrammeCategoryTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindStudyProgrammeCategory() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/studyProgrammeCategories/{ID}", 1)
       .then()
       .statusCode(200)
@@ -69,7 +69,7 @@ public class StudyProgrammeCategoryTestsIT extends AbstractRESTServiceTest {
   public void testUpdateStudyProgrammeCategory() {
     StudyProgrammeCategory studyProgrammeCategory = new StudyProgrammeCategory(null, "Not Updated", 1l, Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studyProgrammeCategory)
       .post("/students/studyProgrammeCategories");
@@ -84,7 +84,7 @@ public class StudyProgrammeCategoryTestsIT extends AbstractRESTServiceTest {
     try {
       StudyProgrammeCategory updateStudyProgrammeCategory = new StudyProgrammeCategory(id, "Updated", 2l, Boolean.FALSE);
 
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateStudyProgrammeCategory)
         .put("/students/studyProgrammeCategories/{ID}", id)
@@ -96,7 +96,7 @@ public class StudyProgrammeCategoryTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateStudyProgrammeCategory.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/students/studyProgrammeCategories/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -107,7 +107,7 @@ public class StudyProgrammeCategoryTestsIT extends AbstractRESTServiceTest {
   public void testDeleteStudyProgrammeCategory() {
     StudyProgrammeCategory studyProgrammeCategory = new StudyProgrammeCategory(null, "create type", 1l, Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studyProgrammeCategory)
       .post("/students/studyProgrammeCategories");
@@ -115,25 +115,25 @@ public class StudyProgrammeCategoryTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/students/studyProgrammeCategories/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/studyProgrammeCategories/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/studyProgrammeCategories/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/studyProgrammeCategories/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/studyProgrammeCategories/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/studyProgrammeCategories/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/studyProgrammeCategories/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/studyProgrammeCategories/{ID}", id)
       .then()
       .statusCode(404);
   }

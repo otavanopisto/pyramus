@@ -16,7 +16,7 @@ public class CourseVariableTestsIT extends AbstractRESTServiceTest {
   public void testCreateCourseVariables() {
     VariableKey courseVariable = new VariableKey("crevar", "variable to be created", false, VariableType.TEXT);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(courseVariable)
       .post("/courses/variables");
@@ -28,7 +28,7 @@ public class CourseVariableTestsIT extends AbstractRESTServiceTest {
       .body("userEditable", is(courseVariable.getUserEditable()))
       .body("type", is(courseVariable.getType().toString()));
 
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/variables/{KEY}", courseVariable.getKey())
       .then()
       .statusCode(204);
@@ -36,7 +36,7 @@ public class CourseVariableTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testListCourseVariables() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/courses/variables")
       .then()
       .statusCode(200)
@@ -54,7 +54,7 @@ public class CourseVariableTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindCourseVariable() {
-    given()
+    given().headers(getAuthHeaders())
     .get("/courses/variables/TV1")
     .then()
     .statusCode(200)
@@ -67,7 +67,7 @@ public class CourseVariableTestsIT extends AbstractRESTServiceTest {
   public void testUpdateCourseVariable() {
     VariableKey courseVariable = new VariableKey("upd", "not updated", false, VariableType.TEXT);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(courseVariable)
       .post("/courses/variables");
@@ -82,7 +82,7 @@ public class CourseVariableTestsIT extends AbstractRESTServiceTest {
     try {
       VariableKey updateVariable = new VariableKey("upd", "updated", true, VariableType.NUMBER);
       
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateVariable)
         .put("/courses/variables/{KEY}", updateVariable.getKey())
@@ -95,7 +95,7 @@ public class CourseVariableTestsIT extends AbstractRESTServiceTest {
 
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/courses/variables/{KEY}", courseVariable.getKey())
         .then()
         .statusCode(204);
@@ -106,7 +106,7 @@ public class CourseVariableTestsIT extends AbstractRESTServiceTest {
   public void testDeleteCourseVariable() {
     VariableKey courseVariable = new VariableKey("delete", "variable to be deleted", false, VariableType.TEXT);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(courseVariable)
       .post("/courses/variables");
@@ -118,16 +118,16 @@ public class CourseVariableTestsIT extends AbstractRESTServiceTest {
       .body("userEditable", is(courseVariable.getUserEditable()))
       .body("type", is(courseVariable.getType().toString()));
     
-    given().get("/courses/variables/{KEY}", courseVariable.getKey())
+    given().headers(getAuthHeaders()).get("/courses/variables/{KEY}", courseVariable.getKey())
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/courses/variables/{KEY}", courseVariable.getKey())
       .then()
       .statusCode(204);
     
-    given().get("/courses/variables/{KEY}", courseVariable.getKey())
+    given().headers(getAuthHeaders()).get("/courses/variables/{KEY}", courseVariable.getKey())
       .then()
       .statusCode(404);
   }

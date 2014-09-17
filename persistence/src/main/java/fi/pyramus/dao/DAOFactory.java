@@ -45,6 +45,9 @@ import fi.pyramus.dao.changelog.ChangeLogEntryEntityDAO;
 import fi.pyramus.dao.changelog.ChangeLogEntryEntityPropertyDAO;
 import fi.pyramus.dao.changelog.ChangeLogEntryPropertyDAO;
 import fi.pyramus.dao.changelog.TrackedEntityPropertyDAO;
+import fi.pyramus.dao.clientapplications.ClientApplicationAccessTokenDAO;
+import fi.pyramus.dao.clientapplications.ClientApplicationAuthorizationCodeDAO;
+import fi.pyramus.dao.clientapplications.ClientApplicationDAO;
 import fi.pyramus.dao.courses.BasicCourseResourceDAO;
 import fi.pyramus.dao.courses.CourseComponentDAO;
 import fi.pyramus.dao.courses.CourseComponentResourceDAO;
@@ -118,6 +121,7 @@ import fi.pyramus.dao.users.InternalAuthDAO;
 import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
+import fi.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
 
 public class DAOFactory {
   
@@ -602,6 +606,20 @@ public class DAOFactory {
 
   public PluginDAO getPluginDAO() {
     return (PluginDAO) findByClass(PluginDAO.class);
+  }
+  
+  /* ClientApplications */
+  
+  public ClientApplicationDAO getClientApplicationDAO(){
+    return (ClientApplicationDAO) findByClass(ClientApplicationDAO.class);
+  }
+  
+  public ClientApplicationAuthorizationCodeDAO getClientApplicationAuthorizationCodeDAO(){
+    return (ClientApplicationAuthorizationCodeDAO) findByClass(ClientApplicationAuthorizationCodeDAO.class);
+  }
+  
+  public ClientApplicationAccessTokenDAO getClientApplicationAccessTokenDAO(){
+    return (ClientApplicationAccessTokenDAO) findByClass(ClientApplicationAccessTokenDAO.class);
   }
   
   /* AccessLog */

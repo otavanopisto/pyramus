@@ -16,7 +16,7 @@ public class StudentStudyEndReasonTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testCreateStudyEndReason() {
     StudentStudyEndReason endReason = new StudentStudyEndReason(null, "create test", null);
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(endReason)
       .post("/students/studyEndReasons");
@@ -29,7 +29,7 @@ public class StudentStudyEndReasonTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/studyEndReasons/{ID}", id)
       .then()
       .statusCode(204);
@@ -37,7 +37,7 @@ public class StudentStudyEndReasonTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testListStudyEndReasons() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/studyEndReasons")
       .then()
       .statusCode(200)
@@ -52,7 +52,7 @@ public class StudentStudyEndReasonTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testFindStudyEndReasons() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/students/studyEndReasons/{ID}", 1)
       .then()
       .statusCode(200)
@@ -64,7 +64,7 @@ public class StudentStudyEndReasonTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testUpdateStudyEndReason() {
     StudentStudyEndReason endReason = new StudentStudyEndReason(null, "not updated", null);
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(endReason)
       .post("/students/studyEndReasons");
@@ -79,7 +79,7 @@ public class StudentStudyEndReasonTestsIT extends AbstractRESTServiceTest {
     try {
       StudentStudyEndReason updateReason = new StudentStudyEndReason(id, "updated", 1l);
       
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateReason)
         .put("/students/studyEndReasons/{ID}", id)
@@ -90,7 +90,7 @@ public class StudentStudyEndReasonTestsIT extends AbstractRESTServiceTest {
         .body("parentReasonId", is(updateReason.getParentReasonId().intValue()));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/students/studyEndReasons/{ID}", id)
         .then()
         .statusCode(204);
@@ -100,7 +100,7 @@ public class StudentStudyEndReasonTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testDeleteStudyEndReason() {
     StudentStudyEndReason endReason = new StudentStudyEndReason(null, "to be deleted", null);
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(endReason)
       .post("/students/studyEndReasons");
@@ -108,16 +108,16 @@ public class StudentStudyEndReasonTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/students/studyEndReasons/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/studyEndReasons/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/students/studyEndReasons/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/students/studyEndReasons/{ID}", id)
+    given().headers(getAuthHeaders()).get("/students/studyEndReasons/{ID}", id)
       .then()
       .statusCode(404);
   }

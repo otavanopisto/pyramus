@@ -17,7 +17,7 @@ public class SchoolEmailTestsIT extends AbstractRESTServiceTest {
   public void testCreateSchoolEmail() {
     Email email = new Email(null, 1l, Boolean.FALSE, "bogus@norealmail.org");
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(email)
       .post("/schools/schools/{ID}/emails", 1l);
@@ -30,7 +30,7 @@ public class SchoolEmailTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/schools/schools/{SCHOOLID}/emails/{ID}", 1l, id)
       .then()
       .statusCode(204);
@@ -38,7 +38,7 @@ public class SchoolEmailTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testListSchoolEmails() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/schools/schools/{ID}/emails", 1l)
       .then()
       .statusCode(200)
@@ -51,7 +51,7 @@ public class SchoolEmailTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindSchoolEmail() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/schools/schools/{SCHOOLID}/emails/{ID}", 1l, 1l)
       .then()
       .statusCode(200)
@@ -65,7 +65,7 @@ public class SchoolEmailTestsIT extends AbstractRESTServiceTest {
   public void testDeleteSchoolEmail() {
     Email email = new Email(null, 1l, Boolean.FALSE, "bogus@norealmail.org");
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(email)
       .post("/schools/schools/{SCHOOLID}/emails", 1l);
@@ -79,16 +79,16 @@ public class SchoolEmailTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/schools/schools/{SCHOOLID}/emails/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/schools/schools/{SCHOOLID}/emails/{ID}", 1l, id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/schools/schools/{SCHOOLID}/emails/{ID}", 1l, id)
       .then()
       .statusCode(204);
     
-    given().get("/schools/schools/{SCHOOLID}/emails/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/schools/schools/{SCHOOLID}/emails/{ID}", 1l, id)
       .then()
       .statusCode(404);
   }

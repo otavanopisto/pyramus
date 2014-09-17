@@ -17,7 +17,7 @@ public class GradingScaleTestsIT extends AbstractRESTServiceTest {
   public void testCreateGradingScale() {
     GradingScale gradingScale = new GradingScale(null, "create scale", "grading scale for testing creation", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(gradingScale)
       .post("/common/gradingScales");
@@ -30,7 +30,7 @@ public class GradingScaleTestsIT extends AbstractRESTServiceTest {
       
     int id = response.body().jsonPath().getInt("id");
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/gradingScales/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
@@ -38,7 +38,7 @@ public class GradingScaleTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testListGradingScales() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/gradingScales")
       .then()
       .statusCode(200)
@@ -55,7 +55,7 @@ public class GradingScaleTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindGradingScale() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/common/gradingScales/{ID}", 1)
       .then()
       .statusCode(200)
@@ -69,7 +69,7 @@ public class GradingScaleTestsIT extends AbstractRESTServiceTest {
   public void testUpdateGradingScale() {
     GradingScale gradingScale = new GradingScale(null, "not updated", "grading scale has not been updated yet", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(gradingScale)
       .post("/common/gradingScales");
@@ -86,7 +86,7 @@ public class GradingScaleTestsIT extends AbstractRESTServiceTest {
     try {
       GradingScale updateScale = new GradingScale(id, "updated", "grading scale has been updated", Boolean.FALSE);
       
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateScale)
         .put("/common/gradingScales/{ID}", id)
@@ -98,7 +98,7 @@ public class GradingScaleTestsIT extends AbstractRESTServiceTest {
         .body("archived", is( updateScale.getArchived() ));
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/common/gradingScales/{ID}?permanent=true", id)
         .then()
         .statusCode(204);
@@ -109,7 +109,7 @@ public class GradingScaleTestsIT extends AbstractRESTServiceTest {
   public void testDeleteGradingScale() {
     GradingScale gradingScale = new GradingScale(null, "to be deleted", "grading scale to be deleted", Boolean.FALSE);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(gradingScale)
       .post("/common/gradingScales");
@@ -117,25 +117,25 @@ public class GradingScaleTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().get("/common/gradingScales/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/gradingScales/{ID}", id)
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/gradingScales/{ID}", id)
       .then()
       .statusCode(204);
     
-    given().get("/common/gradingScales/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/gradingScales/{ID}", id)
       .then()
       .statusCode(404);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/common/gradingScales/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
     
-    given().get("/common/gradingScales/{ID}", id)
+    given().headers(getAuthHeaders()).get("/common/gradingScales/{ID}", id)
       .then()
       .statusCode(404);
   }

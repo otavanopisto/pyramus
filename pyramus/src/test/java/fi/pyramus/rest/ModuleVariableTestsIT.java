@@ -16,7 +16,7 @@ public class ModuleVariableTestsIT extends AbstractRESTServiceTest {
   public void testCreateModuleVariables() {
     VariableKey moduleVariable = new VariableKey("crevar", "variable to be created", false, VariableType.TEXT);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(moduleVariable)
       .post("/modules/variables");
@@ -28,7 +28,7 @@ public class ModuleVariableTestsIT extends AbstractRESTServiceTest {
       .body("userEditable", is(moduleVariable.getUserEditable()))
       .body("type", is(moduleVariable.getType().toString()));
 
-    given()
+    given().headers(getAuthHeaders())
       .delete("/modules/variables/{KEY}", moduleVariable.getKey())
       .then()
       .statusCode(204);
@@ -36,7 +36,7 @@ public class ModuleVariableTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testListModuleVariables() {
-    given()
+    given().headers(getAuthHeaders())
       .get("/modules/variables")
       .then()
       .statusCode(200)
@@ -54,7 +54,7 @@ public class ModuleVariableTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testFindModuleVariable() {
-    given()
+    given().headers(getAuthHeaders())
     .get("/modules/variables/TV1")
     .then()
     .statusCode(200)
@@ -67,7 +67,7 @@ public class ModuleVariableTestsIT extends AbstractRESTServiceTest {
   public void testUpdateModuleVariable() {
     VariableKey moduleVariable = new VariableKey("upd", "not updated", false, VariableType.TEXT);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(moduleVariable)
       .post("/modules/variables");
@@ -82,7 +82,7 @@ public class ModuleVariableTestsIT extends AbstractRESTServiceTest {
     try {
       VariableKey updateVariable = new VariableKey("upd", "updated", true, VariableType.NUMBER);
       
-      given()
+      given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateVariable)
         .put("/modules/variables/{KEY}", updateVariable.getKey())
@@ -95,7 +95,7 @@ public class ModuleVariableTestsIT extends AbstractRESTServiceTest {
 
 
     } finally {
-      given()
+      given().headers(getAuthHeaders())
         .delete("/modules/variables/{KEY}", moduleVariable.getKey())
         .then()
         .statusCode(204);
@@ -106,7 +106,7 @@ public class ModuleVariableTestsIT extends AbstractRESTServiceTest {
   public void testDeleteModuleVariable() {
     VariableKey moduleVariable = new VariableKey("delete", "variable to be deleted", false, VariableType.TEXT);
     
-    Response response = given()
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(moduleVariable)
       .post("/modules/variables");
@@ -118,16 +118,16 @@ public class ModuleVariableTestsIT extends AbstractRESTServiceTest {
       .body("userEditable", is(moduleVariable.getUserEditable()))
       .body("type", is(moduleVariable.getType().toString()));
     
-    given().get("/modules/variables/{KEY}", moduleVariable.getKey())
+    given().headers(getAuthHeaders()).get("/modules/variables/{KEY}", moduleVariable.getKey())
       .then()
       .statusCode(200);
     
-    given()
+    given().headers(getAuthHeaders())
       .delete("/modules/variables/{KEY}", moduleVariable.getKey())
       .then()
       .statusCode(204);
     
-    given().get("/modules/variables/{KEY}", moduleVariable.getKey())
+    given().headers(getAuthHeaders()).get("/modules/variables/{KEY}", moduleVariable.getKey())
       .then()
       .statusCode(404);
   }
