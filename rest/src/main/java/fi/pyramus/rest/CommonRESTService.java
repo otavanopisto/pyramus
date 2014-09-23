@@ -30,7 +30,6 @@ import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.rest.controller.CommonController;
-import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/common")
 @Produces(MediaType.APPLICATION_JSON)

@@ -38,7 +38,6 @@ import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.model.CourseEnrolmentType;
-import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/courses")
 @Produces("application/json")

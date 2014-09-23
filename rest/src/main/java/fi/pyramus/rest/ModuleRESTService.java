@@ -31,7 +31,6 @@ import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
-import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/modules")
 @Produces("application/json")

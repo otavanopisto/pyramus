@@ -30,7 +30,6 @@ import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.persistence.search.SearchTimeFilterMode;
 import fi.pyramus.rest.controller.CalendarController;
-import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/calendar")
 @Produces(MediaType.APPLICATION_JSON)

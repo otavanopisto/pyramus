@@ -33,7 +33,6 @@ import fi.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.SchoolController;
-import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/schools")
 @Produces("application/json")

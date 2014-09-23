@@ -66,7 +66,6 @@ import fi.pyramus.rest.controller.StudentStudyEndReasonController;
 import fi.pyramus.rest.controller.StudentVariableController;
 import fi.pyramus.rest.controller.StudyProgrammeCategoryController;
 import fi.pyramus.rest.controller.StudyProgrammeController;
-import fi.pyramus.rest.model.ObjectFactory;
 
 @Path("/students")
 @Produces("application/json")
