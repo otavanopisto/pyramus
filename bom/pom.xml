@@ -277,6 +277,12 @@
       
       <dependency>
         <groupId>fi.pyramus</groupId>
+        <artifactId>rest-model</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>fi.pyramus</groupId>
         <artifactId>rest</artifactId>
         <version>${pyramus.version}</version>
       </dependency>

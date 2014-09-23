@@ -44,6 +44,7 @@
     <module>openid-plugin</module>
     <module>persistence</module>
     <module>plugin-core</module>
+    <module>rest-model</module>
     <module>rest</module>
     <module>pyramus</module>
     <module>reports</module>

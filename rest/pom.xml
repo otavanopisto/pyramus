@@ -91,6 +91,11 @@
 		</dependency>
 
 		<!-- Pyramus -->
+      
+    <dependency>
+      <groupId>fi.pyramus</groupId>
+      <artifactId>rest-model</artifactId>
+    </dependency>
 
 		<dependency>
 			<groupId>fi.pyramus</groupId>
