@@ -7,7 +7,7 @@
 
 <html>
   <head>
-    <title>Client Applications</title>
+    <title><fmt:message key="system.clientapplications.pageTitle"/></title>
 
     <jsp:include page="/templates/generic/head_generic.jsp"></jsp:include>
     <jsp:include page="/templates/generic/scriptaculous_support.jsp"></jsp:include>
@@ -15,7 +15,6 @@
     <jsp:include page="/templates/generic/table_support.jsp"></jsp:include>
 
     <script type="text/javascript">
-
       function onLoad(event) {
         tabControl = new IxProtoTabs($('tabs'));
         
@@ -31,9 +30,10 @@
             dataType: 'hidden',
             paramName: "regenerateSecret"
           },{
-            header : 'Application name',
+            header : '<fmt:message key="system.clientapplications.nameHeader"/>',
             left : 8,
             width: 300,
+            required: true,
             dataType: 'text',
             editable: true,
             paramName: 'appName'
@@ -52,12 +52,12 @@
             editable: false,
             paramName: 'appSecret'
           },{
-              right: 30,
+              right: 34,
               width: 22,
               dataType: 'button',
               paramName: 'regenerateSecretBtn',
-              imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/mail-mark-junk.png',
-              tooltip: 'Regenerate client application secret',
+              imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/refresh.png',
+              tooltip: '<fmt:message key="system.clientapplications.regenTooltip"/>',
               onclick: function (event) {
                 var table = event.tableComponent;
                 table.setCellValue(event.row, table.getNamedColumnIndex('regenerateSecret'), 1);
@@ -69,7 +69,7 @@
               dataType: 'button',
               paramName: 'deleteButton',
               imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/mail-mark-junk.png',
-              tooltip: 'Remove client application',
+              tooltip: '<fmt:message key="system.clientapplications.removeTooltip"/>',
               onclick: function (event) {
                 var table = event.tableComponent;
                 table.setCellValue(event.row, table.getNamedColumnIndex('remove'), 1);
@@ -85,7 +85,7 @@
               paramName: 'undeleteButton',
               hidden: true,
               imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/mail-mark-not-junk.png',
-              tooltip: 'Restore client application',
+              tooltip: '<fmt:message key="system.clientapplications.restoreTooltip"/>',
               onclick: function (event) {
                 var table = event.tableComponent;
                 table.setCellValue(event.row, table.getNamedColumnIndex('remove'), 0);
@@ -125,26 +125,26 @@
   <body onload="onLoad(event);">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
     
-    <h1 class="genericPageHeader">Client Applications</h1>
+    <h1 class="genericPageHeader"><fmt:message key="system.clientapplications.pageTitle"/></h1>
     
     <div class="genericFormContainer"> 
       <form action="clientapplications.page" method="post">
   
         <div class="tabLabelsContainer" id="tabs">
           <a class="tabLabel" href="#clientApplications">
-            3rd party apps
+            <fmt:message key="system.clientapplications.tabLabel"/>
           </a>
         </div>
         
         <div id="clientApplications" class="tabContent">
           <div class="genericTableAddRowContainer">
-            <span class="genericTableAddRowLinkContainer" onclick="addClientApplication();">Add client app</span>
+            <span class="genericTableAddRowLinkContainer" onclick="addClientApplication();"><fmt:message key="system.clientapplications.addBtn"/></span>
           </div>
           <div id="clientApplicationsTableContainer"></div>
         </div>
   
         <div class="genericFormSubmitSectionOffTab">
-          <input type="submit" class="formvalid" value="save">
+          <input type="submit" class="formvalid" value="<fmt:message key="system.clientapplications.saveBtn"/>">
         </div>
 
       </form>
