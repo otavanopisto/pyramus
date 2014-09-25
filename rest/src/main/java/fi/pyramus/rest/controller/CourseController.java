@@ -308,4 +308,8 @@ public class CourseController {
   public void removeCourseTag(Course course, Tag tag) {
     course.removeTag(tag);
   }
+
+  public List<Course> listCoursesBySubject(Subject subject) {
+    return courseDAO.listBySubject(subject);
+  }
 }
