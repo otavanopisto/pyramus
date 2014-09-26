@@ -14,6 +14,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
 
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.clientapplications.ClientApplicationAuthorizationCodeDAO;
@@ -22,6 +23,7 @@ import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.PyramusFormViewController;
+import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
 
 public class AuthorizeClientApplicationViewController extends PyramusFormViewController {
@@ -55,13 +57,11 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
         request.setAttribute("clientAppName", clientApplication.getClientName());
 
       } else {
-        request.setAttribute("errorMessage", "Client application not found");
-        request.setAttribute("statusCode", "400");
         requestContext.setIncludeJSP("/templates/generic/errorpage.jsp");
+        throw new SmvcRuntimeException(HttpServletResponse.SC_FORBIDDEN, "Client application not found");
       }
     } catch (OAuthProblemException | OAuthSystemException e) {
-      request.setAttribute("statusCode", "500");
-      request.setAttribute("exception", e);
+      throw new SmvcRuntimeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
     requestContext.setIncludeJSP("/templates/users/authorizeclientapp.jsp"); // TODO: show auth page only if everything is ok
@@ -92,14 +92,12 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
           clientApplicationAuthorizationCodeDAO.create(user, clientApplication, authorizationCode, redirectURI);
           requestContext.setRedirectURL(response.getLocationUri());
         } catch (OAuthSystemException e) {
-          request.setAttribute("statusCode", "500");
-          request.setAttribute("exception", e);
           requestContext.setIncludeJSP("/templates/generic/errorpage.jsp");
+          throw new SmvcRuntimeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
       } else {
-        request.setAttribute("errorMessage", "Invalid parameters");
-        request.setAttribute("statusCode", "400");
         requestContext.setIncludeJSP("/templates/generic/errorpage.jsp");
+        throw new SmvcRuntimeException(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameters");
       }
 
     }
