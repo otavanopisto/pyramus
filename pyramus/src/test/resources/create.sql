@@ -84,32 +84,6 @@
         primary key (id)
     );
 
-    create table ClientApplication (
-        id bigint not null,
-        clientName varchar(255) not null,
-        clientId varchar(255) not null,
-        clientSecret varchar(255) not null,
-        primary key (id)
-    );
-    
-    create table ClientApplicationAuthorizationCode (
-        id bigint not null,
-        authorizationCode varchar(255) not null,
-        redirectUrl varchar(255) not null,
-        user_id bigint not null,
-        app_id bigint not null,
-        primary key (id)
-    );
-    
-    create table ClientApplicationAccessToken (
-        id bigint not null,
-        accessToken varchar(255) not null,
-        expires bigint not null,
-        app_id bigint not null,
-        clientApplicationAuthorizationCode bigint not null,
-        primary key (id)
-    );
-    
     create table ChangeLogEntry (
         id bigint not null,
         entityId varchar(255),
@@ -138,6 +112,32 @@
         value clob,
         entry bigint,
         property bigint,
+        primary key (id)
+    );
+
+    create table ClientApplication (
+        id bigint not null,
+        clientId varchar(255) not null,
+        clientName varchar(255) not null,
+        clientSecret varchar(255) not null,
+        primary key (id)
+    );
+
+    create table ClientApplicationAccessToken (
+        id bigint not null,
+        accessToken varchar(255) not null,
+        expires bigint not null,
+        app_id bigint not null,
+        clientApplicationAuthorizationCode bigint,
+        primary key (id)
+    );
+
+    create table ClientApplicationAuthorizationCode (
+        id bigint not null,
+        authorizationCode varchar(255) not null,
+        redirectUrl varchar(255) not null,
+        app_id bigint not null,
+        user_id bigint not null,
         primary key (id)
     );
 
@@ -220,7 +220,7 @@
         archived boolean not null,
         courseNumber integer,
         created timestamp not null,
-        description longtext,
+        description clob,
         lastModified timestamp not null,
         maxParticipantCount bigint,
         name varchar(255) not null,
@@ -268,7 +268,7 @@
 
     create table CourseDescription (
         id bigint not null,
-        description varchar(2147483647),
+        description clob,
         category bigint,
         courseBase bigint,
         primary key (id)
@@ -812,12 +812,9 @@
     );
 
     create table Student (
-        id bigint not null,
         additionalInfo clob,
         archived boolean not null,
         education varchar(255),
-        firstName varchar(255) not null,
-        lastName varchar(255) not null,
         lodging boolean not null,
         nickname varchar(255),
         previousStudies double,
@@ -825,10 +822,9 @@
         studyEndText varchar(255),
         studyStartDate date,
         studyTimeEnd date,
-        version bigint not null,
+        id bigint not null,
         abstractStudent bigint,
         activityType bigint,
-        contactInfo bigint,
         educationalLevel bigint,
         examinationType bigint,
         language bigint,
@@ -977,25 +973,6 @@
         name varchar(255),
         version bigint not null,
         parentReason bigint,
-        primary key (id)
-    );
-
-    create table StudentVariable (
-        id bigint not null,
-        value varchar(255),
-        version bigint not null,
-        variableKey bigint,
-        student bigint,
-        primary key (id)
-    );
-
-    create table StudentVariableKey (
-        id bigint not null,
-        userEditable boolean not null,
-        variableKey varchar(255) not null,
-        variableName varchar(255) not null,
-        variableType varchar(255),
-        version bigint not null,
         primary key (id)
     );
 
@@ -1151,11 +1128,6 @@
         primary key (school, tag)
     );
 
-    create table __StudentBillingDetails (
-        student bigint not null,
-        billingDetails bigint not null
-    );
-
     create table __StudentGroupTags (
         studentGroup bigint not null,
         tag bigint not null,
@@ -1166,12 +1138,6 @@
         studentProject bigint not null,
         tag bigint not null,
         primary key (studentProject, tag)
-    );
-
-    create table __StudentTags (
-        student bigint not null,
-        tag bigint not null,
-        primary key (student, tag)
     );
 
     create table __UserBillingDetails (
@@ -1185,14 +1151,14 @@
         primary key (user, tag)
     );
 
-    alter table ClientApplicationAccessToken 
-        add constraint UK_2ivsxlmh3g4yaho41jt13r30j  unique (accessToken);
-        
-    alter table ClientApplication 
-        add constraint UK_kehc26jk1kjsajf423t19r20i  unique (clientId);
-    
     alter table ChangeLogEntryEntity 
-        add constraint UK_3ivxxlmh3gjyal4jsioehjtu0  unique (name);
+        add constraint UK_3ivxxlmh3gjyajo41lt19r30j  unique (name);
+
+    alter table ClientApplication 
+        add constraint UK_gon59vs1pdxyqysd5etdnn1n9  unique (clientId);
+
+    alter table ClientApplicationAccessToken 
+        add constraint UK_2eepl5h88wfb22nxhcd2rsxgh  unique (accessToken);
 
     alter table CourseAssessment 
         add constraint UK_h2uf2bqevk8mcg4c209iimiii  unique (courseStudent);
@@ -1214,6 +1180,9 @@
 
     alter table Tag 
         add constraint UK_am6x1sovg4dm5l9l581e0ckot  unique (text);
+
+    alter table UserVariableKey 
+        add constraint UK_mb9er7y1ali34igjlk4ccxlfs  unique (variableKey);
 
     alter table AccessLogEntry 
         add constraint FK_r031kiolhx2sg7hpdngdn026l 
@@ -1245,26 +1214,6 @@
         foreign key (resource) 
         references Resource;
 
-    alter table ClientApplicationAuthorizationCode 
-        add constraint FK781DD821F7635B15
-        foreign key (user_id)
-        references User (id);
-        
-    alter table ClientApplicationAuthorizationCode
-        add constraint FK781DD821A23C0179
-        foreign key (app_id)
-        references ClientApplication (id);
-        
-    alter table ClientApplicationAccessToken
-        add constraint FK4E64FD50A23C0179
-        foreign key (app_id)
-        references ClientApplication (id);
-      
-    alter table ClientApplicationAccessToken
-        add constraint FK4E64FJE23JKR0CR3
-        foreign key (clientApplicationAuthorizationCode)
-        references ClientApplicationAuthorizationCode (id);
-        
     alter table ChangeLogEntry 
         add constraint FK_trl3pu52yuhr6jlus9epa7ild 
         foreign key (entity) 
@@ -1289,6 +1238,26 @@
         add constraint FK_qgkacalwos2pvununsghx60j 
         foreign key (property) 
         references ChangeLogEntryEntityProperty;
+
+    alter table ClientApplicationAccessToken 
+        add constraint FK_j3nhydmgnfg8210e2gruxrh4w 
+        foreign key (app_id) 
+        references ClientApplication;
+
+    alter table ClientApplicationAccessToken 
+        add constraint FK_rwdu61j1a1rn11pqv0ii1qdgu 
+        foreign key (clientApplicationAuthorizationCode) 
+        references ClientApplicationAuthorizationCode;
+
+    alter table ClientApplicationAuthorizationCode 
+        add constraint FK_jkil4wujeq1r634wwut2vcs62 
+        foreign key (app_id) 
+        references ClientApplication;
+
+    alter table ClientApplicationAuthorizationCode 
+        add constraint FK_ftbh7jxr3fram1cold5cuetdb 
+        foreign key (user_id) 
+        references User;
 
     alter table ComponentBase 
         add constraint FK_n3636lg4sxh0jvounesk7wec8 
@@ -1761,11 +1730,6 @@
         references StudentActivityType;
 
     alter table Student 
-        add constraint FK_6xxj4ek0nlfmtckd6u8hct201 
-        foreign key (contactInfo) 
-        references ContactInfo;
-
-    alter table Student 
         add constraint FK_h8ypmoc31ra5j40x74esdy6x2 
         foreign key (educationalLevel) 
         references StudentEducationalLevel;
@@ -1804,6 +1768,11 @@
         add constraint FK_jos3vl724h8ln4toi52mn5b6f 
         foreign key (studyProgramme) 
         references StudyProgramme;
+
+    alter table Student 
+        add constraint FK_ohs43dct8k52ch2exlmf4bs3l 
+        foreign key (id) 
+        references User;
 
     alter table StudentContactLogEntry 
         add constraint FK_gnx1l8oymwaqxbl4hlownd4s2 
@@ -1914,16 +1883,6 @@
         add constraint FK_2f8xkyc4p4muk488tcnc6gpqr 
         foreign key (parentReason) 
         references StudentStudyEndReason;
-
-    alter table StudentVariable 
-        add constraint FK_napjy06rvnne36aluoi0ayjfr 
-        foreign key (variableKey) 
-        references StudentVariableKey;
-
-    alter table StudentVariable 
-        add constraint FK_fvw9n1unc74nwjp64w9aml70w 
-        foreign key (student) 
-        references Student;
 
     alter table StudyProgramme 
         add constraint FK_9ro57ucpum3wqatybrefu71it 
@@ -2060,16 +2019,6 @@
         foreign key (school) 
         references School;
 
-    alter table __StudentBillingDetails 
-        add constraint FK_g03t04lpvdnt3j81fo53cbjqq 
-        foreign key (billingDetails) 
-        references BillingDetails;
-
-    alter table __StudentBillingDetails 
-        add constraint FK_8s693eljni5o9vjboyg8rdbpa 
-        foreign key (student) 
-        references Student;
-
     alter table __StudentGroupTags 
         add constraint FK_44ub49nfa8oleq5fg66ur4fc0 
         foreign key (tag) 
@@ -2089,16 +2038,6 @@
         add constraint FK_16emgsigygw6th8y8indckbjv 
         foreign key (studentProject) 
         references StudentProject;
-
-    alter table __StudentTags 
-        add constraint FK_7pip1b30oq902tv535xbor8n4 
-        foreign key (tag) 
-        references Tag;
-
-    alter table __StudentTags 
-        add constraint FK_4bbesi5caq54wpx5ivjx23mco 
-        foreign key (student) 
-        references Student;
 
     alter table __UserBillingDetails 
         add constraint FK_bj58cvcye8yvguabaacs0fw71 
