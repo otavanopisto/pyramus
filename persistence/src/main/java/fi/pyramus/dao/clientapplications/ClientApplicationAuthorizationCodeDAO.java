@@ -12,7 +12,6 @@ import fi.pyramus.dao.PyramusEntityDAO;
 import fi.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode_;
-import fi.pyramus.domainmodel.clientapplications.ClientApplication_;
 import fi.pyramus.domainmodel.users.User;
 
 @Stateless
