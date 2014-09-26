@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
@@ -28,6 +30,7 @@ import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
+import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.ContactURLType;
@@ -38,6 +41,7 @@ import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
+import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
@@ -53,6 +57,7 @@ public class EditStudentViewController extends PyramusViewController implements 
     StudentExaminationTypeDAO studentExaminationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     StudentStudyEndReasonDAO studyEndReasonDAO = DAOFactory.getInstance().getStudentStudyEndReasonDAO();
     UserVariableKeyDAO userVariableKeyDAO = DAOFactory.getInstance().getUserVariableKeyDAO();
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     MunicipalityDAO municipalityDAO = DAOFactory.getInstance().getMunicipalityDAO();
     NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
@@ -104,6 +109,9 @@ public class EditStudentViewController extends PyramusViewController implements 
     
     Map<Long, String> studentTags = new HashMap<Long, String>();
     Map<Long, Boolean> studentHasCredits = new HashMap<Long, Boolean>();
+
+    List<UserVariableKey> userVariableKeys = userVariableKeyDAO.listByUserEditable(Boolean.TRUE);
+    Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
     
     for (Student student : students) {
       StringBuilder tagsBuilder = new StringBuilder();
@@ -121,6 +129,19 @@ public class EditStudentViewController extends PyramusViewController implements 
           creditLinkDAO.countByStudent(student) +
           courseAssessmentDAO.countByStudent(student) +
           transferCreditDAO.countByStudent(student) > 0);
+      
+      JSONArray variables = new JSONArray();
+      for (UserVariableKey userVariableKey : userVariableKeys) {
+        UserVariable userVariable = userVariableDAO.findByUserAndVariableKey(student, userVariableKey);
+        JSONObject variable = new JSONObject();
+        variable.put("type", userVariableKey.getVariableType());
+        variable.put("name", userVariableKey.getVariableName());
+        variable.put("key", userVariableKey.getVariableKey());
+        variable.put("value", userVariable != null ? userVariable.getValue() : "");
+        variables.add(variable);
+      }
+      
+      setJsDataVariable(pageRequestContext, "variables." + student.getId(), variables.toString());
     }
     
     List<Nationality> nationalities = nationalityDAO.listUnarchived();
@@ -140,9 +161,6 @@ public class EditStudentViewController extends PyramusViewController implements 
 
     List<ContactType> contactTypes = contactTypeDAO.listUnarchived();
     Collections.sort(contactTypes, new StringAttributeComparator("getName"));
-
-    List<UserVariableKey> userVariableKeys = userVariableKeyDAO.listByUserEditable(Boolean.TRUE);
-    Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
     
     pageRequestContext.getRequest().setAttribute("tags", studentTags);
     pageRequestContext.getRequest().setAttribute("abstractStudent", abstractStudent);

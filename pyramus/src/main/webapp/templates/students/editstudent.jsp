@@ -409,40 +409,35 @@
             phoneTable.setCellValue(0, 1, true);
           }
 
-          <c:choose>
-            <c:when test="${fn:length(variableKeys) gt 0}">
-              // Student variables
-              variablesTable = initStudentVariableTable(${student.id});
-    
-              <c:forEach var="variableKey" items="${variableKeys}">
-                value = '${fn:escapeXml(student.variablesAsStringMap[variableKey.variableKey])}';
-                var rowNumber = variablesTable.addRow([
-                  '',
-                  '${fn:escapeXml(variableKey.variableKey)}',
-                  '${fn:escapeXml(variableKey.variableName)}',
-                  value
-                ]);
-        
-                var dataType;
-                <c:choose>
-                  <c:when test="${variableKey.variableType == 'NUMBER'}">
-                    dataType = 'number';
-                  </c:when>
-                  <c:when test="${variableKey.variableType == 'DATE'}">
-                    dataType = 'date';
-                  </c:when>
-                  <c:when test="${variableKey.variableType == 'BOOLEAN'}">
-                    dataType = 'checkbox';
-                  </c:when>
-                  <c:otherwise>
-                    dataType = 'text';
-                  </c:otherwise>
-                </c:choose>
-                
-                variablesTable.setCellDataType(rowNumber, 3, dataType);
-              </c:forEach>
-            </c:when>
-          </c:choose>
+          var variables = JSDATA["variables.${student.id}"].evalJSON();
+          if (variables && variables.length > 0) {
+            // Student variables
+            variablesTable = initStudentVariableTable(${student.id});
+
+            for (var i = 0, l = variables.length; i < l; i++) {
+              var rowNumber = variablesTable.addRow([
+                '',
+                variables[i].key,
+                variables[i].name,
+                variables[i].value
+              ]);
+
+              switch (variables[i].type) {
+                case 'NUMBER':
+                  variablesTable.setCellDataType(rowNumber, 3, 'number');
+                break;
+                case 'DATE':
+                  variablesTable.setCellDataType(rowNumber, 3, 'date');
+                break;
+                case 'BOOLEAN':
+                  variablesTable.setCellDataType(rowNumber, 3, 'checkbox');
+                break;
+                default:
+                  variablesTable.setCellDataType(rowNumber, 3, 'text');
+                break;
+              }
+            }
+          }
         </c:forEach>
       }
 

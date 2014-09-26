@@ -1,20 +1,13 @@
 package fi.pyramus.domainmodel.students;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -262,15 +255,6 @@ public class Student extends User implements ArchivableEntity {
   public boolean getHasFinishedStudies() {
     return studyEndDate != null && studyEndDate.before(new Date());
   }
-	
-  @Transient
-  public Map<String, String> getVariablesAsStringMap() {
-    Map<String, String> result = new HashMap<String, String>();
-    for (StudentVariable studentVariable : variables) {
-      result.put(studentVariable.getKey().getVariableKey(), studentVariable.getValue());
-    }
-    return result;
-  } 
 
 	public void setActivityType(StudentActivityType activityType) {
     this.activityType = activityType;
@@ -318,14 +302,6 @@ public class Student extends User implements ArchivableEntity {
   
   public void setLodging(Boolean lodging) {
     this.lodging = lodging;
-  }
-  
-  public void setVariables(List<StudentVariable> variables) {
-    this.variables = variables;
-  }
-
-  public List<StudentVariable> getVariables() {
-    return variables;
   }
 
   @ManyToOne
@@ -403,8 +379,4 @@ public class Student extends User implements ArchivableEntity {
   
   @Basic (fetch = FetchType.LAZY)
   private String studyEndText;
-  
-  @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn (name="student")
-  private List<StudentVariable> variables = new ArrayList<StudentVariable>();
 }
