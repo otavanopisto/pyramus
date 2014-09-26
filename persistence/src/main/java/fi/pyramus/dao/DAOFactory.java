@@ -113,15 +113,12 @@ import fi.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.pyramus.dao.students.StudentGroupUserDAO;
 import fi.pyramus.dao.students.StudentImageDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
-import fi.pyramus.dao.students.StudentVariableDAO;
-import fi.pyramus.dao.students.StudentVariableKeyDAO;
 import fi.pyramus.dao.system.SettingDAO;
 import fi.pyramus.dao.system.SettingKeyDAO;
 import fi.pyramus.dao.users.InternalAuthDAO;
 import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
-import fi.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
 
 public class DAOFactory {
   
@@ -191,14 +188,6 @@ public class DAOFactory {
 
   public StudentStudyEndReasonDAO getStudentStudyEndReasonDAO() {
     return (StudentStudyEndReasonDAO) findByClass(StudentStudyEndReasonDAO.class);
-  }
-  
-  public StudentVariableDAO getStudentVariableDAO() {
-    return (StudentVariableDAO) findByClass(StudentVariableDAO.class);
-  }
-  
-  public StudentVariableKeyDAO getStudentVariableKeyDAO() {
-    return (StudentVariableKeyDAO) findByClass(StudentVariableKeyDAO.class);
   }
 
   public CourseStudentVariableDAO getCourseStudentVariableDAO() {

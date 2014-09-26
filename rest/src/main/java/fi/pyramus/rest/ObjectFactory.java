@@ -59,9 +59,9 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
-import fi.pyramus.domainmodel.students.StudentVariable;
-import fi.pyramus.domainmodel.students.StudentVariableKey;
+import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.rest.controller.SchoolController;
+import fi.pyramus.rest.controller.UserController;
 import fi.pyramus.rest.model.AcademicTerm;
 import fi.pyramus.rest.model.ProjectModuleOptionality;
 import fi.pyramus.rest.model.Sex;
@@ -77,6 +77,9 @@ public class ObjectFactory {
 
   @Inject
   private SchoolController schoolController;
+
+  @Inject
+  private UserController userController;
   
   @PostConstruct
   public void init() {
@@ -314,13 +317,6 @@ public class ObjectFactory {
           }
         }, 
         
-        new Mapper<StudentVariableKey>() {
-          @Override
-          public Object map(StudentVariableKey entity) {
-            return new fi.pyramus.rest.model.VariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), toVariableType(entity.getVariableType()));
-          }
-        }, 
-        
         new Mapper<CourseBaseVariableKey>() {
           @Override
           public Object map(CourseBaseVariableKey entity) {
@@ -448,8 +444,11 @@ public class ObjectFactory {
               }
             }    
             
+            
+            List<UserVariable> entityVariables = userController.listUserVariablesByUser(entity);
+
             Map<String, String> variables = new HashMap<>();
-            for (StudentVariable entityVariable : entity.getVariables()) {
+            for (UserVariable entityVariable : entityVariables) {
               variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
             };
 

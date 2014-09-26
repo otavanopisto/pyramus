@@ -28,7 +28,7 @@ import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
-import fi.pyramus.dao.students.StudentVariableKeyDAO;
+import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.ContactURLType;
 import fi.pyramus.domainmodel.base.Language;
@@ -38,7 +38,7 @@ import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
-import fi.pyramus.domainmodel.students.StudentVariableKey;
+import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.util.StringAttributeComparator;
@@ -52,7 +52,7 @@ public class EditStudentViewController extends PyramusViewController implements 
     StudentEducationalLevelDAO studentEducationalLevelDAO = DAOFactory.getInstance().getStudentEducationalLevelDAO();
     StudentExaminationTypeDAO studentExaminationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     StudentStudyEndReasonDAO studyEndReasonDAO = DAOFactory.getInstance().getStudentStudyEndReasonDAO();
-    StudentVariableKeyDAO variableKeyDAO = DAOFactory.getInstance().getStudentVariableKeyDAO();
+    UserVariableKeyDAO userVariableKeyDAO = DAOFactory.getInstance().getUserVariableKeyDAO();
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     MunicipalityDAO municipalityDAO = DAOFactory.getInstance().getMunicipalityDAO();
     NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
@@ -141,8 +141,8 @@ public class EditStudentViewController extends PyramusViewController implements 
     List<ContactType> contactTypes = contactTypeDAO.listUnarchived();
     Collections.sort(contactTypes, new StringAttributeComparator("getName"));
 
-    List<StudentVariableKey> studentVariableKeys = variableKeyDAO.listUserEditableStudentVariableKeys();
-    Collections.sort(studentVariableKeys, new StringAttributeComparator("getVariableName"));
+    List<UserVariableKey> userVariableKeys = userVariableKeyDAO.listByUserEditable(Boolean.TRUE);
+    Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
     
     pageRequestContext.getRequest().setAttribute("tags", studentTags);
     pageRequestContext.getRequest().setAttribute("abstractStudent", abstractStudent);
@@ -158,7 +158,7 @@ public class EditStudentViewController extends PyramusViewController implements 
     pageRequestContext.getRequest().setAttribute("schools", schools);
     pageRequestContext.getRequest().setAttribute("studyProgrammes", studyProgrammeDAO.listUnarchived());
     pageRequestContext.getRequest().setAttribute("studyEndReasons", studyEndReasonDAO.listByParentReason(null));
-    pageRequestContext.getRequest().setAttribute("variableKeys", studentVariableKeys);
+    pageRequestContext.getRequest().setAttribute("variableKeys", userVariableKeys);
     pageRequestContext.getRequest().setAttribute("studentHasCredits", studentHasCredits);
     
     pageRequestContext.setIncludeJSP("/templates/students/editstudent.jsp");

@@ -49,7 +49,7 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
-import fi.pyramus.domainmodel.students.StudentVariableKey;
+import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.LanguageController;
@@ -63,9 +63,9 @@ import fi.pyramus.rest.controller.StudentEducationalLevelController;
 import fi.pyramus.rest.controller.StudentExaminationTypeController;
 import fi.pyramus.rest.controller.StudentGroupController;
 import fi.pyramus.rest.controller.StudentStudyEndReasonController;
-import fi.pyramus.rest.controller.StudentVariableController;
 import fi.pyramus.rest.controller.StudyProgrammeCategoryController;
 import fi.pyramus.rest.controller.StudyProgrammeController;
+import fi.pyramus.rest.controller.UserController;
 
 @Path("/students")
 @Produces("application/json")
@@ -75,7 +75,7 @@ import fi.pyramus.rest.controller.StudyProgrammeController;
 public class StudentRESTService extends AbstractRESTService {
 
   @Inject
-  private StudentVariableController studentVariableController;
+  private UserController userController;
 
   @Inject
   private CommonController commonController;
@@ -1284,7 +1284,7 @@ public class StudentRESTService extends AbstractRESTService {
         toDate(entity.getStudyTimeEnd()), activityType, examinationType, educationalLevel, entity.getEducation(), nationality,
         municipality, language, school, studyProgramme, entity.getPreviousStudies(), toDate(entity.getStudyStartDate()),
         toDate(entity.getStudyEndDate()), studyEndReason, entity.getStudyEndText(), lodging);
-    studentController.updateStudentVariables(student, entity.getVariables());
+    userController.updateUserVariables(student, entity.getVariables());
     studentController.updateStudentTags(student, entity.getTags());
     studentController.updateStudentAdditionalContactInfo(student, entity.getAdditionalContactInfo());
 
@@ -1381,7 +1381,7 @@ public class StudentRESTService extends AbstractRESTService {
         toDate(entity.getStudyEndDate()), studyEndReason, entity.getStudyEndText(), lodging);
     
     studentController.updateStudentAbstractStudent(student, abstractStudent);
-    studentController.updateStudentVariables(student, entity.getVariables());
+    userController.updateUserVariables(student, entity.getVariables());
     studentController.updateStudentTags(student, entity.getTags());
     studentController.updateStudentAdditionalContactInfo(student, entity.getAdditionalContactInfo());
     
@@ -1562,14 +1562,14 @@ public class StudentRESTService extends AbstractRESTService {
       break;
     }
     
-    StudentVariableKey studentVariableKey = studentVariableController.createStudentVariableKey(entity.getKey(), entity.getName(), variableType, entity.getUserEditable());
-    return Response.ok(objectFactory.createModel(studentVariableKey)).build();
+    UserVariableKey userVariableKey = userController.createUserVariableKey(entity.getKey(), entity.getName(), variableType, entity.getUserEditable());
+    return Response.ok(objectFactory.createModel(userVariableKey)).build();
   }
   
   @Path("/variables")
   @GET
   public Response listVariables() {
-    List<StudentVariableKey> variableKeys = studentVariableController.listStudentVariableKeys();
+    List<UserVariableKey> variableKeys = userController.listUserVariableKeys();
     if (variableKeys.isEmpty()) {
       return Response.noContent().build();
     }
@@ -1580,7 +1580,7 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/variables/{KEY}")
   @GET
   public Response findVariable(@PathParam ("KEY") String key) {
-    StudentVariableKey studentVariableKey = studentVariableController.findStudentVariableKeyByVariableKey(key);
+    UserVariableKey studentVariableKey = userController.findUserVariableKeyByVariableKey(key);
     if (studentVariableKey == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -1599,8 +1599,8 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    StudentVariableKey studentVariableKey = studentVariableController.findStudentVariableKeyByVariableKey(key);
-    if (studentVariableKey == null) {
+    UserVariableKey userVariableKey = userController.findUserVariableKeyByVariableKey(key);
+    if (userVariableKey == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
@@ -1620,20 +1620,20 @@ public class StudentRESTService extends AbstractRESTService {
       break;
     }
     
-    studentVariableController.updateStudentVariableKey(studentVariableKey, entity.getName(), variableType, entity.getUserEditable());
+    userController.updateUserVariableKey(userVariableKey, entity.getName(), variableType, entity.getUserEditable());
     
-    return Response.ok(objectFactory.createModel(studentVariableKey)).build();
+    return Response.ok(objectFactory.createModel(userVariableKey)).build();
   }
   
   @Path("/variables/{KEY}")
   @DELETE
   public Response deleteVariable(@PathParam ("KEY") String key) {
-    StudentVariableKey studentVariableKey = studentVariableController.findStudentVariableKeyByVariableKey(key);
-    if (studentVariableKey == null) {
+    UserVariableKey userVariableKey = userController.findUserVariableKeyByVariableKey(key);
+    if (userVariableKey == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    studentVariableController.deleteStudentVariableKey(studentVariableKey);
+    userController.deleteUserVariableKey(userVariableKey);
     
     return Response.noContent().build();
   }

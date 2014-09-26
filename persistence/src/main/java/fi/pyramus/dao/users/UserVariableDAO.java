@@ -1,5 +1,7 @@
 package fi.pyramus.dao.users;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -19,18 +21,13 @@ import fi.pyramus.domainmodel.users.UserVariable_;
 @Stateless
 public class UserVariableDAO extends PyramusEntityDAO<UserVariable> {
 
-  private UserVariable create(User user, UserVariableKey key, String value) {
-    EntityManager entityManager = getEntityManager();
-
+  public UserVariable create(User user, UserVariableKey key, String value) {
     UserVariable userVariable = new UserVariable();
     userVariable.setUser(user);
     userVariable.setKey(key);
     userVariable.setValue(value);
-    entityManager.persist(userVariable);
     
-    entityManager.persist(user);
-    
-    return userVariable;
+    return persist(userVariable);
   }
   
   public UserVariable findByUserAndVariableKey(User user, UserVariableKey key) {
@@ -62,6 +59,20 @@ public class UserVariableDAO extends PyramusEntityDAO<UserVariable> {
     }
   }
 
+  public List<UserVariable> listByUser(User user) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<UserVariable> criteria = criteriaBuilder.createQuery(UserVariable.class);
+    Root<UserVariable> root = criteria.from(UserVariable.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(UserVariable_.user), user)
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   public void setUserVariable(User user, String key, String value) {
     UserVariableKeyDAO variableKeyDAO = DAOFactory.getInstance().getUserVariableKeyDAO();
     
@@ -87,10 +98,9 @@ public class UserVariableDAO extends PyramusEntityDAO<UserVariable> {
     }
   }
   
-  private void updateValue(UserVariable userVariable, String value) {
-    EntityManager entityManager = getEntityManager();
+  public UserVariable updateValue(UserVariable userVariable, String value) {
     userVariable.setValue(value);
-    entityManager.persist(userVariable);
+    return persist(userVariable);
   }
   
   @Override
