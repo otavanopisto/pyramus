@@ -19,13 +19,18 @@ insert into
 values  
   (1, 10, false, 'test grade #1', 'grade for testing #1', false, 'qualification #1', 1, 1, 1),
   (2, 20, false, 'test grade #2', 'grade for testing #2', true, 'qualification #2', 1, 2, 1);
+
+insert into 
+  InternalAuth (password, username, id, version) 
+values 
+('b9a58c1892016f48e330ce62010609c4', 'devadmin', 1, 0);
   
 insert into
   User (id, authProvider, externalId, firstName, lastName, role, contactInfo, version, title)
 values 
   (1, 'TEST', 'TEST-GUEST-1', 'Test Guest', 'User #1', 'GUEST', null, 1, null),
-  (2, 'TEST', 'TEST-GUEST-2', 'Test Guest', 'User #2', 'GUEST', null, 1, null);
-  
+  (2, 'TEST', 'TEST-GUEST-2', 'Test Guest', 'User #2', 'GUEST', null, 1, null), 
+  (3, 'internal', '3', 'Dev' , 'Aava', 'GUEST', null, 1, null);
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
 values 
@@ -76,7 +81,7 @@ insert into
   EducationalTimeUnit (id, archived, baseUnits, name, version)
 values 
   (1, false, 1, 'Hour', 1),
-  (2, false, 168, 'Week', 1);
+  (2, false, 40, 'Week', 1);
 
 insert into
   EducationalLength (id, units, unit, version)
@@ -255,14 +260,14 @@ values
 insert into 
   Municipality (id, code, name, version, archived)
 values 
-  (1, 'TST1', 'Municipality #1', 1, false),
-  (2, 'TST2', 'Municipality #2', 1, false);  
+  (1, '1', 'Municipality #1', 1, false),
+  (2, '2', 'Municipality #2', 1, false);  
 
 insert into 
   Nationality (id, code, name, version, archived)
 values 
-  (1, 'TST1', 'Nationality #1', 1, false),
-  (2, 'TST2', 'Nationality #2', 1, false);  
+  (1, '1', 'Nationality #1', 1, false),
+  (2, '2', 'Nationality #2', 1, false);  
 
 insert into 
   StudentEducationalLevel (id, name, version, archived)
@@ -332,7 +337,8 @@ values
   (1, 'Tester #1', PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test text #1', 'LETTER', 1, 1, false),
   (2, 'Tester #2', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'Test text #2', 'PHONE', 1, 1, false);
 
-  
+
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'InternalAuth', max(id) + 1 from InternalAuth;  
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
