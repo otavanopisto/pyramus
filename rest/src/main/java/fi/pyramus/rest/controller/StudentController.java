@@ -3,7 +3,6 @@ package fi.pyramus.rest.controller;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -17,8 +16,6 @@ import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.dao.students.StudentVariableDAO;
-import fi.pyramus.dao.students.StudentVariableKeyDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.ContactURL;
@@ -37,8 +34,6 @@ import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
-import fi.pyramus.domainmodel.students.StudentVariable;
-import fi.pyramus.domainmodel.students.StudentVariableKey;
 import fi.pyramus.domainmodel.users.User;
 
 @Dependent
@@ -50,12 +45,6 @@ public class StudentController {
 
   @Inject
   private TagDAO tagDAO;
-
-  @Inject
-  private StudentVariableDAO studentVariableDAO;
-
-  @Inject
-  private StudentVariableKeyDAO studentVariableKeyDAO;
 
   @Inject
   private EmailDAO emailDAO;
@@ -181,68 +170,6 @@ public class StudentController {
     }
     
     return student;
-  }
-
-  public synchronized Student updateStudentVariables(Student student, Map<String, String> variables) {
-    Set<String> newKeys = new HashSet<>(variables.keySet());
-    Set<String> oldKeys = new HashSet<>();
-    Set<String> updateKeys = new HashSet<>();
-    
-    for (StudentVariable variable : student.getVariables()) {
-      oldKeys.add(variable.getKey().getVariableKey());
-    }
-
-    for (String oldKey : oldKeys) {
-      if (!newKeys.contains(oldKey)) {
-        StudentVariableKey key = findStudentVariableKeyByVariableKey(oldKey);
-        StudentVariable studentVariable = findStudentVariableByStudentAndKey(student, key);
-        deleteStudentVariable(studentVariable);
-      } else {
-        updateKeys.add(oldKey);
-      }
-      
-      newKeys.remove(oldKey);
-    }
-    
-    for (String newKey : newKeys) {
-      String value = variables.get(newKey);
-      StudentVariableKey key = findStudentVariableKeyByVariableKey(newKey);
-      createStudentVariable(student, key, value);
-    }
-    
-    for (String updateKey : updateKeys) {
-      String value = variables.get(updateKey);
-      StudentVariableKey key = findStudentVariableKeyByVariableKey(updateKey);
-      StudentVariable studentVariable = findStudentVariableByStudentAndKey(student, key);
-      updateStudentVariable(studentVariable, value);
-    }
-    
-    return student;
-  }
-  
-  public StudentVariable createStudentVariable(Student student, StudentVariableKey key, String value) {
-    return studentVariableDAO.create(student, key, value);
-  }
-
-  public StudentVariable findStudentVariableById(Long id) {
-    StudentVariable studentVariable = studentVariableDAO.findById(id);
-    return studentVariable;
-  }
-
-  public StudentVariable findStudentVariableByStudentAndKey(Student student, StudentVariableKey key) {
-    return studentVariableDAO.findByStudentAndKey(student, key);
-  }
-
-  public void deleteStudentVariable(StudentVariable variable) {
-    studentVariableDAO.delete(variable);
-  }
-
-  public StudentVariable updateStudentVariable(StudentVariable studentVariable, String value) {
-    return studentVariableDAO.update(studentVariable, value);
-  }
-  
-  public StudentVariableKey findStudentVariableKeyByVariableKey(String variableKey) {
-    return studentVariableKeyDAO.findByKey(variableKey);
   }
 
   /* Email */

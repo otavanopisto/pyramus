@@ -12,7 +12,6 @@ import fi.pyramus.dao.PyramusEntityDAO;
 import fi.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode_;
-import fi.pyramus.domainmodel.clientapplications.ClientApplication_;
 import fi.pyramus.domainmodel.users.User;
 
 @Stateless
@@ -40,6 +39,20 @@ public class ClientApplicationAuthorizationCodeDAO extends PyramusEntityDAO<Clie
     criteria.select(root);
     criteria.where(
             criteriaBuilder.equal(root.get(ClientApplicationAuthorizationCode_.user), user)
+        );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
+  public List<ClientApplicationAuthorizationCode> listByClientApplication(ClientApplication clientApplication){
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ClientApplicationAuthorizationCode> criteria = criteriaBuilder.createQuery(ClientApplicationAuthorizationCode.class);
+    Root<ClientApplicationAuthorizationCode> root = criteria.from(ClientApplicationAuthorizationCode.class);
+    criteria.select(root);
+    criteria.where(
+            criteriaBuilder.equal(root.get(ClientApplicationAuthorizationCode_.clientApplication), clientApplication)
         );
     
     return entityManager.createQuery(criteria).getResultList();

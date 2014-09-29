@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 
@@ -62,7 +63,6 @@ public class CourseDescription {
   @JoinColumn(name="category")
   private CourseDescriptionCategory category;
   
-  @Basic (fetch = FetchType.LAZY)
-  @Column (length=2147483647)
+  @Lob
   private String description;
 }

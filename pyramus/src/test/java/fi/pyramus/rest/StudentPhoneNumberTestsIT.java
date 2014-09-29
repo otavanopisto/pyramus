@@ -13,6 +13,8 @@ import fi.pyramus.rest.model.PhoneNumber;
 
 public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
 
+  private final static long TEST_STUDENT_ID = 3l;
+
   @Test
   public void testCreateStudentPhoneNumber() {
     PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
@@ -20,9 +22,10 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(phoneNumber)
-      .post("/students/students/{ID}/phoneNumbers", 1l);
+      .post("/students/students/{ID}/phoneNumbers", TEST_STUDENT_ID);
 
     response.then()
+      .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("number", is(phoneNumber.getNumber()))
       .body("contactTypeId", is(phoneNumber.getContactTypeId().intValue()))
@@ -31,7 +34,7 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
     int id = response.body().jsonPath().getInt("id");
     
     given().headers(getAuthHeaders())
-      .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", 1l, id)
+      .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(204);
   }
@@ -39,7 +42,7 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testListStudentPhoneNumbers() {
     given().headers(getAuthHeaders())
-      .get("/students/students/{ID}/phoneNumbers", 1l)
+      .get("/students/students/{ID}/phoneNumbers", TEST_STUDENT_ID)
       .then()
       .statusCode(200)
       .body("id.size()", is(1))
@@ -52,7 +55,7 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testFindStudentPhoneNumber() {
     given().headers(getAuthHeaders())
-      .get("/students/students/{STUDENTID}/phoneNumbers/{ID}", 1l, 3l)
+      .get("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, 3l)
       .then()
       .statusCode(200)
       .body("id", is(3) )
@@ -68,9 +71,10 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(phoneNumber)
-      .post("/students/students/{STUDENTID}/phoneNumbers", 1l);
+      .post("/students/students/{STUDENTID}/phoneNumbers", TEST_STUDENT_ID);
 
     response.then()
+      .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("number", is(phoneNumber.getNumber()))
       .body("contactTypeId", is(phoneNumber.getContactTypeId().intValue()))
@@ -79,16 +83,16 @@ public class StudentPhoneNumberTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/phoneNumbers/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(200);
     
     given().headers(getAuthHeaders())
-      .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", 1l, id)
+      .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(204);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/phoneNumbers/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(404);
   }

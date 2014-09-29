@@ -13,6 +13,8 @@ import fi.pyramus.rest.model.StudentContactLogEntry;
 import fi.pyramus.rest.model.StudentContactLogEntryType;
 
 public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
+  
+  private final static long TEST_STUDENT_ID = 3l;
 
   @Test
   public void testCreateStudentContactLogEntry() {
@@ -20,7 +22,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentContactLogEntry)
-      .post("/students/students/{ID}/contactLogEntries", 1l);
+      .post("/students/students/{ID}/contactLogEntries", TEST_STUDENT_ID);
     
     response.then()
       .statusCode(200)
@@ -34,7 +36,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
     int id = response.body().jsonPath().getInt("id");
     
     given().headers(getAuthHeaders())
-      .delete("/students/students/{STUDENTID}/contactLogEntries/{ID}?permanent=true", 1l, id)
+      .delete("/students/students/{STUDENTID}/contactLogEntries/{ID}?permanent=true", TEST_STUDENT_ID, id)
       .then()
       .statusCode(204);
   }
@@ -42,7 +44,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testListStudentContactLogEntries() {
     given().headers(getAuthHeaders())
-      .get("/students/students/{ID}/contactLogEntries", 1l)
+      .get("/students/students/{ID}/contactLogEntries", TEST_STUDENT_ID)
       .then()
       .statusCode(200)
       .body("id.size()", is(2))
@@ -63,7 +65,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testFindStudentContactLogEntry() {
     given().headers(getAuthHeaders())
-      .get("/students/students/{STUDENTID}/contactLogEntries/{ID}", 1l, 1l)
+      .get("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, 1l)
       .then()
       .statusCode(200)
       .body("id", is(1) )
@@ -80,7 +82,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentContactLogEntry)
-      .post("/students/students/{ID}/contactLogEntries", 1l);
+      .post("/students/students/{ID}/contactLogEntries", TEST_STUDENT_ID);
     
     response.then()
       .statusCode(200)
@@ -98,7 +100,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
       given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateContactLogEntry)
-        .put("/students/students/{STUDENTID}/contactLogEntries/{ID}", 1, id)
+        .put("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, id)
         .then()
         .statusCode(200)
         .body("id", is(updateContactLogEntry.getId().intValue() ))
@@ -110,7 +112,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
 
     } finally {
       given().headers(getAuthHeaders())
-        .delete("/students/students/{STUDENTID}/contactLogEntries/{ID}?permanent=true", 1l, id)
+        .delete("/students/students/{STUDENTID}/contactLogEntries/{ID}?permanent=true", TEST_STUDENT_ID, id)
         .then()
         .statusCode(204);
     }
@@ -122,7 +124,7 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(studentContactLogEntry)
-      .post("/students/students/{ID}/contactLogEntries", 1l);
+      .post("/students/students/{ID}/contactLogEntries", TEST_STUDENT_ID);
     
     response.then()
       .statusCode(200)
@@ -136,25 +138,25 @@ public class StudentContactLogEntryTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactLogEntries/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(200);
     
     given().headers(getAuthHeaders())
-      .delete("/students/students/{STUDENTID}/contactLogEntries/{ID}", 1l, id)
+      .delete("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(204);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactLogEntries/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(404);
     
     given().headers(getAuthHeaders())
-      .delete("/students/students/{STUDENTID}/contactLogEntries/{ID}?permanent=true", 1l, id)
+      .delete("/students/students/{STUDENTID}/contactLogEntries/{ID}?permanent=true", TEST_STUDENT_ID, id)
       .then()
       .statusCode(204);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactLogEntries/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(404);
   }

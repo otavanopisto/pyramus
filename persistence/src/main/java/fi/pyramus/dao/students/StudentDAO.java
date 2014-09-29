@@ -13,6 +13,7 @@ import javax.persistence.criteria.Root;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.PyramusEntityDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
+import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.ArchivableEntity;
 import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.ContactInfo;
@@ -29,11 +30,12 @@ import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
-import fi.pyramus.domainmodel.students.StudentVariable;
-import fi.pyramus.domainmodel.students.StudentVariableKey;
-import fi.pyramus.domainmodel.students.StudentVariable_;
 import fi.pyramus.domainmodel.students.Student_;
+import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.UserVariable;
+import fi.pyramus.domainmodel.users.UserVariableKey;
+import fi.pyramus.domainmodel.users.UserVariable_;
 
 @Stateless
 public class StudentDAO extends PyramusEntityDAO<Student> {
@@ -122,6 +124,9 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setStudyEndText(studyEndText);
     student.setLodging(lodging);
     student.setContactInfo(contactInfo);
+    student.setAuthProvider("internal");
+    student.setExternalId("-1");
+    student.setRole(Role.STUDENT);
 
     entityManager.persist(student);
 
@@ -309,25 +314,26 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public List<Student> listByStudentVariable(String key, String value) {
-    StudentVariableKeyDAO variableKeyDAO = DAOFactory.getInstance().getStudentVariableKeyDAO();
-    StudentVariableKey studentVariableKey = variableKeyDAO.findByKey(key);
+  public List<Student> listByUserVariable(String key, String value) {
+    UserVariableKeyDAO variableKeyDAO = DAOFactory.getInstance().getUserVariableKeyDAO();
+    UserVariableKey UserVariableKey = variableKeyDAO.findByVariableKey(key);
     
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
-    Root<StudentVariable> variable = criteria.from(StudentVariable.class);
+    Root<UserVariable> variable = criteria.from(UserVariable.class);
     Root<Student> student = criteria.from(Student.class);
 
     criteria.select(student);
     criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(student, variable.get(StudentVariable_.student)),
-            criteriaBuilder.equal(student.get(Student_.archived), Boolean.FALSE),
-            criteriaBuilder.equal(variable.get(StudentVariable_.key), studentVariableKey),
-            criteriaBuilder.equal(variable.get(StudentVariable_.value), value)
-        ));
+      criteriaBuilder.and(
+          criteriaBuilder.equal(student, variable.get(UserVariable_.user)),
+          criteriaBuilder.equal(student.get(Student_.archived), Boolean.FALSE),
+          criteriaBuilder.equal(variable.get(UserVariable_.key), UserVariableKey),
+          criteriaBuilder.equal(variable.get(UserVariable_.value), value)
+      )
+    );
     
     return entityManager.createQuery(criteria).getResultList();
   }

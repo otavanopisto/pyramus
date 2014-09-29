@@ -17,7 +17,7 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(204);
     
-    fi.pyramus.rest.model.StudentGroupStudent entity = new fi.pyramus.rest.model.StudentGroupStudent(null, 1l);
+    fi.pyramus.rest.model.StudentGroupStudent entity = new fi.pyramus.rest.model.StudentGroupStudent(null, 3l);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -25,6 +25,7 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
       .post("/students/studentGroups/{ID}/students", 2l);
 
     response.then()
+      .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("studentId", is(entity.getStudentId().intValue()));
       
@@ -36,7 +37,7 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
         .statusCode(200)
         .body("id.size()", is(1))
         .body("id[0]", is(id.intValue()) )
-        .body("studentId[0]", is(1));
+        .body("studentId[0]", is(3));
     } finally {
       given().headers(getAuthHeaders())
         .delete("/students/studentGroups/{GROUPID}/students/{ID}", 2l, id)
@@ -53,9 +54,9 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id.size()", is(2))
       .body("id[0]", is(1) )
-      .body("studentId[0]", is(1))
+      .body("studentId[0]", is(3))
       .body("id[1]", is(2) )
-      .body("studentId[1]", is(2));
+      .body("studentId[1]", is(4));
   }
   
   @Test
@@ -65,12 +66,12 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(200)
       .body("id", is(1) )
-      .body("studentId", is(1));
+      .body("studentId", is(3));
   }
   
   @Test
   public void testDeleteStudentGroupStudent() {
-    fi.pyramus.rest.model.StudentGroupStudent entity = new fi.pyramus.rest.model.StudentGroupStudent(null, 1l);
+    fi.pyramus.rest.model.StudentGroupStudent entity = new fi.pyramus.rest.model.StudentGroupStudent(null, 3l);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -78,6 +79,7 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
       .post("/students/studentGroups/{ID}/students", 2l);
 
     response.then()
+      .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("studentId", is(entity.getStudentId().intValue()));
       

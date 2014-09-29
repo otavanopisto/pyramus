@@ -42,28 +42,28 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
   public void filter(ContainerRequestContext requestContext) throws IOException {
     ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker");
     Method method = methodInvoker.getMethod();
-
+    if(method == null){
+      requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build());
+    }
     if (!method.isAnnotationPresent(Unsecure.class)) {
-
       try {
         OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
         String accessToken = oauthRequest.getAccessToken();
 
         ClientApplicationAccessToken clientApplicationAccessToken = oauthController.findByAccessToken(accessToken);
         if (clientApplicationAccessToken == null) {
-          requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.UNAUTHORIZED).build());
+          requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
         } else {
           Long currentTime = System.currentTimeMillis() / 1000L;
           if (currentTime > clientApplicationAccessToken.getExpires()) {
-            requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.UNAUTHORIZED).build());
+            requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
           }
         }
 
-      } catch (OAuthProblemException | OAuthSystemException ex) {
-        logger.severe("############################################");
-        logger.severe(ex.getStackTrace().toString());
-        logger.severe("############################################");
-        requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build());
+      } catch (OAuthProblemException e) {
+        requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST).entity(e.getMessage()).build());
+      } catch (OAuthSystemException e) {
+        requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
       }
 
     }

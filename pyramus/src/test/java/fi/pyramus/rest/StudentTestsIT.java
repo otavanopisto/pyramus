@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +19,8 @@ import fi.pyramus.rest.model.Student;
 
 public class StudentTestsIT extends AbstractRESTServiceTest {
 
+  private final static long TEST_STUDENT_ID = 3l;
+  
   @Test
   public void testCreateStudent() {
     Map<String, String> variables = new HashMap<String, String>();
@@ -102,7 +103,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(200)
       .body("id.size()", is(2))
-      .body("id[0]", is(1) )
+      .body("id[0]", is(3) )
       .body("abstractStudentId[0]", is(1))
       .body("firstName[0]", is("Tanya"))
       .body("lastName[0]", is("Test #1"))
@@ -128,7 +129,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .body("tags[0].size", is(0))
       .body("archived[0]", is(Boolean.FALSE))
 
-      .body("id[1]", is(2) )
+      .body("id[1]", is(4) )
       .body("abstractStudentId[1]", is(2))
       .body("firstName[1]", is("David"))
       .body("lastName[1]", is("Test #2"))
@@ -158,10 +159,10 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testFindStudent() {
     given().headers(getAuthHeaders())
-      .get("/students/students/{ID}", 1)
+      .get("/students/students/{ID}", TEST_STUDENT_ID)
       .then()
       .statusCode(200)
-      .body("id", is(1) )
+      .body("id", is((int) TEST_STUDENT_ID) )
       .body("abstractStudentId", is(1))
       .body("firstName", is("Tanya"))
       .body("lastName", is("Test #1"))
@@ -368,8 +369,12 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .body(student)
       .post("/students/students");
     
+    response
+      .then()
+      .statusCode(200)
+      .body("id", not(is((Long) null)));
+     
     Long id = new Long(response.body().jsonPath().getInt("id"));
-    assertNotNull(id);
     
     given().headers(getAuthHeaders()).get("/students/students/{ID}", id)
       .then()

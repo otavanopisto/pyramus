@@ -76,7 +76,7 @@ public class UserVariableKey {
   private Boolean userEditable = Boolean.FALSE;
 
   @NotNull
-  @Column (nullable = false)
+  @Column (nullable = false, unique = true)
   @NotEmpty
   private String variableKey;
   

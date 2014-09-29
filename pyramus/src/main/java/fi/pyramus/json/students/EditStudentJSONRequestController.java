@@ -29,7 +29,7 @@ import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
-import fi.pyramus.dao.students.StudentVariableDAO;
+import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Email;
@@ -59,7 +59,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     StudentExaminationTypeDAO examinationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     StudentEducationalLevelDAO educationalLevelDAO = DAOFactory.getInstance().getStudentEducationalLevelDAO();
     StudentStudyEndReasonDAO studyEndReasonDAO = DAOFactory.getInstance().getStudentStudyEndReasonDAO();
-    StudentVariableDAO studentVariableDAO = DAOFactory.getInstance().getStudentVariableDAO();
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     LanguageDAO languageDAO = DAOFactory.getInstance().getLanguageDAO();
     MunicipalityDAO municipalityDAO = DAOFactory.getInstance().getMunicipalityDAO();
     NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
@@ -155,7 +155,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
   	      String colPrefix = "variablesTable." + student.getId() + "." + i;
   	      String variableKey = requestContext.getString(colPrefix + ".key");
   	      String variableValue = requestContext.getString(colPrefix + ".value");
-  	      studentVariableDAO.setStudentVariable(student, variableKey, variableValue);
+  	      userVariableDAO.setUserVariable(student, variableKey, variableValue);
   	    }
 	    }
 	    
