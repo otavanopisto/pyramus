@@ -13,6 +13,8 @@ import fi.pyramus.rest.model.Email;
 
 public class StudentEmailTestsIT extends AbstractRESTServiceTest {
 
+  private final static long TEST_STUDENT_ID = 3l;
+
   @Test
   public void testCreateStudentEmail() {
     Email email = new Email(null, 1l, Boolean.FALSE, "bogus@norealmail.org");
@@ -20,9 +22,10 @@ public class StudentEmailTestsIT extends AbstractRESTServiceTest {
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(email)
-      .post("/students/students/{ID}/emails", 1l);
+      .post("/students/students/{ID}/emails", TEST_STUDENT_ID);
 
     response.then()
+      .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("address", is(email.getAddress()))
       .body("contactTypeId", is(email.getContactTypeId().intValue()))
@@ -31,7 +34,7 @@ public class StudentEmailTestsIT extends AbstractRESTServiceTest {
     int id = response.body().jsonPath().getInt("id");
     
     given().headers(getAuthHeaders())
-      .delete("/students/students/{STUDENTID}/emails/{ID}", 1l, id)
+      .delete("/students/students/{STUDENTID}/emails/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(204);
   }
@@ -39,7 +42,7 @@ public class StudentEmailTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testListStudentEmails() {
     given().headers(getAuthHeaders())
-      .get("/students/students/{ID}/emails", 1l)
+      .get("/students/students/{ID}/emails", TEST_STUDENT_ID)
       .then()
       .statusCode(200)
       .body("id.size()", is(1))
@@ -52,7 +55,7 @@ public class StudentEmailTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testFindStudentEmail() {
     given().headers(getAuthHeaders())
-      .get("/students/students/{STUDENTID}/emails/{ID}", 1l, 3l)
+      .get("/students/students/{STUDENTID}/emails/{ID}", TEST_STUDENT_ID, 3l)
       .then()
       .statusCode(200)
       .body("id", is(3) )
@@ -68,9 +71,10 @@ public class StudentEmailTestsIT extends AbstractRESTServiceTest {
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(email)
-      .post("/students/students/{STUDENTID}/emails", 1l);
+      .post("/students/students/{STUDENTID}/emails", TEST_STUDENT_ID);
 
     response.then()
+      .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("address", is(email.getAddress()))
       .body("contactTypeId", is(email.getContactTypeId().intValue()))
@@ -79,16 +83,16 @@ public class StudentEmailTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/emails/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/emails/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(200);
     
     given().headers(getAuthHeaders())
-      .delete("/students/students/{STUDENTID}/emails/{ID}", 1l, id)
+      .delete("/students/students/{STUDENTID}/emails/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(204);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/emails/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/emails/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(404);
   }

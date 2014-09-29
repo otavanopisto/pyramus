@@ -154,7 +154,7 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(200)
       .body("id.size()", is(1))
-      .body("id[0]", is(1) )
+      .body("id[0]", is(3) )
       .body("abstractStudentId[0]", is(1))
       .body("firstName[0]", is("Tanya"))
       .body("lastName[0]", is("Test #1"))
