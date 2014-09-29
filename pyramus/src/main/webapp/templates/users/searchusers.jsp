@@ -130,6 +130,7 @@
               <select name="role">
                 <option></option>
                 <option value="GUEST"><fmt:message key="users.searchUsers.roleGuestTitle"/></option>
+                <option value="STUDENT"><fmt:message key="users.searchUsers.roleStudentTitle"/></option>
                 <option value="USER"><fmt:message key="users.searchUsers.roleUserTitle"/></option>
                 <option value="MANAGER"><fmt:message key="users.searchUsers.roleManagerTitle"/></option>
                 <option value="ADMINISTRATOR"><fmt:message key="users.searchUsers.roleAdministratorTitle"/></option>
