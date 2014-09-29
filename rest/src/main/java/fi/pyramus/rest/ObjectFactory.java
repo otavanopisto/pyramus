@@ -60,6 +60,7 @@ import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.domainmodel.users.UserVariable;
+import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.UserController;
 import fi.pyramus.rest.model.AcademicTerm;
@@ -529,6 +530,13 @@ public class ObjectFactory {
           @Override
           public Object map(ContactURLType entity) {
             return new fi.pyramus.rest.model.ContactURLType(entity.getId(), entity.getName(), entity.getArchived());
+          }
+        },
+        
+        new Mapper<UserVariableKey>() {
+          @Override
+          public Object map(UserVariableKey entity) {
+            return new fi.pyramus.rest.model.VariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), toVariableType(entity.getVariableType()));
           }
         }
   
