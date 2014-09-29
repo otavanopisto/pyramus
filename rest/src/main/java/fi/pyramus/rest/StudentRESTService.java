@@ -49,6 +49,7 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
@@ -1397,6 +1398,11 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     if (permanent) {
+      List<UserVariable> userVariables = userController.listUserVariablesByUser(student);
+      for (UserVariable userVariable : userVariables) {
+        userController.deleteUserVariable(userVariable);
+      }
+      
       studentController.deleteStudent(student);
     } else {
       studentController.archiveStudent(student, getLoggedUser());
