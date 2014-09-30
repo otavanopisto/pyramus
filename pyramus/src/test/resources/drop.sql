@@ -118,11 +118,17 @@
     alter table CourseEducationType 
         drop constraint FK_70hkwva11c9btj1r8xdflt6y4 if exists;
 
-    alter table CourseStudent 
-        drop constraint FK_990n0w0581m3h4n0pvxyo09gs if exists;
+    alter table CourseStaffMember 
+        drop constraint FK_41u4buky3x28ak57jifsguwiv if exists;
+
+    alter table CourseStaffMember 
+        drop constraint FK_asks7l7o8ak2icj8u894pbpif if exists;
+
+    alter table CourseStaffMember 
+        drop constraint FK_cv1oyw61ycq8apx40yp47efri if exists;
 
     alter table CourseStudent 
-        drop constraint FK_tdsd2ykmt3gl8al74vhvetp5p if exists;
+        drop constraint FK_990n0w0581m3h4n0pvxyo09gs if exists;
 
     alter table CourseStudent 
         drop constraint FK_joq4rus28ls505so74el2sne2 if exists;
@@ -133,6 +139,9 @@
     alter table CourseStudent 
         drop constraint FK_6syti63mb3rf5ohusl6hhxm1l if exists;
 
+    alter table CourseStudent 
+        drop constraint FK_35hybm4naenn8becfhirs1jv0 if exists;
+
     alter table CourseStudentVariable 
         drop constraint FK_fdew52if7kx4x8t433jtwjbw8 if exists;
 
@@ -141,12 +150,6 @@
 
     alter table CourseUser 
         drop constraint FK_8m1wdnkvu7f4w38jxpb0pf7n6 if exists;
-
-    alter table CourseUser 
-        drop constraint FK_d71yo025tyvtm7sm6c8b33c7k if exists;
-
-    alter table CourseUser 
-        drop constraint FK_gesju89o5caq9d5ics49nkmda if exists;
 
     alter table Credit 
         drop constraint FK_qeujhkfa3cpfwvb48646agdch if exists;
@@ -589,6 +592,10 @@
 
     drop table CourseParticipationType if exists;
 
+    drop table CourseStaffMember if exists;
+
+    drop table CourseStaffMemberRole if exists;
+
     drop table CourseState if exists;
 
     drop table CourseStudent if exists;
@@ -598,8 +605,6 @@
     drop table CourseStudentVariableKey if exists;
 
     drop table CourseUser if exists;
-
-    drop table CourseUserRole if exists;
 
     drop table Credit if exists;
 
