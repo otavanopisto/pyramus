@@ -10,8 +10,19 @@ public class CourseUserRoleEntityFactory implements EntityFactory<CourseUserRole
     if (domainObject == null) {
       return null;
     }
+    
+    // Temporary fix that maps role enum to old role system
+    
     CourseUserRole courseUserRole = (CourseUserRole) domainObject;
-    return new CourseUserRoleEntity(courseUserRole.getId(), courseUserRole.getName());
+    switch (courseUserRole) {
+      case TEACHER:
+        return new CourseUserRoleEntity(1l, "Opettaja");   
+      case TUTOR:
+        return new CourseUserRoleEntity(2l, "Tutor");   
+      default:
+        return new CourseUserRoleEntity(3l, "Vastuuhenkilö");   
+    }
+    
   }
 
 }
