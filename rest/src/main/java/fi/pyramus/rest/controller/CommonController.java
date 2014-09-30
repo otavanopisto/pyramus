@@ -7,6 +7,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.pyramus.dao.base.AddressDAO;
+import fi.pyramus.dao.base.BillingDetailsDAO;
 import fi.pyramus.dao.base.ContactTypeDAO;
 import fi.pyramus.dao.base.ContactURLDAO;
 import fi.pyramus.dao.base.ContactURLTypeDAO;
@@ -20,6 +21,7 @@ import fi.pyramus.dao.base.SubjectDAO;
 import fi.pyramus.dao.grading.GradeDAO;
 import fi.pyramus.dao.grading.GradingScaleDAO;
 import fi.pyramus.domainmodel.base.Address;
+import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.ContactInfo;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.ContactURL;
@@ -79,6 +81,9 @@ public class CommonController {
 
   @Inject
   private ContactTypeDAO contactTypeDAO;
+
+  @Inject
+  private BillingDetailsDAO billingDetailsDAO;
   
   /* EducationType */
   
@@ -449,5 +454,11 @@ public class CommonController {
 
   public void deleteContactURL(ContactURL contactURL) {
     contactURLDAO.delete(contactURL);
+  }
+  
+  /* BillingDetails */
+
+  public BillingDetails findBillingDetailsById(Long billingDetailsId) {
+    return billingDetailsDAO.findById(billingDetailsId);
   }
 }

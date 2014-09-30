@@ -8,7 +8,7 @@ public class CourseStudent {
     super();
   }
 
-  public CourseStudent(Long id, Long courseId, Long studentId, DateTime enrolmentTime, Boolean archived, Long participationTypeId, Long courseEnrolmentTypeId,
+  public CourseStudent(Long id, Long courseId, Long studentId, DateTime enrolmentTime, Boolean archived, Long participationTypeId, Long enrolmentTypeId,
       Boolean lodging, CourseOptionality optionality, Long billingDetailsId) {
     super();
     this.id = id;
@@ -17,7 +17,7 @@ public class CourseStudent {
     this.enrolmentTime = enrolmentTime;
     this.archived = archived;
     this.participationTypeId = participationTypeId;
-    this.courseEnrolmentTypeId = courseEnrolmentTypeId;
+    this.enrolmentTypeId = enrolmentTypeId;
     this.lodging = lodging;
     this.optionality = optionality;
     this.billingDetailsId = billingDetailsId;
@@ -70,13 +70,13 @@ public class CourseStudent {
   public void setParticipationTypeId(Long participationTypeId) {
     this.participationTypeId = participationTypeId;
   }
-
-  public Long getCourseEnrolmentTypeId() {
-    return courseEnrolmentTypeId;
+  
+  public Long getEnrolmentTypeId() {
+    return enrolmentTypeId;
   }
-
-  public void setCourseEnrolmentTypeId(Long courseEnrolmentTypeId) {
-    this.courseEnrolmentTypeId = courseEnrolmentTypeId;
+  
+  public void setEnrolmentTypeId(Long enrolmentTypeId) {
+    this.enrolmentTypeId = enrolmentTypeId;
   }
 
   public Boolean getLodging() {
@@ -109,7 +109,7 @@ public class CourseStudent {
   private DateTime enrolmentTime;
   private Boolean archived;
   private Long participationTypeId;
-  private Long courseEnrolmentTypeId;
+  private Long enrolmentTypeId;
   private Boolean lodging;
   private CourseOptionality optionality;
   private Long billingDetailsId;
