@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>RENAME TABLE CourseStudent TO CourseStudentOld</sql>
+  <sql>RENAME TABLE CourseUser TO CourseUserOld</sql>
+  
+  <createTables>
+    <table primaryKeys="id" name="CourseUser">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="role" type="java.lang.String" nullable="false"/>
+        <field name="version" type="java.lang.Long" nullable="false"/>
+        <field name="course" type="java.lang.Long" nullable="true"/>
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="course" referencedTable="Course"/>
+      </foreignKeys>
+    </table>
+  
+    <table primaryKeys="id" name="CourseStudent">
+      <fields>
+        <field name="archived" type="java.lang.Boolean" nullable="false"/>
+        <field name="enrolmentTime" type="java.util.Date" nullable="false"/>
+        <field name="lodging" type="java.lang.Boolean" nullable="false"/>
+        <field name="optionality" type="java.lang.String" nullable="true"/>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="billingDetails" type="java.lang.Long" nullable="true"/>
+        <field name="enrolmentType" type="java.lang.Long" nullable="true"/>
+        <field name="participationType" type="java.lang.Long" nullable="true"/>
+        <field name="student" type="java.lang.Long" nullable="true"/>
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="billingDetails" referencedTable="BillingDetails"/>
+        <key referencedColumns="id" columns="enrolmentType" referencedTable="CourseEnrolmentType"/>
+        <key referencedColumns="id" columns="participationType" referencedTable="CourseParticipationType"/>
+        <key referencedColumns="id" columns="student" referencedTable="Student"/>
+        <key referencedColumns="id" columns="id" referencedTable="CourseUser"/>
+      </foreignKeys>
+    </table>
+    
+    <table primaryKeys="id" name="CourseStaffMember">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="pyramusUser" type="java.lang.Long" nullable="true"/>
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="pyramusUser" referencedTable="User"/>
+        <key referencedColumns="id" columns="id" referencedTable="CourseUser"/>
+      </foreignKeys>
+    </table>
+  </createTables>
+  
+  <sql>insert into CourseUser (id, role, version, course) select id, 'STUDENT', version, course from CourseStudentOld</sql>
+  <sql>insert into CourseStudent (id, archived, enrolmentTime, lodging, optionality, billingDetails, enrolmentType, participationType, student) select id, archived, enrolmentTime, lodging, optionality, billingDetails, enrolmentType, participationType, student from CourseStudentOld</sql>
+  <sql>insert into CourseUser (id, role, version, course) select id + (select max(id) + 1 from CourseStudentOld) as id, userRole, version, course from CourseUserOld</sql>
+  <sql>update CourseUser set role = 'TEACHER' where role = '1'</sql>
+  <sql>update CourseUser set role = 'TUTOR' where role = '2'</sql>
+  <sql>update CourseUser set role = 'MANAGER' where role = '3'</sql>
+  <sql>insert into CourseStaffMember (id, pyramusUser) select id + (select max(id) + 1 from CourseStudentOld) as id, pyramusUser from CourseUserOld</sql>
+
+  <dropTables>
+    <table name="CourseStudentOld"/>
+    <table name="CourseUserOld"/>
+  </dropTables>
+  
+  <!-- Update hibernate_sequences table -->
+  
+  <sql>delete from hibernate_sequences where sequence_name in ('CourseUser', 'CourseStudent')</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseUser', coalesce(max(id) + 1, 1) from CourseUser</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStudent', coalesce(max(id) + 1, 1) from CourseStudent</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStaffMember', coalesce(max(id) + 1, 1) from CourseStaffMember</sql>
+
+</update>
