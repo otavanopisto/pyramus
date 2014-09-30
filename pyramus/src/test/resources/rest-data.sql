@@ -350,6 +350,18 @@ values
   
 insert into CourseStaffMemberRole (id, name, version) values (1, 'Teacher', 1), (2, 'Tutor', 1);
     
+insert into 
+  CourseUser (id, course, version)
+values 
+  (1, 1000, 1),
+  (2, 1000, 1);
+
+insert into 
+  CourseStaffMember (id, pyramusUser, role_id)
+values 
+  (1, 1, 1),
+  (2, 2, 2);
+  
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
@@ -399,3 +411,4 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ClientApplication', max(id) + 1 from ClientApplication;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ClientApplicationAuthorizationCode', max(id) + 1 from ClientApplicationAuthorizationCode;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStaffMemberRole', max(id) + 1 from CourseStaffMemberRole;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseUser', max(id) + 1 from CourseUser;

@@ -38,6 +38,7 @@ import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
+import fi.pyramus.rest.controller.UserController;
 import fi.pyramus.rest.model.CourseEnrolmentType;
 
 @Path("/courses")
@@ -49,6 +50,9 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Inject
   private CourseController courseController;
+
+  @Inject
+  private UserController userController;
   
   @Inject
   private ModuleController moduleController;
@@ -381,6 +385,139 @@ public class CourseRESTService extends AbstractRESTService {
     } else {
       courseController.archiveCourseComponent(courseComponent, getLoggedUser());
     }
+    
+    return Response.status(Status.NO_CONTENT).build();
+  }
+  
+  @Path("/courses/{COURSEID:[0-9]*}/staffMembers")
+  @POST
+  public Response createCourseStaffMember(@PathParam("COURSEID") Long courseId, fi.pyramus.rest.model.CourseStaffMember entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build(); 
+    }
+    
+    if (entity.getRoleId() == null) {
+      return Response.status(Status.BAD_REQUEST).build(); 
+    }
+    
+    if (entity.getUserId() == null) {
+      return Response.status(Status.BAD_REQUEST).build(); 
+    }
+    
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    User user = userController.findUserById(entity.getUserId());
+    if (user == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    CourseStaffMemberRole role = courseController.findStaffMemberRoleById(entity.getRoleId());
+    if (role == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    return Response.status(Status.OK)
+      .entity(objectFactory.createModel(courseController.createStaffMember(course, user, role)))
+      .build();
+  }
+
+  @Path("/courses/{ID:[0-9]*}/staffMembers")
+  @GET
+  public Response listCourseStaffMembers(@PathParam("ID") Long courseId) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<fi.pyramus.domainmodel.courses.CourseStaffMember> members = courseController.listStaffMembersByCourse(course);
+    if (members.isEmpty()) {
+      return Response.status(Status.NO_CONTENT).build();
+    }
+    
+    return Response.status(Status.OK).entity(objectFactory.createModel(members)).build();
+  }
+
+  @Path("/courses/{CID:[0-9]*}/staffMembers/{ID:[0-9]*}")
+  @GET
+  public Response findCourseStaffMemberById(@PathParam("CID") Long courseId, @PathParam("ID") Long id) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    fi.pyramus.domainmodel.courses.CourseStaffMember staffMember = courseController.findStaffMemberById(id);
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!staffMember.getCourse().getId().equals(courseId)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.status(Status.OK).entity(objectFactory.createModel(staffMember)).build();
+  }
+  
+  @Path("/courses/{COURSEID:[0-9]*}/staffMembers/{ID:[0-9]*}")
+  @PUT
+  public Response updateCourseStaffMember(@PathParam("COURSEID") Long courseId, @PathParam("ID") Long id, fi.pyramus.rest.model.CourseStaffMember entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (entity.getRoleId() == null) {
+      return Response.status(Status.BAD_REQUEST).build(); 
+    }
+    
+    if (entity.getUserId() == null) {
+      return Response.status(Status.BAD_REQUEST).build(); 
+    }
+    
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    fi.pyramus.domainmodel.courses.CourseStaffMember staffMember = courseController.findStaffMemberById(id);
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!staffMember.getCourse().getId().equals(courseId)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    CourseStaffMemberRole role = courseController.findStaffMemberRoleById(entity.getRoleId());
+    if (role == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response
+      .status(Status.OK)
+      .entity(objectFactory.createModel(courseController.updateStaffMemberRole(staffMember, role)))
+      .build();
+  }
+
+  @Path("/courses/{COURSEID:[0-9]*}/staffMembers/{ID:[0-9]*}")
+  @DELETE
+  public Response deleteCourseComponent(@PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    fi.pyramus.domainmodel.courses.CourseStaffMember staffMember = courseController.findStaffMemberById(id);
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!staffMember.getCourse().getId().equals(courseId)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    courseController.deleteStaffMember(staffMember);
     
     return Response.status(Status.NO_CONTENT).build();
   }

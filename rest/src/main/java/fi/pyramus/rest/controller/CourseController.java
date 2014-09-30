@@ -15,6 +15,7 @@ import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberDAO;
 import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -25,6 +26,7 @@ import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
@@ -57,6 +59,9 @@ public class CourseController {
 
   @Inject
   private CourseStaffMemberRoleDAO courseStaffMemberRoleDAO;
+
+  @Inject
+  private CourseStaffMemberDAO courseStaffMemberDAO;
   
   public Course createCourse(Module module, String name, String nameExtension, CourseState state, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
@@ -342,4 +347,27 @@ public class CourseController {
   public void deleteStaffMemberRole(CourseStaffMemberRole courseStaffMemberRole) {
     courseStaffMemberRoleDAO.delete(courseStaffMemberRole);
   }
+  
+  /* CourseStaffMembers */
+  
+  public CourseStaffMember createStaffMember(Course course, User user, CourseStaffMemberRole role) {
+    return courseStaffMemberDAO.create(course, user, role);
+  }
+  
+  public CourseStaffMember findStaffMemberById(Long id) {
+    return courseStaffMemberDAO.findById(id);
+  }
+  
+  public List<CourseStaffMember> listStaffMembersByCourse(Course course) {
+    return courseStaffMemberDAO.listByCourse(course);
+  }
+
+  public CourseStaffMember updateStaffMemberRole(CourseStaffMember staffMember, CourseStaffMemberRole role) {
+    return courseStaffMemberDAO.updateRole(staffMember, role);
+  }
+  
+  public void deleteStaffMember(CourseStaffMember courseStaffMember) {
+    courseStaffMemberDAO.delete(courseStaffMember);
+  }
+
 }
