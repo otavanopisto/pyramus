@@ -11,6 +11,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import fi.pyramus.dao.PyramusEntityDAO;
+import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.CourseOptionality;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
@@ -34,13 +35,19 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
    * @param participationType Student participation type
    * @param enrolmentDate The enrolment date
    * @param optionality 
+   * @param billingDetails 
+   * @param archived 
    * 
    * @return The created course student
    */
   public CourseStudent create(Course course, Student student, CourseEnrolmentType courseEnrolmentType,
-      CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality) {
+      CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, Boolean archived) {
     
     CourseStudent courseStudent = new CourseStudent();
+    
+    courseStudent.setCourse(course);
+    courseStudent.setArchived(archived);
+    courseStudent.setBillingDetails(billingDetails);
     courseStudent.setCourseEnrolmentType(courseEnrolmentType);
     courseStudent.setEnrolmentTime(enrolmentDate);
     courseStudent.setParticipationType(participationType);
@@ -93,6 +100,36 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     entityManager.persist(courseStudent);
 
     return courseStudent;
+  }
+  
+  public CourseStudent updateLodging(CourseStudent courseStudent, Boolean lodging) {
+    courseStudent.setLodging(lodging);
+    return persist(courseStudent);
+  }
+  
+  public CourseStudent updateBillingDetails(CourseStudent courseStudent, BillingDetails billingDetails) {
+    courseStudent.setBillingDetails(billingDetails);
+    return persist(courseStudent);
+  }
+  
+  public CourseStudent updateEnrolmentType(CourseStudent courseStudent, CourseEnrolmentType courseEnrolmentType) {
+    courseStudent.setCourseEnrolmentType(courseEnrolmentType);
+    return persist(courseStudent);
+  }
+  
+  public CourseStudent updateEnrolmentTime(CourseStudent courseStudent, Date enrolmentTime) {
+    courseStudent.setEnrolmentTime(enrolmentTime);
+    return persist(courseStudent);
+  }
+  
+  public CourseStudent updateOptionality(CourseStudent courseStudent, CourseOptionality optionality) {
+    courseStudent.setOptionality(optionality);
+    return persist(courseStudent);
+  }
+  
+  public CourseStudent updateParticipationType(CourseStudent courseStudent, CourseParticipationType participationType) {
+    courseStudent.setParticipationType(participationType);
+    return persist(courseStudent);
   }
 
   /**

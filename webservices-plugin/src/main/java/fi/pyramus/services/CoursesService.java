@@ -286,7 +286,7 @@ public class CoursesService extends PyramusService {
       cOptionality = CourseOptionality.valueOf(optionality);
 
     CourseStudent courseStudent = courseStudentDAO.create(course, student, courseEnrolmentType,
-            participationType, enrolmentDate, lodging, cOptionality);
+            participationType, enrolmentDate, lodging, cOptionality, null, Boolean.FALSE);
 
     validateEntity(courseStudent);
     

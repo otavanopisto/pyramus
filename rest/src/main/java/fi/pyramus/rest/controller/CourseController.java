@@ -18,6 +18,9 @@ import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.pyramus.dao.courses.CourseStaffMemberDAO;
 import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
+import fi.pyramus.dao.courses.CourseStudentDAO;
+import fi.pyramus.domainmodel.base.BillingDetails;
+import fi.pyramus.domainmodel.base.CourseOptionality;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
@@ -29,7 +32,9 @@ import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
+import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.modules.Module;
+import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.User;
 
 @Dependent
@@ -62,6 +67,9 @@ public class CourseController {
 
   @Inject
   private CourseStaffMemberDAO courseStaffMemberDAO;
+
+  @Inject
+  private CourseStudentDAO courseStudentDAO;
   
   public Course createCourse(Module module, String name, String nameExtension, CourseState state, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
@@ -369,5 +377,38 @@ public class CourseController {
   public void deleteStaffMember(CourseStaffMember courseStaffMember) {
     courseStaffMemberDAO.delete(courseStaffMember);
   }
+  
+  /* CourseStudent */
+  
+  public CourseStudent createCourseStudent(Course course, Student student, CourseEnrolmentType enrolmentType, CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails) {
+    return courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, billingDetails, Boolean.FALSE);
+  }
+  
+  public CourseStudent findCourseStudentById(Long id) {
+    return courseStudentDAO.findById(id);
+  }
+  
+  public List<CourseStudent> listCourseStudentsByCourse(Course course) {
+    return courseStudentDAO.listByCourse(course);
+  }
 
+  public CourseStudent updateCourseStudent(CourseStudent courseStudent, Boolean lodging, BillingDetails billingDetails, CourseEnrolmentType enrolmentType, Date enrolmentTime, CourseOptionality optionality, CourseParticipationType participationType) {
+    courseStudentDAO.updateLodging(courseStudent, lodging);
+    courseStudentDAO.updateBillingDetails(courseStudent, billingDetails);
+    courseStudentDAO.updateEnrolmentType(courseStudent, enrolmentType);
+    courseStudentDAO.updateEnrolmentTime(courseStudent, enrolmentTime);
+    courseStudentDAO.updateOptionality(courseStudent, optionality);
+    courseStudentDAO.updateParticipationType(courseStudent, participationType);
+    return courseStudent;
+  }
+
+  public CourseStudent archiveCourseStudent(CourseStudent courseStudent, User loggedUser) {
+    courseStudentDAO.archive(courseStudent, loggedUser);
+    return courseStudent;
+  }
+
+  public void deleteCourseStudent(CourseStudent courseStudent) {
+    courseStudentDAO.delete(courseStudent);
+  }
+  
 }
