@@ -43,7 +43,10 @@ import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.pyramus.domainmodel.courses.CourseStaffMember;
+import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
+import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.modules.Module;
@@ -64,6 +67,7 @@ import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.UserController;
 import fi.pyramus.rest.model.AcademicTerm;
+import fi.pyramus.rest.model.CourseOptionality;
 import fi.pyramus.rest.model.ProjectModuleOptionality;
 import fi.pyramus.rest.model.Sex;
 import fi.pyramus.rest.model.StudentContactLogEntryType;
@@ -537,6 +541,37 @@ public class ObjectFactory {
           @Override
           public Object map(UserVariableKey entity) {
             return new fi.pyramus.rest.model.VariableKey(entity.getVariableKey(), entity.getVariableName(), entity.getUserEditable(), toVariableType(entity.getVariableType()));
+          }
+        },
+        
+        new Mapper<CourseStaffMemberRole>() {
+          @Override
+          public Object map(CourseStaffMemberRole entity) {
+            return new fi.pyramus.rest.model.CourseStaffMemberRole(entity.getId(), entity.getName());
+          }
+        },
+        
+        new Mapper<CourseStaffMember>() {
+          @Override
+          public Object map(CourseStaffMember entity) {
+            Long courseId = entity.getCourse() != null ? entity.getCourse().getId() : null;
+            Long userId = entity.getUser() != null ? entity.getUser().getId() : null;
+            Long roleId = entity.getRole() != null ? entity.getRole().getId() : null;
+            return new fi.pyramus.rest.model.CourseStaffMember(entity.getId(), courseId, userId, roleId);
+          }
+        },
+        
+        new Mapper<CourseStudent>() {
+          @Override
+          public Object map(CourseStudent entity) {
+            Long courseId = entity.getCourse() != null ? entity.getCourse().getId() : null;
+            Long studentId = entity.getStudent() != null ? entity.getStudent().getId() : null;
+            Long participantTypeId = entity.getParticipationType() != null ? entity.getParticipationType().getId() : null;
+            Long courseEnrolmentTypeId = entity.getCourseEnrolmentType() != null ? entity.getCourseEnrolmentType().getId() : null;
+            CourseOptionality optionality = entity.getOptionality() != null ? CourseOptionality.valueOf(entity.getOptionality().name()) : null;
+            Long billingDetailsId = entity.getBillingDetails() != null ? entity.getBillingDetails().getId() : null;
+            
+            return new fi.pyramus.rest.model.CourseStudent(entity.getId(), courseId, studentId, toDateTime(entity.getEnrolmentTime()), entity.getArchived(), participantTypeId, courseEnrolmentTypeId, entity.getLodging(), optionality, billingDetailsId);
           }
         }
   
