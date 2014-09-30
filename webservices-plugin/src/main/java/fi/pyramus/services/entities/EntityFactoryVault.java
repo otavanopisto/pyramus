@@ -27,7 +27,7 @@ import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseStudent;
-import fi.pyramus.domainmodel.courses.CourseUser;
+import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.courses.CourseUserRole;
 import fi.pyramus.domainmodel.grading.CourseAssessment;
 import fi.pyramus.domainmodel.grading.CourseAssessmentRequest;
@@ -199,7 +199,7 @@ public class EntityFactoryVault {
     return (CourseStudentEntity) EntityFactoryVault.getEntityFactory(CourseStudentEntity.class).buildFromDomainObject(courseStudent);
   }
   
-  public static CourseUserEntity buildFromDomainObject(CourseUser courseUser) {
+  public static CourseUserEntity buildFromDomainObject(CourseStaffMember courseUser) {
     return (CourseUserEntity) EntityFactoryVault.getEntityFactory(CourseUserEntity.class).buildFromDomainObject(courseUser);
   }
 
@@ -324,7 +324,7 @@ public class EntityFactoryVault {
     registerEntityFactory(CourseStudent.class, CourseStudentEntity.class, new CourseStudentEntityFactory());
     registerEntityFactory(CourseEducationType.class, CourseEducationTypeEntity.class, new CourseEducationTypeEntityFactory());
     registerEntityFactory(CourseEducationSubtype.class, CourseEducationSubtypeEntity.class, new CourseEducationSubtypeEntityFactory());
-    registerEntityFactory(CourseUser.class, CourseUserEntity.class, new CourseUserEntityFactory());
+    registerEntityFactory(CourseStaffMember.class, CourseUserEntity.class, new CourseUserEntityFactory());
     registerEntityFactory(CourseUserRole.class, CourseUserRoleEntity.class, new CourseUserRoleEntityFactory());
     registerEntityFactory(CourseDescriptionCategory.class, CourseDescriptionCategoryEntity.class, new CourseDescriptionCategoryEntityFactory());
     registerEntityFactory(CourseDescription.class, CourseDescriptionEntity.class, new CourseDescriptionEntityFactory());

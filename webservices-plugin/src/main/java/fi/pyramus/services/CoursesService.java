@@ -28,10 +28,10 @@ import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.courses.CourseStudentVariableDAO;
-import fi.pyramus.dao.courses.CourseUserDAO;
 import fi.pyramus.dao.courses.CourseUserRoleDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.students.StudentDAO;
@@ -53,7 +53,7 @@ import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
-import fi.pyramus.domainmodel.courses.CourseUser;
+import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.courses.CourseUserRole;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
@@ -360,13 +360,13 @@ public class CoursesService extends PyramusService {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     CourseUserRoleDAO userRoleDAO = DAOFactory.getInstance().getCourseUserRoleDAO();
-    CourseUserDAO courseUserDAO = DAOFactory.getInstance().getCourseUserDAO();
+    CourseStaffMemberDAO courseStaffMemberDAO = DAOFactory.getInstance().getCourseStaffMemberDAO();
 
     Course course = courseDAO.findById(courseId);
     User user = userDAO.findById(userId);
     CourseUserRole role = userRoleDAO.findById(courseUserRoleId);
     
-    CourseUser courseUser = courseUserDAO.create(course, user, role);
+    CourseStaffMember courseUser = courseStaffMemberDAO.create(course, user, role);
     
     validateEntity(courseUser);
 
