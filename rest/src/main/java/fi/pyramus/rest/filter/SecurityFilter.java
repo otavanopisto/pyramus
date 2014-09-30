@@ -2,7 +2,6 @@ package fi.pyramus.rest.filter;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -33,9 +32,6 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
 
   @Inject
   private OauthController oauthController;
-  
-  @Inject
-  private Logger logger;
 
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {

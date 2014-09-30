@@ -29,6 +29,7 @@ import fi.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.pyramus.dao.courses.CourseStaffMemberDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.courses.CourseStudentVariableDAO;
@@ -50,10 +51,10 @@ import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.courses.CourseStaffMember;
-import fi.pyramus.domainmodel.courses.CourseUserRole;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.students.Student;
@@ -359,18 +360,12 @@ public class CoursesService extends PyramusService {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     CourseStaffMemberDAO courseStaffMemberDAO = DAOFactory.getInstance().getCourseStaffMemberDAO();
+    CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
 
     Course course = courseDAO.findById(courseId);
     User user = userDAO.findById(userId);
+    CourseStaffMemberRole role = courseStaffMemberRoleDAO.findById(courseUserRoleId);
 
-    // Map old role system to new role system
-    CourseUserRole role = CourseUserRole.MANAGER;
-    if (courseUserRoleId == 1l) {
-      role = CourseUserRole.TEACHER;
-    } else if (courseUserRoleId == 2l) {
-      role = CourseUserRole.TUTOR;
-    }
-    
     CourseStaffMember courseUser = courseStaffMemberDAO.create(course, user, role);
     
     validateEntity(courseUser);

@@ -17,7 +17,6 @@ import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.courses.CourseStudent_;
-import fi.pyramus.domainmodel.courses.CourseUserRole;
 import fi.pyramus.domainmodel.courses.Course_;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.students.Student;
@@ -48,7 +47,6 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     courseStudent.setLodging(lodging);
     courseStudent.setOptionality(optionality);
     courseStudent.setStudent(student);
-    courseStudent.setRole(CourseUserRole.STUDENT);
     
     return persist(courseStudent);
   }

@@ -22,8 +22,19 @@ public class CourseStaffMember extends CourseUser {
     this.user = user;
   }
   
+  public CourseStaffMemberRole getRole() {
+    return role;
+  }
+  
+  public void setRole(CourseStaffMemberRole role) {
+    this.role = role;
+  }
+  
   @ManyToOne 
   @JoinColumn(name="pyramusUser")
   @IndexedEmbedded
   private User user;
+  
+  @ManyToOne
+  private CourseStaffMemberRole role;
 }

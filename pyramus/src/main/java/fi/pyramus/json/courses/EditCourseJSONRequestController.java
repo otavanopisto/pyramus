@@ -32,6 +32,7 @@ import fi.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.pyramus.dao.courses.CourseStaffMemberDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.courses.GradeCourseResourceDAO;
@@ -59,7 +60,7 @@ import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.courses.CourseStaffMember;
-import fi.pyramus.domainmodel.courses.CourseUserRole;
+import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.GradeCourseResource;
 import fi.pyramus.domainmodel.courses.OtherCost;
 import fi.pyramus.domainmodel.courses.StudentCourseResource;
@@ -232,6 +233,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     CourseEnrolmentTypeDAO enrolmentTypeDAO = DAOFactory.getInstance().getCourseEnrolmentTypeDAO();
     CourseComponentDAO componentDAO = DAOFactory.getInstance().getCourseComponentDAO();
     CourseStaffMemberDAO courseStaffMemberDAO = DAOFactory.getInstance().getCourseStaffMemberDAO();
+    CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
     CourseDescriptionDAO descriptionDAO = DAOFactory.getInstance().getCourseDescriptionDAO();
     CourseDescriptionCategoryDAO descriptionCategoryDAO = DAOFactory.getInstance().getCourseDescriptionCategoryDAO();
     OtherCostDAO otherCostDAO = DAOFactory.getInstance().getOtherCostDAO();
@@ -396,8 +398,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
       Long userId = requestContext.getLong(colPrefix + ".userId");
       Long roleId = requestContext.getLong(colPrefix + ".roleId");
       user = userDAO.findById(userId);
-      // FIXME: roles
-      CourseUserRole role = null;// userRoleDAO.findById(roleId);
+      CourseStaffMemberRole role = courseStaffMemberRoleDAO.findById(roleId);
       if (courseUserId == -1) {
         courseUserId = courseStaffMemberDAO.create(course, user, role).getId();
       } else {

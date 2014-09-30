@@ -26,9 +26,9 @@ import fi.pyramus.domainmodel.courses.CourseDescription;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.courses.CourseStaffMember;
-import fi.pyramus.domainmodel.courses.CourseUserRole;
 import fi.pyramus.domainmodel.grading.CourseAssessment;
 import fi.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.pyramus.domainmodel.grading.Credit;
@@ -203,7 +203,7 @@ public class EntityFactoryVault {
     return (CourseUserEntity) EntityFactoryVault.getEntityFactory(CourseUserEntity.class).buildFromDomainObject(courseUser);
   }
 
-  public static CourseUserRoleEntity buildFromDomainObject(CourseUserRole courseUserRole) {
+  public static CourseUserRoleEntity buildFromDomainObject(CourseStaffMemberRole courseUserRole) {
     return (CourseUserRoleEntity) EntityFactoryVault.getEntityFactory(CourseUserRoleEntity.class).buildFromDomainObject(courseUserRole);
   }
   
@@ -325,7 +325,7 @@ public class EntityFactoryVault {
     registerEntityFactory(CourseEducationType.class, CourseEducationTypeEntity.class, new CourseEducationTypeEntityFactory());
     registerEntityFactory(CourseEducationSubtype.class, CourseEducationSubtypeEntity.class, new CourseEducationSubtypeEntityFactory());
     registerEntityFactory(CourseStaffMember.class, CourseUserEntity.class, new CourseUserEntityFactory());
-    registerEntityFactory(CourseUserRole.class, CourseUserRoleEntity.class, new CourseUserRoleEntityFactory());
+    registerEntityFactory(CourseStaffMemberRole.class, CourseUserRoleEntity.class, new CourseUserRoleEntityFactory());
     registerEntityFactory(CourseDescriptionCategory.class, CourseDescriptionCategoryEntity.class, new CourseDescriptionCategoryEntityFactory());
     registerEntityFactory(CourseDescription.class, CourseDescriptionEntity.class, new CourseDescriptionEntityFactory());
     

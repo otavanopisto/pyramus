@@ -57,6 +57,7 @@ import fi.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.pyramus.dao.courses.CourseStaffMemberDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.courses.CourseStudentVariableDAO;
@@ -258,6 +259,10 @@ public class DAOFactory {
 
   public CourseStaffMemberDAO getCourseStaffMemberDAO() {
     return (CourseStaffMemberDAO) findByClass(CourseStaffMemberDAO.class);
+  }
+
+  public CourseStaffMemberRoleDAO getCourseStaffMemberRoleDAO() {
+    return (CourseStaffMemberRoleDAO) findByClass(CourseStaffMemberRoleDAO.class);
   }
 
   /* System */
@@ -644,4 +649,5 @@ public class DAOFactory {
       throw new PersistenceException(e);
     }
   }
+
 }
