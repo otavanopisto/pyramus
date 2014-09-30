@@ -32,7 +32,6 @@ import fi.pyramus.dao.courses.CourseStaffMemberDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.courses.CourseStudentVariableDAO;
-import fi.pyramus.dao.courses.CourseUserRoleDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.users.UserDAO;
@@ -359,12 +358,18 @@ public class CoursesService extends PyramusService {
   public CourseUserEntity createCourseUser(@WebParam (name = "courseId") Long courseId, @WebParam (name = "userId") Long userId, @WebParam (name = "courseUserRoleId") Long courseUserRoleId) {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
-    CourseUserRoleDAO userRoleDAO = DAOFactory.getInstance().getCourseUserRoleDAO();
     CourseStaffMemberDAO courseStaffMemberDAO = DAOFactory.getInstance().getCourseStaffMemberDAO();
 
     Course course = courseDAO.findById(courseId);
     User user = userDAO.findById(userId);
-    CourseUserRole role = userRoleDAO.findById(courseUserRoleId);
+
+    // Map old role system to new role system
+    CourseUserRole role = CourseUserRole.MANAGER;
+    if (courseUserRoleId == 1l) {
+      role = CourseUserRole.TEACHER;
+    } else if (courseUserRoleId == 2l) {
+      role = CourseUserRole.TUTOR;
+    }
     
     CourseStaffMember courseUser = courseStaffMemberDAO.create(course, user, role);
     
