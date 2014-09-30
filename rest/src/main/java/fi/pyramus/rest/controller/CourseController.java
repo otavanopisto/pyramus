@@ -15,6 +15,7 @@ import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
@@ -24,6 +25,7 @@ import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.users.User;
@@ -31,20 +33,30 @@ import fi.pyramus.domainmodel.users.User;
 @Dependent
 @Stateless
 public class CourseController {
+  
   @Inject
   private CourseDAO courseDAO;
+  
   @Inject
   private CourseStateDAO courseStateDAO;
+  
   @Inject
   private TagDAO tagDAO;
+  
   @Inject
   private CourseDescriptionCategoryDAO courseDescriptionCategoryDAO;
+  
   @Inject
   private CourseParticipationTypeDAO courseParticipationTypeDAO;
+  
   @Inject
   private CourseComponentDAO courseComponentDAO;
+  
   @Inject
   private CourseEnrolmentTypeDAO courseEnrolmentTypeDAO;
+
+  @Inject
+  private CourseStaffMemberRoleDAO courseStaffMemberRoleDAO;
   
   public Course createCourse(Module module, String name, String nameExtension, CourseState state, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
@@ -307,5 +319,27 @@ public class CourseController {
   
   public void removeCourseTag(Course course, Tag tag) {
     course.removeTag(tag);
+  }
+  
+  /* CourseStaffMemberRole */
+
+  public CourseStaffMemberRole createStaffMemberRole(String name) {
+    return courseStaffMemberRoleDAO.create(name);
+  }
+  
+  public CourseStaffMemberRole findStaffMemberRoleById(Long id) {
+    return courseStaffMemberRoleDAO.findById(id);
+  }
+  
+  public List<CourseStaffMemberRole> listStaffMemberRoles() {
+    return courseStaffMemberRoleDAO.listAll();
+  }
+
+  public CourseStaffMemberRole updateCourseStaffMemberRoleName(CourseStaffMemberRole courseStaffMemberRole, String name) {
+    return courseStaffMemberRoleDAO.updateName(courseStaffMemberRole, name);
+  }
+  
+  public void deleteStaffMemberRole(CourseStaffMemberRole courseStaffMemberRole) {
+    courseStaffMemberRoleDAO.delete(courseStaffMemberRole);
   }
 }
