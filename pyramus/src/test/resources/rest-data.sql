@@ -348,6 +348,8 @@ insert into
 values
     (1, 'ff81d5b8500c773e7a1776a7963801e3', 'https://localhost:8443/oauth2ClientTest/success', 1, 1);
   
+insert into CourseStaffMemberRole (id, name, version) values (1, 'Teacher', 1), (2, 'Tutor', 1);
+    
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
@@ -396,4 +398,4 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentContactLogEntry', max(id) + 1 from StudentContactLogEntry;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ClientApplication', max(id) + 1 from ClientApplication;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ClientApplicationAuthorizationCode', max(id) + 1 from ClientApplicationAuthorizationCode;
-
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStaffMemberRole', max(id) + 1 from CourseStaffMemberRole;

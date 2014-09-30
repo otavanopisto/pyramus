@@ -31,6 +31,7 @@ import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.users.User;
@@ -837,4 +838,77 @@ public class CourseRESTService extends AbstractRESTService {
     
     return Response.noContent().build();
   }
+  
+  @Path("/staffMemberRoles")
+  @POST
+  public Response createStaffMemberRole(fi.pyramus.rest.model.CourseStaffMemberRole entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(entity.getName())) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    CourseStaffMemberRole staffMemberRole = courseController.createStaffMemberRole(entity.getName());
+    
+    return Response.ok(objectFactory.createModel(staffMemberRole)).build();
+  }
+  
+  @Path("/staffMemberRoles")
+  @GET
+  public Response listStaffMemberRoles() {
+    List<CourseStaffMemberRole> staffMemberRoles = courseController.listStaffMemberRoles();
+    if (staffMemberRoles.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok(objectFactory.createModel(staffMemberRoles)).build();
+  }
+  
+  @Path("/staffMemberRoles/{ID}")
+  @GET
+  public Response findStaffMemberRrole(@PathParam ("ID") Long id) {
+    CourseStaffMemberRole staffMemberRole = courseController.findStaffMemberRoleById(id);
+    if (staffMemberRole == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(staffMemberRole)).build();
+  }
+  
+  @Path("/staffMemberRoles/{ID}")
+  @PUT
+  public Response updateStaffMemberRrole(@PathParam ("ID") Long id, fi.pyramus.rest.model.CourseStaffMemberRole entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (StringUtils.isBlank(entity.getName())) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    CourseStaffMemberRole staffMemberRole = courseController.findStaffMemberRoleById(id);
+    if (staffMemberRole == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    staffMemberRole = courseController.updateCourseStaffMemberRoleName(staffMemberRole, entity.getName());
+    
+    return Response.ok(objectFactory.createModel(staffMemberRole)).build();
+  }
+  
+  @Path("/staffMemberRoles/{ID}")
+  @DELETE
+  public Response deleteStaffMemberRrole(@PathParam ("ID") Long id) {
+    CourseStaffMemberRole staffMemberRole = courseController.findStaffMemberRoleById(id);
+    if (staffMemberRole == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    courseController.deleteStaffMemberRole(staffMemberRole);
+    
+    return Response.noContent().build();
+  }
+  
 }
