@@ -17,6 +17,7 @@ import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.courses.CourseStudent_;
+import fi.pyramus.domainmodel.courses.CourseUserRole;
 import fi.pyramus.domainmodel.courses.Course_;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.students.Student;
@@ -25,6 +26,33 @@ import fi.pyramus.domainmodel.students.Student_;
 @Stateless
 public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
 
+  /**
+   * Adds a course student to the database.
+   * 
+   * @param course The course
+   * @param student The student
+   * @param courseEnrolmentType Student enrolment type
+   * @param participationType Student participation type
+   * @param enrolmentDate The enrolment date
+   * @param optionality 
+   * 
+   * @return The created course student
+   */
+  public CourseStudent create(Course course, Student student, CourseEnrolmentType courseEnrolmentType,
+      CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality) {
+    
+    CourseStudent courseStudent = new CourseStudent();
+    courseStudent.setCourseEnrolmentType(courseEnrolmentType);
+    courseStudent.setEnrolmentTime(enrolmentDate);
+    courseStudent.setParticipationType(participationType);
+    courseStudent.setLodging(lodging);
+    courseStudent.setOptionality(optionality);
+    courseStudent.setStudent(student);
+    courseStudent.setRole(CourseUserRole.STUDENT);
+    
+    return persist(courseStudent);
+  }
+  
   public CourseStudent findByCourseAndStudent(Course course, Student student) {
     EntityManager entityManager = getEntityManager(); 
     
@@ -41,37 +69,6 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
         ));
     
     return getSingleResult(entityManager.createQuery(criteria));
-  }
-
-  /**
-   * Adds a course student to the database.
-   * 
-   * @param course The course
-   * @param student The student
-   * @param courseEnrolmentType Student enrolment type
-   * @param participationType Student participation type
-   * @param enrolmentDate The enrolment date
-   * @param optionality 
-   * 
-   * @return The created course student
-   */
-  public CourseStudent create(Course course, Student student, CourseEnrolmentType courseEnrolmentType,
-      CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality) {
-    EntityManager entityManager = getEntityManager();
-
-    CourseStudent courseStudent = new CourseStudent();
-    courseStudent.setCourseEnrolmentType(courseEnrolmentType);
-    courseStudent.setEnrolmentTime(enrolmentDate);
-    courseStudent.setParticipationType(participationType);
-    courseStudent.setLodging(lodging);
-    courseStudent.setOptionality(optionality);
-    courseStudent.setStudent(student);
-    entityManager.persist(courseStudent);
-    
-    course.addCourseStudent(courseStudent);
-    entityManager.persist(course);
-
-    return courseStudent;
   }
   
   /**
@@ -208,24 +205,6 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
         ));
     
     return entityManager.createQuery(criteria).getResultList();
-  }
-
-  /**
-   * Deletes the given course student from the database.
-   * 
-   * @param courseStudent The course student to be deleted
-   */
-  @Override
-  public void delete(CourseStudent courseStudent) {
-    EntityManager entityManager = getEntityManager();
-    
-    Course course = courseStudent.getCourse();
-    if (course != null) {
-      course.removeCourseStudent(courseStudent);
-//      entityManager.persist(course);
-    }
-    
-    entityManager.remove(courseStudent);
   }
 
 }
