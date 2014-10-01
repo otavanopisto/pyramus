@@ -162,7 +162,7 @@ public class UserDAO extends PyramusEntityDAO<User> {
 
   @SuppressWarnings("unchecked")
   public SearchResult<User> searchUsers(int resultsPerPage, int page, String firstName, String lastName, String tags,
-      String email, Role role) {
+      String email, Role[] roles) {
 
     int firstResult = page * resultsPerPage;
     
@@ -170,8 +170,7 @@ public class UserDAO extends PyramusEntityDAO<User> {
     boolean hasLastName = !StringUtils.isBlank(lastName);
     boolean hasTags = !StringUtils.isBlank(tags);
     boolean hasEmail = !StringUtils.isBlank(email);
-    boolean hasRole = role != null;
-
+   
     StringBuilder queryBuilder = new StringBuilder();
     if (hasFirstName || hasLastName || hasEmail) {
       queryBuilder.append("+(");
@@ -188,9 +187,11 @@ public class UserDAO extends PyramusEntityDAO<User> {
       queryBuilder.append(")");
     }
 
-    if (hasRole) {
+    if (roles.length > 0) {
       queryBuilder.append("+(");
-      addTokenizedSearchCriteria(queryBuilder, "role", role.toString(), false);
+      for (Role role : roles) {
+        addTokenizedSearchCriteria(queryBuilder, "role", role.toString(), false);
+      }
       queryBuilder.append(")");
     }
     
