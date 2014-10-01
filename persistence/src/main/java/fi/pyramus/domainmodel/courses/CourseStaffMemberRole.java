@@ -8,14 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotEmpty;
 
-/**
- * Role of a user within a course, for example teacher or tutor.
- */
 @Entity
-public class CourseUserRole {
+public class CourseStaffMemberRole {
 
   public Long getId() {
     return id;
@@ -39,15 +35,15 @@ public class CourseUserRole {
   }
 
   @Id
-  @GeneratedValue(strategy=GenerationType.TABLE, generator="CourseUserRole")  
-  @TableGenerator(name="CourseUserRole", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
+  @GeneratedValue(strategy = GenerationType.TABLE, generator = "CourseStaffMemberRole")
+  @TableGenerator(name = "CourseStaffMemberRole", allocationSize = 1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   private Long id;
 
   @NotNull
   @Column(nullable = false)
   @NotEmpty
   private String name;
- 
+
   @Version
   @Column(nullable = false)
   private Long version;

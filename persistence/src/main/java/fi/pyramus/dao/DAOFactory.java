@@ -56,12 +56,13 @@ import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.courses.CourseStudentVariableDAO;
 import fi.pyramus.dao.courses.CourseStudentVariableKeyDAO;
 import fi.pyramus.dao.courses.CourseUserDAO;
-import fi.pyramus.dao.courses.CourseUserRoleDAO;
 import fi.pyramus.dao.courses.GradeCourseResourceDAO;
 import fi.pyramus.dao.courses.OtherCostDAO;
 import fi.pyramus.dao.courses.StudentCourseResourceDAO;
@@ -244,10 +245,6 @@ public class DAOFactory {
     return (CourseUserDAO) findByClass(CourseUserDAO.class);
   }
   
-  public CourseUserRoleDAO getCourseUserRoleDAO() {
-    return (CourseUserRoleDAO) findByClass(CourseUserRoleDAO.class);
-  }
-  
   public GradeCourseResourceDAO getGradeCourseResourceDAO() {
     return (GradeCourseResourceDAO) findByClass(GradeCourseResourceDAO.class);
   }
@@ -258,6 +255,14 @@ public class DAOFactory {
   
   public StudentCourseResourceDAO getStudentCourseResourceDAO() {
     return (StudentCourseResourceDAO) findByClass(StudentCourseResourceDAO.class);
+  }
+
+  public CourseStaffMemberDAO getCourseStaffMemberDAO() {
+    return (CourseStaffMemberDAO) findByClass(CourseStaffMemberDAO.class);
+  }
+
+  public CourseStaffMemberRoleDAO getCourseStaffMemberRoleDAO() {
+    return (CourseStaffMemberRoleDAO) findByClass(CourseStaffMemberRoleDAO.class);
   }
 
   /* System */
@@ -644,4 +649,5 @@ public class DAOFactory {
       throw new PersistenceException(e);
     }
   }
+
 }

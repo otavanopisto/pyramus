@@ -23,7 +23,6 @@ import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.PyramusFormViewController;
-import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
 
 public class AuthorizeClientApplicationViewController extends PyramusFormViewController {

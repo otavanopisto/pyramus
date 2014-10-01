@@ -31,10 +31,10 @@ import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
-import fi.pyramus.dao.courses.CourseUserDAO;
-import fi.pyramus.dao.courses.CourseUserRoleDAO;
 import fi.pyramus.dao.courses.GradeCourseResourceDAO;
 import fi.pyramus.dao.courses.OtherCostDAO;
 import fi.pyramus.dao.courses.StudentCourseResourceDAO;
@@ -54,8 +54,8 @@ import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
-import fi.pyramus.domainmodel.courses.CourseUserRole;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.resources.Resource;
 import fi.pyramus.domainmodel.resources.ResourceType;
@@ -218,10 +218,9 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     ResourceDAO resourceDAO = DAOFactory.getInstance().getResourceDAO();
     CourseStateDAO courseStateDAO = DAOFactory.getInstance().getCourseStateDAO();
     CourseParticipationTypeDAO participationTypeDAO = DAOFactory.getInstance().getCourseParticipationTypeDAO();
-    CourseUserRoleDAO userRoleDAO = DAOFactory.getInstance().getCourseUserRoleDAO();
     CourseEnrolmentTypeDAO enrolmentTypeDAO = DAOFactory.getInstance().getCourseEnrolmentTypeDAO();
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
-    CourseUserDAO courseUserDAO = DAOFactory.getInstance().getCourseUserDAO();
+    CourseStaffMemberDAO courseStaffMemberDAO = DAOFactory.getInstance().getCourseStaffMemberDAO();
     CourseDescriptionDAO descriptionDAO = DAOFactory.getInstance().getCourseDescriptionDAO();
     CourseDescriptionCategoryDAO descriptionCategoryDAO = DAOFactory.getInstance().getCourseDescriptionCategoryDAO();
     CourseComponentDAO componentDAO = DAOFactory.getInstance().getCourseComponentDAO();
@@ -238,7 +237,8 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
-
+    CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
+    
     // Course basic information
 
     String name = requestContext.getString("name");
@@ -308,8 +308,8 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       Long userId = requestContext.getLong(colPrefix + ".userId");
       Long roleId = requestContext.getLong(colPrefix + ".roleId");
       User user = userDAO.findById(userId);
-      CourseUserRole role = userRoleDAO.findById(roleId);
-      courseUserDAO.create(course, user, role);
+      CourseStaffMemberRole role = courseStaffMemberRoleDAO.findById(roleId);
+      courseStaffMemberDAO.create(course, user, role);
     }
     
     // Course components
@@ -469,7 +469,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       CourseEnrolmentType enrolmentType = enrolmentTypeId != null ? enrolmentTypeDAO.findById(enrolmentTypeId) : null;
       CourseParticipationType participationType = participationTypeId != null ? participationTypeDAO.findById(participationTypeId) : null;
       CourseOptionality optionality = (CourseOptionality) requestContext.getEnum(colPrefix + ".optionality", CourseOptionality.class);
-      courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality);
+      courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, null, Boolean.FALSE);
     }
     
     String redirectURL = requestContext.getRequest().getContextPath() + "/courses/editcourse.page?course=" + course.getId();

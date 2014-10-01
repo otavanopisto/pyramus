@@ -9,6 +9,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.VariableType;
@@ -19,12 +20,20 @@ import fi.pyramus.domainmodel.users.UserVariableKey;
 @Dependent
 @Stateless
 public class UserController {
+
+  @Inject
+  private UserDAO userDAO;
   
   @Inject
   private UserVariableDAO userVariableDAO;
 
   @Inject
   private UserVariableKeyDAO userVariableKeyDAO;
+
+
+  public User findUserById(Long userId) {
+    return userDAO.findById(userId);
+  }
   
   /* Variables */
 

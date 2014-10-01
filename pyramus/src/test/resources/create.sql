@@ -313,6 +313,20 @@
         primary key (id)
     );
 
+    create table CourseStaffMember (
+        id bigint not null,
+        role_id bigint,
+        pyramusUser bigint,
+        primary key (id)
+    );
+
+    create table CourseStaffMemberRole (
+        id bigint not null,
+        name varchar(255) not null,
+        version bigint not null,
+        primary key (id)
+    );
+
     create table CourseState (
         id bigint not null,
         archived boolean not null,
@@ -322,14 +336,12 @@
     );
 
     create table CourseStudent (
-        id bigint not null,
         archived boolean not null,
         enrolmentTime timestamp not null,
         lodging boolean not null,
         optionality varchar(255),
-        version bigint not null,
+        id bigint not null,
         billingDetails bigint,
-        course bigint,
         enrolmentType bigint,
         participationType bigint,
         student bigint not null,
@@ -359,15 +371,6 @@
         id bigint not null,
         version bigint not null,
         course bigint,
-        userRole bigint,
-        pyramusUser bigint,
-        primary key (id)
-    );
-
-    create table CourseUserRole (
-        id bigint not null,
-        name varchar(255) not null,
-        version bigint not null,
         primary key (id)
     );
 
@@ -1384,15 +1387,25 @@
         foreign key (educationType) 
         references EducationType;
 
+    alter table CourseStaffMember 
+        add constraint FK_41u4buky3x28ak57jifsguwiv 
+        foreign key (role_id) 
+        references CourseStaffMemberRole;
+
+    alter table CourseStaffMember 
+        add constraint FK_asks7l7o8ak2icj8u894pbpif 
+        foreign key (pyramusUser) 
+        references User;
+
+    alter table CourseStaffMember 
+        add constraint FK_cv1oyw61ycq8apx40yp47efri 
+        foreign key (id) 
+        references CourseUser;
+
     alter table CourseStudent 
         add constraint FK_990n0w0581m3h4n0pvxyo09gs 
         foreign key (billingDetails) 
         references BillingDetails;
-
-    alter table CourseStudent 
-        add constraint FK_tdsd2ykmt3gl8al74vhvetp5p 
-        foreign key (course) 
-        references Course;
 
     alter table CourseStudent 
         add constraint FK_joq4rus28ls505so74el2sne2 
@@ -1409,6 +1422,11 @@
         foreign key (student) 
         references Student;
 
+    alter table CourseStudent 
+        add constraint FK_35hybm4naenn8becfhirs1jv0 
+        foreign key (id) 
+        references CourseUser;
+
     alter table CourseStudentVariable 
         add constraint FK_fdew52if7kx4x8t433jtwjbw8 
         foreign key (courseStudent) 
@@ -1423,16 +1441,6 @@
         add constraint FK_8m1wdnkvu7f4w38jxpb0pf7n6 
         foreign key (course) 
         references Course;
-
-    alter table CourseUser 
-        add constraint FK_d71yo025tyvtm7sm6c8b33c7k 
-        foreign key (userRole) 
-        references CourseUserRole;
-
-    alter table CourseUser 
-        add constraint FK_gesju89o5caq9d5ics49nkmda 
-        foreign key (pyramusUser) 
-        references User;
 
     alter table Credit 
         add constraint FK_qeujhkfa3cpfwvb48646agdch 

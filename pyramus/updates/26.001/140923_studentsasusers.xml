@@ -180,6 +180,16 @@ from
     <table name="__StudentTags"/>
   </dropTables>
   
+  <!-- Add foreign key for Student (id) -> User (id) -->
+  
+  <alterTables>
+    <table name="Student">
+      <addForeignKeys>
+        <key referencedColumns="id" columns="id" referencedTable="User"/>
+      </addForeignKeys>
+    </table>
+  </alterTables>
+  
   <!-- Update hibernate_sequences table -->
   
   <sql>delete from hibernate_sequences where sequence_name in ('Student', 'User', 'StudentVariable', 'StudentVariableKey', 'UserVariableKey', 'UserVariable')</sql>

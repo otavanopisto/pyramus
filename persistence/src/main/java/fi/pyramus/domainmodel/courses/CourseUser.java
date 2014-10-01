@@ -5,30 +5,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
-import org.hibernate.search.annotations.IndexedEmbedded;
 
-import fi.pyramus.domainmodel.users.User;
-
-/**
- * Representation of a Pyramus user within a course. Models, for example, the teachers and tutors of a course. 
- */
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 public class CourseUser {
   
   public Long getId() {
     return id;
-  }
-
-  public User getUser() {
-    return user;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
   }
 
   public Course getCourse() {
@@ -37,14 +26,6 @@ public class CourseUser {
 
   public void setCourse(Course course) {
     this.course = course;
-  }
-
-  public void setRole(CourseUserRole role) {
-    this.role = role;
-  }
-
-  public CourseUserRole getRole() {
-    return role;
   }
 
   @SuppressWarnings("unused")
@@ -64,16 +45,6 @@ public class CourseUser {
   @ManyToOne
   @JoinColumn(name="course")
   private Course course;
-  
-  @ManyToOne 
-  @JoinColumn(name="pyramusUser")
-  @IndexedEmbedded
-  private User user;
-  
-  @ManyToOne 
-  @JoinColumn(name="userRole")
-  @IndexedEmbedded
-  private CourseUserRole role;
 
   @Version
   @Column(nullable = false)

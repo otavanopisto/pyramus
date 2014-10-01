@@ -37,7 +37,7 @@ public class CourseStudentAPI {
     }
     
     return courseStudentDAO.create(course, student, defaults.getInitialCourseEnrolmentType(), defaults.getInitialCourseParticipationType(), 
-        new Date(), false, CourseOptionality.OPTIONAL).getId();
+        new Date(), false, CourseOptionality.OPTIONAL, null, Boolean.FALSE).getId();
   }
   
   public Long findIdByCourseAndStudent(Long courseId, Long studentId) throws InvalidScriptException {

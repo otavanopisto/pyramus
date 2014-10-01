@@ -66,12 +66,13 @@ public class ClientApplicationAuthorizationCodeDAO extends PyramusEntityDAO<Clie
     Root<ClientApplicationAuthorizationCode> root = criteria.from(ClientApplicationAuthorizationCode.class);
     criteria.select(root);
     criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(ClientApplicationAuthorizationCode_.authorizationCode), authorizationCode),
-            criteriaBuilder.equal(root.get(ClientApplicationAuthorizationCode_.clientApplication), clientApplication)
-        ));
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(ClientApplicationAuthorizationCode_.authorizationCode), authorizationCode),
+        criteriaBuilder.equal(root.get(ClientApplicationAuthorizationCode_.clientApplication), clientApplication)
+      )
+    );
     
-    return entityManager.createQuery(criteria).getSingleResult();
+    return getSingleResult(entityManager.createQuery(criteria));
   }
   
   public void delete(ClientApplicationAuthorizationCode clientApplicationAuthorizationCode){
