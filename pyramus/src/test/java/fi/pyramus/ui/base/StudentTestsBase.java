@@ -4,10 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import fi.pyramus.SqlAfter;
 import fi.pyramus.SqlBefore;
 import fi.pyramus.ui.AbstractUITest;
