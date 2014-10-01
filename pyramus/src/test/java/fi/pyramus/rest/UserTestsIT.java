@@ -13,7 +13,7 @@ public class UserTestsIT extends AbstractRESTServiceTest {
       .get("/users/users")
       .then()
       .statusCode(200)
-      .body("id.size()", is(4))
+      .body("id.size()", is(2))
       .body("id[0]", is(1))
       .body("firstName[0]", is("Test Guest"))
       .body("lastName[0]", is("User #1"))
@@ -21,16 +21,7 @@ public class UserTestsIT extends AbstractRESTServiceTest {
       .body("id[1]", is(2))
       .body("firstName[1]", is("Test Guest"))
       .body("lastName[1]", is("User #2"))
-      .body("role[1]", is("GUEST"))
-      
-      .body("id[2]", is(3))
-      .body("firstName[2]", is("Tanya"))
-      .body("lastName[2]", is("Test #1"))
-      .body("role[2]", is("STUDENT"))
-      .body("id[3]", is(4))
-      .body("firstName[3]", is("David"))
-      .body("lastName[3]", is("Test #2"))
-      .body("role[3]", is("STUDENT"));
+      .body("role[1]", is("GUEST"));
   }
   
   @Test

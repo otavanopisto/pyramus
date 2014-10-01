@@ -41,8 +41,8 @@ public class UserController {
     return userDAO.findById(userId);
   }
 
-  public List<User> listUsers() {
-    return userDAO.listAll();
+  public List<User> listNonStudentUsers() {
+    return userDAO.listByNotRole(Role.STUDENT);
   }
   
   /* Variables */

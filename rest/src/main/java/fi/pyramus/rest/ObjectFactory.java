@@ -460,9 +460,8 @@ public class ObjectFactory {
             };
             
             String additionalContectInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
-            UserRole role = entity.getRole() != null ? UserRole.valueOf(entity.getRole().name()) : null;
             
-            return new fi.pyramus.rest.model.Student(entity.getId(), abstractStudentId, role, entity.getFirstName(), entity.getLastName(), 
+            return new fi.pyramus.rest.model.Student(entity.getId(), abstractStudentId, entity.getFirstName(), entity.getLastName(), 
                 entity.getNickname(), entity.getAdditionalInfo(), additionalContectInfo, nationalityId, 
                 languageId, municipalityId, schoolId, activityTypeId, examinationTypeId, educationalLevelId, 
                 toDateTime(entity.getStudyTimeEnd()), studyProgrammeId, entity.getPreviousStudies(), entity.getEducation(), 
