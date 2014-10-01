@@ -10,14 +10,22 @@ public class Student {
   public Student() {
     super();
   }
-
+  
   public Student(Long id, Long abstractStudentId, String firstName, String lastName, String nickname, String additionalInfo, String additionalContactInfo, Long nationalityId,
+      Long languageId, Long municipalityId, Long schoolId, Long activityTypeId, Long examinationTypeId, Long educationalLevelId, DateTime studyTimeEnd,
+      Long studyProgrammeId, Double previousStudies, String education, Boolean lodging, DateTime studyStartDate, DateTime studyEndDate, Long studyEndReasonId,
+      String studyEndText, Map<String, String> variables, List<String> tags, Boolean archived) {
+    this(id, abstractStudentId, UserRole.STUDENT, firstName, lastName, nickname, additionalInfo, additionalContactInfo, nationalityId, languageId, municipalityId, schoolId, activityTypeId, examinationTypeId, educationalLevelId, studyTimeEnd, studyProgrammeId, previousStudies, education, lodging, studyStartDate, studyEndDate, studyEndReasonId, studyEndText, variables, tags, archived);
+  }
+  
+  public Student(Long id, Long abstractStudentId, UserRole role, String firstName, String lastName, String nickname, String additionalInfo, String additionalContactInfo, Long nationalityId,
       Long languageId, Long municipalityId, Long schoolId, Long activityTypeId, Long examinationTypeId, Long educationalLevelId, DateTime studyTimeEnd,
       Long studyProgrammeId, Double previousStudies, String education, Boolean lodging, DateTime studyStartDate, DateTime studyEndDate, Long studyEndReasonId,
       String studyEndText, Map<String, String> variables, List<String> tags, Boolean archived) {
     super();
     this.id = id;
     this.abstractStudentId = abstractStudentId;
+    this.role = role;
     this.firstName = firstName;
     this.lastName = lastName;
     this.nickname = nickname;
@@ -60,6 +68,14 @@ public class Student {
     this.abstractStudentId = abstractStudentId;
   }
 
+  public UserRole getRole() {
+    return role;
+  }
+  
+  public void setRole(UserRole role) {
+    this.role = role;
+  }
+  
   public String getFirstName() {
     return firstName;
   }
@@ -254,6 +270,7 @@ public class Student {
 
   private Long id;
   private Long abstractStudentId;
+  private UserRole role;
   private String firstName;
   private String lastName;
   private String nickname;

@@ -458,12 +458,15 @@ public class ObjectFactory {
             for (UserVariable entityVariable : entityVariables) {
               variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
             };
-
-            return new fi.pyramus.rest.model.Student(entity.getId(), abstractStudentId, entity.getFirstName(), entity.getLastName(), 
-                entity.getNickname(), entity.getAdditionalInfo(), entity.getContactInfo().getAdditionalInfo(), nationalityId, 
+            
+            String additionalContectInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
+            UserRole role = entity.getRole() != null ? UserRole.valueOf(entity.getRole().name()) : null;
+            
+            return new fi.pyramus.rest.model.Student(entity.getId(), abstractStudentId, role, entity.getFirstName(), entity.getLastName(), 
+                entity.getNickname(), entity.getAdditionalInfo(), additionalContectInfo, nationalityId, 
                 languageId, municipalityId, schoolId, activityTypeId, examinationTypeId, educationalLevelId, 
                 toDateTime(entity.getStudyTimeEnd()), studyProgrammeId, entity.getPreviousStudies(), entity.getEducation(), 
-                entity.getLodging(), toDateTime(entity.getStudyStartDate()), toDateTime(entity.getStudyEndDate()),  studyEndReasonId, 
+                entity.getLodging(), toDateTime(entity.getStudyStartDate()), toDateTime(entity.getStudyEndDate()), studyEndReasonId, 
                 entity.getStudyEndText(), variables, tags, entity.getArchived());
           }
         },
