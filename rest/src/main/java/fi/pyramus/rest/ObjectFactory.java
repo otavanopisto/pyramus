@@ -62,6 +62,7 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.rest.controller.SchoolController;
@@ -71,6 +72,7 @@ import fi.pyramus.rest.model.CourseOptionality;
 import fi.pyramus.rest.model.ProjectModuleOptionality;
 import fi.pyramus.rest.model.Sex;
 import fi.pyramus.rest.model.StudentContactLogEntryType;
+import fi.pyramus.rest.model.UserRole;
 import fi.pyramus.rest.model.VariableType;
 
 @ApplicationScoped
@@ -573,7 +575,34 @@ public class ObjectFactory {
             
             return new fi.pyramus.rest.model.CourseStudent(entity.getId(), courseId, studentId, toDateTime(entity.getEnrolmentTime()), entity.getArchived(), participantTypeId, courseEnrolmentTypeId, entity.getLodging(), optionality, billingDetailsId);
           }
+        },
+        
+      new Mapper<User>() {
+        
+        public Object map(User entity) {
+         List<String> tags = new ArrayList<>();
+          
+          Set<Tag> entityTags = entity.getTags();
+          if (entityTags != null) {
+            for (Tag entityTag : entityTags) {
+              tags.add(entityTag.getText());
+            }
+          }    
+          
+          List<UserVariable> entityVariables = userController.listUserVariablesByUser(entity);
+
+          Map<String, String> variables = new HashMap<>();
+          for (UserVariable entityVariable : entityVariables) {
+            variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
+          };
+          
+          UserRole role = UserRole.valueOf(entity.getRole().name());
+          String additionalContactInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
+          
+          return new fi.pyramus.rest.model.User(entity.getId(), additionalContactInfo, 
+              entity.getFirstName(), entity.getLastName(), entity.getTitle(), role, tags, variables);
         }
+      }
   
     );
   }
