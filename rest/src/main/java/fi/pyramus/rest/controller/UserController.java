@@ -44,6 +44,10 @@ public class UserController {
   public List<User> listNonStudentUsers() {
     return userDAO.listByNotRole(Role.STUDENT);
   }
+
+  public List<User> listNonStudentUsers(Integer firstResult, Integer maxResults) {
+    return userDAO.listByNotRole(Role.STUDENT, firstResult, maxResults);
+  }
   
   /* Variables */
 
