@@ -13,6 +13,7 @@ import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.VariableType;
+import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
@@ -30,9 +31,18 @@ public class UserController {
   @Inject
   private UserVariableKeyDAO userVariableKeyDAO;
 
+  /* Users */
 
+  public User createUser(String firstName, String lastName, String externalId, String authProvider, Role role) {
+    return userDAO.create(firstName, lastName, externalId, authProvider, role);
+  }
+  
   public User findUserById(Long userId) {
     return userDAO.findById(userId);
+  }
+
+  public List<User> listUsers() {
+    return userDAO.listAll();
   }
   
   /* Variables */
@@ -125,5 +135,6 @@ public class UserController {
   public void deleteUserVariableKey(UserVariableKey userVariableKey) {
     userVariableKeyDAO.delete(userVariableKey);
   }
+
 }
 

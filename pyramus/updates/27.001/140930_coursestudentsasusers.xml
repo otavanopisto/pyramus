@@ -19,9 +19,6 @@
         <field name="version" type="java.lang.Long" nullable="false"/>
         <field name="course" type="java.lang.Long" nullable="true"/>
       </fields>
-      <foreignKeys>
-        <key referencedColumns="id" columns="course" referencedTable="Course"/>
-      </foreignKeys>
     </table>
   
     <table primaryKeys="id" name="CourseStudent">
@@ -36,13 +33,6 @@
         <field name="participationType" type="java.lang.Long" nullable="true"/>
         <field name="student" type="java.lang.Long" nullable="true"/>
       </fields>
-      <foreignKeys>
-        <key referencedColumns="id" columns="billingDetails" referencedTable="BillingDetails"/>
-        <key referencedColumns="id" columns="enrolmentType" referencedTable="CourseEnrolmentType"/>
-        <key referencedColumns="id" columns="participationType" referencedTable="CourseParticipationType"/>
-        <key referencedColumns="id" columns="student" referencedTable="Student"/>
-        <key referencedColumns="id" columns="id" referencedTable="CourseUser"/>
-      </foreignKeys>
     </table>
     
     <table primaryKeys="id" name="CourseStaffMember">
@@ -70,6 +60,23 @@
     <table name="CourseUserOld"/>
     <table name="CourseUserRole"/>
   </dropTables>
+  
+  <alterTables>
+    <table name="CourseUser">
+      <addForeignKeys>
+        <key referencedColumns="id" columns="course" referencedTable="Course"/>
+      </addForeignKeys>
+    </table>
+    <table name="CourseStudent">
+      <addForeignKeys>
+        <key referencedColumns="id" columns="billingDetails" referencedTable="BillingDetails"/>
+        <key referencedColumns="id" columns="enrolmentType" referencedTable="CourseEnrolmentType"/>
+        <key referencedColumns="id" columns="participationType" referencedTable="CourseParticipationType"/>
+        <key referencedColumns="id" columns="student" referencedTable="Student"/>
+        <key referencedColumns="id" columns="id" referencedTable="CourseUser"/>    
+      </addForeignKeys>
+    </table>
+  </alterTables>
   
   <!-- Update hibernate_sequences table -->
   
