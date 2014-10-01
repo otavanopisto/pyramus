@@ -30,7 +30,7 @@ insert into
 values 
   (1, 'TEST', 'TEST-GUEST-1', 'Test Guest', 'User #1', 'GUEST', null, 1, null),
   (2, 'TEST', 'TEST-GUEST-2', 'Test Guest', 'User #2', 'GUEST', null, 1, null), 
-  (3, 'internal', '3', 'Dev' , 'Aava', 'GUEST', null, 1, null);
+  (5, 'internal', '1', 'Dev' , 'Aava', 'ADMINISTRATOR', null, 1, null);
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
 values 
