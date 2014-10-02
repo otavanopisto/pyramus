@@ -83,9 +83,17 @@ public class StudentController {
     return students;
   }
 
+  public List<Student> listStudents(Integer firstResult, Integer maxResults) {
+    return studentDAO.listAll(firstResult, maxResults);
+  }
+
   public List<Student> listUnarchivedStudents() {
     List<Student> students = studentDAO.listUnarchived();
     return students;
+  }
+
+  public List<Student> listUnarchivedStudents(Integer firstResult, Integer maxResults) {
+    return studentDAO.listUnarchived(firstResult, maxResults);
   }
   
   public List<Student> listStudentByAbstractStudent(AbstractStudent abstractStudent) {
