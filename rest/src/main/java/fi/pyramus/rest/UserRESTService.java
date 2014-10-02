@@ -12,6 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.rest.controller.UserController;
 
@@ -39,6 +40,10 @@ public class UserRESTService extends AbstractRESTService {
   public Response findUserById(@PathParam("ID") Long id) {
     User user = userController.findUserById(id);
     if (user == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (user.getRole() == Role.STUDENT) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
