@@ -1294,13 +1294,13 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students")
   @GET
-  public Response findStudents(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+  public Response findStudents(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults, @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<Student> students;
     
     if (filterArchived) {
-      students = studentController.listUnarchivedStudents();
+      students = studentController.listUnarchivedStudents(firstResult, maxResults);
     } else {
-      students = studentController.listStudents();
+      students = studentController.listStudents(firstResult, maxResults);
     }
     
     if (students.isEmpty()) {

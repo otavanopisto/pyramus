@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -75,6 +76,35 @@ public class UserDAO extends PyramusEntityDAO<User> {
         ));
     
     return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<User> listByNotRole(Role role) {
+    return listByNotRole(role, null, null);
+  }
+
+  public List<User> listByNotRole(Role role, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<User> criteria = criteriaBuilder.createQuery(User.class);
+    Root<User> root = criteria.from(User.class);
+    criteria.select(root);
+    
+    criteria.where(
+      criteriaBuilder.notEqual(root.get(User_.role), role)
+    );
+    
+    TypedQuery<User> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+    
+    return query.getResultList();
   }
   
   public User findByExternalIdAndAuthProvider(String externalId, String authProvider) {
