@@ -324,6 +324,19 @@ insert into
 values 
   (3, 1, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false, false),
   (4, 2, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false, false);
+
+insert into
+  CourseUser (id, version, course)
+values
+  (1, 0, 1000),
+  (2, 0, 1001);
+  
+insert into 
+  CourseStudent (archived, enrolmentTime, lodging, optionality, id, billingDetails, enrolmentType, 
+  participationType, student)
+values 
+  (0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 0, 'OPTIONAL', 1, NULL, NULL, 1, 3),
+  (0, PARSEDATETIME('1 1 2011', 'd M yyyy'), 0, 'OPTIONAL', 2, NULL, NULL, 1, 4);
   
 insert into StudentGroupStudent
   (id, studentGroup, student, version)
@@ -391,4 +404,5 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Student', max(id) + 1 from Student;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentStudyEndReason', max(id) + 1 from StudentStudyEndReason;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentContactLogEntry', max(id) + 1 from StudentContactLogEntry;
-
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseUser', max(id) + 1 from CourseUser;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStudent', max(id) + 1 from CourseStudent;
