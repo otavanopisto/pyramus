@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <!-- Drop student - variableKey index from StudentVariable table (prevents updates) -->
+
+  <sql>alter table StudentVariable drop index INX_STUVAR_STUDENT_KEY</sql>
+  
+  <!-- Shift student id's by max user id + 1 (students table will be -->
+
+  <sql>update CourseStudent set student = student + (select max(id) + 1 from User)</sql>
+  <sql>update CreditLink set student = student + (select max(id) + 1 from User)</sql>
+  <sql>update StudentContactLogEntry set student = student + (select max(id) + 1 from User)</sql>
+  <sql>update StudentFile set student = student + (select max(id) + 1 from User)</sql>
+  <sql>update StudentGroupStudent set student = student + (select max(id) + 1 from User)</sql>
+  <sql>update StudentImage set student = student + (select max(id) + 1 from User)</sql>
+  <sql>update StudentProject set student = student + (select max(id) + 1 from User)</sql>
+  <sql>update TransferCredit set student = student + (select max(id) + 1 from User)</sql>
+  <sql>update StudentVariable set student = student + (select max(id) + 1 from User)</sql>
+  <sql>update __StudentBillingDetails set student = student + (select max(id) + 1 from User)</sql>
+  <sql>update __StudentTags set student = student + (select max(id) + 1 from User)</sql>
+  
+  <!-- Add a temporary table for students -->
+  
+  <createTables>
+    <table primaryKeys="id" name="StudentTmp">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="additionalInfo" type="java.sql.Clob"/>
+        <field name="archived" type="java.lang.Boolean" nullable="false"/>
+        <field name="education" type="java.lang.String"/>
+        <field name="lodging" type="java.lang.Boolean" nullable="false"/>
+        <field name="nickname" type="java.lang.String"/>
+        <field name="previousStudies" type="java.lang.Double"/>
+        <field name="studyEndDate" type="java.util.Date"/>
+        <field name="studyEndText" type="java.lang.String"/>
+        <field name="studyStartDate" type="java.util.Date"/>
+        <field name="studyTimeEnd" type="java.util.Date"/>
+        <field name="abstractStudent" type="java.lang.Long"/>
+        <field name="activityType" type="java.lang.Long"/>
+        <field name="contactInfo" type="java.lang.Long"/>
+        <field name="educationalLevel" type="java.lang.Long"/>
+        <field name="examinationType" type="java.lang.Long"/>
+        <field name="language" type="java.lang.Long"/>
+        <field name="municipality" type="java.lang.Long"/>
+        <field name="nationality" type="java.lang.Long"/>
+        <field name="school" type="java.lang.Long"/>
+        <field name="studyEndReason" type="java.lang.Long"/>
+        <field name="studyProgramme" type="java.lang.Long"/>
+      </fields>
+    </table>
+  </createTables>
+  
+  <!-- Move students into the temporary table and shift their id by max user id + 1 -->
+  
+  <sql>
+insert into StudentTmp (
+  id, 
+  additionalInfo, archived, education, lodging, nickname, 
+  previousStudies, studyEndDate, studyEndText, studyStartDate,
+  studyTimeEnd, abstractStudent, activityType, contactInfo, 
+  educationalLevel, examinationType, language, municipality, 
+  nationality, school, studyEndReason, studyProgramme)
+select 
+  id + (select max(id) + 1 from User), 
+  additionalInfo, archived, education, lodging, nickname, 
+  previousStudies, studyEndDate, studyEndText, studyStartDate,
+  studyTimeEnd, abstractStudent, activityType, contactInfo, 
+  educationalLevel, examinationType, language, municipality, 
+  nationality, school, studyEndReason, studyProgramme
+from 
+  Student</sql>
+  
+  <!-- Add user rows for students -->
+    
+  <sql>insert into User (firstName, lastName, role, authProvider, externalId, version, id, contactInfo) select firstName, lastName, 'STUDENT' as role, 'internal', '-1', version, (select max(id) + 1 from User) + id, contactInfo as id from Student</sql>
+
+  <alterTables>
+    <table name="Student">
+      <dropFields>
+        <field name="lastName"/>
+        <field name="firstName"/>
+        <field name="version"/>
+      </dropFields>
+    </table>
+  </alterTables>
+  
+  <!-- Purge student table -->
+  
+  <sql>delete from Student</sql>
+  
+  <!-- Move students with new ids back to students table -->
+  
+  <sql>
+insert into Student (
+  id, 
+  additionalInfo, archived, education, lodging, nickname, 
+  previousStudies, studyEndDate, studyEndText, studyStartDate,
+  studyTimeEnd, abstractStudent, activityType, contactInfo, 
+  educationalLevel, examinationType, language, municipality, 
+  nationality, school, studyEndReason, studyProgramme)
+select 
+  id, 
+  additionalInfo, archived, education, lodging, nickname, 
+  previousStudies, studyEndDate, studyEndText, studyStartDate,
+  studyTimeEnd, abstractStudent, activityType, contactInfo, 
+  educationalLevel, examinationType, language, municipality, 
+  nationality, school, studyEndReason, studyProgramme
+from 
+  StudentTmp</sql>
+  
+  <!-- Drop student temp table -->
+  
+  <dropTables>
+    <table name="StudentTmp"/>
+  </dropTables>
+  
+  <!-- Merge StudentVariableKeys into UserVariableKeys table -->
+  
+  <sql>
+insert into 
+  UserVariableKey (id, variableKey, variableName, variableType, userEditable, version)
+select 
+  id + (select max(id) + 1 from UserVariableKey), variableKey, variableName, variableType, userEditable, version 
+from
+  StudentVariableKey
+where 
+  variableKey not in (select variableKey from UserVariableKey)
+  </sql>
+  
+  <!-- Merge StudentVariable table into UserVariable table -->
+  
+  <sql>
+insert into 
+  UserVariable (id, user, value, variableKey, version)
+select 
+  id  + (select max(id) + 1 from UserVariable), 
+  student, 
+  value, 
+  (select id from UserVariableKey where variableKey = (select svk.variableKey from StudentVariableKey svk where id = sv.variableKey)), 
+  version
+from 
+  StudentVariable sv</sql>
+  
+  <!-- Drop student variable tables -->
+  
+  <dropTables>
+    <table name="StudentVariableKey"/>
+    <table name="StudentVariable"/>
+  </dropTables>
+  
+  <!-- Move student billing details -> user billing details -->
+  
+  <sql>
+insert into 
+  __UserBillingDetails (user, billingDetails)
+select
+  student, billingDetails
+from 
+  __StudentBillingDetails</sql>
+  
+  <!-- Drop __StudentBillingDetails table -->
+  
+  <dropTables>
+    <table name="__StudentBillingDetails"/>
+  </dropTables>
+  
+  <!-- Move student tags -> user tags -->
+
+  <sql>
+insert into 
+  __UserTags (user, tag)
+select
+  student, tag
+from 
+  __StudentTags</sql>
+  
+  <!-- Drop __StudentTags table -->
+  
+  <dropTables>
+    <table name="__StudentTags"/>
+  </dropTables>
+  
+  <!-- Add foreign key for Student (id) -> User (id) -->
+  
+  <alterTables>
+    <table name="Student">
+      <addForeignKeys>
+        <key referencedColumns="id" columns="id" referencedTable="User"/>
+      </addForeignKeys>
+    </table>
+  </alterTables>
+  
+  <!-- Update hibernate_sequences table -->
+  
+  <sql>delete from hibernate_sequences where sequence_name in ('Student', 'User', 'StudentVariable', 'StudentVariableKey', 'UserVariableKey', 'UserVariable')</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Student', coalesce(max(id) + 1, 1) from Student</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', coalesce(max(id) + 1, 1) from User</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'UserVariableKey', coalesce(max(id) + 1, 1) from UserVariableKey</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'UserVariable', coalesce(max(id) + 1, 1) from UserVariable</sql>
+
+</update>

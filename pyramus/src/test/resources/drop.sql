@@ -30,19 +30,19 @@
 
     alter table ChangeLogEntryProperty 
         drop constraint FK_qgkacalwos2pvununsghx60j if exists;
-    
+
+    alter table ClientApplicationAccessToken 
+        drop constraint FK_j3nhydmgnfg8210e2gruxrh4w if exists;
+
+    alter table ClientApplicationAccessToken 
+        drop constraint FK_rwdu61j1a1rn11pqv0ii1qdgu if exists;
+
     alter table ClientApplicationAuthorizationCode 
-        drop constraint FK781DD821F7635B15 if exists;
-        
-    alter table ClientApplicationAuthorizationCode
-        drop constraint FK781DD821A23C0179 if exists;
-        
-    alter table ClientApplicationAccessToken
-        drop constraint FK4E64FD50A23C0179 if exists;
-        
-    alter table ClientApplicationAccessToken
-        drop constraint FK4E64FJE23JKR0CR3 if exists;
-        
+        drop constraint FK_jkil4wujeq1r634wwut2vcs62 if exists;
+
+    alter table ClientApplicationAuthorizationCode 
+        drop constraint FK_ftbh7jxr3fram1cold5cuetdb if exists;
+
     alter table ComponentBase 
         drop constraint FK_n3636lg4sxh0jvounesk7wec8 if exists;
 
@@ -118,11 +118,17 @@
     alter table CourseEducationType 
         drop constraint FK_70hkwva11c9btj1r8xdflt6y4 if exists;
 
-    alter table CourseStudent 
-        drop constraint FK_990n0w0581m3h4n0pvxyo09gs if exists;
+    alter table CourseStaffMember 
+        drop constraint FK_41u4buky3x28ak57jifsguwiv if exists;
+
+    alter table CourseStaffMember 
+        drop constraint FK_asks7l7o8ak2icj8u894pbpif if exists;
+
+    alter table CourseStaffMember 
+        drop constraint FK_cv1oyw61ycq8apx40yp47efri if exists;
 
     alter table CourseStudent 
-        drop constraint FK_tdsd2ykmt3gl8al74vhvetp5p if exists;
+        drop constraint FK_990n0w0581m3h4n0pvxyo09gs if exists;
 
     alter table CourseStudent 
         drop constraint FK_joq4rus28ls505so74el2sne2 if exists;
@@ -133,6 +139,9 @@
     alter table CourseStudent 
         drop constraint FK_6syti63mb3rf5ohusl6hhxm1l if exists;
 
+    alter table CourseStudent 
+        drop constraint FK_35hybm4naenn8becfhirs1jv0 if exists;
+
     alter table CourseStudentVariable 
         drop constraint FK_fdew52if7kx4x8t433jtwjbw8 if exists;
 
@@ -141,12 +150,6 @@
 
     alter table CourseUser 
         drop constraint FK_8m1wdnkvu7f4w38jxpb0pf7n6 if exists;
-
-    alter table CourseUser 
-        drop constraint FK_d71yo025tyvtm7sm6c8b33c7k if exists;
-
-    alter table CourseUser 
-        drop constraint FK_gesju89o5caq9d5ics49nkmda if exists;
 
     alter table Credit 
         drop constraint FK_qeujhkfa3cpfwvb48646agdch if exists;
@@ -326,9 +329,6 @@
         drop constraint FK_moxdtidtiop0frxnxal9unpt if exists;
 
     alter table Student 
-        drop constraint FK_6xxj4ek0nlfmtckd6u8hct201 if exists;
-
-    alter table Student 
         drop constraint FK_h8ypmoc31ra5j40x74esdy6x2 if exists;
 
     alter table Student 
@@ -351,6 +351,9 @@
 
     alter table Student 
         drop constraint FK_jos3vl724h8ln4toi52mn5b6f if exists;
+
+    alter table Student 
+        drop constraint FK_ohs43dct8k52ch2exlmf4bs3l if exists;
 
     alter table StudentContactLogEntry 
         drop constraint FK_gnx1l8oymwaqxbl4hlownd4s2 if exists;
@@ -417,12 +420,6 @@
 
     alter table StudentStudyEndReason 
         drop constraint FK_2f8xkyc4p4muk488tcnc6gpqr if exists;
-
-    alter table StudentVariable 
-        drop constraint FK_napjy06rvnne36aluoi0ayjfr if exists;
-
-    alter table StudentVariable 
-        drop constraint FK_fvw9n1unc74nwjp64w9aml70w if exists;
 
     alter table StudyProgramme 
         drop constraint FK_9ro57ucpum3wqatybrefu71it if exists;
@@ -505,12 +502,6 @@
     alter table __SchoolTags 
         drop constraint FK_lbkqqkavgltyrrcjatg5eqh6w if exists;
 
-    alter table __StudentBillingDetails 
-        drop constraint FK_g03t04lpvdnt3j81fo53cbjqq if exists;
-
-    alter table __StudentBillingDetails 
-        drop constraint FK_8s693eljni5o9vjboyg8rdbpa if exists;
-
     alter table __StudentGroupTags 
         drop constraint FK_44ub49nfa8oleq5fg66ur4fc0 if exists;
 
@@ -522,12 +513,6 @@
 
     alter table __StudentProjectTags 
         drop constraint FK_16emgsigygw6th8y8indckbjv if exists;
-
-    alter table __StudentTags 
-        drop constraint FK_7pip1b30oq902tv535xbor8n4 if exists;
-
-    alter table __StudentTags 
-        drop constraint FK_4bbesi5caq54wpx5ivjx23mco if exists;
 
     alter table __UserBillingDetails 
         drop constraint FK_bj58cvcye8yvguabaacs0fw71 if exists;
@@ -563,12 +548,12 @@
 
     drop table ChangeLogEntryProperty if exists;
 
-    drop table ClientApplicationAuthorizationCode if exists;
-        
-    drop table ClientApplicationAuthorizationCode if exists;
-        
+    drop table ClientApplication if exists;
+
     drop table ClientApplicationAccessToken if exists;
-    
+
+    drop table ClientApplicationAuthorizationCode if exists;
+
     drop table ComponentBase if exists;
 
     drop table ContactInfo if exists;
@@ -607,6 +592,10 @@
 
     drop table CourseParticipationType if exists;
 
+    drop table CourseStaffMember if exists;
+
+    drop table CourseStaffMemberRole if exists;
+
     drop table CourseState if exists;
 
     drop table CourseStudent if exists;
@@ -616,8 +605,6 @@
     drop table CourseStudentVariableKey if exists;
 
     drop table CourseUser if exists;
-
-    drop table CourseUserRole if exists;
 
     drop table Credit if exists;
 
@@ -743,10 +730,6 @@
 
     drop table StudentStudyEndReason if exists;
 
-    drop table StudentVariable if exists;
-
-    drop table StudentVariableKey if exists;
-
     drop table StudyProgramme if exists;
 
     drop table StudyProgrammeCategory if exists;
@@ -783,13 +766,9 @@
 
     drop table __SchoolTags if exists;
 
-    drop table __StudentBillingDetails if exists;
-
     drop table __StudentGroupTags if exists;
 
     drop table __StudentProjectTags if exists;
-
-    drop table __StudentTags if exists;
 
     drop table __UserBillingDetails if exists;
 

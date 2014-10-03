@@ -1,6 +1,5 @@
 package fi.pyramus.domainmodel.courses;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +19,6 @@ import javax.persistence.PersistenceException;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.search.annotations.Analyze;
@@ -77,52 +75,9 @@ public class Course extends CourseBase implements ArchivableEntity {
     courseComponent.setCourse(null);
     this.courseComponents.remove(courseComponent);
   } 
-  
-  public void setCourseUsers(List<CourseUser> courseUsers) {
-    this.courseUsers = courseUsers;
-  }
-
-  public List<CourseUser> getCourseUsers() {
-    return courseUsers;
-  }
-
-  public void addCourseUser(CourseUser courseUser) {
-    if (courseUser.getCourse() != null)
-      courseUser.getCourse().getCourseUsers().remove(courseUser);
-    courseUser.setCourse(this);
-    courseUsers.add(courseUser);
-  }
-  
-  public void removeCourseUser(CourseUser courseUser) {
-    courseUser.setCourse(null);
-    this.courseUsers.remove(courseUser);
-  } 
 
   public void setStudentCourseResources(List<StudentCourseResource> studentCourseResources) {
     this.studentCourseResources = studentCourseResources;
-  }
-  
-  public List<CourseStudent> getCourseStudents() {
-    return courseStudents;
-  }
-  
-  @SuppressWarnings("unused")
-  private void setCourseStudents(List<CourseStudent> courseStudents) {
-    this.courseStudents = courseStudents;
-  }
-  
-  public void addCourseStudent(CourseStudent courseStudent) {
-    // TODO: Check if student already is in this course
-    if (courseStudent.getCourse() != null)
-      courseStudent.getCourse().removeCourseStudent(courseStudent);
-    courseStudent.setCourse(this);
-    courseStudents.add(courseStudent);
-  }
-  
-  public void removeCourseStudent(CourseStudent courseStudent) {
-    // TODO: Check if student is in this course
-    courseStudent.setCourse(null);
-    courseStudents.remove(courseStudent);
   }
 
   public List<StudentCourseResource> getStudentCourseResources() {
@@ -215,11 +170,6 @@ public class Course extends CourseBase implements ArchivableEntity {
 
   public Date getEndDate() {
     return endDate;
-  }
-  
-  @Transient
-  public Integer getStudentCount() {
-    return courseStudents.size();
   }
   
   public String getNameExtension() {
@@ -347,15 +297,6 @@ public class Course extends CourseBase implements ArchivableEntity {
   @JoinColumn (name="course")
   @IndexedEmbedded
   private List<CourseComponent> courseComponents = new Vector<CourseComponent>();
-  
-  @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn (name="course")
-  @IndexedEmbedded
-  private List<CourseUser> courseUsers = new Vector<CourseUser>();
-
-  @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn (name="course")
-  private List<CourseStudent> courseStudents = new ArrayList<CourseStudent>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="course")

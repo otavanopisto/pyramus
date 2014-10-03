@@ -58,7 +58,7 @@ public class TokenEndpointRESTService extends AbstractRESTService {
       ClientApplication clientApplication = oauthController.findByClientIdAndClientSecret(oauthRequest.getClientId(), oauthRequest.getClientSecret());
 
       if (clientApplication == null) {
-        OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).setError(OAuthError.TokenResponse.INVALID_CLIENT)
+        OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_FORBIDDEN).setError(OAuthError.TokenResponse.INVALID_CLIENT)
             .setErrorDescription("Invalid client").buildJSONMessage();
         return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
       }
@@ -68,15 +68,17 @@ public class TokenEndpointRESTService extends AbstractRESTService {
         clientApplicationAuthorizationCode = oauthController.findByClientApplicationAndAuthorizationCode(clientApplication,
             oauthRequest.getParam(OAuth.OAUTH_CODE));
         if (clientApplicationAuthorizationCode == null) {
-          OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).setError(OAuthError.TokenResponse.INVALID_GRANT)
+          OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_FORBIDDEN).setError(OAuthError.TokenResponse.INVALID_GRANT)
               .setErrorDescription("invalid authorization code").buildJSONMessage();
           return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
         }
       } else if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(GrantType.REFRESH_TOKEN.toString())) {
         // TODO: add support for refresh token
-        OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).setError(OAuthError.TokenResponse.INVALID_REQUEST)
+        OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_NOT_IMPLEMENTED).setError(OAuthError.TokenResponse.INVALID_REQUEST)
             .setErrorDescription("Refresh token not supported").buildJSONMessage();
         return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+      }else {
+        return Response.status(HttpServletResponse.SC_NOT_IMPLEMENTED).build();
       }
 
       String accessToken = oauthIssuerImpl.accessToken();

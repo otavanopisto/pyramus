@@ -33,8 +33,15 @@ public class SearchUsersJSONRequestController extends JSONRequestController {
     
     String text = requestContext.getString("text");
     Role role = (Role) requestContext.getEnum("role", Role.class);
+    Role[] roles;
+    
+    if (role == null) {
+      roles = new Role[] { Role.ADMINISTRATOR, Role.EVERYONE, Role.GUEST, Role.MANAGER, Role.USER };
+    } else {
+      roles = new Role[] { role };
+    }
 
-    SearchResult<User> searchResult = userDAO.searchUsers(resultsPerPage, page, text, text, text, text, role);
+    SearchResult<User> searchResult = userDAO.searchUsers(resultsPerPage, page, text, text, text, text, roles);
     List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
     List<User> users = searchResult.getResults();
     for (User user : users) {

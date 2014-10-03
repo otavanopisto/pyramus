@@ -28,11 +28,11 @@ import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.courses.CourseStudentVariableDAO;
-import fi.pyramus.dao.courses.CourseUserDAO;
-import fi.pyramus.dao.courses.CourseUserRoleDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.users.UserDAO;
@@ -51,10 +51,10 @@ import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
-import fi.pyramus.domainmodel.courses.CourseUser;
-import fi.pyramus.domainmodel.courses.CourseUserRole;
+import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.students.Student;
@@ -286,7 +286,7 @@ public class CoursesService extends PyramusService {
       cOptionality = CourseOptionality.valueOf(optionality);
 
     CourseStudent courseStudent = courseStudentDAO.create(course, student, courseEnrolmentType,
-            participationType, enrolmentDate, lodging, cOptionality);
+            participationType, enrolmentDate, lodging, cOptionality, null, Boolean.FALSE);
 
     validateEntity(courseStudent);
     
@@ -359,14 +359,14 @@ public class CoursesService extends PyramusService {
   public CourseUserEntity createCourseUser(@WebParam (name = "courseId") Long courseId, @WebParam (name = "userId") Long userId, @WebParam (name = "courseUserRoleId") Long courseUserRoleId) {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
-    CourseUserRoleDAO userRoleDAO = DAOFactory.getInstance().getCourseUserRoleDAO();
-    CourseUserDAO courseUserDAO = DAOFactory.getInstance().getCourseUserDAO();
+    CourseStaffMemberDAO courseStaffMemberDAO = DAOFactory.getInstance().getCourseStaffMemberDAO();
+    CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
 
     Course course = courseDAO.findById(courseId);
     User user = userDAO.findById(userId);
-    CourseUserRole role = userRoleDAO.findById(courseUserRoleId);
-    
-    CourseUser courseUser = courseUserDAO.create(course, user, role);
+    CourseStaffMemberRole role = courseStaffMemberRoleDAO.findById(courseUserRoleId);
+
+    CourseStaffMember courseUser = courseStaffMemberDAO.create(course, user, role);
     
     validateEntity(courseUser);
 

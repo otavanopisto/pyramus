@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -75,6 +76,35 @@ public class UserDAO extends PyramusEntityDAO<User> {
         ));
     
     return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<User> listByNotRole(Role role) {
+    return listByNotRole(role, null, null);
+  }
+
+  public List<User> listByNotRole(Role role, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<User> criteria = criteriaBuilder.createQuery(User.class);
+    Root<User> root = criteria.from(User.class);
+    criteria.select(root);
+    
+    criteria.where(
+      criteriaBuilder.notEqual(root.get(User_.role), role)
+    );
+    
+    TypedQuery<User> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+    
+    return query.getResultList();
   }
   
   public User findByExternalIdAndAuthProvider(String externalId, String authProvider) {
@@ -162,7 +192,7 @@ public class UserDAO extends PyramusEntityDAO<User> {
 
   @SuppressWarnings("unchecked")
   public SearchResult<User> searchUsers(int resultsPerPage, int page, String firstName, String lastName, String tags,
-      String email, Role role) {
+      String email, Role[] roles) {
 
     int firstResult = page * resultsPerPage;
     
@@ -170,8 +200,7 @@ public class UserDAO extends PyramusEntityDAO<User> {
     boolean hasLastName = !StringUtils.isBlank(lastName);
     boolean hasTags = !StringUtils.isBlank(tags);
     boolean hasEmail = !StringUtils.isBlank(email);
-    boolean hasRole = role != null;
-
+   
     StringBuilder queryBuilder = new StringBuilder();
     if (hasFirstName || hasLastName || hasEmail) {
       queryBuilder.append("+(");
@@ -188,9 +217,11 @@ public class UserDAO extends PyramusEntityDAO<User> {
       queryBuilder.append(")");
     }
 
-    if (hasRole) {
+    if (roles.length > 0) {
       queryBuilder.append("+(");
-      addTokenizedSearchCriteria(queryBuilder, "role", role.toString(), false);
+      for (Role role : roles) {
+        addTokenizedSearchCriteria(queryBuilder, "role", role.toString(), false);
+      }
       queryBuilder.append(")");
     }
     

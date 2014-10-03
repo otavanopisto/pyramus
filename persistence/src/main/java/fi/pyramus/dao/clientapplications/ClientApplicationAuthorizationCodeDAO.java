@@ -12,7 +12,6 @@ import fi.pyramus.dao.PyramusEntityDAO;
 import fi.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode_;
-import fi.pyramus.domainmodel.clientapplications.ClientApplication_;
 import fi.pyramus.domainmodel.users.User;
 
 @Stateless
@@ -45,6 +44,20 @@ public class ClientApplicationAuthorizationCodeDAO extends PyramusEntityDAO<Clie
     return entityManager.createQuery(criteria).getResultList();
   }
   
+  public List<ClientApplicationAuthorizationCode> listByClientApplication(ClientApplication clientApplication){
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ClientApplicationAuthorizationCode> criteria = criteriaBuilder.createQuery(ClientApplicationAuthorizationCode.class);
+    Root<ClientApplicationAuthorizationCode> root = criteria.from(ClientApplicationAuthorizationCode.class);
+    criteria.select(root);
+    criteria.where(
+            criteriaBuilder.equal(root.get(ClientApplicationAuthorizationCode_.clientApplication), clientApplication)
+        );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
   public ClientApplicationAuthorizationCode findByClientApplicationAndAuthorizationCode(String authorizationCode, ClientApplication clientApplication){
     EntityManager entityManager = getEntityManager(); 
     
@@ -53,12 +66,13 @@ public class ClientApplicationAuthorizationCodeDAO extends PyramusEntityDAO<Clie
     Root<ClientApplicationAuthorizationCode> root = criteria.from(ClientApplicationAuthorizationCode.class);
     criteria.select(root);
     criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(ClientApplicationAuthorizationCode_.authorizationCode), authorizationCode),
-            criteriaBuilder.equal(root.get(ClientApplicationAuthorizationCode_.clientApplication), clientApplication)
-        ));
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(ClientApplicationAuthorizationCode_.authorizationCode), authorizationCode),
+        criteriaBuilder.equal(root.get(ClientApplicationAuthorizationCode_.clientApplication), clientApplication)
+      )
+    );
     
-    return entityManager.createQuery(criteria).getSingleResult();
+    return getSingleResult(entityManager.createQuery(criteria));
   }
   
   public void delete(ClientApplicationAuthorizationCode clientApplicationAuthorizationCode){

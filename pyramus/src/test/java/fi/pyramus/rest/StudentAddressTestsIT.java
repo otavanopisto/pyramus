@@ -13,6 +13,8 @@ import fi.pyramus.rest.model.Address;
 
 public class StudentAddressTestsIT extends AbstractRESTServiceTest {
 
+  private final static long TEST_STUDENT_ID = 3l;
+  
   @Test
   public void testCreateStudentAddress() {
     Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
@@ -20,9 +22,10 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(address)
-      .post("/students/students/{ID}/addresses", 1l);
+      .post("/students/students/{ID}/addresses", TEST_STUDENT_ID);
 
     response.then()
+      .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("name", is(address.getName()))
       .body("streetAddress", is(address.getStreetAddress()))
@@ -35,7 +38,7 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
     int id = response.body().jsonPath().getInt("id");
     
     given().headers(getAuthHeaders())
-      .delete("/students/students/{STUDENTID}/addresses/{ID}", 1l, id)
+      .delete("/students/students/{STUDENTID}/addresses/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(204);
   }
@@ -43,7 +46,7 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testListStudentAddresses() {
     given().headers(getAuthHeaders())
-      .get("/students/students/{ID}/addresses", 1l)
+      .get("/students/students/{ID}/addresses", TEST_STUDENT_ID)
       .then()
       .statusCode(200)
       .body("id.size()", is(1))
@@ -59,7 +62,7 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testFindStudentAddress() {
     given().headers(getAuthHeaders())
-      .get("/students/students/{STUDENTID}/addresses/{ID}", 1l, 3l)
+      .get("/students/students/{STUDENTID}/addresses/{ID}", TEST_STUDENT_ID, 3l)
       .then()
       .statusCode(200)
       .body("id", is(3) )
@@ -79,9 +82,10 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(address)
-      .post("/students/students/{STUDENTID}/addresses", 1l);
+      .post("/students/students/{STUDENTID}/addresses", TEST_STUDENT_ID);
 
     response.then()
+      .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("name", is(address.getName()))
       .body("streetAddress", is(address.getStreetAddress()))
@@ -94,16 +98,16 @@ public class StudentAddressTestsIT extends AbstractRESTServiceTest {
     Long id = new Long(response.body().jsonPath().getInt("id"));
     assertNotNull(id);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/addresses/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/addresses/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(200);
     
     given().headers(getAuthHeaders())
-      .delete("/students/students/{STUDENTID}/addresses/{ID}", 1l, id)
+      .delete("/students/students/{STUDENTID}/addresses/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(204);
     
-    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/addresses/{ID}", 1l, id)
+    given().headers(getAuthHeaders()).get("/students/students/{STUDENTID}/addresses/{ID}", TEST_STUDENT_ID, id)
       .then()
       .statusCode(404);
   }

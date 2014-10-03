@@ -10,7 +10,7 @@ public class Student {
   public Student() {
     super();
   }
-
+  
   public Student(Long id, Long abstractStudentId, String firstName, String lastName, String nickname, String additionalInfo, String additionalContactInfo, Long nationalityId,
       Long languageId, Long municipalityId, Long schoolId, Long activityTypeId, Long examinationTypeId, Long educationalLevelId, DateTime studyTimeEnd,
       Long studyProgrammeId, Double previousStudies, String education, Boolean lodging, DateTime studyStartDate, DateTime studyEndDate, Long studyEndReasonId,
@@ -59,7 +59,7 @@ public class Student {
   public void setAbstractStudentId(Long abstractStudentId) {
     this.abstractStudentId = abstractStudentId;
   }
-
+  
   public String getFirstName() {
     return firstName;
   }

@@ -15,7 +15,12 @@ import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
+import fi.pyramus.dao.courses.CourseStudentDAO;
+import fi.pyramus.domainmodel.base.BillingDetails;
+import fi.pyramus.domainmodel.base.CourseOptionality;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
@@ -24,27 +29,47 @@ import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.pyramus.domainmodel.courses.CourseStaffMember;
+import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
+import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.modules.Module;
+import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.User;
 
 @Dependent
 @Stateless
 public class CourseController {
+  
   @Inject
   private CourseDAO courseDAO;
+  
   @Inject
   private CourseStateDAO courseStateDAO;
+  
   @Inject
   private TagDAO tagDAO;
+  
   @Inject
   private CourseDescriptionCategoryDAO courseDescriptionCategoryDAO;
+  
   @Inject
   private CourseParticipationTypeDAO courseParticipationTypeDAO;
+  
   @Inject
   private CourseComponentDAO courseComponentDAO;
+  
   @Inject
   private CourseEnrolmentTypeDAO courseEnrolmentTypeDAO;
+
+  @Inject
+  private CourseStaffMemberRoleDAO courseStaffMemberRoleDAO;
+
+  @Inject
+  private CourseStaffMemberDAO courseStaffMemberDAO;
+
+  @Inject
+  private CourseStudentDAO courseStudentDAO;
   
   public Course createCourse(Module module, String name, String nameExtension, CourseState state, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
@@ -312,4 +337,82 @@ public class CourseController {
   public List<Course> listCoursesBySubject(Subject subject) {
     return courseDAO.listBySubject(subject);
   }
+  
+  /* CourseStaffMemberRole */
+
+  public CourseStaffMemberRole createStaffMemberRole(String name) {
+    return courseStaffMemberRoleDAO.create(name);
+  }
+  
+  public CourseStaffMemberRole findStaffMemberRoleById(Long id) {
+    return courseStaffMemberRoleDAO.findById(id);
+  }
+  
+  public List<CourseStaffMemberRole> listStaffMemberRoles() {
+    return courseStaffMemberRoleDAO.listAll();
+  }
+
+  public CourseStaffMemberRole updateCourseStaffMemberRoleName(CourseStaffMemberRole courseStaffMemberRole, String name) {
+    return courseStaffMemberRoleDAO.updateName(courseStaffMemberRole, name);
+  }
+  
+  public void deleteStaffMemberRole(CourseStaffMemberRole courseStaffMemberRole) {
+    courseStaffMemberRoleDAO.delete(courseStaffMemberRole);
+  }
+  
+  /* CourseStaffMembers */
+  
+  public CourseStaffMember createStaffMember(Course course, User user, CourseStaffMemberRole role) {
+    return courseStaffMemberDAO.create(course, user, role);
+  }
+  
+  public CourseStaffMember findStaffMemberById(Long id) {
+    return courseStaffMemberDAO.findById(id);
+  }
+  
+  public List<CourseStaffMember> listStaffMembersByCourse(Course course) {
+    return courseStaffMemberDAO.listByCourse(course);
+  }
+
+  public CourseStaffMember updateStaffMemberRole(CourseStaffMember staffMember, CourseStaffMemberRole role) {
+    return courseStaffMemberDAO.updateRole(staffMember, role);
+  }
+  
+  public void deleteStaffMember(CourseStaffMember courseStaffMember) {
+    courseStaffMemberDAO.delete(courseStaffMember);
+  }
+  
+  /* CourseStudent */
+  
+  public CourseStudent createCourseStudent(Course course, Student student, CourseEnrolmentType enrolmentType, CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails) {
+    return courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, billingDetails, Boolean.FALSE);
+  }
+  
+  public CourseStudent findCourseStudentById(Long id) {
+    return courseStudentDAO.findById(id);
+  }
+  
+  public List<CourseStudent> listCourseStudentsByCourse(Course course) {
+    return courseStudentDAO.listByCourse(course);
+  }
+
+  public CourseStudent updateCourseStudent(CourseStudent courseStudent, Boolean lodging, BillingDetails billingDetails, CourseEnrolmentType enrolmentType, Date enrolmentTime, CourseOptionality optionality, CourseParticipationType participationType) {
+    courseStudentDAO.updateLodging(courseStudent, lodging);
+    courseStudentDAO.updateBillingDetails(courseStudent, billingDetails);
+    courseStudentDAO.updateEnrolmentType(courseStudent, enrolmentType);
+    courseStudentDAO.updateEnrolmentTime(courseStudent, enrolmentTime);
+    courseStudentDAO.updateOptionality(courseStudent, optionality);
+    courseStudentDAO.updateParticipationType(courseStudent, participationType);
+    return courseStudent;
+  }
+
+  public CourseStudent archiveCourseStudent(CourseStudent courseStudent, User loggedUser) {
+    courseStudentDAO.archive(courseStudent, loggedUser);
+    return courseStudent;
+  }
+
+  public void deleteCourseStudent(CourseStudent courseStudent) {
+    courseStudentDAO.delete(courseStudent);
+  }
+  
 }

@@ -27,7 +27,7 @@ import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
-import fi.pyramus.dao.students.StudentVariableDAO;
+import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Email;
@@ -389,15 +389,15 @@ public class StudentsService extends PyramusService {
 
   public StudentEntity[] listStudentsByStudentVariable(@WebParam (name="key") String key, @WebParam (name="value") String value) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listByStudentVariable(key, value));
+    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listByUserVariable(key, value));
   }
 
   public String getStudentVariable(@WebParam (name="studentId") Long studentId, @WebParam (name="key") String key) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    StudentVariableDAO studentVariableDAO = DAOFactory.getInstance().getStudentVariableDAO();
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
 
     Student student = studentDAO.findById(studentId);
-    return studentVariableDAO.findByStudentAndKey(student, key);
+    return userVariableDAO.findByUserAndKey(student, key);
   }
 
   public void setStudentSchool(@WebParam (name="studentId") Long studentId, @WebParam (name="schoolId") Long schoolId) {
@@ -411,9 +411,9 @@ public class StudentsService extends PyramusService {
 
   public void setStudentVariable(@WebParam (name="studentId") Long studentId, @WebParam (name="key") String key, @WebParam (name="value") String value) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    StudentVariableDAO studentVariableDAO = DAOFactory.getInstance().getStudentVariableDAO();
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     Student student = studentDAO.findById(studentId);
-    studentVariableDAO.setStudentVariable(student, key, value);
+    userVariableDAO.setUserVariable(student, key, value);
   }
 
 }

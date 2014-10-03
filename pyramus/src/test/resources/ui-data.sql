@@ -169,8 +169,8 @@ insert into
 values   
   (1, 'For test school #1', 1),
   (2, 'For test school #2', 1),
-  (3, 'For test student #1', 1),
-  (4, 'For test student #2', 1);
+  (3, 'For test student #3', 1),
+  (4, 'For test student #4', 1);
   
 insert into 
   ContactType (id, name, version, archived)
@@ -233,7 +233,7 @@ values
   (1, 'test', 1, 1, 1, false);
   
 insert into 
-  StudentVariableKey (id, userEditable, variableKey, variableName, variableType, version)
+  UserVariableKey (id, userEditable, variableKey, variableName, variableType, version)
 values 
   (1, false, 'TV1', 'Test Variable #1 - text', 'TEXT', 1),
   (2, false, 'TV2', 'Test Variable #2 - number', 'NUMBER', 1),
@@ -307,18 +307,24 @@ values
   (2, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false, 1);
   
 insert into 
-  Student (id, abstractStudent, studyProgramme, firstName, lastName,  nickname, previousStudies, studyStartDate, 
-    additionalInfo, activityType, educationalLevel, language, municipality, nationality, school, 
-    examinationType, education, lodging, contactInfo, version, archived)
+  User (id, authProvider, externalId, role, firstName, lastName, contactInfo, version)
 values 
-  (1, 1, 1, 'Tanya', 'Test #1', 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false, 3, 1, false),
-  (2, 2, 1, 'David', 'Test #2', 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false, 4, 1, false);
+  (3, 'internal', '-1', 'STUDENT', 'Tanya', 'Test #1', 3, 1),
+  (4, 'internal', '-1', 'STUDENT', 'David', 'Test #2', 4, 1);
+  
+insert into 
+  Student (id, abstractStudent, studyProgramme, nickname, previousStudies, studyStartDate, 
+    additionalInfo, activityType, educationalLevel, language, municipality, nationality, school, 
+    examinationType, education, lodging, archived)
+values 
+  (3, 1, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false, false),
+  (4, 2, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false, false);
   
 insert into StudentGroupStudent
   (id, studentGroup, student, version)
 values 
-  (1, 1, 1, 1),
-  (2, 1, 2, 1);
+  (1, 1, 3, 1),
+  (2, 1, 4, 1);
   
 insert into StudentStudyEndReason 
   (id, name, parentReason, version)
@@ -329,8 +335,8 @@ values
 insert into 
   StudentContactLogEntry (id, creatorName, entryDate, text, type, student, version, archived)
 values
-  (1, 'Tester #1', PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test text #1', 'LETTER', 1, 1, false),
-  (2, 'Tester #2', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'Test text #2', 'PHONE', 1, 1, false);
+  (1, 'Tester #1', PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test text #1', 'LETTER', 3, 1, false),
+  (2, 'Tester #2', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'Test text #2', 'PHONE', 3, 1, false);
 
   
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
@@ -363,7 +369,7 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'School', max(id) + 1 from School;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SchoolVariableKey', max(id) + 1 from SchoolVariableKey;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'SchoolVariable', max(id) + 1 from SchoolVariable;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentVariableKey', max(id) + 1 from StudentVariableKey;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'UserVariableKey', max(id) + 1 from UserVariableKey;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseBaseVariableKey', max(id) + 1 from CourseBaseVariableKey;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Language', max(id) + 1 from Language;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Municipality', max(id) + 1 from Municipality;

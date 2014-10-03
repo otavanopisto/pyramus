@@ -10,6 +10,10 @@
     <relativePath>../</relativePath>
   </parent>
   
+  <properties>
+    <hibernate-jpamodelgen.version>4.3.5.Final</hibernate-jpamodelgen.version>
+  </properties>
+  
   <dependencies>
   
     <!-- Servlet -->
@@ -89,35 +93,9 @@
     <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.7</version>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${basedir}/src/main/.metamodel</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.bsc.maven</groupId>
         <artifactId>maven-processor-plugin</artifactId>
-        <version>2.0.5</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>1.0.0.Final</version>
-          </dependency>
-        </dependencies>
+        <version>2.2.4</version>
         <executions>
           <execution>
             <id>process</id>
@@ -126,13 +104,19 @@
             </goals>
             <phase>generate-sources</phase>
             <configuration>
-              <outputDirectory>${basedir}/src/main/.metamodel</outputDirectory>
               <processors>
                 <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
               </processors>
             </configuration>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>${hibernate-jpamodelgen.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>
