@@ -28,8 +28,7 @@ public class AbstractUITest extends AbstractIntegrationTest {
 
   protected void testPageElementsByName(String elementName) {
     Boolean elementExists = getWebDriver().findElements(By.name(elementName)).size() > 0;
-    Boolean expected = true;
-    assertEquals(expected, elementExists);
+    assertEquals(true, elementExists);
   }
 
   protected void testLogin(String username, String password) throws InterruptedException {
@@ -86,6 +85,13 @@ public class AbstractUITest extends AbstractIntegrationTest {
         return driver.getCurrentUrl().matches(regex);
       }
     });
+  }
+
+  protected void sleep(long millis) {
+    try {
+      Thread.sleep(millis);
+    } catch (InterruptedException e) {
+    }
   }
 
   private RemoteWebDriver webDriver;
