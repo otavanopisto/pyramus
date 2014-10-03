@@ -136,14 +136,20 @@ public class CourseController {
     return course;
   }
   
-  public List<Course> findCourses() {
-    List<Course> courses = courseDAO.listAll();
-    return courses;
+  public List<Course> listCourses() {
+    return courseDAO.listAll();
+  }
+
+  public List<Course> listCourses(Integer firstResult, Integer maxResults) {
+    return courseDAO.listAll(firstResult, maxResults);
   }
   
-  public List<Course> findUnarchivedCourses() {
-    List<Course> courses = courseDAO.listUnarchived();
-    return courses;
+  public List<Course> listUnarchivedCourses() {
+    return courseDAO.listUnarchived();
+  }
+
+  public List<Course> listUnarchivedCourses(Integer firstResult, Integer maxResults) {
+    return courseDAO.listUnarchived(firstResult, maxResults);
   }
   
   public Course findCourseById(Long id) {
