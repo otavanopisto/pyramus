@@ -152,13 +152,13 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses")
   @GET
-  public Response listCourses(@DefaultValue("true") @QueryParam("filterArchived") boolean filterArchived) {
+  public Response listCourses(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults, @DefaultValue("true") @QueryParam("filterArchived") boolean filterArchived) {
     List<Course> courses;
     
     if (filterArchived) {
-      courses = courseController.findUnarchivedCourses();
+      courses = courseController.listUnarchivedCourses(firstResult, maxResults);
     } else {
-      courses = courseController.findCourses();
+      courses = courseController.listCourses(firstResult, maxResults);
     }
     
     if (!courses.isEmpty()) {
