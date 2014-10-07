@@ -206,6 +206,22 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  public List<Course> listBySubject(Subject subject) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Course> criteria = criteriaBuilder.createQuery(Course.class);
+    Root<Course> root = criteria.from(Course.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(Course_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(root.get(Course_.subject), subject)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   @SuppressWarnings("unchecked")
   public SearchResult<Course> searchCoursesBasic(int resultsPerPage, int page, String text, boolean filterArchived) {
     int firstResult = page * resultsPerPage;
@@ -404,6 +420,5 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
       throw new PersistenceException(e);
     }
   }
-
   
 }
