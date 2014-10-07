@@ -398,6 +398,10 @@ public class CourseController {
     return courseStudentDAO.listByCourse(course);
   }
 
+  public List<CourseStudent> listCourseStudentsByStudent(Student student) {
+    return courseStudentDAO.listByStudent(student);
+  }
+
   public CourseStudent updateCourseStudent(CourseStudent courseStudent, Boolean lodging, BillingDetails billingDetails, CourseEnrolmentType enrolmentType, Date enrolmentTime, CourseOptionality optionality, CourseParticipationType participationType) {
     courseStudentDAO.updateLodging(courseStudent, lodging);
     courseStudentDAO.updateBillingDetails(courseStudent, billingDetails);
