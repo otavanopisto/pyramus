@@ -173,9 +173,7 @@ insert into
   ContactInfo (id, additionalInfo, version)
 values   
   (1, 'For test school #1', 1),
-  (2, 'For test school #2', 1),
-  (3, 'For test student #3', 1),
-  (4, 'For test student #4', 1);
+  (2, 'For test school #2', 1);
   
 insert into 
   ContactType (id, name, version, archived)
@@ -186,25 +184,19 @@ insert into
   Address (id, city, country, postalCode, streetAddress, name, contactInfo, contactType, indexColumn, defaultAddress, version)
 values 
   (1, 'Eastbury', 'Senegal', '76763-3962', '2636 Johnston Harbors', null, 1, 1, 0, true, 1),
-  (2, 'Zambia', 'Portborough', '02531-1064', '430 Vesta Inlet', null, 2, 1, 0, true, 1),
-  (3, 'Southshire', 'Yemen', '17298', '6967 Bailee Mission', null, 3, 1, 0, true, 1),
-  (4, 'Northchester', 'Cuba', '97733', '556 Lupe Mountains', null, 4, 1, 0, true, 1);
+  (2, 'Zambia', 'Portborough', '02531-1064', '430 Vesta Inlet', null, 2, 1, 0, true, 1);
   
 insert into 
   Email (id, address, defaultAddress, contactInfo, contactType, indexColumn, version)
 values 
   (1, 'school1@bogusmail.com', true, 1, 1, 0, 1),
-  (2, 'school2@bogusmail.com', true, 2, 1, 0, 1),
-  (3, 'student1@bogusmail.com', true, 3, 1, 0, 1),
-  (4, 'student2@bogusmail.com', true, 4, 1, 0, 1);
+  (2, 'school2@bogusmail.com', true, 2, 1, 0, 1);
   
 insert into 
   PhoneNumber (id, number, defaultNumber, contactInfo, contactType, indexColumn, version)
 values 
   (1, '+123 45 678 9012', true, 1, 1, 0, 1),
-  (2, '+234 56 789 0123', true, 2, 1, 0, 1),
-  (3, '+456 78 901 2345', true, 3, 1, 0, 1),
-  (4, '+567 89 012 3456', true, 4, 1, 0, 1);
+  (2, '+234 56 789 0123', true, 2, 1, 0, 1);
   
 insert into
   ContactURLType (id, name, version, archived)
@@ -215,9 +207,7 @@ insert into
   ContactURL (id, url, contactInfo, contactURLType, indexColumn, version)
 values 
   (1, 'http://www.school1webpage.com', 1, 1, 0, 1),
-  (2, 'http://www.school2webpage.com', 2, 1, 0, 1),
-  (3, 'http://www.student1webpage.com', 3, 1, 0, 1),
-  (4, 'http://www.student2webpage.com', 4, 1, 0, 1);
+  (2, 'http://www.school2webpage.com', 2, 1, 0, 1);
   
 insert into 
   School (id, name, code, contactInfo, version, field, archived)
@@ -304,58 +294,12 @@ insert into
 values  
   (1, 'StudentActivityType #1', 1, false),
   (2, 'StudentActivityType #2', 1, false);
-
-insert into 
-  AbstractStudent (id, birthday, sex, socialSecurityNumber, basicInfo, secureInfo, version)
-values 
-  (1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'FEMALE', '123456-7890', 'Test student #1', false, 1),
-  (2, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false, 1);
-  
-insert into 
-  User (id, authProvider, externalId, role, firstName, lastName, contactInfo, version)
-values 
-  (3, 'internal', '-1', 'STUDENT', 'Tanya', 'Test #1', 3, 1),
-  (4, 'internal', '-1', 'STUDENT', 'David', 'Test #2', 4, 1);
-  
-insert into 
-  Student (id, abstractStudent, studyProgramme, nickname, previousStudies, studyStartDate, 
-    additionalInfo, activityType, educationalLevel, language, municipality, nationality, school, 
-    examinationType, education, lodging, archived)
-values 
-  (3, 1, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false, false),
-  (4, 2, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false, false);
-
-insert into
-  CourseUser (id, version, course)
-values
-  (1, 0, 1000),
-  (2, 0, 1001);
-  
-insert into 
-  CourseStudent (archived, enrolmentTime, lodging, optionality, id, billingDetails, enrolmentType, 
-  participationType, student)
-values 
-  (0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 0, 'OPTIONAL', 1, NULL, NULL, 1, 3),
-  (0, PARSEDATETIME('1 1 2011', 'd M yyyy'), 0, 'OPTIONAL', 2, NULL, NULL, 1, 4);
-  
-insert into StudentGroupStudent
-  (id, studentGroup, student, version)
-values 
-  (1, 1, 3, 1),
-  (2, 1, 4, 1);
   
 insert into StudentStudyEndReason 
   (id, name, parentReason, version)
 values 
   (1, 'StudentStudyEndReason #1', null ,1),
   (2, 'StudentStudyEndReason #2', 1 ,1);
-  
-insert into 
-  StudentContactLogEntry (id, creatorName, entryDate, text, type, student, version, archived)
-values
-  (1, 'Tester #1', PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test text #1', 'LETTER', 3, 1, false),
-  (2, 'Tester #2', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'Test text #2', 'PHONE', 3, 1, false);
-
 
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'InternalAuth', max(id) + 1 from InternalAuth;  
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
@@ -397,12 +341,5 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentEducationalLevel', max(id) + 1 from StudentEducationalLevel;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentExaminationType', max(id) + 1 from StudentExaminationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgrammeCategory', max(id) + 1 from StudyProgrammeCategory;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgramme', max(id) + 1 from StudyProgramme;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroup', max(id) + 1 from StudentGroup;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroupStudent', max(id) + 1 from StudentGroupStudent;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'AbstractStudent', max(id) + 1 from AbstractStudent;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Student', max(id) + 1 from Student;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentStudyEndReason', max(id) + 1 from StudentStudyEndReason;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentContactLogEntry', max(id) + 1 from StudentContactLogEntry;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseUser', max(id) + 1 from CourseUser;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStudent', max(id) + 1 from CourseStudent;
