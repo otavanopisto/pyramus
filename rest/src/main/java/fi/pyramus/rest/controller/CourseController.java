@@ -339,6 +339,10 @@ public class CourseController {
   public void removeCourseTag(Course course, Tag tag) {
     course.removeTag(tag);
   }
+
+  public List<Course> listCoursesBySubject(Subject subject) {
+    return courseDAO.listBySubject(subject);
+  }
   
   /* CourseStaffMemberRole */
 
@@ -396,6 +400,10 @@ public class CourseController {
   
   public List<CourseStudent> listCourseStudentsByCourse(Course course) {
     return courseStudentDAO.listByCourse(course);
+  }
+
+  public List<CourseStudent> listCourseStudentsByStudent(Student student) {
+    return courseStudentDAO.listByStudent(student);
   }
 
   public CourseStudent updateCourseStudent(CourseStudent courseStudent, Boolean lodging, BillingDetails billingDetails, CourseEnrolmentType enrolmentType, Date enrolmentTime, CourseOptionality optionality, CourseParticipationType participationType) {

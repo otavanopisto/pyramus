@@ -27,9 +27,11 @@ import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
+import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.rest.controller.CommonController;
+import fi.pyramus.rest.controller.CourseController;
 
 @Path("/common")
 @Produces(MediaType.APPLICATION_JSON)
@@ -41,6 +43,9 @@ public class CommonRESTService extends AbstractRESTService {
   @Inject
   private CommonController commonController;
 
+  @Inject
+  private CourseController courseController;
+  
   @Inject
   private ObjectFactory objectFactory;
   
@@ -411,6 +416,25 @@ public class CommonRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
+  @Path("/subjects/{ID:[0-9]*}/courses")
+  @GET
+  public Response listCoursesBySubject(@PathParam("ID") Long id) {
+    Subject subject = commonController.findSubjectById(id);
+    if (subject == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (subject.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    List<Course> courses = courseController.listCoursesBySubject(subject);
+    
+    return Response.ok()
+        .entity(objectFactory.createModel(courses))
+        .build();
+  }
+
   @Path("/gradingScales")
   @POST
   public Response createGradingScale(fi.pyramus.rest.model.GradingScale entity) {

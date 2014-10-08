@@ -53,6 +53,7 @@ import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
+import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.LanguageController;
 import fi.pyramus.rest.controller.MunicipalityController;
 import fi.pyramus.rest.controller.NationalityController;
@@ -122,7 +123,10 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Inject
   private SchoolController schoolController;
-  
+
+  @Inject
+  private CourseController courseController;
+
   @Inject
   private ObjectFactory objectFactory;
 
@@ -2055,5 +2059,28 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.noContent().build(); 
   } 
   
-
+  @Path("/students/{STUDENTID:[0-9]*}/courses")
+  @GET
+  public Response listCourseStudents(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<fi.pyramus.domainmodel.courses.CourseStudent> courseStudents = courseController.listCourseStudentsByStudent(student);
+    if (courseStudents.isEmpty()) {
+      return Response.status(Status.NO_CONTENT).build();
+    }
+    
+    List<fi.pyramus.domainmodel.courses.Course> courses = new ArrayList<>();
+    for (fi.pyramus.domainmodel.courses.CourseStudent courseStudent : courseStudents) {
+      courses.add(courseStudent.getCourse());
+    }
+    
+    return Response.status(Status.OK).entity(objectFactory.createModel(courses)).build();
+  }
 }
