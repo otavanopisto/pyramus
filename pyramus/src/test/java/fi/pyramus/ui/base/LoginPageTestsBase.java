@@ -11,29 +11,6 @@ public class LoginPageTestsBase extends AbstractUITest {
   @Test
   @SqlBefore ("sql/basic-before.sql")
   @SqlAfter ("sql/basic-after.sql")
-  public void testLoginPageUsernameElement(){
-    getWebDriver().get(getAppUrl(true) + "/users/login.page");
-    testPageElementsByName("username");
-  }
-  
-  @Test
-  @SqlBefore ("sql/basic-before.sql")
-  @SqlAfter ("sql/basic-after.sql")
-  public void testLoginPagePasswordElement(){
-    getWebDriver().get(getAppUrl(true) + "/users/login.page");
-    testPageElementsByName("password");
-  }
-  
-  @Test
-  @SqlBefore ("sql/basic-before.sql")
-  @SqlAfter ("sql/basic-after.sql")
-  public void testLoginPageLoginbuttonElement(){
-    getWebDriver().get(getAppUrl(true) + "/users/login.page");
-    testPageElementsByName("login");
-  }
-  @Test
-  @SqlBefore ("sql/basic-before.sql")
-  @SqlAfter ("sql/basic-after.sql")
   public void testLogin() throws InterruptedException{
     testLogin(ADMIN_USERNAME, ADMIN_PASSWORD);
   }

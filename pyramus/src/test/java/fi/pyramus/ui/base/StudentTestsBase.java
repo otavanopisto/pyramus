@@ -77,7 +77,7 @@ public class StudentTestsBase extends AbstractUITest {
   @Test
   @SqlBefore ("sql/basic-before.sql")
   @SqlAfter ("sql/basic-after.sql")
-  public void testCourseEditStudentBasicData(){
+  public void testCourseEditStudentBasicDataSsec(){
     login(ADMIN_USERNAME, ADMIN_PASSWORD);
     getWebDriver().get(getAppUrl(true) + "/courses/searchcourses.page");
     waitForUrlNotMatches(".*/index.*");
@@ -100,11 +100,92 @@ public class StudentTestsBase extends AbstractUITest {
     String ssec = getWebDriver().findElement(By.name("ssecId")).getAttribute("value");   
     assertEquals("010150-1234", ssec);
   }
+
+  @Test
+  @SqlBefore ("sql/basic-before.sql")
+  @SqlAfter ("sql/basic-after.sql")
+  public void testCourseEditStudentBasicDataBirthday(){
+    login(ADMIN_USERNAME, ADMIN_PASSWORD);
+    getWebDriver().get(getAppUrl(true) + "/courses/searchcourses.page");
+    waitForUrlNotMatches(".*/index.*");
+    getWebDriver().findElement(By.cssSelector(".genericFormSubmitSection input[type~=\"submit\"]")).click();
+//  TODO: No usable name, class or id for this element.
+    waitForElementToBePresent(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(4) img"));
+    getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(4) img")).click();
+    waitForUrlNotMatches(".*/searchcourses.*");
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".tabLabel:last-child")).click();
+    waitForElementToBePresent(By.cssSelector("div#students"));
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(11) img")).click();
+    waitForUrlNotMatches(".*/viewcourse.*");
+    
+    getWebDriver().findElement(By.id("birthday-text")).clear();
+    getWebDriver().findElement(By.id("birthday-text")).sendKeys("02/08/1980");
+    getWebDriver().findElement(By.cssSelector(".genericFormSubmitSectionOffTab input")).click();
+    waitForElementToBeClickable(By.id("birthday-text"));
+    String birthday = getWebDriver().findElement(By.id("birthday-text")).getAttribute("value");   
+    assertEquals("02/08/1980", birthday);
+  }
   
   @Test
   @SqlBefore ("sql/basic-before.sql")
   @SqlAfter ("sql/basic-after.sql")
-  public void testCourseEditStudentStudyprogrammeData(){
+  public void testCourseEditStudentBasicDataGender(){
+    login(ADMIN_USERNAME, ADMIN_PASSWORD);
+    getWebDriver().get(getAppUrl(true) + "/courses/searchcourses.page");
+    waitForUrlNotMatches(".*/index.*");
+    getWebDriver().findElement(By.cssSelector(".genericFormSubmitSection input[type~=\"submit\"]")).click();
+//  TODO: No usable name, class or id for this element.
+    waitForElementToBePresent(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(4) img"));
+    getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(4) img")).click();
+    waitForUrlNotMatches(".*/searchcourses.*");
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".tabLabel:last-child")).click();
+    waitForElementToBePresent(By.cssSelector("div#students"));
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(11) img")).click();
+    waitForUrlNotMatches(".*/viewcourse.*");
+    
+    new Select(getWebDriver().findElement(By.name("gender"))).selectByValue("male");
+
+    getWebDriver().findElement(By.cssSelector(".genericFormSubmitSectionOffTab input")).click();
+    waitForElementToBeClickable(By.id("birthday-text"));
+    
+    assertEquals("Male", new Select(getWebDriver().findElement(By.name("gender"))).getFirstSelectedOption().getText());
+  }
+
+  @Test
+  @SqlBefore ("sql/basic-before.sql")
+  @SqlAfter ("sql/basic-after.sql")
+  public void testCourseEditStudentBasicDataSecureInfo(){
+    login(ADMIN_USERNAME, ADMIN_PASSWORD);
+    getWebDriver().get(getAppUrl(true) + "/courses/searchcourses.page");
+    waitForUrlNotMatches(".*/index.*");
+    getWebDriver().findElement(By.cssSelector(".genericFormSubmitSection input[type~=\"submit\"]")).click();
+//  TODO: No usable name, class or id for this element.
+    waitForElementToBePresent(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(4) img"));
+    getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(4) img")).click();
+    waitForUrlNotMatches(".*/searchcourses.*");
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".tabLabel:last-child")).click();
+    waitForElementToBePresent(By.cssSelector("div#students"));
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(11) img")).click();
+    waitForUrlNotMatches(".*/viewcourse.*");
+    
+    getWebDriver().findElement(By.name("secureInfo")).click();
+
+    getWebDriver().findElement(By.cssSelector(".genericFormSubmitSectionOffTab input")).click();
+    waitForElementToBeClickable(By.id("birthday-text"));
+    
+    assertEquals(true, getWebDriver().findElement(By.name("secureInfo")).isSelected());
+  }
+  
+  @Test
+  @SqlBefore ("sql/basic-before.sql")
+  @SqlAfter ("sql/basic-after.sql")
+  public void testCourseEditStudentStudyprogrammeDataFirstName(){
     login(ADMIN_USERNAME, ADMIN_PASSWORD);
     getWebDriver().get(getAppUrl(true) + "/courses/searchcourses.page");
     waitForUrlNotMatches(".*/index.*");
@@ -123,10 +204,94 @@ public class StudentTestsBase extends AbstractUITest {
     getWebDriver().findElement(By.cssSelector(".tabLabel:last-child")).click();   
 //  TODO: No usable name, class or id.
     getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(3) input")).clear();
-    getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(3) input")).sendKeys("Neonaine");
+    getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(3) input")).sendKeys("TestSt");
     getWebDriver().findElement(By.cssSelector(".genericFormSubmitSectionOffTab input[type~=\"submit\"]")).click();
     waitForElementToBeClickable(By.cssSelector(".activeTab .genericFormSection:nth-of-type(3) input"));
-    assertEquals("Neonaine", getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(3) input")).getAttribute("value"));
+    assertEquals("TestSt", getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(3) input")).getAttribute("value"));
+  }
+  
+  @Test
+  @SqlBefore ("sql/basic-before.sql")
+  @SqlAfter ("sql/basic-after.sql")
+  public void testCourseEditStudentStudyprogrammeDataLastName(){
+    login(ADMIN_USERNAME, ADMIN_PASSWORD);
+    getWebDriver().get(getAppUrl(true) + "/courses/searchcourses.page");
+    waitForUrlNotMatches(".*/index.*");
+    getWebDriver().findElement(By.cssSelector(".genericFormSubmitSection input[type~=\"submit\"]")).click();
+//  TODO: No usable name, class or id for this element.
+    waitForElementToBePresent(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(4) img"));
+    getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(4) img")).click();
+    waitForUrlNotMatches(".*/searchcourses.*");
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".tabLabel:last-child")).click();
+    waitForElementToBePresent(By.cssSelector("div#students"));
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(11) img")).click();
+    waitForUrlNotMatches(".*/viewcourse.*");
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".tabLabel:last-child")).click();   
+//  TODO: No usable name, class or id.
+    getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(4) input")).clear();
+    getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(4) input")).sendKeys("Testlastname");
+    getWebDriver().findElement(By.cssSelector(".genericFormSubmitSectionOffTab input[type~=\"submit\"]")).click();
+    waitForElementToBeClickable(By.cssSelector(".activeTab .genericFormSection:nth-of-type(4) input"));
+    assertEquals("Testlastname", getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(4) input")).getAttribute("value"));
+  }
+  
+  @Test
+  @SqlBefore ("sql/basic-before.sql")
+  @SqlAfter ("sql/basic-after.sql")
+  public void testCourseEditStudentStudyprogrammeDataNickname(){
+    login(ADMIN_USERNAME, ADMIN_PASSWORD);
+    getWebDriver().get(getAppUrl(true) + "/courses/searchcourses.page");
+    waitForUrlNotMatches(".*/index.*");
+    getWebDriver().findElement(By.cssSelector(".genericFormSubmitSection input[type~=\"submit\"]")).click();
+//  TODO: No usable name, class or id for this element.
+    waitForElementToBePresent(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(4) img"));
+    getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(4) img")).click();
+    waitForUrlNotMatches(".*/searchcourses.*");
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".tabLabel:last-child")).click();
+    waitForElementToBePresent(By.cssSelector("div#students"));
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(11) img")).click();
+    waitForUrlNotMatches(".*/viewcourse.*");
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".tabLabel:last-child")).click();   
+//  TODO: No usable name, class or id.
+    getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(5) input")).clear();
+    getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(5) input")).sendKeys("Testnick");
+    getWebDriver().findElement(By.cssSelector(".genericFormSubmitSectionOffTab input[type~=\"submit\"]")).click();
+    waitForElementToBeClickable(By.cssSelector(".activeTab .genericFormSection:nth-of-type(5) input"));
+    assertEquals("Testnick", getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(5) input")).getAttribute("value"));
+  }
+  
+  @Test
+  @SqlBefore ("sql/basic-before.sql")
+  @SqlAfter ("sql/basic-after.sql")
+  public void testCourseEditStudentStudyprogrammeDataTags(){
+    login(ADMIN_USERNAME, ADMIN_PASSWORD);
+    getWebDriver().get(getAppUrl(true) + "/courses/searchcourses.page");
+    waitForUrlNotMatches(".*/index.*");
+    getWebDriver().findElement(By.cssSelector(".genericFormSubmitSection input[type~=\"submit\"]")).click();
+//  TODO: No usable name, class or id for this element.
+    waitForElementToBePresent(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(4) img"));
+    getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(4) img")).click();
+    waitForUrlNotMatches(".*/searchcourses.*");
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".tabLabel:last-child")).click();
+    waitForElementToBePresent(By.cssSelector("div#students"));
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(11) img")).click();
+    waitForUrlNotMatches(".*/viewcourse.*");
+//  TODO: No usable name, class or id for this element.
+    getWebDriver().findElement(By.cssSelector(".tabLabel:last-child")).click();   
+//  TODO: No usable name, class or id.
+    getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(6) input")).clear();
+    getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(6) input")).sendKeys("Test");
+    getWebDriver().findElement(By.cssSelector(".genericFormSubmitSectionOffTab input[type~=\"submit\"]")).click();
+    waitForElementToBeClickable(By.cssSelector(".activeTab .genericFormSection:nth-of-type(6) input"));
+    assertEquals("Test", getWebDriver().findElement(By.cssSelector(".activeTab .genericFormSection:nth-of-type(6) input")).getAttribute("value"));
   }
   
 }
