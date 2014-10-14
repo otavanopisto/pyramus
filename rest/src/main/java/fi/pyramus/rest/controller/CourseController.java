@@ -9,6 +9,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.DefaultsDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.courses.CourseComponentDAO;
 import fi.pyramus.dao.courses.CourseDAO;
@@ -70,6 +71,9 @@ public class CourseController {
 
   @Inject
   private CourseStudentDAO courseStudentDAO;
+
+  @Inject
+  private DefaultsDAO defaultsDAO;
   
   public Course createCourse(Module module, String name, String nameExtension, CourseState state, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
@@ -423,6 +427,14 @@ public class CourseController {
 
   public void deleteCourseStudent(CourseStudent courseStudent) {
     courseStudentDAO.delete(courseStudent);
+  }
+
+  public CourseEnrolmentType getDefaultCourseEnrolmentType() {
+    return defaultsDAO.getDefaults().getInitialCourseEnrolmentType();
+  }
+
+  public CourseParticipationType getDefaultCourseParticipationType() {
+    return defaultsDAO.getDefaults().getInitialCourseParticipationType();
   }
   
 }
