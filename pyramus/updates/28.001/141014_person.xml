@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table primaryKeys="id" name="Person">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+
+    <table primaryKeys="id" name="StaffMember">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="externalId" type="java.lang.String" nullable="false" unique="false" />
+        <field name="authProvider" type="java.lang.String" nullable="false" unique="false" />
+        <field name="role" type="java.lang.String" nullable="false" unique="false" />
+        <field name="title" type="java.lang.String" length="255" nullable="true"/>
+        <field name="person_id" type="java.lang.Long" nullable="true" unique="false" />
+      </fields>
+    </table>
+
+    <table primaryKeys="address" name="TmpEmailMap">
+      <fields>
+        <field name="address" type="java.lang.String" length="255" nullable="true"/>
+        <field name="abstractStudent" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+
+    <table primaryKeys="userId" name="TmpUserMap">
+      <fields>
+        <field name="userId" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="personId" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+    </table>
+  </createTables>
+
+  <sql>insert into Person (id, version) select id, version from AbstractStudent;</sql>
+
+  <sql>
+    insert into TmpEmailMap (address, abstractStudent)
+    select e.address, s.abstractStudent
+    from Email e, Student s
+    where e.contactInfo = s.contactInfo and s.archived = false
+    group by e.address
+    having count(distinct s.abstractStudent) = 1;
+  </sql>
+
+  <!-- 
+    One possible issue lies here if user has several emails which are linked to different students. 
+    Sql will link user to the first result. 
+  -->
+
+  <sql>
+    insert into StaffMember (id, externalId, authProvider, role, title, person_id)
+    select id, externalId, authProvider, role, title, (
+        select tmp.abstractStudent 
+        from TmpEmailMap tmp, Email e2, User u2
+        where tmp.address = e2.address and e2.contactInfo = u2.contactInfo and u2.id = u.id limit 1) as person
+    from User u
+    where role not in ('STUDENT');
+  </sql>
+
+  <!-- For users that are left with no person we create then through temporary table -->
+
+  <sql>
+    insert into TmpUserMap (userId, personId)
+    select id, id + (select max(id) + 1 from Person) 
+    from StaffMember
+    where person_id is null;
+  </sql>
+
+  <sql>insert into Person (id, version) select personId, 0 as version from TmpUserMap;</sql>
+
+  <sql>
+    update StaffMember sm, TmpUserMap tum
+    set 
+      sm.person_id = tum.personId
+    where
+      sm.id = tum.userId;
+  </sql>
+
+  <alterTables>
+    <table name="User">
+      <dropFields>
+        <field name="externalId" />
+        <field name="authProvider" />
+        <field name="role" />
+        <field name="title" />
+      </dropFields>
+    </table>
+
+    <table name="AbstractStudent">
+      <dropFields>
+        <field name="version" />
+      </dropFields>
+    </table>
+  </alterTables>
+  
+  <dropTables>
+    <table name="TmpEmailMap"/>
+    <table name="TmpUserMap"/>
+  </dropTables>
+  
+  <!-- Update hibernate_sequences table -->
+  
+  <sql>delete from hibernate_sequences where sequence_name in ('Person', 'StaffMember')</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Person', coalesce(max(id) + 1, 1) from Person</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StaffMember', coalesce(max(id) + 1, 1) from StaffMember</sql>
+  
+</update>
