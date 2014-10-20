@@ -24,7 +24,7 @@ import fi.pyramus.dao.grading.GradeDAO;
 import fi.pyramus.dao.grading.GradingScaleDAO;
 import fi.pyramus.dao.grading.TransferCreditDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.CourseOptionality;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.School;
@@ -109,7 +109,7 @@ public class GradingService extends PyramusService {
   }
   
   public CourseAssessmentEntity createCourseAssessment(@WebParam (name = "courseStudentId") Long courseStudentId, @WebParam (name = "assessingUserId") Long assessingUserId, @WebParam (name = "gradeId") Long gradeId, @WebParam (name = "date") Date date, @WebParam (name = "verbalAssessment") String verbalAssessment) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
@@ -127,7 +127,7 @@ public class GradingService extends PyramusService {
   }
   
   public CourseAssessmentEntity updateCourseAssessment(@WebParam (name = "courseAssessmentId") Long courseAssessmentId, @WebParam (name = "assessingUserId") Long assessingUserId, @WebParam (name = "gradeId") Long gradeId, @WebParam (name = "date") Date date, @WebParam (name = "verbalAssessment") String verbalAssessment) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
 
@@ -153,7 +153,7 @@ public class GradingService extends PyramusService {
   }
   
   public TransferCreditEntity createTransferCredit(@WebParam (name = "courseName") String courseName, @WebParam (name = "courseNumber") Integer courseNumber, @WebParam (name = "courseLength") Double courseLength, @WebParam (name = "courseLengthUnitId") Long courseLengthUnitId, @WebParam (name = "schoolId") Long schoolId, @WebParam (name = "subjectId") Long subjectId, @WebParam (name = "optionality") String optionality, @WebParam (name = "studentId") Long studentId, @WebParam (name = "assessingUserId") Long assessingUserId, @WebParam (name = "gradeId") Long gradeId, @WebParam (name = "date") Date date, @WebParam (name = "verbalAssessment") String verbalAssessment) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();

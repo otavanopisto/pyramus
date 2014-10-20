@@ -15,16 +15,15 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import fi.pyramus.domainmodel.base.Email;
-import fi.pyramus.domainmodel.users.Role;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.rest.controller.UserController;
 
-@Path("/users")
+@Path("/staff")
 @Produces("application/json")
 @Consumes("application/json")
 @Stateful
 @RequestScoped
-public class UserRESTService extends AbstractRESTService {
+public class StaffRESTService extends AbstractRESTService {
 
   @Inject
   private UserController userController;
@@ -32,39 +31,31 @@ public class UserRESTService extends AbstractRESTService {
   @Inject
   private ObjectFactory objectFactory;
 
-  @Path("/users")
+  @Path("/members")
   @GET
   public Response listUsers(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults) {
     return Response.ok(objectFactory.createModel(userController.listNonStudentUsers(firstResult, maxResults))).build();
   }
   
-  @Path("/users/{ID:[0-9]*}")
+  @Path("/members/{ID:[0-9]*}")
   @GET
   public Response findUserById(@PathParam("ID") Long id) {
-    User user = userController.findUserById(id);
+    StaffMember user = userController.findStaffMemberById(id);
     if (user == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    if (user.getRole() == Role.STUDENT) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
     return Response.ok(objectFactory.createModel(user)).build();
   }
 
-  @Path("/users/{ID:[0-9]*}/emails")
+  @Path("/members/{ID:[0-9]*}/emails")
   @GET
-  public Response listUserEmails(@PathParam("ID") Long userId) {
-    User user = userController.findUserById(userId);
+  public Response listUserEmails(@PathParam("ID") Long id) {
+    StaffMember user = userController.findStaffMemberById(id);
     if (user == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    if (user.getRole() == Role.STUDENT) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
     List<Email> emails = user.getContactInfo().getEmails();
     if (emails.isEmpty()) {
       return Response.noContent().build();

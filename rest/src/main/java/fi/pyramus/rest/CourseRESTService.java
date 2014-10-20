@@ -619,7 +619,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    User user = userController.findUserById(entity.getUserId());
+    User user = userController.findStaffMemberById(entity.getUserId());
     if (user == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }

@@ -62,7 +62,7 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.rest.controller.SchoolController;
@@ -579,9 +579,9 @@ public class ObjectFactory {
           }
         },
         
-      new Mapper<User>() {
+      new Mapper<StaffMember>() {
         
-        public Object map(User entity) {
+        public Object map(StaffMember entity) {
          List<String> tags = new ArrayList<>();
           
           Set<Tag> entityTags = entity.getTags();

@@ -6,13 +6,13 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.users.User;
 
 public abstract class AbstractRESTService {
   
   @Inject
-  private UserDAO userDAO;
+  private StaffMemberDAO userDAO;
 
   // TODO: Implement this
   protected Long getLoggedUserId() {

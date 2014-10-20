@@ -9,11 +9,13 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.users.Role;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
@@ -23,7 +25,7 @@ import fi.pyramus.domainmodel.users.UserVariableKey;
 public class UserController {
 
   @Inject
-  private UserDAO userDAO;
+  private StaffMemberDAO staffDAO;
   
   @Inject
   private UserVariableDAO userVariableDAO;
@@ -33,20 +35,20 @@ public class UserController {
 
   /* Users */
 
-  public User createUser(String firstName, String lastName, String externalId, String authProvider, Role role) {
-    return userDAO.create(firstName, lastName, externalId, authProvider, role);
+  public StaffMember createStaffMember(String firstName, String lastName, String externalId, String authProvider, Role role, Person person) {
+    return staffDAO.create(firstName, lastName, externalId, authProvider, role, person);
   }
   
-  public User findUserById(Long userId) {
-    return userDAO.findById(userId);
+  public StaffMember findStaffMemberById(Long userId) {
+    return staffDAO.findById(userId);
   }
 
-  public List<User> listNonStudentUsers() {
-    return userDAO.listByNotRole(Role.STUDENT);
+  public List<StaffMember> listNonStudentUsers() {
+    return staffDAO.listAll();
   }
 
-  public List<User> listNonStudentUsers(Integer firstResult, Integer maxResults) {
-    return userDAO.listByNotRole(Role.STUDENT, firstResult, maxResults);
+  public List<StaffMember> listNonStudentUsers(Integer firstResult, Integer maxResults) {
+    return staffDAO.listAll(firstResult, maxResults);
   }
   
   /* Variables */

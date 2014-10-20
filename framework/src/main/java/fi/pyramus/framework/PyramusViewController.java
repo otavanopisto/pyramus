@@ -13,9 +13,9 @@ import fi.internetix.smvc.controllers.PageController;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.users.Role;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 
 public abstract class PyramusViewController implements PageController {
 
@@ -37,8 +37,8 @@ public abstract class PyramusViewController implements PageController {
       else {
         Long loggedUserId = requestContext.getLoggedUserId();
         
-        UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-        User user = userDAO.findById(loggedUserId);
+        StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+        StaffMember user = userDAO.findById(loggedUserId);
         
         Role role = user.getRole();
         
