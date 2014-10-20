@@ -10,7 +10,8 @@ import org.apache.lucene.queryParser.QueryParser;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.BinaryRequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.BinaryRequestController;
 import fi.pyramus.framework.UserRole;
@@ -31,7 +32,7 @@ public class UsersAutoCompleteBinaryRequestController extends BinaryRequestContr
    * @param binaryRequestContext The context of the binary request.
    */
   public void process(BinaryRequestContext binaryRequestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
 
     String text = binaryRequestContext.getString("text");
 
@@ -41,7 +42,7 @@ public class UsersAutoCompleteBinaryRequestController extends BinaryRequestContr
     if (!StringUtils.isBlank(text)) {
       text = QueryParser.escape(StringUtils.trim(text)) + '*';
       
-      List<User> users = userDAO.searchUsersBasic(100, 0, text).getResults();
+      List<StaffMember> users = userDAO.searchUsersBasic(100, 0, text).getResults();
       
       for (User user : users) {
         addUser(resultBuilder, user);

@@ -8,10 +8,13 @@ import org.apache.commons.lang.math.NumberUtils;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.EmailDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.users.InternalAuthDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.users.InternalAuth;
 import fi.pyramus.domainmodel.users.Role;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.plugin.auth.AuthenticationException;
 import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
@@ -35,14 +38,19 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
    * @return The created user
    */
   public User createUser(String firstName, String lastName, String email, String username, String password, Role role) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
 
     try {
       String passwordEncoded = EncodingUtils.md5EncodeString(password);
       InternalAuth internalAuth = internalAuthDAO.create(username, passwordEncoded);
-      User user = userDAO.create(firstName, lastName, String.valueOf(internalAuth.getId()), getName(), role);
+      
+      // TODO: Should not create always
+      Person person = personDAO.create();
+      
+      User user = userDAO.create(firstName, lastName, String.valueOf(internalAuth.getId()), getName(), role, person);
       // TODO Default contact type?
       emailDAO.create(user.getContactInfo(), null, Boolean.TRUE, email);
       return user;
@@ -85,8 +93,8 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
    * 
    * @return The user corresponding to the given credentials, or <code>null</code> if not found
    */
-  public User getUser(String username, String password) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+  public StaffMember getUser(String username, String password) {
+    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffDAO();
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
 
     String passwordEncoded;
@@ -103,7 +111,7 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
 
     InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, passwordEncoded);
     if (internalAuth != null) {
-      User user = userDAO.findByExternalIdAndAuthProvider(String.valueOf(internalAuth.getId()), getName());
+      StaffMember user = staffDAO.findByExternalIdAndAuthProvider(String.valueOf(internalAuth.getId()), getName());
       return user;
     }
     else {

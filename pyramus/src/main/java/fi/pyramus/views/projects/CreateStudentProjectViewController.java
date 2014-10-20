@@ -6,7 +6,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
 
@@ -21,7 +21,7 @@ public class CreateStudentProjectViewController extends PyramusViewController im
    * @param pageRequestContext Page request context
    */
   public void process(PageRequestContext pageRequestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
 
     pageRequestContext.getRequest().setAttribute("users", userDAO.listAll());
     pageRequestContext.setIncludeJSP("/templates/projects/createstudentproject.jsp");

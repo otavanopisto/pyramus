@@ -7,7 +7,7 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.DefaultsDAO;
 import fi.pyramus.dao.base.SubjectDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.modules.Module;
@@ -23,7 +23,7 @@ public class ModuleAPI {
   public Long create(String name, String description, Long maxParticipantCount, String subjectCode, Integer courseNumber) throws InvalidScriptException {
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
     
     Subject subject = subjectDAO.findByCode(subjectCode);

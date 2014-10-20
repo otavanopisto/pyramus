@@ -41,7 +41,7 @@ import fi.pyramus.dao.courses.StudentCourseResourceDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.resources.ResourceDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.CourseEducationType;
 import fi.pyramus.domainmodel.base.CourseOptionality;
 import fi.pyramus.domainmodel.base.EducationSubtype;
@@ -211,7 +211,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
    * @param binaryRequestContext The context of the binary request.
    */
   public void process(JSONRequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();

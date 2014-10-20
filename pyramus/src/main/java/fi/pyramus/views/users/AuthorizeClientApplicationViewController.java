@@ -19,7 +19,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.clientapplications.ClientApplicationAuthorizationCodeDAO;
 import fi.pyramus.dao.clientapplications.ClientApplicationDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.PyramusFormViewController;
@@ -68,7 +68,7 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
 
   @Override
   public void processSend(PageRequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     ClientApplicationDAO clientApplicationDAO = DAOFactory.getInstance().getClientApplicationDAO();
     ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO = DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO();
 

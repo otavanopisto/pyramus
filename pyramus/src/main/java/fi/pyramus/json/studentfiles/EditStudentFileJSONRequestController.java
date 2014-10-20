@@ -6,7 +6,7 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.file.FileTypeDAO;
 import fi.pyramus.dao.file.StudentFileDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.file.FileType;
 import fi.pyramus.domainmodel.file.StudentFile;
 import fi.pyramus.domainmodel.users.User;
@@ -27,7 +27,7 @@ public class EditStudentFileJSONRequestController extends JSONRequestController 
    *          The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
     FileTypeDAO fileTypeDAO = DAOFactory.getInstance().getFileTypeDAO();
 

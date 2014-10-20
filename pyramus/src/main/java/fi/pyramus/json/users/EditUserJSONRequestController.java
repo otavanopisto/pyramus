@@ -17,7 +17,7 @@ import fi.pyramus.dao.base.ContactTypeDAO;
 import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.TagDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
@@ -25,7 +25,7 @@ import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.users.Role;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
@@ -47,7 +47,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
    * @param jsonRequestContext The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
@@ -56,12 +56,12 @@ public class EditUserJSONRequestController extends JSONRequestController {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
 
     Long loggedUserId = requestContext.getLoggedUserId();
-    User loggedUser = userDAO.findById(loggedUserId);
+    StaffMember loggedUser = staffDAO.findById(loggedUserId);
     Role loggedUserRole = loggedUser.getRole();
     
     Long userId = requestContext.getLong("userId");
 
-    User user = userDAO.findById(userId);
+    StaffMember user = staffDAO.findById(userId);
 
     String firstName = requestContext.getString("firstName");
     String lastName = requestContext.getString("lastName");
@@ -85,12 +85,12 @@ public class EditUserJSONRequestController extends JSONRequestController {
       }
     }
     
-    userDAO.update(user, firstName, lastName, role);
-    userDAO.updateTitle(user, title);
+    staffDAO.update(user, firstName, lastName, role);
+    staffDAO.updateTitle(user, title);
 
     // Tags
 
-    userDAO.updateTags(user, tagEntities);
+    staffDAO.updateTags(user, tagEntities);
     
     // Addresses
     
@@ -186,7 +186,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
       String authProvider = requestContext.getString("authProvider");
       
       if (!user.getAuthProvider().equals(authProvider)) {
-        userDAO.updateAuthProvider(user, authProvider);
+        staffDAO.updateAuthProvider(user, authProvider);
       }
       
       Integer variableCount = requestContext.getInteger("variablesTable.rowCount");
@@ -213,7 +213,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
         if (internalAuthenticationProvider.canUpdateCredentials()) {
           if ("-1".equals(user.getExternalId())) {
             String externalId = internalAuthenticationProvider.createCredentials(username, password);
-            userDAO.updateExternalId(user, externalId);
+            staffDAO.updateExternalId(user, externalId);
           } else {
             if (!StringUtils.isBlank(username))
               internalAuthenticationProvider.updateUsername(user.getExternalId(), username);
@@ -226,7 +226,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
     }
     
     if (requestContext.getLoggedUserId().equals(user.getId())) {
-      user = userDAO.findById(user.getId());
+      user = staffDAO.findById(user.getId());
       HttpSession session = requestContext.getRequest().getSession(true);
       session.setAttribute("loggedUserName", user.getFullName());
       session.setAttribute("loggedUserRole", Role.valueOf(user.getRole().name()));
