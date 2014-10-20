@@ -1,11 +1,10 @@
     create table AbstractStudent (
-        id bigint not null,
         basicInfo clob,
         birthday date,
         secureInfo boolean not null,
         sex varchar(255),
         socialSecurityNumber varchar(255),
-        version bigint not null,
+        id bigint not null,
         primary key (id)
     );
 
@@ -659,6 +658,12 @@
         primary key (id)
     );
 
+    create table Person (
+        id bigint not null,
+        version bigint not null,
+        primary key (id)
+    );
+
     create table PhoneNumber (
         id bigint not null,
         defaultNumber boolean not null,
@@ -811,6 +816,16 @@
     create table SettingKey (
         id bigint not null,
         name varchar(255) not null,
+        primary key (id)
+    );
+
+    create table StaffMember (
+        authProvider varchar(255) not null,
+        externalId varchar(255) not null,
+        role varchar(255) not null,
+        title varchar(255),
+        id bigint not null,
+        person_id bigint,
         primary key (id)
     );
 
@@ -1056,12 +1071,8 @@
 
     create table User (
         id bigint not null,
-        authProvider varchar(255) not null,
-        externalId varchar(255) not null,
         firstName varchar(255) not null,
         lastName varchar(255) not null,
-        role varchar(255) not null,
-        title varchar(255),
         version bigint not null,
         contactInfo bigint,
         primary key (id)
@@ -1186,6 +1197,11 @@
 
     alter table UserVariableKey 
         add constraint UK_mb9er7y1ali34igjlk4ccxlfs  unique (variableKey);
+
+    alter table AbstractStudent 
+        add constraint FK_ls16l9u0xbwdvb3w2gp8pb54p 
+        foreign key (id) 
+        references Person;
 
     alter table AccessLogEntry 
         add constraint FK_r031kiolhx2sg7hpdngdn026l 
@@ -1726,6 +1742,16 @@
         add constraint FK_i4lfreu085sgpg9qjjhesr2vi 
         foreign key (settingKey) 
         references SettingKey;
+
+    alter table StaffMember 
+        add constraint FK_9ruwo3icv3hk9965x46pafx5b 
+        foreign key (person_id) 
+        references Person;
+
+    alter table StaffMember 
+        add constraint FK_g3ikfuvto0x9gk62rqf3nhg49 
+        foreign key (id) 
+        references User;
 
     alter table Student 
         add constraint FK_jkly5h0o7bfv241wftfpj5mh6 
