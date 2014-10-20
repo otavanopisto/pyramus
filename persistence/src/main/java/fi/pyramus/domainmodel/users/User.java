@@ -8,8 +8,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -77,34 +75,10 @@ public class User {
   public String getLastNameSortable() {
     return getLastName();
   }
-
-  public String getAuthProvider() {
-    return authProvider;
-  }
-  
-  public void setAuthProvider(String authProvider) {
-    this.authProvider = authProvider;
-  }
-  
-  public String getExternalId() {
-    return externalId;
-  }
-  
-  public void setExternalId(String externalId) {
-    this.externalId = externalId;
-  }
   
   @Transient 
   public String getFullName() {
     return getFirstName() + ' ' + getLastName();
-  }
-
-  public void setRole(Role role) {
-    this.role = role;
-  }
-
-  public Role getRole() {
-    return role;
   }
   
   public Set<Tag> getTags() {
@@ -145,14 +119,6 @@ public class User {
 
   public Long getVersion() {
     return version;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public String getTitle() {
-    return title;
   }
 
   public void setBillingDetails(List<BillingDetails> billingDetails) {
@@ -201,25 +167,6 @@ public class User {
   @NotEmpty
   @Field
   private String lastName;
-
-  @NotNull
-  @Column (nullable = false)
-  @NotEmpty
-  private String externalId;
-  
-  @NotNull
-  @Column (nullable = false)
-  @NotEmpty
-  private String authProvider;  
-
-  private String title;  
-  
-  @NotNull
-  @Column (nullable = false)
-  @Enumerated (EnumType.STRING)
-  @Field (store = Store.NO)
-  // TODO Some way to disallow Role.EVERYONE
-  private Role role;
 
   @ManyToMany (fetch = FetchType.LAZY)
   @JoinTable (name="__UserBillingDetails", joinColumns=@JoinColumn(name="user"), inverseJoinColumns=@JoinColumn(name="billingDetails"))

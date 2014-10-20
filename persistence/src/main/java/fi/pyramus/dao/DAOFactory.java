@@ -31,6 +31,7 @@ import fi.pyramus.dao.base.LanguageDAO;
 import fi.pyramus.dao.base.MagicKeyDAO;
 import fi.pyramus.dao.base.MunicipalityDAO;
 import fi.pyramus.dao.base.NationalityDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.SchoolDAO;
 import fi.pyramus.dao.base.SchoolFieldDAO;
@@ -117,7 +118,7 @@ import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.pyramus.dao.system.SettingDAO;
 import fi.pyramus.dao.system.SettingKeyDAO;
 import fi.pyramus.dao.users.InternalAuthDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
 
@@ -295,8 +296,8 @@ public class DAOFactory {
     return (InternalAuthDAO) findByClass(InternalAuthDAO.class);
   }
   
-  public UserDAO getUserDAO() {
-    return (UserDAO) findByClass(UserDAO.class);
+  public StaffMemberDAO getStaffDAO() {
+    return (StaffMemberDAO) findByClass(StaffMemberDAO.class);
   }
   
   public UserVariableDAO getUserVariableDAO() {
@@ -305,6 +306,10 @@ public class DAOFactory {
   
   public UserVariableKeyDAO getUserVariableKeyDAO() {
     return (UserVariableKeyDAO) findByClass(UserVariableKeyDAO.class);
+  }
+  
+  public PersonDAO getPersonDAO() {
+    return (PersonDAO) findByClass(PersonDAO.class);
   }
   
   /* Change Log */

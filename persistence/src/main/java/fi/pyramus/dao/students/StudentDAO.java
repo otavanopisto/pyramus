@@ -31,7 +31,6 @@ import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.domainmodel.students.Student_;
-import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
@@ -124,9 +123,6 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setStudyEndText(studyEndText);
     student.setLodging(lodging);
     student.setContactInfo(contactInfo);
-    student.setAuthProvider("internal");
-    student.setExternalId("-1");
-    student.setRole(Role.STUDENT);
 
     entityManager.persist(student);
 

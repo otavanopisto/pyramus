@@ -23,11 +23,7 @@ public enum Role {
   /**
    * Administrator privileges. Full control over all application features.
    */
-  ADMINISTRATOR  (4),
-  /**
-   * Student privileges. Students can not login into application
-   */
-  STUDENT        (5);
+  ADMINISTRATOR  (4);
   
   /**
    * Constructor specifying the role.
