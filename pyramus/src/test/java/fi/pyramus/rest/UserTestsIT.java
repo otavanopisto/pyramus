@@ -10,7 +10,7 @@ public class UserTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testListUsers() {
     given().headers(getAuthHeaders())
-      .get("/users/users")
+      .get("/staff/members")
       .then()
       .statusCode(200)
       .body("id.size()", is(2))
@@ -27,7 +27,7 @@ public class UserTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testFindUser() {
     given().headers(getAuthHeaders())
-      .get("/users/users/{ID}", 1l)
+      .get("/staff/members/{ID}", 1l)
       .then()
       .statusCode(200)
       .body("id", is(1))
