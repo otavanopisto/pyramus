@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -41,12 +43,24 @@ import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.Course_;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.events.CourseArchivedEvent;
+import fi.pyramus.events.CourseCreatedEvent;
+import fi.pyramus.events.CourseUpdatedEvent;
 import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.persistence.search.SearchTimeFilterMode;
 
 @Stateless
 public class CourseDAO extends PyramusEntityDAO<Course> {
+  
+  @Inject
+  private Event<CourseCreatedEvent> courseCreatedEvent;
 
+  @Inject
+  private Event<CourseUpdatedEvent> courseUpdatedEvent;
+
+  @Inject
+  private Event<CourseArchivedEvent> courseArchivedEvent;
+  
   /**
    * Creates a new course into the database.
    * 
@@ -66,8 +80,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
       Integer courseNumber, Date beginDate, Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, 
       Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double planningHours, 
       Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User creatingUser) {
-    EntityManager entityManager = getEntityManager();
-
+    
     Date now = new Date(System.currentTimeMillis());
     EducationalLength educationalLength = new EducationalLength();
     educationalLength.setUnit(courseLengthTimeUnit);
@@ -97,7 +110,9 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setLastModifier(creatingUser);
     course.setLastModified(now);
 
-    entityManager.persist(course);
+    persist(course);
+    
+    courseCreatedEvent.fire(new CourseCreatedEvent(course.getId()));
 
     return course;
   }
@@ -151,6 +166,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setLastModified(now);
 
     entityManager.persist(course);
+    
+    courseUpdatedEvent.fire(new CourseUpdatedEvent(course.getId()));
   }
   
   public Course setCourseTags(Course course, Set<Tag> tags) {
@@ -159,6 +176,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setTags(tags);
     
     entityManager.persist(course);
+    
+    courseUpdatedEvent.fire(new CourseUpdatedEvent(course.getId()));
     
     return course;
   }
@@ -419,6 +438,16 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     catch (ParseException e) {
       throw new PersistenceException(e);
     }
+  }
+  
+  public void archive(Course course) {
+    super.archive(course);
+    courseArchivedEvent.fire(new CourseArchivedEvent(course.getId()));
+  }
+  
+  public void archive(Course course, User user) {
+    super.archive(course, user);
+    courseArchivedEvent.fire(new CourseArchivedEvent(course.getId()));
   }
   
 }

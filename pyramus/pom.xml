@@ -355,6 +355,11 @@
       <scope>compile</scope>
     </dependency>
     
+    <dependency>
+      <groupId>fi.pyramus</groupId>
+      <artifactId>pyramus-webhooks</artifactId>
+    </dependency>
+    
     <!-- Test Dependecies -->
 
     <dependency>
