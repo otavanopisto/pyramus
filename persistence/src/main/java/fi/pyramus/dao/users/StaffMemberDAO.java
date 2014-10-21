@@ -49,17 +49,17 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   public StaffMember create(String firstName, String lastName, String externalId, String authProvider, Role role, Person person) {
     ContactInfo contactInfo = new ContactInfo();
     
-    StaffMember newUser = new StaffMember();
+    StaffMember staffMember = new StaffMember();
     
-    newUser.setFirstName(firstName);
-    newUser.setLastName(lastName);
-    newUser.setAuthProvider(authProvider);
-    newUser.setExternalId(externalId);
-    newUser.setRole(role);
-    newUser.setContactInfo(contactInfo);
-    newUser.setPerson(person);
+    staffMember.setFirstName(firstName);
+    staffMember.setLastName(lastName);
+    staffMember.setAuthProvider(authProvider);
+    staffMember.setExternalId(externalId);
+    staffMember.setRole(role);
+    staffMember.setContactInfo(contactInfo);
+    staffMember.setPerson(person);
 
-    return persist(newUser);
+    return persist(staffMember);
   }
 
   public List<User> listByUserVariable(String key, String value) {
