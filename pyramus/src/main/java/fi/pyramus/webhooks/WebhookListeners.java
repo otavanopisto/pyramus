@@ -22,43 +22,43 @@ public class WebhookListeners {
   private WebhookController webhookController;
   
   public void onCourseCreated(@Observes CourseCreatedEvent event) {
-    webhookController.sendWebHookNotifications(new WebhookCourseCreatePayload(event.getCourseId()));
+    webhookController.sendWebhookNotifications(new WebhookCourseCreatePayload(event.getCourseId()));
   }
 
   public void onCourseArchived(@Observes CourseArchivedEvent event) {
-    webhookController.sendWebHookNotifications(new WebhookCourseArchivePayload(event.getCourseId()));
+    webhookController.sendWebhookNotifications(new WebhookCourseArchivePayload(event.getCourseId()));
   }
   
   public void onStudentCreated(@Observes StudentCreatedEvent event) {
-    webhookController.sendWebHookNotifications(new WebhookStudentCreatePayload(event.getStudentId()));
+    webhookController.sendWebhookNotifications(new WebhookStudentCreatePayload(event.getStudentId()));
   }
 
   public void onStudentArchived(@Observes StudentArchivedEvent event) {
-    webhookController.sendWebHookNotifications(new WebhookStudentArchivePayload(event.getStudentId()));
+    webhookController.sendWebhookNotifications(new WebhookStudentArchivePayload(event.getStudentId()));
   }
   
   public void onCourseStaffMemberCreated(@Observes CourseStaffMemberCreatedEvent event) {
-    webhookController.sendWebHookNotifications(new WebhookCourseStaffMemberCreatePayload(event.getCourseStaffMemberId(), event.getCourseId(), event.getStaffMemberId()));
+    webhookController.sendWebhookNotifications(new WebhookCourseStaffMemberCreatePayload(event.getCourseStaffMemberId(), event.getCourseId(), event.getStaffMemberId()));
   }
   
   public void onCourseStaffMemberDeleted(@Observes CourseStaffMemberDeletedEvent event) {
-    webhookController.sendWebHookNotifications(new WebhookCourseStaffMemberDeletePayload(event.getCourseStaffMemberId(), event.getCourseId(), event.getStaffMemberId()));
+    webhookController.sendWebhookNotifications(new WebhookCourseStaffMemberDeletePayload(event.getCourseStaffMemberId(), event.getCourseId(), event.getStaffMemberId()));
   }
   
   public void onCourseStudentCreated(@Observes CourseStudentCreatedEvent event) {
-    webhookController.sendWebHookNotifications(new WebhookCourseStudentCreatePayload(event.getCourseStudentId(), event.getCourseId(), event.getStudentId()));
+    webhookController.sendWebhookNotifications(new WebhookCourseStudentCreatePayload(event.getCourseStudentId(), event.getCourseId(), event.getStudentId()));
   }
   
   public void onCourseStudentArchived(@Observes CourseStudentArchivedEvent event) {
-    webhookController.sendWebHookNotifications(new WebhookCourseStudentArchivePayload(event.getCourseStudentId(), event.getCourseId(), event.getStudentId()));
+    webhookController.sendWebhookNotifications(new WebhookCourseStudentArchivePayload(event.getCourseStudentId(), event.getCourseId(), event.getStudentId()));
   }
   
   public void onStaffMemberCreated(@Observes StaffMemberCreatedEvent event) {
-    webhookController.sendWebHookNotifications(new WebhookStaffMemberCreatePayload(event.getStaffMemberId()));
+    webhookController.sendWebhookNotifications(new WebhookStaffMemberCreatePayload(event.getStaffMemberId()));
   }
   
   public void onStaffMemberDeleted(@Observes StaffMemberDeletedEvent event) {
-    webhookController.sendWebHookNotifications(new WebhookStaffMemberDeletePayload(event.getStaffMemberId()));
+    webhookController.sendWebhookNotifications(new WebhookStaffMemberDeletePayload(event.getStaffMemberId()));
   }
   
 }

@@ -32,7 +32,7 @@ public class WebhookController {
   @Inject
   private WebhookDAO webhookDAO;
 
-  public void sendWebHookNotifications(WebhookPayload<?> payload) {
+  public void sendWebhookNotifications(WebhookPayload<?> payload) {
     List<Webhook> webhooks = webhookDAO.listAll();
     if (!webhooks.isEmpty()) {
       ObjectMapper objectMapper = new ObjectMapper(); 
