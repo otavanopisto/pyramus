@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.pyramus.I18N.Messages;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.ContactTypeDAO;
@@ -32,6 +33,7 @@ import fi.pyramus.framework.UserRole;
 import fi.pyramus.plugin.auth.AuthenticationProvider;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.pyramus.util.UserUtils;
 
 /**
  * The controller responsible of editing an existing Pyramus user. 
@@ -71,6 +73,15 @@ public class EditUserJSONRequestController extends JSONRequestController {
     String password = requestContext.getString("password1");
     String password2 = requestContext.getString("password2");
     String tagsText = requestContext.getString("tags");
+    
+    int emailCount2 = requestContext.getInteger("emailTable.rowCount");
+    for (int i = 0; i < emailCount2; i++) {
+      String colPrefix = "emailTable." + i;
+      String email = requestContext.getString(colPrefix + ".email");
+
+      if (!UserUtils.isAllowedEmail(email, user.getPerson().getId()))
+        throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+    }
     
     Set<Tag> tagEntities = new HashSet<Tag>();
     if (!StringUtils.isBlank(tagsText)) {

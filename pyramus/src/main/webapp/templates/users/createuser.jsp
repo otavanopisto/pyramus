@@ -16,16 +16,16 @@
     <jsp:include page="/templates/generic/validation_support.jsp"></jsp:include>
     
     <script type="text/javascript">
-      function addEmailTableRow() {
-        getIxTableById('emailTable').addRow(['', '', '', '', '']);
+      function addEmailTableRow(values) {
+        getIxTableById('emailTable').addRow(values || ['', '', '', '', '']);
       };
   
-      function addPhoneTableRow() {
-        getIxTableById('phoneTable').addRow(['', '', '', '', '']);
+      function addPhoneTableRow(values) {
+        getIxTableById('phoneTable').addRow(values || ['', '', '', '', '']);
       };
   
-      function addAddressTableRow() {
-        getIxTableById('addressTable').addRow(['', '', '', '', '', '', '', '', '']);
+      function addAddressTableRow(values) {
+        getIxTableById('addressTable').addRow(values || ['', '', '', '', '', '', '', '', '']);
       };
           
       function setupTags() {
@@ -75,6 +75,16 @@
         setupAuthSelect();
         updateCredentialsVisibility();
 
+        var emails_values = undefined;
+        var address_values = undefined;
+        var phone_values = undefined;
+        
+        if (window.JSDATA) {
+          emails_values = JSDATA["createuser_emails"] ? JSDATA["createuser_emails"].evalJSON() : undefined;
+          address_values = JSDATA["createuser_addresses"] ? JSDATA["createuser_addresses"].evalJSON() : undefined;
+          phone_values = JSDATA["createuser_phones"] ? JSDATA["createuser_phones"].evalJSON() : undefined;
+        }
+        
         // E-mail address
 
         var emailTable = new IxTable($('emailTable'), {
@@ -136,8 +146,15 @@
           var enabledButton = event.row == 0 ? 'addButton' : 'removeButton';
           emailTable.showCell(event.row, emailTable.getNamedColumnIndex(enabledButton));
         });
-        addEmailTableRow();
-        emailTable.setCellValue(0, 0, true);
+
+        if (emails_values && emails_values.length > 0) {
+          for (var i = 0; i < emails_values.length; i++) {
+            addEmailTableRow([emails_values[i].defaultAddress, emails_values[i].contactType.id, emails_values[i].address, '', '']);
+          }
+        } else {
+          addEmailTableRow();
+          emailTable.setCellValue(0, 0, true);
+        }
 
         // Addresses
 
@@ -227,8 +244,17 @@
           var enabledButton = event.row == 0 ? 'addButton' : 'removeButton';
           addressTable.showCell(event.row, addressTable.getNamedColumnIndex(enabledButton));
         });
-        addAddressTableRow();
-        addressTable.setCellValue(0, 0, true);
+
+        if (address_values && address_values.length > 0) {
+          for (var i = 0; i < address_values.length; i++) {
+            addAddressTableRow([address_values[i].defaultAddress, address_values[i].contactType.id, address_values[i].name, 
+                                address_values[i].streetAddress, address_values[i].postalCode, address_values[i].city, 
+                                address_values[i].country, '', '']);
+          }
+        } else {
+          addAddressTableRow();
+          addressTable.setCellValue(0, 0, true);
+        }
 
         // Phone numbers
 
@@ -290,8 +316,15 @@
           var enabledButton = event.row == 0 ? 'addButton' : 'removeButton';
           phoneTable.showCell(event.row, phoneTable.getNamedColumnIndex(enabledButton));
         });
-        addPhoneTableRow();
-        phoneTable.setCellValue(0, 0, true);
+        
+        if (phone_values && phone_values.length > 0) {
+          for (var i = 0; i < phone_values.length; i++) {
+            addPhoneTableRow([phone_values[i].defaultNumber, phone_values[i].contactType.id, phone_values[i].number, '', '']);
+          }
+        } else {
+          addPhoneTableRow();
+          phoneTable.setCellValue(0, 0, true);
+        }
       };
     </script>
     
@@ -310,6 +343,8 @@
         </div>
         
         <form action="createuser.json" method="post" ix:jsonform="true">
+          <input type="hidden" name="personId" value="${person.id}" />
+        
           <div id="createUser" class="tabContent">
 
             <div class="genericFormSection">
@@ -317,14 +352,14 @@
                 <jsp:param name="titleLocale" value="users.createUser.firstNameTitle"/>
                 <jsp:param name="helpLocale" value="users.createUser.firstNameHelp"/>
               </jsp:include>                  
-              <input type="text" name="firstName" size="20" class="required"/>
+              <input type="text" name="firstName" size="20" class="required" value="${student.firstName}" />
             </div>
             <div class="genericFormSection">  
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="users.createUser.lastNameTitle"/>
                 <jsp:param name="helpLocale" value="users.createUser.lastNameHelp"/>
               </jsp:include>                  
-              <input type="text" name="lastName" size="30" class="required"/>
+              <input type="text" name="lastName" size="30" class="required" value="${student.lastName}" />
             </div>
 
             <div class="genericFormSection">  

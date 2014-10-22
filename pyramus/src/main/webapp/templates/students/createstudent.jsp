@@ -31,6 +31,8 @@
       <div class="genericFormContainer">    
         <form action="createstudent.json" method="post" ix:jsonform="true" ix:useglasspane="true">  
 
+          <input type="hidden" name="personId" value="${person.id}" />
+
           <div class="tabLabelsContainer" id="tabs">
             <a class="tabLabel" href="#basic">
               <fmt:message key="students.createStudent.studentBasicInfoTabLabel"/>
@@ -108,7 +110,7 @@
                 <jsp:param name="titleLocale" value="students.createStudent.firstNameTitle"/>
                 <jsp:param name="helpLocale" value="students.createStudent.firstNameHelp"/>
               </jsp:include>                 
-              <input type="text" name="firstName" size="20" class="required">
+              <input type="text" name="firstName" size="20" class="required" value="${staffMember.firstName}">
             </div>
             
             <div class="genericFormSection">  
@@ -116,7 +118,7 @@
                 <jsp:param name="titleLocale" value="students.createStudent.lastNameTitle"/>
                 <jsp:param name="helpLocale" value="students.createStudent.lastNameHelp"/>
               </jsp:include>                 
-              <input type="text" name="lastName" size="30" class="required">
+              <input type="text" name="lastName" size="30" class="required" value="${staffMember.lastName}">
             </div>
               
             <div class="genericFormSection">  

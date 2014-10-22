@@ -2,11 +2,15 @@ package fi.pyramus.dao.base;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import fi.pyramus.dao.PyramusEntityDAO;
 import fi.pyramus.domainmodel.base.ContactInfo;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Email;
+import fi.pyramus.domainmodel.base.Email_;
 
 @Stateless
 public class EmailDAO extends PyramusEntityDAO<Email> {
@@ -27,6 +31,20 @@ public class EmailDAO extends PyramusEntityDAO<Email> {
     return email;
   }
 
+  public Email findByAddress(String emailAddress) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Email> criteria = criteriaBuilder.createQuery(Email.class);
+    Root<Email> root = criteria.from(Email.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.equal(root.get(Email_.address), emailAddress)
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+
   public Email update(Email email, ContactType contactType, Boolean defaultAddress, String address) {
     EntityManager entityManager = getEntityManager();
 
@@ -45,6 +63,5 @@ public class EmailDAO extends PyramusEntityDAO<Email> {
     }
     super.delete(email);
   }
-
 
 }

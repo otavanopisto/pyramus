@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.pyramus.I18N.Messages;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.ContactInfoDAO;
@@ -44,6 +45,7 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.util.UserUtils;
 
 public class CreateStudentJSONRequestController extends JSONRequestController {
 
@@ -67,6 +69,19 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
 
+    Long personId = requestContext.getLong("personId");
+    
+    int emailCount2 = requestContext.getInteger("emailTable.rowCount");
+    for (int i = 0; i < emailCount2; i++) {
+      String colPrefix = "emailTable." + i;
+      String email = requestContext.getString(colPrefix + ".email");
+      if (email != null) {
+        if (!UserUtils.isAllowedEmail(email, personId)) {
+          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+        }
+      }
+    }
+    
     Date birthday = requestContext.getDate("birthday");
     String ssecId = requestContext.getString("ssecId");
     Sex sex = "male".equals(requestContext.getRequest().getParameter("gender")) ? Sex.MALE : Sex.FEMALE;

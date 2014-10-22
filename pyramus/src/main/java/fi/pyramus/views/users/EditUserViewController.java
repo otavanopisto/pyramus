@@ -90,7 +90,7 @@ public class EditUserViewController extends PyramusViewController implements Bre
     List<ContactType> contactTypes = contactTypeDAO.listUnarchived();
     Collections.sort(contactTypes, new StringAttributeComparator("getName"));
 
-    List<UserVariableKey> userVariableKeys = variableKeyDAO.listAll();
+    List<UserVariableKey> userVariableKeys = variableKeyDAO.listUserEditableUserVariableKeys();
     Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
     
     JSONArray variables = new JSONArray();

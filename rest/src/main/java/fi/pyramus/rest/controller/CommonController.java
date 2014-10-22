@@ -345,8 +345,12 @@ public class CommonController {
   }
   
   /* Email */
-  
+
+  // TODO: allowed email check is better handled when email is created through staffmember or student, maybe it should be always context-aware creation
   public Email createEmail(ContactInfo contactInfo, ContactType contactType, Boolean defaultAddress, String address) {
+    if (!UserUtils.isAllowedEmail(address))
+      throw new RuntimeException("Email address is in use.");
+
     return emailDAO.create(contactInfo, contactType, defaultAddress, address);
   }
   

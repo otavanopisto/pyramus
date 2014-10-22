@@ -1,34 +1,15 @@
-package fi.pyramus.services;
+package fi.pyramus.util;
 
 import java.util.List;
-import java.util.Set;
-
-import javax.persistence.PersistenceException;
-import javax.validation.ConstraintViolation;
 
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.SystemDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.StaffMember;
 
-public class PyramusService {
+public class UserUtils {
 
-  protected void validateEntity(Object entity) {
-  	SystemDAO systemDAO = DAOFactory.getInstance().getSystemDAO(); 
-  	  
-  	Set<ConstraintViolation<Object>> constraintViolations = systemDAO.validateEntity(entity);
-  	if (constraintViolations.size() != 0) {
-  	  String message = "";
-  	  for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
-  	    message += constraintViolation.getMessage() + '\n';
-  	  }  	
-  		
-  	  throw new PersistenceException(message);
-  	}
-  }
-  
   public static boolean isAllowedEmail(String emailAddress) {
     return isAllowedEmail(emailAddress, null);
   }
@@ -55,5 +36,4 @@ public class PyramusService {
       return (staffMember == null) && (students.size() == 0);
     }
   }
-
 }

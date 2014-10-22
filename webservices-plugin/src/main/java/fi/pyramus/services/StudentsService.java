@@ -344,6 +344,10 @@ public class StudentsService extends PyramusService {
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     Student student = studentDAO.findById(studentId);
+    
+    if (!isAllowedEmail(address, student.getAbstractStudent().getId()))
+      throw new RuntimeException("Email address is in use");
+
     // TODO contactType
     ContactType contactType = contactTypeDAO.findById(new Long(1));
     Email email = emailDAO.create(student.getContactInfo(), contactType, defaultAddress, address);

@@ -22,7 +22,7 @@ public class Person {
   public Long getId() {
     return id;
   }
-
+  
   @SuppressWarnings("unused")
   private void setVersion(Long version) {
     this.version = version;

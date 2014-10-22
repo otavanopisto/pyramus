@@ -15,6 +15,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.file.StudentFileDAO;
 import fi.pyramus.dao.grading.CourseAssessmentDAO;
@@ -30,7 +31,9 @@ import fi.pyramus.dao.students.StudentContactLogEntryDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentGroupDAO;
 import fi.pyramus.dao.students.StudentImageDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.CourseOptionality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.file.StudentFile;
@@ -49,6 +52,7 @@ import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.pyramus.domainmodel.students.StudentGroup;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.util.StringAttributeComparator;
@@ -102,13 +106,19 @@ public class ViewStudentViewController extends PyramusViewController implements 
     StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
     CourseAssessmentRequestDAO courseAssessmentRequestDAO = DAOFactory.getInstance().getCourseAssessmentRequestDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
 
     Long abstractStudentId = pageRequestContext.getLong("abstractStudent");
     
     AbstractStudent abstractStudent = abstractStudentDAO.findById(abstractStudentId);
+    Person person = personDAO.findById(abstractStudentId);
     
     pageRequestContext.getRequest().setAttribute("abstractStudent", abstractStudent);
 
+    StaffMember staffMember = staffMemberDAO.findByPerson(person);
+    pageRequestContext.getRequest().setAttribute("staffMember", staffMember);
+    
     List<Student> students = studentDAO.listByAbstractStudent(abstractStudent);
     Collections.sort(students, new Comparator<Student>() {
       @Override

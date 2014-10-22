@@ -8,6 +8,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Root;
 
 import fi.pyramus.dao.DAOFactory;
@@ -17,6 +19,9 @@ import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.ArchivableEntity;
 import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.ContactInfo;
+import fi.pyramus.domainmodel.base.ContactInfo_;
+import fi.pyramus.domainmodel.base.Email;
+import fi.pyramus.domainmodel.base.Email_;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
@@ -217,6 +222,24 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     );
     
     return entityManager.createQuery(criteria).getSingleResult();
+  }
+
+  public List<Student> listByEmail(String email) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
+    Root<Student> root = criteria.from(Student.class);
+    
+    Join<Student, ContactInfo> contactInfoJoin = root.join(Student_.contactInfo);
+    ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.equal(emailJoin.get(Email_.address), email)
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
 
   public List<Student> listActiveStudents() {

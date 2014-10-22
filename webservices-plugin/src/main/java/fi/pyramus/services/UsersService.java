@@ -79,7 +79,11 @@ public class UsersService extends PyramusService {
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
-    fi.pyramus.domainmodel.users.User user = userDAO.findById(userId);
+    StaffMember user = userDAO.findById(userId);
+    
+    if (!isAllowedEmail(address, user.getPerson().getId()))
+      throw new RuntimeException("Email address is in use");
+
     // TODO contact type, default address
     ContactType contactType = contactTypeDAO.findById(new Long(1));
     Email email = emailDAO.create(user.getContactInfo(), contactType, Boolean.TRUE, address);

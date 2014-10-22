@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.pyramus.I18N.Messages;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.ContactTypeDAO;
@@ -28,6 +29,7 @@ import fi.pyramus.framework.UserRole;
 import fi.pyramus.plugin.auth.AuthenticationProvider;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.pyramus.util.UserUtils;
 
 /**
  * The controller responsible of creating a new Pyramus user. 
@@ -51,6 +53,19 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
 
+    Long personId = requestContext.getLong("personId");
+    
+    int emailCount2 = requestContext.getInteger("emailTable.rowCount");
+    for (int i = 0; i < emailCount2; i++) {
+      String colPrefix = "emailTable." + i;
+      String email = requestContext.getString(colPrefix + ".email");
+      if (email != null) {
+        if (!UserUtils.isAllowedEmail(email, personId)) {
+          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+        }
+      }
+    }
+    
     // Fields from the web page
 
     String firstName = requestContext.getString("firstName");
@@ -99,8 +114,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     
     // User
 
-    // TODO: Should not create if user exists
-    Person person = personDAO.create();
+    Person person = personId != null ? personDAO.findById(personId) : personDAO.create();
     
     StaffMember user = userDAO.create(firstName, lastName, externalId, authProvider, role, person);
     if (title != null)

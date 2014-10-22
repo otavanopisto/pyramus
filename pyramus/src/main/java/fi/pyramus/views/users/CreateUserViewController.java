@@ -11,14 +11,17 @@ import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.ContactTypeDAO;
 import fi.pyramus.dao.base.ContactURLTypeDAO;
+import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.ContactURLType;
+import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.plugin.auth.AuthenticationProvider;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.pyramus.util.JSONArrayExtractor;
 import fi.pyramus.util.StringAttributeComparator;
 
 /**
@@ -36,7 +39,25 @@ public class CreateUserViewController extends PyramusViewController implements B
   public void process(PageRequestContext pageRequestContext) {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     ContactURLTypeDAO contactURLTypeDAO = DAOFactory.getInstance().getContactURLTypeDAO();
+    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    
+    Long studentId = pageRequestContext.getLong("studentId");
+    
+    if (studentId != null) {
+      Student student = studentDAO.findById(studentId);
+      
+      pageRequestContext.getRequest().setAttribute("person", student.getAbstractStudent());
+      pageRequestContext.getRequest().setAttribute("student", student);
 
+      String emails = new JSONArrayExtractor("defaultAddress", "contactType", "address").extractString(student.getContactInfo().getEmails());
+      String addresses = new JSONArrayExtractor("defaultAddress", "name", "contactType", "streetAddress", "postalCode", "city", "country").extractString(student.getContactInfo().getAddresses());
+      String phones = new JSONArrayExtractor("defaultNumber", "contactType", "number").extractString(student.getContactInfo().getPhoneNumbers());
+
+      setJsDataVariable(pageRequestContext, "createuser_emails", emails);
+      setJsDataVariable(pageRequestContext, "createuser_addresses", addresses);
+      setJsDataVariable(pageRequestContext, "createuser_phones", phones);
+    }
+    
     List<AuthenticationProviderInfoBean> authenticationProviders = new ArrayList<AuthenticationProviderInfoBean>();
     for (String authenticationProviderName : AuthenticationProviderVault.getAuthenticationProviderClasses().keySet()) {
       boolean active = AuthenticationProviderVault.getInstance().getAuthenticationProvider(authenticationProviderName) != null;

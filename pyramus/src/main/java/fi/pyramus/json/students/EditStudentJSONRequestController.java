@@ -11,6 +11,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.StaleObjectStateException;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.pyramus.I18N.Messages;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.ContactInfoDAO;
@@ -49,6 +50,7 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.util.UserUtils;
 
 public class EditStudentJSONRequestController extends JSONRequestController {
 
@@ -90,6 +92,17 @@ public class EditStudentJSONRequestController extends JSONRequestController {
 
     List<Student> students = studentDAO.listByAbstractStudent(abstractStudent);
 
+    for (Student student : students) {
+      int rowCount = requestContext.getInteger("emailTable." + student.getId() + ".rowCount");
+      for (int i = 0; i < rowCount; i++) {
+        String colPrefix = "emailTable." + student.getId() + "." + i;
+        String email = requestContext.getString(colPrefix + ".email");
+        
+        if (!UserUtils.isAllowedEmail(email, abstractStudent.getId()))
+          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+      }
+    }
+    
     for (Student student : students) {
     	Long studentVersion = requestContext.getLong("studentVersion." + student.getId());
       if (!student.getVersion().equals(studentVersion))

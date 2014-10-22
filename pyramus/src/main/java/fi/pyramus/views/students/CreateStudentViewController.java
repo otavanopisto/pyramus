@@ -13,20 +13,24 @@ import fi.pyramus.dao.base.ContactURLTypeDAO;
 import fi.pyramus.dao.base.LanguageDAO;
 import fi.pyramus.dao.base.MunicipalityDAO;
 import fi.pyramus.dao.base.NationalityDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.SchoolDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.ContactURLType;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
@@ -48,6 +52,25 @@ public class CreateStudentViewController extends PyramusViewController implement
     LanguageDAO languageDAO = DAOFactory.getInstance().getLanguageDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     ContactURLTypeDAO contactURLTypeDAO = DAOFactory.getInstance().getContactURLTypeDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
+    
+    Long personId = pageRequestContext.getLong("personId");
+    if (personId != null) {
+      Person person = personDAO.findById(personId);
+      StaffMember staffMember = staffMemberDAO.findByPerson(person);
+      
+      pageRequestContext.getRequest().setAttribute("person", person);
+      pageRequestContext.getRequest().setAttribute("staffMember", staffMember);
+      
+      String emails = new JSONArrayExtractor("defaultAddress", "contactType", "address").extractString(staffMember.getContactInfo().getEmails());
+      String addresses = new JSONArrayExtractor("defaultAddress", "name", "contactType", "streetAddress", "postalCode", "city", "country").extractString(staffMember.getContactInfo().getAddresses());
+      String phones = new JSONArrayExtractor("defaultNumber", "contactType", "number").extractString(staffMember.getContactInfo().getPhoneNumbers());
+
+      setJsDataVariable(pageRequestContext, "createstudent_emails", emails);
+      setJsDataVariable(pageRequestContext, "createstudent_addresses", addresses);
+      setJsDataVariable(pageRequestContext, "createstudent_phones", phones);
+    }
 
     List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));

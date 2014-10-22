@@ -183,6 +183,9 @@ public class StudentController {
   /* Email */
 
   public Email addStudentEmail(Student student, ContactType contactType, String address, Boolean defaultAddress) {
+    if (!UserUtils.isAllowedEmail(address, student.getAbstractStudent().getId()))
+      throw new RuntimeException("Email address is in use.");
+    
     return emailDAO.create(student.getContactInfo(), contactType, defaultAddress, address);
   }
   

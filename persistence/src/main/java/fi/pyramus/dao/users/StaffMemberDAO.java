@@ -145,6 +145,20 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   }
 
 
+  public StaffMember findByPerson(Person person) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StaffMember> criteria = criteriaBuilder.createQuery(StaffMember.class);
+    Root<StaffMember> root = criteria.from(StaffMember.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.equal(root.get(StaffMember_.person), person)
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+
   @SuppressWarnings("unchecked")
   public SearchResult<StaffMember> searchUsersBasic(int resultsPerPage, int page, String text) {
 
