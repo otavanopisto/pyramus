@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -40,10 +42,18 @@ import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.domainmodel.users.UserVariable_;
+import fi.pyramus.events.StudentArchivedEvent;
+import fi.pyramus.events.StudentCreatedEvent;
 
 @Stateless
 public class StudentDAO extends PyramusEntityDAO<Student> {
-
+  
+  @Inject
+  private Event<StudentCreatedEvent> studentCreatedEvent;
+  
+  @Inject
+  private Event<StudentArchivedEvent> studentArchivedEvent;
+  
   /**
    * Archives a student.
    * 
@@ -73,6 +83,8 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
       // change in this operation but it still needs to be reindexed
   
       abstractStudentDAO.forceReindex(student.getAbstractStudent());
+      
+      studentArchivedEvent.fire(new StudentArchivedEvent(student.getId()));
     }
   }
 
@@ -134,6 +146,8 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     abstractStudent.addStudent(student);
 
     entityManager.persist(abstractStudent);
+    
+    studentCreatedEvent.fire(new StudentCreatedEvent(student.getId()));
 
     return student;
   }
@@ -174,6 +188,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setMunicipality(municipality);
 
     entityManager.persist(student);
+
   }
 
   public void updateSchool(Student student, School school) {
@@ -188,7 +203,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setTags(tags);
     
     entityManager.persist(student);
-    
+
     return student;
   }
 
@@ -198,7 +213,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setBillingDetails(billingDetails);
     
     entityManager.persist(student);
-    
+
     return student;
   }
 
@@ -368,7 +383,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
       abstractStudent.addStudent(student);
       getEntityManager().persist(abstractStudent);
     }
-    
+
     return persist(student);
   }
 

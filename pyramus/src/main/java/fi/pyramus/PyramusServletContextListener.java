@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -30,23 +31,32 @@ import fi.pyramus.dao.plugins.PluginDAO;
 import fi.pyramus.dao.plugins.PluginRepositoryDAO;
 import fi.pyramus.dao.system.SettingDAO;
 import fi.pyramus.dao.system.SettingKeyDAO;
+import fi.pyramus.dao.webhooks.WebhookDAO;
 import fi.pyramus.domainmodel.base.MagicKey;
 import fi.pyramus.domainmodel.base.MagicKeyScope;
 import fi.pyramus.domainmodel.plugins.Plugin;
 import fi.pyramus.domainmodel.plugins.PluginRepository;
 import fi.pyramus.domainmodel.system.Setting;
 import fi.pyramus.domainmodel.system.SettingKey;
+import fi.pyramus.domainmodel.webhooks.Webhook;
 import fi.pyramus.plugin.PluginDescriptor;
 import fi.pyramus.plugin.PluginManager;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.internal.InternalAuthenticationStrategy;
+import fi.pyramus.webhooks.Webhooks;
 
 /**
  * The application context listener responsible of initialization and finalization of the
  * application.
  */
 public class PyramusServletContextListener implements ServletContextListener {
+  
+  @Inject
+  private Webhooks webhooks;
 
+  @Inject
+  private WebhookDAO webhookDAO;
+  
   /**
    * Called when the application shuts down.
    * 
@@ -254,9 +264,14 @@ public class PyramusServletContextListener implements ServletContextListener {
           }
         }
       }
+      
     } catch (Exception e) {
       Logging.logException("Plugins loading failed", e);
     }
+    
+    for (Webhook webhook : webhookDAO.listAll()) {
+      webhooks.addWebhook(webhook.getUrl(), webhook.getSecret());
+    };
   }
   
   private static void trustSelfSignedCerts() {

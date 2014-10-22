@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -22,9 +24,18 @@ import fi.pyramus.domainmodel.courses.Course_;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.Student_;
+import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.events.CourseStudentArchivedEvent;
+import fi.pyramus.events.CourseStudentCreatedEvent;
 
 @Stateless
 public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
+
+  @Inject
+  private Event<CourseStudentCreatedEvent> courseStudentCreatedEvent;
+  
+  @Inject
+  private Event<CourseStudentArchivedEvent> courseStudentArchivedEvent;
 
   /**
    * Adds a course student to the database.
@@ -55,7 +66,11 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     courseStudent.setOptionality(optionality);
     courseStudent.setStudent(student);
     
-    return persist(courseStudent);
+    persist(courseStudent);
+    
+    courseStudentCreatedEvent.fire(new CourseStudentCreatedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
+
+    return courseStudent;
   }
   
   public CourseStudent findByCourseAndStudent(Course course, Student student) {
@@ -242,4 +257,14 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  public void archive(CourseStudent courseStudent) {
+    super.archive(courseStudent);
+    courseStudentArchivedEvent.fire(new CourseStudentArchivedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
+  }
+  
+  public void archive(CourseStudent courseStudent, User user) {
+    super.archive(courseStudent, user);
+    courseStudentArchivedEvent.fire(new CourseStudentArchivedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
+  }
+  
 }

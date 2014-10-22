@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
@@ -41,16 +43,24 @@ import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.domainmodel.users.UserVariable_;
+import fi.pyramus.events.StaffMemberCreatedEvent;
+import fi.pyramus.events.StaffMemberDeletedEvent;
 import fi.pyramus.persistence.search.SearchResult;
 
 @Stateless
 public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   
+  @Inject
+  private Event<StaffMemberCreatedEvent> staffMemberCreatedEvent;
+
+  @Inject
+  private Event<StaffMemberDeletedEvent> staffMemberDeletedEvent;
+  
   public StaffMember create(String firstName, String lastName, String externalId, String authProvider, Role role, Person person) {
     ContactInfo contactInfo = new ContactInfo();
     
     StaffMember staffMember = new StaffMember();
-    
+
     staffMember.setFirstName(firstName);
     staffMember.setLastName(lastName);
     staffMember.setAuthProvider(authProvider);
@@ -59,7 +69,10 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     staffMember.setContactInfo(contactInfo);
     staffMember.setPerson(person);
 
-    return persist(staffMember);
+    persist(staffMember);
+    staffMemberCreatedEvent.fire(new StaffMemberCreatedEvent(staffMember.getId()));
+
+    return staffMember;
   }
 
   public List<User> listByUserVariable(String key, String value) {
@@ -329,7 +342,10 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
 
   @Override
   public void delete(StaffMember user) {
+    Long id = user.getId();
     super.delete(user);
+    
+    staffMemberDeletedEvent.fire(new StaffMemberDeletedEvent(id));
   }
 
 }

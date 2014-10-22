@@ -271,6 +271,12 @@
   
       <dependency>
         <groupId>fi.pyramus</groupId>
+        <artifactId>pyramus-webhooks</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>
+  
+      <dependency>
+        <groupId>fi.pyramus</groupId>
         <artifactId>persistence</artifactId>
         <version>${pyramus.version}</version>
       </dependency>

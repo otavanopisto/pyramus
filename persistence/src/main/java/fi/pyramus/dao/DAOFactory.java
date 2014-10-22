@@ -121,6 +121,7 @@ import fi.pyramus.dao.users.InternalAuthDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
+import fi.pyramus.dao.webhooks.WebhookDAO;
 
 public class DAOFactory {
   
@@ -310,6 +311,12 @@ public class DAOFactory {
   
   public PersonDAO getPersonDAO() {
     return (PersonDAO) findByClass(PersonDAO.class);
+  }
+  
+  /* Webhooks */
+
+  public WebhookDAO getWebhookDAO() {
+    return (WebhookDAO) findByClass(WebhookDAO.class);
   }
   
   /* Change Log */
