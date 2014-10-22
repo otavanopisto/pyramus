@@ -15,9 +15,9 @@ import javax.persistence.Version;
 public class Person {
   
   /**
-   * Returns unique identifier for this AbstractStudent
+   * Returns unique identifier for this Person
    * 
-   * @return unique id of this AbstractStudent
+   * @return unique id of this Person
    */
   public Long getId() {
     return id;

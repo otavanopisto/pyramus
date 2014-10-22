@@ -428,13 +428,14 @@
         <it.port.https>8443</it.port.https>
         <it.host>dev.pyramus.fi</it.host>
         <it.jdbc.driver>org.h2.Driver</it.jdbc.driver>
-        <it.jdbc.url>jdbc:h2:file:${project.build.directory}/h2;AUTO_SERVER=TRUE</it.jdbc.url>
+        <it.jdbc.url>jdbc:h2:file:${project.build.directory}${file.separator}h2;AUTO_SERVER=TRUE</it.jdbc.url>
         <it.jdbc.jndi>java:/jdbc/pyramus</it.jdbc.jndi>
         <it.jdbc.username>sa</it.jdbc.username>
         <it.jdbc.password>sa</it.jdbc.password>
         <it.keystore.alias>pyrit</it.keystore.alias>
         <it.keystore.pass>storepass</it.keystore.pass>
-        <it.keystore.file>${project.build.directory}/pyrit.keystore</it.keystore.file>
+        <it.keystore.file>${project.build.directory}${file.separator}pyrit.keystore</it.keystore.file>
+        <it.wildfly.cli-batch>true</it.wildfly.cli-batch>
       </properties>
       
       <dependencies>          
@@ -543,7 +544,7 @@
               </execution>
             </executions>
           </plugin>
-          
+
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>keytool-maven-plugin</artifactId>
@@ -556,7 +557,7 @@
                   <goal>clean</goal>
                 </goals>
                 <configuration>
-                  <keystore>${project.build.directory}/pyrit.keystore</keystore>
+                  <keystore>${it.keystore.file}</keystore>
                 </configuration>
               </execution>
               <execution>
@@ -668,7 +669,7 @@
           <plugin>
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
-            <version>1.0.1.Final</version>
+            <version>1.0.2.Final</version>
             <executions>
               <execution>
                 <id>configure-wildfly</id>
@@ -678,7 +679,7 @@
                 </goals>
                 <configuration>
                   <execute-commands>
-                    <batch>true</batch>
+                    <batch>${it.wildfly.cli-batch}</batch>
                     <commands>
                       <command>/system-property=PyramusWSAllowedIPs:add(value="127.0.0.1")</command>
                       <command>/system-property=pyramus-url:add(value="${it.host}:${it.port.https}")</command>
@@ -747,13 +748,13 @@
         <it.port.https>8443</it.port.https>
         <it.host>dev.pyramus.fi</it.host>
         <it.jdbc.driver>org.h2.Driver</it.jdbc.driver>
-        <it.jdbc.url>jdbc:h2:file:${project.build.directory}/h2;AUTO_SERVER=TRUE</it.jdbc.url>
+        <it.jdbc.url>jdbc:h2:file:${project.build.directory}${file.separator}h2;AUTO_SERVER=TRUE</it.jdbc.url>
         <it.jdbc.jndi>java:/jdbc/pyramus</it.jdbc.jndi>
         <it.jdbc.username>sa</it.jdbc.username>
         <it.jdbc.password>sa</it.jdbc.password>
         <it.keystore.alias>pyrit</it.keystore.alias>
         <it.keystore.pass>storepass</it.keystore.pass>
-        <it.keystore.file>${project.build.directory}/pyrit.keystore</it.keystore.file>
+        <it.keystore.file>${project.build.directory}${file.separator}pyrit.keystore</it.keystore.file>
       </properties>
       
       <dependencies>          
@@ -875,7 +876,7 @@
                   <goal>clean</goal>
                 </goals>
                 <configuration>
-                  <keystore>${project.build.directory}/pyrit.keystore</keystore>
+                  <keystore>${it.keystore.file}</keystore>
                 </configuration>
               </execution>
               <execution>
