@@ -50,6 +50,7 @@
     <module>reports</module>
     <module>webservices-plugin</module>
     <module>smvcj</module>
+    <module>webhooks</module>
   </modules>
 
   <dependencyManagement>
