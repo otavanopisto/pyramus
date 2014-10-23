@@ -3,8 +3,6 @@ package fi.pyramus.views.system;
 import java.util.List;
 import java.util.UUID;
 
-import com.gargoylesoftware.htmlunit.javascript.host.Console;
-
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.clientapplications.ClientApplicationAccessTokenDAO;
