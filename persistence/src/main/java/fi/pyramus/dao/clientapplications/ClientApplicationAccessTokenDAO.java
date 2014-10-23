@@ -15,11 +15,12 @@ import fi.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationC
 @Stateless
 public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientApplicationAccessToken> {
 
-  public ClientApplicationAccessToken create(String accessToken, Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode) {
+  public ClientApplicationAccessToken create(String accessToken, String refreshToken, Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode) {
     EntityManager entityManager = getEntityManager();
 
     ClientApplicationAccessToken clientApplicationAccessToken = new ClientApplicationAccessToken();
     clientApplicationAccessToken.setAccessToken(accessToken);
+    clientApplicationAccessToken.setRefreshToken(refreshToken);
     clientApplicationAccessToken.setClientApplication(clientApplication);
     clientApplicationAccessToken.setExpires(expires);
     clientApplicationAccessToken.setClientApplicationAuthorizationCode(clientApplicationAuthorizationCode);
