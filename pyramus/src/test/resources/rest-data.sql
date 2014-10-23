@@ -351,9 +351,10 @@ values
   (2, 'Tester #2', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'Test text #2', 'PHONE', 3, 1, false);
 
 insert into
-   ClientApplication (id, clientName, clientId, clientSecret)
+   ClientApplication (id, clientName, clientId, clientSecret, skipPrompt)
 values
-    (1, 'Oauth2 test App', '854885cf-2284-4b17-b63c-a8b189535f8d', 'cqJ4J1if8ca5RMUqaYyFPYToxfFxt2YT8PXL3pNygPClnjJdt55lrFs6k1SZ6colJN24YEtZ7bhFW29S');
+    (1, 'Clientapp without prompt skipping', '854885cf-2284-4b17-b63c-a8b189535f8d', 'cqJ4J1if8ca5RMUqaYyFPYToxfFxt2YT8PXL3pNygPClnjJdt55lrFs6k1SZ6colJN24YEtZ7bhFW29S', false),
+    (2, 'Clientapp with prompt skipping', 'a46d97f8-c37b-4bef-afe4-369a2481f632', 'n22FKq4WBSJxX91ekTnx4F7KdmcGsVsXL2XEplCfm9fYrNbGRyp7CpXiGiu4TaL25lceLchFatjCpSCU', true);
    
 insert into
    ClientApplicationAuthorizationCode (id, authorizationCode, redirectUrl, user_id, app_id)
