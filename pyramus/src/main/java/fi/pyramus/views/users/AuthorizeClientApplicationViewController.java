@@ -45,8 +45,10 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
         request.getSession().setAttribute("clientAppId", oauthRequest.getClientId());
         String responseType = oauthRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE);
 
+        String authorizationCode = "";
+        
         if (responseType.equals(ResponseType.CODE.toString())) {
-          final String authorizationCode = oauthIssuerImpl.authorizationCode();
+          authorizationCode = oauthIssuerImpl.authorizationCode();
           request.getSession().setAttribute("pendingAuthCode", authorizationCode);
         }
 
@@ -54,7 +56,31 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
 
         request.getSession().setAttribute("pendingOauthRedirectUrl", redirectURI);
         request.setAttribute("clientAppName", clientApplication.getClientName());
-
+        
+        if(clientApplication.getSkipPrompt()){
+          ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO = DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO();
+          StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+          HttpSession session = request.getSession();
+          Long userId = (Long) session.getAttribute("loggedUserId");
+          
+          if (userId != null && authorizationCode != null && redirectURI != null && clientApplication != null) {
+            try {
+              OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse.authorizationResponse(request, HttpServletResponse.SC_FOUND);
+              builder.setCode(authorizationCode);
+              final OAuthResponse response = builder.location(redirectURI).buildQueryMessage();
+              User user = userDAO.findById(userId);
+              clientApplicationAuthorizationCodeDAO.create(user, clientApplication, authorizationCode, redirectURI);
+              requestContext.setRedirectURL(response.getLocationUri());
+            } catch (OAuthSystemException e) {
+              requestContext.setIncludeJSP("/templates/generic/errorpage.jsp");
+              throw new SmvcRuntimeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            }
+          } else {
+            requestContext.setIncludeJSP("/templates/generic/errorpage.jsp");
+            throw new SmvcRuntimeException(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameters");
+          }
+        }
+        
       } else {
         requestContext.setIncludeJSP("/templates/generic/errorpage.jsp");
         throw new SmvcRuntimeException(HttpServletResponse.SC_FORBIDDEN, "Client application not found");
