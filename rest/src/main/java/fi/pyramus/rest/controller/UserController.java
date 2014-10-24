@@ -25,7 +25,7 @@ import fi.pyramus.domainmodel.users.UserVariableKey;
 public class UserController {
 
   @Inject
-  private StaffMemberDAO staffDAO;
+  private StaffMemberDAO staffMemberDAO;
   
   @Inject
   private UserVariableDAO userVariableDAO;
@@ -36,19 +36,23 @@ public class UserController {
   /* Users */
 
   public StaffMember createStaffMember(String firstName, String lastName, String externalId, String authProvider, Role role, Person person) {
-    return staffDAO.create(firstName, lastName, externalId, authProvider, role, person);
+    return staffMemberDAO.create(firstName, lastName, externalId, authProvider, role, person);
   }
   
   public StaffMember findStaffMemberById(Long userId) {
-    return staffDAO.findById(userId);
+    return staffMemberDAO.findById(userId);
   }
 
-  public List<StaffMember> listNonStudentUsers() {
-    return staffDAO.listAll();
+  public StaffMember findStaffMemberByEmail(String email) {
+    return staffMemberDAO.findByEmail(email);
   }
 
-  public List<StaffMember> listNonStudentUsers(Integer firstResult, Integer maxResults) {
-    return staffDAO.listAll(firstResult, maxResults);
+  public List<StaffMember> listStaffMembers() {
+    return staffMemberDAO.listAll();
+  }
+
+  public List<StaffMember> listStaffMembers(Integer firstResult, Integer maxResults) {
+    return staffMemberDAO.listAll(firstResult, maxResults);
   }
   
   /* Variables */
