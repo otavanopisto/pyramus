@@ -7,6 +7,11 @@ insert into
   Setting (id, settingKey, value)
 values 
   (1, 1, 'it');
+  
+insert into 
+  ContactType (id, name, version, archived)
+values 
+  (1, 'Home', 1, false);
 
 insert into 
   GradingScale (id, archived, name, description, version)
@@ -20,11 +25,23 @@ values
   (1, 10, false, 'test grade #1', 'grade for testing #1', false, 'qualification #1', 1, 1, 1),
   (2, 20, false, 'test grade #2', 'grade for testing #2', true, 'qualification #2', 1, 2, 1);
   
+insert into 
+  ContactInfo (id, additionalInfo, version)
+values   
+  (5, 'Test Guest #1', 1),
+  (6, 'Test Guest #2', 1);
+  
+insert into 
+  Email (id, address, defaultAddress, contactInfo, contactType, indexColumn, version)
+values 
+  (5, 'guest1@bogusmail.com', true, 5, 1, 0, 1),
+  (6, 'guest2@bogusmail.com', true, 6, 1, 0, 1);
+  
 insert into
   User (id, firstName, lastName, contactInfo, version)
 values 
-  (1, 'Test Guest', 'User #1', null, 1),
-  (2, 'Test Guest', 'User #2', null, 1);
+  (1, 'Test Guest', 'User #1', 5, 1),
+  (2, 'Test Guest', 'User #2', 6, 1);
 
 insert into
   StaffMember (id, authProvider, externalId, role, title)
@@ -177,11 +194,6 @@ values
   (2, 'For test school #2', 1),
   (3, 'For test student #3', 1),
   (4, 'For test student #4', 1);
-  
-insert into 
-  ContactType (id, name, version, archived)
-values 
-  (1, 'Home', 1, false);
 
 insert into 
   Address (id, city, country, postalCode, streetAddress, name, contactInfo, contactType, indexColumn, defaultAddress, version)
