@@ -32,7 +32,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.reports.ReportContextDAO;
 import fi.pyramus.dao.reports.ReportDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.reports.Report;
 import fi.pyramus.domainmodel.reports.ReportContext;
 import fi.pyramus.domainmodel.reports.ReportContextType;
@@ -88,7 +88,7 @@ public class ImportReportViewController extends PyramusFormViewController {
   @Override
   public void processSend(PageRequestContext requestContext) {
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     
     Long existingReportId = requestContext.getLong("report");
     String name = requestContext.getString("name");

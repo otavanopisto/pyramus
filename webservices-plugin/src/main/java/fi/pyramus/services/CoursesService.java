@@ -35,7 +35,7 @@ import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.courses.CourseStudentVariableDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.CourseBase;
 import fi.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.pyramus.domainmodel.base.CourseEducationType;
@@ -84,7 +84,7 @@ public class CoursesService extends PyramusService {
       @WebParam (name = "courseNumber") Integer courseNumber, @WebParam (name = "beginDate") Date beginDate, @WebParam (name = "endDate") Date endDate, @WebParam (name = "courseLength") Double courseLength, @WebParam (name = "courseLengthTimeUnitId") Long courseLengthTimeUnitId,
       @WebParam (name = "description") String description, @WebParam (name = "creatingUserId") Long creatingUserId) {
 
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     CourseComponentDAO componentDAO = DAOFactory.getInstance().getCourseComponentDAO();
@@ -173,7 +173,7 @@ public class CoursesService extends PyramusService {
       @WebParam (name = "beginDate") Date beginDate, @WebParam (name = "endDate") Date endDate, @WebParam (name = "courseLength") Double courseLength, @WebParam (name = "courseLengthTimeUnitId") Long courseLengthTimeUnitId, @WebParam (name = "description") String description,
       @WebParam (name = "modifyingUserId") Long modifyingUserId) {
 
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
@@ -357,7 +357,7 @@ public class CoursesService extends PyramusService {
   }
 
   public CourseUserEntity createCourseUser(@WebParam (name = "courseId") Long courseId, @WebParam (name = "userId") Long userId, @WebParam (name = "courseUserRoleId") Long courseUserRoleId) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     CourseStaffMemberDAO courseStaffMemberDAO = DAOFactory.getInstance().getCourseStaffMemberDAO();
     CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();

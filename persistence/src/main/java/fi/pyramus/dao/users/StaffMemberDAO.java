@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
@@ -32,31 +34,45 @@ import fi.pyramus.domainmodel.base.ContactInfo;
 import fi.pyramus.domainmodel.base.ContactInfo_;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Email_;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.users.Role;
+import fi.pyramus.domainmodel.users.StaffMember;
+import fi.pyramus.domainmodel.users.StaffMember_;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.domainmodel.users.UserVariable_;
-import fi.pyramus.domainmodel.users.User_;
+import fi.pyramus.events.StaffMemberCreatedEvent;
+import fi.pyramus.events.StaffMemberDeletedEvent;
 import fi.pyramus.persistence.search.SearchResult;
 
 @Stateless
-public class UserDAO extends PyramusEntityDAO<User> {
+public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   
-  public User create(String firstName, String lastName, String externalId, String authProvider, Role role) {
+  @Inject
+  private Event<StaffMemberCreatedEvent> staffMemberCreatedEvent;
+
+  @Inject
+  private Event<StaffMemberDeletedEvent> staffMemberDeletedEvent;
+  
+  public StaffMember create(String firstName, String lastName, String externalId, String authProvider, Role role, Person person) {
     ContactInfo contactInfo = new ContactInfo();
     
-    User newUser = new User();
-    
-    newUser.setFirstName(firstName);
-    newUser.setLastName(lastName);
-    newUser.setAuthProvider(authProvider);
-    newUser.setExternalId(externalId);
-    newUser.setRole(role);
-    newUser.setContactInfo(contactInfo);
+    StaffMember staffMember = new StaffMember();
 
-    return persist(newUser);
+    staffMember.setFirstName(firstName);
+    staffMember.setLastName(lastName);
+    staffMember.setAuthProvider(authProvider);
+    staffMember.setExternalId(externalId);
+    staffMember.setRole(role);
+    staffMember.setContactInfo(contactInfo);
+    staffMember.setPerson(person);
+
+    persist(staffMember);
+    staffMemberCreatedEvent.fire(new StaffMemberCreatedEvent(staffMember.getId()));
+
+    return staffMember;
   }
 
   public List<User> listByUserVariable(String key, String value) {
@@ -78,23 +94,23 @@ public class UserDAO extends PyramusEntityDAO<User> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public List<User> listByNotRole(Role role) {
+  public List<StaffMember> listByNotRole(Role role) {
     return listByNotRole(role, null, null);
   }
 
-  public List<User> listByNotRole(Role role, Integer firstResult, Integer maxResults) {
+  public List<StaffMember> listByNotRole(Role role, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<User> criteria = criteriaBuilder.createQuery(User.class);
-    Root<User> root = criteria.from(User.class);
+    CriteriaQuery<StaffMember> criteria = criteriaBuilder.createQuery(StaffMember.class);
+    Root<StaffMember> root = criteria.from(StaffMember.class);
     criteria.select(root);
     
     criteria.where(
-      criteriaBuilder.notEqual(root.get(User_.role), role)
+      criteriaBuilder.notEqual(root.get(StaffMember_.role), role)
     );
     
-    TypedQuery<User> query = entityManager.createQuery(criteria);
+    TypedQuery<StaffMember> query = entityManager.createQuery(criteria);
     
     if (firstResult != null) {
       query.setFirstResult(firstResult);
@@ -107,30 +123,30 @@ public class UserDAO extends PyramusEntityDAO<User> {
     return query.getResultList();
   }
   
-  public User findByExternalIdAndAuthProvider(String externalId, String authProvider) {
+  public StaffMember findByExternalIdAndAuthProvider(String externalId, String authProvider) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<User> criteria = criteriaBuilder.createQuery(User.class);
-    Root<User> root = criteria.from(User.class);
+    CriteriaQuery<StaffMember> criteria = criteriaBuilder.createQuery(StaffMember.class);
+    Root<StaffMember> root = criteria.from(StaffMember.class);
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(User_.externalId), externalId),
-            criteriaBuilder.equal(root.get(User_.authProvider), authProvider)
+            criteriaBuilder.equal(root.get(StaffMember_.externalId), externalId),
+            criteriaBuilder.equal(root.get(StaffMember_.authProvider), authProvider)
         ));
     
     return getSingleResult(entityManager.createQuery(criteria));
   }
   
-  public User findByEmail(String email) {
+  public StaffMember findByEmail(String email) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<User> criteria = criteriaBuilder.createQuery(User.class);
-    Root<User> root = criteria.from(User.class);
+    CriteriaQuery<StaffMember> criteria = criteriaBuilder.createQuery(StaffMember.class);
+    Root<StaffMember> root = criteria.from(StaffMember.class);
     
-    Join<User, ContactInfo> contactInfoJoin = root.join(User_.contactInfo);
+    Join<StaffMember, ContactInfo> contactInfoJoin = root.join(StaffMember_.contactInfo);
     ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
     
     criteria.select(root);
@@ -143,7 +159,7 @@ public class UserDAO extends PyramusEntityDAO<User> {
 
 
   @SuppressWarnings("unchecked")
-  public SearchResult<User> searchUsersBasic(int resultsPerPage, int page, String text) {
+  public SearchResult<StaffMember> searchUsersBasic(int resultsPerPage, int page, String text) {
 
     int firstResult = page * resultsPerPage;
 
@@ -169,7 +185,7 @@ public class UserDAO extends PyramusEntityDAO<User> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, User.class)
+      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, StaffMember.class)
           .setSort(new Sort(new SortField[] { SortField.FIELD_SCORE, new SortField("lastNameSortable", SortField.STRING),
                    new SortField("firstNameSortable", SortField.STRING) }))
           .setFirstResult(firstResult)
@@ -183,7 +199,7 @@ public class UserDAO extends PyramusEntityDAO<User> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<User>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<StaffMember>(page, pages, hits, firstResult, lastResult, query.getResultList());
 
     } catch (ParseException e) {
       throw new PersistenceException(e);
@@ -191,7 +207,7 @@ public class UserDAO extends PyramusEntityDAO<User> {
   }
 
   @SuppressWarnings("unchecked")
-  public SearchResult<User> searchUsers(int resultsPerPage, int page, String firstName, String lastName, String tags,
+  public SearchResult<StaffMember> searchUsers(int resultsPerPage, int page, String firstName, String lastName, String tags,
       String email, Role[] roles) {
 
     int firstResult = page * resultsPerPage;
@@ -239,7 +255,7 @@ public class UserDAO extends PyramusEntityDAO<User> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, User.class)
+      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, StaffMember.class)
           .setSort(new Sort(new SortField[] { SortField.FIELD_SCORE, new SortField("lastNameSortable", SortField.STRING),
                    new SortField("firstNameSortable", SortField.STRING) }))
           .setFirstResult(firstResult)
@@ -253,14 +269,14 @@ public class UserDAO extends PyramusEntityDAO<User> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<User>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<StaffMember>(page, pages, hits, firstResult, lastResult, query.getResultList());
 
     } catch (ParseException e) {
       throw new PersistenceException(e);
     }
   }
   
-  public User update(User user, String firstName, String lastName, Role role) {
+  public StaffMember update(StaffMember user, String firstName, String lastName, Role role) {
     EntityManager entityManager = getEntityManager();
     user.setFirstName(firstName);
     user.setLastName(lastName);
@@ -269,7 +285,7 @@ public class UserDAO extends PyramusEntityDAO<User> {
     return user;
   }
 
-  public User updateBillingDetails(User user, List<BillingDetails> billingDetails) {
+  public StaffMember updateBillingDetails(StaffMember user, List<BillingDetails> billingDetails) {
     EntityManager entityManager = getEntityManager();
     
     user.setBillingDetails(billingDetails);
@@ -279,7 +295,7 @@ public class UserDAO extends PyramusEntityDAO<User> {
     return user;
   }
   
-  public User updateTags(User user, Set<Tag> tags) {
+  public StaffMember updateTags(StaffMember user, Set<Tag> tags) {
     EntityManager entityManager = getEntityManager();
     
     user.setTags(tags);
@@ -289,14 +305,14 @@ public class UserDAO extends PyramusEntityDAO<User> {
     return user;
   }
   
-  public User updateTitle(User user, String title) {
+  public StaffMember updateTitle(StaffMember user, String title) {
     EntityManager entityManager = getEntityManager();
     user.setTitle(title);
     entityManager.persist(user);
     return user;
   }
 
-  public void updateAuthProvider(User user, String authProvider) {
+  public void updateAuthProvider(StaffMember user, String authProvider) {
     EntityManager entityManager = getEntityManager();
     
     user.setAuthProvider(authProvider);
@@ -304,15 +320,18 @@ public class UserDAO extends PyramusEntityDAO<User> {
     entityManager.persist(user);
   }
 
-  public void updateExternalId(User user, String externalId) {
+  public void updateExternalId(StaffMember user, String externalId) {
     EntityManager entityManager = getEntityManager();
     user.setExternalId(externalId);
     entityManager.persist(user);
   }
 
   @Override
-  public void delete(User user) {
+  public void delete(StaffMember user) {
+    Long id = user.getId();
     super.delete(user);
+    
+    staffMemberDeletedEvent.fire(new StaffMemberDeletedEvent(id));
   }
 
 }

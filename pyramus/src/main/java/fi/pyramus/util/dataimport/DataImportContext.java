@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.users.User;
 
 @SuppressWarnings("rawtypes")
@@ -69,7 +69,7 @@ public class DataImportContext {
   }
 
   public User getLoggedUser() {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     this.loggedUser = userDAO.findById(this.loggedUserId); 
     return loggedUser;
   }

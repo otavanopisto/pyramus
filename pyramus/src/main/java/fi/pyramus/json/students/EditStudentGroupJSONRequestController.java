@@ -18,7 +18,7 @@ import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentGroupDAO;
 import fi.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.pyramus.dao.students.StudentGroupUserDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentGroup;
@@ -42,7 +42,7 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
    *          The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
     StudentGroupStudentDAO studentGroupStudentDAO = DAOFactory.getInstance().getStudentGroupStudentDAO();

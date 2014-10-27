@@ -407,20 +407,12 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("studentId is missing").build(); 
     }
     
-    if (entity.getEnrolmentTypeId() == null) {
-      return Response.status(Status.BAD_REQUEST).entity("enrolmentTypeId is missing").build(); 
+    if (entity.getLodging() == null) {
+      return Response.status(Status.BAD_REQUEST).entity("lodging is missing").build(); 
     }
     
     if (entity.getEnrolmentTime() == null) {
       return Response.status(Status.BAD_REQUEST).entity("enrolmentTime is missing").build(); 
-    }
-    
-    if (entity.getParticipationTypeId() == null) {
-      return Response.status(Status.BAD_REQUEST).entity("participationTypeId is missing").build(); 
-    }
-    
-    if (entity.getLodging() == null) {
-      return Response.status(Status.BAD_REQUEST).entity("lodging is missing").build(); 
     }
     
     Course course = courseController.findCourseById(courseId);
@@ -441,16 +433,26 @@ public class CourseRESTService extends AbstractRESTService {
       }
     }
     
-    fi.pyramus.domainmodel.courses.CourseEnrolmentType enrolmentType = courseController.findCourseEnrolmentTypeById(entity.getEnrolmentTypeId());
-    if (enrolmentType == null) {
-      return Response.status(Status.BAD_REQUEST).entity("could not find enrolmentType #" + entity.getEnrolmentTypeId()).build();
+    fi.pyramus.domainmodel.courses.CourseEnrolmentType enrolmentType = null;
+    if (entity.getEnrolmentTypeId() != null) {
+      enrolmentType = courseController.findCourseEnrolmentTypeById(entity.getEnrolmentTypeId());
+      if (enrolmentType == null) {
+        return Response.status(Status.BAD_REQUEST).entity("could not find enrolmentType #" + entity.getEnrolmentTypeId()).build();
+      }
+    } else {
+      enrolmentType = courseController.getDefaultCourseEnrolmentType();
     }
     
     fi.pyramus.domainmodel.base.CourseOptionality optionality = entity.getOptionality() != null ? fi.pyramus.domainmodel.base.CourseOptionality.valueOf(entity.getOptionality().name()) : null;
-    
-    fi.pyramus.domainmodel.courses.CourseParticipationType participantionType = courseController.findCourseParticipationTypeById(entity.getParticipationTypeId());
-    if (participantionType == null) {
-      return Response.status(Status.BAD_REQUEST).entity("could not find participantionType #" + entity.getParticipationTypeId()).build();
+    fi.pyramus.domainmodel.courses.CourseParticipationType participantionType = null;
+        
+    if (entity.getParticipationTypeId() != null) {
+      participantionType = courseController.findCourseParticipationTypeById(entity.getParticipationTypeId());
+      if (participantionType == null) {
+        return Response.status(Status.BAD_REQUEST).entity("could not find participantionType #" + entity.getParticipationTypeId()).build();
+      }
+    } else {
+      participantionType = courseController.getDefaultCourseParticipationType();
     }
     
     return Response.status(Status.OK)
@@ -619,7 +621,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    User user = userController.findUserById(entity.getUserId());
+    User user = userController.findStaffMemberById(entity.getUserId());
     if (user == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }

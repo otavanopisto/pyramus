@@ -1,6 +1,7 @@
 package fi.pyramus.domainmodel.students;
 
 import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -33,12 +35,6 @@ import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
-/**
- * Student
- * 
- * @author antti.viljakainen
- */
-
 @Entity
 @Indexed
 @FullTextFilterDefs (
@@ -47,6 +43,7 @@ import fi.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
      impl=ArchivedEntityFilterFactory.class
   )
 )
+@PrimaryKeyJoinColumn(name="id")
 public class Student extends User implements ArchivableEntity {
 
   /**

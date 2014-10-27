@@ -13,13 +13,15 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.ContactTypeDAO;
 import fi.pyramus.dao.base.EmailDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.TagDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.ContactType;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.users.Role;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
@@ -41,12 +43,13 @@ public class CreateUserJSONRequestController extends JSONRequestController {
    * @param requestContext The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
 
     // Fields from the web page
 
@@ -96,7 +99,10 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     
     // User
 
-    User user = userDAO.create(firstName, lastName, externalId, authProvider, role);
+    // TODO: Should not create if user exists
+    Person person = personDAO.create();
+    
+    StaffMember user = userDAO.create(firstName, lastName, externalId, authProvider, role, person);
     if (title != null)
       userDAO.updateTitle(user, title);
     

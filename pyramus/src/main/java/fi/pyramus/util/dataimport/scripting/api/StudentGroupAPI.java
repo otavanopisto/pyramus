@@ -13,7 +13,7 @@ public class StudentGroupAPI {
   }
   
   public Long create(String name, String description, Date beginDate) throws InvalidScriptException {
-    User loggedUser = DAOFactory.getInstance().getUserDAO().findById(loggedUserId);
+    User loggedUser = DAOFactory.getInstance().getStaffDAO().findById(loggedUserId);
     if (loggedUser == null) {
       throw new InvalidScriptException("Logged user could not be found");  
     }

@@ -24,7 +24,7 @@ public class UserEntityFactory implements EntityFactory<UserEntity> {
       tags[i++] = tag.getText();
     }
     
-    return new UserEntity(user.getId(), emails.toArray(new String[0]), user.getFirstName(), user.getLastName(), tags, user.getExternalId(), user.getAuthProvider(), user.getRole().name());
+    return new UserEntity(user.getId(), emails.toArray(new String[0]), user.getFirstName(), user.getLastName(), tags); //, user.getExternalId(), user.getAuthProvider(), user.getRole().name());
   }
   
   public UserEntity[] buildFromDomainObjects(Collection<?> domainObjects) {

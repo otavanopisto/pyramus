@@ -1,3 +1,6 @@
+    alter table AbstractStudent 
+        drop constraint FK_ls16l9u0xbwdvb3w2gp8pb54p if exists;
+
     alter table AccessLogEntry 
         drop constraint FK_r031kiolhx2sg7hpdngdn026l if exists;
 
@@ -321,6 +324,12 @@
 
     alter table Setting 
         drop constraint FK_i4lfreu085sgpg9qjjhesr2vi if exists;
+
+    alter table StaffMember 
+        drop constraint FK_9ruwo3icv3hk9965x46pafx5b if exists;
+
+    alter table StaffMember 
+        drop constraint FK_g3ikfuvto0x9gk62rqf3nhg49 if exists;
 
     alter table Student 
         drop constraint FK_jkly5h0o7bfv241wftfpj5mh6 if exists;
@@ -666,6 +675,8 @@
 
     drop table OtherCost if exists;
 
+    drop table Person if exists;
+
     drop table PhoneNumber if exists;
 
     drop table Plugin if exists;
@@ -699,6 +710,8 @@
     drop table Setting if exists;
 
     drop table SettingKey if exists;
+
+    drop table StaffMember if exists;
 
     drop table Student if exists;
 
@@ -751,6 +764,8 @@
     drop table UserVariable if exists;
 
     drop table UserVariableKey if exists;
+
+    drop table Webhook if exists;
 
     drop table WorkResource if exists;
 

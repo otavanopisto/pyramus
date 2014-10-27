@@ -15,7 +15,7 @@ import fi.pyramus.dao.resources.MaterialResourceDAO;
 import fi.pyramus.dao.resources.ResourceCategoryDAO;
 import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.resources.ResourceCategory;
@@ -28,7 +28,7 @@ import fi.pyramus.framework.UserRole;
 public class DebugDataViewController extends PyramusViewController {
 
   public void process(PageRequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();

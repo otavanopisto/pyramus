@@ -9,7 +9,7 @@ import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.pyramus.dao.grading.GradeDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.grading.CourseAssessment;
@@ -53,7 +53,7 @@ public class SaveCourseAssessmentsJSONRequestController extends JSONRequestContr
    * @param requestContext The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     CourseParticipationTypeDAO participationTypeDAO = DAOFactory.getInstance().getCourseParticipationTypeDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();

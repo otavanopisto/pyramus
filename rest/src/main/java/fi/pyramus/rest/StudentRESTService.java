@@ -1298,13 +1298,21 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students")
   @GET
-  public Response findStudents(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults, @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+  public Response listStudents(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults, @QueryParam ("email") String email, @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<Student> students;
     
-    if (filterArchived) {
-      students = studentController.listUnarchivedStudents(firstResult, maxResults);
+    if (StringUtils.isNotBlank(email)) {
+      if (!filterArchived) {
+        students = studentController.listStudentsByEmail(email, firstResult, maxResults);
+      } else {
+        students = studentController.listStudentsByEmailAndArchived(email, Boolean.FALSE, firstResult, maxResults);
+      }
     } else {
-      students = studentController.listStudents(firstResult, maxResults);
+      if (filterArchived) {
+        students = studentController.listUnarchivedStudents(firstResult, maxResults);
+      } else {
+        students = studentController.listStudents(firstResult, maxResults);
+      }
     }
     
     if (students.isEmpty()) {
@@ -1313,7 +1321,6 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Response.ok(objectFactory.createModel(students)).build();
   }
-  
   
   @Path("/students/{ID:[0-9]*}")
   @GET

@@ -182,6 +182,22 @@ public class StudentController {
 
   /* Email */
 
+  public List<Student> listStudentsByEmail(String email) {
+    return studentDAO.listByEmail(email);
+  }
+
+  public List<Student> listStudentsByEmail(String email, Integer firstResult, Integer maxResults) {
+    return studentDAO.listByEmail(email, firstResult, maxResults);
+  }
+  
+  public List<Student> listStudentsByEmailAndArchived(String email, Boolean archived) {
+    return studentDAO.listByEmailAndArchived(email, archived);
+  }
+  
+  public List<Student> listStudentsByEmailAndArchived(String email, Boolean archived, Integer firstResult, Integer maxResults) {
+    return studentDAO.listByEmailAndArchived(email, archived, firstResult, maxResults);
+  }
+  
   public Email addStudentEmail(Student student, ContactType contactType, String address, Boolean defaultAddress) {
     return emailDAO.create(student.getContactInfo(), contactType, defaultAddress, address);
   }

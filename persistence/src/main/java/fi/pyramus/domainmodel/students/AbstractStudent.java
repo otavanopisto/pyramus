@@ -15,22 +15,17 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceException;
-import javax.persistence.TableGenerator;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FullTextFilterDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
@@ -40,6 +35,7 @@ import org.hibernate.search.annotations.Store;
 
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.Email;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.persistence.search.filters.StudentIdFilterFactory;
@@ -60,16 +56,8 @@ import fi.pyramus.persistence.search.filters.StudentIdFilterFactory;
      impl=StudentIdFilterFactory.class
   )
 )
-public class AbstractStudent {
-  
-  /**
-   * Returns unique identifier for this AbstractStudent
-   * 
-   * @return unique id of this AbstractStudent
-   */
-  public Long getId() {
-    return id;
-  }
+@PrimaryKeyJoinColumn(name="id")
+public class AbstractStudent extends Person {
 
   /**
    * Sets birthday for this AbstractStudent
@@ -754,15 +742,6 @@ public class AbstractStudent {
     return sb.toString();
   }
 
-  @SuppressWarnings("unused")
-  private void setVersion(Long version) {
-    this.version = version;
-  }
-
-  public Long getVersion() {
-    return version;
-  }
-
   public Boolean getSecureInfo() {
     return secureInfo;
   }
@@ -770,12 +749,6 @@ public class AbstractStudent {
   public void setSecureInfo(Boolean secureInfo) {
     this.secureInfo = secureInfo;
   }
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.TABLE, generator = "AbstractStudent")
-  @TableGenerator(name = "AbstractStudent", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
-  @DocumentId
-  private Long id;
 
   @Column
   @Temporal(value = TemporalType.DATE)
@@ -804,8 +777,4 @@ public class AbstractStudent {
   @JoinColumn(name = "abstractStudent")
   @IndexedEmbedded
   private List<Student> students = new ArrayList<Student>();
-  
-  @Version
-  @Column(nullable = false)
-  private Long version;
 }

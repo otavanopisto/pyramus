@@ -18,7 +18,7 @@ import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.projects.ProjectDAO;
 import fi.pyramus.dao.projects.ProjectModuleDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.modules.Module;
@@ -32,7 +32,7 @@ import fi.pyramus.framework.UserRole;
 public class EditProjectJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext jsonRequestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     ProjectDAO projectDAO = DAOFactory.getInstance().getProjectDAO();
     ProjectModuleDAO projectModuleDAO = DAOFactory.getInstance().getProjectModuleDAO();

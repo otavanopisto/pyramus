@@ -9,8 +9,9 @@ import java.util.Map;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.users.Role;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
@@ -19,7 +20,7 @@ import fi.pyramus.persistence.search.SearchResult;
 public class SearchUsersJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
 
     Integer resultsPerPage = requestContext.getInteger("maxResults");
     if (resultsPerPage == null) {
@@ -41,9 +42,9 @@ public class SearchUsersJSONRequestController extends JSONRequestController {
       roles = new Role[] { role };
     }
 
-    SearchResult<User> searchResult = userDAO.searchUsers(resultsPerPage, page, text, text, text, text, roles);
+    SearchResult<StaffMember> searchResult = userDAO.searchUsers(resultsPerPage, page, text, text, text, text, roles);
     List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
-    List<User> users = searchResult.getResults();
+    List<StaffMember> users = searchResult.getResults();
     for (User user : users) {
       Map<String, Object> info = new HashMap<String, Object>();
       info.put("id", user.getId());
