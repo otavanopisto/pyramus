@@ -1,13 +1,20 @@
 insert into 
   SettingKey (id, name)
 values 
-  (1, 'system.environment');
+  (1, 'system.environment'),
+  (2, 'authentication.enabledStrategies');
   
 insert into 
   Setting (id, settingKey, value)
 values 
-  (1, 1, 'it');
+  (1, 1, 'it'),
+  (2, 2, 'TestAuth');
 
+insert into
+  Plugin (id, artifactId, enabled, groupId, version)
+values
+  (1, 'testauth-plugin', true, 'fi.pyramus', '0.7.2-SNAPSHOT');
+  
 insert into 
   GradingScale (id, archived, name, description, version)
 values  

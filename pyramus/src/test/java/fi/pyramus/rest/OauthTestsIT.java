@@ -2,18 +2,53 @@ package fi.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
+
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
+import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.junit.Test;
 
+import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
+
+import fi.pyramus.Common;
 
 public class OauthTestsIT extends AbstractRESTServiceTest {
   
   @Test
-  public void testSkipUserPrompt(){
-    //TODO: how to do this?
+  public void testSkipUserPrompt() throws OAuthSystemException{
+    
+    login(2);
+    
+    OAuthClientRequest request = OAuthClientRequest
+        .authorizationLocation(Common.AUTH_URL)
+        .setClientId(Common.CLIENT_ID)
+        .setRedirectURI(Common.REDIRECT_URL)
+        .setResponseType(ResponseType.CODE.toString())
+        .setState("state")
+        .buildQueryMessage();
+    
+    Response htmlResponse = given()
+        .contentType(ContentType.HTML)
+        .sessionId(getSessionId())
+        .get(request.getLocationUri());
+            
+    OAuthClientRequest redirectRequest = OAuthClientRequest
+        .authorizationLocation(Common.AUTH_URL)
+        .setClientId(Common.SKIP_ID)
+        .setRedirectURI(Common.REDIRECT_URL)
+        .setResponseType(ResponseType.CODE.toString())
+        .setState("state")
+        .buildQueryMessage();
+    
+    Response redirectResponse = given()
+        .contentType(ContentType.HTML)
+        .sessionId(getSessionId())
+        .get(redirectRequest.getLocationUri());
+    
+    System.out.println(redirectResponse.header("location"));       
+  
   }
   
   @Test
@@ -23,10 +58,10 @@ public class OauthTestsIT extends AbstractRESTServiceTest {
       tokenRequest = OAuthClientRequest
           .tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
           .setGrantType(GrantType.AUTHORIZATION_CODE)
-          .setClientId(fi.pyramus.Common.CLIENT_ID)
-          .setClientSecret(fi.pyramus.Common.CLIENT_SECRET)
-          .setRedirectURI(fi.pyramus.Common.REDIRECT_URL)
-          .setCode(fi.pyramus.Common.AUTH_CODE)
+          .setClientId(Common.CLIENT_ID)
+          .setClientSecret(Common.CLIENT_SECRET)
+          .setRedirectURI(Common.REDIRECT_URL)
+          .setCode(Common.AUTH_CODE)
           .buildBodyMessage();
     } catch (OAuthSystemException e) {
       e.printStackTrace();
@@ -43,9 +78,9 @@ public class OauthTestsIT extends AbstractRESTServiceTest {
       refreshRequest = OAuthClientRequest
           .tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
           .setGrantType(GrantType.REFRESH_TOKEN)
-          .setClientId(fi.pyramus.Common.CLIENT_ID)
-          .setClientSecret(fi.pyramus.Common.CLIENT_SECRET)
-          .setRedirectURI(fi.pyramus.Common.REDIRECT_URL)
+          .setClientId(Common.CLIENT_ID)
+          .setClientSecret(Common.CLIENT_SECRET)
+          .setRedirectURI(Common.REDIRECT_URL)
           .setRefreshToken(refreshToken)
           .buildBodyMessage();
     } catch (OAuthSystemException e) {
