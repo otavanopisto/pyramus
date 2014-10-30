@@ -1,13 +1,3 @@
-    create table AbstractStudent (
-        basicInfo clob,
-        birthday date,
-        secureInfo boolean not null,
-        sex varchar(255),
-        socialSecurityNumber varchar(255),
-        id bigint not null,
-        primary key (id)
-    );
-
     create table AcademicTerm (
         id bigint not null,
         archived boolean not null,
@@ -661,6 +651,11 @@
     create table Person (
         id bigint not null,
         version bigint not null,
+        basicInfo clob,
+        birthday date,
+        secureInfo boolean not null,
+        sex varchar(255),
+        socialSecurityNumber varchar(255),
         primary key (id)
     );
 
@@ -825,7 +820,6 @@
         role varchar(255) not null,
         title varchar(255),
         id bigint not null,
-        person_id bigint,
         primary key (id)
     );
 
@@ -841,7 +835,6 @@
         studyStartDate date,
         studyTimeEnd date,
         id bigint not null,
-        abstractStudent bigint,
         activityType bigint,
         educationalLevel bigint,
         examinationType bigint,
@@ -1071,6 +1064,7 @@
 
     create table User (
         id bigint not null,
+        person bigint,
         firstName varchar(255) not null,
         lastName varchar(255) not null,
         version bigint not null,
@@ -1197,11 +1191,6 @@
 
     alter table UserVariableKey 
         add constraint UK_mb9er7y1ali34igjlk4ccxlfs  unique (variableKey);
-
-    alter table AbstractStudent 
-        add constraint FK_ls16l9u0xbwdvb3w2gp8pb54p 
-        foreign key (id) 
-        references Person;
 
     alter table AccessLogEntry 
         add constraint FK_r031kiolhx2sg7hpdngdn026l 
@@ -1743,20 +1732,15 @@
         foreign key (settingKey) 
         references SettingKey;
 
-    alter table StaffMember 
+    alter table User 
         add constraint FK_9ruwo3icv3hk9965x46pafx5b 
-        foreign key (person_id) 
+        foreign key (person) 
         references Person;
 
     alter table StaffMember 
         add constraint FK_g3ikfuvto0x9gk62rqf3nhg49 
         foreign key (id) 
         references User;
-
-    alter table Student 
-        add constraint FK_jkly5h0o7bfv241wftfpj5mh6 
-        foreign key (abstractStudent) 
-        references AbstractStudent;
 
     alter table Student 
         add constraint FK_moxdtidtiop0frxnxal9unpt 

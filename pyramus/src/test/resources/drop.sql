@@ -1,6 +1,3 @@
-    alter table AbstractStudent 
-        drop constraint FK_ls16l9u0xbwdvb3w2gp8pb54p if exists;
-
     alter table AccessLogEntry 
         drop constraint FK_r031kiolhx2sg7hpdngdn026l if exists;
 
@@ -534,8 +531,6 @@
 
     alter table __UserTags 
         drop constraint FK_cd49dr1pn4dybqibkwedyfl77 if exists;
-
-    drop table AbstractStudent if exists;
 
     drop table AcademicTerm if exists;
 

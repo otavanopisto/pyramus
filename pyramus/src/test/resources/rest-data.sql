@@ -305,32 +305,26 @@ insert into
 values  
   (1, 'StudentActivityType #1', 1, false),
   (2, 'StudentActivityType #2', 1, false);
-
-insert into 
-  Person (id, version)
-values 
-  (1, 1),
-  (2, 1);
   
 insert into 
-  AbstractStudent (id, birthday, sex, socialSecurityNumber, basicInfo, secureInfo)
+  Person (id, version, birthday, sex, socialSecurityNumber, basicInfo, secureInfo)
 values 
-  (1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'FEMALE', '123456-7890', 'Test student #1', false),
-  (2, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false);
+  (1, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'FEMALE', '123456-7890', 'Test student #1', false),
+  (2, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false);
   
 insert into 
-  User (id, firstName, lastName, contactInfo, version)
+  User (id, person, firstName, lastName, contactInfo, version)
 values 
-  (3, 'Tanya', 'Test #1', 3, 1),
-  (4, 'David', 'Test #2', 4, 1);
+  (3, 1, 'Tanya', 'Test #1', 3, 1),
+  (4, 2, 'David', 'Test #2', 4, 1);
   
 insert into 
-  Student (id, abstractStudent, studyProgramme, nickname, previousStudies, studyStartDate, 
+  Student (id, studyProgramme, nickname, previousStudies, studyStartDate, 
     additionalInfo, activityType, educationalLevel, language, municipality, nationality, school, 
     examinationType, education, lodging, archived)
 values 
-  (3, 1, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false, false),
-  (4, 2, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false, false);
+  (3, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false, false),
+  (4, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false, false);
   
 insert into StudentGroupStudent
   (id, studentGroup, student, version)
@@ -425,7 +419,6 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgramme', max(id) + 1 from StudyProgramme;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroup', max(id) + 1 from StudentGroup;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroupStudent', max(id) + 1 from StudentGroupStudent;
-insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'AbstractStudent', max(id) + 1 from AbstractStudent;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Student', max(id) + 1 from Student;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentStudyEndReason', max(id) + 1 from StudentStudyEndReason;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentContactLogEntry', max(id) + 1 from StudentContactLogEntry;
