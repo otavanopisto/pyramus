@@ -9,40 +9,40 @@ import org.junit.Test;
 
 import com.jayway.restassured.response.Response;
 
-import fi.pyramus.rest.model.AbstractStudent;
+import fi.pyramus.rest.model.Person;
 import fi.pyramus.rest.model.Sex;
 
-public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
+public class PersonTestsIT extends AbstractRESTServiceTest {
 
   @Test
-  public void testCreateAbstractStudent() {
-    AbstractStudent abstractStudent = new AbstractStudent(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be created");
+  public void testCreatePerson() {
+    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be created");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
-      .body(abstractStudent)
-      .post("/students/abstractStudents");
+      .body(person)
+      .post("/students/persons");
 
     response.then()
       .body("id", not(is((Long) null)))
-      .body("birthday", is(abstractStudent.getBirthday().toString()))
-      .body("socialSecurityNumber", is(abstractStudent.getSocialSecurityNumber() ))
-      .body("basicInfo", is(abstractStudent.getBasicInfo() ))
-      .body("secureInfo", is(abstractStudent.getSecureInfo() ))
-      .body("sex", is(abstractStudent.getSex().toString() ));
+      .body("birthday", is(person.getBirthday().toString()))
+      .body("socialSecurityNumber", is(person.getSocialSecurityNumber() ))
+      .body("basicInfo", is(person.getBasicInfo() ))
+      .body("secureInfo", is(person.getSecureInfo() ))
+      .body("sex", is(person.getSex().toString() ));
       
     int id = response.body().jsonPath().getInt("id");
     
     given().headers(getAuthHeaders())
-      .delete("/students/abstractStudents/{ID}", id)
+      .delete("/students/persons/{ID}", id)
       .then()
       .statusCode(204);
   }
   
   @Test
-  public void testListAbstractStudents() {
+  public void testListPersons() {
     given().headers(getAuthHeaders())
-      .get("/students/abstractStudents")
+      .get("/students/persons")
       .then()
       .statusCode(200)
       .body("id.size()", is(2))
@@ -59,9 +59,9 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
-  public void testFindAbstractStudent() {
+  public void testFindPerson() {
     given().headers(getAuthHeaders())
-      .get("/students/abstractStudents/{ID}", 1)
+      .get("/students/persons/{ID}", 1)
       .then()
       .statusCode(200)
       .body("id", is(1) )
@@ -72,29 +72,29 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
-  public void testUpdateAbstractStudent() {
-    AbstractStudent abstractStudent = new AbstractStudent(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "not updated");
+  public void testUpdatePerson() {
+    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "not updated");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
-      .body(abstractStudent)
-      .post("/students/abstractStudents");
+      .body(person)
+      .post("/students/persons");
 
     response.then()
       .body("id", not(is((Long) null)))
-      .body("birthday", is(abstractStudent.getBirthday().toString()))
-      .body("socialSecurityNumber", is(abstractStudent.getSocialSecurityNumber() ))
-      .body("basicInfo", is(abstractStudent.getBasicInfo() ))
-      .body("secureInfo", is(abstractStudent.getSecureInfo() ))
-      .body("sex", is(abstractStudent.getSex().toString() ));
+      .body("birthday", is(person.getBirthday().toString()))
+      .body("socialSecurityNumber", is(person.getSocialSecurityNumber() ))
+      .body("basicInfo", is(person.getBasicInfo() ))
+      .body("secureInfo", is(person.getSecureInfo() ))
+      .body("sex", is(person.getSex().toString() ));
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      AbstractStudent updateStudent = new AbstractStudent(id, getDate(1991, 7, 7), "1234567-9876", Sex.MALE, true, "updated");
+      Person updateStudent = new Person(id, getDate(1991, 7, 7), "1234567-9876", Sex.MALE, true, "updated");
 
       given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateStudent)
-        .put("/students/abstractStudents/{ID}", id)
+        .put("/students/persons/{ID}", id)
         .then()
         .statusCode(200)
         .body("id", is(updateStudent.getId().intValue() ))
@@ -106,43 +106,43 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
 
     } finally {
       given().headers(getAuthHeaders())
-        .delete("/students/abstractStudents/{ID}", id)
+        .delete("/students/persons/{ID}", id)
         .then()
         .statusCode(204);
     }
   }
   
   @Test
-  public void testDeleteAbstractStudent() {
-    AbstractStudent abstractStudent = new AbstractStudent(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be deleted");
+  public void testDeletePerson() {
+    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be deleted");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
-      .body(abstractStudent)
-      .post("/students/abstractStudents");
+      .body(person)
+      .post("/students/persons");
 
     response.then()
       .body("id", not(is((Long) null)))
-      .body("birthday", is(abstractStudent.getBirthday().toString()))
-      .body("socialSecurityNumber", is(abstractStudent.getSocialSecurityNumber() ))
-      .body("basicInfo", is(abstractStudent.getBasicInfo() ))
-      .body("secureInfo", is(abstractStudent.getSecureInfo() ))
-      .body("sex", is(abstractStudent.getSex().toString() ));
+      .body("birthday", is(person.getBirthday().toString()))
+      .body("socialSecurityNumber", is(person.getSocialSecurityNumber() ))
+      .body("basicInfo", is(person.getBasicInfo() ))
+      .body("secureInfo", is(person.getSecureInfo() ))
+      .body("sex", is(person.getSex().toString() ));
     int id = response.body().jsonPath().getInt("id");
     assertNotNull(id);
     
     given().headers(getAuthHeaders())
-      .get("/students/abstractStudents/{ID}", id)
+      .get("/students/persons/{ID}", id)
       .then()
       .statusCode(200);
     
     given().headers(getAuthHeaders())
-      .delete("/students/abstractStudents/{ID}", id)
+      .delete("/students/persons/{ID}", id)
       .then()
       .statusCode(204);
     
     given().headers(getAuthHeaders())
-      .get("/students/abstractStudents/{ID}", id)
+      .get("/students/persons/{ID}", id)
       .then()
       .statusCode(404);
   }
@@ -150,12 +150,12 @@ public class AbstractStudentTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testListStudents() {
     given().headers(getAuthHeaders())   
-      .get("/students/abstractStudents/{ID}/students", 1l)
+      .get("/students/persons/{ID}/students", 1l)
       .then()
       .statusCode(200)
       .body("id.size()", is(1))
       .body("id[0]", is(3) )
-      .body("abstractStudentId[0]", is(1))
+      .body("personId[0]", is(1))
       .body("firstName[0]", is("Tanya"))
       .body("lastName[0]", is("Test #1"))
       .body("nickname[0]", is("Tanya-T"))

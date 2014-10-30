@@ -28,7 +28,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
     variables.put("TV2", "123");
     
     Student student = new Student(null, 
-      1l, // abstractStudentId
+      1l, // personId
       "to be", // firstName
       "created", // lastName
       "cretest", // nickname
@@ -62,7 +62,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
     
     response.then()
       .body("id", not(is((Long) null)))
-      .body("abstractStudentId", is(student.getAbstractStudentId().intValue()))
+      .body("personId", is(student.getPersonId().intValue()))
       .body("firstName", is(student.getFirstName()))
       .body("lastName", is(student.getLastName()))
       .body("nickname", is(student.getNickname()))
@@ -104,7 +104,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id.size()", is(2))
       .body("id[0]", is(3) )
-      .body("abstractStudentId[0]", is(1))
+      .body("personId[0]", is(1))
       .body("firstName[0]", is("Tanya"))
       .body("lastName[0]", is("Test #1"))
       .body("nickname[0]", is("Tanya-T"))
@@ -130,7 +130,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .body("archived[0]", is(Boolean.FALSE))
 
       .body("id[1]", is(4) )
-      .body("abstractStudentId[1]", is(2))
+      .body("personId[1]", is(2))
       .body("firstName[1]", is("David"))
       .body("lastName[1]", is("Test #2"))
       .body("nickname[1]", is("David-T"))
@@ -163,7 +163,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(200)
       .body("id", is((int) TEST_STUDENT_ID) )
-      .body("abstractStudentId", is(1))
+      .body("personId", is(1))
       .body("firstName", is("Tanya"))
       .body("lastName", is("Test #1"))
       .body("nickname", is("Tanya-T"))
@@ -230,7 +230,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
     
     response.then()
       .body("id", not(is((Long) null)))
-      .body("abstractStudentId", is(student.getAbstractStudentId().intValue()))
+      .body("personId", is(student.getPersonId().intValue()))
       .body("firstName", is(student.getFirstName()))
       .body("lastName", is(student.getLastName()))
       .body("nickname", is(student.getNickname()))
@@ -296,7 +296,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
         .put("/students/students/{ID}", id)
         .then()
         .body("id", is(updateStudent.getId().intValue()))
-        .body("abstractStudentId", is(updateStudent.getAbstractStudentId().intValue()))
+        .body("personId", is(updateStudent.getPersonId().intValue()))
         .body("firstName", is(updateStudent.getFirstName()))
         .body("lastName", is(updateStudent.getLastName()))
         .body("nickname", is(updateStudent.getNickname()))
