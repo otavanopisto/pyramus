@@ -44,7 +44,7 @@ public class UsersService extends PyramusService {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
     // TODO: should not create if user exists
-    Person person = personDAO.create();
+    Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
     Role userRole = EnumType.valueOf(Role.class, role);
     User user = userDAO.create(firstName, lastName, externalId, authProvider, userRole, person);
     validateEntity(user);

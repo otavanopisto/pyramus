@@ -47,7 +47,7 @@ public class PyramusService {
       allowed = allowed && (staffMember != null ? personId.equals(staffMember.getPerson().getId()) : true);
       
       for (Student student : students)
-        allowed = allowed && (student != null ? personId.equals(student.getAbstractStudent().getId()) : true);
+        allowed = allowed && (student != null ? personId.equals(student.getPerson().getId()) : true);
       
       return allowed;
     } else {

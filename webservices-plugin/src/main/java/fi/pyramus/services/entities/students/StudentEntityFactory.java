@@ -11,6 +11,7 @@ import fi.pyramus.services.entities.base.AddressEntity;
 import fi.pyramus.services.entities.base.LanguageEntity;
 import fi.pyramus.services.entities.base.MunicipalityEntity;
 import fi.pyramus.services.entities.base.NationalityEntity;
+import fi.pyramus.services.entities.base.PersonEntity;
 import fi.pyramus.services.entities.base.SchoolEntity;
 import fi.pyramus.services.entities.base.StudyProgrammeEntity;
 
@@ -22,7 +23,7 @@ public class StudentEntityFactory implements EntityFactory<StudentEntity> {
     
     Student student = (Student) domainObject;
     
-    AbstractStudentEntity abstractStudentEntity = EntityFactoryVault.buildFromDomainObject(student.getAbstractStudent());
+    PersonEntity personEntity = EntityFactoryVault.buildFromDomainObject(student.getPerson());
     NationalityEntity nationalityEntity = EntityFactoryVault.buildFromDomainObject(student.getNationality());
     LanguageEntity languageEntity = EntityFactoryVault.buildFromDomainObject(student.getLanguage()); 
     MunicipalityEntity municipalityEntity = EntityFactoryVault.buildFromDomainObject(student.getMunicipality()); 
@@ -59,7 +60,7 @@ public class StudentEntityFactory implements EntityFactory<StudentEntity> {
       tags[i++] = tag.getText();
     }
     
-    return new StudentEntity(student.getId(), abstractStudentEntity, emails, student.getFirstName(), student.getLastName(),
+    return new StudentEntity(student.getId(), personEntity, emails, student.getFirstName(), student.getLastName(),
         tags, addresses, phoneNumberStr, student.getAdditionalInfo(), parentalInfo, student.getStudyTimeEnd(), 
         nationalityEntity, languageEntity, municipalityEntity, schoolEntity, studyProgramme, student.getArchived(), 
         student.getStudyStartDate(), student.getStudyEndDate());

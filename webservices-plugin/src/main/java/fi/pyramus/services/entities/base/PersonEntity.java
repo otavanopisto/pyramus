@@ -1,13 +1,13 @@
-package fi.pyramus.services.entities.students;
+package fi.pyramus.services.entities.base;
 
 import java.util.Date;
 
-public class AbstractStudentEntity {
+public class PersonEntity {
 
-  public AbstractStudentEntity() {
+  public PersonEntity() {
   }
   
-  public AbstractStudentEntity(Long id, Date birthday, String socialSecurityNumber, String sex) {
+  public PersonEntity(Long id, Date birthday, String socialSecurityNumber, String sex) {
     this.id = id;
     this.birthday = birthday;
     this.socialSecurityNumber = socialSecurityNumber;

@@ -18,10 +18,10 @@ import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.LanguageDAO;
 import fi.pyramus.dao.base.MunicipalityDAO;
 import fi.pyramus.dao.base.NationalityDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.SchoolDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
@@ -34,10 +34,10 @@ import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
@@ -46,7 +46,7 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.services.entities.EntityFactoryVault;
 import fi.pyramus.services.entities.base.AddressEntity;
-import fi.pyramus.services.entities.students.AbstractStudentEntity;
+import fi.pyramus.services.entities.base.PersonEntity;
 import fi.pyramus.services.entities.students.StudentEntity;
 
 @Stateless
@@ -55,14 +55,14 @@ import fi.pyramus.services.entities.students.StudentEntity;
 @RolesAllowed("WebServices")
 public class StudentsService extends PyramusService {
 
-  public AbstractStudentEntity getAbstractStudentById(@WebParam (name="abstractStudentId") Long abstractStudentId) {
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
-    return EntityFactoryVault.buildFromDomainObject(abstractStudentDAO.findById(abstractStudentId));
+  public PersonEntity getPersonById(@WebParam (name="personId") Long personId) {
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    return EntityFactoryVault.buildFromDomainObject(personDAO.findById(personId));
   }
 
-  public AbstractStudentEntity getAbstractStudentBySSN(@WebParam (name="ssn") String ssn) {
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
-    return EntityFactoryVault.buildFromDomainObject(abstractStudentDAO.findBySSN(ssn));
+  public PersonEntity getPersonBySSN(@WebParam (name="ssn") String ssn) {
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    return EntityFactoryVault.buildFromDomainObject(personDAO.findBySSN(ssn));
   }
 
   public StudentEntity addStudyProgramme(@WebParam (name="studentId") Long studentId, @WebParam (name="studyProgrammeId") Long studyProgrammeId) {
@@ -76,7 +76,7 @@ public class StudentsService extends PyramusService {
 
     Student oldStudent = studentDAO.findById(studentId);
 
-    AbstractStudent abstractStudent = oldStudent.getAbstractStudent();
+    Person person = oldStudent.getPerson();
     String firstName = oldStudent.getFirstName();
     String lastName = oldStudent.getLastName();
     String nickname = oldStudent.getNickname();
@@ -98,7 +98,7 @@ public class StudentsService extends PyramusService {
     StudentStudyEndReason studyEndReason = null; // student.getStudyEndReason();
     Boolean lodging = false; // oldStudent.getLodging();
 
-    Student newStudent = studentDAO.create(abstractStudent, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType,
+    Student newStudent = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType,
         educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies, studyStartTime, studyEndTime,
         studyEndReason, studyEndText, lodging);
 
@@ -134,16 +134,16 @@ public class StudentsService extends PyramusService {
     return EntityFactoryVault.buildFromDomainObject(newStudent);
   }
 
-  public AbstractStudentEntity createAbstractStudent(@WebParam (name="birthday") Date birthday, @WebParam (name="socialSecurityNumber") String socialSecurityNumber, @WebParam (name="sex") String sex) {
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
-
+  public PersonEntity createPerson(@WebParam (name="birthday") Date birthday, @WebParam (name="socialSecurityNumber") String socialSecurityNumber, @WebParam (name="sex") String sex) {
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    
     // TODO: Parameterize?
     Boolean secureInfo = Boolean.FALSE;
 
     Sex studentSex = EnumType.valueOf(Sex.class, sex);
-    AbstractStudent abstractStudent = abstractStudentDAO.create(birthday, socialSecurityNumber, studentSex, null, secureInfo);
-    validateEntity(abstractStudent);
-    return EntityFactoryVault.buildFromDomainObject(abstractStudent);
+    Person person = personDAO.create(birthday, socialSecurityNumber, studentSex, null, secureInfo);
+    validateEntity(person);
+    return EntityFactoryVault.buildFromDomainObject(person);
   }
   
   public void endStudentStudies(@WebParam (name="studentId") Long studentId, @WebParam (name = "endDate") Date endDate, @WebParam (name="endReasonId") Long endReasonId, @WebParam (name="endReasonText") String endReasonText) {
@@ -182,22 +182,22 @@ public class StudentsService extends PyramusService {
     return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listByStudyProgramme(studyProgramme));
   }
   
-  public StudentEntity[] listStudentsByAbstractStudent(@WebParam (name="abstractStudentId") Long abstractStudentId) {
+  public StudentEntity[] listStudentsByPerson(@WebParam (name="personId") Long personId) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
-    AbstractStudent abstractStudent = abstractStudentDAO.findById(abstractStudentId);
+    Person person = personDAO.findById(personId);
 
-    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listByAbstractStudent(abstractStudent));
+    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listByPerson(person));
   }
   
-  public StudentEntity[] listActiveStudentsByAbstractStudent(@WebParam (name="abstractStudentId") Long abstractStudentId) {
+  public StudentEntity[] listActiveStudentsByPerson(@WebParam (name="personId") Long personId) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
-    AbstractStudent abstractStudent = abstractStudentDAO.findById(abstractStudentId);
+    Person person = personDAO.findById(personId);
 
-    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listActiveStudentsByAbstractStudent(abstractStudent));
+    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listActiveStudentsByPerson(person));
   }
 
   public StudentEntity[] listActiveStudents() {
@@ -213,7 +213,7 @@ public class StudentsService extends PyramusService {
   }
   
   public StudentEntity createStudent(
-      @WebParam (name="abstractStudentId") Long abstractStudentId, 
+      @WebParam (name="personId") Long personId, 
       @WebParam (name="firstName") String firstName, 
       @WebParam (name="lastName") String lastName, 
       @WebParam (name="nickname") String nickname, 
@@ -238,7 +238,7 @@ public class StudentsService extends PyramusService {
       @WebParam (name="lodging") Boolean lodging) {
 
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentActivityTypeDAO activityTypeDAO = DAOFactory.getInstance().getStudentActivityTypeDAO();
     StudentExaminationTypeDAO examinationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     StudentEducationalLevelDAO educationalLevelDAO = DAOFactory.getInstance().getStudentEducationalLevelDAO();
@@ -252,7 +252,7 @@ public class StudentsService extends PyramusService {
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
 
-    AbstractStudent abstractStudent = abstractStudentDAO.findById(abstractStudentId);
+    Person person = personDAO.findById(personId);
     Nationality nationality = nationalityId == null ? null : nationalityDAO.findById(nationalityId);
     Municipality municipality = municipalityId == null ? null : municipalityDAO.findById(municipalityId);
     Language language = languageId == null ? null : languageDAO.findById(languageId);
@@ -263,7 +263,7 @@ public class StudentsService extends PyramusService {
     StudyProgramme studyProgramme = studyProgrammeId == null ? null : studyProgrammeDAO.findById(studyProgrammeId);
     StudentStudyEndReason studyEndReason = studyEndReasonId == null ? null : studyEndReasonDAO.findById(studyEndReasonId);
 
-    Student student = studentDAO.create(abstractStudent, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType,
+    Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType,
         examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies, studyStartDate,
         studyEndDate, studyEndReason, studyEndText, lodging);
     
@@ -345,7 +345,7 @@ public class StudentsService extends PyramusService {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     Student student = studentDAO.findById(studentId);
     
-    if (!isAllowedEmail(address, student.getAbstractStudent().getId()))
+    if (!isAllowedEmail(address, student.getPerson().getId()))
       throw new RuntimeException("Email address is in use");
 
     // TODO contactType
