@@ -48,7 +48,7 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
       InternalAuth internalAuth = internalAuthDAO.create(username, passwordEncoded);
       
       // TODO: Should not create always
-      Person person = personDAO.create();
+      Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
       
       User user = userDAO.create(firstName, lastName, String.valueOf(internalAuth.getId()), getName(), role, person);
       // TODO Default contact type?

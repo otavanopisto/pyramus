@@ -134,7 +134,7 @@ public class EditCourseViewController extends PyramusViewController implements B
     Map<Long, List<Student>> courseStudentsStudents = new HashMap<Long, List<Student>>();
     
     for (CourseStudent courseStudent : courseStudents) {
-      courseStudentsStudents.put(courseStudent.getId(), studentDAO.listByAbstractStudent(courseStudent.getStudent().getAbstractStudent()));
+      courseStudentsStudents.put(courseStudent.getId(), studentDAO.listByPerson(courseStudent.getStudent().getPerson()));
     }
     
     // Subjects

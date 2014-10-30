@@ -57,7 +57,7 @@
             var results = jsonResponse.results;
             for (var i = 0; i < results.length; i++) {
               var studentName = results[i].lastName + ', ' + results[i].firstName;
-              resultsTable.addRow(['', studentName.escapeHTML(), results[i].id, results[i].abstractStudentId, results[i].lodging]);
+              resultsTable.addRow(['', studentName.escapeHTML(), results[i].id, results[i].personId, results[i].lodging]);
               var rowIndex = getStudentRowIndex('studentsTable', results[i].id);
               if (rowIndex != -1) {
                 resultsTable.disableRow(resultsTable.getRowCount() - 1);
@@ -93,13 +93,13 @@
         for (var i = 0; i < table.getRowCount(); i++) {
           var studentName = table.getCellValue(i, table.getNamedColumnIndex('name'));
           var studentId = table.getCellValue(i, table.getNamedColumnIndex('studentId'));
-          var abstractStudentId = table.getCellValue(i, table.getNamedColumnIndex('abstractStudentId'));
+          var personId = table.getCellValue(i, table.getNamedColumnIndex('personId'));
           var lodging = table.getCellValue(i, table.getNamedColumnIndex('lodging'));
 
           results.push({
             name: studentName,
             id: studentId,
-            abstractStudentId: abstractStudentId,
+            personId: personId,
             lodging: lodging
           });
         }
@@ -157,9 +157,9 @@
               tooltip: '<fmt:message key="students.searchStudentsDialog.searchResultsTableStudentInfoTooltip"/>',
               onclick: function (event) {
                 var table = event.tableComponent;
-                var abstractStudentId = table.getCellValue(event.row, table.getNamedColumnIndex('abstractStudentId'));
+                var personId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
                 var button = table.getCellEditor(event.row, table.getNamedColumnIndex('studentInfoButton'));
-                openStudentInfoPopupOnElement(button, abstractStudentId);
+                openStudentInfoPopupOnElement(button, personId);
               } 
             }, {
               left: 46,
@@ -173,16 +173,16 @@
                 table.disableRow(event.row);
                 var studentId = table.getCellValue(event.row, table.getNamedColumnIndex('studentId'));
                 var studentName = table.getCellValue(event.row, table.getNamedColumnIndex('name'));
-                var abstractStudentId = table.getCellValue(event.row, table.getNamedColumnIndex('abstractStudentId'));
+                var personId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
                 var lodging = table.getCellValue(event.row, table.getNamedColumnIndex('lodging'));
-                getIxTableById('studentsTable').addRow([studentName, studentId, abstractStudentId, lodging]);
+                getIxTableById('studentsTable').addRow([studentName, studentId, personId, lodging]);
               }
             }, {
               dataType: 'hidden',
               paramName: 'studentId'
             }, {
               dataType: 'hidden',
-              paramName: 'abstractStudentId'
+              paramName: 'personId'
             }, {
               dataType: 'hidden',
               paramName: 'lodging'
@@ -216,7 +216,7 @@
               paramName: 'studentId'
             }, {
               dataType: 'hidden',
-              paramName: 'abstractStudentId'
+              paramName: 'personId'
             }, {
               dataType: 'hidden',
               paramName: 'lodging'

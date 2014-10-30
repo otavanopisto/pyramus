@@ -29,7 +29,7 @@ public class ImportStudentCreditsJSONRequestController extends JSONRequestContro
     Long studentId = requestContext.getLong("studentId");
     Student baseStudent = studentDAO.findById(studentId);
     
-    List<Student> students = studentDAO.listByAbstractStudent(baseStudent.getAbstractStudent());
+    List<Student> students = studentDAO.listByPerson(baseStudent.getPerson());
     students.remove(baseStudent);
 
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());

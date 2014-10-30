@@ -68,7 +68,7 @@
 			    	    <c:forEach var="student" items="${entityClassEntities}">
 			    	      <tr>
 			    	        <td>${student.id}</td>
-		                <td>${student.abstractStudent.socialSecurityNumber}</td>
+		                <td>${student.person.socialSecurityNumber}</td>
 		                <td>${student.fullName}</td>
 			    	      </tr>
 			    	    </c:forEach>

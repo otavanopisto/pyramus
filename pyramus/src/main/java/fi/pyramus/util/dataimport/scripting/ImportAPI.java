@@ -7,7 +7,6 @@ import org.apache.commons.lang3.LocaleUtils;
 
 import com.github.javafaker.Faker;
 
-import fi.pyramus.util.dataimport.scripting.api.AbstractStudentAPI;
 import fi.pyramus.util.dataimport.scripting.api.ActivityTypeAPI;
 import fi.pyramus.util.dataimport.scripting.api.ContactTypeAPI;
 import fi.pyramus.util.dataimport.scripting.api.CourseAPI;
@@ -19,6 +18,7 @@ import fi.pyramus.util.dataimport.scripting.api.LanguageAPI;
 import fi.pyramus.util.dataimport.scripting.api.ModuleAPI;
 import fi.pyramus.util.dataimport.scripting.api.MunicipalityAPI;
 import fi.pyramus.util.dataimport.scripting.api.NationalityAPI;
+import fi.pyramus.util.dataimport.scripting.api.PersonAPI;
 import fi.pyramus.util.dataimport.scripting.api.SchoolAPI;
 import fi.pyramus.util.dataimport.scripting.api.SchoolFieldAPI;
 import fi.pyramus.util.dataimport.scripting.api.StudentAPI;
@@ -66,8 +66,8 @@ public class ImportAPI {
     return new StudyProgrammeAPI(loggedUserId);
   }
   
-  public AbstractStudentAPI getAbstractStudents() {
-    return new AbstractStudentAPI(loggedUserId);
+  public PersonAPI getPersons() {
+    return new PersonAPI(loggedUserId);
   }
   
   public StudentAPI getStudents() {

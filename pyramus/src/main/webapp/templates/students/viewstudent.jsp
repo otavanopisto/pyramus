@@ -9,7 +9,7 @@
 <html>
 <head>
 <title><fmt:message key="students.viewStudent.pageTitle">
-    <fmt:param value="${abstractStudent.latestStudent.fullName}" />
+    <fmt:param value="${person.latestStudent.fullName}" />
   </fmt:message></title>
 <jsp:include page="/templates/generic/head_generic.jsp"></jsp:include>
 <jsp:include page="/templates/generic/tabs_support.jsp"></jsp:include>
@@ -27,7 +27,7 @@
 %>
 
 <script type="text/javascript">
-      function setupBasicTab(abstractStudentId, studentId, studentFullName) {
+      function setupBasicTab(personId, studentId, studentFullName) {
         var basicTabRelatedActionsHoverMenu = new IxHoverMenu($('basicTabRelatedActionsHoverMenuContainer.' + studentId), {
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsLabel"/>'
         });
@@ -35,13 +35,13 @@
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsEditStudentLabel"/>',
-          link: GLOBAL_contextPath + '/students/editstudent.page?abstractStudent=' + abstractStudentId  
+          link: GLOBAL_contextPath + '/students/editstudent.page?person=' + personId  
         }));
 
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageContactEntriesLabel"/>',
-          link: GLOBAL_contextPath + '/students/managestudentcontactentries.page?abstractStudent=' + abstractStudentId  
+          link: GLOBAL_contextPath + '/students/managestudentcontactentries.page?person=' + personId  
         }));
         
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
@@ -125,7 +125,7 @@
         contactLogTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.viewStudent.contactLogTabRelatedActionsManageContactEntriesLabel"/>',
-          link: GLOBAL_contextPath + '/students/managestudentcontactentries.page?abstractStudent=' + abstractStudentId  
+          link: GLOBAL_contextPath + '/students/managestudentcontactentries.page?person=' + personId  
         }));
 
         var projectsTabRelatedActionsHoverMenu = new IxHoverMenu($('projectsTabRelatedActionsHoverMenuContainer.' + studentId), {
@@ -176,7 +176,7 @@
                   optionality: optionality
                 },
                 onSuccess: function (jsonResponse) {
-                  redirectTo(GLOBAL_contextPath + '/students/viewstudent.page?abstractStudent=${abstractStudent.id}'); //'#at-studentProject.' + studentId);
+                  redirectTo(GLOBAL_contextPath + '/students/viewstudent.page?person=${person.id}'); //'#at-studentProject.' + studentId);
                 }
               });
             break;
@@ -807,7 +807,7 @@
 
         <c:forEach var="student" items="${students}">
           // Setup basics
-          setupBasicTab(${abstractStudent.id}, ${student.id}, '${fn:escapeXml(student.fullName)}');
+          setupBasicTab(${person.id}, ${student.id}, '${fn:escapeXml(student.fullName)}');
 
           // Setup course tabs
           coursesTable = setupCoursesTab(${student.id});
@@ -1393,7 +1393,7 @@
 
   <h1 class="genericPageHeader">
     <fmt:message key="students.viewStudent.pageTitle">
-      <fmt:param value="${abstractStudent.latestStudent.fullName}" />
+      <fmt:param value="${person.latestStudent.fullName}" />
     </fmt:message>
   </h1>
 
@@ -1424,7 +1424,7 @@
       </div>
 
       <c:choose>
-        <c:when test="${abstractStudent.secureInfo}">
+        <c:when test="${person.secureInfo}">
           <c:set var="secureInfoTitle">
             <fmt:message key="students.viewStudent.secureInfoTooltip" />
           </c:set>
@@ -1509,7 +1509,7 @@
                   </div>
 
                   <c:choose>
-                    <c:when test="${!empty abstractStudent.birthday}">
+                    <c:when test="${!empty person.birthday}">
                       <div class="genericFormSection"
                         title="${secureInfoTitle}">
                         <jsp:include
@@ -1521,7 +1521,7 @@
                         </jsp:include>
                         <div class="genericViewFormDataText">
                           <fmt:formatDate
-                            value="${abstractStudent.birthday}" />
+                            value="${person.birthday}" />
                         </div>
                       </div>
                     </c:when>
@@ -1529,7 +1529,7 @@
 
                   <c:choose>
                     <c:when
-                      test="${!empty abstractStudent.socialSecurityNumber}">
+                      test="${!empty person.socialSecurityNumber}">
                       <div class="genericFormSection"
                         title="${secureInfoTitle}">
                         <jsp:include
@@ -1539,7 +1539,7 @@
                           <jsp:param name="helpLocale"
                             value="students.viewStudent.ssecIdHelp" />
                         </jsp:include>
-                        <div class="genericViewFormDataText">${abstractStudent.socialSecurityNumber}</div>
+                        <div class="genericViewFormDataText">${person.socialSecurityNumber}</div>
                       </div>
                     </c:when>
                   </c:choose>
@@ -1556,7 +1556,7 @@
                     <div class="genericViewFormDataText">
                       <c:choose>
                         <c:when
-                          test="${abstractStudent.sex != 'FEMALE'}">
+                          test="${person.sex != 'FEMALE'}">
                           <fmt:message
                             key="students.viewStudent.genderMaleTitle" />
                         </c:when>

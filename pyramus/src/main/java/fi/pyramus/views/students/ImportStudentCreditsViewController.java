@@ -53,7 +53,7 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
     JSONObject linkedCourseAssessments = new JSONObject();
     JSONObject linkedTransferCredits = new JSONObject();
     
-    List<Student> students = studentDAO.listByAbstractStudent(baseStudent.getAbstractStudent());
+    List<Student> students = studentDAO.listByPerson(baseStudent.getPerson());
 
     Collections.sort(students, new Comparator<Student>() {
       @Override

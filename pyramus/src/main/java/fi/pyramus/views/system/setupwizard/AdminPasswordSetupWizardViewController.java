@@ -38,7 +38,7 @@ public class AdminPasswordSetupWizardViewController extends SetupWizardControlle
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
     InternalAuth internalAuth = internalAuthDAO.create(username, passwordMD5);
-    Person person = personDAO.create();
+    Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
     userDAO.create(firstName, lastName, String.valueOf(internalAuth.getId()), "internal", Role.ADMINISTRATOR, person);
   }
 

@@ -18,11 +18,11 @@ import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.LanguageDAO;
 import fi.pyramus.dao.base.MunicipalityDAO;
 import fi.pyramus.dao.base.NationalityDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.SchoolDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.base.TagDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
@@ -33,10 +33,10 @@ import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.Tag;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
@@ -51,7 +51,7 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext requestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentActivityTypeDAO activityTypeDAO = DAOFactory.getInstance().getStudentActivityTypeDAO();
     StudentExaminationTypeDAO examinationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     StudentEducationalLevelDAO educationalLevelDAO = DAOFactory.getInstance().getStudentEducationalLevelDAO();
@@ -141,15 +141,15 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     entityId = requestContext.getLong("studyEndReason");
     StudentStudyEndReason studyEndReason = entityId == null ? null : studyEndReasonDAO.findById(entityId);
 
-    AbstractStudent abstractStudent = abstractStudentDAO.findBySSN(ssecId);
-    if (abstractStudent == null) {
-      abstractStudent = abstractStudentDAO.create(birthday, ssecId, sex, basicInfo, secureInfo);
+    Person person = personDAO.findBySSN(ssecId);
+    if (person == null) {
+      person = personDAO.create(birthday, ssecId, sex, basicInfo, secureInfo);
     }
     else {
-      abstractStudentDAO.update(abstractStudent, birthday, ssecId, sex, basicInfo, secureInfo);
+      personDAO.update(person, birthday, ssecId, sex, basicInfo, secureInfo);
     }
     
-    Student student = studentDAO.create(abstractStudent, firstName, lastName, nickname, additionalInfo,
+    Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo,
         studyTimeEnd, activityType, examinationType, educationalLevel, education, nationality, municipality,
         language, school, studyProgramme, previousStudies, studyStartTime, studyEndTime, studyEndReason, studyEndText, lodging);
 
@@ -217,12 +217,12 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
       }
     }
     
-    // Contact information of a student won't be reflected to AbstractStudent
+    // Contact information of a student won't be reflected to Person
     // used when searching students, so a manual re-index is needed
 
-    abstractStudentDAO.forceReindex(student.getAbstractStudent());
+    personDAO.forceReindex(student.getPerson());
     
-    String redirectURL = requestContext.getRequest().getContextPath() + "/students/editstudent.page?abstractStudent=" + student.getAbstractStudent().getId();
+    String redirectURL = requestContext.getRequest().getContextPath() + "/students/editstudent.page?person=" + student.getPerson().getId();
     String refererAnchor = requestContext.getRefererAnchor();
     
     if (!StringUtils.isBlank(refererAnchor)) {

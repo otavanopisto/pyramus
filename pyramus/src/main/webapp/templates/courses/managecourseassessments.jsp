@@ -124,9 +124,9 @@
             tooltip: '<fmt:message key="courses.manageCourseAssessments.studentsTableStudentInfoTooltip"/>',
             onclick: function (event) {
               var table = event.tableComponent;
-              var abstractStudentId = table.getCellValue(event.row, table.getNamedColumnIndex('abstractStudentId'));
+              var personId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
               var button = table.getCellEditor(event.row, table.getNamedColumnIndex('studentInfoButton'));
-              openStudentInfoPopupOnElement(button, abstractStudentId);
+              openStudentInfoPopupOnElement(button, personId);
             } 
           }, {
             headerimg: {
@@ -390,7 +390,7 @@
             paramName: 'assessmentId'
           }, {
             dataType: 'hidden', 
-            paramName: 'abstractStudentId'
+            paramName: 'personId'
           }, {
             dataType: 'hidden', 
             paramName: 'modified'
@@ -444,7 +444,7 @@
             '',
             '${courseStudent.id}',
             '${assessments[courseStudent.id].id}',
-            '${courseStudent.student.abstractStudent.id}',
+            '${courseStudent.student.person.id}',
             0,
             '',
             0]);

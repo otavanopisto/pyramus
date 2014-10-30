@@ -82,8 +82,8 @@
 
             <div class="genericFormSection">         
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="students.createStudent.abstractStudentBasicInfoTitle"/>
-                <jsp:param name="helpLocale" value="students.createStudent.abstractStudentBasicInfoHelp"/>
+                <jsp:param name="titleLocale" value="students.createStudent.personBasicInfoTitle"/>
+                <jsp:param name="helpLocale" value="students.createStudent.personBasicInfoHelp"/>
               </jsp:include>            
               <textarea name="basicInfo" ix:cktoolbar="studentAdditionalInformation" ix:ckeditor="true"></textarea>
             </div>

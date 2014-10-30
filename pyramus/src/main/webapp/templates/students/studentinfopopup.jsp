@@ -9,7 +9,7 @@
   <div class="studentInfoPopupImageContainer">
     <c:choose>
       <c:when test="${latestStudentHasImage}">
-        <img class="studentInfoPopupImage" src="${pageContext.request.contextPath}/students/viewstudentimage.binary?studentId=${abstractStudent.latestStudent.id}"/> 
+        <img class="studentInfoPopupImage" src="${pageContext.request.contextPath}/students/viewstudentimage.binary?studentId=${person.latestStudent.id}"/> 
       </c:when>
       <c:otherwise>
         <img class="studentInfoPopupImage" src="${studentImage}"/> 
@@ -19,24 +19,24 @@
   <div class="studentInfoPopupDetailsContainer">
     <div class="studentInfoPopupName">
       <c:choose>
-        <c:when test="${fn:length(abstractStudent.latestStudent.fullName) ge 30}">
-          <c:out value="${fn:substring(abstractStudent.latestStudent.fullName, 0, 27)}..."/>
+        <c:when test="${fn:length(person.latestStudent.fullName) ge 30}">
+          <c:out value="${fn:substring(person.latestStudent.fullName, 0, 27)}..."/>
         </c:when>
         <c:otherwise>
-          <c:out value="${abstractStudent.latestStudent.fullName}"/>
+          <c:out value="${person.latestStudent.fullName}"/>
         </c:otherwise>
       </c:choose>
     </div>
-    <div class="studentInfoPopupMail"><c:choose><c:when test="${fn:length(abstractStudent.latestStudent.primaryEmail.address) ge 40}"><c:out value="${fn:substring(abstractStudent.latestStudent.primaryEmail.address, 0, 37)}..."/></c:when><c:otherwise><c:out value="${abstractStudent.latestStudent.primaryEmail.address}"/></c:otherwise></c:choose></div>
+    <div class="studentInfoPopupMail"><c:choose><c:when test="${fn:length(person.latestStudent.primaryEmail.address) ge 40}"><c:out value="${fn:substring(person.latestStudent.primaryEmail.address, 0, 37)}..."/></c:when><c:otherwise><c:out value="${person.latestStudent.primaryEmail.address}"/></c:otherwise></c:choose></div>
     <div class="studentInfoPopupSSNContainer">
       <div class="studentInfoPopupSSNTitle"><fmt:message key="students.studentInfoPopup.socialSecurityNumberLabel"/></div>
       <div class="studentInfoPopupSSNValue">
         <c:choose>
-          <c:when test="${fn:length(abstractStudent.socialSecurityNumber) ge 30}">
-            <c:out value="${fn:substring(abstractStudent.socialSecurityNumber, 0, 27)}..."/>
+          <c:when test="${fn:length(person.socialSecurityNumber) ge 30}">
+            <c:out value="${fn:substring(person.socialSecurityNumber, 0, 27)}..."/>
           </c:when>
           <c:otherwise>
-            <c:out value="${abstractStudent.socialSecurityNumber}"/>
+            <c:out value="${person.socialSecurityNumber}"/>
           </c:otherwise>
         </c:choose>
       </div>
@@ -45,16 +45,16 @@
       <div class="studentInfoPopupPhoneNumberTitle"><fmt:message key="students.studentInfoPopup.phoneNumberLabel"/></div>
       <div class="studentInfoPopupPhoneNumberValue">
         <c:choose>
-          <c:when test="${abstractStudent.latestStudent.defaultPhone.number eq ''}">
+          <c:when test="${person.latestStudent.defaultPhone.number eq ''}">
             -
           </c:when>
           <c:otherwise>
             <c:choose>
-              <c:when test="${fn:length(abstractStudent.latestStudent.defaultPhone.number) ge 30}">
-                <c:out value="${fn:substring(abstractStudent.latestStudent.defaultPhone.number, 0, 27)}..."/>
+              <c:when test="${fn:length(person.latestStudent.defaultPhone.number) ge 30}">
+                <c:out value="${fn:substring(person.latestStudent.defaultPhone.number, 0, 27)}..."/>
               </c:when>
               <c:otherwise>
-                <c:out value="${abstractStudent.latestStudent.defaultPhone.number}"/>
+                <c:out value="${person.latestStudent.defaultPhone.number}"/>
               </c:otherwise>
             </c:choose>
           </c:otherwise>
@@ -113,16 +113,16 @@
       <div class="studentInfoPopupNationalityTitle"><fmt:message key="students.studentInfoPopup.nationalityLabel"/></div>
       <div class="studentInfoPopupNationalityValue">
         <c:choose>
-          <c:when test="${abstractStudent.latestStudent.nationality == null}">
+          <c:when test="${person.latestStudent.nationality == null}">
             -
           </c:when>
           <c:otherwise>
             <c:choose>
-              <c:when test="${fn:length(abstractStudent.latestStudent.nationality.name) ge 30}">
-                <c:out value="${fn:substring(abstractStudent.latestStudent.nationality.name, 0, 27)}..."/>
+              <c:when test="${fn:length(person.latestStudent.nationality.name) ge 30}">
+                <c:out value="${fn:substring(person.latestStudent.nationality.name, 0, 27)}..."/>
               </c:when>
               <c:otherwise>
-                <c:out value="${abstractStudent.latestStudent.nationality.name}"/>
+                <c:out value="${person.latestStudent.nationality.name}"/>
               </c:otherwise>
             </c:choose>
           </c:otherwise>
@@ -133,16 +133,16 @@
       <div class="studentInfoPopupLanguageTitle"><fmt:message key="students.studentInfoPopup.languageLabel"/></div>
       <div class="studentInfoPopupLanguageValue">
         <c:choose>
-          <c:when test="${abstractStudent.latestStudent.language == null}">
+          <c:when test="${person.latestStudent.language == null}">
             -
           </c:when>
           <c:otherwise>
             <c:choose>
-              <c:when test="${fn:length(abstractStudent.latestStudent.language.name) ge 30}">
-                <c:out value="${fn:substring(abstractStudent.latestStudent.language.name, 0, 27)}..."/>
+              <c:when test="${fn:length(person.latestStudent.language.name) ge 30}">
+                <c:out value="${fn:substring(person.latestStudent.language.name, 0, 27)}..."/>
               </c:when>
               <c:otherwise>
-                <c:out value="${abstractStudent.latestStudent.language.name}"/>
+                <c:out value="${person.latestStudent.language.name}"/>
               </c:otherwise>
             </c:choose>
           </c:otherwise>

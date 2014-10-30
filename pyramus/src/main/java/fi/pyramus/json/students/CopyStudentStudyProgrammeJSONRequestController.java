@@ -21,13 +21,13 @@ import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.grading.CourseAssessment;
 import fi.pyramus.domainmodel.grading.CreditLink;
 import fi.pyramus.domainmodel.grading.TransferCredit;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
@@ -57,7 +57,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
     
-    AbstractStudent abstractStudent = oldStudent.getAbstractStudent();
+    Person person = oldStudent.getPerson();
     String firstName = oldStudent.getFirstName();
     String lastName = oldStudent.getLastName();
     String nickname = oldStudent.getNickname();
@@ -79,7 +79,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     StudentStudyEndReason studyEndReason = null; // student.getStudyEndReason();
     Boolean lodging = false; // oldStudent.getLodging();
 
-    Student newStudent = studentDAO.create(abstractStudent, firstName, lastName, nickname, additionalInfo, studyTimeEnd,
+    Student newStudent = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd,
         activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies,
         studyStartTime, studyEndTime, studyEndReason, studyEndText, lodging);
     
@@ -129,7 +129,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
       }
     }
     
-    String redirectURL = requestContext.getRequest().getContextPath() + "/students/editstudent.page?student=" + newStudent.getAbstractStudent().getId();
+    String redirectURL = requestContext.getRequest().getContextPath() + "/students/editstudent.page?student=" + newStudent.getPerson().getId();
     String refererAnchor = requestContext.getRefererAnchor();
 
     if (!StringUtils.isBlank(refererAnchor))

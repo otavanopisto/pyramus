@@ -15,14 +15,14 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.LanguageDAO;
 import fi.pyramus.dao.base.MunicipalityDAO;
 import fi.pyramus.dao.base.NationalityDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.StudyProgramme;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.framework.JSONRequestController;
@@ -39,7 +39,7 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
 
   public void process(JSONRequestContext jsonRequestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     LanguageDAO languageDAO = DAOFactory.getInstance().getLanguageDAO();
     MunicipalityDAO municipalityDAO = DAOFactory.getInstance().getMunicipalityDAO();
     NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
@@ -55,7 +55,7 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
       page = 0;
     }
     
-    SearchResult<AbstractStudent> searchResult = null;
+    SearchResult<Person> searchResult = null;
     
     if ("advanced".equals(jsonRequestContext.getRequest().getParameter("activeTab"))) {
       String firstName = jsonRequestContext.getString("firstname");
@@ -102,28 +102,28 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
         studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
       }
       
-      searchResult = abstractStudentDAO.searchAbstractStudents(resultsPerPage, page, firstName, lastName, nickname,
+      searchResult = personDAO.searchPersons(resultsPerPage, page, firstName, lastName, nickname,
           tags, education, email, sex, ssn, addressCity, addressCountry, addressPostalCode, addressStreetAddress,
           phone, lodging, studyProgramme, language, nationality, municipality, studentFilter);
     }
     else if ("active".equals(jsonRequestContext.getRequest().getParameter("activeTab"))) {
       String query = jsonRequestContext.getRequest().getParameter("activesQuery");
-      searchResult = abstractStudentDAO.searchAbstractStudentsBasic(resultsPerPage, page, query, StudentFilter.SKIP_INACTIVE);
+      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, StudentFilter.SKIP_INACTIVE);
     }
     else {
       String query = jsonRequestContext.getRequest().getParameter("query");
-      searchResult = abstractStudentDAO.searchAbstractStudentsBasic(resultsPerPage, page, query, StudentFilter.INCLUDE_INACTIVE);
+      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, StudentFilter.INCLUDE_INACTIVE);
     }
 
     List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
-    List<AbstractStudent> abstractStudents = searchResult.getResults();
-    for (AbstractStudent abstractStudent : abstractStudents) {
-    	Student student = abstractStudent.getLatestStudent();
+    List<Person> persons = searchResult.getResults();
+    for (Person person : persons) {
+    	Student student = person.getLatestStudent();
     	if (student != null) {
     	  String activeStudyProgrammes = "";
     	  String inactiveStudyProgrammes = "";
 
-    	  List<Student> studentList2 = studentDAO.listByAbstractStudent(abstractStudent);
+    	  List<Student> studentList2 = studentDAO.listByPerson(person);
     	  
     	  for (Student student1 : studentList2) {
     	    if (student1.getStudyProgramme() != null) {
@@ -142,14 +142,14 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
     	  }
     	  
         Map<String, Object> info = new HashMap<String, Object>();
-        info.put("abstractStudentId", abstractStudent.getId());
-        info.put("id", abstractStudent.getLatestStudent().getId());
+        info.put("personId", person.getId());
+        info.put("id", person.getLatestStudent().getId());
         info.put("firstName", student.getFirstName());
         info.put("lastName", student.getLastName());
         info.put("archived", student.getArchived());
         info.put("activeStudyProgrammes", activeStudyProgrammes);
         info.put("inactiveStudyProgrammes", inactiveStudyProgrammes);
-        info.put("active", abstractStudent.getActive());
+        info.put("active", person.getActive());
         results.add(info);
     	}
     }

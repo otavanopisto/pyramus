@@ -7,19 +7,19 @@ import org.apache.commons.lang.StringUtils;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.projects.ProjectDAO;
 import fi.pyramus.dao.resources.MaterialResourceDAO;
 import fi.pyramus.dao.resources.ResourceCategoryDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.resources.ResourceCategory;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.PyramusViewController;
@@ -33,7 +33,7 @@ public class DebugDataViewController extends PyramusViewController {
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     ProjectDAO projectDAO = DAOFactory.getInstance().getProjectDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     CourseStateDAO courseStateDAO = DAOFactory.getInstance().getCourseStateDAO();
     ResourceCategoryDAO resourceCategoryDAO = DAOFactory.getInstance().getResourceCategoryDAO();
     MaterialResourceDAO materialResourceDAO = DAOFactory.getInstance().getMaterialResourceDAO();
@@ -76,8 +76,8 @@ public class DebugDataViewController extends PyramusViewController {
     }
     else if ("student".equals(type)) {
       for (int i = start; i < (start + count); i++) {
-        AbstractStudent abstractStudent = abstractStudentDAO.create(new Date(), "030310-123R", Sex.MALE, null, Boolean.FALSE);
-        studentDAO.create(abstractStudent, "Etunimi " + i, "Sukunimi " + i, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, Boolean.FALSE);
+        Person person = personDAO.create(new Date(), "030310-123R", Sex.MALE, null, Boolean.FALSE);
+        studentDAO.create(person, "Etunimi " + i, "Sukunimi " + i, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, Boolean.FALSE);
       }
     }
   }

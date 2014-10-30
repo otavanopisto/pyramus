@@ -114,7 +114,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     
     // User
 
-    Person person = personId != null ? personDAO.findById(personId) : personDAO.create();
+    Person person = personId != null ? personDAO.findById(personId) : personDAO.create(null, null, null, null, Boolean.FALSE);
     
     StaffMember user = userDAO.create(firstName, lastName, externalId, authProvider, role, person);
     if (title != null)

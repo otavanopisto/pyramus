@@ -19,12 +19,12 @@ import fi.pyramus.dao.base.ContactURLTypeDAO;
 import fi.pyramus.dao.base.LanguageDAO;
 import fi.pyramus.dao.base.MunicipalityDAO;
 import fi.pyramus.dao.base.NationalityDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.SchoolDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.pyramus.dao.grading.CreditLinkDAO;
 import fi.pyramus.dao.grading.TransferCreditDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
@@ -37,9 +37,9 @@ import fi.pyramus.domainmodel.base.ContactURLType;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.Tag;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
@@ -51,7 +51,7 @@ public class EditStudentViewController extends PyramusViewController implements 
 
   public void process(PageRequestContext pageRequestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentActivityTypeDAO studentActivityTypeDAO = DAOFactory.getInstance().getStudentActivityTypeDAO();
     StudentEducationalLevelDAO studentEducationalLevelDAO = DAOFactory.getInstance().getStudentEducationalLevelDAO();
     StudentExaminationTypeDAO studentExaminationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
@@ -69,10 +69,10 @@ public class EditStudentViewController extends PyramusViewController implements 
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
 
-    Long abstractStudentId = pageRequestContext.getLong("abstractStudent");
-    AbstractStudent abstractStudent = abstractStudentDAO.findById(abstractStudentId);
+    Long personId = pageRequestContext.getLong("person");
+    Person person = personDAO.findById(personId);
     
-    List<Student> students = studentDAO.listByAbstractStudent(abstractStudent);
+    List<Student> students = studentDAO.listByPerson(person);
     Collections.sort(students, new Comparator<Student>() {
       @Override
       public int compare(Student o1, Student o2) {
@@ -163,7 +163,7 @@ public class EditStudentViewController extends PyramusViewController implements 
     Collections.sort(contactTypes, new StringAttributeComparator("getName"));
     
     pageRequestContext.getRequest().setAttribute("tags", studentTags);
-    pageRequestContext.getRequest().setAttribute("abstractStudent", abstractStudent);
+    pageRequestContext.getRequest().setAttribute("person", person);
     pageRequestContext.getRequest().setAttribute("students", students);
     pageRequestContext.getRequest().setAttribute("activityTypes", studentActivityTypeDAO.listUnarchived());
     pageRequestContext.getRequest().setAttribute("contactURLTypes", contactURLTypes);

@@ -12,9 +12,9 @@ import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
@@ -28,7 +28,7 @@ public class StudentAPI {
     this.loggedUserId = loggedUserId;
   }
   
-  public Long create(Long abstractStudentId, String firstName, String lastName, String email, Long emailContactTypeId, String nickname, String additionalInfo, Date studyTimeEnd, Long activityType,
+  public Long create(Long personId, String firstName, String lastName, String email, Long emailContactTypeId, String nickname, String additionalInfo, Date studyTimeEnd, Long activityType,
       Long examinationType, Long educationalLevel, String education, Long nationality, Long municipality, Long language, Long schoolId, Long studyProgrammeId,
       Double previousStudies, Date studyStartDate, Date studyEndDate, Long studyEndReasonId, String studyEndText, boolean lodging) throws InvalidScriptException {
 
@@ -36,9 +36,9 @@ public class StudentAPI {
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     
-    AbstractStudent abstractStudentEntity = null;
-    if (abstractStudentId != null) {
-      abstractStudentEntity = DAOFactory.getInstance().getAbstractStudentDAO().findById(abstractStudentId);
+    Person personEntity = null;
+    if (personId != null) {
+      personEntity = DAOFactory.getInstance().getPersonDAO().findById(personId);
     }
     StudentActivityType activityTypeEntity = null;
     if (activityType != null) {
@@ -83,7 +83,7 @@ public class StudentAPI {
       studyEndReason = DAOFactory.getInstance().getStudentStudyEndReasonDAO().findById(studyEndReasonId);
     }
 
-    Student student = studentDAO.create(abstractStudentEntity, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityTypeEntity,
+    Student student = studentDAO.create(personEntity, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityTypeEntity,
         examinationTypeEntity, educationalLevelEntity, education, nationalityEntity, municipalityEntity, languageEntity, school, studyProgramme,
         previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging);
 

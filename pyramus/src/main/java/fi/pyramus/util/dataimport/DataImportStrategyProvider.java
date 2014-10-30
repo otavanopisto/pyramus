@@ -6,17 +6,17 @@ import java.util.Map;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactInfo;
 import fi.pyramus.domainmodel.base.Email;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.modules.Module;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.PyramusStatusCode;
@@ -86,14 +86,14 @@ public class DataImportStrategyProvider {
       public void initializeContext(DataImportContext context) {
         super.initializeContext(context);
         
-        AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+        PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
         
         if (context.hasField("socialSecurityNumber")) {
           String ssn = context.getFieldValue("socialSecurityNumber");
 
           if (ssn != null) {
-            AbstractStudent abstractStudent = abstractStudentDAO.findBySSN(ssn);
-            context.addEntity(AbstractStudent.class, abstractStudent);
+            Person person = personDAO.findBySSN(ssn);
+            context.addEntity(Person.class, person);
           }
         }
       }
@@ -102,16 +102,16 @@ public class DataImportStrategyProvider {
       protected void bindEntities(DataImportContext context) {
         super.bindEntities(context);
         
-        // Bind Address, Email, Phone, AbstractStudent etc. to Student or create new ones where needed
+        // Bind Address, Email, Phone, Person etc. to Student or create new ones where needed
         Student student = (Student) context.getEntity(Student.class);
         
-        AbstractStudent abstractStudent = (AbstractStudent) context.getEntity(AbstractStudent.class);
-        if (abstractStudent == null) {
-          abstractStudent = new AbstractStudent();
-          context.addEntity(AbstractStudent.class, abstractStudent);
+        Person person = (Person) context.getEntity(Person.class);
+        if (person == null) {
+          person = new Person();
+          context.addEntity(Person.class, person);
         }
         
-        abstractStudent.addStudent(student);
+        person.addStudent(student);
 
         // Adress        
         Address address = (Address) context.getEntity(Address.class);
@@ -177,8 +177,8 @@ public class DataImportStrategyProvider {
     subClass = PhoneNumber.class;
     instance().registerFieldHandler(entityStrategy, "phoneNumber", new DefaultFieldHandingStrategy(subClass, "number"));
 
-    // AbstractStudent
-    subClass = AbstractStudent.class;
+    // Person
+    subClass = Person.class;
     instance().registerFieldHandler(entityStrategy, "birthday", new DefaultFieldHandingStrategy(subClass));
     instance().registerFieldHandler(entityStrategy, "socialSecurityNumber", new DefaultFieldHandingStrategy(subClass));// new SocialSecurityNumberHandlingStrategy(subClass, true));
     instance().registerFieldHandler(entityStrategy, "sex", new DefaultFieldHandingStrategy(subClass));

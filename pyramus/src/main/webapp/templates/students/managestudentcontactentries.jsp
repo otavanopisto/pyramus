@@ -22,7 +22,7 @@
     <% pageContext.setAttribute("newLineChar", "\n"); %>
 
     <script type="text/javascript">
-      function setupTabRelatedActions(abstractStudentId, studentId) {
+      function setupTabRelatedActions(personId, studentId) {
         var basicTabRelatedActionsHoverMenu = new IxHoverMenu($('basicTabRelatedActionsHoverMenuContainer.' + studentId), {
           text: '<fmt:message key="students.manageStudentContactEntries.basicTabRelatedActionsLabel"/>'
         });
@@ -30,20 +30,20 @@
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/eye.png',
           text: '<fmt:message key="students.manageStudentContactEntries.basicTabRelatedActionsViewStudentLabel"/>',
-          link: GLOBAL_contextPath + '/students/viewstudent.page?abstractStudent=' + abstractStudentId  
+          link: GLOBAL_contextPath + '/students/viewstudent.page?person=' + personId  
         }));
 
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.manageStudentContactEntries.basicTabRelatedActionsEditStudentLabel"/>',
-          link: GLOBAL_contextPath + '/students/editstudent.page?abstractStudent=' + abstractStudentId  
+          link: GLOBAL_contextPath + '/students/editstudent.page?person=' + personId  
         }));
       }
 
       function onLoad(event) {
         <c:forEach var="student" items="${students}">
           // Setup basics
-          setupTabRelatedActions(${abstractStudent.id}, ${student.id}); 
+          setupTabRelatedActions(${person.id}, ${student.id}); 
         </c:forEach>
         
         var tabControl2 = new IxProtoTabs($('studentTabs'));
@@ -485,7 +485,7 @@
   <body onload="onLoad(event);">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
   
-    <h1 class="genericPageHeader"><fmt:message key="students.manageStudentContactEntries.pageTitle" /> (${abstractStudent.latestStudent.fullName})</h1>
+    <h1 class="genericPageHeader"><fmt:message key="students.manageStudentContactEntries.pageTitle" /> (${person.latestStudent.fullName})</h1>
   
     <div id="viewStudentViewContainer"> 
       <div class="genericFormContainer"> 

@@ -169,7 +169,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
       studentProjectModulesJSON.add(obj);
     }
 
-    List<Student> students = studentDAO.listByAbstractStudent(studentProject.getStudent().getAbstractStudent());
+    List<Student> students = studentDAO.listByPerson(studentProject.getStudent().getPerson());
     Collections.sort(students, new Comparator<Student>() {
       @Override
       public int compare(Student o1, Student o2) {

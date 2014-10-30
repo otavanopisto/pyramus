@@ -115,9 +115,9 @@
         dialog.open();
       }
 
-      function addNewCourseStudent(abstractStudentId, studentId, studentName, lodging) {
+      function addNewCourseStudent(personId, studentId, studentName, lodging) {
         var table = getIxTableById('studentsTable');
-        var rowIndex = table.addRow(['', '', studentName, studentId, 10, new Date().getTime(), 0, '', lodging, abstractStudentId, -1, 1, '', '', '']);
+        var rowIndex = table.addRow(['', '', studentName, studentId, 10, new Date().getTime(), 0, '', lodging, personId, -1, 1, '', '', '']);
         table.hideCell(rowIndex, table.getNamedColumnIndex('evaluateButton'));
         for (var i = 3; i < 9; i++) {
           table.setCellEditable(rowIndex, i, true);
@@ -161,13 +161,13 @@
               var studentsTable = getIxTableById('studentsTable');
               studentsTable.detachFromDom();
               for (var i = 0, len = event.results.students.length; i < len; i++) {
-                var abstractStudentId = event.results.students[i].abstractStudentId;
+                var personId = event.results.students[i].personId;
                 var studentId = event.results.students[i].id;
                 var studentName = event.results.students[i].name;
                 var lodging = event.results.students[i].lodging;
                 var index = getStudentRowIndex(studentId);
                 if (index == -1) {
-                  addNewCourseStudent(abstractStudentId, studentId, studentName, lodging);
+                  addNewCourseStudent(personId, studentId, studentName, lodging);
                 } 
               }
               studentsTable.reattachToDom();
@@ -798,9 +798,9 @@
             tooltip: '<fmt:message key="courses.editCourse.studentsTableStudentInfoTooltip"/>',
             onclick: function (event) {
               var table = event.tableComponent;
-              var abstractStudentId = table.getCellValue(event.row, table.getNamedColumnIndex('abstractStudentId'));
+              var personId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
               var button = table.getCellEditor(event.row, table.getNamedColumnIndex('studentInfoButton'));
-              openStudentInfoPopupOnElement(button, abstractStudentId);
+              openStudentInfoPopupOnElement(button, personId);
             } 
           }, {
             left: 8 + 22 + 8,
@@ -1046,7 +1046,7 @@
             }
           }, {
             dataType: 'hidden', 
-            paramName: 'abstractStudentId'
+            paramName: 'personId'
           }, {
             dataType: 'hidden', 
             paramName: 'courseStudentId'
@@ -1177,7 +1177,7 @@
             ${courseStudent.courseEnrolmentType.id},
             '${courseStudent.optionality}',
             '${courseStudent.lodging}',
-            ${courseStudent.student.abstractStudent.id},
+            ${courseStudent.student.person.id},
             ${courseStudent.id},
             0,
             '',
@@ -1240,11 +1240,11 @@
 
       function loadStudentStudyProgrammes(rowIndex, studentId) {
         var studentsTable = getIxTableById('studentsTable');
-        var abstractStudentId = studentsTable.getCellValue(rowIndex, studentsTable.getNamedColumnIndex('abstractStudentId'));
+        var personId = studentsTable.getCellValue(rowIndex, studentsTable.getNamedColumnIndex('personId'));
         JSONRequest.request("students/getstudentstudyprogrammes.json", {
           asynchronous: false,
           parameters: {
-            abstractStudentId: abstractStudentId
+            personId: personId
           },
           onSuccess: function (jsonResponse) {
             var cellEditor = studentsTable.getCellEditor(rowIndex, studentsTable.getNamedColumnIndex('studentId'));

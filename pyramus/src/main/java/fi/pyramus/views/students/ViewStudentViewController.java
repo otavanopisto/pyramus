@@ -25,7 +25,6 @@ import fi.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.pyramus.dao.grading.TransferCreditDAO;
 import fi.pyramus.dao.projects.StudentProjectDAO;
 import fi.pyramus.dao.reports.ReportDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentContactLogEntryCommentDAO;
 import fi.pyramus.dao.students.StudentContactLogEntryDAO;
 import fi.pyramus.dao.students.StudentDAO;
@@ -47,7 +46,6 @@ import fi.pyramus.domainmodel.projects.StudentProject;
 import fi.pyramus.domainmodel.projects.StudentProjectModule;
 import fi.pyramus.domainmodel.reports.Report;
 import fi.pyramus.domainmodel.reports.ReportContextType;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.pyramus.domainmodel.students.StudentContactLogEntryComment;
@@ -78,7 +76,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
    * 
    * In parameters
    * - student
-   * - abstractStudent
+   * - person
    * 
    * Page parameters
    * - student - Student object
@@ -92,7 +90,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
    */
   public void process(PageRequestContext pageRequestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentImageDAO imageDAO = DAOFactory.getInstance().getStudentImageDAO();
     StudentContactLogEntryDAO logEntryDAO = DAOFactory.getInstance().getStudentContactLogEntryDAO();
     StudentContactLogEntryCommentDAO entryCommentDAO = DAOFactory.getInstance().getStudentContactLogEntryCommentDAO();
@@ -107,19 +105,17 @@ public class ViewStudentViewController extends PyramusViewController implements 
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
     CourseAssessmentRequestDAO courseAssessmentRequestDAO = DAOFactory.getInstance().getCourseAssessmentRequestDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
-    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
 
-    Long abstractStudentId = pageRequestContext.getLong("abstractStudent");
+    Long personId = pageRequestContext.getLong("person");
     
-    AbstractStudent abstractStudent = abstractStudentDAO.findById(abstractStudentId);
-    Person person = personDAO.findById(abstractStudentId);
+    Person person = personDAO.findById(personId);
     
-    pageRequestContext.getRequest().setAttribute("abstractStudent", abstractStudent);
+    pageRequestContext.getRequest().setAttribute("person", person);
 
     StaffMember staffMember = staffMemberDAO.findByPerson(person);
     pageRequestContext.getRequest().setAttribute("staffMember", staffMember);
     
-    List<Student> students = studentDAO.listByAbstractStudent(abstractStudent);
+    List<Student> students = studentDAO.listByPerson(person);
     Collections.sort(students, new Comparator<Student>() {
       @Override
       public int compare(Student o1, Student o2) {

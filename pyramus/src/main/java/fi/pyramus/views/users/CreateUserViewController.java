@@ -46,7 +46,7 @@ public class CreateUserViewController extends PyramusViewController implements B
     if (studentId != null) {
       Student student = studentDAO.findById(studentId);
       
-      pageRequestContext.getRequest().setAttribute("person", student.getAbstractStudent());
+      pageRequestContext.getRequest().setAttribute("person", student.getPerson());
       pageRequestContext.getRequest().setAttribute("student", student);
 
       String emails = new JSONArrayExtractor("defaultAddress", "contactType", "address").extractString(student.getContactInfo().getEmails());

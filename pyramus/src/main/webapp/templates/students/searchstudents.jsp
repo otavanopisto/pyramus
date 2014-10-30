@@ -55,7 +55,7 @@
             resultsTable.deleteAllRows();
             var results = jsonResponse.results;
             for (var i = 0; i < results.length; i++) {
-              var rowIndex = resultsTable.addRow(['', String(results[i].lastName + ", " + results[i].firstName).escapeHTML(), String(results[i].activeStudyProgrammes).escapeHTML(), String(results[i].inactiveStudyProgrammes).escapeHTML(), '', '', results[i].abstractStudentId]);
+              var rowIndex = resultsTable.addRow(['', String(results[i].lastName + ", " + results[i].firstName).escapeHTML(), String(results[i].activeStudyProgrammes).escapeHTML(), String(results[i].inactiveStudyProgrammes).escapeHTML(), '', '', results[i].personId]);
               var rowElement = resultsTable.getRowElement(rowIndex);
 
               if (results[i].active == "false")
@@ -138,9 +138,9 @@
             tooltip: '<fmt:message key="courses.createCourse.studentsTableStudentInfoTooltip"/>',
             onclick: function (event) {
               var table = event.tableComponent;
-              var abstractStudentId = table.getCellValue(event.row, table.getNamedColumnIndex('abstractStudentId'));
+              var personId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
               var button = table.getCellEditor(event.row, table.getNamedColumnIndex('studentInfoButton'));
-              openStudentInfoPopupOnElement(button, abstractStudentId);
+              openStudentInfoPopupOnElement(button, personId);
             } 
           }, {
             header : '<fmt:message key="students.searchStudents.resultsTableNameHeader"/>',
@@ -168,8 +168,8 @@
             tooltip: '<fmt:message key="students.searchStudents.studentTableViewTooltip"/>',
             onclick: function (event) {
               var table = event.tableComponent;
-              var studentId = table.getCellValue(event.row, table.getNamedColumnIndex('abstractStudentId'));
-              redirectTo(GLOBAL_contextPath + '/students/viewstudent.page?abstractStudent=' + studentId);
+              var studentId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
+              redirectTo(GLOBAL_contextPath + '/students/viewstudent.page?person=' + studentId);
             }
           }, {
             width: 30,
@@ -179,12 +179,12 @@
             tooltip: '<fmt:message key="students.searchStudents.studentTableEditTooltip"/>',
             onclick: function (event) {
               var table = event.tableComponent;
-              var studentId = table.getCellValue(event.row, table.getNamedColumnIndex('abstractStudentId'));
-              redirectTo(GLOBAL_contextPath + '/students/editstudent.page?abstractStudent=' + studentId);
+              var studentId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
+              redirectTo(GLOBAL_contextPath + '/students/editstudent.page?person=' + studentId);
             }
           }, {
             dataType: 'hidden',
-            paramName: 'abstractStudentId'
+            paramName: 'personId'
           }]
         });
       }
