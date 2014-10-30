@@ -33,12 +33,12 @@ import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.base.VariableType;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
@@ -51,12 +51,12 @@ import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
-import fi.pyramus.rest.controller.AbstractStudentController;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.LanguageController;
 import fi.pyramus.rest.controller.MunicipalityController;
 import fi.pyramus.rest.controller.NationalityController;
+import fi.pyramus.rest.controller.PersonController;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.StudentActivityTypeController;
 import fi.pyramus.rest.controller.StudentContactLogEntryController;
@@ -113,7 +113,7 @@ public class StudentRESTService extends AbstractRESTService {
   private StudentGroupController studentGroupController;
   
   @Inject
-  private AbstractStudentController abstractStudentController;
+  private PersonController personController;
 
   @Inject
   private StudentStudyEndReasonController studentStudyEndReasonController;
@@ -1144,9 +1144,9 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
-  @Path("/abstractStudents")
+  @Path("/persons")
   @POST
-  public Response createAbstractStudent(fi.pyramus.rest.model.AbstractStudent entity) {
+  public Response createPerson(fi.pyramus.rest.model.Person entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
@@ -1166,37 +1166,37 @@ public class StudentRESTService extends AbstractRESTService {
       break;
     }
     
-    return Response.ok(objectFactory.createModel(abstractStudentController.createAbstractStudent(toDate(entity.getBirthday()), 
+    return Response.ok(objectFactory.createModel(personController.createPerson(toDate(entity.getBirthday()), 
         entity.getSocialSecurityNumber(), sex, entity.getBasicInfo(), entity.getSecureInfo()))).build();
   }
   
-  @Path("/abstractStudents")
+  @Path("/persons")
   @GET
-  public Response findAbstractStudents(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-    List<AbstractStudent> abstractStudents;
+  public Response findPersons(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Person> persons;
     if (filterArchived) {
-      abstractStudents = abstractStudentController.findUnarchivedAbstractStudents();
+      persons = personController.findUnarchivedPersons();
     } else {
-      abstractStudents = abstractStudentController.findAbstractStudents();
+      persons = personController.findPersons();
     }
     
-    return Response.ok(objectFactory.createModel(abstractStudents)).build();
+    return Response.ok(objectFactory.createModel(persons)).build();
   }
 
-  @Path("/abstractStudents/{ID:[0-9]*}")
+  @Path("/persons/{ID:[0-9]*}")
   @GET
-  public Response findAbstractStudentById(@PathParam("ID") Long id) {
-    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(id);
-    if (abstractStudent == null) {
+  public Response findPersonById(@PathParam("ID") Long id) {
+    Person person = personController.findPersonById(id);
+    if (person == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    return Response.ok(objectFactory.createModel(abstractStudent)).build();
+    return Response.ok(objectFactory.createModel(person)).build();
   }
 
-  @Path("/abstractStudents/{ID:[0-9]*}")
+  @Path("/persons/{ID:[0-9]*}")
   @PUT
-  public Response updateAbstractStudent(@PathParam("ID") Long id, fi.pyramus.rest.model.AbstractStudent entity) {
+  public Response updatePerson(@PathParam("ID") Long id, fi.pyramus.rest.model.Person entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
@@ -1216,49 +1216,49 @@ public class StudentRESTService extends AbstractRESTService {
       break;
     }
     
-    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(id);
-    if (abstractStudent == null) {
+    Person person = personController.findPersonById(id);
+    if (person == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    return Response.ok(objectFactory.createModel(abstractStudentController.updateAbstractStudent(abstractStudent, toDate(entity.getBirthday()), 
+    return Response.ok(objectFactory.createModel(personController.updatePerson(person, toDate(entity.getBirthday()), 
         entity.getSocialSecurityNumber(), sex, entity.getBasicInfo(), entity.getSecureInfo()))).build();
   }
 
-  @Path("/abstractStudents/{ID:[0-9]*}")
+  @Path("/persons/{ID:[0-9]*}")
   @DELETE
-  public Response deleteAbstractStudent(@PathParam("ID") Long id) {
-    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(id);
-    if (abstractStudent == null) {
+  public Response deletePerson(@PathParam("ID") Long id) {
+    Person person = personController.findPersonById(id);
+    if (person == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    abstractStudentController.deleteAbstractStudent(abstractStudent);
+    personController.deletePerson(person);
     
     return Response.noContent().build();
   }
 
-  @Path("/abstractStudents/{ID:[0-9]*}/students")
+  @Path("/persons/{ID:[0-9]*}/students")
   @GET
-  public Response listStudentsByAbstractStudent(@PathParam("ID") Long id) {
-    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(id);
-    if (abstractStudent == null) {
+  public Response listStudentsByPerson(@PathParam("ID") Long id) {
+    Person person = personController.findPersonById(id);
+    if (person == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    return Response.ok(objectFactory.createModel(studentController.listStudentByAbstractStudent(abstractStudent))).build();
+    return Response.ok(objectFactory.createModel(studentController.listStudentByPerson(person))).build();
   }
   
   @Path("/students")
   @POST
   public Response createStudent(fi.pyramus.rest.model.Student entity) {
-    Long abstractStudentId = entity.getAbstractStudentId();
+    Long personId = entity.getPersonId();
     Long studyProgrammeId = entity.getStudyProgrammeId();
     String firstName = entity.getFirstName();
     String lastName = entity.getLastName();
     Boolean lodging = entity.getLodging();
     
-    if ((abstractStudentId == null)||(studyProgrammeId == null)||(lodging == null)) {
+    if ((personId == null)||(studyProgrammeId == null)||(lodging == null)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -1266,8 +1266,8 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(abstractStudentId);
-    if (abstractStudent == null) {
+    Person person = personController.findPersonById(personId);
+    if (person == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -1285,7 +1285,7 @@ public class StudentRESTService extends AbstractRESTService {
     School school = entity.getSchoolId() != null ? schoolController.findSchoolById(entity.getSchoolId()) : null;
     StudentStudyEndReason studyEndReason = entity.getStudyEndReasonId() != null ? studentStudyEndReasonController.findStudentStudyEndReasonById(entity.getStudyEndReasonId()) : null;
     
-    Student student = studentController.createStudent(abstractStudent, firstName, lastName, entity.getNickname(), entity.getAdditionalInfo(), 
+    Student student = studentController.createStudent(person, firstName, lastName, entity.getNickname(), entity.getAdditionalInfo(), 
         toDate(entity.getStudyTimeEnd()), activityType, examinationType, educationalLevel, entity.getEducation(), nationality,
         municipality, language, school, studyProgramme, entity.getPreviousStudies(), toDate(entity.getStudyStartDate()),
         toDate(entity.getStudyEndDate()), studyEndReason, entity.getStudyEndText(), lodging);
@@ -1338,13 +1338,13 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    Long abstractStudentId = entity.getAbstractStudentId();
+    Long personId = entity.getPersonId();
     Long studyProgrammeId = entity.getStudyProgrammeId();
     String firstName = entity.getFirstName();
     String lastName = entity.getLastName();
     Boolean lodging = entity.getLodging();
     
-    if ((abstractStudentId == null)||(studyProgrammeId == null)||(lodging == null)) {
+    if ((personId == null)||(studyProgrammeId == null)||(lodging == null)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -1361,8 +1361,8 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    AbstractStudent abstractStudent = abstractStudentController.findAbstractStudentById(abstractStudentId);
-    if (abstractStudent == null) {
+    Person person = personController.findPersonById(personId);
+    if (person == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -1385,7 +1385,7 @@ public class StudentRESTService extends AbstractRESTService {
         municipality, language, school, studyProgramme, entity.getPreviousStudies(), toDate(entity.getStudyStartDate()),
         toDate(entity.getStudyEndDate()), studyEndReason, entity.getStudyEndText(), lodging);
     
-    studentController.updateStudentAbstractStudent(student, abstractStudent);
+    studentController.updateStudentPerson(student, person);
     userController.updateUserVariables(student, entity.getVariables());
     studentController.updateStudentTags(student, entity.getTags());
     studentController.updateStudentAdditionalContactInfo(student, entity.getAdditionalContactInfo());

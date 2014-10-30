@@ -29,6 +29,7 @@ import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.SchoolField;
@@ -53,7 +54,6 @@ import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.domainmodel.projects.ProjectModule;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentContactLogEntry;
@@ -411,9 +411,9 @@ public class ObjectFactory {
           }
         },
         
-        new Mapper<AbstractStudent>() {
+        new Mapper<Person>() {
           
-          public Object map(AbstractStudent entity) {
+          public Object map(Person entity) {
             Sex sex = null;
             switch (entity.getSex()) {
               case FEMALE:
@@ -424,14 +424,14 @@ public class ObjectFactory {
               break;
             }
             
-            return new fi.pyramus.rest.model.AbstractStudent(entity.getId(), toDateTime(entity.getBirthday()), entity.getSocialSecurityNumber(), sex, entity.getSecureInfo(), entity.getBasicInfo());
+            return new fi.pyramus.rest.model.Person(entity.getId(), toDateTime(entity.getBirthday()), entity.getSocialSecurityNumber(), sex, entity.getSecureInfo(), entity.getBasicInfo());
           }
         },
           
         new Mapper<Student>() {
           
           public Object map(Student entity) {
-            Long abstractStudentId = entity.getAbstractStudent() != null ? entity.getAbstractStudent().getId() : null;
+            Long personId = entity.getPerson() != null ? entity.getPerson().getId() : null;
             Long nationalityId = entity.getNationality()  != null ? entity.getNationality().getId() : null;
             Long languageId = entity.getLanguage()  != null ? entity.getLanguage().getId() : null;
             Long municipalityId = entity.getMunicipality()  != null ? entity.getMunicipality().getId() : null;
@@ -461,7 +461,7 @@ public class ObjectFactory {
             
             String additionalContectInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
             
-            return new fi.pyramus.rest.model.Student(entity.getId(), abstractStudentId, entity.getFirstName(), entity.getLastName(), 
+            return new fi.pyramus.rest.model.Student(entity.getId(), personId, entity.getFirstName(), entity.getLastName(), 
                 entity.getNickname(), entity.getAdditionalInfo(), additionalContectInfo, nationalityId, 
                 languageId, municipalityId, schoolId, activityTypeId, examinationTypeId, educationalLevelId, 
                 toDateTime(entity.getStudyTimeEnd()), studyProgrammeId, entity.getPreviousStudies(), entity.getEducation(), 

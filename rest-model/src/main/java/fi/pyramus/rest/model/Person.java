@@ -2,13 +2,13 @@ package fi.pyramus.rest.model;
 
 import org.joda.time.DateTime;
 
-public class AbstractStudent {
+public class Person {
 
-  public AbstractStudent() {
+  public Person() {
     super();
   }
 
-  public AbstractStudent(Long id, DateTime birthday, String socialSecurityNumber, Sex sex, Boolean secureInfo, String basicInfo) {
+  public Person(Long id, DateTime birthday, String socialSecurityNumber, Sex sex, Boolean secureInfo, String basicInfo) {
     super();
     this.id = id;
     this.birthday = birthday;

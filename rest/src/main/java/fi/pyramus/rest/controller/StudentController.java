@@ -24,11 +24,11 @@ import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.Tag;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
@@ -61,12 +61,12 @@ public class StudentController {
   @Inject
   private ContactInfoDAO contactInfoDAO;
 
-  public Student createStudent(AbstractStudent abstractStudent, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
+  public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
       Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Double previousStudies,
       Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, String studyEndText, Boolean lodging) {
 
-    Student student = studentDAO.create(abstractStudent, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType,
+    Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType,
         educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies, studyStartDate, studyEndDate,
         studyEndReason, studyEndText, lodging);
 
@@ -96,8 +96,8 @@ public class StudentController {
     return studentDAO.listUnarchived(firstResult, maxResults);
   }
   
-  public List<Student> listStudentByAbstractStudent(AbstractStudent abstractStudent) {
-    List<Student> students = studentDAO.listByAbstractStudent(abstractStudent);
+  public List<Student> listStudentByPerson(Person person) {
+    List<Student> students = studentDAO.listByPerson(person);
     return students;
   }
   
@@ -113,9 +113,9 @@ public class StudentController {
     return student;
   }
 
-  public Student updateStudentAbstractStudent(Student student, AbstractStudent abstractStudent) {
-    if (!student.getAbstractStudent().getId().equals(abstractStudent.getId())) {
-      return studentDAO.updateAbstractStudent(student, abstractStudent);
+  public Student updateStudentPerson(Student student, Person person) {
+    if (!student.getPerson().getId().equals(person.getId())) {
+      return studentDAO.updatePerson(student, person);
     }
     
     return student;
@@ -183,7 +183,7 @@ public class StudentController {
   /* Email */
 
   public Email addStudentEmail(Student student, ContactType contactType, String address, Boolean defaultAddress) {
-    if (!UserUtils.isAllowedEmail(address, student.getAbstractStudent().getId()))
+    if (!UserUtils.isAllowedEmail(address, student.getPerson().getId()))
       throw new RuntimeException("Email address is in use.");
     
     return emailDAO.create(student.getContactInfo(), contactType, defaultAddress, address);
