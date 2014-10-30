@@ -1,5 +1,6 @@
 package fi.pyramus.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateful;
@@ -13,6 +14,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.users.StaffMember;
@@ -33,8 +36,20 @@ public class StaffRESTService extends AbstractRESTService {
 
   @Path("/members")
   @GET
-  public Response listUsers(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults) {
-    return Response.ok(objectFactory.createModel(userController.listNonStudentUsers(firstResult, maxResults))).build();
+  public Response listUsers(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults, @QueryParam ("email") String email) {
+    List<StaffMember> staffMembers = null;
+    
+    if (StringUtils.isNotBlank(email)) {
+      staffMembers = new ArrayList<StaffMember>();
+      StaffMember staffMember = userController.findStaffMemberByEmail(email);
+      if (staffMember != null) {
+        staffMembers.add(staffMember);
+      }
+    } else {
+      staffMembers = userController.listStaffMembers(firstResult, maxResults);
+    }
+    
+    return Response.ok(objectFactory.createModel(staffMembers)).build();
   }
   
   @Path("/members/{ID:[0-9]*}")

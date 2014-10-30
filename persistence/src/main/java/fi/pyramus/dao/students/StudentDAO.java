@@ -8,6 +8,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -240,24 +241,6 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getSingleResult();
   }
 
-  public List<Student> listByEmail(String email) {
-    EntityManager entityManager = getEntityManager(); 
-    
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
-    Root<Student> root = criteria.from(Student.class);
-    
-    Join<Student, ContactInfo> contactInfoJoin = root.join(Student_.contactInfo);
-    ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
-    
-    criteria.select(root);
-    criteria.where(
-        criteriaBuilder.equal(emailJoin.get(Email_.address), email)
-    );
-    
-    return entityManager.createQuery(criteria).getResultList();
-  }
-
   public List<Student> listActiveStudents() {
     EntityManager entityManager = getEntityManager(); 
     
@@ -373,6 +356,71 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  public List<Student> listByEmail(String email) {
+    return listByEmail(email, null, null);
+  }
+  
+  public List<Student> listByEmail(String email, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
+    Root<Student> root = criteria.from(Student.class);
+    Join<Student, ContactInfo> contactInfoJoin = root.join(Student_.contactInfo);
+    ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
+    
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(emailJoin.get(Email_.address), email)
+    );
+    
+    TypedQuery<Student> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+   
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+  
+    return query.getResultList();
+  }
+
+  public List<Student> listByEmailAndArchived(String email, Boolean archived) {
+    return listByEmailAndArchived(email, archived, null, null);
+  }
+  
+  public List<Student> listByEmailAndArchived(String email, Boolean archived, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
+    Root<Student> root = criteria.from(Student.class);
+    Join<Student, ContactInfo> contactInfoJoin = root.join(Student_.contactInfo);
+    ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
+    
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Student_.archived), archived),
+        criteriaBuilder.equal(emailJoin.get(Email_.address), email)
+      )
+    );
+  
+    TypedQuery<Student> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+   
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+  
+    return query.getResultList();
+  }
+  
   public Student updatePerson(Student student, Person person) {
     Person oldPerson = student.getPerson();
     if (oldPerson != null) {
@@ -397,5 +445,4 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.addTag(tag);
     return persist(student);
   }
-  
 }

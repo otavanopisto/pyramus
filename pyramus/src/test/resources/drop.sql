@@ -760,6 +760,8 @@
 
     drop table UserVariableKey if exists;
 
+    drop table Webhook if exists;
+
     drop table WorkResource if exists;
 
     drop table __CourseTags if exists;

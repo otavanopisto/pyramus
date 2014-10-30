@@ -1091,6 +1091,13 @@
         primary key (id)
     );
 
+    create table Webhook (
+        id bigint not null,
+        secret varchar(255) not null,
+        url varchar(255) not null,
+        primary key (id)
+    );
+
     create table WorkResource (
         costPerUse_amount double,
         costPerUse_currency varchar(255),
@@ -1191,6 +1198,9 @@
 
     alter table UserVariableKey 
         add constraint UK_mb9er7y1ali34igjlk4ccxlfs  unique (variableKey);
+
+    alter table Webhook 
+        add constraint UK_dk6f5jw076amfqpx329q009yq  unique (url);
 
     alter table AccessLogEntry 
         add constraint FK_r031kiolhx2sg7hpdngdn026l 

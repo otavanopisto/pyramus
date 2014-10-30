@@ -5,10 +5,10 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.Test;
 
-public class UserTestsIT extends AbstractRESTServiceTest {
+public class StaffMemberTestsIT extends AbstractRESTServiceTest {
 
   @Test
-  public void testListUsers() {
+  public void testListStaffMembers() {
     given().headers(getAuthHeaders())
       .get("/staff/members")
       .then()
@@ -25,7 +25,20 @@ public class UserTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
-  public void testFindUser() {
+  public void testListStaffMembersByEmail() {
+    given().headers(getAuthHeaders())
+      .get("/staff/members?email=guest1@bogusmail.com")
+      .then()
+      .statusCode(200)
+      .body("id.size()", is(1))
+      .body("id[0]", is(1))
+      .body("firstName[0]", is("Test Guest"))
+      .body("lastName[0]", is("User #1"))
+      .body("role[0]", is("GUEST"));
+  }
+  
+  @Test
+  public void testFindStaffMember() {
     given().headers(getAuthHeaders())
       .get("/staff/members/{ID}", 1l)
       .then()
