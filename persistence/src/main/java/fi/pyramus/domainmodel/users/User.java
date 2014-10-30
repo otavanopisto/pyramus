@@ -17,6 +17,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
@@ -36,6 +37,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.ContactInfo;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.Tag;
 
 @Entity
@@ -145,11 +147,23 @@ public class User {
     }
   }
 
+  public Person getPerson() {
+    return person;
+  }
+
+  public void setPerson(Person person) {
+    this.person = person;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="User")  
   @TableGenerator(name="User", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   @DocumentId
   private Long id;
+  
+  @ManyToOne
+  @JoinColumn (name="person")
+  private Person person;
   
   @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="contactInfo")

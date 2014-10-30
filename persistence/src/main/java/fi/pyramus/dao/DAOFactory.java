@@ -103,7 +103,6 @@ import fi.pyramus.dao.resources.MaterialResourceDAO;
 import fi.pyramus.dao.resources.ResourceCategoryDAO;
 import fi.pyramus.dao.resources.ResourceDAO;
 import fi.pyramus.dao.resources.WorkResourceDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.pyramus.dao.students.StudentContactLogEntryCommentDAO;
 import fi.pyramus.dao.students.StudentContactLogEntryDAO;
@@ -149,10 +148,6 @@ public class DAOFactory {
     return (StudentDAO) findByClass(fi.pyramus.dao.students.StudentDAO.class);
   }
 
-  public AbstractStudentDAO getAbstractStudentDAO() {
-    return (AbstractStudentDAO) findByClass(AbstractStudentDAO.class);
-  }
-  
   public StudentActivityTypeDAO getStudentActivityTypeDAO() {
     return (StudentActivityTypeDAO) findByClass(StudentActivityTypeDAO.class);
   }

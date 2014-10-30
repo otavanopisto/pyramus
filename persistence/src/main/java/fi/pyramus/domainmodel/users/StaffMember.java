@@ -4,7 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
@@ -14,8 +13,6 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotEmpty;
-
-import fi.pyramus.domainmodel.base.Person;
 
 @Entity
 @Indexed
@@ -55,14 +52,6 @@ public class StaffMember extends User {
     return title;
   }
 
-  public Person getPerson() {
-    return person;
-  }
-
-  public void setPerson(Person person) {
-    this.person = person;
-  }
-
   @NotNull
   @Column (nullable = false)
   @NotEmpty
@@ -81,7 +70,4 @@ public class StaffMember extends User {
   @Field (store = Store.NO)
   // TODO Some way to disallow Role.EVERYONE
   private Role role;
-
-  @ManyToOne
-  private Person person;
 }

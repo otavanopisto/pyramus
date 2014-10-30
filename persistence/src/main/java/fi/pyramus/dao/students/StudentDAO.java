@@ -16,6 +16,7 @@ import javax.persistence.criteria.Root;
 
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.PyramusEntityDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.ArchivableEntity;
@@ -27,11 +28,11 @@ import fi.pyramus.domainmodel.base.Email_;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.CourseStudent;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
@@ -68,7 +69,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
       Student student = (Student) entity;
 
       CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
-      AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+      PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
   
       // Also archive course students of the archived student
       
@@ -79,10 +80,10 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
         }
       }
   
-      // This is necessary because AbstractStudent entity does not really
+      // This is necessary because Person entity does not really
       // change in this operation but it still needs to be reindexed
   
-      abstractStudentDAO.forceReindex(student.getAbstractStudent());
+      personDAO.forceReindex(student.getPerson());
       
       studentArchivedEvent.fire(new StudentArchivedEvent(student.getId()));
     }
@@ -97,19 +98,19 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
   @Override
   public void unarchive(ArchivableEntity entity, User modifier) {
     super.unarchive(entity, modifier);
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
     if (entity instanceof Student) {
-      // This is necessary because AbstractStudent entity does not really
+      // This is necessary because Person entity does not really
       // change in this operation but it still needs to be reindexed
 
       Student student = (Student) entity;
 
-      abstractStudentDAO.forceReindex(student.getAbstractStudent());
+      personDAO.forceReindex(student.getPerson());
     }
   }
 
-  public Student create(AbstractStudent abstractStudent, String firstName, String lastName, String nickname, String additionalInfo,
+  public Student create(Person person, String firstName, String lastName, String nickname, String additionalInfo,
       Date studyTimeEnd, StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
       Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Double previousStudies,
       Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, String studyEndText, Boolean lodging) {
@@ -143,9 +144,9 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
 
     entityManager.persist(student);
 
-    abstractStudent.addStudent(student);
+    person.addStudent(student);
 
-    entityManager.persist(abstractStudent);
+    entityManager.persist(person);
     
     studentCreatedEvent.fire(new StudentCreatedEvent(student.getId()));
 
@@ -312,7 +313,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getResultList();
   }
   
-  public List<Student> listByAbstractStudent(AbstractStudent abstractStudent) {
+  public List<Student> listByPerson(Person person) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -322,13 +323,13 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(Student_.archived), Boolean.FALSE),
-            criteriaBuilder.equal(root.get(Student_.abstractStudent), abstractStudent)
+            criteriaBuilder.equal(root.get(Student_.person), person)
         ));
     
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public List<Student> listActiveStudentsByAbstractStudent(AbstractStudent abstractStudent) {
+  public List<Student> listActiveStudentsByPerson(Person person) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -338,7 +339,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(Student_.archived), Boolean.FALSE),
-            criteriaBuilder.equal(root.get(Student_.abstractStudent), abstractStudent),
+            criteriaBuilder.equal(root.get(Student_.person), person),
             criteriaBuilder.or(
                 criteriaBuilder.isNull(root.get(Student_.studyEndDate)),
                 criteriaBuilder.greaterThan(root.get(Student_.studyEndDate), new Date())
@@ -372,16 +373,16 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public Student updateAbstractStudent(Student student, AbstractStudent abstractStudent) {
-    AbstractStudent oldAbstractStudent = student.getAbstractStudent();
-    if (oldAbstractStudent != null) {
-      oldAbstractStudent.removeStudent(student);
-      getEntityManager().persist(oldAbstractStudent);
+  public Student updatePerson(Student student, Person person) {
+    Person oldPerson = student.getPerson();
+    if (oldPerson != null) {
+      oldPerson.removeStudent(student);
+      getEntityManager().persist(oldPerson);
     }
     
-    if (abstractStudent != null) {
-      abstractStudent.addStudent(student);
-      getEntityManager().persist(abstractStudent);
+    if (person != null) {
+      person.addStudent(student);
+      getEntityManager().persist(person);
     }
 
     return persist(student);

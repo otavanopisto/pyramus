@@ -85,24 +85,6 @@ public class Student extends User implements ArchivableEntity {
   }
 
   /**
-   * Sets AbstractStudent for this student
-   * 
-   * @param abstractStudent AbstractStudent
-   */
-  protected void setAbstractStudent(AbstractStudent abstractStudent) {
-    this.abstractStudent = abstractStudent;
-  }
-
-  /**
-   * Returns AbstractStudent of this student.
-   * 
-   * @return AbstractStudent
-   */
-  public AbstractStudent getAbstractStudent() {
-    return abstractStudent;
-  }
-
-  /**
    * Sets the municipality of this student.
    * 
    * @param municipality Municipality
@@ -301,10 +283,6 @@ public class Student extends User implements ArchivableEntity {
     this.lodging = lodging;
   }
 
-  @ManyToOne
-  @JoinColumn (name = "abstractStudent")
-  private AbstractStudent abstractStudent;
-  
   private String nickname;
     
   @Lob
