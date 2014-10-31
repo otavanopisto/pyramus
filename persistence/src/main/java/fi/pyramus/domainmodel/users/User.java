@@ -162,7 +162,6 @@ public class User {
   private Long id;
   
   @ManyToOne
-  @JoinColumn (name="person")
   private Person person;
   
   @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

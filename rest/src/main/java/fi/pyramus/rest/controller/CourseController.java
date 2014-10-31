@@ -36,6 +36,7 @@ import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.students.Student;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 
 @Dependent
@@ -372,8 +373,8 @@ public class CourseController {
   
   /* CourseStaffMembers */
   
-  public CourseStaffMember createStaffMember(Course course, User user, CourseStaffMemberRole role) {
-    return courseStaffMemberDAO.create(course, user, role);
+  public CourseStaffMember createStaffMember(Course course, StaffMember staffMember, CourseStaffMemberRole role) {
+    return courseStaffMemberDAO.create(course, staffMember, role);
   }
   
   public CourseStaffMember findStaffMemberById(Long id) {

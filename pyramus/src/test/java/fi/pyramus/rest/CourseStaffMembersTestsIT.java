@@ -27,7 +27,7 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("roleId", is(entity.getRoleId().intValue()))
-      .body("userId", is(entity.getUserId().intValue()))
+      .body("userId", is(entity.getStaffMemberId().intValue()))
       .body("courseId", is(entity.getCourseId().intValue()));
     
     int id = response.body().jsonPath().getInt("id");

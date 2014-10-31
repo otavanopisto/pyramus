@@ -39,8 +39,8 @@ import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
-import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.courses.CourseStaffMember;
+import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.framework.PyramusViewController;
@@ -111,9 +111,9 @@ public class EditCourseViewController extends PyramusViewController implements B
     Collections.sort(courseUsers, new Comparator<CourseStaffMember>() {
       @Override
       public int compare(CourseStaffMember o1, CourseStaffMember o2) {
-        int cmp = o1.getUser().getLastName().compareToIgnoreCase(o2.getUser().getLastName());
+        int cmp = o1.getStaffMember().getLastName().compareToIgnoreCase(o2.getStaffMember().getLastName());
         if (cmp == 0)
-          cmp = o1.getUser().getFirstName().compareToIgnoreCase(o2.getUser().getFirstName());
+          cmp = o1.getStaffMember().getFirstName().compareToIgnoreCase(o2.getStaffMember().getFirstName());
         return cmp;
       }
     });

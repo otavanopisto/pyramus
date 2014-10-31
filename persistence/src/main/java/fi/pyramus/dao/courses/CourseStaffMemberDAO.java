@@ -15,7 +15,7 @@ import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseStaffMember_;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.events.CourseStaffMemberCreatedEvent;
 import fi.pyramus.events.CourseStaffMemberDeletedEvent;
 
@@ -28,14 +28,15 @@ public class CourseStaffMemberDAO extends PyramusEntityDAO<CourseStaffMember> {
   @Inject
   private Event<CourseStaffMemberDeletedEvent> courseStaffMemberDeletedEvent;
 
-  public CourseStaffMember create(Course course, User user, CourseStaffMemberRole role) {
+  public CourseStaffMember create(Course course, StaffMember staffMember, CourseStaffMemberRole role) {
     CourseStaffMember courseStaffMember = new CourseStaffMember();
     courseStaffMember.setCourse(course);
-    courseStaffMember.setUser(user);
+    courseStaffMember.setStaffMember(staffMember);
     courseStaffMember.setRole(role);
     persist(courseStaffMember);
 
-    courseStaffMemberCreatedEvent.fire(new CourseStaffMemberCreatedEvent(courseStaffMember.getId(), courseStaffMember.getCourse().getId(), courseStaffMember.getUser().getId()));
+    courseStaffMemberCreatedEvent.fire(new CourseStaffMemberCreatedEvent(courseStaffMember.getId(), 
+        courseStaffMember.getCourse().getId(), courseStaffMember.getStaffMember().getId()));
 
     return courseStaffMember;
   }
@@ -62,7 +63,7 @@ public class CourseStaffMemberDAO extends PyramusEntityDAO<CourseStaffMember> {
   @Override
   public void delete(CourseStaffMember courseStaffMember) {
     Long courseId = courseStaffMember.getCourse().getId();
-    Long staffMemberId = courseStaffMember.getUser().getId();
+    Long staffMemberId = courseStaffMember.getStaffMember().getId();
     Long id = courseStaffMember.getId();
     
     super.delete(courseStaffMember);

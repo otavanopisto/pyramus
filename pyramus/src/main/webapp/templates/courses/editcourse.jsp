@@ -364,8 +364,8 @@
         <c:forEach var="courseUser" items="${courseUsers}">
           personnelTable.addRow([
             ${courseUser.id},
-            ${courseUser.user.id},
-            '${fn:escapeXml(courseUser.user.lastName)}, ${fn:escapeXml(courseUser.user.firstName)}',
+            ${courseUser.staffMember.id},
+            '${fn:escapeXml(courseUser.staffMember.lastName)}, ${fn:escapeXml(courseUser.staffMember.firstName)}',
             ${courseUser.role.id},
             ''
           ]);

@@ -57,17 +57,17 @@ import fi.pyramus.domainmodel.courses.CourseDescription;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
-import fi.pyramus.domainmodel.courses.CourseState;
-import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
+import fi.pyramus.domainmodel.courses.CourseState;
+import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.courses.GradeCourseResource;
 import fi.pyramus.domainmodel.courses.OtherCost;
 import fi.pyramus.domainmodel.courses.StudentCourseResource;
 import fi.pyramus.domainmodel.resources.Resource;
 import fi.pyramus.domainmodel.resources.ResourceType;
 import fi.pyramus.domainmodel.students.Student;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.persistence.usertypes.MonetaryAmount;
@@ -291,11 +291,11 @@ public class EditCourseJSONRequestController extends JSONRequestController {
       }
     }
     
-    User user = userDAO.findById(requestContext.getLoggedUserId());
+    StaffMember staffMember = userDAO.findById(requestContext.getLoggedUserId());
 
     courseDAO.update(course, name, nameExtension, courseState, subject, courseNumber, beginDate, endDate,
         courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, 
-        description, maxParticipantCount, enrolmentTimeEnd, user);
+        description, maxParticipantCount, enrolmentTimeEnd, staffMember);
     
     // Tags
 
@@ -397,10 +397,10 @@ public class EditCourseJSONRequestController extends JSONRequestController {
       Long courseUserId = requestContext.getLong(colPrefix + ".courseUserId");
       Long userId = requestContext.getLong(colPrefix + ".userId");
       Long roleId = requestContext.getLong(colPrefix + ".roleId");
-      user = userDAO.findById(userId);
+      staffMember = userDAO.findById(userId);
       CourseStaffMemberRole role = courseStaffMemberRoleDAO.findById(roleId);
       if (courseUserId == -1) {
-        courseUserId = courseStaffMemberDAO.create(course, user, role).getId();
+        courseUserId = courseStaffMemberDAO.create(course, staffMember, role).getId();
       } else {
         courseStaffMemberDAO.updateRole(courseStaffMemberDAO.findById(courseUserId), role);
       }

@@ -1,26 +1,17 @@
 package fi.pyramus.domainmodel.courses;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.search.annotations.IndexedEmbedded;
 
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 
 /**
  * Representation staff member within a course. For example, the teachers and tutors of a course. 
  */
 @Entity
 public class CourseStaffMember extends CourseUser {
-  
-  public User getUser() {
-    return user;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
-  }
   
   public CourseStaffMemberRole getRole() {
     return role;
@@ -30,10 +21,17 @@ public class CourseStaffMember extends CourseUser {
     this.role = role;
   }
   
+  public StaffMember getStaffMember() {
+    return staffMember;
+  }
+
+  public void setStaffMember(StaffMember staffMember) {
+    this.staffMember = staffMember;
+  }
+
   @ManyToOne 
-  @JoinColumn(name="pyramusUser")
   @IndexedEmbedded
-  private User user;
+  private StaffMember staffMember;
   
   @ManyToOne
   private CourseStaffMemberRole role;

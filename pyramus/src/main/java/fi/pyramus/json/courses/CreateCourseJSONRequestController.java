@@ -60,6 +60,7 @@ import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.resources.Resource;
 import fi.pyramus.domainmodel.resources.ResourceType;
 import fi.pyramus.domainmodel.students.Student;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
@@ -307,9 +308,9 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       String colPrefix = "personnelTable." + i;
       Long userId = requestContext.getLong(colPrefix + ".userId");
       Long roleId = requestContext.getLong(colPrefix + ".roleId");
-      User user = userDAO.findById(userId);
+      StaffMember staffMember = userDAO.findById(userId);
       CourseStaffMemberRole role = courseStaffMemberRoleDAO.findById(roleId);
-      courseStaffMemberDAO.create(course, user, role);
+      courseStaffMemberDAO.create(course, staffMember, role);
     }
     
     // Course components

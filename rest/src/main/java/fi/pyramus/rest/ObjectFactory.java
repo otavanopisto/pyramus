@@ -559,7 +559,7 @@ public class ObjectFactory {
           @Override
           public Object map(CourseStaffMember entity) {
             Long courseId = entity.getCourse() != null ? entity.getCourse().getId() : null;
-            Long userId = entity.getUser() != null ? entity.getUser().getId() : null;
+            Long userId = entity.getStaffMember() != null ? entity.getStaffMember().getId() : null;
             Long roleId = entity.getRole() != null ? entity.getRole().getId() : null;
             return new fi.pyramus.rest.model.CourseStaffMember(entity.getId(), courseId, userId, roleId);
           }

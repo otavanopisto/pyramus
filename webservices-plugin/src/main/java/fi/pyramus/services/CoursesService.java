@@ -58,6 +58,7 @@ import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.students.Student;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.persistence.search.SearchTimeFilterMode;
@@ -357,16 +358,16 @@ public class CoursesService extends PyramusService {
   }
 
   public CourseUserEntity createCourseUser(@WebParam (name = "courseId") Long courseId, @WebParam (name = "userId") Long userId, @WebParam (name = "courseUserRoleId") Long courseUserRoleId) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     CourseStaffMemberDAO courseStaffMemberDAO = DAOFactory.getInstance().getCourseStaffMemberDAO();
     CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
 
     Course course = courseDAO.findById(courseId);
-    User user = userDAO.findById(userId);
+    StaffMember staffMember = staffMemberDAO.findById(userId);
     CourseStaffMemberRole role = courseStaffMemberRoleDAO.findById(courseUserRoleId);
 
-    CourseStaffMember courseUser = courseStaffMemberDAO.create(course, user, role);
+    CourseStaffMember courseUser = courseStaffMemberDAO.create(course, staffMember, role);
     
     validateEntity(courseUser);
 

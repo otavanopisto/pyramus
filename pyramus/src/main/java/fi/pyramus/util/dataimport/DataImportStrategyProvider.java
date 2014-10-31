@@ -111,7 +111,7 @@ public class DataImportStrategyProvider {
           context.addEntity(Person.class, person);
         }
         
-        person.addStudent(student);
+        person.addUser(student);
 
         // Adress        
         Address address = (Address) context.getEntity(Address.class);

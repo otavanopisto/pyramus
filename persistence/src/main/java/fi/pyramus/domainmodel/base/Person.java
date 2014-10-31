@@ -40,6 +40,7 @@ import org.hibernate.search.annotations.Store;
 
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
+import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.persistence.search.filters.StudentIdFilterFactory;
 
 @Entity
@@ -127,28 +128,32 @@ public class Person {
     this.sex = sex;
   }
 
+  
   public List<Student> getStudents() {
+    List<User> users = getUsers();
+    List<Student> students = new ArrayList<Student>();
+    
+    for (User user : users) {
+      if (user instanceof Student)
+        students.add((Student) user);
+    }
+    
     return students;
   }
 
-  @SuppressWarnings("unused")
-  private void setStudents(List<Student> students) {
-    this.students = students;
-  }
-
-  public void addStudent(Student student) {
-    if (!this.students.contains(student)) {
-      student.setPerson(this);
-      students.add(student);
+  public void addUser(User user) {
+    if (!this.getUsers().contains(user)) {
+      user.setPerson(this);
+      getUsers().add(user);
     } else {
       throw new PersistenceException("Student is already in this Person");
     }
   }
 
-  public void removeStudent(Student student) {
-    if (this.students.contains(student)) {
-      student.setPerson(null);
-      students.remove(student);
+  public void removeUser(User user) {
+    if (this.getUsers().contains(user)) {
+      user.setPerson(null);
+      getUsers().remove(user);
     } else {
       throw new PersistenceException("Student is not in this Person");
     }
@@ -158,8 +163,8 @@ public class Person {
   public Student getLatestStudent() {
     List<Student> students = new ArrayList<Student>();
     
-    if (this.students != null) {
-      for (Student student : this.students) {
+    if (this.getUsers() != null) {
+      for (Student student : this.getStudents()) {
         if (!student.getArchived())
           students.add(student);
       }
@@ -761,6 +766,15 @@ public class Person {
     this.secureInfo = secureInfo;
   }
   
+  private List<User> getUsers() {
+    return users;
+  }
+
+  @SuppressWarnings("unused")
+  private void setUsers(List<User> users) {
+    this.users = users;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE, generator = "Person")
   @TableGenerator(name = "Person", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -795,7 +809,7 @@ public class Person {
   private String basicInfo;
 
   @OneToMany
-  @JoinColumn(name = "person")
+  @JoinColumn(name = "person_id")
   @IndexedEmbedded
-  private List<Student> students = new ArrayList<Student>();
+  private List<User> users = new ArrayList<User>();
 }

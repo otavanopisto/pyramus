@@ -68,8 +68,12 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     staffMember.setRole(role);
     staffMember.setContactInfo(contactInfo);
     staffMember.setPerson(person);
-
+    
     persist(staffMember);
+    
+    person.addUser(staffMember);
+    getEntityManager().persist(person);
+    
     staffMemberCreatedEvent.fire(new StaffMemberCreatedEvent(staffMember.getId()));
 
     return staffMember;
@@ -343,6 +347,10 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   @Override
   public void delete(StaffMember user) {
     Long id = user.getId();
+    
+    if (user.getPerson() != null)
+      user.getPerson().removeUser(user);
+
     super.delete(user);
     
     staffMemberDeletedEvent.fire(new StaffMemberDeletedEvent(id));

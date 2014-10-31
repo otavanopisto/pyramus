@@ -628,7 +628,7 @@
             </jsp:include>
             <div class="genericViewFormDataText">
               <c:forEach var="courseUser" items="${courseUsers}">
-                <div>${courseUser.user.lastName}, ${courseUser.user.firstName} - ${courseUser.role.name}</div>
+                <div>${courseUser.staffMember.lastName}, ${courseUser.staffMember.firstName} - ${courseUser.role.name}</div>
               </c:forEach>
             </div>
           </div>        

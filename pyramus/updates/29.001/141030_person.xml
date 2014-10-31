@@ -4,8 +4,11 @@
   <alterTables>
     <table name="User">
       <addFields>
-      	<field name="person" type="java.lang.Long" nullable="true" unique="false" />
+      	<field name="person_id" type="java.lang.Long" nullable="true" unique="false" />
       </addFields>
+      <addForeignKeys>
+        <key columns="person_id" referencedTable="Person" referencedColumns="id" name="FK_USER_PERSON_ID"/>
+      </addForeignKeys>
     </table>    
 
     <table name="Person">
@@ -33,27 +36,27 @@
   
   <sql>
     update User u, Student s
-    set u.person = s.abstractStudent
+    set u.person_id = s.abstractStudent
     where u.id = s.id; 
   </sql>
 
   <sql>
     update User u, StaffMember sm
-    set u.person = sm.person_id
+    set u.person_id = sm.person_id
     where u.id = sm.id;
   </sql>
 
   <alterTables>
-    <table name="StaffMember">
-      <dropFields>
-        <field name="person_id"/>
-      </dropFields>
-    </table>
-
     <table name="Student">
       <dropForeignKeys>
         <key name="FKF3371A1BFDB61D8B"/>
       </dropForeignKeys>
+    </table>
+
+    <table name="StaffMember">
+      <dropFields>
+        <field name="person_id"/>
+      </dropFields>
     </table>
 
     <table name="Student">

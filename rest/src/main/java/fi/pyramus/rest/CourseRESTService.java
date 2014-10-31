@@ -37,6 +37,7 @@ import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.students.Student;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
@@ -621,8 +622,8 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    User user = userController.findStaffMemberById(entity.getStaffMemberId());
-    if (user == null) {
+    StaffMember staffMember = userController.findStaffMemberById(entity.getStaffMemberId());
+    if (staffMember == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -632,7 +633,7 @@ public class CourseRESTService extends AbstractRESTService {
     }
 
     return Response.status(Status.OK)
-      .entity(objectFactory.createModel(courseController.createStaffMember(course, user, role)))
+      .entity(objectFactory.createModel(courseController.createStaffMember(course, staffMember, role)))
       .build();
   }
 

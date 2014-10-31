@@ -14,7 +14,7 @@ public class CourseUserEntityFactory implements EntityFactory<CourseUserEntity> 
     CourseStaffMember courseUser = (CourseStaffMember) domainObject;
 
     CourseEntity course = EntityFactoryVault.buildFromDomainObject(courseUser.getCourse());
-    UserEntity user = EntityFactoryVault.buildFromDomainObject(courseUser.getUser());
+    UserEntity user = EntityFactoryVault.buildFromDomainObject(courseUser.getStaffMember());
     CourseUserRoleEntity role = EntityFactoryVault.buildFromDomainObject(courseUser.getRole());
 
     return new CourseUserEntity(courseUser.getId(), course, user, role);

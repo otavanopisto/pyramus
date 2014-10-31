@@ -145,7 +145,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
 
     entityManager.persist(student);
 
-    person.addStudent(student);
+    person.addUser(student);
 
     entityManager.persist(person);
     
@@ -424,12 +424,12 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
   public Student updatePerson(Student student, Person person) {
     Person oldPerson = student.getPerson();
     if (oldPerson != null) {
-      oldPerson.removeStudent(student);
+      oldPerson.removeUser(student);
       getEntityManager().persist(oldPerson);
     }
     
     if (person != null) {
-      person.addStudent(student);
+      person.addUser(student);
       getEntityManager().persist(person);
     }
 
