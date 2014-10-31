@@ -8,15 +8,16 @@ import javax.persistence.EntityManager;
 import fi.pyramus.dao.PyramusEntityDAO;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupUser;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 
 @Stateless
 public class StudentGroupUserDAO extends PyramusEntityDAO<StudentGroupUser> {
 
-  public StudentGroupUser create(StudentGroup studentGroup, User user, User updatingUser) {
+  public StudentGroupUser create(StudentGroup studentGroup, StaffMember staffMember, User updatingUser) {
     EntityManager entityManager = getEntityManager();
     StudentGroupUser sgu = new StudentGroupUser();
-    sgu.setUser(user);
+    sgu.setStaffMember(staffMember);
     
     entityManager.persist(sgu);
 
