@@ -305,7 +305,7 @@
     create table CourseStaffMember (
         id bigint not null,
         role_id bigint,
-        pyramusUser bigint,
+        staffMember_id bigint,
         primary key (id)
     );
 
@@ -370,7 +370,7 @@
         date timestamp not null,
         verbalAssessment clob,
         version bigint not null,
-        assessingUser bigint,
+        assessor_id bigint,
         grade bigint,
         primary key (id)
     );
@@ -650,12 +650,12 @@
 
     create table Person (
         id bigint not null,
-        version bigint not null,
         basicInfo clob,
         birthday date,
         secureInfo boolean not null,
         sex varchar(255),
         socialSecurityNumber varchar(255),
+        version bigint not null,
         primary key (id)
     );
 
@@ -938,8 +938,8 @@
     create table StudentGroupUser (
         id bigint not null,
         version bigint not null,
+        staffMember_id bigint,
         studentGroup bigint,
-        user bigint,
         primary key (id)
     );
 
@@ -1064,11 +1064,11 @@
 
     create table User (
         id bigint not null,
-        person bigint,
         firstName varchar(255) not null,
         lastName varchar(255) not null,
         version bigint not null,
         contactInfo bigint,
+        person_id bigint,
         primary key (id)
     );
 
@@ -1408,9 +1408,9 @@
         references CourseStaffMemberRole;
 
     alter table CourseStaffMember 
-        add constraint FK_asks7l7o8ak2icj8u894pbpif 
-        foreign key (pyramusUser) 
-        references User;
+        add constraint FK_8k27sg6wfnv0l898tca5q50qn 
+        foreign key (staffMember_id) 
+        references StaffMember;
 
     alter table CourseStaffMember 
         add constraint FK_cv1oyw61ycq8apx40yp47efri 
@@ -1458,9 +1458,9 @@
         references Course;
 
     alter table Credit 
-        add constraint FK_qeujhkfa3cpfwvb48646agdch 
-        foreign key (assessingUser) 
-        references User;
+        add constraint FK_l49be6ghd77prvi1o4mju4v92 
+        foreign key (assessor_id) 
+        references StaffMember;
 
     alter table Credit 
         add constraint FK_fpl517x4owb3qt2nhit9oy8e7 
@@ -1742,11 +1742,6 @@
         foreign key (settingKey) 
         references SettingKey;
 
-    alter table User 
-        add constraint FK_9ruwo3icv3hk9965x46pafx5b 
-        foreign key (person) 
-        references Person;
-
     alter table StaffMember 
         add constraint FK_g3ikfuvto0x9gk62rqf3nhg49 
         foreign key (id) 
@@ -1853,14 +1848,14 @@
         references StudentGroup;
 
     alter table StudentGroupUser 
+        add constraint FK_382mbqbh4sebp8g1l5xakis7t 
+        foreign key (staffMember_id) 
+        references StaffMember;
+
+    alter table StudentGroupUser 
         add constraint FK_7qmfe5ac665syeij5k3x3vb7o 
         foreign key (studentGroup) 
         references StudentGroup;
-
-    alter table StudentGroupUser 
-        add constraint FK_a0t3yelwll2bbm4m123bs7int 
-        foreign key (user) 
-        references User;
 
     alter table StudentImage 
         add constraint FK_a4fvsbpg1wd2fq74f8xqcwb6s 
@@ -1971,6 +1966,11 @@
         add constraint FK_riou196egia4li7tw37luek46 
         foreign key (contactInfo) 
         references ContactInfo;
+
+    alter table User 
+        add constraint FK_2mt2vvhqq9j7gcyotuy1j29oi 
+        foreign key (person_id) 
+        references Person;
 
     alter table UserVariable 
         add constraint FK_qaiiydgi6aj0x9exdsxf0st2d 

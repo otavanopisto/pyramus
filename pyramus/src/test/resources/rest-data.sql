@@ -37,11 +37,17 @@ values
   (5, 'guest1@bogusmail.com', true, 5, 1, 0, 1),
   (6, 'guest2@bogusmail.com', true, 6, 1, 0, 1);
   
-insert into
-  User (id, firstName, lastName, contactInfo, version)
+insert into 
+  Person (id, version, birthday, sex, socialSecurityNumber, basicInfo, secureInfo)
 values 
-  (1, 'Test Guest', 'User #1', 5, 1),
-  (2, 'Test Guest', 'User #2', 6, 1);
+  (1, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '123411-7890', 'Test staff #1', false),
+  (2, 1, PARSEDATETIME('1 1 1970', 'd M yyyy'), 'MALE', '012345535-8901', 'Test staff #2', false);
+
+insert into
+  User (id, person_id, firstName, lastName, contactInfo, version)
+values 
+  (1, 1, 'Test Guest', 'User #1', 5, 1),
+  (2, 2, 'Test Guest', 'User #2', 6, 1);
 
 insert into
   StaffMember (id, authProvider, externalId, role, title)
@@ -321,14 +327,14 @@ values
 insert into 
   Person (id, version, birthday, sex, socialSecurityNumber, basicInfo, secureInfo)
 values 
-  (1, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'FEMALE', '123456-7890', 'Test student #1', false),
-  (2, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false);
+  (3, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'FEMALE', '123456-7890', 'Test student #1', false),
+  (4, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false);
   
 insert into 
-  User (id, person, firstName, lastName, contactInfo, version)
+  User (id, person_id, firstName, lastName, contactInfo, version)
 values 
-  (3, 1, 'Tanya', 'Test #1', 3, 1),
-  (4, 2, 'David', 'Test #2', 4, 1);
+  (3, 3, 'Tanya', 'Test #1', 3, 1),
+  (4, 4, 'David', 'Test #2', 4, 1);
   
 insert into 
   Student (id, studyProgramme, nickname, previousStudies, studyStartDate, 
@@ -377,7 +383,7 @@ values
   (4, 1000, 1);
 
 insert into 
-  CourseStaffMember (id, pyramusUser, role_id)
+  CourseStaffMember (id, staffMember_id, role_id)
 values 
   (1, 1, 1),
   (2, 2, 2);

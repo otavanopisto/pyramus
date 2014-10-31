@@ -27,7 +27,7 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("id", not(is((Long) null)))
       .body("roleId", is(entity.getRoleId().intValue()))
-      .body("userId", is(entity.getStaffMemberId().intValue()))
+      .body("staffMemberId", is(entity.getStaffMemberId().intValue()))
       .body("courseId", is(entity.getCourseId().intValue()));
     
     int id = response.body().jsonPath().getInt("id");
@@ -48,11 +48,11 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
       .body("id[0]", is(1))
       .body("roleId[0]", is(1))
       .body("courseId[0]", is((int) COURSE_ID)) 
-      .body("userId[0]", is(1))    
+      .body("staffMemberId[0]", is(1))    
       .body("id[1]", is(2))
       .body("roleId[1]", is(2))
       .body("courseId[1]", is((int) COURSE_ID)) 
-      .body("userId[1]", is(2));
+      .body("staffMemberId[1]", is(2));
   }
   
   @Test
@@ -64,7 +64,7 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
       .body("id", is(1))
       .body("roleId", is(1))
       .body("courseId", is((int) COURSE_ID)) 
-      .body("userId", is(1));   
+      .body("staffMemberId", is(1));   
   }
   
   @Test
@@ -82,7 +82,7 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
       .body("id", not(is((Long) null)))
       .body("roleId", is(1))
       .body("courseId", is((int) COURSE_ID)) 
-      .body("userId", is(1));   
+      .body("staffMemberId", is(1));   
     
     try {
       id = response.body().jsonPath().getLong("id");
@@ -120,7 +120,7 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
       .body("id", not(is((Long) null)))
       .body("roleId", is(1))
       .body("courseId", is((int) COURSE_ID)) 
-      .body("userId", is(1));  
+      .body("staffMemberId", is(1));  
     
     Long id = response.body().jsonPath().getLong("id");
 
