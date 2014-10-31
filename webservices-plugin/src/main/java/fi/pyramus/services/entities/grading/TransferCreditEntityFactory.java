@@ -13,7 +13,7 @@ public class TransferCreditEntityFactory implements EntityFactory<TransferCredit
     
     TransferCredit transferCredit = (TransferCredit) domainObject;
     GradeEntity grade = EntityFactoryVault.buildFromDomainObject(transferCredit.getGrade());
-    UserEntity assessingUser = EntityFactoryVault.buildFromDomainObject(transferCredit.getAssessingUser());
+    UserEntity assessingUser = EntityFactoryVault.buildFromDomainObject(transferCredit.getAssessor());
     
     return new TransferCreditEntity(transferCredit.getId(), transferCredit.getStudent().getId(), transferCredit.getDate(), 
         grade, transferCredit.getVerbalAssessment(), assessingUser, transferCredit.getArchived(),

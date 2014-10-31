@@ -14,7 +14,7 @@ import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.grading.CourseAssessment;
 import fi.pyramus.domainmodel.grading.Grade;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
@@ -53,7 +53,7 @@ public class SaveCourseAssessmentsJSONRequestController extends JSONRequestContr
    * @param requestContext The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     CourseParticipationTypeDAO participationTypeDAO = DAOFactory.getInstance().getCourseParticipationTypeDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
@@ -72,7 +72,7 @@ public class SaveCourseAssessmentsJSONRequestController extends JSONRequestContr
 
       if (courseStudent != null) {
         Long assessingUserId = requestContext.getLong(colPrefix + ".assessingUserId");
-        User assessingUser = userDAO.findById(assessingUserId);
+        StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
         Long gradeId = requestContext.getLong(colPrefix + ".gradeId");
         Grade grade = gradeId == null ? null : gradeDAO.findById(gradeId);
         Date assessmentDate = requestContext.getDate(colPrefix + ".assessmentDate");

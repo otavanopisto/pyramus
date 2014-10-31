@@ -124,8 +124,8 @@
           
             <c:choose>
               <c:when test="${assessment != null}">
-                <c:set var="assessingUserId">${assessment.assessingUser.id}</c:set>
-                <c:set var="assessingUserName">${fn:escapeXml(assessment.assessingUser.fullName)}</c:set>
+                <c:set var="assessingUserId">${assessment.assessor.id}</c:set>
+                <c:set var="assessingUserName">${fn:escapeXml(assessment.assessor.fullName)}</c:set>
                 <c:set var="gradeId">${assessment.grade.id}</c:set>
                 <c:set var="gradeDate">${assessment.date.time}</c:set>
                 <c:set var="verbalAssessment">${assessment.verbalAssessment}</c:set>

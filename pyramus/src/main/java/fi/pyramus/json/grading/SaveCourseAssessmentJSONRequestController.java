@@ -11,14 +11,14 @@ import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.grading.CourseAssessment;
 import fi.pyramus.domainmodel.grading.Grade;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
 
 public class SaveCourseAssessmentJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext jsonRequestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
@@ -30,7 +30,7 @@ public class SaveCourseAssessmentJSONRequestController extends JSONRequestContro
     String verbalAssessment = jsonRequestContext.getString("verbalAssessment");
     
     CourseStudent courseStudent = courseStudentDAO.findById(courseStudentId);
-    User assessingUser = userDAO.findById(assessingUserId);
+    StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
     Grade grade = gradeId == null ? null : gradeDAO.findById(gradeId);
 
     CourseAssessment assessment = courseAssessmentDAO.findByCourseStudent(courseStudent);

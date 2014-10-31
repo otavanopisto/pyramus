@@ -897,7 +897,7 @@
               '${fn:escapeXml(studentTransferCredit.courseLength.unit.name)}',
               '${fn:escapeXml(studentTransferCredit.grade.name)}',
               '${fn:escapeXml(studentTransferCredit.grade.gradingScale.name)}',
-              '${fn:escapeXml(studentTransferCredit.assessingUser.fullName)}']);
+              '${fn:escapeXml(studentTransferCredit.assessor.fullName)}']);
           </c:forEach>
           transferCreditsTable.addRows(rows);
           if (transferCreditsTable.getRowCount() > 0) {
@@ -961,7 +961,7 @@
               '${fn:escapeXml(studentCourseAssessment.courseStudent.course.courseLength.unit.name)}',
               '${fn:escapeXml(studentCourseAssessment.grade.name)}',
               '${fn:escapeXml(studentCourseAssessment.grade.gradingScale.name)}',
-              '${fn:escapeXml(studentCourseAssessment.assessingUser.fullName)}',
+              '${fn:escapeXml(studentCourseAssessment.assessor.fullName)}',
               '${studentCourseAssessment.courseStudent.id}',
               '']);
           </c:forEach>

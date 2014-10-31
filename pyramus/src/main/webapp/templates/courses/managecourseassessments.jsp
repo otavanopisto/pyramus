@@ -438,7 +438,7 @@
             "${studyProgrammeName}", 
             '${assessments[courseStudent.id].grade.id}',
             '${courseStudent.participationType.id}',
-            '${assessments[courseStudent.id].assessingUser.id}',
+            '${assessments[courseStudent.id].assessor.id}',
             '${assessments[courseStudent.id].date.time}',
             '${verbalAssessment}',
             '',
@@ -448,7 +448,7 @@
             0,
             '',
             0]);
-          IxTableControllers.getController('autoCompleteSelect').setDisplayValue(studentsTable.getCellEditor(rowIndex, userColumnIndex), '${fn:escapeXml(assessments[courseStudent.id].assessingUser.fullName)}');
+          IxTableControllers.getController('autoCompleteSelect').setDisplayValue(studentsTable.getCellEditor(rowIndex, userColumnIndex), '${fn:escapeXml(assessments[courseStudent.id].assessor.fullName)}');
         </c:forEach>
         studentsTable.reattachToDom();
         if (studentsTable.getRowCount() > 0) {

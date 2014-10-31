@@ -38,7 +38,7 @@ import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.grading.TransferCredit;
 import fi.pyramus.domainmodel.students.Student;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.services.entities.EntityFactoryVault;
 import fi.pyramus.services.entities.grading.CourseAssessmentEntity;
 import fi.pyramus.services.entities.grading.CourseAssessmentRequestEntity;
@@ -109,12 +109,12 @@ public class GradingService extends PyramusService {
   }
   
   public CourseAssessmentEntity createCourseAssessment(@WebParam (name = "courseStudentId") Long courseStudentId, @WebParam (name = "assessingUserId") Long assessingUserId, @WebParam (name = "gradeId") Long gradeId, @WebParam (name = "date") Date date, @WebParam (name = "verbalAssessment") String verbalAssessment) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
 
-    User assessingUser = userDAO.findById(assessingUserId);
+    StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
     Grade grade = gradeDAO.findById(gradeId);
     
     CourseStudent courseStudent = courseStudentDAO.findById(courseStudentId);
@@ -127,11 +127,11 @@ public class GradingService extends PyramusService {
   }
   
   public CourseAssessmentEntity updateCourseAssessment(@WebParam (name = "courseAssessmentId") Long courseAssessmentId, @WebParam (name = "assessingUserId") Long assessingUserId, @WebParam (name = "gradeId") Long gradeId, @WebParam (name = "date") Date date, @WebParam (name = "verbalAssessment") String verbalAssessment) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
 
-    User assessingUser = userDAO.findById(assessingUserId);
+    StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
     Grade grade = gradeDAO.findById(gradeId);
     CourseAssessment courseAssessment = courseAssessmentDAO.findById(courseAssessmentId);
     
@@ -153,7 +153,7 @@ public class GradingService extends PyramusService {
   }
   
   public TransferCreditEntity createTransferCredit(@WebParam (name = "courseName") String courseName, @WebParam (name = "courseNumber") Integer courseNumber, @WebParam (name = "courseLength") Double courseLength, @WebParam (name = "courseLengthUnitId") Long courseLengthUnitId, @WebParam (name = "schoolId") Long schoolId, @WebParam (name = "subjectId") Long subjectId, @WebParam (name = "optionality") String optionality, @WebParam (name = "studentId") Long studentId, @WebParam (name = "assessingUserId") Long assessingUserId, @WebParam (name = "gradeId") Long gradeId, @WebParam (name = "date") Date date, @WebParam (name = "verbalAssessment") String verbalAssessment) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
@@ -165,7 +165,7 @@ public class GradingService extends PyramusService {
     School school = schoolDAO.findById(schoolId);
     Subject subject = subjectDAO.findById(subjectId);
     Student student = studentDAO.findById(studentId);
-    User assessingUser = userDAO.findById(assessingUserId);
+    StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
     Grade grade = gradeDAO.findById(gradeId);
     CourseOptionality courseOptionality = null;
     if (!StringUtils.isBlank(optionality))

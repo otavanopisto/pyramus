@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="Credit">
+      <addFields>
+        <field name="assessor_id" type="java.lang.Long" nullable="true" unique="false" />
+      </addFields>
+      <addForeignKeys>
+        <key columns="assessor_id" referencedTable="StaffMember" referencedColumns="id" name="FK_CREDIT_ASSESSOR_ID"/>
+      </addForeignKeys>
+    </table>    
+  </alterTables>
+  
+  <sql>
+    update Credit
+    set assessor_id = assessingUser;
+  </sql>
+
+  <alterTables>
+    <table name="Credit">
+      <dropForeignKeys>
+        <key name="FK78CA9719D709AF89"/>
+      </dropForeignKeys>
+    </table>
+
+    <table name="Credit">
+      <dropFields>
+        <field name="assessingUser"/>
+      </dropFields>
+    </table>
+  </alterTables>
+
+</update>

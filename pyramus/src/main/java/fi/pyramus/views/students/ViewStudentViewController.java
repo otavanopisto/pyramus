@@ -394,7 +394,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
         
         obj.put("gradeName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getName() : null);
         obj.put("gradingScaleName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getGradingScale().getName() : null);
-        obj.put("assessingUserName", courseAssessment.getAssessingUser().getFullName());
+        obj.put("assessingUserName", courseAssessment.getAssessor().getFullName());
         
         arr.add(obj);
       }
@@ -445,7 +445,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
         
         obj.put("gradeName", transferCredit.getGrade() != null ? transferCredit.getGrade().getName() : null);
         obj.put("gradingScaleName", transferCredit.getGrade() != null ? transferCredit.getGrade().getGradingScale().getName() : null);
-        obj.put("assessingUserName", transferCredit.getAssessingUser().getFullName());
+        obj.put("assessingUserName", transferCredit.getAssessor().getFullName());
         
         arr.add(obj);
       }
