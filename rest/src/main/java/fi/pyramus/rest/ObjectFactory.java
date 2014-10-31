@@ -601,7 +601,7 @@ public class ObjectFactory {
           UserRole role = UserRole.valueOf(entity.getRole().name());
           String additionalContactInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
           
-          return new fi.pyramus.rest.model.User(entity.getId(), additionalContactInfo, 
+          return new fi.pyramus.rest.model.StaffMember(entity.getId(), additionalContactInfo, 
               entity.getFirstName(), entity.getLastName(), entity.getTitle(), role, tags, variables);
         }
       }

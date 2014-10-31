@@ -612,7 +612,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build(); 
     }
     
-    if (entity.getUserId() == null) {
+    if (entity.getStaffMemberId() == null) {
       return Response.status(Status.BAD_REQUEST).build(); 
     }
     
@@ -621,7 +621,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    User user = userController.findStaffMemberById(entity.getUserId());
+    User user = userController.findStaffMemberById(entity.getStaffMemberId());
     if (user == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
@@ -683,7 +683,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build(); 
     }
     
-    if (entity.getUserId() == null) {
+    if (entity.getStaffMemberId() == null) {
       return Response.status(Status.BAD_REQUEST).build(); 
     }
     
