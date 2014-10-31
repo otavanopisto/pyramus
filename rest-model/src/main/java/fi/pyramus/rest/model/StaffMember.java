@@ -3,13 +3,13 @@ package fi.pyramus.rest.model;
 import java.util.List;
 import java.util.Map;
 
-public class User {
+public class StaffMember {
 
-  public User() {
+  public StaffMember() {
     super();
   }
 
-  public User(Long id, String additionalContactInfo, String firstName, String lastName, String title, UserRole role, List<String> tags, Map<String, String> variables) {
+  public StaffMember(Long id, String additionalContactInfo, String firstName, String lastName, String title, UserRole role, List<String> tags, Map<String, String> variables) {
     super();
     this.id = id;
     this.additionalContactInfo = additionalContactInfo;

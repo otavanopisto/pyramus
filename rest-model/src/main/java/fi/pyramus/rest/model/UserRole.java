@@ -10,8 +10,6 @@ public enum UserRole {
 
   MANAGER,
 
-  ADMINISTRATOR,
-
-  STUDENT
+  ADMINISTRATOR
   
 }
