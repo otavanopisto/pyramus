@@ -137,19 +137,23 @@ public class ObjectFactory {
             }
 
             Double length = entity.getCourseLength() != null ? entity.getCourseLength().getUnits() : null;
-            Long lengthUnitId = entity.getCourseLength() != null ? entity.getCourseLength().getUnit().getId() : null;
+            Long lengthUnitId = entity.getCourseLength() != null && entity.getCourseLength().getUnit() != null ? entity.getCourseLength().getUnit().getId() : null;
             DateTime created = toDateTime(entity.getCreated() );
             DateTime lastModified = toDateTime(entity.getLastModified() );
             DateTime beginDate = toDateTime(entity.getBeginDate() );
             DateTime endDate = toDateTime(entity.getEndDate() );
             DateTime enrolmentTimeEnd = toDateTime( entity.getEnrolmentTimeEnd() );
+            Long creatorId = entity.getCreator() != null ? entity.getCreator().getId() : null;
+            Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
+            Long moduleId = entity.getModule() != null ? entity.getModule().getId() : null;
+            Long stateId = entity.getState() != null ? entity.getState().getId() : null;
             
             return new fi.pyramus.rest.model.Course(entity.getId(), entity.getName(), created, 
                 lastModified, entity.getDescription(), entity.getArchived(), entity.getCourseNumber(), 
                 entity.getMaxParticipantCount(), beginDate, endDate, entity.getNameExtension(), 
                 entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingDays(), 
-                entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, entity.getCreator().getId(), 
-                entity.getLastModifier().getId(), subjectId, length, lengthUnitId, entity.getModule().getId(), entity.getState().getId(), tags);
+                entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, creatorId, 
+                lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, tags);
           }
         }, 
         
@@ -221,7 +225,7 @@ public class ObjectFactory {
             Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
             Long subjectId = entity.getSubject() != null ? entity.getSubject().getId() : null;
             Double length = entity.getCourseLength() != null ? entity.getCourseLength().getUnits() : null; 
-            Long lenghtUnitId = entity.getCourseLength() != null ? entity.getCourseLength().getUnit().getId() : null; 
+            Long lenghtUnitId = entity.getCourseLength() != null && entity.getCourseLength().getUnit() != null ? entity.getCourseLength().getUnit().getId() : null; 
             List<String> tags = new ArrayList<>();
             
             Set<Tag> moduleTags = entity.getTags();
@@ -240,7 +244,7 @@ public class ObjectFactory {
         new Mapper<ModuleComponent>() {
           @Override
           public Object map(ModuleComponent entity) {
-            Long lengthUnitId = entity.getLength() != null ? entity.getLength().getUnit().getId() : null;
+            Long lengthUnitId = entity.getLength() != null && entity.getLength().getUnit() != null ? entity.getLength().getUnit().getId() : null;
             Double length = entity.getLength() != null ? entity.getLength().getUnits() : null;
             return new fi.pyramus.rest.model.ModuleComponent(entity.getId(), entity.getName(), entity.getDescription(), length, lengthUnitId, entity.getArchived());
           }
@@ -250,7 +254,7 @@ public class ObjectFactory {
           @Override
           public Object map(Project entity) {
             Double optionalStudiesLength = entity.getOptionalStudiesLength() != null ? entity.getOptionalStudiesLength().getUnits() : null;
-            Long optionalStudiesLengthUnitId = entity.getOptionalStudiesLength() != null ? entity.getOptionalStudiesLength().getUnit().getId() : null;
+            Long optionalStudiesLengthUnitId = entity.getOptionalStudiesLength() != null && entity.getOptionalStudiesLength().getUnit() != null ? entity.getOptionalStudiesLength().getUnit().getId() : null;
             Long creatorId = entity.getCreator().getId();
             Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
             List<String> tags = new ArrayList<>();
