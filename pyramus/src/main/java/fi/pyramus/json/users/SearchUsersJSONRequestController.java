@@ -20,7 +20,7 @@ import fi.pyramus.persistence.search.SearchResult;
 public class SearchUsersJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     Integer resultsPerPage = requestContext.getInteger("maxResults");
     if (resultsPerPage == null) {

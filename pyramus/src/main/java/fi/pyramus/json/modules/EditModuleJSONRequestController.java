@@ -49,7 +49,7 @@ import fi.pyramus.framework.UserRole;
 public class EditModuleJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     CourseDescriptionDAO courseDescriptionDAO = DAOFactory.getInstance().getCourseDescriptionDAO();
     CourseDescriptionCategoryDAO descriptionCategoryDAO = DAOFactory.getInstance().getCourseDescriptionCategoryDAO();

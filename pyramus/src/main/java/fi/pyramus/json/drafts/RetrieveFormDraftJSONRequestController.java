@@ -12,7 +12,7 @@ import fi.pyramus.framework.UserRole;
 public class RetrieveFormDraftJSONRequestController extends JSONRequestController {
   
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     DraftDAO draftDAO = DAOFactory.getInstance().getDraftDAO();
 
     String url = requestContext.getRequest().getHeader("Referer");

@@ -45,7 +45,7 @@ public class EditUserViewController extends PyramusViewController implements Bre
    */
   public void process(PageRequestContext pageRequestContext) {
     // TODO loggedUserRole vs. user role
-    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     UserVariableKeyDAO variableKeyDAO = DAOFactory.getInstance().getUserVariableKeyDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();

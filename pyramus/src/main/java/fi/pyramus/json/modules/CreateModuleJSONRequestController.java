@@ -51,7 +51,7 @@ public class CreateModuleJSONRequestController extends JSONRequestController {
    * @param requestContext The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     CourseDescriptionDAO descriptionDAO = DAOFactory.getInstance().getCourseDescriptionDAO();
     CourseDescriptionCategoryDAO descriptionCategoryDAO = DAOFactory.getInstance().getCourseDescriptionCategoryDAO();

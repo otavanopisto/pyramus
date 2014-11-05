@@ -21,7 +21,7 @@ public class CreateStudentProjectViewController extends PyramusViewController im
    * @param pageRequestContext Page request context
    */
   public void process(PageRequestContext pageRequestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     pageRequestContext.getRequest().setAttribute("users", userDAO.listAll());
     pageRequestContext.setIncludeJSP("/templates/projects/createstudentproject.jsp");

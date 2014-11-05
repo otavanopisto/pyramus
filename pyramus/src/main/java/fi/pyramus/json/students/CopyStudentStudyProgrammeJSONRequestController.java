@@ -48,7 +48,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     CreditLinkDAO creditLinkDAO = DAOFactory.getInstance().getCreditLinkDAO();
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     Long studentId = requestContext.getLong("studentId");
     Student oldStudent = studentDAO.findById(studentId);

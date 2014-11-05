@@ -21,7 +21,7 @@ import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.persistence.search.SearchResult;
-import fi.pyramus.persistence.search.StudentFilter;
+import fi.pyramus.persistence.search.PersonFilter;
 
 /**
  * Request handler for searching students.
@@ -48,7 +48,7 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
     SearchResult<Person> searchResult = null;
     
     String query = jsonRequestContext.getRequest().getParameter("query");
-    StudentFilter studentFilter = (StudentFilter) jsonRequestContext.getEnum("studentFilter", StudentFilter.class);
+    PersonFilter personFilter = (PersonFilter) jsonRequestContext.getEnum("studentFilter", PersonFilter.class);
     StudyProgramme studyProgramme = null;
     StudentGroup studentGroup = null;
     
@@ -60,7 +60,7 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
     if (studentGroupId.intValue() != -1)
       studentGroup = studentGroupDAO.findById(studentGroupId);
 
-    searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, studentFilter, studyProgramme, studentGroup);
+    searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, personFilter, studyProgramme, studentGroup);
     
     List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
     List<Person> persons = searchResult.getResults();

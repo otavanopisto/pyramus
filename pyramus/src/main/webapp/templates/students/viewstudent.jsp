@@ -1419,7 +1419,7 @@
         </c:forEach>
         
         <c:if test="${!empty staffMember}">
-          <a class="tabLabel" href="#staffMember"><fmt:message key="students.viewStudent.staffMemberTab" /></a>
+          <a class="tabLabel tabLabelUserId" href="#staffMember"><fmt:message key="students.viewStudent.staffMemberTab" /></a>
         </c:if>
       </div>
 

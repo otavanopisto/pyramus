@@ -56,7 +56,7 @@ public class ChangeLogJPAEventsListener implements MessageListener {
   
   private void handleCreate(MapMessage mapMessage) throws JMSException, ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InvocationTargetException  {
     SystemDAO systemDAO = DAOFactory.getInstance().getSystemDAO();
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ChangeLogEntryDAO logEntryDAO = DAOFactory.getInstance().getChangeLogEntryDAO();
     ChangeLogEntryEntityDAO entryEntityDAO = DAOFactory.getInstance().getChangeLogEntryEntityDAO();
     ChangeLogEntryEntityPropertyDAO entryEntityPropertyDAO = DAOFactory.getInstance().getChangeLogEntryEntityPropertyDAO();
@@ -116,7 +116,7 @@ public class ChangeLogJPAEventsListener implements MessageListener {
   }
   
   private void handleDelete(MapMessage mapMessage) throws JMSException  {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ChangeLogEntryDAO logEntryDAO = DAOFactory.getInstance().getChangeLogEntryDAO();
     ChangeLogEntryEntityDAO entryEntityDAO = DAOFactory.getInstance().getChangeLogEntryEntityDAO();
     
@@ -139,7 +139,7 @@ public class ChangeLogJPAEventsListener implements MessageListener {
   
   private void handleUpdate(MapMessage mapMessage) throws JMSException, ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InvocationTargetException  {
     SystemDAO systemDAO = DAOFactory.getInstance().getSystemDAO();
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ChangeLogEntryDAO logEntryDAO = DAOFactory.getInstance().getChangeLogEntryDAO();
     ChangeLogEntryEntityDAO entryEntityDAO = DAOFactory.getInstance().getChangeLogEntryEntityDAO();
     ChangeLogEntryEntityPropertyDAO entryEntityPropertyDAO = DAOFactory.getInstance().getChangeLogEntryEntityPropertyDAO();

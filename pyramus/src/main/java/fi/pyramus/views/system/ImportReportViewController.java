@@ -88,7 +88,7 @@ public class ImportReportViewController extends PyramusFormViewController {
   @Override
   public void processSend(PageRequestContext requestContext) {
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
     Long existingReportId = requestContext.getLong("report");
     String name = requestContext.getString("name");

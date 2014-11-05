@@ -15,7 +15,7 @@ public class ArchiveStudentGroupJSONRequestController extends JSONRequestControl
   
   public void process(JSONRequestContext requestContext) {
     StudentGroupDAO studentDAO = DAOFactory.getInstance().getStudentGroupDAO();
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
     Long studentGroupId = NumberUtils.createLong(requestContext.getRequest().getParameter("studentGroupId"));
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());

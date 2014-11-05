@@ -28,7 +28,7 @@ import fi.pyramus.framework.UserRole;
 public class DebugDataViewController extends PyramusViewController {
 
   public void process(PageRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();

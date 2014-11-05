@@ -85,7 +85,7 @@ public class CoursesService extends PyramusService {
       @WebParam (name = "courseNumber") Integer courseNumber, @WebParam (name = "beginDate") Date beginDate, @WebParam (name = "endDate") Date endDate, @WebParam (name = "courseLength") Double courseLength, @WebParam (name = "courseLengthTimeUnitId") Long courseLengthTimeUnitId,
       @WebParam (name = "description") String description, @WebParam (name = "creatingUserId") Long creatingUserId) {
 
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     CourseComponentDAO componentDAO = DAOFactory.getInstance().getCourseComponentDAO();
@@ -174,7 +174,7 @@ public class CoursesService extends PyramusService {
       @WebParam (name = "beginDate") Date beginDate, @WebParam (name = "endDate") Date endDate, @WebParam (name = "courseLength") Double courseLength, @WebParam (name = "courseLengthTimeUnitId") Long courseLengthTimeUnitId, @WebParam (name = "description") String description,
       @WebParam (name = "modifyingUserId") Long modifyingUserId) {
 
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
@@ -358,7 +358,7 @@ public class CoursesService extends PyramusService {
   }
 
   public CourseUserEntity createCourseUser(@WebParam (name = "courseId") Long courseId, @WebParam (name = "userId") Long userId, @WebParam (name = "courseUserRoleId") Long courseUserRoleId) {
-    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     CourseStaffMemberDAO courseStaffMemberDAO = DAOFactory.getInstance().getCourseStaffMemberDAO();
     CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();

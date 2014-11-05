@@ -212,7 +212,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
    * @param binaryRequestContext The context of the binary request.
    */
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();

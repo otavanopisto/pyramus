@@ -20,7 +20,7 @@ public abstract class BinaryRequestController implements fi.internetix.smvc.cont
       else {
         Long loggedUserId = requestContext.getLoggedUserId();
         
-        StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffDAO();
+        StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
         StaffMember user = staffDAO.findById(loggedUserId);
         
         Role role = user.getRole();

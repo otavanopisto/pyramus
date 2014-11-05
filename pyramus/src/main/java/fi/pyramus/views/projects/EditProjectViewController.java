@@ -33,7 +33,7 @@ public class EditProjectViewController extends PyramusViewController implements 
    * @param pageRequestContext Page request context
    */
   public void process(PageRequestContext pageRequestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ProjectDAO projectDAO = DAOFactory.getInstance().getProjectDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
 

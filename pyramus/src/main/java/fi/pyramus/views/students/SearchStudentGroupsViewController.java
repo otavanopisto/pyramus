@@ -18,7 +18,7 @@ import fi.pyramus.framework.UserRole;
 public class SearchStudentGroupsViewController extends PyramusViewController implements Breadcrumbable {
 
   public void process(PageRequestContext pageRequestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
     List<StaffMember> users = userDAO.listAll();
     

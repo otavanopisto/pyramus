@@ -32,7 +32,7 @@ import fi.pyramus.framework.UserRole;
 public class CreateStudentProjectJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext jsonRequestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     ProjectDAO projectDAO = DAOFactory.getInstance().getProjectDAO();
     StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();

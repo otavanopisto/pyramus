@@ -26,7 +26,7 @@ public class SaveTransferCreditsJSONRequestController extends JSONRequestControl
 
   public void process(JSONRequestContext jsonRequestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();

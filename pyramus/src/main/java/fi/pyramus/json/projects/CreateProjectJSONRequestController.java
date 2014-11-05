@@ -28,7 +28,7 @@ import fi.pyramus.framework.UserRole;
 public class CreateProjectJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext jsonRequestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     ProjectDAO projectDAO = DAOFactory.getInstance().getProjectDAO();
     ProjectModuleDAO projectModuleDAO = DAOFactory.getInstance().getProjectModuleDAO();

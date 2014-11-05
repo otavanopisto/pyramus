@@ -29,18 +29,18 @@ import fi.pyramus.services.entities.users.UserEntity;
 public class UsersService extends PyramusService {
 
   public UserEntity[] listUsers() {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     return (UserEntity[]) EntityFactoryVault.buildFromDomainObjects(userDAO.listAll());
   }
 
   public UserEntity[] listUsersByUserVariable(@WebParam(name = "key") String key, @WebParam(name = "value") String value) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     return (UserEntity[]) EntityFactoryVault.buildFromDomainObjects(userDAO.listByUserVariable(key, value));
   }
 
   public UserEntity createUser(@WebParam(name = "firstName") String firstName, @WebParam(name = "lastName") String lastName,
       @WebParam(name = "externalId") String externalId, @WebParam(name = "authProvider") String authProvider, @WebParam(name = "role") String role) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
     // TODO: should not create if user exists
@@ -53,7 +53,7 @@ public class UsersService extends PyramusService {
 
   public void updateUser(@WebParam(name = "userId") Long userId, @WebParam(name = "firstName") String firstName, @WebParam(name = "lastName") String lastName,
       @WebParam(name = "role") String role) {
-    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StaffMember user = staffDAO.findById(userId);
     Role userRole = EnumType.valueOf(Role.class, role);
     staffDAO.update(user, firstName, lastName, userRole);
@@ -61,22 +61,22 @@ public class UsersService extends PyramusService {
   }
 
   public UserEntity getUserById(@WebParam(name = "userId") Long userId) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     return EntityFactoryVault.buildFromDomainObject(userDAO.findById(userId));
   }
 
   public UserEntity getUserByExternalId(@WebParam(name = "externalId") String externalId, @WebParam(name = "authProvider") String authProvider) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     return EntityFactoryVault.buildFromDomainObject(userDAO.findByExternalIdAndAuthProvider(externalId, authProvider));
   }
 
   public UserEntity getUserByEmail(@WebParam(name = "email") String email) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     return EntityFactoryVault.buildFromDomainObject(userDAO.findByEmail(email));
   }
 
   public void addUserEmail(@WebParam(name = "userId") Long userId, @WebParam(name = "address") String address) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     StaffMember user = userDAO.findById(userId);
@@ -91,7 +91,7 @@ public class UsersService extends PyramusService {
   }
 
   public void removeUserEmail(@WebParam(name = "userId") Long userId, @WebParam(name = "address") String address) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     fi.pyramus.domainmodel.users.User user = userDAO.findById(userId);
     for (Email email : user.getContactInfo().getEmails()) {
@@ -104,7 +104,7 @@ public class UsersService extends PyramusService {
 
   public void updateUserEmail(@WebParam(name = "userId") Long userId, @WebParam(name = "fromAddress") String fromAddress,
       @WebParam(name = "toAddress") String toAddress) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     fi.pyramus.domainmodel.users.User user = userDAO.findById(userId);
     for (Email email : user.getContactInfo().getEmails()) {
@@ -117,13 +117,13 @@ public class UsersService extends PyramusService {
   }
 
   public String getUserVariable(@WebParam(name = "userId") Long userId, @WebParam(name = "key") String key) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     return userVariableDAO.findByUserAndKey(userDAO.findById(userId), key);
   }
 
   public void setUserVariable(@WebParam(name = "userId") Long userId, @WebParam(name = "key") String key, @WebParam(name = "value") String value) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     userVariableDAO.setUserVariable(userDAO.findById(userId), key, value);
   }

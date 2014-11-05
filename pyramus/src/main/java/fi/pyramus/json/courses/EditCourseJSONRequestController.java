@@ -221,7 +221,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
    * @param requestContext The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     ResourceDAO resourceDAO = DAOFactory.getInstance().getResourceDAO();

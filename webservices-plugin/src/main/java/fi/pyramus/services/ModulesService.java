@@ -39,7 +39,7 @@ public class ModulesService extends PyramusService {
       @WebParam(name = "courseNumber") Integer courseNumber, @WebParam(name = "moduleLength") Double moduleLength,
       @WebParam(name = "moduleLengthTimeUnitId") Long moduleLengthTimeUnitId, @WebParam(name = "description") String description,
       @WebParam(name = "creatingUserId") Long creatingUserId) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
@@ -59,7 +59,7 @@ public class ModulesService extends PyramusService {
       @WebParam(name = "courseNumber") Integer courseNumber, @WebParam(name = "length") Double length,
       @WebParam(name = "lengthTimeUnitId") Long lengthTimeUnitId, @WebParam(name = "description") String description,
       @WebParam(name = "modifyingUserId") Long modifyingUserId) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();

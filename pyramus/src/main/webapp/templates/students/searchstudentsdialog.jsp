@@ -279,9 +279,9 @@
 		            <jsp:param name="helpLocale" value="students.searchStudentsDialog.studentFilterHelp"/>
 		          </jsp:include>                                     
 		          <select name="studentFilter" id="searchStudentsDialogStudentFilter">
-		            <option value="SKIP_INACTIVE"><fmt:message key="students.searchStudentsDialog.studentFilterSkipInactiveOption"/></option>
-		            <option value="INCLUDE_INACTIVE"><fmt:message key="students.searchStudentsDialog.studentFilterIncludeInactiveOption"/></option>
-		            <option value="ONLY_INACTIVE"><fmt:message key="students.searchStudentsDialog.studentFilterOnlyInactiveOption"/></option>
+		            <option value="ACTIVE_STUDENTS"><fmt:message key="students.searchStudentsDialog.studentFilterSkipInactiveOption"/></option>
+		            <option value="ALL"><fmt:message key="students.searchStudentsDialog.studentFilterIncludeInactiveOption"/></option>
+		            <option value="INACTIVE_STUDENTS"><fmt:message key="students.searchStudentsDialog.studentFilterOnlyInactiveOption"/></option>
 		          </select>
 		        </div>
   

@@ -69,7 +69,7 @@ public class DataImportContext {
   }
 
   public User getLoggedUser() {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     this.loggedUser = userDAO.findById(this.loggedUserId); 
     return loggedUser;
   }

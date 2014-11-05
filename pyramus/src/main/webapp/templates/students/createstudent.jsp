@@ -49,7 +49,7 @@
                 <jsp:param name="titleLocale" value="students.createStudent.birthdayTitle"/>
                 <jsp:param name="helpLocale" value="students.createStudent.birthdayHelp"/>
               </jsp:include>   
-              <input type="text" name="birthday" class="ixDateField"/>
+              <input type="text" name="birthday" class="ixDateField" value="${person.birthday.time}"/>
             </div>
       
             <div class="genericFormSection">  
@@ -57,7 +57,7 @@
                 <jsp:param name="titleLocale" value="students.createStudent.ssecIdTitle"/>
                 <jsp:param name="helpLocale" value="students.createStudent.ssecIdHelp"/>
               </jsp:include>   
-              <input type="text" name="ssecId" size="15" class="mask" ix:validatemask="^([0-9]{6})[-A]([0-9A-Z]{4})$">
+              <input type="text" name="ssecId" size="15" class="mask" ix:validatemask="^([0-9]{6})[-A]([0-9A-Z]{4})$" value="${person.socialSecurityNumber}">
             </div>
       
             <div class="genericFormSection">  
@@ -66,8 +66,8 @@
                 <jsp:param name="helpLocale" value="students.createStudent.genderHelp"/>
               </jsp:include>                             
               <select name="gender">
-                <option value="male"><fmt:message key="students.createStudent.genderMaleTitle"/></option>
-                <option value="female"><fmt:message key="students.createStudent.genderFemaleTitle"/></option>
+                <option value="male" <c:if test="${person.sex == 'MALE'}">selected="selected"</c:if>><fmt:message key="students.createStudent.genderMaleTitle"/></option>
+                <option value="female" <c:if test="${person.sex == 'FEMALE'}">selected="selected"</c:if>><fmt:message key="students.createStudent.genderFemaleTitle"/></option>
               </select>
             </div>
 
@@ -76,7 +76,10 @@
                 <jsp:param name="titleLocale" value="students.createStudent.secureInfoTitle"/>
                 <jsp:param name="helpLocale" value="students.createStudent.secureInfoHelp"/>
               </jsp:include>
-              <input type="checkbox" name="secureInfo" value="true"/>              
+              <c:choose>
+                <c:when test="${person.secureInfo}"><input type="checkbox" name="secureInfo" value="true" checked="checked"/></c:when>
+                <c:otherwise><input type="checkbox" name="secureInfo" value="true"/></c:otherwise>              
+              </c:choose>
               <fmt:message key="students.createStudent.secureInfoCheckboxLabel"/>
             </div>
 
@@ -85,7 +88,7 @@
                 <jsp:param name="titleLocale" value="students.createStudent.personBasicInfoTitle"/>
                 <jsp:param name="helpLocale" value="students.createStudent.personBasicInfoHelp"/>
               </jsp:include>            
-              <textarea name="basicInfo" ix:cktoolbar="studentAdditionalInformation" ix:ckeditor="true"></textarea>
+              <textarea name="basicInfo" ix:cktoolbar="studentAdditionalInformation" ix:ckeditor="true">${person.basicInfo}</textarea>
             </div>
             <ix:extensionHook name="students.createStudent.tabs.basic"/>
           </div>

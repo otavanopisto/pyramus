@@ -76,6 +76,24 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
     }
   }
   
+  protected void addTokenizedSearchCriteria(StringBuilder queryBuilder, boolean required, String value, String ... fields) {
+    String inputText = value.replaceAll(" +", " ");
+    String[] tokens = escapeSearchCriteria(inputText).split("[ ,]");
+    for (String token : tokens) {
+      if (!StringUtils.isBlank(token)) {
+        if (required) {
+          queryBuilder.append("+");
+        }
+        
+        queryBuilder.append('(');
+        for (String field : fields) {
+          queryBuilder.append(field).append(':').append(token).append(' ');
+        }
+        queryBuilder.append(')');
+      }
+    }
+  }
+
   protected String getSearchDateInfinityHigh() {
     return DATERANGE_INFINITY_HIGH;
   }

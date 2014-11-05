@@ -68,7 +68,7 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
 
   @Override
   public void processSend(PageRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ClientApplicationDAO clientApplicationDAO = DAOFactory.getInstance().getClientApplicationDAO();
     ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO = DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO();
 

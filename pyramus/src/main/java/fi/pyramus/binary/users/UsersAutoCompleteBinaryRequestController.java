@@ -32,7 +32,7 @@ public class UsersAutoCompleteBinaryRequestController extends BinaryRequestContr
    * @param binaryRequestContext The context of the binary request.
    */
   public void process(BinaryRequestContext binaryRequestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     String text = binaryRequestContext.getString("text");
 

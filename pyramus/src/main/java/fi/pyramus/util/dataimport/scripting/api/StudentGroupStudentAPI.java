@@ -14,7 +14,7 @@ public class StudentGroupStudentAPI {
   }
   
   public Long create(Long studentId, Long studentGroupId) throws InvalidScriptException {
-    User loggedUser = DAOFactory.getInstance().getStaffDAO().findById(loggedUserId);
+    User loggedUser = DAOFactory.getInstance().getStaffMemberDAO().findById(loggedUserId);
     if (loggedUser == null) {
       throw new InvalidScriptException("Logged user could not be found");  
     }
@@ -33,7 +33,7 @@ public class StudentGroupStudentAPI {
   }
   
   public Long findIdByStudentAndStudentGroup(Long studentId, Long studentGroupId) throws InvalidScriptException {
-    User loggedUser = DAOFactory.getInstance().getStaffDAO().findById(loggedUserId);
+    User loggedUser = DAOFactory.getInstance().getStaffMemberDAO().findById(loggedUserId);
     if (loggedUser == null) {
       throw new InvalidScriptException("Logged user could not be found");  
     }

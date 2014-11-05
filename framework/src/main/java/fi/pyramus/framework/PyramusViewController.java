@@ -37,7 +37,7 @@ public abstract class PyramusViewController implements PageController {
       else {
         Long loggedUserId = requestContext.getLoggedUserId();
         
-        StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+        StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
         StaffMember user = userDAO.findById(loggedUserId);
         
         Role role = user.getRole();

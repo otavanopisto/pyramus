@@ -454,9 +454,10 @@
                     <jsp:param name="helpLocale" value="students.searchStudents.advancedSearchArchiveHelp"/>
                   </jsp:include>                                     
                   <select name="studentFilter">
-                    <option value="SKIP_INACTIVE"><fmt:message key="students.searchStudents.advancedSearchSkipInactiveOption"/></option>
-                    <option value="INCLUDE_INACTIVE"><fmt:message key="students.searchStudents.advancedSearchIncludeInactiveOption"/></option>
-                    <option value="ONLY_INACTIVE"><fmt:message key="students.searchStudents.advancedSearchOnlyInactiveOption"/></option>
+                    <option value="ALL"><fmt:message key="students.searchStudents.advancedSearchIncludeInactiveOption"/></option>
+                    <option value="ACTIVE_STUDENTS"><fmt:message key="students.searchStudents.advancedSearchSkipInactiveOption"/></option>
+                    <option value="INACTIVE_STUDENTS"><fmt:message key="students.searchStudents.advancedSearchOnlyInactiveOption"/></option>
+                    <option value="STAFFMEMBERS"><fmt:message key="students.searchStudents.advancedSearchOnlyStaffMembersOption"/></option>
                   </select>
                 </div>
                 

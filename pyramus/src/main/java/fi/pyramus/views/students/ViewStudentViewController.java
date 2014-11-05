@@ -104,7 +104,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
     CourseAssessmentRequestDAO courseAssessmentRequestDAO = DAOFactory.getInstance().getCourseAssessmentRequestDAO();
-    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     Long personId = pageRequestContext.getLong("person");
     

@@ -124,7 +124,7 @@ public class OpenIDAuthorizationStrategy implements ExternalAuthenticationProvid
           emails = fetchResp.getAttributeValues("email");
         }
         
-        StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffDAO();
+        StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
         UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
         StaffMember user = staffDAO.findByExternalIdAndAuthProvider(verified.getIdentifier(), getName());
         if (user == null) {

@@ -15,7 +15,7 @@ public class UserUtils {
   }
   
   public static boolean isAllowedEmail(String emailAddress, Long personId) {
-    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
 
     StaffMember staffMember = staffMemberDAO.findByEmail(emailAddress);

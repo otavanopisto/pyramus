@@ -49,7 +49,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
    * @param jsonRequestContext The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();

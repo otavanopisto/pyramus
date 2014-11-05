@@ -33,7 +33,7 @@ public class AdminPasswordSetupWizardViewController extends SetupWizardControlle
     String firstName = requestContext.getString("firstName");
     String lastName = requestContext.getString("lastName");
     String passwordMD5 = DigestUtils.md5Hex(password);
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
@@ -44,13 +44,13 @@ public class AdminPasswordSetupWizardViewController extends SetupWizardControlle
 
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     return userDAO.listAll().size() > 0;
   }
 
   @Override
   public UserRole[] getAllowedRoles() {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     List<StaffMember> users = userDAO.listAll();
     if (users.size() == 0) {
       return new UserRole[] { UserRole.EVERYONE }; 

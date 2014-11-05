@@ -27,7 +27,7 @@ public class EditStudentFileJSONRequestController extends JSONRequestController 
    *          The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
     FileTypeDAO fileTypeDAO = DAOFactory.getInstance().getFileTypeDAO();
 

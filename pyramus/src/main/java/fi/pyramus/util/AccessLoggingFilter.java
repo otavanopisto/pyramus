@@ -90,7 +90,7 @@ public class AccessLoggingFilter implements Filter {
     Long userId = session == null ? null : (Long) session.getAttribute("loggedUserId");
     
     if (userId != null) {
-      StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+      StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
       return userDAO.findById(userId);
     } else
       return null;

@@ -27,7 +27,7 @@ public class CourseAPI {
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
     
     Module module = moduleDAO.findById(moduleId);

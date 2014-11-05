@@ -41,7 +41,7 @@ public class UploadStudentReportJSONRequestController extends JSONRequestControl
     StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
     FileTypeDAO fileTypeDAO = DAOFactory.getInstance().getFileTypeDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
     
     Long studentId = requestContext.getLong("studentId");

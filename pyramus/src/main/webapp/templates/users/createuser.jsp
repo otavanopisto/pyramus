@@ -149,7 +149,9 @@
 
         if (emails_values && emails_values.length > 0) {
           for (var i = 0; i < emails_values.length; i++) {
-            addEmailTableRow([emails_values[i].defaultAddress, emails_values[i].contactType.id, emails_values[i].address, '', '']);
+            addEmailTableRow([emails_values[i].defaultAddress, 
+                              emails_values[i].contactType != undefined ? emails_values[i].contactType.id : '',
+                              emails_values[i].address, '', '']);
           }
         } else {
           addEmailTableRow();
@@ -247,8 +249,12 @@
 
         if (address_values && address_values.length > 0) {
           for (var i = 0; i < address_values.length; i++) {
-            addAddressTableRow([address_values[i].defaultAddress, address_values[i].contactType.id, address_values[i].name, 
-                                address_values[i].streetAddress, address_values[i].postalCode, address_values[i].city, 
+            addAddressTableRow([address_values[i].defaultAddress, 
+                                address_values[i].contactType != undefined ? address_values[i].contactType.id : '', 
+                                address_values[i].name != undefined ? address_values[i].name : '', 
+                                address_values[i].streetAddress, 
+                                address_values[i].postalCode, 
+                                address_values[i].city, 
                                 address_values[i].country, '', '']);
           }
         } else {
@@ -319,7 +325,9 @@
         
         if (phone_values && phone_values.length > 0) {
           for (var i = 0; i < phone_values.length; i++) {
-            addPhoneTableRow([phone_values[i].defaultNumber, phone_values[i].contactType.id, phone_values[i].number, '', '']);
+            addPhoneTableRow([phone_values[i].defaultNumber, 
+                              phone_values[i].contactType != undefined ? phone_values[i].contactType.id : '',
+                              phone_values[i].number, '', '']);
           }
         } else {
           addPhoneTableRow();

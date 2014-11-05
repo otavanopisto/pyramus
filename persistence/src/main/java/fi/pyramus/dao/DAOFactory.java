@@ -292,7 +292,7 @@ public class DAOFactory {
     return (InternalAuthDAO) findByClass(InternalAuthDAO.class);
   }
   
-  public StaffMemberDAO getStaffDAO() {
+  public StaffMemberDAO getStaffMemberDAO() {
     return (StaffMemberDAO) findByClass(StaffMemberDAO.class);
   }
   

@@ -141,11 +141,18 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     entityId = requestContext.getLong("studyEndReason");
     StudentStudyEndReason studyEndReason = entityId == null ? null : studyEndReasonDAO.findById(entityId);
 
-    Person person = personDAO.findBySSN(ssecId);
+    Person person = personId != null ? personDAO.findById(personId) : null;
+    Person personBySSN = personDAO.findBySSN(ssecId); 
+
     if (person == null) {
-      person = personDAO.create(birthday, ssecId, sex, basicInfo, secureInfo);
-    }
-    else {
+      if (personBySSN == null) {
+        person = personDAO.create(birthday, ssecId, sex, basicInfo, secureInfo);
+      }
+      else {
+        personDAO.update(personBySSN, birthday, ssecId, sex, basicInfo, secureInfo);
+        person = personBySSN;
+      }
+    } else {
       personDAO.update(person, birthday, ssecId, sex, basicInfo, secureInfo);
     }
     

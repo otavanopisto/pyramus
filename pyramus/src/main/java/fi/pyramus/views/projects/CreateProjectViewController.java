@@ -27,7 +27,7 @@ public class CreateProjectViewController extends PyramusViewController implement
    * @param pageRequestContext Page request context
    */
   public void process(PageRequestContext pageRequestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
 
     List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listUnarchived();

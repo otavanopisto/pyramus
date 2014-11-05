@@ -53,7 +53,7 @@ public class CreateStudentViewController extends PyramusViewController implement
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     ContactURLTypeDAO contactURLTypeDAO = DAOFactory.getInstance().getContactURLTypeDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
-    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
     Long personId = pageRequestContext.getLong("personId");
     if (personId != null) {

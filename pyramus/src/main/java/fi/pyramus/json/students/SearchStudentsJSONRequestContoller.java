@@ -18,6 +18,7 @@ import fi.pyramus.dao.base.NationalityDAO;
 import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.students.StudentDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
@@ -25,10 +26,11 @@ import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.persistence.search.SearchResult;
-import fi.pyramus.persistence.search.StudentFilter;
+import fi.pyramus.persistence.search.PersonFilter;
 
 /**
  * Request handler for searching students.
@@ -44,7 +46,8 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
     MunicipalityDAO municipalityDAO = DAOFactory.getInstance().getMunicipalityDAO();
     NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
-
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    
     Integer resultsPerPage = NumberUtils.createInteger(jsonRequestContext.getRequest().getParameter("maxResults"));
     if (resultsPerPage == null) {
       resultsPerPage = 10;
@@ -74,9 +77,10 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
       String addressPostalCode = jsonRequestContext.getString("addressPostalCode");
       String addressStreetAddress = jsonRequestContext.getString("addressStreetAddress");
       String phone = jsonRequestContext.getString("phone");
+      String title = jsonRequestContext.getString("title");
       Integer lodgingInt = jsonRequestContext.getInteger("lodging");
       Boolean lodging = lodgingInt == null ? null : lodgingInt == 1;
-      StudentFilter studentFilter = (StudentFilter) jsonRequestContext.getEnum("studentFilter", StudentFilter.class);
+      PersonFilter personFilter = (PersonFilter) jsonRequestContext.getEnum("studentFilter", PersonFilter.class);
 
       Language language = null;
       Long languageId = jsonRequestContext.getLong("language");
@@ -104,28 +108,28 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
       
       searchResult = personDAO.searchPersons(resultsPerPage, page, firstName, lastName, nickname,
           tags, education, email, sex, ssn, addressCity, addressCountry, addressPostalCode, addressStreetAddress,
-          phone, lodging, studyProgramme, language, nationality, municipality, studentFilter);
+          phone, lodging, studyProgramme, language, nationality, municipality, title, personFilter);
     }
     else if ("active".equals(jsonRequestContext.getRequest().getParameter("activeTab"))) {
       String query = jsonRequestContext.getRequest().getParameter("activesQuery");
-      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, StudentFilter.SKIP_INACTIVE);
+      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, PersonFilter.ACTIVE_STUDENTS);
     }
     else {
       String query = jsonRequestContext.getRequest().getParameter("query");
-      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, StudentFilter.INCLUDE_INACTIVE);
+      searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, PersonFilter.ALL);
     }
 
     List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
     List<Person> persons = searchResult.getResults();
     for (Person person : persons) {
-    	Student student = person.getLatestStudent();
-    	if (student != null) {
-    	  String activeStudyProgrammes = "";
-    	  String inactiveStudyProgrammes = "";
-
-    	  List<Student> studentList2 = studentDAO.listByPerson(person);
-    	  
-    	  for (Student student1 : studentList2) {
+  	  List<Student> studentList2 = studentDAO.listByPerson(person);
+  	  StaffMember staffMember = staffMemberDAO.findByPerson(person);
+  	  
+  	  if ((studentList2.size() > 0) || (staffMember != null)) {
+        String activeStudyProgrammes = "";
+        String inactiveStudyProgrammes = "";
+  
+        for (Student student1 : studentList2) {
     	    if (student1.getStudyProgramme() != null) {
       	    if (!student1.getHasFinishedStudies()) {
       	      if (activeStudyProgrammes.length() == 0)
@@ -140,18 +144,35 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
       	    }
     	    }
     	  }
+  
+    	  String firstName = "";
+    	  String lastName = "";
+    	  Boolean archived = Boolean.FALSE;
+        Long id = null;
+    	  
+    	  if (person.getLatestStudent() != null) {
+    	    firstName = person.getLatestStudent().getFirstName();
+    	    lastName = person.getLatestStudent().getLastName();
+    	    archived = person.getLatestStudent().getArchived();
+    	    id = person.getLatestStudent().getId();
+    	  } else {
+    	    if (staffMember != null) {
+            firstName = staffMember.getFirstName();
+            lastName = staffMember.getLastName();
+    	    }
+    	  }
     	  
         Map<String, Object> info = new HashMap<String, Object>();
         info.put("personId", person.getId());
-        info.put("id", person.getLatestStudent().getId());
-        info.put("firstName", student.getFirstName());
-        info.put("lastName", student.getLastName());
-        info.put("archived", student.getArchived());
+        info.put("id", id);
+        info.put("firstName", firstName);
+        info.put("lastName", lastName);
+        info.put("archived", archived);
         info.put("activeStudyProgrammes", activeStudyProgrammes);
         info.put("inactiveStudyProgrammes", inactiveStudyProgrammes);
         info.put("active", person.getActive());
         results.add(info);
-    	}
+  	  }
     }
     
     String statusMessage = "";

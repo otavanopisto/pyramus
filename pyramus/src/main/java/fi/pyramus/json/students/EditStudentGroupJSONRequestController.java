@@ -43,7 +43,7 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
    *          The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
     StudentGroupStudentDAO studentGroupStudentDAO = DAOFactory.getInstance().getStudentGroupStudentDAO();

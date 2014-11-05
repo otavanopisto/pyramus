@@ -29,7 +29,7 @@ public class UploadStudentFileJSONRequestController extends JSONRequestControlle
    */
   public void process(JSONRequestContext requestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
     FileTypeDAO fileTypeDAO = DAOFactory.getInstance().getFileTypeDAO();
 

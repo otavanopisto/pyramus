@@ -59,7 +59,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
    * @param pageRequestContext Page request context
    */
   public void process(PageRequestContext pageRequestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();

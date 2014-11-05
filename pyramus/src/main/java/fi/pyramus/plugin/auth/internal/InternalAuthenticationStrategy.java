@@ -38,7 +38,7 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
    * @return The created user
    */
   public User createUser(String firstName, String lastName, String email, String username, String password, Role role) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
@@ -94,7 +94,7 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
    * @return The user corresponding to the given credentials, or <code>null</code> if not found
    */
   public StaffMember getUser(String username, String password) {
-    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
 
     String passwordEncoded;

@@ -23,7 +23,7 @@ public class ModuleAPI {
   public Long create(String name, String description, Long maxParticipantCount, String subjectCode, Integer courseNumber) throws InvalidScriptException {
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
     
     Subject subject = subjectDAO.findByCode(subjectCode);

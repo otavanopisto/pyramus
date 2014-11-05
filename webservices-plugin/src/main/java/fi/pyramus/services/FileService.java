@@ -42,7 +42,7 @@ public class FileService extends PyramusService {
     StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     Student student = studentDAO.findById(studentId);
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     FileTypeDAO fileTypeDAO = DAOFactory.getInstance().getFileTypeDAO();
     
     User creator = creatorId != null ? userDAO.findById(creatorId) : null;

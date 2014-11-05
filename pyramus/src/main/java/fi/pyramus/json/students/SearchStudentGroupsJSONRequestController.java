@@ -34,7 +34,7 @@ public class SearchStudentGroupsJSONRequestController extends JSONRequestControl
    * @param jsonRequestContext The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
 
     // Determine the number of results shown per page. If not defined, default to ten results per page

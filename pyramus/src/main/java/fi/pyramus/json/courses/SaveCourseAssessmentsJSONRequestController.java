@@ -53,7 +53,7 @@ public class SaveCourseAssessmentsJSONRequestController extends JSONRequestContr
    * @param requestContext The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     CourseParticipationTypeDAO participationTypeDAO = DAOFactory.getInstance().getCourseParticipationTypeDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();

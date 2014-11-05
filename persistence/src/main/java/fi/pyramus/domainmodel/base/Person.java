@@ -40,6 +40,7 @@ import org.hibernate.search.annotations.Store;
 
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.persistence.search.filters.StudentIdFilterFactory;
 
@@ -128,6 +129,17 @@ public class Person {
     this.sex = sex;
   }
 
+  public List<StaffMember> getStaffMembers() {
+    List<User> users = getUsers();
+    List<StaffMember> staffMembers = new ArrayList<StaffMember>();
+    
+    for (User user : users) {
+      if (user instanceof StaffMember)
+        staffMembers.add((StaffMember) user);
+    }
+    
+    return staffMembers;
+  }
   
   public List<Student> getStudents() {
     List<User> users = getUsers();
@@ -226,18 +238,25 @@ public class Person {
     return basicInfo;
   }
 
+  private StaffMember getStaffMember() {
+    List<StaffMember> staffMembers = getStaffMembers();
+    return staffMembers.size() > 0 ? staffMembers.get(0) : null;
+  }
+
   @Transient
   @Field(analyze = Analyze.NO, store = Store.YES)
   public String getLastNameSortable() {
     Student student = getLatestStudent();
-    return student != null ? student.getLastName() : "";
+    StaffMember staffMember = getStaffMember();
+    return student != null ? student.getLastName() : staffMember != null ? staffMember.getLastName() : "";
   }
 
   @Transient
   @Field(analyze = Analyze.NO, store = Store.YES)
   public String getFirstNameSortable() {
     Student student = getLatestStudent();
-    return student != null ? student.getFirstName() : "";
+    StaffMember staffMember = getStaffMember();
+    return student != null ? student.getFirstName() : staffMember != null ? staffMember.getFirstName() : "";
   }
 
   @Transient
@@ -486,6 +505,7 @@ public class Person {
         }
       }
     }
+
     return setToString(results);
   }
 
@@ -500,6 +520,7 @@ public class Person {
         }
       }
     }
+    
     return setToString(results);
   }
 
@@ -544,6 +565,7 @@ public class Person {
         }
       }
     }
+    
     return setToString(results);
   }
 
@@ -600,6 +622,14 @@ public class Person {
 
   @Transient
   @Field
+  public String getStaff() {
+    StaffMember staffMember = getStaffMember();
+
+    return new Boolean(staffMember != null).toString();
+  }
+
+  @Transient
+  @Field
   public String getActiveCities() {
     Set<String> results = new HashSet<String>();
     for (Student student : getStudents()) {
@@ -611,6 +641,7 @@ public class Person {
         }
       }
     }
+    
     return setToString(results);
   }
 
@@ -627,6 +658,7 @@ public class Person {
         }
       }
     }
+    
     return setToString(results);
   }
 
@@ -739,6 +771,186 @@ public class Person {
       if (!student.getArchived() && !student.getActive()) {
         for (Tag tag : student.getTags()) {
           results.add(tag.getText());
+        }
+      }
+    }
+
+    return setToString(results);
+  }
+
+  @Transient
+  @Field
+  public String getStaffMemberFirstNames() {
+    Set<String> results = new HashSet<String>();
+    for (StaffMember staffMember : getStaffMembers()) {
+      String s = staffMember.getFirstName(); 
+      
+      if (s != null) {
+        results.add(s);
+      }
+    }
+
+    return setToString(results);
+  }
+
+  @Transient
+  @Field
+  public String getStaffMemberLastNames() {
+    Set<String> results = new HashSet<String>();
+    for (StaffMember staffMember : getStaffMembers()) {
+      String s = staffMember.getLastName(); 
+      
+      if (s != null) {
+        results.add(s);
+      }
+    }
+
+    return setToString(results);
+  }
+
+  @Transient
+  @Field
+  public String getStaffMemberEmails() {
+    Set<String> results = new HashSet<String>();
+    for (StaffMember staffMember : getStaffMembers()) {
+      
+      for (Email email : staffMember.getContactInfo().getEmails()) {
+        String s = email.getAddress(); 
+        
+        if (s != null) {
+          results.add(s);
+        }
+      }
+    }
+
+    return setToString(results);
+  }
+
+  @Transient
+  @Field
+  public String getStaffMemberTitles() {
+    Set<String> results = new HashSet<String>();
+    for (StaffMember staffMember : getStaffMembers()) {
+      String s = staffMember.getTitle(); 
+      
+      if (s != null) {
+        results.add(s);
+      }
+    }
+
+    return setToString(results);
+  }
+
+  @Transient
+  @Field
+  public String getStaffMemberRoles() {
+    Set<String> results = new HashSet<String>();
+    for (StaffMember staffMember : getStaffMembers()) {
+      String s = staffMember.getRole().toString(); 
+      
+      if (s != null) {
+        results.add(s);
+      }
+    }
+
+    return setToString(results);
+  }
+
+  @Transient
+  @Field
+  public String getStaffMemberTags() {
+    Set<String> results = new HashSet<String>();
+    for (StaffMember staffMember : getStaffMembers()) {
+      for (Tag tag : staffMember.getTags()) {
+        String s = tag.getText();
+        
+        if (s != null) {
+          results.add(s);
+        }
+      }
+    }
+
+    return setToString(results);
+  }
+  
+  @Transient
+  @Field
+  public String getStaffMemberPhones() {
+    Set<String> results = new HashSet<String>();
+    for (StaffMember staffMember : getStaffMembers()) {
+      for (PhoneNumber number : staffMember.getContactInfo().getPhoneNumbers()) {
+        String s = number.getNumber(); 
+        
+        if (s != null) {
+          results.add(s);
+        }
+      }
+    }
+
+    return setToString(results);
+  }
+
+  @Transient
+  @Field
+  public String getStaffMemberStreetAddresses() {
+    Set<String> results = new HashSet<String>();
+    for (StaffMember staffMember : getStaffMembers()) {
+      for (Address address : staffMember.getContactInfo().getAddresses()) {
+        String s = address.getStreetAddress(); 
+        
+        if (s != null) {
+          results.add(s);
+        }
+      }
+    }
+
+    return setToString(results);
+  }
+
+  @Transient
+  @Field
+  public String getStaffMemberPostalCodes() {
+    Set<String> results = new HashSet<String>();
+    for (StaffMember staffMember : getStaffMembers()) {
+      for (Address address : staffMember.getContactInfo().getAddresses()) {
+        String s = address.getPostalCode(); 
+        
+        if (s != null) {
+          results.add(s);
+        }
+      }
+    }
+
+    return setToString(results);
+  }
+
+  @Transient
+  @Field
+  public String getStaffMemberCities() {
+    Set<String> results = new HashSet<String>();
+    for (StaffMember staffMember : getStaffMembers()) {
+      for (Address address : staffMember.getContactInfo().getAddresses()) {
+        String s = address.getCity(); 
+        
+        if (s != null) {
+          results.add(s);
+        }
+      }
+    }
+
+    return setToString(results);
+  }
+
+  @Transient
+  @Field
+  public String getStaffMemberCountries() {
+    Set<String> results = new HashSet<String>();
+    for (StaffMember staffMember : getStaffMembers()) {
+      for (Address address : staffMember.getContactInfo().getAddresses()) {
+        String s = address.getCountry(); 
+        
+        if (s != null) {
+          results.add(s);
         }
       }
     }
