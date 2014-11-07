@@ -6,13 +6,13 @@ import fi.pyramus.SqlAfter;
 import fi.pyramus.SqlBefore;
 import fi.pyramus.ui.AbstractUITest;
 
-public class IndexPageTestsBase extends AbstractUITest {
-  
+public class LoginPageTestsBase extends AbstractUITest {
+
   @Test
   @SqlBefore ("sql/basic-before.sql")
   @SqlAfter ("sql/basic-after.sql")
-  public void testTitle() {
-    testTitle("/", "Pyramus 2010");
+  public void testLogin() throws InterruptedException{
+    testLogin(ADMIN_USERNAME, ADMIN_PASSWORD);
   }
-  
+
 }

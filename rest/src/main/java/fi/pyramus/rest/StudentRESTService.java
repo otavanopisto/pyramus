@@ -18,9 +18,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
@@ -782,7 +788,7 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/studyProgrammes/{ID:[0-9]*}")
   @GET
-  public Response findStudyProgrammeById(@PathParam("ID") Long id) {
+  public Response findStudyProgrammeById(@PathParam("ID") Long id, @Context Request request) {
     StudyProgramme studyProgramme = studyProgrammeController.findStudyProgrammeById(id);
     if (studyProgramme == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -792,7 +798,19 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }    
 
-    return Response.ok(objectFactory.createModel(studyProgramme)).build();
+    EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(studyProgramme.getVersion())));
+    ResponseBuilder builder = request.evaluatePreconditions(tag);
+    if (builder != null) {
+      return builder.build();
+    }
+
+    CacheControl cacheControl = new CacheControl();
+    cacheControl.setMustRevalidate(true);
+    
+    return Response.ok(objectFactory.createModel(studyProgramme))
+        .cacheControl(cacheControl)
+        .tag(tag)
+        .build();
   }
 
   @Path("/studyProgrammes/{ID:[0-9]*}")
@@ -1324,7 +1342,7 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{ID:[0-9]*}")
   @GET
-  public Response findStudentById(@PathParam("ID") Long id) {
+  public Response findStudentById(@PathParam("ID") Long id, @Context Request request) {
     Student student = studentController.findStudentById(id);
     if (student == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -1334,7 +1352,20 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    return Response.ok(objectFactory.createModel(student)).build();
+    EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(student.getVersion())));
+
+    ResponseBuilder builder = request.evaluatePreconditions(tag);
+    if (builder != null) {
+      return builder.build();
+    }
+    
+    CacheControl cacheControl = new CacheControl();
+    cacheControl.setMustRevalidate(true);
+    
+    return Response.ok(objectFactory.createModel(student))
+        .cacheControl(cacheControl)
+        .tag(tag)
+        .build();
   }
 
 

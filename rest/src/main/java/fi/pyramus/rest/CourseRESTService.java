@@ -17,9 +17,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
@@ -138,14 +144,27 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses/{ID:[0-9]*}")
   @GET
-  public Response getCourse(@PathParam("ID") Long id) {
+  public Response getCourse(@PathParam("ID") Long id, @Context Request request) {
     Course course = courseController.findCourseById(id);
     if (course != null) {
       if (course.getArchived()) {
         return Response.status(Status.NOT_FOUND).build();
       }
       
-      return Response.ok().entity(objectFactory.createModel(course)).build();
+      EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(course.getLastModified().getTime())));
+      
+      ResponseBuilder builder = request.evaluatePreconditions(tag);
+      if (builder != null) {
+        return builder.build();
+      }
+      
+      CacheControl cacheControl = new CacheControl();
+      cacheControl.setMustRevalidate(true);
+      
+      return Response.ok(objectFactory.createModel(course))
+          .cacheControl(cacheControl)
+          .tag(tag)
+          .build();
     } else {
       return Response.status(Status.NOT_FOUND).build();
     }

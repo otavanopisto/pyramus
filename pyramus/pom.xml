@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <name>Pyramus</name>
   <artifactId>pyramus</artifactId>
@@ -8,7 +7,7 @@
   <parent>
     <groupId>fi.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.2-SNAPSHOT</version>
+    <version>0.7.3-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   
@@ -644,7 +643,7 @@
               </configuration>
 
               <deployables>
-                <dependency/>                 
+                <dependency />                 
               </deployables>
 
             </configuration>
@@ -687,7 +686,7 @@
                       <command>/core-service=management/security-realm=ssl-realm/server-identity=ssl:add(keystore-path="${it.keystore.file}",keystore-password="${it.keystore.pass}",alias="${it.keystore.alias}")</command>
                       <command>/subsystem=undertow/server=default-server/https-listener=https:add(socket-binding="https",security-realm="ssl-realm")</command>
                       <command>/subsystem=security/security-domain=WebServices:add(cache-type=default)</command>
-                      <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=>"RealmUsersRoles","flag"=>"required","module-options"=>[("realm"=>"WebServices"),("password-stacking"=>"useFirstPass"),("rolesProperties"=>"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=>"\${jboss.server.config.dir}/application-users.properties")]}])</command>
+                      <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=&gt;"RealmUsersRoles","flag"=&gt;"required","module-options"=&gt;[("realm"=&gt;"WebServices"),("password-stacking"=&gt;"useFirstPass"),("rolesProperties"=&gt;"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=&gt;"\${jboss.server.config.dir}/application-users.properties")]}])</command>
                     </commands>
                   </execute-commands>
                 </configuration>
@@ -963,7 +962,7 @@
               </configuration>
 
               <deployables>
-                <dependency/>                 
+                <dependency />                 
               </deployables>
 
             </configuration>
@@ -1006,7 +1005,7 @@
                       <command>/core-service=management/security-realm=ssl-realm/server-identity=ssl:add(keystore-path="${it.keystore.file}",keystore-password="${it.keystore.pass}",alias="${it.keystore.alias}")</command>
                       <command>/subsystem=undertow/server=default-server/https-listener=https:add(socket-binding="https",security-realm="ssl-realm")</command>
                       <command>/subsystem=security/security-domain=WebServices:add(cache-type=default)</command>
-                      <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=>"RealmUsersRoles","flag"=>"required","module-options"=>[("realm"=>"WebServices"),("password-stacking"=>"useFirstPass"),("rolesProperties"=>"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=>"\${jboss.server.config.dir}/application-users.properties")]}])</command>
+                      <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=&gt;"RealmUsersRoles","flag"=&gt;"required","module-options"=&gt;[("realm"=&gt;"WebServices"),("password-stacking"=&gt;"useFirstPass"),("rolesProperties"=&gt;"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=&gt;"\${jboss.server.config.dir}/application-users.properties")]}])</command>
                     </commands>
                   </execute-commands>
                 </configuration>
