@@ -3,6 +3,7 @@ package fi.pyramus.webhooks;
 public enum WebhookType {
   
   STAFF_MEMBER_CREATE,
+  STAFF_MEMBER_UPDATE,
   STAFF_MEMBER_DELETE,
 
   STUDENT_CREATE,

@@ -20,6 +20,7 @@ import fi.pyramus.events.CourseStudentArchivedEvent;
 import fi.pyramus.events.CourseStudentCreatedEvent;
 import fi.pyramus.events.StaffMemberCreatedEvent;
 import fi.pyramus.events.StaffMemberDeletedEvent;
+import fi.pyramus.events.StaffMemberUpdatedEvent;
 import fi.pyramus.events.StudentArchivedEvent;
 import fi.pyramus.events.StudentCreatedEvent;
 
@@ -30,6 +31,9 @@ public class Webhooks {
   @Inject
   private WebhookController webhookController;
 
+  @Inject
+  private WebhookSessionData sessionData;
+  
   @PostConstruct
   public void init() {
     webhooks = new ArrayList<>();
@@ -72,13 +76,32 @@ public class Webhooks {
     webhookController.sendWebhookNotifications(webhooks, new WebhookCourseStudentArchivePayload(event.getCourseStudentId(), event.getCourseId(), event.getStudentId()));
   }
   
+  /* StaffMember */
+  
   public void onStaffMemberCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StaffMemberCreatedEvent event) {
     webhookController.sendWebhookNotifications(webhooks, new WebhookStaffMemberCreatePayload(event.getStaffMemberId()));
   }
   
+  public void onStaffMemberUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) StaffMemberUpdatedEvent event) {
+    sessionData.addUpdatedStaffMemberId(event.getStaffMemberId());
+  }
+
+  public void onStaffMemberUpdatedAfterFailure(@Observes(during=TransactionPhase.AFTER_FAILURE) StaffMemberUpdatedEvent event) {
+    sessionData.clearUpdatedStaffMemberIds();
+  }
+
+  public void onStaffMemberUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) StaffMemberUpdatedEvent event) {
+    List<Long> updatedStaffMemberIds = sessionData.retrieveUpdatedStaffMemberIds();
+    
+    for (Long updatedStaffMemberId : updatedStaffMemberIds) {
+      webhookController.sendWebhookNotifications(webhooks, new WebhookStaffMemberUpdatePayload(updatedStaffMemberId));
+    }
+  }
+
   public void onStaffMemberDeleted(@Observes(during=TransactionPhase.AFTER_SUCCESS) StaffMemberDeletedEvent event) {
     webhookController.sendWebhookNotifications(webhooks, new WebhookStaffMemberDeletePayload(event.getStaffMemberId()));
   }
  
   private List<fi.pyramus.webhooks.Webhook> webhooks;
+
 }
