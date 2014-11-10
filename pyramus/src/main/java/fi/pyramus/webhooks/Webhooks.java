@@ -23,6 +23,7 @@ import fi.pyramus.events.StaffMemberDeletedEvent;
 import fi.pyramus.events.StaffMemberUpdatedEvent;
 import fi.pyramus.events.StudentArchivedEvent;
 import fi.pyramus.events.StudentCreatedEvent;
+import fi.pyramus.events.StudentUpdatedEvent;
 
 @ApplicationScoped 
 @Stateful
@@ -52,13 +53,33 @@ public class Webhooks {
     webhookController.sendWebhookNotifications(webhooks, new WebhookCourseArchivePayload(event.getCourseId()));
   }
   
+  /* Student */
+  
   public void onStudentCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentCreatedEvent event) {
     webhookController.sendWebhookNotifications(webhooks, new WebhookStudentCreatePayload(event.getStudentId()));
+  }
+  
+  public void onStudentUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) StudentUpdatedEvent event) {
+    sessionData.addUpdatedStudentId(event.getStudentId());
+  }
+
+  public void onStudentUpdatedAfterFailure(@Observes(during=TransactionPhase.AFTER_FAILURE) StudentUpdatedEvent event) {
+    sessionData.clearUpdatedStudentIds();
+  }
+
+  public void onStudentUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentUpdatedEvent event) {
+    List<Long> updatedStudentIds = sessionData.retrieveUpdatedStudentIds();
+    
+    for (Long updatedStudentId : updatedStudentIds) {
+      webhookController.sendWebhookNotifications(webhooks, new WebhookStudentUpdatePayload(updatedStudentId));
+    }
   }
 
   public void onStudentArchived(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentArchivedEvent event) {
     webhookController.sendWebhookNotifications(webhooks, new WebhookStudentArchivePayload(event.getStudentId()));
   }
+  
+  /* Course Staff Member */
   
   public void onCourseStaffMemberCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStaffMemberCreatedEvent event) {
     webhookController.sendWebhookNotifications(webhooks, new WebhookCourseStaffMemberCreatePayload(event.getCourseStaffMemberId(), event.getCourseId(), event.getStaffMemberId()));
@@ -67,6 +88,8 @@ public class Webhooks {
   public void onCourseStaffMemberDeleted(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStaffMemberDeletedEvent event) {
     webhookController.sendWebhookNotifications(webhooks, new WebhookCourseStaffMemberDeletePayload(event.getCourseStaffMemberId(), event.getCourseId(), event.getStaffMemberId()));
   }
+  
+  /* Course Student */
   
   public void onCourseStudentCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStudentCreatedEvent event) {
     webhookController.sendWebhookNotifications(webhooks, new WebhookCourseStudentCreatePayload(event.getCourseStudentId(), event.getCourseId(), event.getStudentId()));
