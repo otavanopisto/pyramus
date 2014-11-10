@@ -21,6 +21,9 @@ public class WebhookSessionData {
     updatedCourseStudentIds = new ArrayList<>();
     courseStudentStudentIdMap = new HashMap<>();
     courseStudentCourseIdMap = new HashMap<>();
+    updatedCourseStaffMemberIds = new ArrayList<>();
+    courseStaffMemberStaffMemberIdMap = new HashMap<>();
+    courseStaffMemberCourseIdMap = new HashMap<>();
   }
   
   /* StaffMemberIds */
@@ -108,10 +111,44 @@ public class WebhookSessionData {
     return courseStudentStudentIdMap.get(courseStudentId);
   }
   
+  /* Course Staff Members */
+  
+  public void addUpdatedCourseStaffMember(Long updatedCourseStaffMemberId, Long courseId, Long staffMemberId) {
+    if (!updatedCourseStaffMemberIds.contains(updatedCourseStaffMemberId)) {
+      updatedCourseStaffMemberIds.add(updatedCourseStaffMemberId);
+    }
+    
+    courseStaffMemberStaffMemberIdMap.put(updatedCourseStaffMemberId, staffMemberId);
+    courseStaffMemberCourseIdMap.put(updatedCourseStaffMemberId, courseId);
+  }
+  
+  public List<Long> retrieveUpdatedCourseStaffMemberIds() {
+    List<Long> result = new ArrayList<Long>(updatedCourseStaffMemberIds);
+    updatedCourseStaffMemberIds.clear();
+    return result;
+  }
+
+  public void clearUpdatedCourseStaffMemberIds() {
+    updatedCourseStaffMemberIds.clear();
+    courseStaffMemberStaffMemberIdMap.clear();
+    courseStaffMemberCourseIdMap.clear();
+  }
+
+  public Long getCourseStaffMemberCourseId(Long courseStaffMemberId) {
+    return courseStaffMemberCourseIdMap.get(courseStaffMemberId);
+  }
+
+  public Long getCourseStaffMemberStaffMemberId(Long courseStaffMemberId) {
+    return courseStaffMemberStaffMemberIdMap.get(courseStaffMemberId);
+  }
+  
   private List<Long> updatedStaffMemberIds;
   private List<Long> updatedStudentIds;
   private List<Long> updatedCourseIds;
   private List<Long> updatedCourseStudentIds;
   private Map<Long, Long> courseStudentStudentIdMap;
   private Map<Long, Long> courseStudentCourseIdMap;
+  private List<Long> updatedCourseStaffMemberIds;
+  private Map<Long, Long> courseStaffMemberStaffMemberIdMap;
+  private Map<Long, Long> courseStaffMemberCourseIdMap;
 }

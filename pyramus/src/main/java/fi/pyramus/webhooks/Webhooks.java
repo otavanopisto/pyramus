@@ -16,6 +16,7 @@ import fi.pyramus.events.CourseArchivedEvent;
 import fi.pyramus.events.CourseCreatedEvent;
 import fi.pyramus.events.CourseStaffMemberCreatedEvent;
 import fi.pyramus.events.CourseStaffMemberDeletedEvent;
+import fi.pyramus.events.CourseStaffMemberUpdatedEvent;
 import fi.pyramus.events.CourseStudentArchivedEvent;
 import fi.pyramus.events.CourseStudentCreatedEvent;
 import fi.pyramus.events.CourseStudentUpdatedEvent;
@@ -103,6 +104,26 @@ public class Webhooks {
   
   public void onCourseStaffMemberCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStaffMemberCreatedEvent event) {
     webhookController.sendWebhookNotifications(webhooks, new WebhookCourseStaffMemberCreatePayload(event.getCourseStaffMemberId(), event.getCourseId(), event.getStaffMemberId()));
+  }
+  
+  public synchronized void onCourseStaffMemberUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) CourseStaffMemberUpdatedEvent event) {
+    sessionData.addUpdatedCourseStaffMember(event.getCourseStaffMemberId(), event.getCourseId(), event.getStaffMemberId());
+  }
+
+  public synchronized void onCourseStaffMemberUpdatedAfterFailure(@Observes(during=TransactionPhase.AFTER_FAILURE) CourseStaffMemberUpdatedEvent event) {
+    sessionData.clearUpdatedCourseStaffMemberIds();
+  }
+
+  public synchronized void onCourseStaffMemberUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStaffMemberUpdatedEvent event) {
+    List<Long> updatedCourseStaffMemberIds = sessionData.retrieveUpdatedCourseStaffMemberIds();
+    
+    for (Long updatedCourseStaffMemberId : updatedCourseStaffMemberIds) {
+      Long courseId = sessionData.getCourseStaffMemberCourseId(updatedCourseStaffMemberId);
+      Long staffMemberId = sessionData.getCourseStaffMemberStaffMemberId(updatedCourseStaffMemberId);
+      webhookController.sendWebhookNotifications(webhooks, new WebhookCourseStaffMemberUpdatePayload(updatedCourseStaffMemberId, courseId, staffMemberId));
+    }
+    
+    sessionData.clearUpdatedCourseStaffMemberIds();
   }
   
   public void onCourseStaffMemberDeleted(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStaffMemberDeletedEvent event) {

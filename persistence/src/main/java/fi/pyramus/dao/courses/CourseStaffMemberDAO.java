@@ -18,12 +18,16 @@ import fi.pyramus.domainmodel.courses.CourseStaffMember_;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.events.CourseStaffMemberCreatedEvent;
 import fi.pyramus.events.CourseStaffMemberDeletedEvent;
+import fi.pyramus.events.CourseStaffMemberUpdatedEvent;
 
 @Stateless
 public class CourseStaffMemberDAO extends PyramusEntityDAO<CourseStaffMember> {
 
   @Inject
   private Event<CourseStaffMemberCreatedEvent> courseStaffMemberCreatedEvent;
+
+  @Inject
+  private Event<CourseStaffMemberUpdatedEvent> courseStaffMemberUpdatedEvent;
   
   @Inject
   private Event<CourseStaffMemberDeletedEvent> courseStaffMemberDeletedEvent;
@@ -57,7 +61,11 @@ public class CourseStaffMemberDAO extends PyramusEntityDAO<CourseStaffMember> {
 
   public CourseStaffMember updateRole(CourseStaffMember courseStaffMember, CourseStaffMemberRole role) {
     courseStaffMember.setRole(role);
-    return persist(courseStaffMember);
+    persist(courseStaffMember);
+    
+    courseStaffMemberUpdatedEvent.fire(new CourseStaffMemberUpdatedEvent(courseStaffMember.getId(), courseStaffMember.getCourse().getId(), courseStaffMember.getStaffMember().getId()));
+    
+    return courseStaffMember;
   }
 
   @Override
