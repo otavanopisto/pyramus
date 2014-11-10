@@ -333,8 +333,8 @@
             tooltip: '<fmt:message key="projects.viewProject.studentProjectsTableViewStudentTooltip"/>',
             onclick: function (event) {
               var table = event.tableComponent;
-              var abstractStudentId = table.getCellValue(event.row, table.getNamedColumnIndex('abstractStudentId'));
-              redirectTo(GLOBAL_contextPath + '/students/viewstudent.page?abstractStudent=' + abstractStudentId);
+              var personId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
+              redirectTo(GLOBAL_contextPath + '/students/viewstudent.page?person=' + personId);
             }
           }, {
             width: 22,
@@ -349,7 +349,7 @@
             }
           }, {
             dataType: 'hidden',
-            paramName: 'abstractStudentId'
+            paramName: 'personId'
           }, {
             dataType: 'hidden',
             paramName: 'studentProjectId'
@@ -386,7 +386,7 @@
             '${stuP.passedOptionalModuleCount}' + '/' + '${stuP.optionalModuleCount}',
             '',
             '',
-            '${stuP.studentProject.student.abstractStudent.id}',
+            '${stuP.studentProject.student.person.id}',
             '${stuP.studentProject.id}'
           ]);
         </c:forEach>

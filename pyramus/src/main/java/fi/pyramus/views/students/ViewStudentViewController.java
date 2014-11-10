@@ -15,6 +15,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.file.StudentFileDAO;
 import fi.pyramus.dao.grading.CourseAssessmentDAO;
@@ -24,13 +25,14 @@ import fi.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.pyramus.dao.grading.TransferCreditDAO;
 import fi.pyramus.dao.projects.StudentProjectDAO;
 import fi.pyramus.dao.reports.ReportDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentContactLogEntryCommentDAO;
 import fi.pyramus.dao.students.StudentContactLogEntryDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentGroupDAO;
 import fi.pyramus.dao.students.StudentImageDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.CourseOptionality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.file.StudentFile;
@@ -44,11 +46,11 @@ import fi.pyramus.domainmodel.projects.StudentProject;
 import fi.pyramus.domainmodel.projects.StudentProjectModule;
 import fi.pyramus.domainmodel.reports.Report;
 import fi.pyramus.domainmodel.reports.ReportContextType;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.pyramus.domainmodel.students.StudentGroup;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.util.StringAttributeComparator;
@@ -74,7 +76,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
    * 
    * In parameters
    * - student
-   * - abstractStudent
+   * - person
    * 
    * Page parameters
    * - student - Student object
@@ -88,7 +90,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
    */
   public void process(PageRequestContext pageRequestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentImageDAO imageDAO = DAOFactory.getInstance().getStudentImageDAO();
     StudentContactLogEntryDAO logEntryDAO = DAOFactory.getInstance().getStudentContactLogEntryDAO();
     StudentContactLogEntryCommentDAO entryCommentDAO = DAOFactory.getInstance().getStudentContactLogEntryCommentDAO();
@@ -102,14 +104,18 @@ public class ViewStudentViewController extends PyramusViewController implements 
     StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
     CourseAssessmentRequestDAO courseAssessmentRequestDAO = DAOFactory.getInstance().getCourseAssessmentRequestDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
-    Long abstractStudentId = pageRequestContext.getLong("abstractStudent");
+    Long personId = pageRequestContext.getLong("person");
     
-    AbstractStudent abstractStudent = abstractStudentDAO.findById(abstractStudentId);
+    Person person = personDAO.findById(personId);
     
-    pageRequestContext.getRequest().setAttribute("abstractStudent", abstractStudent);
+    pageRequestContext.getRequest().setAttribute("person", person);
 
-    List<Student> students = studentDAO.listByAbstractStudent(abstractStudent);
+    StaffMember staffMember = staffMemberDAO.findByPerson(person);
+    pageRequestContext.getRequest().setAttribute("staffMember", staffMember);
+    
+    List<Student> students = studentDAO.listByPerson(person);
     Collections.sort(students, new Comparator<Student>() {
       @Override
       public int compare(Student o1, Student o2) {
@@ -388,7 +394,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
         
         obj.put("gradeName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getName() : null);
         obj.put("gradingScaleName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getGradingScale().getName() : null);
-        obj.put("assessingUserName", courseAssessment.getAssessingUser().getFullName());
+        obj.put("assessingUserName", courseAssessment.getAssessor().getFullName());
         
         arr.add(obj);
       }
@@ -439,7 +445,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
         
         obj.put("gradeName", transferCredit.getGrade() != null ? transferCredit.getGrade().getName() : null);
         obj.put("gradingScaleName", transferCredit.getGrade() != null ? transferCredit.getGrade().getGradingScale().getName() : null);
-        obj.put("assessingUserName", transferCredit.getAssessingUser().getFullName());
+        obj.put("assessingUserName", transferCredit.getAssessor().getFullName());
         
         arr.add(obj);
       }

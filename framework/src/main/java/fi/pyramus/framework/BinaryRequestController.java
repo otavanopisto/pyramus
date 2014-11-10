@@ -4,9 +4,9 @@ import fi.internetix.smvc.AccessDeniedException;
 import fi.internetix.smvc.LoginRequiredException;
 import fi.internetix.smvc.controllers.RequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.users.Role;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 
 public abstract class BinaryRequestController implements fi.internetix.smvc.controllers.BinaryRequestController {
 
@@ -20,8 +20,8 @@ public abstract class BinaryRequestController implements fi.internetix.smvc.cont
       else {
         Long loggedUserId = requestContext.getLoggedUserId();
         
-        UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-        User user = userDAO.findById(loggedUserId);
+        StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
+        StaffMember user = staffDAO.findById(loggedUserId);
         
         Role role = user.getRole();
         

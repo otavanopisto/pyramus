@@ -11,17 +11,17 @@ import org.apache.commons.lang.math.NumberUtils;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentGroupDAO;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.StudyProgramme;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.persistence.search.SearchResult;
-import fi.pyramus.persistence.search.StudentFilter;
+import fi.pyramus.persistence.search.PersonFilter;
 
 /**
  * Request handler for searching students.
@@ -32,7 +32,7 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
 
   public void process(JSONRequestContext jsonRequestContext) {
     StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
 
     Integer resultsPerPage = NumberUtils.createInteger(jsonRequestContext.getRequest().getParameter("maxResults"));
@@ -45,10 +45,10 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
       page = 0;
     }
     
-    SearchResult<AbstractStudent> searchResult = null;
+    SearchResult<Person> searchResult = null;
     
     String query = jsonRequestContext.getRequest().getParameter("query");
-    StudentFilter studentFilter = (StudentFilter) jsonRequestContext.getEnum("studentFilter", StudentFilter.class);
+    PersonFilter personFilter = (PersonFilter) jsonRequestContext.getEnum("studentFilter", PersonFilter.class);
     StudyProgramme studyProgramme = null;
     StudentGroup studentGroup = null;
     
@@ -60,15 +60,15 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
     if (studentGroupId.intValue() != -1)
       studentGroup = studentGroupDAO.findById(studentGroupId);
 
-    searchResult = abstractStudentDAO.searchAbstractStudentsBasic(resultsPerPage, page, query, studentFilter, studyProgramme, studentGroup);
+    searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, personFilter, studyProgramme, studentGroup);
     
     List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
-    List<AbstractStudent> abstractStudents = searchResult.getResults();
-    for (AbstractStudent abstractStudent : abstractStudents) {
-    	Student student = abstractStudent.getLatestStudent();
+    List<Person> persons = searchResult.getResults();
+    for (Person person : persons) {
+    	Student student = person.getLatestStudent();
     	if (student != null) {
         Map<String, Object> info = new HashMap<String, Object>();
-        info.put("abstractStudentId", abstractStudent.getId());
+        info.put("personId", person.getId());
         info.put("id", student.getId());
         info.put("firstName", student.getFirstName());
         info.put("lastName", student.getLastName());

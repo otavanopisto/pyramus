@@ -16,6 +16,7 @@ import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
@@ -26,9 +27,9 @@ import fi.pyramus.domainmodel.courses.CourseDescription;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.pyramus.domainmodel.courses.CourseStaffMember;
+import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseStudent;
-import fi.pyramus.domainmodel.courses.CourseUser;
-import fi.pyramus.domainmodel.courses.CourseUserRole;
 import fi.pyramus.domainmodel.grading.CourseAssessment;
 import fi.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.pyramus.domainmodel.grading.Credit;
@@ -37,7 +38,6 @@ import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.grading.TransferCredit;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.services.entities.base.AcademicTermEntity;
@@ -56,6 +56,8 @@ import fi.pyramus.services.entities.base.MunicipalityEntity;
 import fi.pyramus.services.entities.base.MunicipalityEntityFactory;
 import fi.pyramus.services.entities.base.NationalityEntity;
 import fi.pyramus.services.entities.base.NationalityEntityFactory;
+import fi.pyramus.services.entities.base.PersonEntity;
+import fi.pyramus.services.entities.base.PersonEntityFactory;
 import fi.pyramus.services.entities.base.SchoolEntity;
 import fi.pyramus.services.entities.base.SchoolEntityFactory;
 import fi.pyramus.services.entities.base.StudyProgrammeCategoryEntity;
@@ -102,8 +104,6 @@ import fi.pyramus.services.entities.modules.ModuleComponentEntity;
 import fi.pyramus.services.entities.modules.ModuleComponentEntityFactory;
 import fi.pyramus.services.entities.modules.ModuleEntity;
 import fi.pyramus.services.entities.modules.ModuleEntityFactory;
-import fi.pyramus.services.entities.students.AbstractStudentEntity;
-import fi.pyramus.services.entities.students.AbstractStudentEntityFactory;
 import fi.pyramus.services.entities.students.StudentEntity;
 import fi.pyramus.services.entities.students.StudentEntityFactory;
 import fi.pyramus.services.entities.users.UserEntity;
@@ -131,8 +131,8 @@ public class EntityFactoryVault {
     return (GradingScaleEntity) getEntityFactory(GradingScaleEntity.class).buildFromDomainObject(gradingScale);
   }
   
-  public static AbstractStudentEntity buildFromDomainObject(AbstractStudent abstractStudent) {
-    return (AbstractStudentEntity) EntityFactoryVault.getEntityFactory(AbstractStudentEntity.class).buildFromDomainObject(abstractStudent);
+  public static PersonEntity buildFromDomainObject(Person person) {
+    return (PersonEntity) EntityFactoryVault.getEntityFactory(PersonEntity.class).buildFromDomainObject(person);
   }
 
   public static StudentEntity buildFromDomainObject(Student student) {
@@ -199,11 +199,11 @@ public class EntityFactoryVault {
     return (CourseStudentEntity) EntityFactoryVault.getEntityFactory(CourseStudentEntity.class).buildFromDomainObject(courseStudent);
   }
   
-  public static CourseUserEntity buildFromDomainObject(CourseUser courseUser) {
+  public static CourseUserEntity buildFromDomainObject(CourseStaffMember courseUser) {
     return (CourseUserEntity) EntityFactoryVault.getEntityFactory(CourseUserEntity.class).buildFromDomainObject(courseUser);
   }
 
-  public static CourseUserRoleEntity buildFromDomainObject(CourseUserRole courseUserRole) {
+  public static CourseUserRoleEntity buildFromDomainObject(CourseStaffMemberRole courseUserRole) {
     return (CourseUserRoleEntity) EntityFactoryVault.getEntityFactory(CourseUserRoleEntity.class).buildFromDomainObject(courseUserRole);
   }
   
@@ -305,6 +305,7 @@ public class EntityFactoryVault {
     registerEntityFactory(Subject.class, SubjectEntity.class, new SubjectEntityFactory());
     registerEntityFactory(StudyProgramme.class, StudyProgrammeEntity.class, new StudyProgrammeEntityFactory());
     registerEntityFactory(StudyProgrammeCategory.class, StudyProgrammeCategoryEntity.class, new StudyProgrammeCategoryEntityFactory());
+    registerEntityFactory(Person.class ,PersonEntity.class, new PersonEntityFactory());
     
     /* Users */ 
     
@@ -312,7 +313,6 @@ public class EntityFactoryVault {
     
     /* Students */ 
     
-    registerEntityFactory(AbstractStudent.class ,AbstractStudentEntity.class, new AbstractStudentEntityFactory());
     registerEntityFactory(Student.class, StudentEntity.class, new StudentEntityFactory());
     
     /* Courses */
@@ -324,8 +324,8 @@ public class EntityFactoryVault {
     registerEntityFactory(CourseStudent.class, CourseStudentEntity.class, new CourseStudentEntityFactory());
     registerEntityFactory(CourseEducationType.class, CourseEducationTypeEntity.class, new CourseEducationTypeEntityFactory());
     registerEntityFactory(CourseEducationSubtype.class, CourseEducationSubtypeEntity.class, new CourseEducationSubtypeEntityFactory());
-    registerEntityFactory(CourseUser.class, CourseUserEntity.class, new CourseUserEntityFactory());
-    registerEntityFactory(CourseUserRole.class, CourseUserRoleEntity.class, new CourseUserRoleEntityFactory());
+    registerEntityFactory(CourseStaffMember.class, CourseUserEntity.class, new CourseUserEntityFactory());
+    registerEntityFactory(CourseStaffMemberRole.class, CourseUserRoleEntity.class, new CourseUserRoleEntityFactory());
     registerEntityFactory(CourseDescriptionCategory.class, CourseDescriptionCategoryEntity.class, new CourseDescriptionCategoryEntityFactory());
     registerEntityFactory(CourseDescription.class, CourseDescriptionEntity.class, new CourseDescriptionEntityFactory());
     

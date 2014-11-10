@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.pyramus.I18N.Messages;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.ContactInfoDAO;
@@ -17,25 +18,25 @@ import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.LanguageDAO;
 import fi.pyramus.dao.base.MunicipalityDAO;
 import fi.pyramus.dao.base.NationalityDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.SchoolDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.base.TagDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
-import fi.pyramus.dao.students.StudentVariableDAO;
+import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.Tag;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
@@ -44,17 +45,18 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.util.UserUtils;
 
 public class CreateStudentJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext requestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentActivityTypeDAO activityTypeDAO = DAOFactory.getInstance().getStudentActivityTypeDAO();
     StudentExaminationTypeDAO examinationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     StudentEducationalLevelDAO educationalLevelDAO = DAOFactory.getInstance().getStudentEducationalLevelDAO();
     StudentStudyEndReasonDAO studyEndReasonDAO = DAOFactory.getInstance().getStudentStudyEndReasonDAO();
-    StudentVariableDAO studentVariableDAO = DAOFactory.getInstance().getStudentVariableDAO();
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     LanguageDAO languageDAO = DAOFactory.getInstance().getLanguageDAO();
     MunicipalityDAO municipalityDAO = DAOFactory.getInstance().getMunicipalityDAO();
     NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
@@ -67,6 +69,19 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
 
+    Long personId = requestContext.getLong("personId");
+    
+    int emailCount2 = requestContext.getInteger("emailTable.rowCount");
+    for (int i = 0; i < emailCount2; i++) {
+      String colPrefix = "emailTable." + i;
+      String email = requestContext.getString(colPrefix + ".email");
+      if (email != null) {
+        if (!UserUtils.isAllowedEmail(email, personId)) {
+          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+        }
+      }
+    }
+    
     Date birthday = requestContext.getDate("birthday");
     String ssecId = requestContext.getString("ssecId");
     Sex sex = "male".equals(requestContext.getRequest().getParameter("gender")) ? Sex.MALE : Sex.FEMALE;
@@ -126,15 +141,22 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     entityId = requestContext.getLong("studyEndReason");
     StudentStudyEndReason studyEndReason = entityId == null ? null : studyEndReasonDAO.findById(entityId);
 
-    AbstractStudent abstractStudent = abstractStudentDAO.findBySSN(ssecId);
-    if (abstractStudent == null) {
-      abstractStudent = abstractStudentDAO.create(birthday, ssecId, sex, basicInfo, secureInfo);
-    }
-    else {
-      abstractStudentDAO.update(abstractStudent, birthday, ssecId, sex, basicInfo, secureInfo);
+    Person person = personId != null ? personDAO.findById(personId) : null;
+    Person personBySSN = personDAO.findBySSN(ssecId); 
+
+    if (person == null) {
+      if (personBySSN == null) {
+        person = personDAO.create(birthday, ssecId, sex, basicInfo, secureInfo);
+      }
+      else {
+        personDAO.update(personBySSN, birthday, ssecId, sex, basicInfo, secureInfo);
+        person = personBySSN;
+      }
+    } else {
+      personDAO.update(person, birthday, ssecId, sex, basicInfo, secureInfo);
     }
     
-    Student student = studentDAO.create(abstractStudent, firstName, lastName, nickname, additionalInfo,
+    Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo,
         studyTimeEnd, activityType, examinationType, educationalLevel, education, nationality, municipality,
         language, school, studyProgramme, previousStudies, studyStartTime, studyEndTime, studyEndReason, studyEndText, lodging);
 
@@ -198,16 +220,16 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
         String colPrefix = "variablesTable." + i;
         String variableKey = requestContext.getRequest().getParameter(colPrefix + ".key");
         String variableValue = requestContext.getRequest().getParameter(colPrefix + ".value");
-        studentVariableDAO.setStudentVariable(student, variableKey, variableValue);
+        userVariableDAO.setUserVariable(student, variableKey, variableValue);
       }
     }
     
-    // Contact information of a student won't be reflected to AbstractStudent
+    // Contact information of a student won't be reflected to Person
     // used when searching students, so a manual re-index is needed
 
-    abstractStudentDAO.forceReindex(student.getAbstractStudent());
+    personDAO.forceReindex(student.getPerson());
     
-    String redirectURL = requestContext.getRequest().getContextPath() + "/students/editstudent.page?abstractStudent=" + student.getAbstractStudent().getId();
+    String redirectURL = requestContext.getRequest().getContextPath() + "/students/editstudent.page?person=" + student.getPerson().getId();
     String refererAnchor = requestContext.getRefererAnchor();
     
     if (!StringUtils.isBlank(refererAnchor)) {

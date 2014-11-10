@@ -937,5 +937,7 @@
       </addForeignKeys>
     </table>
   </alterTables>
+    
+  <sql>alter table StudentVariable add UNIQUE KEY `INX_STUVAR_STUDENT_KEY` (`student`,`variableKey`)</sql>
 
 </update>

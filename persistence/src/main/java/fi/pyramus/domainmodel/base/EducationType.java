@@ -1,20 +1,11 @@
 package fi.pyramus.domainmodel.base;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
@@ -81,88 +72,6 @@ public class EducationType implements ArchivableEntity {
   }
   
   /**
-   * Returns the subtypes of this education type.
-   * 
-   * @return The subtypes of this education type
-   */
-  public List<EducationSubtype> getSubtypes() {
-    return subtypes;
-  }
-
-  @Transient
-  public List<EducationSubtype> getUnarchivedSubtypes() {
-    List<EducationSubtype> subtypes = new ArrayList<EducationSubtype>();
-    for (EducationSubtype subtype : this.subtypes) {
-      if (!subtype.getArchived()) {
-        subtypes.add(subtype);
-      }
-    }
-    return subtypes;
-  }
-
-  @Transient
-  public List<EducationSubtype> getArchivedSubtypes() {
-    List<EducationSubtype> subtypes = new ArrayList<EducationSubtype>();
-    for (EducationSubtype subtype : this.subtypes) {
-      if (subtype.getArchived()) {
-        subtypes.add(subtype);
-      }
-    }
-    return subtypes;
-  }
-
-  /**
-   * Sets the subtypes of this education type.
-   * 
-   * @param subtypes The subtypes of this education type
-   */
-  @SuppressWarnings("unused")
-  private void setSubtypes(List<EducationSubtype> subtypes) {
-    this.subtypes = subtypes;
-  }
-
-  /**
-   * Adds a subtype to this education type.
-   * 
-   * @param subtype The subtype to be added
-   */
-  public void addSubtype(EducationSubtype subtype) {
-    if (subtype.getEducationType() != null) {
-      subtype.getEducationType().getSubtypes().remove(subtype);
-    }
-    subtype.setEducationType(this);
-    this.subtypes.add(subtype);
-  }
-  
-  /**
-   * Removes the given subtype from this education type.
-   * 
-   * @param subtype The subtype to be removed
-   */
-  public void removeSubtype(EducationSubtype subtype) {
-    subtype.setEducationType(null);
-    this.subtypes.remove(subtype);
-  }
-  
-  /**
-   * Returns an education subtype corresponding to the given identifier. If such subtype cannot
-   * be found, returns <code>null</code>.
-   * 
-   * @param educationSubtypeId Education subtype identifeir
-   * 
-   * @return An education subtype corresponding to the given identifier, or <code>null</code> if not found
-   */
-  @Transient
-  public EducationSubtype getEducationSubtypeById(Long educationSubtypeId) {
-    for (EducationSubtype educationSubtype : subtypes) {
-      if (educationSubtype.getId().equals(educationSubtypeId)) {
-        return educationSubtype;
-      }
-    }
-    return null;
-  }
-  
-  /**
    * Sets the archived flag of this object.
    * 
    * @param archived The archived flag of this object
@@ -207,11 +116,6 @@ public class EducationType implements ArchivableEntity {
   @Field
   private String code;
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn (name="educationType")
-  @OrderBy("name")
-  private List<EducationSubtype> subtypes = new Vector<EducationSubtype>();
-  
   @NotNull
   @Column(nullable = false)
   private Boolean archived = Boolean.FALSE;

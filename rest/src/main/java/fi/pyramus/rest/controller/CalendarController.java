@@ -29,12 +29,12 @@ public class CalendarController {
     return academicTerm;
   }
   
-  public List<AcademicTerm> findAcademicTerms() {
+  public List<AcademicTerm> listAcademicTerms() {
     List<AcademicTerm> academicTerms = academicTermDAO.listAll();
     return academicTerms;
   }
   
-  public List<AcademicTerm> findUnarchivedAcademicTerms() {
+  public List<AcademicTerm> listUnarchivedAcademicTerms() {
     List<AcademicTerm> academicTerms = academicTermDAO.listUnarchived();
     return academicTerms;
   }
@@ -62,5 +62,9 @@ public class CalendarController {
   public AcademicTerm unarchiveAcademicTerm(AcademicTerm academicTerm, User user) {
     academicTermDAO.unarchive(academicTerm, user);
     return academicTerm;
+  }
+  
+  public void deleteAcademicTerm(AcademicTerm academicTerm) {
+    academicTermDAO.delete(academicTerm);
   }
 }

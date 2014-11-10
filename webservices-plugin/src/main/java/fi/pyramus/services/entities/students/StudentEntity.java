@@ -6,6 +6,7 @@ import fi.pyramus.services.entities.base.AddressEntity;
 import fi.pyramus.services.entities.base.LanguageEntity;
 import fi.pyramus.services.entities.base.MunicipalityEntity;
 import fi.pyramus.services.entities.base.NationalityEntity;
+import fi.pyramus.services.entities.base.PersonEntity;
 import fi.pyramus.services.entities.base.SchoolEntity;
 import fi.pyramus.services.entities.base.StudyProgrammeEntity;
 
@@ -14,13 +15,13 @@ public class StudentEntity {
   public StudentEntity() {
   }
 
-  public StudentEntity(Long id, AbstractStudentEntity abstractStudent, String[] emails, String firstName, String lastName, String[] tags,
+  public StudentEntity(Long id, PersonEntity person, String[] emails, String firstName, String lastName, String[] tags,
       AddressEntity[] addresses, String phone, String additionalInfo, String parentalInfo, Date studyTimeEnd, NationalityEntity nationality,
       LanguageEntity language, MunicipalityEntity municipality, SchoolEntity school, StudyProgrammeEntity studyProgramme, Boolean archived,
       Date studyStartDate, Date studyEndDate) {
     super();
     this.id = id;
-    this.abstractStudent = abstractStudent;
+    this.person = person;
     this.emails = emails;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -48,12 +49,12 @@ public class StudentEntity {
     this.id = id;
   }
 
-  public AbstractStudentEntity getAbstractStudent() {
-    return abstractStudent;
+  public PersonEntity getPerson() {
+    return person;
   }
 
-  public void setAbstractStudent(AbstractStudentEntity abstractStudent) {
-    this.abstractStudent = abstractStudent;
+  public void setPerson(PersonEntity person) {
+    this.person = person;
   }
 
   public String[] getEmails() {
@@ -193,7 +194,7 @@ public class StudentEntity {
   }
 
   private Long id;
-  private AbstractStudentEntity abstractStudent;
+  private PersonEntity person;
   private String[] emails;
   private String firstName;
   private String lastName;

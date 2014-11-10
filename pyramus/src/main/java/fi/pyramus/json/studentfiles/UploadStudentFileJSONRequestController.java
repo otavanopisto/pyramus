@@ -7,7 +7,7 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.file.FileTypeDAO;
 import fi.pyramus.dao.file.StudentFileDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.file.FileType;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.User;
@@ -29,7 +29,7 @@ public class UploadStudentFileJSONRequestController extends JSONRequestControlle
    */
   public void process(JSONRequestContext requestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
     FileTypeDAO fileTypeDAO = DAOFactory.getInstance().getFileTypeDAO();
 

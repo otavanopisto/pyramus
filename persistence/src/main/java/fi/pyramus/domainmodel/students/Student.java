@@ -1,38 +1,22 @@
 package fi.pyramus.domainmodel.students;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PersistenceException;
-import javax.persistence.TableGenerator;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FullTextFilterDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
@@ -40,27 +24,16 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Resolution;
 import org.hibernate.search.annotations.Store;
-import org.hibernate.validator.constraints.NotEmpty;
 
-import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ArchivableEntity;
-import fi.pyramus.domainmodel.base.BillingDetails;
-import fi.pyramus.domainmodel.base.ContactInfo;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
-import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
-import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
-
-/**
- * Student
- * 
- * @author antti.viljakainen
- */
 
 @Entity
 @Indexed
@@ -70,53 +43,9 @@ import fi.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
      impl=ArchivedEntityFilterFactory.class
   )
 )
-public class Student implements ArchivableEntity {
+@PrimaryKeyJoinColumn(name="id")
+public class Student extends User implements ArchivableEntity {
 
-  /**
-   * Returns internal unique id
-   * 
-   * @return Internal unique id
-   */
-  public Long getId() {
-    return id;
-  }
-
-  /**
-   * Returns first name of this student.
-   * 
-   * @return First name
-   */
-  public String getFirstName() {
-    return firstName;
-  }
-
-  /**
-   * Sets first name for this student.
-   * 
-   * @param firstName New first name
-   */
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
-
-  /**
-   * Returns last name of this student.
-   * 
-   * @return Last name
-   */
-  public String getLastName() {
-    return lastName;
-  }
-
-  /**
-   * Sets last name for this student.
-   * 
-   * @param lastName New last name
-   */
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
-    
   /**
    * Returns full name (first name + last name) of this student.
    *  
@@ -153,24 +82,6 @@ public class Student implements ArchivableEntity {
    */
   public String getAdditionalInfo() {
     return additionalInfo;
-  }
-
-  /**
-   * Sets AbstractStudent for this student
-   * 
-   * @param abstractStudent AbstractStudent
-   */
-  protected void setAbstractStudent(AbstractStudent abstractStudent) {
-    this.abstractStudent = abstractStudent;
-  }
-
-  /**
-   * Returns AbstractStudent of this student.
-   * 
-   * @return AbstractStudent
-   */
-  public AbstractStudent getAbstractStudent() {
-    return abstractStudent;
   }
 
   /**
@@ -323,15 +234,6 @@ public class Student implements ArchivableEntity {
   public boolean getHasFinishedStudies() {
     return studyEndDate != null && studyEndDate.before(new Date());
   }
-	
-  @Transient
-  public Map<String, String> getVariablesAsStringMap() {
-    Map<String, String> result = new HashMap<String, String>();
-    for (StudentVariable studentVariable : variables) {
-      result.put(studentVariable.getKey().getVariableKey(), studentVariable.getValue());
-    }
-    return result;
-  } 
 
 	public void setActivityType(StudentActivityType activityType) {
     this.activityType = activityType;
@@ -355,36 +257,6 @@ public class Student implements ArchivableEntity {
 
   public StudentExaminationType getExaminationType() {
     return examinationType;
-  }
-  
-  @Transient
-  public Address getDefaultAddress() {
-    for (Address address : contactInfo.getAddresses()) {
-      if (address.getDefaultAddress()) {
-        return address;
-      }
-    }
-    return null;
-  }
-
-  @Transient
-  public Email getDefaultEmail() {
-    for (Email email : contactInfo.getEmails()) {
-      if (email.getDefaultAddress()) {
-        return email;
-      }
-    }
-    return null;
-  }
-  
-  @Transient
-  public PhoneNumber getDefaultPhone() {
-    for (PhoneNumber phone : contactInfo.getPhoneNumbers()) {
-      if (phone.getDefaultNumber()) {
-        return phone;
-      }
-    }
-    return null;
   }
 
   public String getEducation() {
@@ -410,108 +282,12 @@ public class Student implements ArchivableEntity {
   public void setLodging(Boolean lodging) {
     this.lodging = lodging;
   }
-  
-  public void setVariables(List<StudentVariable> variables) {
-    this.variables = variables;
-  }
 
-  public List<StudentVariable> getVariables() {
-    return variables;
-  }
-
-  public void setContactInfo(ContactInfo contactInfo) {
-    this.contactInfo = contactInfo;
-  }
-
-  public ContactInfo getContactInfo() {
-    return contactInfo;
-  }
-
-  public Set<Tag> getTags() {
-    return tags;
-  }
-  
-  public void setTags(Set<Tag> tags) {
-    this.tags = tags;
-  }
-  
-  public void addTag(Tag tag) {
-    if (!tags.contains(tag)) {
-      tags.add(tag);
-    } else {
-      throw new PersistenceException("Entity already has this tag");
-    }
-  }
-  
-  public void removeTag(Tag tag) {
-    if (tags.contains(tag)) {
-      tags.remove(tag);
-    } else {
-      throw new PersistenceException("Entity does not have this tag");
-    }
-  }
-
-  public void setBillingDetails(List<BillingDetails> billingDetails) {
-    this.billingDetails = billingDetails;
-  }
-
-  public List<BillingDetails> getBillingDetails() {
-    return billingDetails;
-  }
-
-  public void addBillingDetails(BillingDetails billingDetails) {
-    if (!this.billingDetails.contains(billingDetails)) {
-      this.billingDetails.add(billingDetails);
-    } else {
-      throw new PersistenceException("Entity already has this BillingDetails");
-    }
-  }
-  
-  public void removeBillingDetails(BillingDetails billingDetails) {
-    if (this.billingDetails.contains(billingDetails)) {
-      this.billingDetails.remove(billingDetails);
-    } else {
-      throw new PersistenceException("Entity does not have this BillingDetails");
-    }
-  }
-
-  @SuppressWarnings("unused")
-  private void setVersion(Long version) {
-    this.version = version;
-  }
-
-  public Long getVersion() {
-    return version;
-  }
-
-  @Id 
-  @GeneratedValue(strategy=GenerationType.TABLE, generator="Student")  
-  @TableGenerator(name="Student", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
-  @DocumentId
-  private Long id;
-
-  @ManyToOne
-  @JoinColumn (name = "abstractStudent")
-  private AbstractStudent abstractStudent;
-  
-  @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn (name="contactInfo")
-  private ContactInfo contactInfo = new ContactInfo();
-  
-  @NotNull
-  @Column (nullable = false)
-  @NotEmpty
-  private String firstName;
-  
-  @NotNull
-  @Column (nullable = false)
-  @NotEmpty
-  private String lastName;
-  
   private String nickname;
     
+  @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column (length=1073741824)
+  @Column
   private String additionalInfo;
   
   @ManyToOne
@@ -578,22 +354,4 @@ public class Student implements ArchivableEntity {
   
   @Basic (fetch = FetchType.LAZY)
   private String studyEndText;
-  
-  @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn (name="student")
-  private List<StudentVariable> variables = new ArrayList<StudentVariable>();
-
-  @ManyToMany (fetch = FetchType.LAZY)
-  @JoinTable (name="__StudentBillingDetails", joinColumns=@JoinColumn(name="student"), inverseJoinColumns=@JoinColumn(name="billingDetails"))
-  @IndexedEmbedded 
-  private List<BillingDetails> billingDetails = new ArrayList<BillingDetails>();
-
-  @ManyToMany (fetch = FetchType.LAZY)
-  @JoinTable (name="__StudentTags", joinColumns=@JoinColumn(name="student"), inverseJoinColumns=@JoinColumn(name="tag"))
-  @IndexedEmbedded 
-  private Set<Tag> tags = new HashSet<Tag>();
-  
-  @Version
-  @Column(nullable = false)
-  private Long version;
 }

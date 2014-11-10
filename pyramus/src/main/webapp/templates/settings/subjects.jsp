@@ -31,15 +31,14 @@
     <h1 class="genericPageHeader"><fmt:message key="settings.subjects.pageTitle"/></h1>
     
     <div id="manageSubjectsFormContainer"> 
-	    <div class="genericFormContainer"> 
-	      <form action="" method="post">
-	  
-	        <div class="tabLabelsContainer" id="tabs">
-	          <a class="tabLabel" href="#manageSubjects">
-	            <fmt:message key="settings.subjects.tabLabelSubjects"/>
-	          </a>
-	        </div>
-          
+      <div class="genericFormContainer"> 
+	    <form action="savesubjects.json" method="post" ix:jsonform="true" ix:useglasspane="true">
+
+          <div class="tabLabelsContainer" id="tabs">
+            <a class="tabLabel" href="#manageSubjects"> <fmt:message key="settings.subjects.tabLabelSubjects" />
+            </a>
+          </div>
+  
           <div id="manageSubjects" class="tabContentixTableFormattedData">
             <div class="genericTableAddRowContainer">
               <span class="genericTableAddRowLinkContainer" onclick="addSubjectsTableRow();"><fmt:message key="settings.subjects.addSubjectLink"/></span>
@@ -51,14 +50,13 @@
             
             <div id="subjectsTable"></div>
           </div>
-	  
+    
           <div class="genericFormSubmitSectionOffTab">
             <input type="submit" class="formvalid" value="<fmt:message key="settings.subjects.saveButton"/>">
           </div>
-
-	      </form>
-	    </div>
-	  </div>
+        </form>
+      </div>
+    </div>
     
     <jsp:include page="/templates/generic/footer.jsp"></jsp:include>
   </body>

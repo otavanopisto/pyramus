@@ -15,10 +15,11 @@ import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentGroupDAO;
 import fi.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.pyramus.dao.students.StudentGroupUserDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentGroup;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
@@ -26,7 +27,7 @@ import fi.pyramus.framework.UserRole;
 public class CreateStudentGroupJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
     StudentGroupStudentDAO studentGroupStudentDAO = DAOFactory.getInstance().getStudentGroupStudentDAO();
@@ -53,7 +54,7 @@ public class CreateStudentGroupJSONRequestController extends JSONRequestControll
       }
     }
 
-    User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
+    User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
 
     StudentGroup studentGroup = studentGroupDAO.create(name, description, beginDate, loggedUser);
 
@@ -67,9 +68,9 @@ public class CreateStudentGroupJSONRequestController extends JSONRequestControll
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "usersTable." + i;
       Long userId = requestContext.getLong(colPrefix + ".userId");
-      User user = userDAO.findById(userId);
+      StaffMember staffMember = staffMemberDAO.findById(userId);
       
-      studentGroupUserDAO.create(studentGroup, user, loggedUser);
+      studentGroupUserDAO.create(studentGroup, staffMember, loggedUser);
     }
 
     // Students

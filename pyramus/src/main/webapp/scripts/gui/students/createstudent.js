@@ -1,16 +1,20 @@
 var contactTypes = JSDATA["contactTypes"].evalJSON();
 var variableKeys = JSDATA["variableKeys"].evalJSON();
 
-function addEmailTableRow() {
-  getIxTableById('emailTable').addRow([ '', '', '', '', '' ]);
+var emails_values = JSDATA["createstudent_emails"] ? JSDATA["createstudent_emails"].evalJSON() : undefined;
+var address_values = JSDATA["createstudent_addresses"] ? JSDATA["createstudent_addresses"].evalJSON() : undefined;
+var phone_values = JSDATA["createstudent_phones"] ? JSDATA["createstudent_phones"].evalJSON() : undefined;
+
+function addEmailTableRow(values) {
+  getIxTableById('emailTable').addRow(values || [ '', '', '', '', '' ]);
 };
 
-function addPhoneTableRow() {
-  getIxTableById('phoneTable').addRow([ '', '', '', '', '' ]);
+function addPhoneTableRow(values) {
+  getIxTableById('phoneTable').addRow(values || [ '', '', '', '', '' ]);
 };
 
-function addAddressTableRow() {
-  getIxTableById('addressTable').addRow([ '', '', '', '', '', '', '', '', '' ]);
+function addAddressTableRow(values) {
+  getIxTableById('addressTable').addRow(values || [ '', '', '', '', '', '', '', '', '' ]);
 };
 
 function setupTags() {
@@ -92,8 +96,17 @@ function onLoad(event) {
     var enabledButton = event.row == 0 ? 'addButton' : 'removeButton';
     emailTable.showCell(event.row, emailTable.getNamedColumnIndex(enabledButton));
   });
-  addEmailTableRow();
-  emailTable.setCellValue(0, 0, true);
+  
+  if (emails_values && emails_values.length > 0) {
+    for (var i = 0; i < emails_values.length; i++) {
+      addEmailTableRow([emails_values[i].defaultAddress, 
+                        emails_values[i].contactType != undefined ? emails_values[i].contactType.id : '', 
+                        emails_values[i].address, '', '']);
+    }
+  } else {
+    addEmailTableRow();
+    emailTable.setCellValue(0, 0, true);
+  }
 
   // Addresses
 
@@ -187,9 +200,22 @@ function onLoad(event) {
     var enabledButton = event.row == 0 ? 'addButton' : 'removeButton';
     addressTable.showCell(event.row, addressTable.getNamedColumnIndex(enabledButton));
   });
-  addAddressTableRow();
-  addressTable.setCellValue(0, 0, true);
 
+  if (address_values && address_values.length > 0) {
+    for (var i = 0; i < address_values.length; i++) {
+      addAddressTableRow([address_values[i].defaultAddress, 
+                          address_values[i].contactType != undefined ? address_values[i].contactType.id : '', 
+                          address_values[i].name != undefined ? address_values[i].name : '', 
+                          address_values[i].streetAddress, 
+                          address_values[i].postalCode, 
+                          address_values[i].city, 
+                          address_values[i].country, '', '']);
+    }
+  } else {
+    addAddressTableRow();
+    addressTable.setCellValue(0, 0, true);
+  }
+  
   // Phone numbers
 
   var phoneTable = new IxTable($('phoneTable'), {
@@ -254,9 +280,19 @@ function onLoad(event) {
     var enabledButton = event.row == 0 ? 'addButton' : 'removeButton';
     phoneTable.showCell(event.row, phoneTable.getNamedColumnIndex(enabledButton));
   });
-  addPhoneTableRow();
-  phoneTable.setCellValue(0, 0, true);
 
+  if (phone_values && phone_values.length > 0) {
+    for (var i = 0; i < phone_values.length; i++) {
+      addPhoneTableRow([phone_values[i].defaultNumber, 
+                        phone_values[i].contactType != undefined ? phone_values[i].contactType.id : '', 
+                        phone_values[i].number, 
+                        '', '']);
+    }
+  } else {
+    addPhoneTableRow();
+    phoneTable.setCellValue(0, 0, true);
+  }
+  
   // Student variables
 
   // Variables

@@ -9,24 +9,24 @@ import java.util.Map;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
+import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.courses.CourseComponentDAO;
 import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.dao.courses.CourseDescriptionDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
-import fi.pyramus.dao.courses.CourseUserDAO;
 import fi.pyramus.dao.grading.CourseAssessmentRequestDAO;
 import fi.pyramus.dao.reports.ReportDAO;
-import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.domainmodel.courses.Course;
+import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.courses.CourseStudent;
-import fi.pyramus.domainmodel.courses.CourseUser;
 import fi.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.pyramus.domainmodel.reports.Report;
 import fi.pyramus.domainmodel.reports.ReportContextType;
+import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.util.StringAttributeComparator;
@@ -46,7 +46,7 @@ public class ViewCourseViewController extends PyramusViewController implements B
     CourseDescriptionDAO descriptionDAO = DAOFactory.getInstance().getCourseDescriptionDAO();
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     CourseComponentDAO courseComponentDAO = DAOFactory.getInstance().getCourseComponentDAO();
-    CourseUserDAO courseUserDAO = DAOFactory.getInstance().getCourseUserDAO();
+    CourseStaffMemberDAO courseStaffMemberDAO = DAOFactory.getInstance().getCourseStaffMemberDAO();
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
     CourseAssessmentRequestDAO courseAssessmentRequestDAO = DAOFactory.getInstance().getCourseAssessmentRequestDAO();
     
@@ -68,13 +68,13 @@ public class ViewCourseViewController extends PyramusViewController implements B
       }
     });
     
-    List<CourseUser> courseUsers = courseUserDAO.listByCourse(course);
-    Collections.sort(courseUsers, new Comparator<CourseUser>() {
+    List<CourseStaffMember> courseUsers = courseStaffMemberDAO.listByCourse(course);
+    Collections.sort(courseUsers, new Comparator<CourseStaffMember>() {
       @Override
-      public int compare(CourseUser o1, CourseUser o2) {
-        int cmp = o1.getUser().getLastName().compareToIgnoreCase(o2.getUser().getLastName());
+      public int compare(CourseStaffMember o1, CourseStaffMember o2) {
+        int cmp = o1.getStaffMember().getLastName().compareToIgnoreCase(o2.getStaffMember().getLastName());
         if (cmp == 0)
-          cmp = o1.getUser().getFirstName().compareToIgnoreCase(o2.getUser().getFirstName());
+          cmp = o1.getStaffMember().getFirstName().compareToIgnoreCase(o2.getStaffMember().getFirstName());
         return cmp;
       }
     });

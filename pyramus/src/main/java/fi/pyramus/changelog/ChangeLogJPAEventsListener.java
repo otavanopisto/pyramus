@@ -19,7 +19,7 @@ import fi.pyramus.dao.changelog.ChangeLogEntryDAO;
 import fi.pyramus.dao.changelog.ChangeLogEntryEntityDAO;
 import fi.pyramus.dao.changelog.ChangeLogEntryEntityPropertyDAO;
 import fi.pyramus.dao.changelog.ChangeLogEntryPropertyDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.changelog.ChangeLogEntry;
 import fi.pyramus.domainmodel.changelog.ChangeLogEntryEntity;
 import fi.pyramus.domainmodel.changelog.ChangeLogEntryEntityProperty;
@@ -56,7 +56,7 @@ public class ChangeLogJPAEventsListener implements MessageListener {
   
   private void handleCreate(MapMessage mapMessage) throws JMSException, ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InvocationTargetException  {
     SystemDAO systemDAO = DAOFactory.getInstance().getSystemDAO();
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ChangeLogEntryDAO logEntryDAO = DAOFactory.getInstance().getChangeLogEntryDAO();
     ChangeLogEntryEntityDAO entryEntityDAO = DAOFactory.getInstance().getChangeLogEntryEntityDAO();
     ChangeLogEntryEntityPropertyDAO entryEntityPropertyDAO = DAOFactory.getInstance().getChangeLogEntryEntityPropertyDAO();
@@ -116,7 +116,7 @@ public class ChangeLogJPAEventsListener implements MessageListener {
   }
   
   private void handleDelete(MapMessage mapMessage) throws JMSException  {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ChangeLogEntryDAO logEntryDAO = DAOFactory.getInstance().getChangeLogEntryDAO();
     ChangeLogEntryEntityDAO entryEntityDAO = DAOFactory.getInstance().getChangeLogEntryEntityDAO();
     
@@ -139,7 +139,7 @@ public class ChangeLogJPAEventsListener implements MessageListener {
   
   private void handleUpdate(MapMessage mapMessage) throws JMSException, ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InvocationTargetException  {
     SystemDAO systemDAO = DAOFactory.getInstance().getSystemDAO();
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ChangeLogEntryDAO logEntryDAO = DAOFactory.getInstance().getChangeLogEntryDAO();
     ChangeLogEntryEntityDAO entryEntityDAO = DAOFactory.getInstance().getChangeLogEntryEntityDAO();
     ChangeLogEntryEntityPropertyDAO entryEntityPropertyDAO = DAOFactory.getInstance().getChangeLogEntryEntityPropertyDAO();

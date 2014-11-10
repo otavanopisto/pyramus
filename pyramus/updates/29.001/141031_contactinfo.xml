@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="Student">
+      <dropForeignKeys>
+        <key name="FKF3371A1BC028436E"/>
+      </dropForeignKeys>
+    </table>
+
+    <table name="Student">
+      <dropFields>
+        <field name="contactInfo"/>
+      </dropFields>
+    </table>
+  </alterTables>
+
+</update>

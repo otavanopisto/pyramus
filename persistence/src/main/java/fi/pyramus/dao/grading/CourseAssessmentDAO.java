@@ -20,16 +20,16 @@ import fi.pyramus.domainmodel.grading.CourseAssessment;
 import fi.pyramus.domainmodel.grading.CourseAssessment_;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.students.Student;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 
 @Stateless
 public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
 
-  public CourseAssessment create(CourseStudent courseStudent, User assessingUser, Grade grade, Date date, String verbalAssessment) {
+  public CourseAssessment create(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment) {
     EntityManager entityManager = getEntityManager();
 
     CourseAssessment courseAssessment = new CourseAssessment();
-    courseAssessment.setAssessingUser(assessingUser);
+    courseAssessment.setAssessor(assessingUser);
     courseAssessment.setCourseStudent(courseStudent);
     courseAssessment.setDate(date);
     courseAssessment.setGrade(grade);
@@ -107,10 +107,10 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
-  public CourseAssessment update(CourseAssessment assessment, User assessingUser, Grade grade, Date assessmentDate, String verbalAssessment) {
+  public CourseAssessment update(CourseAssessment assessment, StaffMember assessingUser, Grade grade, Date assessmentDate, String verbalAssessment) {
     EntityManager entityManager = getEntityManager();
 
-    assessment.setAssessingUser(assessingUser);
+    assessment.setAssessor(assessingUser);
     assessment.setGrade(grade);
     assessment.setDate(assessmentDate);
     assessment.setVerbalAssessment(verbalAssessment);

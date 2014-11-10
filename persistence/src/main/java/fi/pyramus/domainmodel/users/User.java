@@ -8,12 +8,12 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -37,11 +37,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.ContactInfo;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.Tag;
 
 @Entity
 @Indexed
 @Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@Inheritance(strategy=InheritanceType.JOINED)
 public class User implements fi.muikku.security.User {
 
   public Long getId() {
@@ -75,34 +77,10 @@ public class User implements fi.muikku.security.User {
   public String getLastNameSortable() {
     return getLastName();
   }
-
-  public String getAuthProvider() {
-    return authProvider;
-  }
-  
-  public void setAuthProvider(String authProvider) {
-    this.authProvider = authProvider;
-  }
-  
-  public String getExternalId() {
-    return externalId;
-  }
-  
-  public void setExternalId(String externalId) {
-    this.externalId = externalId;
-  }
   
   @Transient 
   public String getFullName() {
     return getFirstName() + ' ' + getLastName();
-  }
-
-  public void setRole(Role role) {
-    this.role = role;
-  }
-
-  public Role getRole() {
-    return role;
   }
   
   public Set<Tag> getTags() {
@@ -145,14 +123,6 @@ public class User implements fi.muikku.security.User {
     return version;
   }
 
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
   public void setBillingDetails(List<BillingDetails> billingDetails) {
     this.billingDetails = billingDetails;
   }
@@ -184,6 +154,14 @@ public class User implements fi.muikku.security.User {
   public void setRoleEntity(EnvironmentRoleEntity roleEntity) {
     this.roleEntity = roleEntity;
   }
+  
+  public Person getPerson() {
+    return person;
+  }
+
+  public void setPerson(Person person) {
+    this.person = person;
+  }
 
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="User")  
@@ -191,10 +169,13 @@ public class User implements fi.muikku.security.User {
   @DocumentId
   private Long id;
   
+  @ManyToOne
+  private Person person;
+  
   @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="contactInfo")
   @IndexedEmbedded
-  private ContactInfo contactInfo = new ContactInfo();
+  private ContactInfo contactInfo;
 
   @NotNull
   @Column (nullable = false)
@@ -208,25 +189,6 @@ public class User implements fi.muikku.security.User {
   @Field
   private String lastName;
 
-  @NotNull
-  @Column (nullable = false)
-  @NotEmpty
-  private String externalId;
-  
-  @NotNull
-  @Column (nullable = false)
-  @NotEmpty
-  private String authProvider;  
-
-  private String title;  
-  
-  @NotNull
-  @Column (nullable = false)
-  @Enumerated (EnumType.STRING)
-  @Field (store = Store.NO)
-  // TODO Some way to disallow Role.EVERYONE
-  private Role role;
-
   @ManyToOne
   private EnvironmentRoleEntity roleEntity;
   
@@ -235,7 +197,7 @@ public class User implements fi.muikku.security.User {
   @IndexedEmbedded 
   private List<BillingDetails> billingDetails = new ArrayList<BillingDetails>();
 
-  @ManyToMany (fetch = FetchType.LAZY)
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__UserTags", joinColumns=@JoinColumn(name="user"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
   private Set<Tag> tags = new HashSet<Tag>();

@@ -9,7 +9,7 @@
   <head>
     <title>
       <fmt:message key="students.editStudent.pageTitle">
-        <fmt:param value="${abstractStudent.latestStudent.fullName}"/>
+        <fmt:param value="${person.latestStudent.fullName}"/>
       </fmt:message>
     </title>
     <jsp:include page="/templates/generic/head_generic.jsp"></jsp:include>
@@ -409,40 +409,35 @@
             phoneTable.setCellValue(0, 1, true);
           }
 
-          <c:choose>
-            <c:when test="${fn:length(variableKeys) gt 0}">
-              // Student variables
-              variablesTable = initStudentVariableTable(${student.id});
-    
-              <c:forEach var="variableKey" items="${variableKeys}">
-                value = '${fn:escapeXml(student.variablesAsStringMap[variableKey.variableKey])}';
-                var rowNumber = variablesTable.addRow([
-                  '',
-                  '${fn:escapeXml(variableKey.variableKey)}',
-                  '${fn:escapeXml(variableKey.variableName)}',
-                  value
-                ]);
-        
-                var dataType;
-                <c:choose>
-                  <c:when test="${variableKey.variableType == 'NUMBER'}">
-                    dataType = 'number';
-                  </c:when>
-                  <c:when test="${variableKey.variableType == 'DATE'}">
-                    dataType = 'date';
-                  </c:when>
-                  <c:when test="${variableKey.variableType == 'BOOLEAN'}">
-                    dataType = 'checkbox';
-                  </c:when>
-                  <c:otherwise>
-                    dataType = 'text';
-                  </c:otherwise>
-                </c:choose>
-                
-                variablesTable.setCellDataType(rowNumber, 3, dataType);
-              </c:forEach>
-            </c:when>
-          </c:choose>
+          var variables = JSDATA["variables.${student.id}"].evalJSON();
+          if (variables && variables.length > 0) {
+            // Student variables
+            variablesTable = initStudentVariableTable(${student.id});
+
+            for (var i = 0, l = variables.length; i < l; i++) {
+              var rowNumber = variablesTable.addRow([
+                '',
+                variables[i].key,
+                variables[i].name,
+                variables[i].value
+              ]);
+
+              switch (variables[i].type) {
+                case 'NUMBER':
+                  variablesTable.setCellDataType(rowNumber, 3, 'number');
+                break;
+                case 'DATE':
+                  variablesTable.setCellDataType(rowNumber, 3, 'date');
+                break;
+                case 'BOOLEAN':
+                  variablesTable.setCellDataType(rowNumber, 3, 'checkbox');
+                break;
+                default:
+                  variablesTable.setCellDataType(rowNumber, 3, 'text');
+                break;
+              }
+            }
+          }
         </c:forEach>
       }
 
@@ -455,14 +450,14 @@
           iconURL: GLOBAL_contextPath + '/gfx/eye.png',
           text: '<fmt:message key="students.editStudent.basicTabRelatedActionLabel"/>',
           onclick: function (event) {
-            redirectTo(GLOBAL_contextPath + '/students/viewstudent.page?abstractStudent=${abstractStudent.id}');
+            redirectTo(GLOBAL_contextPath + '/students/viewstudent.page?person=${person.id}');
           }
         }));
 
         relatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.editStudent.basicTabRelatedActionsManageContactEntriesLabel"/>',
-          link: GLOBAL_contextPath + '/students/managestudentcontactentries.page?abstractStudent=${abstractStudent.id}'  
+          link: GLOBAL_contextPath + '/students/managestudentcontactentries.page?person=${person.id}'  
         }));
       }
 
@@ -579,7 +574,7 @@
   
     <h1 class="genericPageHeader">
       <fmt:message key="students.editStudent.pageTitle">
-        <fmt:param value="${abstractStudent.latestStudent.fullName}"/>
+        <fmt:param value="${person.latestStudent.fullName}"/>
       </fmt:message>
     </h1>
 
@@ -587,7 +582,7 @@
       <div class="genericFormContainer"> 
 
         <form action="editstudent.json" method="post" ix:jsonform="true" ix:useglasspane="true">
-          <input type="hidden" name="version" value="${abstractStudent.version}"/>
+          <input type="hidden" name="version" value="${person.version}"/>
         
           <div class="tabLabelsContainer" id="tabs">
             <a class="tabLabel" href="#basic">
@@ -614,14 +609,14 @@
           <div id="basic" class="tabContent">    
             <div id="basicRelatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
             
-            <input type="hidden" name="abstractStudentId" value="${abstractStudent.id}"/>
+            <input type="hidden" name="personId" value="${person.id}"/>
             
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="students.editStudent.firstNameTitle"/>
                 <jsp:param name="helpLocale" value="students.editStudent.firstNameHelp"/>
               </jsp:include>            
-              ${abstractStudent.latestStudent.firstName}
+              ${person.latestStudent.firstName}
             </div>
   
             <div class="genericFormSection">  
@@ -629,7 +624,7 @@
                 <jsp:param name="titleLocale" value="students.editStudent.lastNameTitle"/>
                 <jsp:param name="helpLocale" value="students.editStudent.lastNameHelp"/>
               </jsp:include>            
-              ${abstractStudent.latestStudent.lastName}
+              ${person.latestStudent.lastName}
             </div>
             
             <div class="genericFormSection">   
@@ -637,7 +632,7 @@
                 <jsp:param name="titleLocale" value="students.editStudent.birthdayTitle"/>
                 <jsp:param name="helpLocale" value="students.editStudent.birthdayHelp"/>
               </jsp:include>            
-              <input type="text" name="birthday" class="ixDateField" value="${abstractStudent.birthday.time}">
+              <input type="text" name="birthday" class="ixDateField" value="${person.birthday.time}">
             </div>
       
             <div class="genericFormSection">     
@@ -645,7 +640,7 @@
                 <jsp:param name="titleLocale" value="students.editStudent.ssecIdTitle"/>
                 <jsp:param name="helpLocale" value="students.editStudent.ssecIdHelp"/>
               </jsp:include>            
-              <input type="text" name="ssecId" value="${abstractStudent.socialSecurityNumber}" size="15" class="mask" ix:validatemask="^([0-9]{6})[-A]([0-9A-Z]{4})$">
+              <input type="text" name="ssecId" value="${person.socialSecurityNumber}" size="15" class="mask" ix:validatemask="^([0-9]{6})[-A]([0-9A-Z]{4})$">
             </div>
 
             <div class="genericFormSection">       
@@ -654,8 +649,8 @@
                 <jsp:param name="helpLocale" value="students.editStudent.genderHelp"/>
               </jsp:include>            
               <select name="gender">
-                <option value="male" <c:if test="${abstractStudent.sex == 'MALE'}">selected="selected"</c:if>><fmt:message key="students.editStudent.genderMaleTitle"/></option>
-                <option value="female" <c:if test="${abstractStudent.sex == 'FEMALE'}">selected="selected"</c:if>><fmt:message key="students.editStudent.genderFemaleTitle"/></option>
+                <option value="male" <c:if test="${person.sex == 'MALE'}">selected="selected"</c:if>><fmt:message key="students.editStudent.genderMaleTitle"/></option>
+                <option value="female" <c:if test="${person.sex == 'FEMALE'}">selected="selected"</c:if>><fmt:message key="students.editStudent.genderFemaleTitle"/></option>
               </select>
             </div>
 
@@ -665,7 +660,7 @@
                 <jsp:param name="helpLocale" value="students.editStudent.secureInfoHelp"/>
               </jsp:include>
               <c:choose>
-                <c:when test="${abstractStudent.secureInfo}"><input type="checkbox" name="secureInfo" value="true" checked="checked"/></c:when>
+                <c:when test="${person.secureInfo}"><input type="checkbox" name="secureInfo" value="true" checked="checked"/></c:when>
                 <c:otherwise><input type="checkbox" name="secureInfo" value="true"/></c:otherwise>              
               </c:choose>
               <fmt:message key="students.editStudent.secureInfoCheckboxLabel"/>
@@ -673,10 +668,10 @@
 
             <div class="genericFormSection">         
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="students.editStudent.abstractStudentBasicInfoTitle"/>
-                <jsp:param name="helpLocale" value="students.editStudent.abstractStudentBasicInfoHelp"/>
+                <jsp:param name="titleLocale" value="students.editStudent.personBasicInfoTitle"/>
+                <jsp:param name="helpLocale" value="students.editStudent.personBasicInfoHelp"/>
               </jsp:include>            
-              <textarea name="basicInfo" ix:cktoolbar="studentAdditionalInformation" ix:ckeditor="true">${abstractStudent.basicInfo}</textarea>
+              <textarea name="basicInfo" ix:cktoolbar="studentAdditionalInformation" ix:ckeditor="true">${person.basicInfo}</textarea>
             </div>
             <ix:extensionHook name="students.editStudent.tabs.basic"/>
           </div>

@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -147,10 +148,6 @@ public abstract class CourseBase implements ArchivableEntity {
    * 
    * @return The description of this entity
    */
-  @Basic (fetch = FetchType.LAZY)
-  @Column (length=1073741824)
-  @Field
-  // Annotations in getter for a reason; see the property comment
   public String getDescription() {
     return description;
   }
@@ -357,9 +354,10 @@ public abstract class CourseBase implements ArchivableEntity {
   @Temporal (value=TemporalType.TIMESTAMP)
   private Date lastModified;
   
-  // The annotations of this property are specified in its getter method because it's
-  // both lazy and tokenized, which is currently an open bug in Hibernate Search:
-  // http://opensource.atlassian.com/projects/hibernate/browse/HSEARCH-76
+  @Lob
+  @Basic (fetch = FetchType.LAZY)
+  @Column
+  @Field
   private String description;
   
   @ManyToOne  

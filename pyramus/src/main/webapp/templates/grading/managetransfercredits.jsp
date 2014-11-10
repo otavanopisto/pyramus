@@ -485,7 +485,7 @@
             ${transferCredit.courseLength.units}, 
             ${transferCredit.courseLength.unit.id},          
             ${transferCredit.school.id},                     
-            ${transferCredit.assessingUser.id},
+            ${transferCredit.assessor.id},
             ${transferCredit.date.time},                     
             '',
             '',
@@ -528,7 +528,7 @@
           
           IxTableControllers.getController('autoCompleteSelect').setDisplayValue(transferCreditsTable.getCellEditor(rowIndex, subjectColumnIndex), '${fn:escapeXml(subjectName)}');
           IxTableControllers.getController('autoCompleteSelect').setDisplayValue(transferCreditsTable.getCellEditor(rowIndex, schoolColumnIndex), '${fn:escapeXml(transferCredit.school.name)}');
-          IxTableControllers.getController('autoCompleteSelect').setDisplayValue(transferCreditsTable.getCellEditor(rowIndex, userColumnIndex), '${fn:escapeXml(transferCredit.assessingUser.fullName)}');
+          IxTableControllers.getController('autoCompleteSelect').setDisplayValue(transferCreditsTable.getCellEditor(rowIndex, userColumnIndex), '${fn:escapeXml(transferCredit.assessor.fullName)}');
         </c:forEach>
         transferCreditsTable.reattachToDom();
 

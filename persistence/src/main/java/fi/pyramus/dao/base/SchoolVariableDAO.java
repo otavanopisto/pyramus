@@ -1,5 +1,7 @@
 package fi.pyramus.dao.base;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -20,21 +22,14 @@ import fi.pyramus.domainmodel.base.SchoolVariable_;
 public class SchoolVariableDAO extends PyramusEntityDAO<SchoolVariable> {
 
   public SchoolVariable create(School school, SchoolVariableKey key, String value) {
-    EntityManager entityManager = getEntityManager();
-
     SchoolVariable schoolVariable = new SchoolVariable();
     schoolVariable.setSchool(school);
     schoolVariable.setKey(key);
     schoolVariable.setValue(value);
-    entityManager.persist(schoolVariable);
-
-    school.getVariables().add(schoolVariable);
-    entityManager.persist(school);
-
-    return schoolVariable;
+    return persist(schoolVariable);
   }
 
-  private SchoolVariable findBySchoolAndVariableKey(School school, SchoolVariableKey key) {
+  public SchoolVariable findBySchoolAndVariableKey(School school, SchoolVariableKey key) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -59,6 +54,20 @@ public class SchoolVariableDAO extends PyramusEntityDAO<SchoolVariable> {
     } else {
       throw new PersistenceException("Unknown VariableKey");
     }
+  }
+
+  public List<SchoolVariable> listBySchool(School school) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<SchoolVariable> criteria = criteriaBuilder.createQuery(SchoolVariable.class);
+    Root<SchoolVariable> root = criteria.from(SchoolVariable.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(SchoolVariable_.school), school)
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
 
   public SchoolVariable update(SchoolVariable schoolVariable, String value) {
@@ -90,4 +99,8 @@ public class SchoolVariableDAO extends PyramusEntityDAO<SchoolVariable> {
     }
   }
 
+  public void delete(SchoolVariable schoolVariable) {
+    super.delete(schoolVariable);
+  }
+  
 }

@@ -17,6 +17,7 @@
   </head>
   <body onload="onLoad(event)">
 	  <jsp:include page="/templates/generic/header.jsp"></jsp:include>
+    <p style="text-align:center">${statusMessage}</p>
 	  <h1 class="genericPageHeader"><fmt:message key="system.importscripteddata.pageTitle" /></h1>
 	  
 	  <div id="importDataImportFormContainer"> 

@@ -23,9 +23,9 @@ import org.openid4java.message.ax.FetchResponse;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.RequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.plugin.auth.AuthenticationException;
 import fi.pyramus.plugin.auth.ExternalAuthenticationProvider;
 
@@ -91,7 +91,7 @@ public class OpenIDAuthorizationStrategy implements ExternalAuthenticationProvid
   }
   
   @SuppressWarnings("unchecked")
-  public User processResponse(RequestContext requestContext) throws AuthenticationException {
+  public StaffMember processResponse(RequestContext requestContext) throws AuthenticationException {
     try {
       HttpSession session = requestContext.getRequest().getSession();
       
@@ -124,17 +124,17 @@ public class OpenIDAuthorizationStrategy implements ExternalAuthenticationProvid
           emails = fetchResp.getAttributeValues("email");
         }
         
-        UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+        StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
         UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
-        User user = userDAO.findByExternalIdAndAuthProvider(verified.getIdentifier(), getName());
+        StaffMember user = staffDAO.findByExternalIdAndAuthProvider(verified.getIdentifier(), getName());
         if (user == null) {
-          user = userDAO.findByEmail(emails.get(0));
+          user = staffDAO.findByEmail(emails.get(0));
           if (user != null) {
             String expectedLoginServer = userVariableDAO.findByUserAndKey(user, "openid.expectedlogin");
             String loginServer = verification.getAuthResponse().getParameterValue("openid.op_endpoint");
             if (!StringUtils.isBlank(expectedLoginServer) && expectedLoginServer.equals(loginServer)) {
               userVariableDAO.setUserVariable(user, "openid.expectedlogin", null);
-              userDAO.updateExternalId(user, verified.getIdentifier());
+              staffDAO.updateExternalId(user, verified.getIdentifier());
             } else {
               throw new AuthenticationException(AuthenticationException.LOCAL_USER_MISSING);
             }

@@ -10,10 +10,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
+
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.IndexedEmbedded;
 
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 
 @Entity
 public class StudentGroupUser {
@@ -35,12 +36,12 @@ public class StudentGroupUser {
     return studentGroup;
   }
 
-  public void setUser(User user) {
-    this.user = user;
+  public void setStaffMember(StaffMember staffMember) {
+    this.staffMember = staffMember;
   }
 
-  public User getUser() {
-    return user;
+  public StaffMember getStaffMember() {
+    return staffMember;
   }
 
   @SuppressWarnings("unused")
@@ -63,9 +64,8 @@ public class StudentGroupUser {
   private StudentGroup studentGroup;
 
   @ManyToOne
-  @JoinColumn (name = "user")
   @IndexedEmbedded
-  private User user;  
+  private StaffMember staffMember;  
 
   @Version
   @Column(nullable = false)

@@ -1,6 +1,6 @@
 package fi.pyramus.services.entities.courses;
 
-import fi.pyramus.domainmodel.courses.CourseUser;
+import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.services.entities.EntityFactory;
 import fi.pyramus.services.entities.EntityFactoryVault;
 import fi.pyramus.services.entities.users.UserEntity;
@@ -11,10 +11,10 @@ public class CourseUserEntityFactory implements EntityFactory<CourseUserEntity> 
     if (domainObject == null) {
       return null;
     }
-    CourseUser courseUser = (CourseUser) domainObject;
+    CourseStaffMember courseUser = (CourseStaffMember) domainObject;
 
     CourseEntity course = EntityFactoryVault.buildFromDomainObject(courseUser.getCourse());
-    UserEntity user = EntityFactoryVault.buildFromDomainObject(courseUser.getUser());
+    UserEntity user = EntityFactoryVault.buildFromDomainObject(courseUser.getStaffMember());
     CourseUserRoleEntity role = EntityFactoryVault.buildFromDomainObject(courseUser.getRole());
 
     return new CourseUserEntity(courseUser.getId(), course, user, role);

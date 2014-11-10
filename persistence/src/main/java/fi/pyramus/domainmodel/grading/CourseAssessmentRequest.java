@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
@@ -82,8 +83,9 @@ public class CourseAssessmentRequest implements ArchivableEntity {
   @Temporal (value=TemporalType.TIMESTAMP)
   private Date created;
   
+  @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column (length=1073741824)
+  @Column
   private String requestText;
 
   @NotNull

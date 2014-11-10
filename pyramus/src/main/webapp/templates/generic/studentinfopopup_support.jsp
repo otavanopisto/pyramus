@@ -6,10 +6,10 @@
 <c:choose>
   <c:when test="${studentInfoPopupSupportIncluded != true}">
     <script type="text/javascript">
-      function openStudentInfoPopupOnElement(element, abstractStudentId) {
+      function openStudentInfoPopupOnElement(element, personId) {
 
           var hoverPanel = new IxHoverPanel({
-            contentURL: GLOBAL_contextPath + '/students/studentinfopopup.page?abstractStudent=' + abstractStudentId
+            contentURL: GLOBAL_contextPath + '/students/studentinfopopup.page?person=' + personId
           });
   
           hoverPanel.showOverElement(element);

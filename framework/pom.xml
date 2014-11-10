@@ -6,20 +6,18 @@
   <parent>
     <groupId>fi.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.6.6-SNAPSHOT</version>
+    <version>0.7.3-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
-
+  
   <dependencies>
+    <!-- Pyramus -->
+  
     <dependency>
-      <groupId>fi.internetix.smvcj</groupId>
+      <groupId>fi.pyramus</groupId>
       <artifactId>smvcj</artifactId>
     </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.0.1</version>
-    </dependency>
+    
     <dependency>
       <groupId>fi.pyramus</groupId>
       <artifactId>persistence</artifactId>
@@ -33,6 +31,7 @@
       <groupId>org.jboss.spec</groupId>
       <artifactId>jboss-javaee-6.0</artifactId>
       <type>pom</type>
+      <version>3.0.2.Final</version>
     </dependency>
   </dependencies>
   

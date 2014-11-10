@@ -11,6 +11,7 @@ import fi.pyramus.dao.students.StudentContactLogEntryDAO;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.pyramus.domainmodel.students.StudentContactLogEntryType;
+import fi.pyramus.domainmodel.users.User;
 
 @Dependent
 @Stateless
@@ -22,24 +23,27 @@ public class StudentContactLogEntryController {
     StudentContactLogEntry contactLogEntry = contactLogEntryDAO.create(student, type, text, entryDate, creator);
     return contactLogEntry;
   }
-
-  public List<StudentContactLogEntry> findContactLogEntriesByStudent(Student student) {
-    List<StudentContactLogEntry> contactLogEntries = contactLogEntryDAO.listByStudent(student);
-    return contactLogEntries;
+  
+  public StudentContactLogEntry findContactLogEntryById(Long id) {
+    return contactLogEntryDAO.findById(id);
   }
 
-  public StudentContactLogEntry findContactLogEntryByIdAndStudent(Long id, Student student) {
+  public List<StudentContactLogEntry> listContactLogEntriesByStudent(Student student) {
     List<StudentContactLogEntry> contactLogEntries = contactLogEntryDAO.listByStudent(student);
-    for (StudentContactLogEntry contactLogEntry : contactLogEntries) {
-      if (contactLogEntry.getId().equals(id)) {
-        return contactLogEntry;
-      }
-    }
-    return null;
+    return contactLogEntries;
   }
 
   public StudentContactLogEntry updateContactLogEntry(StudentContactLogEntry entry, StudentContactLogEntryType type, String text, Date entryDate, String creator) {
     StudentContactLogEntry updated = contactLogEntryDAO.update(entry, type, text, entryDate, creator);
     return updated;
   }
+
+  public void archiveStudentContactLogEntry(StudentContactLogEntry contactLogEntry, User loggedUser) {
+    contactLogEntryDAO.archive(contactLogEntry, loggedUser);
+  }
+
+  public void deleteStudentContactLogEntry(StudentContactLogEntry contactLogEntry) {
+    contactLogEntryDAO.delete(contactLogEntry);
+  }
+  
 }

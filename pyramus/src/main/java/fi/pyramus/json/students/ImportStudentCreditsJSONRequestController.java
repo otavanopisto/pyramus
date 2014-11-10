@@ -8,7 +8,7 @@ import fi.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.pyramus.dao.grading.CreditLinkDAO;
 import fi.pyramus.dao.grading.TransferCreditDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.grading.CourseAssessment;
 import fi.pyramus.domainmodel.grading.CreditLink;
 import fi.pyramus.domainmodel.grading.TransferCredit;
@@ -24,12 +24,12 @@ public class ImportStudentCreditsJSONRequestController extends JSONRequestContro
     CreditLinkDAO creditLinkDAO = DAOFactory.getInstance().getCreditLinkDAO();
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     Long studentId = requestContext.getLong("studentId");
     Student baseStudent = studentDAO.findById(studentId);
     
-    List<Student> students = studentDAO.listByAbstractStudent(baseStudent.getAbstractStudent());
+    List<Student> students = studentDAO.listByPerson(baseStudent.getPerson());
     students.remove(baseStudent);
 
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());

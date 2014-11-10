@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table name="ClientApplicationAuthorizationCode" primaryKeys="id">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="true" />
+        <field name="authorizationCode" type="java.lang.String" nullable="false" unique="false" />
+        <field name="redirectUrl" type="java.lang.String" nullable="false" unique="false" />
+        <field name="user_id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="app_id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key columns="user_id" referencedColumns="id" referencedTable="User" />
+        <key columns="app_id" referencedColumns="id" referencedTable="ClientApplication" />
+      </foreignKeys>
+    </table>
+  </createTables>
+</update>

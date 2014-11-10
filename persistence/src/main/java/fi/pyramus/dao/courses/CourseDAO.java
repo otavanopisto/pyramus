@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -41,12 +43,20 @@ import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.Course_;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.events.CourseArchivedEvent;
+import fi.pyramus.events.CourseCreatedEvent;
 import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.persistence.search.SearchTimeFilterMode;
 
 @Stateless
 public class CourseDAO extends PyramusEntityDAO<Course> {
+  
+  @Inject
+  private Event<CourseCreatedEvent> courseCreatedEvent;
 
+  @Inject
+  private Event<CourseArchivedEvent> courseArchivedEvent;
+  
   /**
    * Creates a new course into the database.
    * 
@@ -66,8 +76,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
       Integer courseNumber, Date beginDate, Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, 
       Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double planningHours, 
       Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User creatingUser) {
-    EntityManager entityManager = getEntityManager();
-
+    
     Date now = new Date(System.currentTimeMillis());
     EducationalLength educationalLength = new EducationalLength();
     educationalLength.setUnit(courseLengthTimeUnit);
@@ -97,7 +106,9 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setLastModifier(creatingUser);
     course.setLastModified(now);
 
-    entityManager.persist(course);
+    persist(course);
+    
+    courseCreatedEvent.fire(new CourseCreatedEvent(course.getId()));
 
     return course;
   }
@@ -201,6 +212,22 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(Course_.archived), Boolean.FALSE),
             criteriaBuilder.equal(root.get(Course_.module), module)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<Course> listBySubject(Subject subject) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Course> criteria = criteriaBuilder.createQuery(Course.class);
+    Root<Course> root = criteria.from(Course.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(Course_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(root.get(Course_.subject), subject)
         ));
     
     return entityManager.createQuery(criteria).getResultList();
@@ -404,6 +431,15 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
       throw new PersistenceException(e);
     }
   }
-
+  
+  public void archive(Course course) {
+    super.archive(course);
+    courseArchivedEvent.fire(new CourseArchivedEvent(course.getId()));
+  }
+  
+  public void archive(Course course, User user) {
+    super.archive(course, user);
+    courseArchivedEvent.fire(new CourseArchivedEvent(course.getId()));
+  }
   
 }

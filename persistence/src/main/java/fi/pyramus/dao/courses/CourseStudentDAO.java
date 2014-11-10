@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -11,6 +13,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import fi.pyramus.dao.PyramusEntityDAO;
+import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.CourseOptionality;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
@@ -21,10 +24,55 @@ import fi.pyramus.domainmodel.courses.Course_;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.Student_;
+import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.events.CourseStudentArchivedEvent;
+import fi.pyramus.events.CourseStudentCreatedEvent;
 
 @Stateless
 public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
 
+  @Inject
+  private Event<CourseStudentCreatedEvent> courseStudentCreatedEvent;
+  
+  @Inject
+  private Event<CourseStudentArchivedEvent> courseStudentArchivedEvent;
+
+  /**
+   * Adds a course student to the database.
+   * 
+   * @param course The course
+   * @param student The student
+   * @param courseEnrolmentType Student enrolment type
+   * @param participationType Student participation type
+   * @param enrolmentDate The enrolment date
+   * @param optionality 
+   * @param billingDetails 
+   * @param archived 
+   * 
+   * @return The created course student
+   */
+  public CourseStudent create(Course course, Student student, CourseEnrolmentType courseEnrolmentType,
+      CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, Boolean archived) {
+    
+    CourseStudent courseStudent = new CourseStudent();
+    
+    courseStudent.setCourse(course);
+    courseStudent.setArchived(archived);
+    courseStudent.setBillingDetails(billingDetails);
+    courseStudent.setCourseEnrolmentType(courseEnrolmentType);
+    courseStudent.setEnrolmentTime(enrolmentDate);
+    courseStudent.setParticipationType(participationType);
+    courseStudent.setLodging(lodging);
+    courseStudent.setOptionality(optionality);
+    courseStudent.setStudent(student);
+    
+    persist(courseStudent);
+    
+    courseStudentCreatedEvent.fire(new CourseStudentCreatedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
+
+    return courseStudent;
+  }
+  
   public CourseStudent findByCourseAndStudent(Course course, Student student) {
     EntityManager entityManager = getEntityManager(); 
     
@@ -41,37 +89,6 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
         ));
     
     return getSingleResult(entityManager.createQuery(criteria));
-  }
-
-  /**
-   * Adds a course student to the database.
-   * 
-   * @param course The course
-   * @param student The student
-   * @param courseEnrolmentType Student enrolment type
-   * @param participationType Student participation type
-   * @param enrolmentDate The enrolment date
-   * @param optionality 
-   * 
-   * @return The created course student
-   */
-  public CourseStudent create(Course course, Student student, CourseEnrolmentType courseEnrolmentType,
-      CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality) {
-    EntityManager entityManager = getEntityManager();
-
-    CourseStudent courseStudent = new CourseStudent();
-    courseStudent.setCourseEnrolmentType(courseEnrolmentType);
-    courseStudent.setEnrolmentTime(enrolmentDate);
-    courseStudent.setParticipationType(participationType);
-    courseStudent.setLodging(lodging);
-    courseStudent.setOptionality(optionality);
-    courseStudent.setStudent(student);
-    entityManager.persist(courseStudent);
-    
-    course.addCourseStudent(courseStudent);
-    entityManager.persist(course);
-
-    return courseStudent;
   }
   
   /**
@@ -98,6 +115,36 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     entityManager.persist(courseStudent);
 
     return courseStudent;
+  }
+  
+  public CourseStudent updateLodging(CourseStudent courseStudent, Boolean lodging) {
+    courseStudent.setLodging(lodging);
+    return persist(courseStudent);
+  }
+  
+  public CourseStudent updateBillingDetails(CourseStudent courseStudent, BillingDetails billingDetails) {
+    courseStudent.setBillingDetails(billingDetails);
+    return persist(courseStudent);
+  }
+  
+  public CourseStudent updateEnrolmentType(CourseStudent courseStudent, CourseEnrolmentType courseEnrolmentType) {
+    courseStudent.setCourseEnrolmentType(courseEnrolmentType);
+    return persist(courseStudent);
+  }
+  
+  public CourseStudent updateEnrolmentTime(CourseStudent courseStudent, Date enrolmentTime) {
+    courseStudent.setEnrolmentTime(enrolmentTime);
+    return persist(courseStudent);
+  }
+  
+  public CourseStudent updateOptionality(CourseStudent courseStudent, CourseOptionality optionality) {
+    courseStudent.setOptionality(optionality);
+    return persist(courseStudent);
+  }
+  
+  public CourseStudent updateParticipationType(CourseStudent courseStudent, CourseParticipationType participationType) {
+    courseStudent.setParticipationType(participationType);
+    return persist(courseStudent);
   }
 
   /**
@@ -210,22 +257,14 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  /**
-   * Deletes the given course student from the database.
-   * 
-   * @param courseStudent The course student to be deleted
-   */
-  @Override
-  public void delete(CourseStudent courseStudent) {
-    EntityManager entityManager = getEntityManager();
-    
-    Course course = courseStudent.getCourse();
-    if (course != null) {
-      course.removeCourseStudent(courseStudent);
-//      entityManager.persist(course);
-    }
-    
-    entityManager.remove(courseStudent);
+  public void archive(CourseStudent courseStudent) {
+    super.archive(courseStudent);
+    courseStudentArchivedEvent.fire(new CourseStudentArchivedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
   }
-
+  
+  public void archive(CourseStudent courseStudent, User user) {
+    super.archive(courseStudent, user);
+    courseStudentArchivedEvent.fire(new CourseStudentArchivedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
+  }
+  
 }

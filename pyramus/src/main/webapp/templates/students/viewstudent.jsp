@@ -9,7 +9,7 @@
 <html>
 <head>
 <title><fmt:message key="students.viewStudent.pageTitle">
-    <fmt:param value="${abstractStudent.latestStudent.fullName}" />
+    <fmt:param value="${person.latestStudent.fullName}" />
   </fmt:message></title>
 <jsp:include page="/templates/generic/head_generic.jsp"></jsp:include>
 <jsp:include page="/templates/generic/tabs_support.jsp"></jsp:include>
@@ -27,7 +27,7 @@
 %>
 
 <script type="text/javascript">
-      function setupBasicTab(abstractStudentId, studentId, studentFullName) {
+      function setupBasicTab(personId, studentId, studentFullName) {
         var basicTabRelatedActionsHoverMenu = new IxHoverMenu($('basicTabRelatedActionsHoverMenuContainer.' + studentId), {
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsLabel"/>'
         });
@@ -35,13 +35,13 @@
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsEditStudentLabel"/>',
-          link: GLOBAL_contextPath + '/students/editstudent.page?abstractStudent=' + abstractStudentId  
+          link: GLOBAL_contextPath + '/students/editstudent.page?person=' + personId  
         }));
 
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsManageContactEntriesLabel"/>',
-          link: GLOBAL_contextPath + '/students/managestudentcontactentries.page?abstractStudent=' + abstractStudentId  
+          link: GLOBAL_contextPath + '/students/managestudentcontactentries.page?person=' + personId  
         }));
         
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
@@ -57,6 +57,14 @@
             openEditStudentImageDialog(studentId);
           }
         }));
+        
+        <c:if test="${empty staffMember}">
+          basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+            iconURL: GLOBAL_contextPath + '/gfx/list-add.png',
+            text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsAddStaffMemberLabel"/>',
+            link: GLOBAL_contextPath + '/users/createuser.page?studentId=' + studentId 
+          }));
+        </c:if>
         
         var extensionHoverMenuLinks = $$('#extensionHoverMenuLinks a');
         for (var i=0, l=extensionHoverMenuLinks.length; i<l; i++) {
@@ -117,7 +125,7 @@
         contactLogTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.viewStudent.contactLogTabRelatedActionsManageContactEntriesLabel"/>',
-          link: GLOBAL_contextPath + '/students/managestudentcontactentries.page?abstractStudent=' + abstractStudentId  
+          link: GLOBAL_contextPath + '/students/managestudentcontactentries.page?person=' + personId  
         }));
 
         var projectsTabRelatedActionsHoverMenu = new IxHoverMenu($('projectsTabRelatedActionsHoverMenuContainer.' + studentId), {
@@ -168,7 +176,7 @@
                   optionality: optionality
                 },
                 onSuccess: function (jsonResponse) {
-                  redirectTo(GLOBAL_contextPath + '/students/viewstudent.page?abstractStudent=${abstractStudent.id}'); //'#at-studentProject.' + studentId);
+                  redirectTo(GLOBAL_contextPath + '/students/viewstudent.page?person=${person.id}'); //'#at-studentProject.' + studentId);
                 }
               });
             break;
@@ -799,7 +807,7 @@
 
         <c:forEach var="student" items="${students}">
           // Setup basics
-          setupBasicTab(${abstractStudent.id}, ${student.id}, '${fn:escapeXml(student.fullName)}');
+          setupBasicTab(${person.id}, ${student.id}, '${fn:escapeXml(student.fullName)}');
 
           // Setup course tabs
           coursesTable = setupCoursesTab(${student.id});
@@ -889,7 +897,7 @@
               '${fn:escapeXml(studentTransferCredit.courseLength.unit.name)}',
               '${fn:escapeXml(studentTransferCredit.grade.name)}',
               '${fn:escapeXml(studentTransferCredit.grade.gradingScale.name)}',
-              '${fn:escapeXml(studentTransferCredit.assessingUser.fullName)}']);
+              '${fn:escapeXml(studentTransferCredit.assessor.fullName)}']);
           </c:forEach>
           transferCreditsTable.addRows(rows);
           if (transferCreditsTable.getRowCount() > 0) {
@@ -953,7 +961,7 @@
               '${fn:escapeXml(studentCourseAssessment.courseStudent.course.courseLength.unit.name)}',
               '${fn:escapeXml(studentCourseAssessment.grade.name)}',
               '${fn:escapeXml(studentCourseAssessment.grade.gradingScale.name)}',
-              '${fn:escapeXml(studentCourseAssessment.assessingUser.fullName)}',
+              '${fn:escapeXml(studentCourseAssessment.assessor.fullName)}',
               '${studentCourseAssessment.courseStudent.id}',
               '']);
           </c:forEach>
@@ -1153,6 +1161,26 @@
         $$('.viewStudentProjectHeaderEditButton').each(function (node) {
           Event.observe(node, 'click', onStudentProjectEditClick);
         });
+
+        <c:if test="${!empty staffMember}">
+          var staffMemberTabRelatedActionsHoverMenu = new IxHoverMenu($('staffMemberTabRelatedActionsHoverMenuContainer'), {
+            text: '<fmt:message key="students.viewStudent.staffMemberTabRelatedActionsLabel"/>'
+          });
+      
+          staffMemberTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+            iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+            text: '<fmt:message key="students.viewStudent.staffMemberTabRelatedActionsEditUserLabel"/>',
+            link: GLOBAL_contextPath + '/users/edituser.page?userId=${staffMember.id}' 
+          }));
+  
+          <c:if test="${empty students}">
+            staffMemberTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+              iconURL: GLOBAL_contextPath + '/gfx/list-add.png',
+              text: '<fmt:message key="students.viewStudent.staffMemberTabRelatedActionsAddStudentLabel"/>',
+              link: GLOBAL_contextPath + '/students/createstudent.page?personId=${staffMember.person.id}' 
+            }));
+          </c:if>
+        </c:if>
       }
       
       function onStudentProjectHeaderClick(event) {
@@ -1365,7 +1393,7 @@
 
   <h1 class="genericPageHeader">
     <fmt:message key="students.viewStudent.pageTitle">
-      <fmt:param value="${abstractStudent.latestStudent.fullName}" />
+      <fmt:param value="${person.latestStudent.fullName}" />
     </fmt:message>
   </h1>
 
@@ -1389,10 +1417,14 @@
             </c:choose> <c:if test="${student.hasFinishedStudies}">*</c:if>
           </a>
         </c:forEach>
+        
+        <c:if test="${!empty staffMember}">
+          <a class="tabLabel tabLabelUserId" href="#staffMember"><fmt:message key="students.viewStudent.staffMemberTab" /></a>
+        </c:if>
       </div>
 
       <c:choose>
-        <c:when test="${abstractStudent.secureInfo}">
+        <c:when test="${person.secureInfo}">
           <c:set var="secureInfoTitle">
             <fmt:message key="students.viewStudent.secureInfoTooltip" />
           </c:set>
@@ -1477,7 +1509,7 @@
                   </div>
 
                   <c:choose>
-                    <c:when test="${!empty abstractStudent.birthday}">
+                    <c:when test="${!empty person.birthday}">
                       <div class="genericFormSection"
                         title="${secureInfoTitle}">
                         <jsp:include
@@ -1489,7 +1521,7 @@
                         </jsp:include>
                         <div class="genericViewFormDataText">
                           <fmt:formatDate
-                            value="${abstractStudent.birthday}" />
+                            value="${person.birthday}" />
                         </div>
                       </div>
                     </c:when>
@@ -1497,7 +1529,7 @@
 
                   <c:choose>
                     <c:when
-                      test="${!empty abstractStudent.socialSecurityNumber}">
+                      test="${!empty person.socialSecurityNumber}">
                       <div class="genericFormSection"
                         title="${secureInfoTitle}">
                         <jsp:include
@@ -1507,7 +1539,7 @@
                           <jsp:param name="helpLocale"
                             value="students.viewStudent.ssecIdHelp" />
                         </jsp:include>
-                        <div class="genericViewFormDataText">${abstractStudent.socialSecurityNumber}</div>
+                        <div class="genericViewFormDataText">${person.socialSecurityNumber}</div>
                       </div>
                     </c:when>
                   </c:choose>
@@ -1524,7 +1556,7 @@
                     <div class="genericViewFormDataText">
                       <c:choose>
                         <c:when
-                          test="${abstractStudent.sex != 'FEMALE'}">
+                          test="${person.sex != 'FEMALE'}">
                           <fmt:message
                             key="students.viewStudent.genderMaleTitle" />
                         </c:when>
@@ -2284,9 +2316,6 @@
                   <div id="viewStudentStudentFilesTableContainer">
                     <div id="filesTableContainer.${student.id}"></div>
                   </div>
-                  <%--                     <div id="viewStudentFilesTotalContainer.${student.id}" class="viewStudentFilesTotalContainer"> --%>
-                  <%--                       <fmt:message key="students.viewStudent.filesTotal"/> <span id="viewStudentFilesTotalValue.${student.id}"></span> --%>
-                  <!--                     </div> -->
                 </div>
               </div>
 
@@ -2295,6 +2324,184 @@
           </div>
         </div>
       </c:forEach>
+      
+      <c:if test="${!empty staffMember}">
+        <div id="staffMember" class="tabContent tabContentNestedTabs">
+          <div
+            id="staffMemberTabRelatedActionsHoverMenuContainer"
+            class="tabRelatedActionsContainer"></div>
+  
+          <div class="genericViewInfoWapper" id="studentViewStaffMemberBasicInfoWrapper">
+          
+            <div class="genericFormSection">
+              <jsp:include
+                page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale"
+                  value="students.viewStudent.firstNameTitle" />
+                <jsp:param name="helpLocale"
+                  value="students.viewStudent.firstNameHelp" />
+              </jsp:include>
+              <div class="genericViewFormDataText">${staffMember.firstName}</div>
+            </div>
+  
+            <div class="genericFormSection">
+              <jsp:include
+                page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale"
+                  value="students.viewStudent.lastNameTitle" />
+                <jsp:param name="helpLocale"
+                  value="students.viewStudent.lastNameHelp" />
+              </jsp:include>
+              <div class="genericViewFormDataText">${staffMember.lastName}</div>
+            </div>
+  
+            <c:if test="${!empty staffMember.title}">
+              <div class="genericFormSection">
+                <jsp:include
+                  page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale"
+                    value="students.viewStudent.titleTitle" />
+                  <jsp:param name="helpLocale"
+                    value="students.viewStudent.titleHelp" />
+                </jsp:include>
+                <div class="genericViewFormDataText">${staffMember.title}</div>
+              </div>
+            </c:if>
+  
+            <div class="genericFormSection">
+              <jsp:include
+                page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale"
+                  value="students.viewStudent.roleTitle" />
+                <jsp:param name="helpLocale"
+                  value="students.viewStudent.roleHelp" />
+              </jsp:include>
+              <div class="genericViewFormDataText">
+                <c:choose>
+                  <c:when test="${staffMember.role == 'GUEST'}">
+                    <fmt:message key="students.viewStudent.roleGuestTitle"/>
+                  </c:when>
+                  <c:when test="${staffMember.role == 'USER'}">
+                    <fmt:message key="students.viewStudent.roleUserTitle"/>
+                  </c:when>
+                  <c:when test="${staffMember.role == 'MANAGER'}">
+                    <fmt:message key="students.viewStudent.roleManagerTitle"/>
+                  </c:when>
+                  <c:when test="${staffMember.role == 'ADMINISTRATOR'}">
+                    <fmt:message key="students.viewStudent.roleAdministratorTitle"/>
+                  </c:when>
+                </c:choose>
+              </div>
+            </div>
+  
+            <c:choose>
+              <c:when test="${not empty staffMember.tags}">
+                <div class="genericFormSection">
+                  <jsp:include
+                    page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale"
+                      value="students.viewStudent.tagsTitle" />
+                    <jsp:param name="helpLocale"
+                      value="students.viewStudent.tagsHelp" />
+                  </jsp:include>
+                  <div class="genericViewFormDataText">
+                    <c:forEach var="tag" items="${staffMember.tags}"
+                      varStatus="vs">
+                      <c:out value="${tag.text}" />
+                      <c:if test="${not vs.last}">
+                        <c:out value=" " />
+                      </c:if>
+                    </c:forEach>
+                  </div>
+                </div>
+              </c:when>
+            </c:choose>
+          </div>
+  
+          <!--  Student Contact Info Starts -->
+          <div class="genericViewInfoWapper"
+            id="studentViewStaffMemberContactInfoWrapper">
+  
+            <c:if test="${!empty staffMember.contactInfo.addresses}">
+              <div class="genericFormSection">
+                <c:forEach var="address"
+                  items="${staffMember.contactInfo.addresses}">
+                  <div class="genericFormTitle">
+                    <div class="genericFormTitleText">
+                      <div>${address.contactType.name}</div>
+                    </div>
+                  </div>
+                  <div class="genericViewFormDataText">
+                    <div>${address.name}</div>
+                    <div>${address.streetAddress}</div>
+                    <div>${address.postalCode}
+                    ${address.city}</div>
+                  <div>${address.country}</div>
+                </div>
+              </c:forEach>
+            </div>
+          </c:if>
+
+          <div class="genericFormSection">
+            <jsp:include
+              page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale"
+                value="students.viewStudent.emailTitle" />
+              <jsp:param name="helpLocale"
+                value="students.viewStudent.emailHelp" />
+            </jsp:include>
+            <div class="genericViewFormDataText">
+              <c:forEach var="email"
+                items="${staffMember.contactInfo.emails}">
+                <c:choose>
+                  <c:when test="${not empty email.contactType}">
+                    <div>
+                      <a href="mailto:${email.address}">${email.address}</a>
+                      (${fn:toLowerCase(email.contactType.name)})
+                    </div>
+                  </c:when>
+                  <c:otherwise>
+                    <div>
+                      <a href="mailto:${email.address}">${email.address}</a>
+                    </div>
+                  </c:otherwise>
+                </c:choose>
+              </c:forEach>
+            </div>
+          </div>
+
+          <c:choose>
+            <c:when
+              test="${!empty staffMember.contactInfo.phoneNumbers}">
+              <div class="genericFormSection">
+                <jsp:include
+                  page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale"
+                    value="students.viewStudent.phoneNumberTitle" />
+                  <jsp:param name="helpLocale"
+                    value="students.viewStudent.phoneNumberHelp" />
+                </jsp:include>
+                <div class="genericViewFormDataText">
+                  <c:forEach var="phone"
+                    items="${staffMember.contactInfo.phoneNumbers}">
+                    <c:choose>
+                      <c:when
+                        test="${not empty phone.contactType}">
+                        <div>${phone.number}
+                          (${fn:toLowerCase(phone.contactType.name)})</div>
+                      </c:when>
+                      <c:otherwise>
+                        <div>${phone.number}</div>
+                      </c:otherwise>
+                    </c:choose>
+                  </c:forEach>
+                </div>
+              </div>
+            </c:when>
+          </c:choose>
+        </div>
+      </div>
+      </c:if>
     </div>
   </div>
 

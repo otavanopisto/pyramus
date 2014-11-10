@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="CourseStaffMember">
+      <addFields>
+        <field name="staffMember_id" type="java.lang.Long" nullable="true" unique="false" />
+      </addFields>
+      <addForeignKeys>
+        <key columns="staffMember_id" referencedTable="StaffMember" referencedColumns="id" name="FK_COURSESTAFFMEMBER_STAFFMEMBER_ID"/>
+      </addForeignKeys>
+    </table>    
+  </alterTables>
+  
+  <sql>
+    update CourseStaffMember
+    set staffMember_id = pyramusUser;
+  </sql>
+
+  <alterTables>
+    <table name="CourseStaffMember">
+      <dropForeignKeys>
+        <key name="FKE4A80A5F51F23E24"/>
+      </dropForeignKeys>
+    </table>
+
+    <table name="CourseStaffMember">
+      <dropFields>
+        <field name="pyramusUser"/>
+      </dropFields>
+    </table>
+  </alterTables>
+
+</update>

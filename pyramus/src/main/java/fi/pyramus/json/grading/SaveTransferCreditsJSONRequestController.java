@@ -10,7 +10,7 @@ import fi.pyramus.dao.base.SubjectDAO;
 import fi.pyramus.dao.grading.GradeDAO;
 import fi.pyramus.dao.grading.TransferCreditDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.CourseOptionality;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.School;
@@ -18,7 +18,7 @@ import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.TransferCredit;
 import fi.pyramus.domainmodel.students.Student;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
 
@@ -26,7 +26,7 @@ public class SaveTransferCreditsJSONRequestController extends JSONRequestControl
 
   public void process(JSONRequestContext jsonRequestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
@@ -56,15 +56,15 @@ public class SaveTransferCreditsJSONRequestController extends JSONRequestControl
       Subject subject = subjectDAO.findById(subjectId);
       EducationalTimeUnit timeUnit = educationalTimeUnitDAO.findById(courseLengthUnitId);
       School school = schoolDAO.findById(schooId);
-      User user = userDAO.findById(userId);
+      StaffMember staffMember = staffMemberDAO.findById(userId);
 
       TransferCredit transferCredit;
       
       if (id != null && id >= 0) {
         transferCredit = transferCreditDAO.findById(id);
-        transferCreditDAO.update(transferCredit, courseName, courseNumber, courseLength, timeUnit, school, subject, courseOptionality, student, user, grade, date, transferCredit.getVerbalAssessment());
+        transferCreditDAO.update(transferCredit, courseName, courseNumber, courseLength, timeUnit, school, subject, courseOptionality, student, staffMember, grade, date, transferCredit.getVerbalAssessment());
       } else {
-        transferCredit = transferCreditDAO.create(courseName, courseNumber, courseLength, timeUnit, school, subject, courseOptionality, student, user, grade, date, ""); 
+        transferCredit = transferCreditDAO.create(courseName, courseNumber, courseLength, timeUnit, school, subject, courseOptionality, student, staffMember, grade, date, ""); 
       }
     }
     

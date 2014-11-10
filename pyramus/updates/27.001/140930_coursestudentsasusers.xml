@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>RENAME TABLE CourseStudent TO CourseStudentOld</sql>
+  <sql>RENAME TABLE CourseUser TO CourseUserOld</sql>
+  <createTables>
+    
+    <table primaryKeys="id" name="CourseStaffMemberRole">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="version" type="java.lang.Long" nullable="false"/>
+        <field name="name" type="java.lang.String" nullable="false"/>
+      </fields>
+    </table>
+    
+    <table primaryKeys="id" name="CourseUser">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="version" type="java.lang.Long" nullable="false"/>
+        <field name="course" type="java.lang.Long" nullable="true"/>
+      </fields>
+    </table>
+  
+    <table primaryKeys="id" name="CourseStudent">
+      <fields>
+        <field name="archived" type="java.lang.Boolean" nullable="false"/>
+        <field name="enrolmentTime" type="java.util.Date" nullable="false"/>
+        <field name="lodging" type="java.lang.Boolean" nullable="false"/>
+        <field name="optionality" type="java.lang.String" nullable="true"/>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="billingDetails" type="java.lang.Long" nullable="true"/>
+        <field name="enrolmentType" type="java.lang.Long" nullable="true"/>
+        <field name="participationType" type="java.lang.Long" nullable="true"/>
+        <field name="student" type="java.lang.Long" nullable="true"/>
+      </fields>
+    </table>
+    
+    <table primaryKeys="id" name="CourseStaffMember">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false"/>
+        <field name="pyramusUser" type="java.lang.Long" nullable="true"/>
+        <field name="role_id" type="java.lang.Long" nullable="true"/>
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="pyramusUser" referencedTable="User"/>
+        <key referencedColumns="id" columns="id" referencedTable="CourseUser"/>
+        <key referencedColumns="id" columns="role_id" referencedTable="CourseStaffMemberRole"/>
+      </foreignKeys>
+    </table>
+  </createTables>
+  
+  <sql>insert into CourseStaffMemberRole (id, name, version) select id, name, version from CourseUserRole</sql>
+  <sql>insert into CourseUser (id, version, course) select id, version, course from CourseStudentOld</sql>
+  <sql>insert into CourseStudent (id, archived, enrolmentTime, lodging, optionality, billingDetails, enrolmentType, participationType, student) select id, archived, enrolmentTime, lodging, optionality, billingDetails, enrolmentType, participationType, student from CourseStudentOld</sql>
+  <sql>insert into CourseUser (id, version, course) select id + (select max(id) + 1 from CourseStudentOld) as id, version, course from CourseUserOld</sql>
+  <sql>insert into CourseStaffMember (id, role_id, pyramusUser) select id + (select max(id) + 1 from CourseStudentOld) as id, userRole, pyramusUser from CourseUserOld</sql>
+
+  <dropTables>
+    <table name="CourseStudentOld"/>
+    <table name="CourseUserOld"/>
+    <table name="CourseUserRole"/>
+  </dropTables>
+  
+  <alterTables>
+    <table name="CourseUser">
+      <addForeignKeys>
+        <key referencedColumns="id" columns="course" referencedTable="Course"/>
+      </addForeignKeys>
+    </table>
+    <table name="CourseStudent">
+      <addForeignKeys>
+        <key referencedColumns="id" columns="billingDetails" referencedTable="BillingDetails"/>
+        <key referencedColumns="id" columns="enrolmentType" referencedTable="CourseEnrolmentType"/>
+        <key referencedColumns="id" columns="participationType" referencedTable="CourseParticipationType"/>
+        <key referencedColumns="id" columns="student" referencedTable="Student"/>
+        <key referencedColumns="id" columns="id" referencedTable="CourseUser"/>    
+      </addForeignKeys>
+    </table>
+  </alterTables>
+  
+  <!-- Update hibernate_sequences table -->
+  
+  <sql>delete from hibernate_sequences where sequence_name in ('CourseUser', 'CourseStudent', 'CourseUserRole')</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseUser', coalesce(max(id) + 1, 1) from CourseUser</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStudent', coalesce(max(id) + 1, 1) from CourseStudent</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStaffMember', coalesce(max(id) + 1, 1) from CourseStaffMember</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStaffMemberRole', coalesce(max(id) + 1, 1) from CourseStaffMemberRole</sql>
+
+</update>

@@ -1,6 +1,6 @@
 package fi.pyramus.plugin.auth;
 
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 
 /**
  * Defines requirements for a class capable of authorizing users with username & password combination.
@@ -16,7 +16,7 @@ public interface InternalAuthenticationProvider extends AuthenticationProvider {
    * 
    * @return The user corresponding to the given credentials, or <code>null</code> if not found
    */
-  public User getUser(String username, String password) throws AuthenticationException;
+  public StaffMember getUser(String username, String password) throws AuthenticationException;
   
   /**
    * Returns the username of a user corresponding to the given identifier, or <code>null</code> if

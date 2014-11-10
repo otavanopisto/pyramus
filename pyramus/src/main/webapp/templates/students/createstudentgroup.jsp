@@ -23,13 +23,13 @@
 
     <script type="text/javascript">
 
-      function addNewStudent(studentsTable, abstractStudentId, studentId, studentName) {
+      function addNewStudent(studentsTable, personId, studentId, studentName) {
         JSONRequest.request("students/getstudentstudyprogrammes.json", {
           parameters: {
-            abstractStudentId: abstractStudentId
+            personId: personId
           },
           onSuccess: function (jsonResponse) {
-            var rowIndex = studentsTable.addRow(['', studentName, studentId, abstractStudentId, '']);
+            var rowIndex = studentsTable.addRow(['', studentName, studentId, personId, '']);
             var cellEditor = studentsTable.getCellEditor(rowIndex, studentsTable.getNamedColumnIndex('studentId'));
             for (var j = 0, l = jsonResponse.studentStudyProgrammes.length; j < l; j++) {
               IxTableControllers.getController('select').addOption(cellEditor , jsonResponse.studentStudyProgrammes[j].studentId, jsonResponse.studentStudyProgrammes[j].studyProgrammeName);
@@ -73,12 +73,12 @@
               var studentsTable = getIxTableById('studentsTable');
               studentsTable.detachFromDom();
               for (var i = 0, len = event.results.students.length; i < len; i++) {
-                var abstractStudentId = event.results.students[i].abstractStudentId;
+                var personId = event.results.students[i].personId;
                 var studentId = event.results.students[i].id;
                 var studentName = event.results.students[i].name;
-                var index = getStudentRowIndex(abstractStudentId);
+                var index = getStudentRowIndex(personId);
                 if (index == -1) {
-                  addNewStudent(studentsTable, abstractStudentId, studentId, studentName);
+                  addNewStudent(studentsTable, personId, studentId, studentName);
                 } 
               }
               studentsTable.reattachToDom();
@@ -88,12 +88,12 @@
         dialog.open();
       }
 
-      function getStudentRowIndex(abstractStudentId) {
+      function getStudentRowIndex(personId) {
         var table = getIxTableById('studentsTable');
         if (table) {
           for (var i = 0; i < table.getRowCount(); i++) {
-            var tableStudentId = table.getCellValue(i, table.getNamedColumnIndex('abstractStudentId'));
-            if (tableStudentId == abstractStudentId) {
+            var tableStudentId = table.getCellValue(i, table.getNamedColumnIndex('personId'));
+            if (tableStudentId == personId) {
               return i;
             }
           }
@@ -189,9 +189,9 @@
             tooltip: '<fmt:message key="students.createStudentGroup.studentsTableStudentInfoTooltip"/>',
             onclick: function (event) {
               var table = event.tableComponent;
-              var abstractStudentId = table.getCellValue(event.row, table.getNamedColumnIndex('abstractStudentId'));
+              var personId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
               var button = table.getCellEditor(event.row, table.getNamedColumnIndex('studentInfoButton'));
-              openStudentInfoPopupOnElement(button, abstractStudentId);
+              openStudentInfoPopupOnElement(button, personId);
             } 
           }, {
             header : '<fmt:message key="students.createStudentGroup.studentsTableNameHeader"/>',
@@ -212,7 +212,7 @@
             ]
           }, {
             dataType: 'hidden', 
-            paramName: 'abstractStudentId'
+            paramName: 'personId'
           }, {
             right: 0,
             width: 30,

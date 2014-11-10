@@ -10,10 +10,12 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.SubjectDAO;
 import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
+import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
@@ -41,6 +43,7 @@ public class CreateModuleViewController extends PyramusViewController implements
     CourseDescriptionCategoryDAO descriptionCategoryDAO = DAOFactory.getInstance().getCourseDescriptionCategoryDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();    
+    EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();    
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
 
     List<EducationType> educationTypes = educationTypeDAO.listUnarchived();
@@ -60,8 +63,16 @@ public class CreateModuleViewController extends PyramusViewController implements
 
     List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listUnarchived();
     Collections.sort(educationalTimeUnits, new StringAttributeComparator("getName"));
+    Map<Long, List<EducationSubtype>> educationSubtypes = new HashMap<>();
+    
+    for (EducationType educationType : educationTypes) {
+      List<EducationSubtype> subtypes = educationSubtypeDAO.listByEducationType(educationType);
+      Collections.sort(subtypes, new StringAttributeComparator("getName"));
+      educationSubtypes.put(educationType.getId(), subtypes);
+    }
 
     pageRequestContext.getRequest().setAttribute("educationTypes", educationTypes);
+    pageRequestContext.getRequest().setAttribute("educationSubtypes", educationSubtypes);
     pageRequestContext.getRequest().setAttribute("subjectsByNoEducationType", subjectsByNoEducationType);
     pageRequestContext.getRequest().setAttribute("subjectsByEducationType", subjectsByEducationType);
     pageRequestContext.getRequest().setAttribute("moduleLengthTimeUnits", educationalTimeUnits);

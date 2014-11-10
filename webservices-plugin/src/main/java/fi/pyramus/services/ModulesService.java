@@ -15,7 +15,7 @@ import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.pyramus.dao.modules.ModuleComponentDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.CourseBase;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -39,7 +39,7 @@ public class ModulesService extends PyramusService {
       @WebParam(name = "courseNumber") Integer courseNumber, @WebParam(name = "moduleLength") Double moduleLength,
       @WebParam(name = "moduleLengthTimeUnitId") Long moduleLengthTimeUnitId, @WebParam(name = "description") String description,
       @WebParam(name = "creatingUserId") Long creatingUserId) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
@@ -59,7 +59,7 @@ public class ModulesService extends PyramusService {
       @WebParam(name = "courseNumber") Integer courseNumber, @WebParam(name = "length") Double length,
       @WebParam(name = "lengthTimeUnitId") Long lengthTimeUnitId, @WebParam(name = "description") String description,
       @WebParam(name = "modifyingUserId") Long modifyingUserId) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();

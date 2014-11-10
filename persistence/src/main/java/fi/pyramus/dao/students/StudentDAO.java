@@ -5,38 +5,57 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Root;
 
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.PyramusEntityDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
+import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.ArchivableEntity;
 import fi.pyramus.domainmodel.base.BillingDetails;
+import fi.pyramus.domainmodel.base.ContactInfo;
+import fi.pyramus.domainmodel.base.ContactInfo_;
+import fi.pyramus.domainmodel.base.Email;
+import fi.pyramus.domainmodel.base.Email_;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.CourseStudent;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
-import fi.pyramus.domainmodel.students.StudentVariable;
-import fi.pyramus.domainmodel.students.StudentVariableKey;
-import fi.pyramus.domainmodel.students.StudentVariable_;
 import fi.pyramus.domainmodel.students.Student_;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.UserVariable;
+import fi.pyramus.domainmodel.users.UserVariableKey;
+import fi.pyramus.domainmodel.users.UserVariable_;
+import fi.pyramus.events.StudentArchivedEvent;
+import fi.pyramus.events.StudentCreatedEvent;
 
 @Stateless
 public class StudentDAO extends PyramusEntityDAO<Student> {
-
+  
+  @Inject
+  private Event<StudentCreatedEvent> studentCreatedEvent;
+  
+  @Inject
+  private Event<StudentArchivedEvent> studentArchivedEvent;
+  
   /**
    * Archives a student.
    * 
@@ -51,7 +70,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
       Student student = (Student) entity;
 
       CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
-      AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+      PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
   
       // Also archive course students of the archived student
       
@@ -62,10 +81,12 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
         }
       }
   
-      // This is necessary because AbstractStudent entity does not really
+      // This is necessary because Person entity does not really
       // change in this operation but it still needs to be reindexed
   
-      abstractStudentDAO.forceReindex(student.getAbstractStudent());
+      personDAO.forceReindex(student.getPerson());
+      
+      studentArchivedEvent.fire(new StudentArchivedEvent(student.getId()));
     }
   }
 
@@ -78,25 +99,27 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
   @Override
   public void unarchive(ArchivableEntity entity, User modifier) {
     super.unarchive(entity, modifier);
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
     if (entity instanceof Student) {
-      // This is necessary because AbstractStudent entity does not really
+      // This is necessary because Person entity does not really
       // change in this operation but it still needs to be reindexed
 
       Student student = (Student) entity;
 
-      abstractStudentDAO.forceReindex(student.getAbstractStudent());
+      personDAO.forceReindex(student.getPerson());
     }
   }
 
-  public Student create(AbstractStudent abstractStudent, String firstName, String lastName, String nickname, String additionalInfo,
+  public Student create(Person person, String firstName, String lastName, String nickname, String additionalInfo,
       Date studyTimeEnd, StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
       Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Double previousStudies,
       Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, String studyEndText, Boolean lodging) {
 
     EntityManager entityManager = getEntityManager();
 
+    ContactInfo contactInfo = new ContactInfo();
+    
     Student student = new Student();
     student.setFirstName(firstName);
     student.setLastName(lastName);
@@ -118,12 +141,15 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setStudyEndReason(studyEndReason);
     student.setStudyEndText(studyEndText);
     student.setLodging(lodging);
+    student.setContactInfo(contactInfo);
 
     entityManager.persist(student);
 
-    abstractStudent.addStudent(student);
+    person.addUser(student);
 
-    entityManager.persist(abstractStudent);
+    entityManager.persist(person);
+    
+    studentCreatedEvent.fire(new StudentCreatedEvent(student.getId()));
 
     return student;
   }
@@ -164,6 +190,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setMunicipality(municipality);
 
     entityManager.persist(student);
+
   }
 
   public void updateSchool(Student student, School school) {
@@ -178,7 +205,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setTags(tags);
     
     entityManager.persist(student);
-    
+
     return student;
   }
 
@@ -188,7 +215,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setBillingDetails(billingDetails);
     
     entityManager.persist(student);
-    
+
     return student;
   }
 
@@ -269,7 +296,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getResultList();
   }
   
-  public List<Student> listByAbstractStudent(AbstractStudent abstractStudent) {
+  public List<Student> listByPerson(Person person) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -279,13 +306,13 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(Student_.archived), Boolean.FALSE),
-            criteriaBuilder.equal(root.get(Student_.abstractStudent), abstractStudent)
+            criteriaBuilder.equal(root.get(Student_.person), person)
         ));
     
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public List<Student> listActiveStudentsByAbstractStudent(AbstractStudent abstractStudent) {
+  public List<Student> listActiveStudentsByPerson(Person person) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -295,7 +322,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(Student_.archived), Boolean.FALSE),
-            criteriaBuilder.equal(root.get(Student_.abstractStudent), abstractStudent),
+            criteriaBuilder.equal(root.get(Student_.person), person),
             criteriaBuilder.or(
                 criteriaBuilder.isNull(root.get(Student_.studyEndDate)),
                 criteriaBuilder.greaterThan(root.get(Student_.studyEndDate), new Date())
@@ -305,26 +332,117 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public List<Student> listByStudentVariable(String key, String value) {
-    StudentVariableKeyDAO variableKeyDAO = DAOFactory.getInstance().getStudentVariableKeyDAO();
-    StudentVariableKey studentVariableKey = variableKeyDAO.findByKey(key);
+  public List<Student> listByUserVariable(String key, String value) {
+    UserVariableKeyDAO variableKeyDAO = DAOFactory.getInstance().getUserVariableKeyDAO();
+    UserVariableKey UserVariableKey = variableKeyDAO.findByVariableKey(key);
     
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
-    Root<StudentVariable> variable = criteria.from(StudentVariable.class);
+    Root<UserVariable> variable = criteria.from(UserVariable.class);
     Root<Student> student = criteria.from(Student.class);
 
     criteria.select(student);
     criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(student, variable.get(StudentVariable_.student)),
-            criteriaBuilder.equal(student.get(Student_.archived), Boolean.FALSE),
-            criteriaBuilder.equal(variable.get(StudentVariable_.key), studentVariableKey),
-            criteriaBuilder.equal(variable.get(StudentVariable_.value), value)
-        ));
+      criteriaBuilder.and(
+          criteriaBuilder.equal(student, variable.get(UserVariable_.user)),
+          criteriaBuilder.equal(student.get(Student_.archived), Boolean.FALSE),
+          criteriaBuilder.equal(variable.get(UserVariable_.key), UserVariableKey),
+          criteriaBuilder.equal(variable.get(UserVariable_.value), value)
+      )
+    );
     
     return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<Student> listByEmail(String email) {
+    return listByEmail(email, null, null);
+  }
+  
+  public List<Student> listByEmail(String email, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
+    Root<Student> root = criteria.from(Student.class);
+    Join<Student, ContactInfo> contactInfoJoin = root.join(Student_.contactInfo);
+    ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
+    
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(emailJoin.get(Email_.address), email)
+    );
+    
+    TypedQuery<Student> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+   
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+  
+    return query.getResultList();
+  }
+
+  public List<Student> listByEmailAndArchived(String email, Boolean archived) {
+    return listByEmailAndArchived(email, archived, null, null);
+  }
+  
+  public List<Student> listByEmailAndArchived(String email, Boolean archived, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
+    Root<Student> root = criteria.from(Student.class);
+    Join<Student, ContactInfo> contactInfoJoin = root.join(Student_.contactInfo);
+    ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
+    
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Student_.archived), archived),
+        criteriaBuilder.equal(emailJoin.get(Email_.address), email)
+      )
+    );
+  
+    TypedQuery<Student> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+   
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+  
+    return query.getResultList();
+  }
+  
+  public Student updatePerson(Student student, Person person) {
+    Person oldPerson = student.getPerson();
+    if (oldPerson != null) {
+      oldPerson.removeUser(student);
+      getEntityManager().persist(oldPerson);
+    }
+    
+    if (person != null) {
+      person.addUser(student);
+      getEntityManager().persist(person);
+    }
+
+    return persist(student);
+  }
+
+  public Student removeTag(Student student, Tag tag) {
+    student.removeTag(tag);
+    return persist(student);
+  }
+
+  public Student addTag(Student student, Tag tag) {
+    student.addTag(tag);
+    return persist(student);
   }
 }

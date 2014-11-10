@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
@@ -24,7 +25,7 @@ import javax.persistence.Version;
 
 import fi.pyramus.domainmodel.base.ArchivableEntity;
 import fi.pyramus.domainmodel.students.Student;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
@@ -58,14 +59,6 @@ public class Credit implements ArchivableEntity {
     this.verbalAssessment = verbalAssessment;
   }
   
-  public void setAssessingUser(User assessingUser) {
-    this.assessingUser = assessingUser;
-  }
-  
-  public User getAssessingUser() {
-    return assessingUser;
-  }
-  
   public Boolean getArchived() {
     return archived;
   }
@@ -96,6 +89,14 @@ public class Credit implements ArchivableEntity {
     throw new PersistenceException("Credit.getStudent() not implemented");
   }
   
+  public StaffMember getAssessor() {
+    return assessor;
+  }
+
+  public void setAssessor(StaffMember assessor) {
+    this.assessor = assessor;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Credit")  
   @TableGenerator(name="Credit", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -109,13 +110,13 @@ public class Credit implements ArchivableEntity {
   @JoinColumn(name="grade")
   private Grade grade;
   
+  @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column (length=1073741824)
+  @Column
   private String verbalAssessment;
   
   @ManyToOne  
-  @JoinColumn(name="assessingUser")
-  private User assessingUser;
+  private StaffMember assessor;
   
   @Basic (optional = false)
   private Boolean archived = Boolean.FALSE;

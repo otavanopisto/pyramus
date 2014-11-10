@@ -18,7 +18,7 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.file.FileTypeDAO;
 import fi.pyramus.dao.file.StudentFileDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.file.FileType;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.User;
@@ -42,7 +42,7 @@ public class FileService extends PyramusService {
     StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     Student student = studentDAO.findById(studentId);
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     FileTypeDAO fileTypeDAO = DAOFactory.getInstance().getFileTypeDAO();
     
     User creator = creatorId != null ? userDAO.findById(creatorId) : null;

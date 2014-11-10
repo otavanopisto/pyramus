@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>smvcj</artifactId>
+  <name>Pyramus smvcj</name>
+
+  <parent>
+    <groupId>fi.pyramus</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.7.3-SNAPSHOT</version>
+    <relativePath>../</relativePath>
+  </parent>
+  
+  <dependencies>
+  
+    <!-- Servlet -->
+
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+    </dependency>
+        
+    <!-- Transactions -->
+    
+    <dependency>
+      <groupId>org.jboss.spec.javax.transaction</groupId>
+      <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- Commons -->
+
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+    </dependency>
+    
+    <!-- JSON -->
+
+    <dependency>
+      <groupId>net.sf.json-lib</groupId>
+      <artifactId>json-lib</artifactId>
+      <classifier>jdk15</classifier>
+    </dependency>
+    
+  </dependencies>
+  
+</project>

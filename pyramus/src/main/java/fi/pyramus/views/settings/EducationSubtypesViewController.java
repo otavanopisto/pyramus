@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Locale;
 
 import net.sf.json.*;
-
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
@@ -31,13 +31,15 @@ public class EducationSubtypesViewController extends PyramusViewController imple
    * @param pageRequestContext Page request context
    */
   public void process(PageRequestContext pageRequestContext) {
-    EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();    
+    EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();
+    EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();
+    
     List<EducationType> educationTypes = educationTypeDAO.listUnarchived();
     Collections.sort(educationTypes, new StringAttributeComparator("getName"));
     
     JSONArray jsonEducationTypes = new JSONArrayExtractor("name", "id").extract(educationTypes);
     for (int i=0; i<educationTypes.size(); i++) {
-      List<EducationSubtype> subtypes = educationTypes.get(i).getUnarchivedSubtypes();
+      List<EducationSubtype> subtypes = educationSubtypeDAO.listByEducationType(educationTypes.get(i));
       JSONArray jsonSubtypes = new JSONArrayExtractor("id", "name", "code").extract(subtypes);
       jsonEducationTypes.getJSONObject(i).put("subtypes", jsonSubtypes);
     }

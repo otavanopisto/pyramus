@@ -17,6 +17,8 @@ public class ContactURLDAO extends PyramusEntityDAO<ContactURL> {
     ContactURL contactURL = new ContactURL();
     contactURL.setContactInfo(contactInfo);
     contactURL.setURL(url);
+    contactURL.setContactURLType(contactURLType);
+    
     entityManager.persist(contactURL);
 
     contactInfo.addContactURL(contactURL);
@@ -42,6 +44,5 @@ public class ContactURLDAO extends PyramusEntityDAO<ContactURL> {
     }
     super.delete(contactURL);
   }
-
 
 }

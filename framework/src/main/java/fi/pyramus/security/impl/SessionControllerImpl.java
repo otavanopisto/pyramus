@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import fi.muikku.security.ContextReference;
 import fi.muikku.security.PermissionResolver;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.users.User;
 
 @Stateful
@@ -83,7 +83,7 @@ public class SessionControllerImpl implements SessionController {
   @Override
   public User getUser() {
     if (isLoggedIn()) {
-      UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+      StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
       
       return userDAO.findById(loggedUserId);
     } else

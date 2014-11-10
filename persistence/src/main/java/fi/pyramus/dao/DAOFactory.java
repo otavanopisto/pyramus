@@ -31,6 +31,7 @@ import fi.pyramus.dao.base.LanguageDAO;
 import fi.pyramus.dao.base.MagicKeyDAO;
 import fi.pyramus.dao.base.MunicipalityDAO;
 import fi.pyramus.dao.base.NationalityDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.SchoolDAO;
 import fi.pyramus.dao.base.SchoolFieldDAO;
@@ -45,6 +46,9 @@ import fi.pyramus.dao.changelog.ChangeLogEntryEntityDAO;
 import fi.pyramus.dao.changelog.ChangeLogEntryEntityPropertyDAO;
 import fi.pyramus.dao.changelog.ChangeLogEntryPropertyDAO;
 import fi.pyramus.dao.changelog.TrackedEntityPropertyDAO;
+import fi.pyramus.dao.clientapplications.ClientApplicationAccessTokenDAO;
+import fi.pyramus.dao.clientapplications.ClientApplicationAuthorizationCodeDAO;
+import fi.pyramus.dao.clientapplications.ClientApplicationDAO;
 import fi.pyramus.dao.courses.BasicCourseResourceDAO;
 import fi.pyramus.dao.courses.CourseComponentDAO;
 import fi.pyramus.dao.courses.CourseComponentResourceDAO;
@@ -53,12 +57,13 @@ import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.courses.CourseStudentVariableDAO;
 import fi.pyramus.dao.courses.CourseStudentVariableKeyDAO;
 import fi.pyramus.dao.courses.CourseUserDAO;
-import fi.pyramus.dao.courses.CourseUserRoleDAO;
 import fi.pyramus.dao.courses.GradeCourseResourceDAO;
 import fi.pyramus.dao.courses.OtherCostDAO;
 import fi.pyramus.dao.courses.StudentCourseResourceDAO;
@@ -98,7 +103,6 @@ import fi.pyramus.dao.resources.MaterialResourceDAO;
 import fi.pyramus.dao.resources.ResourceCategoryDAO;
 import fi.pyramus.dao.resources.ResourceDAO;
 import fi.pyramus.dao.resources.WorkResourceDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.pyramus.dao.students.StudentContactLogEntryCommentDAO;
 import fi.pyramus.dao.students.StudentContactLogEntryDAO;
@@ -110,14 +114,13 @@ import fi.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.pyramus.dao.students.StudentGroupUserDAO;
 import fi.pyramus.dao.students.StudentImageDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
-import fi.pyramus.dao.students.StudentVariableDAO;
-import fi.pyramus.dao.students.StudentVariableKeyDAO;
 import fi.pyramus.dao.system.SettingDAO;
 import fi.pyramus.dao.system.SettingKeyDAO;
 import fi.pyramus.dao.users.InternalAuthDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
+import fi.pyramus.dao.webhooks.WebhookDAO;
 
 public class DAOFactory {
   
@@ -145,10 +148,6 @@ public class DAOFactory {
     return (StudentDAO) findByClass(fi.pyramus.dao.students.StudentDAO.class);
   }
 
-  public AbstractStudentDAO getAbstractStudentDAO() {
-    return (AbstractStudentDAO) findByClass(AbstractStudentDAO.class);
-  }
-  
   public StudentActivityTypeDAO getStudentActivityTypeDAO() {
     return (StudentActivityTypeDAO) findByClass(StudentActivityTypeDAO.class);
   }
@@ -187,14 +186,6 @@ public class DAOFactory {
 
   public StudentStudyEndReasonDAO getStudentStudyEndReasonDAO() {
     return (StudentStudyEndReasonDAO) findByClass(StudentStudyEndReasonDAO.class);
-  }
-  
-  public StudentVariableDAO getStudentVariableDAO() {
-    return (StudentVariableDAO) findByClass(StudentVariableDAO.class);
-  }
-  
-  public StudentVariableKeyDAO getStudentVariableKeyDAO() {
-    return (StudentVariableKeyDAO) findByClass(StudentVariableKeyDAO.class);
   }
 
   public CourseStudentVariableDAO getCourseStudentVariableDAO() {
@@ -251,10 +242,6 @@ public class DAOFactory {
     return (CourseUserDAO) findByClass(CourseUserDAO.class);
   }
   
-  public CourseUserRoleDAO getCourseUserRoleDAO() {
-    return (CourseUserRoleDAO) findByClass(CourseUserRoleDAO.class);
-  }
-  
   public GradeCourseResourceDAO getGradeCourseResourceDAO() {
     return (GradeCourseResourceDAO) findByClass(GradeCourseResourceDAO.class);
   }
@@ -265,6 +252,14 @@ public class DAOFactory {
   
   public StudentCourseResourceDAO getStudentCourseResourceDAO() {
     return (StudentCourseResourceDAO) findByClass(StudentCourseResourceDAO.class);
+  }
+
+  public CourseStaffMemberDAO getCourseStaffMemberDAO() {
+    return (CourseStaffMemberDAO) findByClass(CourseStaffMemberDAO.class);
+  }
+
+  public CourseStaffMemberRoleDAO getCourseStaffMemberRoleDAO() {
+    return (CourseStaffMemberRoleDAO) findByClass(CourseStaffMemberRoleDAO.class);
   }
 
   /* System */
@@ -297,8 +292,8 @@ public class DAOFactory {
     return (InternalAuthDAO) findByClass(InternalAuthDAO.class);
   }
   
-  public UserDAO getUserDAO() {
-    return (UserDAO) findByClass(UserDAO.class);
+  public StaffMemberDAO getStaffMemberDAO() {
+    return (StaffMemberDAO) findByClass(StaffMemberDAO.class);
   }
   
   public UserVariableDAO getUserVariableDAO() {
@@ -307,6 +302,16 @@ public class DAOFactory {
   
   public UserVariableKeyDAO getUserVariableKeyDAO() {
     return (UserVariableKeyDAO) findByClass(UserVariableKeyDAO.class);
+  }
+  
+  public PersonDAO getPersonDAO() {
+    return (PersonDAO) findByClass(PersonDAO.class);
+  }
+  
+  /* Webhooks */
+
+  public WebhookDAO getWebhookDAO() {
+    return (WebhookDAO) findByClass(WebhookDAO.class);
   }
   
   /* Change Log */
@@ -604,6 +609,20 @@ public class DAOFactory {
     return (PluginDAO) findByClass(PluginDAO.class);
   }
   
+  /* ClientApplications */
+  
+  public ClientApplicationDAO getClientApplicationDAO(){
+    return (ClientApplicationDAO) findByClass(ClientApplicationDAO.class);
+  }
+  
+  public ClientApplicationAuthorizationCodeDAO getClientApplicationAuthorizationCodeDAO(){
+    return (ClientApplicationAuthorizationCodeDAO) findByClass(ClientApplicationAuthorizationCodeDAO.class);
+  }
+  
+  public ClientApplicationAccessTokenDAO getClientApplicationAccessTokenDAO(){
+    return (ClientApplicationAccessTokenDAO) findByClass(ClientApplicationAccessTokenDAO.class);
+  }
+  
   /* AccessLog */
   
   public AccessLogEntryDAO getAccessLogEntryDAO() {
@@ -637,4 +656,5 @@ public class DAOFactory {
       throw new PersistenceException(e);
     }
   }
+
 }

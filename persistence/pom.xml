@@ -6,134 +6,100 @@
   <parent>
     <groupId>fi.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.6.6-SNAPSHOT</version>
+    <version>0.7.3-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   
   <properties>
-    <tranquil-model-gen.version>1.0.3-SNAPSHOT</tranquil-model-gen.version>
+    <hibernate-jpamodelgen.version>4.3.5.Final</hibernate-jpamodelgen.version>
   </properties>
   
   <dependencies>
+  
+    <!-- Servlet -->
+
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.1_spec</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>dom4j</artifactId>
-          <groupId>dom4j</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-search</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-queries</artifactId>
-      <version>3.5.0</version>
-    </dependency>
-    <dependency>
-      <groupId>fi.pyramus</groupId>
-      <artifactId>common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>6.0</version>
-      <scope>provided</scope>
-    </dependency>
+  
+    <!-- Hibernate -->
+  
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
-      <scope>provided</scope>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-infinispan</artifactId>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-orm</artifactId>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-analyzers</artifactId>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-infinispan</artifactId>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+    </dependency>    
+
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-queries</artifactId>
     </dependency>
     
-    <!-- Tranquil Model -->
-      
+    <!-- JMS -->
+    
     <dependency>
-      <groupId>fi.tranquil-model</groupId>
-      <artifactId>tranquil-model</artifactId>
+      <groupId>org.jboss.spec.javax.jms</groupId>
+      <artifactId>jboss-jms-api_2.0_spec</artifactId>
     </dependency>
+
+    <!-- EJB -->
+
+    <dependency>
+      <groupId>org.jboss.spec.javax.ejb</groupId>
+      <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>fi.muikku</groupId>
       <artifactId>security</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
+    
+    <!-- Pyramus -->
+    
+    <dependency>
+      <groupId>fi.pyramus</groupId>
+      <artifactId>common</artifactId>
+    </dependency>
   </dependencies>
-  
+
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <versionRange>[1.7,)</versionRange>
-                    <goals>
-                      <goal>run</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore />
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.7</version>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${basedir}/src/main/.metamodel</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>   
       <plugin>
         <groupId>org.bsc.maven</groupId>
         <artifactId>maven-processor-plugin</artifactId>
-        <version>2.0.5</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>1.0.0.Final</version>
-          </dependency>     
-        </dependencies>
+        <version>2.2.4</version>
         <executions>
           <execution>
             <id>process</id>
@@ -142,94 +108,21 @@
             </goals>
             <phase>generate-sources</phase>
             <configuration>
-              <outputDirectory>${basedir}/src/main/.metamodel</outputDirectory>
               <processors>
                 <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
               </processors>
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.7</version>
         <dependencies>
-		  <dependency>
-		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate-entitymanager</artifactId>
-		    <version>4.0.1.Final</version>
-		  </dependency>
+          <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>${hibernate-jpamodelgen.version}</version>
+          </dependency>
         </dependencies>
-        <executions>
-          <execution>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <tasks>
-            <taskdef name="instrument" classname="org.hibernate.tool.instrument.javassist.InstrumentTask">
-              <classpath>
-                <path refid="maven.runtime.classpath" />
-                <path refid="maven.plugin.classpath" />
-              </classpath>
-            </taskdef>
-            <instrument verbose="true">
-              <fileset dir="${project.build.outputDirectory}">
-                <include name="**/domainmodel/**/*.class" />
-              </fileset>
-            </instrument>
-          </tasks>
-        </configuration>
       </plugin>
     </plugins>
   </build>
-  
-  <profiles>
-    <profile>
-      <id>generate-tranquil-model</id>
-      <build>
-        <plugins>
-           <plugin>
-            <groupId>org.bsc.maven</groupId>
-            <artifactId>maven-processor-plugin</artifactId>
-            <version>2.2.1</version>
-            <dependencies>
-              <dependency>
-                <groupId>fi.tranquil-model</groupId>
-                <artifactId>tranquil-model-gen</artifactId>
-                <version>${tranquil-model-gen.version}</version>
-              </dependency>
-            </dependencies>
-            <executions>
-              <execution>
-                <id>process-tranquilmodel</id>
-                <goals>
-                  <goal>process</goal>
-                </goals>
-                <phase>generate-sources</phase>
-                <configuration>
-                  <includes>
-                    <include>**fi/pyramus/domainmodel/**/*.java</include>
-                  </includes>
-    
-                  <outputDirectory>${basedir}/generated</outputDirectory>
-                  <processors>
-                    <processor>fi.tranquil.TranquilModelAnnotationProcessor</processor>
-                  </processors>
-                  <optionMap>
-                    <lookupPackage>fi.pyramus.rest.tranquil</lookupPackage>
-                  </optionMap>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>  
 
 </project>

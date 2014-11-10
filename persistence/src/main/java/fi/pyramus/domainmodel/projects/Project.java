@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -272,8 +273,9 @@ public class Project implements ArchivableEntity {
   @Field
   private String name;
 
+  @Lob
   @Basic (fetch = FetchType.LAZY)
-  @Column (length=1073741824)
+  @Column
   @Field
   private String description;
 
@@ -287,7 +289,7 @@ public class Project implements ArchivableEntity {
   @IndexedEmbedded
   private List<ProjectModule> projectModules = new Vector<ProjectModule>();
 
-  @ManyToOne 
+  @ManyToOne
   @JoinColumn(name="creator")
   @IndexedEmbedded (depth = 1)
   private User creator;
@@ -309,7 +311,7 @@ public class Project implements ArchivableEntity {
   @Field
   private Boolean archived = Boolean.FALSE;
 
-  @ManyToMany (fetch = FetchType.LAZY)
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__ProjectTags", joinColumns=@JoinColumn(name="project"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
   private Set<Tag> tags = new HashSet<Tag>();

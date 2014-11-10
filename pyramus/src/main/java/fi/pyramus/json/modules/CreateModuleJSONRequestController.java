@@ -16,6 +16,7 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.CourseEducationSubtypeDAO;
 import fi.pyramus.dao.base.CourseEducationTypeDAO;
 import fi.pyramus.dao.base.DefaultsDAO;
+import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.SubjectDAO;
@@ -24,7 +25,7 @@ import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.pyramus.dao.modules.ModuleComponentDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.CourseEducationType;
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
@@ -50,15 +51,16 @@ public class CreateModuleJSONRequestController extends JSONRequestController {
    * @param requestContext The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     CourseDescriptionDAO descriptionDAO = DAOFactory.getInstance().getCourseDescriptionDAO();
     CourseDescriptionCategoryDAO descriptionCategoryDAO = DAOFactory.getInstance().getCourseDescriptionCategoryDAO();
     CourseEducationTypeDAO courseEducationTypeDAO = DAOFactory.getInstance().getCourseEducationTypeDAO();
-    CourseEducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getCourseEducationSubtypeDAO();
+    CourseEducationSubtypeDAO courseEducationSubtypeDAO = DAOFactory.getInstance().getCourseEducationSubtypeDAO();
     ModuleComponentDAO moduleComponentDAO = DAOFactory.getInstance().getModuleComponentDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();    
+    EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();    
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
@@ -152,10 +154,10 @@ public class CreateModuleJSONRequestController extends JSONRequestController {
         courseEducationType = module.getCourseEducationTypeByEducationTypeId(educationTypeId);
       }
       for (Long educationSubtypeId : chosenEducationTypes.get(educationTypeId)) {
-        EducationSubtype educationSubtype = educationType.getEducationSubtypeById(educationSubtypeId);
+        EducationSubtype educationSubtype = educationSubtypeDAO.findById(educationSubtypeId);
 
         if (!courseEducationType.contains(educationSubtype)) {
-          educationSubtypeDAO.create(courseEducationType, educationSubtype);
+          courseEducationSubtypeDAO.create(courseEducationType, educationSubtype);
         }
       }
     }

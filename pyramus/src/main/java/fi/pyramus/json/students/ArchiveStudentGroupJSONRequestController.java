@@ -4,7 +4,7 @@ import org.apache.commons.lang.math.NumberUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.dao.students.StudentGroupDAO;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.users.User;
@@ -15,7 +15,7 @@ public class ArchiveStudentGroupJSONRequestController extends JSONRequestControl
   
   public void process(JSONRequestContext requestContext) {
     StudentGroupDAO studentDAO = DAOFactory.getInstance().getStudentGroupDAO();
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
     Long studentGroupId = NumberUtils.createLong(requestContext.getRequest().getParameter("studentGroupId"));
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());

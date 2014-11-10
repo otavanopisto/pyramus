@@ -29,7 +29,7 @@ import fi.pyramus.dao.grading.TransferCreditDAO;
 import fi.pyramus.dao.projects.StudentProjectDAO;
 import fi.pyramus.dao.projects.StudentProjectModuleDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.AcademicTerm;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Tag;
@@ -59,7 +59,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
    * @param pageRequestContext Page request context
    */
   public void process(PageRequestContext pageRequestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();
@@ -169,7 +169,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
       studentProjectModulesJSON.add(obj);
     }
 
-    List<Student> students = studentDAO.listByAbstractStudent(studentProject.getStudent().getAbstractStudent());
+    List<Student> students = studentDAO.listByPerson(studentProject.getStudent().getPerson());
     Collections.sort(students, new Comparator<Student>() {
       @Override
       public int compare(Student o1, Student o2) {

@@ -10,10 +10,10 @@ import org.apache.commons.lang.math.NumberUtils;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.students.AbstractStudentDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentImageDAO;
-import fi.pyramus.domainmodel.students.AbstractStudent;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
@@ -51,22 +51,22 @@ public class StudentInfoPopupViewController extends PyramusViewController implem
    */
   public void process(PageRequestContext pageRequestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentImageDAO imageDAO = DAOFactory.getInstance().getStudentImageDAO();
 
     Long studentId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("student"));
-    Long abstractStudentId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("abstractStudent"));
+    Long personId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("person"));
     
-    AbstractStudent abstractStudent;
+    Person person;
 
-    if (abstractStudentId != null) {
-    	abstractStudent = abstractStudentDAO.findById(abstractStudentId);
+    if (personId != null) {
+    	person = personDAO.findById(personId);
     } else {
       Student student = studentDAO.findById(studentId);
-      abstractStudent = student.getAbstractStudent();
+      person = student.getPerson();
     }
   
-    List<Student> students = studentDAO.listByAbstractStudent(abstractStudent);
+    List<Student> students = studentDAO.listByPerson(person);
     Collections.sort(students, new Comparator<Student>() {
       @Override
       public int compare(Student o1, Student o2) {
@@ -102,10 +102,10 @@ public class StudentInfoPopupViewController extends PyramusViewController implem
     
     String studentImage = pageRequestContext.getRequest().getContextPath() + "/gfx/default-user-image.png";
     
-		pageRequestContext.getRequest().setAttribute("abstractStudent", abstractStudent);
+		pageRequestContext.getRequest().setAttribute("person", person);
     pageRequestContext.getRequest().setAttribute("students", students);
     pageRequestContext.getRequest().setAttribute("studentImage", studentImage);
-    pageRequestContext.getRequest().setAttribute("latestStudentHasImage", abstractStudent.getLatestStudent() != null ? imageDAO.findStudentHasImage(abstractStudent.getLatestStudent()) : Boolean.FALSE);
+    pageRequestContext.getRequest().setAttribute("latestStudentHasImage", person.getLatestStudent() != null ? imageDAO.findStudentHasImage(person.getLatestStudent()) : Boolean.FALSE);
   
     pageRequestContext.setIncludeJSP("/templates/students/studentinfopopup.jsp");
   }

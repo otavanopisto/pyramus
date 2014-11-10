@@ -11,6 +11,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.StaleObjectStateException;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.pyramus.I18N.Messages;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.ContactInfoDAO;
@@ -19,28 +20,28 @@ import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.LanguageDAO;
 import fi.pyramus.dao.base.MunicipalityDAO;
 import fi.pyramus.dao.base.NationalityDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.SchoolDAO;
 import fi.pyramus.dao.base.StudyProgrammeDAO;
 import fi.pyramus.dao.base.TagDAO;
-import fi.pyramus.dao.students.AbstractStudentDAO;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
-import fi.pyramus.dao.students.StudentVariableDAO;
+import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.Tag;
-import fi.pyramus.domainmodel.students.AbstractStudent;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
@@ -49,17 +50,18 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.util.UserUtils;
 
 public class EditStudentJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext requestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentActivityTypeDAO activityTypeDAO = DAOFactory.getInstance().getStudentActivityTypeDAO();
     StudentExaminationTypeDAO examinationTypeDAO = DAOFactory.getInstance().getStudentExaminationTypeDAO();
     StudentEducationalLevelDAO educationalLevelDAO = DAOFactory.getInstance().getStudentEducationalLevelDAO();
     StudentStudyEndReasonDAO studyEndReasonDAO = DAOFactory.getInstance().getStudentStudyEndReasonDAO();
-    StudentVariableDAO studentVariableDAO = DAOFactory.getInstance().getStudentVariableDAO();
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     LanguageDAO languageDAO = DAOFactory.getInstance().getLanguageDAO();
     MunicipalityDAO municipalityDAO = DAOFactory.getInstance().getMunicipalityDAO();
     NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
@@ -72,8 +74,8 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
 
-    Long abstractStudentId = NumberUtils.createLong(requestContext.getRequest().getParameter("abstractStudentId"));
-    AbstractStudent abstractStudent = abstractStudentDAO.findById(abstractStudentId);
+    Long personId = NumberUtils.createLong(requestContext.getRequest().getParameter("personId"));
+    Person person = personDAO.findById(personId);
 
     Date birthday = requestContext.getDate("birthday");
     String ssecId = requestContext.getString("ssecId");
@@ -82,14 +84,25 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     Long version = requestContext.getLong("version"); 
     Boolean secureInfo = requestContext.getBoolean("secureInfo");
     
-    if (!abstractStudent.getVersion().equals(version))
-      throw new StaleObjectStateException(AbstractStudent.class.getName(), abstractStudent.getId());
+    if (!person.getVersion().equals(version))
+      throw new StaleObjectStateException(Person.class.getName(), person.getId());
 
     // Abstract student
-    abstractStudentDAO.update(abstractStudent, birthday, ssecId, sex, basicInfo, secureInfo);
+    personDAO.update(person, birthday, ssecId, sex, basicInfo, secureInfo);
 
-    List<Student> students = studentDAO.listByAbstractStudent(abstractStudent);
+    List<Student> students = studentDAO.listByPerson(person);
 
+    for (Student student : students) {
+      int rowCount = requestContext.getInteger("emailTable." + student.getId() + ".rowCount");
+      for (int i = 0; i < rowCount; i++) {
+        String colPrefix = "emailTable." + student.getId() + "." + i;
+        String email = requestContext.getString(colPrefix + ".email");
+        
+        if (!UserUtils.isAllowedEmail(email, person.getId()))
+          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+      }
+    }
+    
     for (Student student : students) {
     	Long studentVersion = requestContext.getLong("studentVersion." + student.getId());
       if (!student.getVersion().equals(studentVersion))
@@ -155,7 +168,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
   	      String colPrefix = "variablesTable." + student.getId() + "." + i;
   	      String variableKey = requestContext.getString(colPrefix + ".key");
   	      String variableValue = requestContext.getString(colPrefix + ".value");
-  	      studentVariableDAO.setStudentVariable(student, variableKey, variableValue);
+  	      userVariableDAO.setUserVariable(student, variableKey, variableValue);
   	    }
 	    }
 	    
@@ -262,10 +275,10 @@ public class EditStudentJSONRequestController extends JSONRequestController {
       }
     }
     
-    // Contact information of a student won't be reflected to AbstractStudent
+    // Contact information of a student won't be reflected to Person
     // used when searching students, so a manual re-index is needed
 
-    abstractStudentDAO.forceReindex(abstractStudent);
+    personDAO.forceReindex(person);
         
     requestContext.setRedirectURL(requestContext.getReferer(true));
   }

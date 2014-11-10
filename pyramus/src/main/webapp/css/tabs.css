@@ -113,6 +113,14 @@
   display:block;
 }
 
+.tabLabelUserId {
+  background-color: #E4F4E4 !important;
+}
+
+.activeTabLabel.tabLabelUserId {
+  background-color: #A0E9B8 !important;
+}
+
 /* ToDo:
 
   * .tabContent have to be generalized and .tabContentixTableFormattedData has to be removed

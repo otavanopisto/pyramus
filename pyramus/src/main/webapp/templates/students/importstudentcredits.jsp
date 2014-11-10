@@ -34,13 +34,13 @@
         relatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/eye.png',
           text: '<fmt:message key="students.importStudentCredits.relatedActionsViewStudentLabel"/>',
-          link: GLOBAL_contextPath + '/students/viewstudent.page?abstractStudent=${baseStudent.abstractStudent.id}'  
+          link: GLOBAL_contextPath + '/students/viewstudent.page?person=${baseStudent.person.id}'  
         }));
         
         relatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.importStudentCredits.relatedActionsEditStudentLabel"/>',
-          link: GLOBAL_contextPath + '/students/editstudent.page?abstractStudent=${baseStudent.abstractStudent.id}'  
+          link: GLOBAL_contextPath + '/students/editstudent.page?person=${baseStudent.person.id}'  
         }));
       }
 

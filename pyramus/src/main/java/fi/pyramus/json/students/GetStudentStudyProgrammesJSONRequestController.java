@@ -12,9 +12,9 @@ import org.apache.commons.lang.math.NumberUtils;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.students.AbstractStudentDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.domainmodel.students.AbstractStudent;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
@@ -42,11 +42,11 @@ public class GetStudentStudyProgrammesJSONRequestController extends JSONRequestC
    */
   public void process(JSONRequestContext requestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
-
-    Long abstractStudentId = NumberUtils.createLong(requestContext.getRequest().getParameter("abstractStudentId"));
-    AbstractStudent abstractStudent = abstractStudentDAO.findById(abstractStudentId);
-    List<Student> students = studentDAO.listByAbstractStudent(abstractStudent);
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    
+    Long personId = NumberUtils.createLong(requestContext.getRequest().getParameter("personId"));
+    Person person = personDAO.findById(personId);
+    List<Student> students = studentDAO.listByPerson(person);
     Collections.sort(students, new Comparator<Student>() {
       @Override
       public int compare(Student o1, Student o2) {

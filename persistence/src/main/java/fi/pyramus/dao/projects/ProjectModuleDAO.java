@@ -63,4 +63,32 @@ public class ProjectModuleDAO extends PyramusEntityDAO<ProjectModule> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  public List<ProjectModule> listByModule(Module module) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ProjectModule> criteria = criteriaBuilder.createQuery(ProjectModule.class);
+    Root<ProjectModule> root = criteria.from(ProjectModule.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.equal(root.get(ProjectModule_.module), module)
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<Project> listProjectsByModule(Module module) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Project> criteria = criteriaBuilder.createQuery(Project.class);
+    Root<ProjectModule> root = criteria.from(ProjectModule.class);
+    criteria.select(root.get(ProjectModule_.project));
+    criteria.where(
+        criteriaBuilder.equal(root.get(ProjectModule_.module), module)
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
 }

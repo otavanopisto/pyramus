@@ -8,7 +8,6 @@ import java.util.Locale;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
@@ -53,7 +52,7 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
     JSONObject linkedCourseAssessments = new JSONObject();
     JSONObject linkedTransferCredits = new JSONObject();
     
-    List<Student> students = studentDAO.listByAbstractStudent(baseStudent.getAbstractStudent());
+    List<Student> students = studentDAO.listByPerson(baseStudent.getPerson());
 
     Collections.sort(students, new Comparator<Student>() {
       @Override
@@ -181,7 +180,7 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         
         obj.put("gradeName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getName() : null);
         obj.put("gradingScaleName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getGradingScale().getName() : null);
-        obj.put("assessingUserName", courseAssessment.getAssessingUser().getFullName());
+        obj.put("assessingUserName", courseAssessment.getAssessor().getFullName());
         obj.put("isLinked", linkedCourseAssessmentIds.contains(courseAssessment.getId()));
         
         arr.add(obj);
@@ -207,7 +206,7 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         
         obj.put("gradeName", transferCredit.getGrade() != null ? transferCredit.getGrade().getName() : null);
         obj.put("gradingScaleName", transferCredit.getGrade() != null ? transferCredit.getGrade().getGradingScale().getName() : null);
-        obj.put("assessingUserName", transferCredit.getAssessingUser().getFullName());
+        obj.put("assessingUserName", transferCredit.getAssessor().getFullName());
         obj.put("isLinked", linkedTransferCreditIds.contains(transferCredit.getId()));
         
         arr.add(obj);
@@ -264,7 +263,7 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         
         obj.put("gradeName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getName() : null);
         obj.put("gradingScaleName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getGradingScale().getName() : null);
-        obj.put("assessingUserName", courseAssessment.getAssessingUser().getFullName());
+        obj.put("assessingUserName", courseAssessment.getAssessor().getFullName());
         obj.put("isLinked", linkedCourseAssessmentIds.contains(courseAssessment.getId()));
         
         arr.add(obj);
@@ -319,7 +318,7 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         
         obj.put("gradeName", transferCredit.getGrade() != null ? transferCredit.getGrade().getName() : null);
         obj.put("gradingScaleName", transferCredit.getGrade() != null ? transferCredit.getGrade().getGradingScale().getName() : null);
-        obj.put("assessingUserName", transferCredit.getAssessingUser().getFullName());
+        obj.put("assessingUserName", transferCredit.getAssessor().getFullName());
         obj.put("isLinked", linkedTransferCreditIds.contains(transferCredit.getId()));
         
         arr.add(obj);

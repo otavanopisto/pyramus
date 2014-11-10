@@ -9,7 +9,8 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
@@ -17,9 +18,9 @@ import fi.pyramus.framework.UserRole;
 public class SearchStudentGroupsViewController extends PyramusViewController implements Breadcrumbable {
 
   public void process(PageRequestContext pageRequestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
-    List<User> users = userDAO.listAll();
+    List<StaffMember> users = userDAO.listAll();
     
     Collections.sort(users, new Comparator<User>() {
       @Override

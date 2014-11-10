@@ -39,9 +39,9 @@
             tooltip: '<fmt:message key="students.viewStudentGroup.studentsTableStudentInfoTooltip"/>',
             onclick: function (event) {
               var table = event.tableComponent;
-              var abstractStudentId = table.getCellValue(event.row, table.getNamedColumnIndex('abstractStudentId'));
+              var personId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
               var button = table.getCellEditor(event.row, table.getNamedColumnIndex('studentInfoButton'));
-              openStudentInfoPopupOnElement(button, abstractStudentId);
+              openStudentInfoPopupOnElement(button, personId);
             } 
           }, {
             header : '<fmt:message key="students.viewStudentGroup.studentsTableNameHeader"/>',
@@ -73,7 +73,7 @@
             ]
           }, {
             dataType: 'hidden', 
-            paramName: 'abstractStudentId'
+            paramName: 'personId'
           }, {
             width: 22,
             right: 8 + 22 + 8,
@@ -82,8 +82,8 @@
             tooltip: '<fmt:message key="students.viewStudentGroup.studentsTableViewStudentTooltip"/>',
             onclick: function (event) {
               var table = event.tableComponent;
-              var abstractStudentId = table.getCellValue(event.row, table.getNamedColumnIndex('abstractStudentId'));
-              redirectTo(GLOBAL_contextPath + '/students/viewstudent.page?abstractStudent=' + abstractStudentId);
+              var personId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
+              redirectTo(GLOBAL_contextPath + '/students/viewstudent.page?person=' + personId);
             }
           }, {
             width: 22,
@@ -93,8 +93,8 @@
             tooltip: '<fmt:message key="students.viewStudentGroup.studentsTableEditStudentTooltip"/>',
             onclick: function (event) {
               var table = event.tableComponent;
-              var abstractStudentId = table.getCellValue(event.row, table.getNamedColumnIndex('abstractStudentId'));
-              redirectTo(GLOBAL_contextPath + '/students/editstudent.page?abstractStudent=' + abstractStudentId);
+              var personId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
+              redirectTo(GLOBAL_contextPath + '/students/editstudent.page?person=' + personId);
             }
           }]        
         });
@@ -120,7 +120,7 @@
             "", 
             "${studentName}", 
             "${studyProgrammeName}",
-            ${student.student.abstractStudent.id},
+            ${student.student.person.id},
             '',
             ''
           ]);

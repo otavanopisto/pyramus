@@ -12,11 +12,11 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.students.AbstractStudentDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.students.StudentContactLogEntryCommentDAO;
 import fi.pyramus.dao.students.StudentContactLogEntryDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.domainmodel.students.AbstractStudent;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.pyramus.domainmodel.students.StudentContactLogEntryComment;
@@ -43,27 +43,27 @@ public class ManageStudentContactEntriesViewController extends PyramusViewContro
    * Processes the page request.
    * 
    * In parameters
-   * - abstractStudent
+   * - person
    * 
    * Page parameters
-   * - abstractStudent - AbstractStudent object
+   * - person - Person object
    * - contactEntries - List of StudentContactLogEntry objects
    * 
    * @param pageRequestContext pageRequestContext
    */
   public void process(PageRequestContext pageRequestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    AbstractStudentDAO abstractStudentDAO = DAOFactory.getInstance().getAbstractStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentContactLogEntryDAO logEntryDAO = DAOFactory.getInstance().getStudentContactLogEntryDAO();
     StudentContactLogEntryCommentDAO entryCommentDAO = DAOFactory.getInstance().getStudentContactLogEntryCommentDAO();
 
-    Long abstractStudentId = pageRequestContext.getLong("abstractStudent");
+    Long personId = pageRequestContext.getLong("person");
     
-    AbstractStudent abstractStudent = abstractStudentDAO.findById(abstractStudentId);
+    Person person = personDAO.findById(personId);
     
-    pageRequestContext.getRequest().setAttribute("abstractStudent", abstractStudent);
+    pageRequestContext.getRequest().setAttribute("person", person);
 
-    List<Student> students = studentDAO.listByAbstractStudent(abstractStudent);
+    List<Student> students = studentDAO.listByPerson(person);
     Collections.sort(students, new Comparator<Student>() {
       @Override
       public int compare(Student o1, Student o2) {

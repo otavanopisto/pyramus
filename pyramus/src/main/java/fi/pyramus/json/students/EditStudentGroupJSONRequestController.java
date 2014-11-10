@@ -18,12 +18,13 @@ import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentGroupDAO;
 import fi.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.pyramus.dao.students.StudentGroupUserDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentGroupUser;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
@@ -42,7 +43,7 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
    *          The JSON request context
    */
   public void process(JSONRequestContext requestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
     StudentGroupStudentDAO studentGroupStudentDAO = DAOFactory.getInstance().getStudentGroupStudentDAO();
@@ -70,7 +71,7 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
     }
 
     StudentGroup studentGroup = studentGroupDAO.findById(requestContext.getLong("studentGroupId"));
-    User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
+    User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
 
     // Version check
     Long version = requestContext.getLong("version"); 
@@ -101,8 +102,8 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
       
       if (studentGroupUserId == null) {
         // New User
-        User user = userDAO.findById(userId);
-        studentGroupUserDAO.create(studentGroup, user, loggedUser);
+        StaffMember staffMember = staffMemberDAO.findById(userId);
+        studentGroupUserDAO.create(studentGroup, staffMember, loggedUser);
       } else {
         // Old User, still in list
         removables.remove(studentGroupUserId);

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="User">
+      <addFields>
+      	<field name="person_id" type="java.lang.Long" nullable="true" unique="false" />
+      </addFields>
+      <addForeignKeys>
+        <key columns="person_id" referencedTable="Person" referencedColumns="id" name="FK_USER_PERSON_ID"/>
+      </addForeignKeys>
+    </table>    
+
+    <table name="Person">
+      <addFields>
+        <field name="sex" type="java.lang.String" nullable="true"/>
+        <field name="birthday" type="Types.DATE" nullable="true" unique="false" />
+        <field name="socialSecurityNumber" type="java.lang.String" nullable="true" unique="false" />
+        <field name="basicInfo" type="java.lang.String" nullable="true" unique="false" length="1073741824" />
+        <field name="secureInfo" type="java.lang.Boolean" nullable="false" unique="false" />
+      </addFields>
+    </table>    
+  </alterTables>
+  
+  <sql>
+    update Person p, AbstractStudent a
+    set 
+      p.sex = a.sex,
+      p.birthday = a.birthday,
+      p.socialSecurityNumber = a.socialSecurityNumber,
+      p.basicInfo = a.basicInfo,
+      p.secureInfo = a.secureInfo
+    where 
+      p.id = a.id;
+  </sql>
+  
+  <sql>
+    update User u, Student s
+    set u.person_id = s.abstractStudent
+    where u.id = s.id; 
+  </sql>
+
+  <sql>
+    update User u, StaffMember sm
+    set u.person_id = sm.person_id
+    where u.id = sm.id;
+  </sql>
+
+  <alterTables>
+    <table name="Student">
+      <dropForeignKeys>
+        <key name="FKF3371A1BFDB61D8B"/>
+      </dropForeignKeys>
+    </table>
+
+    <table name="StaffMember">
+      <dropFields>
+        <field name="person_id"/>
+      </dropFields>
+    </table>
+
+    <table name="Student">
+      <dropFields>
+        <field name="abstractStudent"/>
+      </dropFields>
+    </table>
+  </alterTables>
+
+  <dropTables>
+    <table name="AbstractStudent"/>
+  </dropTables>
+  
+</update>

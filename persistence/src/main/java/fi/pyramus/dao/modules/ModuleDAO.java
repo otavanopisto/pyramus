@@ -78,6 +78,37 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     return module;
   }
 
+  public List<Module> listBySubject(Subject subject) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Module> criteria = criteriaBuilder.createQuery(Module.class);
+    Root<Module> root = criteria.from(Module.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(Module_.subject), subject)
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<Module> listBySubjectAndCourseNumber(Subject subject, Integer courseNumber) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Module> criteria = criteriaBuilder.createQuery(Module.class);
+    Root<Module> root = criteria.from(Module.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Module_.subject), subject),
+        criteriaBuilder.equal(root.get(Module_.courseNumber), courseNumber)
+      )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   public Module updateTags(Module module, Set<Tag> tags) {
     EntityManager entityManager = getEntityManager();
 

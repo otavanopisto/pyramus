@@ -23,21 +23,24 @@ public abstract class GenericDAO<T> {
     return (T) entityManager.find(getGenericTypeClass(), id);
   }
 
-  @SuppressWarnings("unchecked")
   public List<T> listAll() {
-    EntityManager entityManager = getEntityManager();
-    Class<?> genericTypeClass = getGenericTypeClass();
-    Query query = entityManager.createQuery("select o from " + genericTypeClass.getName() + " o");
-    return query.getResultList();
+    return listAll(null, null);
   }
 
   @SuppressWarnings("unchecked")
-  public List<T> listAll(int firstResult, int maxResults) {
+  public List<T> listAll(Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     Class<?> genericTypeClass = getGenericTypeClass();
     Query query = entityManager.createQuery("select o from " + genericTypeClass.getName() + " o");
-    query.setFirstResult(firstResult);
-    query.setMaxResults(maxResults);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+    
     return query.getResultList();
   }
   
@@ -69,6 +72,11 @@ public abstract class GenericDAO<T> {
     entityManager.persist(entity);
   }
 
+  protected T persist(T object) {
+    getEntityManager().persist(object);
+    return object;
+  }
+
   public Integer count() {
     EntityManager entityManager = getEntityManager();
     Class<?> genericTypeClass = getGenericTypeClass();
@@ -76,7 +84,7 @@ public abstract class GenericDAO<T> {
     return (Integer) query.getSingleResult();
   }
 
-  protected void delete(T e) {
+  public void delete(T e) {
     getEntityManager().remove(e);
   }
   

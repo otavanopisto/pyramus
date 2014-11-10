@@ -14,6 +14,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.base.EducationSubtypeDAO;
 import fi.pyramus.dao.base.EducationTypeDAO;
 import fi.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.pyramus.dao.base.SubjectDAO;
@@ -23,13 +24,14 @@ import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
-import fi.pyramus.dao.courses.CourseUserDAO;
-import fi.pyramus.dao.courses.CourseUserRoleDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.pyramus.domainmodel.base.CourseEducationType;
+import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
@@ -37,8 +39,8 @@ import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.courses.CourseStudent;
-import fi.pyramus.domainmodel.courses.CourseUser;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.framework.PyramusViewController;
@@ -65,13 +67,14 @@ public class EditCourseViewController extends PyramusViewController implements B
     CourseParticipationTypeDAO participationTypeDAO = DAOFactory.getInstance().getCourseParticipationTypeDAO();
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     CourseStateDAO courseStateDAO = DAOFactory.getInstance().getCourseStateDAO();
-    CourseUserDAO courseUserDAO = DAOFactory.getInstance().getCourseUserDAO();
+    CourseStaffMemberDAO courseStaffMemberDAO = DAOFactory.getInstance().getCourseStaffMemberDAO();
+    CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
     CourseComponentDAO courseComponentDAO = DAOFactory.getInstance().getCourseComponentDAO();
-    CourseUserRoleDAO courseUserRoleDAO = DAOFactory.getInstance().getCourseUserRoleDAO();
     CourseEnrolmentTypeDAO enrolmentTypeDAO = DAOFactory.getInstance().getCourseEnrolmentTypeDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();    
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
+    EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();    
 
     // The course to be edited
     
@@ -104,13 +107,13 @@ public class EditCourseViewController extends PyramusViewController implements B
       }
     });
     
-    List<CourseUser> courseUsers = courseUserDAO.listByCourse(course);
-    Collections.sort(courseUsers, new Comparator<CourseUser>() {
+    List<CourseStaffMember> courseUsers = courseStaffMemberDAO.listByCourse(course);
+    Collections.sort(courseUsers, new Comparator<CourseStaffMember>() {
       @Override
-      public int compare(CourseUser o1, CourseUser o2) {
-        int cmp = o1.getUser().getLastName().compareToIgnoreCase(o2.getUser().getLastName());
+      public int compare(CourseStaffMember o1, CourseStaffMember o2) {
+        int cmp = o1.getStaffMember().getLastName().compareToIgnoreCase(o2.getStaffMember().getLastName());
         if (cmp == 0)
-          cmp = o1.getUser().getFirstName().compareToIgnoreCase(o2.getUser().getFirstName());
+          cmp = o1.getStaffMember().getFirstName().compareToIgnoreCase(o2.getStaffMember().getFirstName());
         return cmp;
       }
     });
@@ -131,7 +134,7 @@ public class EditCourseViewController extends PyramusViewController implements B
     Map<Long, List<Student>> courseStudentsStudents = new HashMap<Long, List<Student>>();
     
     for (CourseStudent courseStudent : courseStudents) {
-      courseStudentsStudents.put(courseStudent.getId(), studentDAO.listByAbstractStudent(courseStudent.getStudent().getAbstractStudent()));
+      courseStudentsStudents.put(courseStudent.getId(), studentDAO.listByPerson(courseStudent.getStudent().getPerson()));
     }
     
     // Subjects
@@ -156,9 +159,18 @@ public class EditCourseViewController extends PyramusViewController implements B
       }
     });
     
+    Map<Long, List<EducationSubtype>> educationSubtypes = new HashMap<>();
+    
+    for (EducationType educationType : educationTypes) {
+      List<EducationSubtype> subtypes = educationSubtypeDAO.listByEducationType(educationType);
+      Collections.sort(subtypes, new StringAttributeComparator("getName"));
+      educationSubtypes.put(educationType.getId(), subtypes);
+    }
+
+    pageRequestContext.getRequest().setAttribute("educationSubtypes", educationSubtypes);
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());
     pageRequestContext.getRequest().setAttribute("states", courseStateDAO.listUnarchived());
-    pageRequestContext.getRequest().setAttribute("roles", courseUserRoleDAO.listAll());
+    pageRequestContext.getRequest().setAttribute("roles", courseStaffMemberRoleDAO.listAll());
     pageRequestContext.getRequest().setAttribute("subjectsByNoEducationType", subjectsByNoEducationType);
     pageRequestContext.getRequest().setAttribute("subjectsByEducationType", subjectsByEducationType);
     pageRequestContext.getRequest().setAttribute("courseParticipationTypes", courseParticipationTypes);

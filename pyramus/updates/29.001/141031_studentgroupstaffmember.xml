@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="StudentGroupUser">
+      <addFields>
+        <field name="staffMember_id" type="java.lang.Long" nullable="true" unique="false" />
+      </addFields>
+      <addForeignKeys>
+        <key columns="staffMember_id" referencedTable="StaffMember" referencedColumns="id" name="FK_STUDENTGROUPUSER_STAFFMEMBER_ID"/>
+      </addForeignKeys>
+    </table>    
+  </alterTables>
+  
+  <sql>
+    update StudentGroupUser
+    set staffMember_id = user;
+  </sql>
+
+  <alterTables>
+    <table name="StudentGroupUser">
+      <dropForeignKeys>
+        <key name="FK12F3330F62D248B"/>
+      </dropForeignKeys>
+    </table>
+
+    <table name="StudentGroupUser">
+      <dropFields>
+        <field name="user"/>
+      </dropFields>
+    </table>
+  </alterTables>
+
+</update>

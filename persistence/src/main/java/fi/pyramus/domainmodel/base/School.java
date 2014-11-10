@@ -1,10 +1,6 @@
 package fi.pyramus.domainmodel.base;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -18,14 +14,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -84,23 +78,6 @@ public class School implements ArchivableEntity {
   public String getNameSortable() {
     return name;
   }
-  
-  public List<SchoolVariable> getVariables() {
-    return variables;
-  }
-  
-  public void setVariables(List<SchoolVariable> variables) {
-    this.variables = variables;
-  }
-
-  @Transient
-  public Map<String, String> getVariablesAsStringMap() {
-    Map<String, String> result = new HashMap<String, String>();
-    for (SchoolVariable schoolVariable : variables) {
-      result.put(schoolVariable.getKey().getVariableKey(), schoolVariable.getValue());
-    }
-    return result;
-  } 
 
   public void setCode(String code) {
     this.code = code;
@@ -198,22 +175,16 @@ public class School implements ArchivableEntity {
   @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="contactInfo")
   @IndexedEmbedded
-  private ContactInfo contactInfo = new ContactInfo();
-
-  @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn (name="school")
-  @XmlTransient
-  private List<SchoolVariable> variables = new ArrayList<SchoolVariable>();
+  private ContactInfo contactInfo;
 
   @NotNull
   @Column (nullable = false)
   @Field
   private Boolean archived = Boolean.FALSE;
 
-  @ManyToMany (fetch = FetchType.LAZY)
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__SchoolTags", joinColumns=@JoinColumn(name="school"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded
-  @XmlTransient
   private Set<Tag> tags = new HashSet<Tag>();
 
   @ManyToOne

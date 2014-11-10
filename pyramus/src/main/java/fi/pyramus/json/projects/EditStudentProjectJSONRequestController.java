@@ -24,7 +24,7 @@ import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.projects.StudentProjectDAO;
 import fi.pyramus.dao.projects.StudentProjectModuleDAO;
 import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.AcademicTerm;
 import fi.pyramus.domainmodel.base.CourseOptionality;
 import fi.pyramus.domainmodel.base.Defaults;
@@ -40,7 +40,7 @@ import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.projects.StudentProject;
 import fi.pyramus.domainmodel.projects.StudentProjectModule;
 import fi.pyramus.domainmodel.students.Student;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
@@ -48,7 +48,7 @@ import fi.pyramus.framework.UserRole;
 public class EditStudentProjectJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext jsonRequestContext) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
@@ -76,7 +76,7 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
     
     String name = jsonRequestContext.getString("name");
     String description = jsonRequestContext.getString("description");
-    User user = userDAO.findById(jsonRequestContext.getLoggedUserId());
+    StaffMember staffMember = staffMemberDAO.findById(jsonRequestContext.getLoggedUserId());
     Long optionalStudiesLengthTimeUnitId = jsonRequestContext.getLong("optionalStudiesLengthTimeUnit");
     EducationalTimeUnit optionalStudiesLengthTimeUnit = educationalTimeUnitDAO.findById(optionalStudiesLengthTimeUnitId);
     Double optionalStudiesLength = jsonRequestContext.getDouble("optionalStudiesLength");
@@ -102,11 +102,11 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
     // Student
     
     if (!studentProject.getStudent().equals(student)) {
-      studentProjectDAO.updateStudent(studentProject, student, user);
+      studentProjectDAO.updateStudent(studentProject, student, staffMember);
     }
     
     studentProjectDAO.update(studentProject, name, description, optionalStudiesLength,
-        optionalStudiesLengthTimeUnit, projectOptionality, user);
+        optionalStudiesLengthTimeUnit, projectOptionality, staffMember);
 
     // Tags
 
@@ -141,9 +141,9 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
             verbalAssessment = jsonRequestContext.getString(colPrefix + ".verbalAssessment");
           
           if (projectAssessment == null) {
-            projectAssessmentDAO.create(studentProject, user, grade, assessmentDate, verbalAssessment);
+            projectAssessmentDAO.create(studentProject, staffMember, grade, assessmentDate, verbalAssessment);
           } else {
-            projectAssessmentDAO.update(projectAssessment, user, grade, assessmentDate, verbalAssessment);
+            projectAssessmentDAO.update(projectAssessment, staffMember, grade, assessmentDate, verbalAssessment);
           }
         }
       }
@@ -197,7 +197,7 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
         CourseParticipationType participationType = defaults.getInitialCourseParticipationType();
         Date enrolmentDate = new Date(System.currentTimeMillis());
         Boolean lodging = Boolean.FALSE;
-        courseStudent = courseStudentDAO.create(course, studentProject.getStudent(), courseEnrolmentType, participationType, enrolmentDate, lodging, optionality);
+        courseStudent = courseStudentDAO.create(course, studentProject.getStudent(), courseEnrolmentType, participationType, enrolmentDate, lodging, optionality, null, Boolean.FALSE);
       } else {
         courseStudent = courseStudentDAO.update(courseStudent, studentProject.getStudent(), courseStudent.getCourseEnrolmentType(), courseStudent.getParticipationType(), courseStudent.getEnrolmentTime(), courseStudent.getLodging(), optionality);
       }

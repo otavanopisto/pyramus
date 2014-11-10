@@ -219,7 +219,7 @@ public class HelpItem {
   @IndexedEmbedded
   private List<HelpItemTitle> titles = new ArrayList<HelpItemTitle>();
   
-  @ManyToMany (fetch = FetchType.LAZY)
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__HelpItemTags", joinColumns=@JoinColumn(name="helpItem"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
   private Set<Tag> tags = new HashSet<Tag>();
