@@ -45,16 +45,16 @@
       <div class="studentInfoPopupPhoneNumberTitle"><fmt:message key="students.studentInfoPopup.phoneNumberLabel"/></div>
       <div class="studentInfoPopupPhoneNumberValue">
         <c:choose>
-          <c:when test="${person.latestStudent.defaultPhone.number eq ''}">
+          <c:when test="${latestStudentDefaultPhone.number eq ''}">
             -
           </c:when>
           <c:otherwise>
             <c:choose>
-              <c:when test="${fn:length(person.latestStudent.defaultPhone.number) ge 30}">
-                <c:out value="${fn:substring(person.latestStudent.defaultPhone.number, 0, 27)}..."/>
+              <c:when test="${fn:length(latestStudentDefaultPhone.number) ge 30}">
+                <c:out value="${fn:substring(latestStudentDefaultPhone.number, 0, 27)}..."/>
               </c:when>
               <c:otherwise>
-                <c:out value="${person.latestStudent.defaultPhone.number}"/>
+                <c:out value="${latestStudentDefaultPhone.number}"/>
               </c:otherwise>
             </c:choose>
           </c:otherwise>

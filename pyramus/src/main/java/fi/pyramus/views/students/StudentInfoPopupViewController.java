@@ -14,6 +14,7 @@ import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentImageDAO;
 import fi.pyramus.domainmodel.base.Person;
+import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
@@ -53,7 +54,7 @@ public class StudentInfoPopupViewController extends PyramusViewController implem
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentImageDAO imageDAO = DAOFactory.getInstance().getStudentImageDAO();
-
+    
     Long studentId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("student"));
     Long personId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("person"));
     
@@ -106,7 +107,17 @@ public class StudentInfoPopupViewController extends PyramusViewController implem
     pageRequestContext.getRequest().setAttribute("students", students);
     pageRequestContext.getRequest().setAttribute("studentImage", studentImage);
     pageRequestContext.getRequest().setAttribute("latestStudentHasImage", person.getLatestStudent() != null ? imageDAO.findStudentHasImage(person.getLatestStudent()) : Boolean.FALSE);
-  
+    
+    Student latestStudent = person.getLatestStudent();
+    if ((latestStudent != null) && (latestStudent.getContactInfo() != null)) {
+      for (PhoneNumber phoneNumber : latestStudent.getContactInfo().getPhoneNumbers()) {
+        if (phoneNumber.getDefaultNumber()) {
+          pageRequestContext.getRequest().setAttribute("latestStudentDefaultPhone", phoneNumber);
+          break;
+        }
+      }
+    }
+    
     pageRequestContext.setIncludeJSP("/templates/students/studentinfopopup.jsp");
   }
 
