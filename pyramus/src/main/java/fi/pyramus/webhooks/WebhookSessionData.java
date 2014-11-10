@@ -15,6 +15,7 @@ public class WebhookSessionData {
   public void init() {
     updatedStaffMemberIds = new ArrayList<>();
     updatedStudentIds = new ArrayList<>();
+    updatedCourseIds = new ArrayList<>();
   }
   
   /* StaffMemberIds */
@@ -53,6 +54,25 @@ public class WebhookSessionData {
     updatedStudentIds.clear();
   }
   
+  /* CourseIds */
+  
+  public synchronized void addUpdatedCourseId(Long updatedCourseId) {
+    if (!updatedCourseIds.contains(updatedCourseId)) {
+      updatedCourseIds.add(updatedCourseId);
+    }
+  }
+  
+  public synchronized List<Long> retrieveUpdatedCourseIds() {
+    List<Long> result = new ArrayList<Long>(updatedCourseIds);
+    updatedCourseIds.clear();
+    return result;
+  }
+
+  public synchronized void clearUpdatedCourseIds() {
+    updatedCourseIds.clear();
+  }
+  
   private List<Long> updatedStaffMemberIds;
   private List<Long> updatedStudentIds;
+  private List<Long> updatedCourseIds;
 }

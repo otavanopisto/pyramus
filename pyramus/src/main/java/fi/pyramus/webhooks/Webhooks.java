@@ -18,6 +18,7 @@ import fi.pyramus.events.CourseStaffMemberCreatedEvent;
 import fi.pyramus.events.CourseStaffMemberDeletedEvent;
 import fi.pyramus.events.CourseStudentArchivedEvent;
 import fi.pyramus.events.CourseStudentCreatedEvent;
+import fi.pyramus.events.CourseUpdatedEvent;
 import fi.pyramus.events.StaffMemberCreatedEvent;
 import fi.pyramus.events.StaffMemberDeletedEvent;
 import fi.pyramus.events.StaffMemberUpdatedEvent;
@@ -45,8 +46,26 @@ public class Webhooks {
     webhooks.add(new fi.pyramus.webhooks.Webhook(url, signature));
   }
   
+  /* Courses */
+  
   public void onCourseCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseCreatedEvent event) {
     webhookController.sendWebhookNotifications(webhooks, new WebhookCourseCreatePayload(event.getCourseId()));
+  }
+  
+  public void onCourseUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) CourseUpdatedEvent event) {
+    sessionData.addUpdatedCourseId(event.getCourseId());
+  }
+
+  public void onCourseUpdatedAfterFailure(@Observes(during=TransactionPhase.AFTER_FAILURE) CourseUpdatedEvent event) {
+    sessionData.clearUpdatedCourseIds();
+  }
+
+  public void onCourseUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseUpdatedEvent event) {
+    List<Long> updatedCourseIds = sessionData.retrieveUpdatedCourseIds();
+    
+    for (Long updatedCourseId : updatedCourseIds) {
+      webhookController.sendWebhookNotifications(webhooks, new WebhookCourseUpdatePayload(updatedCourseId));
+    }
   }
 
   public void onCourseArchived(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseArchivedEvent event) {
