@@ -32,6 +32,7 @@ import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
+import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
@@ -281,6 +282,12 @@ public class Student extends User implements ArchivableEntity {
   
   public void setLodging(Boolean lodging) {
     this.lodging = lodging;
+  }
+  
+  @Transient
+  @Override
+  public Role getRole() {
+    return Role.STUDENT;
   }
 
   private String nickname;

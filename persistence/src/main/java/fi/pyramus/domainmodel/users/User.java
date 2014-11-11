@@ -147,12 +147,9 @@ public class User implements fi.muikku.security.User {
     }
   }
 
-  public EnvironmentRoleEntity getRoleEntity() {
-    return roleEntity;
-  }
-
-  public void setRoleEntity(EnvironmentRoleEntity roleEntity) {
-    this.roleEntity = roleEntity;
+  @Transient
+  public Role getRole() {
+    return Role.EVERYONE;
   }
   
   public Person getPerson() {
@@ -189,9 +186,6 @@ public class User implements fi.muikku.security.User {
   @Field
   private String lastName;
 
-  @ManyToOne
-  private EnvironmentRoleEntity roleEntity;
-  
   @ManyToMany (fetch = FetchType.LAZY)
   @JoinTable (name="__UserBillingDetails", joinColumns=@JoinColumn(name="user"), inverseJoinColumns=@JoinColumn(name="billingDetails"))
   @IndexedEmbedded 

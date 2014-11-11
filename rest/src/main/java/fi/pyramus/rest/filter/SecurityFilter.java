@@ -53,6 +53,11 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
           if (currentTime > clientApplicationAccessToken.getExpires()) {
             requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
           }
+//          else {
+//            
+//            clientApplicationAccessToken.getClientApplicationAuthorizationCode().getUser()
+//
+//          }
         }
 
       } catch (OAuthProblemException e) {
@@ -60,9 +65,7 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
       } catch (OAuthSystemException e) {
         requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
       }
-
     }
-
   }
 
 }

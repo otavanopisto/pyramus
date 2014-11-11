@@ -40,6 +40,7 @@ public class StaffMember extends User {
     this.role = role;
   }
 
+  @Override
   public Role getRole() {
     return role;
   }

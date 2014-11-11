@@ -18,7 +18,7 @@ import fi.pyramus.domainmodel.users.User;
 
 @Stateful
 @SessionScoped
-public class SessionControllerImpl implements SessionController {
+public class AbstractSessionControllerImpl implements SessionController {
   
 //  @Override
 //  public void login(Long userId) {

@@ -46,7 +46,7 @@ public interface SessionController {
    * 
    * @param userId user id
    */
-  public void login(Long userId);
+//  public void login(Long userId);
   
   /**
    * Logs user out 

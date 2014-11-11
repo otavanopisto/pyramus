@@ -11,9 +11,8 @@ import javax.inject.Inject;
 
 import fi.pyramus.dao.security.EnvironmentRolePermissionDAO;
 import fi.pyramus.dao.security.PermissionDAO;
-import fi.pyramus.dao.users.RoleEntityDAO;
 import fi.pyramus.domainmodel.security.Permission;
-import fi.pyramus.domainmodel.users.RoleEntity;
+import fi.pyramus.domainmodel.users.Role;
 
 @Singleton
 @Startup
@@ -25,9 +24,6 @@ public class PermissionCollector {
 
   @Inject
   private PermissionDAO permissionDAO;
-  
-  @Inject
-  private RoleEntityDAO roleEntityDAO;
   
   @Inject
   private EnvironmentRolePermissionDAO environmentRolePermissionDAO;
@@ -53,9 +49,9 @@ public class PermissionCollector {
                 case PermissionScope.ENVIRONMENT:
                   for (int i = 0; i < defaultRoles.length; i++) {
                     String roleName = defaultRoles[i];
-                    RoleEntity roleEntity = roleEntityDAO.findByName(roleName);
+                    Role role = Role.valueOf(roleName);
                     
-                    environmentRolePermissionDAO.create(roleEntity, permission);
+                    environmentRolePermissionDAO.create(role, permission);
                   }
                 break;
                 

@@ -1,14 +1,21 @@
 package fi.pyramus.domainmodel.security;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
-import fi.pyramus.domainmodel.users.RoleEntity;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Store;
+
+import fi.pyramus.domainmodel.users.Role;
 
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
@@ -23,11 +30,11 @@ public class RolePermission {
     return id;
   }
 
-  public RoleEntity getRole() {
+  public Role getRole() {
 		return role;
 	}
   
-  public void setRole(RoleEntity role) {
+  public void setRole(Role role) {
 		this.role = role;
 	}
 
@@ -46,6 +53,9 @@ public class RolePermission {
   @ManyToOne
   private Permission permission;
   
-  @ManyToOne
-  private RoleEntity role;
+  @NotNull
+  @Column (nullable = false)
+  @Enumerated (EnumType.STRING)
+  @Field (store = Store.NO)
+  private Role role;
 }

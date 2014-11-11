@@ -9,7 +9,7 @@ import fi.muikku.security.User;
 import fi.pyramus.dao.security.EnvironmentRolePermissionDAO;
 import fi.pyramus.dao.security.PermissionDAO;
 import fi.pyramus.domainmodel.security.Permission;
-import fi.pyramus.domainmodel.users.RoleEntity;
+import fi.pyramus.domainmodel.users.Role;
 
 @Stateless
 public class EnvironmentPermissionResolver extends AbstractPermissionResolver implements PermissionResolver {
@@ -37,14 +37,14 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     Permission perm = permissionDAO.findByName(permission);
     fi.pyramus.domainmodel.users.User userEntity = getUser(user);
 
-    return environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(userEntity.getRoleEntity(), perm);
+    return environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(userEntity.getRole(), perm);
   }
 
   @Override
   public boolean hasEveryonePermission(String permission, ContextReference contextReference) {
     System.out.println("Checking permission " + permission + " for: everyone");
 
-    RoleEntity everyoneRole = getEveryoneRole();
+    Role everyoneRole = getEveryoneRole();
     Permission perm = permissionDAO.findByName(permission);
     
     return environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(everyoneRole, perm);

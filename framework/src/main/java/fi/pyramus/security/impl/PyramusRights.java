@@ -22,13 +22,13 @@ public class PyramusRights {
   }
 
   public static void login(Long userId) throws NamingException {
-    SessionController sessionController = (SessionController) new InitialContext().lookup("java:app/pyramus/SessionControllerImpl");
-    sessionController.login(userId);
+//    SessionController sessionController = (SessionController) new InitialContext().lookup("java:app/pyramus/SessionControllerImpl");
+//    sessionController.login(userId);
   }
 
   public static void logout() throws NamingException {
-    SessionController sessionController = (SessionController) new InitialContext().lookup("java:app/pyramus/SessionControllerImpl");
-    sessionController.logout();
+//    SessionController sessionController = (SessionController) new InitialContext().lookup("java:app/pyramus/SessionControllerImpl");
+//    sessionController.logout();
   }
   
 }

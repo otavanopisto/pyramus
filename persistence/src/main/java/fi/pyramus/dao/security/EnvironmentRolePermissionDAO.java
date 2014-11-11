@@ -11,13 +11,13 @@ import fi.pyramus.dao.PyramusEntityDAO;
 import fi.pyramus.domainmodel.security.EnvironmentRolePermission;
 import fi.pyramus.domainmodel.security.EnvironmentRolePermission_;
 import fi.pyramus.domainmodel.security.Permission;
-import fi.pyramus.domainmodel.users.RoleEntity;
+import fi.pyramus.domainmodel.users.Role;
 
 @Dependent
 @Stateless
 public class EnvironmentRolePermissionDAO extends PyramusEntityDAO<EnvironmentRolePermission> {
 
-  public EnvironmentRolePermission create(RoleEntity role, Permission permission) {
+  public EnvironmentRolePermission create(Role role, Permission permission) {
 		EnvironmentRolePermission eurpermission = new EnvironmentRolePermission();
 
 		eurpermission.setRole(role);
@@ -29,11 +29,11 @@ public class EnvironmentRolePermissionDAO extends PyramusEntityDAO<EnvironmentRo
 	}
 
 	// TODO: Not a DAO method
-	public boolean hasEnvironmentPermissionAccess(RoleEntity role, Permission permission) {
+	public boolean hasEnvironmentPermissionAccess(Role role, Permission permission) {
 		return findByUserRoleAndPermission(role, permission) != null;
 	}
 
-	public EnvironmentRolePermission findByUserRoleAndPermission(RoleEntity role, Permission permission) {
+	public EnvironmentRolePermission findByUserRoleAndPermission(Role role, Permission permission) {
 		EntityManager entityManager = getEntityManager();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
