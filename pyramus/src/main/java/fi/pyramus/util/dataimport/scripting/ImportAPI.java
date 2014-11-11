@@ -8,6 +8,8 @@ import org.apache.commons.lang3.LocaleUtils;
 import com.github.javafaker.Faker;
 
 import fi.pyramus.util.dataimport.scripting.api.ActivityTypeAPI;
+import fi.pyramus.util.dataimport.scripting.api.ClientApplicationAPI;
+import fi.pyramus.util.dataimport.scripting.api.ClientApplicationAuthorizationCodeAPI;
 import fi.pyramus.util.dataimport.scripting.api.ContactTypeAPI;
 import fi.pyramus.util.dataimport.scripting.api.CourseAPI;
 import fi.pyramus.util.dataimport.scripting.api.CourseStudentAPI;
@@ -21,6 +23,7 @@ import fi.pyramus.util.dataimport.scripting.api.NationalityAPI;
 import fi.pyramus.util.dataimport.scripting.api.PersonAPI;
 import fi.pyramus.util.dataimport.scripting.api.SchoolAPI;
 import fi.pyramus.util.dataimport.scripting.api.SchoolFieldAPI;
+import fi.pyramus.util.dataimport.scripting.api.StaffMemberAPI;
 import fi.pyramus.util.dataimport.scripting.api.StudentAPI;
 import fi.pyramus.util.dataimport.scripting.api.StudentGroupAPI;
 import fi.pyramus.util.dataimport.scripting.api.StudentGroupStudentAPI;
@@ -120,6 +123,18 @@ public class ImportAPI {
   
   public CourseStudentAPI getCourseStudents() {
     return new CourseStudentAPI(loggedUserId);
+  }
+  
+  public ClientApplicationAPI getClientApplications() {
+    return new ClientApplicationAPI(loggedUserId);
+  }
+  
+  public ClientApplicationAuthorizationCodeAPI getClientApplicationAuthorizationCodes() {
+    return new ClientApplicationAuthorizationCodeAPI(loggedUserId);
+  }
+  
+  public StaffMemberAPI getStaffMembers() {
+    return new StaffMemberAPI();
   }
   
   private Long loggedUserId;
