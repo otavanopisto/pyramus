@@ -11,6 +11,7 @@ import javax.enterprise.context.RequestScoped;
 
 import fi.muikku.security.ContextReference;
 import fi.muikku.security.PermissionResolver;
+import fi.pyramus.domainmodel.users.User;
 
 @Stateful
 @RequestScoped
@@ -36,7 +37,7 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
   }
   
   @Override
-  public UserEntity getUser() {
+  public User getUser() {
     if (authentication != null)
       return authentication.getUser();
     
