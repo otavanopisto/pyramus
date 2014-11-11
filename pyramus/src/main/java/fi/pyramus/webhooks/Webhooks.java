@@ -12,6 +12,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.events.CourseArchivedEvent;
 import fi.pyramus.events.CourseCreatedEvent;
 import fi.pyramus.events.CourseStaffMemberCreatedEvent;
@@ -125,8 +127,10 @@ public class Webhooks {
   }
   
   public synchronized void onCourseStudentUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) CourseStudentUpdatedEvent event) {
-    sessionData.addUpdatedCourseStudent(event.getCourseStudentId(), event.getCourseId(), event.getStudentId());
+    CourseStudent courseStudent = DAOFactory.getInstance().getCourseStudentDAO().findById(event.getCourseStudentId());
+    sessionData.addUpdatedCourseStudent(event.getCourseStudentId(), event.getCourseId(), courseStudent.getStudent().getId());
   }
+  
   public synchronized void onCourseStudentUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStudentUpdatedEvent event) {
     List<Long> updatedCourseStudentIds = sessionData.retrieveUpdatedCourseStudentIds();
     
