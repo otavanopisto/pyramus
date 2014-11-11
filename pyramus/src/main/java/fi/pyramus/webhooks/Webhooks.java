@@ -58,10 +58,6 @@ public class Webhooks {
     sessionData.addUpdatedCourseId(event.getCourseId());
   }
 
-  public synchronized void onCourseUpdatedAfterFailure(@Observes(during=TransactionPhase.AFTER_FAILURE) CourseUpdatedEvent event) {
-    sessionData.clearUpdatedCourseIds();
-  }
-
   public synchronized void onCourseUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseUpdatedEvent event) {
     List<Long> updatedCourseIds = sessionData.retrieveUpdatedCourseIds();
     
@@ -84,10 +80,6 @@ public class Webhooks {
     sessionData.addUpdatedStudentId(event.getStudentId());
   }
 
-  public synchronized void onStudentUpdatedAfterFailure(@Observes(during=TransactionPhase.AFTER_FAILURE) StudentUpdatedEvent event) {
-    sessionData.clearUpdatedStudentIds();
-  }
-
   public synchronized void onStudentUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentUpdatedEvent event) {
     List<Long> updatedStudentIds = sessionData.retrieveUpdatedStudentIds();
     
@@ -108,10 +100,6 @@ public class Webhooks {
   
   public synchronized void onCourseStaffMemberUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) CourseStaffMemberUpdatedEvent event) {
     sessionData.addUpdatedCourseStaffMember(event.getCourseStaffMemberId(), event.getCourseId(), event.getStaffMemberId());
-  }
-
-  public synchronized void onCourseStaffMemberUpdatedAfterFailure(@Observes(during=TransactionPhase.AFTER_FAILURE) CourseStaffMemberUpdatedEvent event) {
-    sessionData.clearUpdatedCourseStaffMemberIds();
   }
 
   public synchronized void onCourseStaffMemberUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStaffMemberUpdatedEvent event) {
@@ -139,11 +127,6 @@ public class Webhooks {
   public synchronized void onCourseStudentUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) CourseStudentUpdatedEvent event) {
     sessionData.addUpdatedCourseStudent(event.getCourseStudentId(), event.getCourseId(), event.getStudentId());
   }
-
-  public synchronized void onCourseStudentUpdatedAfterFailure(@Observes(during=TransactionPhase.AFTER_FAILURE) CourseStudentUpdatedEvent event) {
-    sessionData.clearUpdatedCourseStudentIds();
-  }
-
   public synchronized void onCourseStudentUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStudentUpdatedEvent event) {
     List<Long> updatedCourseStudentIds = sessionData.retrieveUpdatedCourseStudentIds();
     
@@ -168,10 +151,6 @@ public class Webhooks {
   
   public synchronized void onStaffMemberUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) StaffMemberUpdatedEvent event) {
     sessionData.addUpdatedStaffMemberId(event.getStaffMemberId());
-  }
-
-  public synchronized void onStaffMemberUpdatedAfterFailure(@Observes(during=TransactionPhase.AFTER_FAILURE) StaffMemberUpdatedEvent event) {
-    sessionData.clearUpdatedStaffMemberIds();
   }
 
   public synchronized void onStaffMemberUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) StaffMemberUpdatedEvent event) {

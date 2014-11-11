@@ -7,9 +7,9 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.RequestScoped;
 
-@SessionScoped
+@RequestScoped
 @Stateful
 public class WebhookSessionData {
   
@@ -39,10 +39,6 @@ public class WebhookSessionData {
     updatedStaffMemberIds.clear();
     return result;
   }
-
-  public void clearUpdatedStaffMemberIds() {
-    updatedStaffMemberIds.clear();
-  }
   
   /* StudentIds */
   
@@ -57,10 +53,6 @@ public class WebhookSessionData {
     updatedStudentIds.clear();
     return result;
   }
-
-  public void clearUpdatedStudentIds() {
-    updatedStudentIds.clear();
-  }
   
   /* CourseIds */
   
@@ -74,10 +66,6 @@ public class WebhookSessionData {
     List<Long> result = new ArrayList<Long>(updatedCourseIds);
     updatedCourseIds.clear();
     return result;
-  }
-
-  public void clearUpdatedCourseIds() {
-    updatedCourseIds.clear();
   }
   
   /* Course Students */
