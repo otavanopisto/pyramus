@@ -45,6 +45,7 @@ import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.domainmodel.users.UserVariable_;
 import fi.pyramus.events.StaffMemberCreatedEvent;
 import fi.pyramus.events.StaffMemberDeletedEvent;
+import fi.pyramus.events.StaffMemberUpdatedEvent;
 import fi.pyramus.persistence.search.SearchResult;
 
 @Stateless
@@ -53,6 +54,9 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   @Inject
   private Event<StaffMemberCreatedEvent> staffMemberCreatedEvent;
 
+  @Inject
+  private Event<StaffMemberUpdatedEvent> staffMemberUpdatedEvent;
+  
   @Inject
   private Event<StaffMemberDeletedEvent> staffMemberDeletedEvent;
   
@@ -294,54 +298,60 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     }
   }
   
-  public StaffMember update(StaffMember user, String firstName, String lastName, Role role) {
-    EntityManager entityManager = getEntityManager();
-    user.setFirstName(firstName);
-    user.setLastName(lastName);
-    user.setRole(role);
-    entityManager.persist(user);
-    return user;
+  public StaffMember update(StaffMember staffMember, String firstName, String lastName, Role role) {
+    staffMember.setFirstName(firstName);
+    staffMember.setLastName(lastName);
+    staffMember.setRole(role);
+    persist(staffMember);
+    
+    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
+    
+    return staffMember;
   }
 
-  public StaffMember updateBillingDetails(StaffMember user, List<BillingDetails> billingDetails) {
-    EntityManager entityManager = getEntityManager();
+  public StaffMember updateBillingDetails(StaffMember staffMember, List<BillingDetails> billingDetails) {
+    staffMember.setBillingDetails(billingDetails);
+    persist(staffMember);
     
-    user.setBillingDetails(billingDetails);
+    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
     
-    entityManager.persist(user);
-    
-    return user;
+    return staffMember;
   }
   
-  public StaffMember updateTags(StaffMember user, Set<Tag> tags) {
-    EntityManager entityManager = getEntityManager();
+  public StaffMember updateTags(StaffMember staffMember, Set<Tag> tags) {
+    staffMember.setTags(tags);
+    persist(staffMember);
     
-    user.setTags(tags);
+    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
     
-    entityManager.persist(user);
-    
-    return user;
+    return staffMember;
   }
   
-  public StaffMember updateTitle(StaffMember user, String title) {
-    EntityManager entityManager = getEntityManager();
-    user.setTitle(title);
-    entityManager.persist(user);
-    return user;
+  public StaffMember updateTitle(StaffMember staffMember, String title) {
+    staffMember.setTitle(title);
+    persist(staffMember);
+    
+    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
+    
+    return staffMember;
   }
 
-  public void updateAuthProvider(StaffMember user, String authProvider) {
-    EntityManager entityManager = getEntityManager();
+  public StaffMember updateAuthProvider(StaffMember staffMember, String authProvider) {
+    staffMember.setAuthProvider(authProvider);
+    persist(staffMember);
+
+    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
     
-    user.setAuthProvider(authProvider);
-    
-    entityManager.persist(user);
+    return staffMember;
   }
 
-  public void updateExternalId(StaffMember user, String externalId) {
-    EntityManager entityManager = getEntityManager();
-    user.setExternalId(externalId);
-    entityManager.persist(user);
+  public StaffMember updateExternalId(StaffMember staffMember, String externalId) {
+    staffMember.setExternalId(externalId);
+    persist(staffMember);
+
+    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
+    
+    return staffMember;
   }
 
   @Override

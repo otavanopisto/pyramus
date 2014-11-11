@@ -45,6 +45,7 @@ import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.events.CourseArchivedEvent;
 import fi.pyramus.events.CourseCreatedEvent;
+import fi.pyramus.events.CourseUpdatedEvent;
 import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.persistence.search.SearchTimeFilterMode;
 
@@ -54,6 +55,9 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
   @Inject
   private Event<CourseCreatedEvent> courseCreatedEvent;
 
+  @Inject
+  private Event<CourseUpdatedEvent> courseUpdatedEvent;
+  
   @Inject
   private Event<CourseArchivedEvent> courseArchivedEvent;
   
@@ -162,6 +166,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setLastModified(now);
 
     entityManager.persist(course);
+    
+    courseUpdatedEvent.fire(new CourseUpdatedEvent(course.getId()));
   }
   
   public Course setCourseTags(Course course, Set<Tag> tags) {
@@ -170,6 +176,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setTags(tags);
     
     entityManager.persist(course);
+    
+    courseUpdatedEvent.fire(new CourseUpdatedEvent(course.getId()));
     
     return course;
   }

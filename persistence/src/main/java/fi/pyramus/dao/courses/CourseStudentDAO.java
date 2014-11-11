@@ -27,12 +27,16 @@ import fi.pyramus.domainmodel.students.Student_;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.events.CourseStudentArchivedEvent;
 import fi.pyramus.events.CourseStudentCreatedEvent;
+import fi.pyramus.events.CourseStudentUpdatedEvent;
 
 @Stateless
 public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
 
   @Inject
   private Event<CourseStudentCreatedEvent> courseStudentCreatedEvent;
+
+  @Inject
+  private Event<CourseStudentUpdatedEvent> courseStudentUpdatedEvent;
   
   @Inject
   private Event<CourseStudentArchivedEvent> courseStudentArchivedEvent;
@@ -113,38 +117,64 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     courseStudent.setOptionality(optionality);
 
     entityManager.persist(courseStudent);
+    
+    courseStudentUpdatedEvent.fire(new CourseStudentUpdatedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
 
     return courseStudent;
   }
   
   public CourseStudent updateLodging(CourseStudent courseStudent, Boolean lodging) {
     courseStudent.setLodging(lodging);
-    return persist(courseStudent);
+    persist(courseStudent);
+    
+    courseStudentUpdatedEvent.fire(new CourseStudentUpdatedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
+
+    return courseStudent;
   }
   
   public CourseStudent updateBillingDetails(CourseStudent courseStudent, BillingDetails billingDetails) {
     courseStudent.setBillingDetails(billingDetails);
-    return persist(courseStudent);
+    persist(courseStudent);
+    
+    courseStudentUpdatedEvent.fire(new CourseStudentUpdatedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
+
+    return courseStudent;
   }
   
   public CourseStudent updateEnrolmentType(CourseStudent courseStudent, CourseEnrolmentType courseEnrolmentType) {
     courseStudent.setCourseEnrolmentType(courseEnrolmentType);
-    return persist(courseStudent);
+    persist(courseStudent);
+    
+    courseStudentUpdatedEvent.fire(new CourseStudentUpdatedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
+
+    return courseStudent;
   }
   
   public CourseStudent updateEnrolmentTime(CourseStudent courseStudent, Date enrolmentTime) {
     courseStudent.setEnrolmentTime(enrolmentTime);
-    return persist(courseStudent);
+    persist(courseStudent);
+    
+    courseStudentUpdatedEvent.fire(new CourseStudentUpdatedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
+
+    return courseStudent;
   }
   
   public CourseStudent updateOptionality(CourseStudent courseStudent, CourseOptionality optionality) {
     courseStudent.setOptionality(optionality);
-    return persist(courseStudent);
+    persist(courseStudent);
+    
+    courseStudentUpdatedEvent.fire(new CourseStudentUpdatedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
+
+    return courseStudent;
   }
   
   public CourseStudent updateParticipationType(CourseStudent courseStudent, CourseParticipationType participationType) {
     courseStudent.setParticipationType(participationType);
-    return persist(courseStudent);
+    persist(courseStudent);
+    
+    courseStudentUpdatedEvent.fire(new CourseStudentUpdatedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
+
+    return courseStudent;
   }
 
   /**
