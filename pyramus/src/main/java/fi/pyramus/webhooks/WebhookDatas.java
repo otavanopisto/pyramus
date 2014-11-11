@@ -11,7 +11,7 @@ import javax.enterprise.context.RequestScoped;
 
 @RequestScoped
 @Stateful
-public class WebhookSessionData {
+public class WebhookDatas {
   
   @PostConstruct
   public void init() {

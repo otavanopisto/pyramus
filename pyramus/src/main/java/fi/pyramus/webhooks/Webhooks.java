@@ -38,7 +38,7 @@ public class Webhooks {
   private WebhookController webhookController;
 
   @Inject
-  private WebhookSessionData sessionData;
+  private WebhookDatas datas;
   
   @PostConstruct
   public void init() {
@@ -57,11 +57,11 @@ public class Webhooks {
   }
   
   public synchronized void onCourseUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) CourseUpdatedEvent event) {
-    sessionData.addUpdatedCourseId(event.getCourseId());
+    datas.addUpdatedCourseId(event.getCourseId());
   }
 
   public synchronized void onCourseUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseUpdatedEvent event) {
-    List<Long> updatedCourseIds = sessionData.retrieveUpdatedCourseIds();
+    List<Long> updatedCourseIds = datas.retrieveUpdatedCourseIds();
     
     for (Long updatedCourseId : updatedCourseIds) {
       webhookController.sendWebhookNotifications(webhooks, new WebhookCourseUpdatePayload(updatedCourseId));
@@ -79,11 +79,11 @@ public class Webhooks {
   }
   
   public synchronized void onStudentUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) StudentUpdatedEvent event) {
-    sessionData.addUpdatedStudentId(event.getStudentId());
+    datas.addUpdatedStudentId(event.getStudentId());
   }
 
   public synchronized void onStudentUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentUpdatedEvent event) {
-    List<Long> updatedStudentIds = sessionData.retrieveUpdatedStudentIds();
+    List<Long> updatedStudentIds = datas.retrieveUpdatedStudentIds();
     
     for (Long updatedStudentId : updatedStudentIds) {
       webhookController.sendWebhookNotifications(webhooks, new WebhookStudentUpdatePayload(updatedStudentId));
@@ -101,19 +101,19 @@ public class Webhooks {
   }
   
   public synchronized void onCourseStaffMemberUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) CourseStaffMemberUpdatedEvent event) {
-    sessionData.addUpdatedCourseStaffMember(event.getCourseStaffMemberId(), event.getCourseId(), event.getStaffMemberId());
+    datas.addUpdatedCourseStaffMember(event.getCourseStaffMemberId(), event.getCourseId(), event.getStaffMemberId());
   }
 
   public synchronized void onCourseStaffMemberUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStaffMemberUpdatedEvent event) {
-    List<Long> updatedCourseStaffMemberIds = sessionData.retrieveUpdatedCourseStaffMemberIds();
+    List<Long> updatedCourseStaffMemberIds = datas.retrieveUpdatedCourseStaffMemberIds();
     
     for (Long updatedCourseStaffMemberId : updatedCourseStaffMemberIds) {
-      Long courseId = sessionData.getCourseStaffMemberCourseId(updatedCourseStaffMemberId);
-      Long staffMemberId = sessionData.getCourseStaffMemberStaffMemberId(updatedCourseStaffMemberId);
+      Long courseId = datas.getCourseStaffMemberCourseId(updatedCourseStaffMemberId);
+      Long staffMemberId = datas.getCourseStaffMemberStaffMemberId(updatedCourseStaffMemberId);
       webhookController.sendWebhookNotifications(webhooks, new WebhookCourseStaffMemberUpdatePayload(updatedCourseStaffMemberId, courseId, staffMemberId));
     }
     
-    sessionData.clearUpdatedCourseStaffMemberIds();
+    datas.clearUpdatedCourseStaffMemberIds();
   }
   
   public void onCourseStaffMemberDeleted(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStaffMemberDeletedEvent event) {
@@ -128,19 +128,19 @@ public class Webhooks {
   
   public synchronized void onCourseStudentUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) CourseStudentUpdatedEvent event) {
     CourseStudent courseStudent = DAOFactory.getInstance().getCourseStudentDAO().findById(event.getCourseStudentId());
-    sessionData.addUpdatedCourseStudent(event.getCourseStudentId(), event.getCourseId(), courseStudent.getStudent().getId());
+    datas.addUpdatedCourseStudent(event.getCourseStudentId(), event.getCourseId(), courseStudent.getStudent().getId());
   }
   
   public synchronized void onCourseStudentUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStudentUpdatedEvent event) {
-    List<Long> updatedCourseStudentIds = sessionData.retrieveUpdatedCourseStudentIds();
+    List<Long> updatedCourseStudentIds = datas.retrieveUpdatedCourseStudentIds();
     
     for (Long updatedCourseStudentId : updatedCourseStudentIds) {
-      Long courseId = sessionData.getCourseStudentCourseId(updatedCourseStudentId);
-      Long studentId = sessionData.getCourseStudentStudentId(updatedCourseStudentId);
+      Long courseId = datas.getCourseStudentCourseId(updatedCourseStudentId);
+      Long studentId = datas.getCourseStudentStudentId(updatedCourseStudentId);
       webhookController.sendWebhookNotifications(webhooks, new WebhookCourseStudentUpdatePayload(updatedCourseStudentId, courseId, studentId));
     }
     
-    sessionData.clearUpdatedCourseStudentIds();
+    datas.clearUpdatedCourseStudentIds();
   }
   
   public void onCourseStudentArchived(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseStudentArchivedEvent event) {
@@ -154,11 +154,11 @@ public class Webhooks {
   }
   
   public synchronized void onStaffMemberUpdatedBeforeCompletion(@Observes(during=TransactionPhase.BEFORE_COMPLETION) StaffMemberUpdatedEvent event) {
-    sessionData.addUpdatedStaffMemberId(event.getStaffMemberId());
+    datas.addUpdatedStaffMemberId(event.getStaffMemberId());
   }
 
   public synchronized void onStaffMemberUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) StaffMemberUpdatedEvent event) {
-    List<Long> updatedStaffMemberIds = sessionData.retrieveUpdatedStaffMemberIds();
+    List<Long> updatedStaffMemberIds = datas.retrieveUpdatedStaffMemberIds();
     
     for (Long updatedStaffMemberId : updatedStaffMemberIds) {
       webhookController.sendWebhookNotifications(webhooks, new WebhookStaffMemberUpdatePayload(updatedStaffMemberId));
