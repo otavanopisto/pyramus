@@ -30,6 +30,7 @@ import fi.pyramus.util.dataimport.scripting.api.StudentGroupStudentAPI;
 import fi.pyramus.util.dataimport.scripting.api.StudyProgrammeAPI;
 import fi.pyramus.util.dataimport.scripting.api.StudyProgrammeCategoryAPI;
 import fi.pyramus.util.dataimport.scripting.api.SubjectAPI;
+import fi.pyramus.util.dataimport.scripting.api.WebhookAPI;
 
 public class ImportAPI {
   
@@ -135,6 +136,10 @@ public class ImportAPI {
   
   public StaffMemberAPI getStaffMembers() {
     return new StaffMemberAPI();
+  }
+  
+  public WebhookAPI getWebhooks() {
+    return new WebhookAPI();
   }
   
   private Long loggedUserId;
