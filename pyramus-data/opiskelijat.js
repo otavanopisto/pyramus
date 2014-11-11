@@ -56,7 +56,7 @@
         zeroPad(id, 3) +
         checksum;
       
-      var abstractStudentId = api.abstractStudents.create(birthday, ssn, sex, 'Generated test student', false);
+      var personId = api.persons.create(birthday, ssn, sex, 'Generated test student', false);
       var studyProgrammeCount = Math.round(Math.random() * 2) + 1;
       
       var firstName = faker.name().firstName();
@@ -85,7 +85,7 @@
         var studyEndReason = null;
         var studyEndText = null;
         
-        var studentId = api.students.create(abstractStudentId, firstName, lastName, email, emailContactType, nickname, additionalInfo, studyTimeEnd, activityType,
+        var studentId = api.students.create(personId, firstName, lastName, email, emailContactType, nickname, additionalInfo, studyTimeEnd, activityType,
           examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme,
           previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging);
         
