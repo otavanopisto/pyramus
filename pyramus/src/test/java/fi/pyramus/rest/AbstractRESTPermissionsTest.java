@@ -3,6 +3,7 @@ package fi.pyramus.rest;
 import static com.jayway.restassured.RestAssured.certificate;
 import static com.jayway.restassured.RestAssured.given;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -86,6 +87,17 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     } catch (OAuthSystemException e) {
     }
     return bearerClientRequest.getHeaders();
+  }
+  
+  public boolean roleIsAllowed(String role, List<String> allowedRoles){
+    for (String str : allowedRoles) {
+      if (str.trim().contains(role)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
   }
   
   protected String getRole() {
