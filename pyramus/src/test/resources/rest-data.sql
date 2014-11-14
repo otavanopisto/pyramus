@@ -28,32 +28,64 @@ values
 insert into 
   ContactInfo (id, additionalInfo, version)
 values   
+  (1, 'For test school #1', 1),
+  (2, 'For test school #2', 1),
+  (3, 'For test student #3', 1),
+  (4, 'For test student #4', 1),
   (5, 'Test Guest #1', 1),
-  (6, 'Test Guest #2', 1);
+  (6, 'Test Guest #2', 1),
+  (7, 'Test User  #1', 1),
+  (8, 'Test Manager #1', 1),
+  (9, 'Test Administrator #1', 1),
+  (10, 'Test Student #1', 1);;
   
 insert into 
   Email (id, address, defaultAddress, contactInfo, contactType, indexColumn, version)
 values 
+  (1, 'school1@bogusmail.com', true, 1, 1, 0, 1),
+  (2, 'school2@bogusmail.com', true, 2, 1, 0, 1),
+  (3, 'student1@bogusmail.com', true, 3, 1, 0, 1),
+  (4, 'student2@bogusmail.com', true, 4, 1, 0, 1),
   (5, 'guest1@bogusmail.com', true, 5, 1, 0, 1),
-  (6, 'guest2@bogusmail.com', true, 6, 1, 0, 1);
-  
+  (6, 'guest2@bogusmail.com', true, 6, 1, 0, 1),
+  (7, 'user1@bogusmail.com', true, 7, 1, 0, 1),
+  (8, 'manager1@bogusmail.com', true, 8, 1, 0, 1),
+  (9, 'administrator1@bogusmail.com', true, 9, 1, 0, 1),,
+  (10, 'student1@bogusmail.com', true, 10, 1, 0, 1),;
+
 insert into 
   Person (id, version, birthday, sex, socialSecurityNumber, basicInfo, secureInfo)
 values 
   (1, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '123411-7890', 'Test staff #1', false),
-  (2, 1, PARSEDATETIME('1 1 1970', 'd M yyyy'), 'MALE', '012345535-8901', 'Test staff #2', false);
-
+  (2, 1, PARSEDATETIME('1 1 1970', 'd M yyyy'), 'MALE', '012345535-8901', 'Test staff #2', false),
+  (3, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'FEMALE', '123456-7890', 'Test student #1', false),
+  (4, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false);
+  (5, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121213-7890', 'Test User #1', false),
+  (6, 1, PARSEDATETIME('1 1 1970', 'd M yyyy'), 'MALE', '131214-8901', 'Test Manager #1', false),
+  (7, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121216-7891', 'Test administrator #1', false),
+  (8, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121217-7892', 'Test Student #1', false);
+  
 insert into
   User (id, person_id, firstName, lastName, contactInfo, version)
 values 
   (1, 1, 'Test Guest', 'User #1', 5, 1),
-  (2, 2, 'Test Guest', 'User #2', 6, 1);
+  (2, 2, 'Test Guest', 'User #2', 6, 1),
+  (3, 3, 'Tanya', 'Test #1', 3, 1),
+  (4, 4, 'David', 'Test #2', 4, 1),
+  (5, 5, 'Test User', 'User #3', 7, 1),
+  (6, 6, 'Test Manager', 'User #4', 8, 1),
+  (7, 6, 'Test Administrator', 'User #5', 9, 1),
+  (8, 6, 'Test Student', 'User #4', 10, 1);
 
 insert into
   StaffMember (id, authProvider, externalId, role, title)
 values 
   (1, 'TEST', 'TEST-GUEST-1', 'GUEST', null),
-  (2, 'TEST', 'TEST-GUEST-2', 'GUEST', null);
+  (2, 'TEST', 'TEST-GUEST-2', 'GUEST', null),
+  (5, 'TEST', 'TEST-USER-1', 'USER', null),
+  (6, 'TEST', 'TEST-MANAGER-1', 'MANAGER', null),
+  (7, 'TEST', 'TEST-ADMINISTRATOR-1', 'ADMINISTRATOR', null),
+  (8, 'TEST', 'TEST-STUDENT-1', 'STUDENT', null);
   
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
@@ -194,28 +226,16 @@ values
   (2, 'Field #2', false);
   
 insert into 
-  ContactInfo (id, additionalInfo, version)
-values   
-  (1, 'For test school #1', 1),
-  (2, 'For test school #2', 1),
-  (3, 'For test student #3', 1),
-  (4, 'For test student #4', 1);
-
-insert into 
   Address (id, city, country, postalCode, streetAddress, name, contactInfo, contactType, indexColumn, defaultAddress, version)
 values 
   (1, 'Eastbury', 'Senegal', '76763-3962', '2636 Johnston Harbors', null, 1, 1, 0, true, 1),
   (2, 'Zambia', 'Portborough', '02531-1064', '430 Vesta Inlet', null, 2, 1, 0, true, 1),
   (3, 'Southshire', 'Yemen', '17298', '6967 Bailee Mission', null, 3, 1, 0, true, 1),
-  (4, 'Northchester', 'Cuba', '97733', '556 Lupe Mountains', null, 4, 1, 0, true, 1);
-  
-insert into 
-  Email (id, address, defaultAddress, contactInfo, contactType, indexColumn, version)
-values 
-  (1, 'school1@bogusmail.com', true, 1, 1, 0, 1),
-  (2, 'school2@bogusmail.com', true, 2, 1, 0, 1),
-  (3, 'student1@bogusmail.com', true, 3, 1, 0, 1),
-  (4, 'student2@bogusmail.com', true, 4, 1, 0, 1);
+  (4, 'Northchester', 'Cuba', '97733', '556 Lupe Mountains', null, 4, 1, 0, true, 1),
+  (5, 'Shire', 'New-Zealand', '17298', '123 Mission', null, 7, 1, 0, true, 1),
+  (6, 'Chester', 'Belgium', '1111', '456 Mountains', null, 8, 1, 0, true, 1),
+  (7, 'Ushire', 'China', '17298', '123 Missions', null, 9, 1, 0, true, 1),
+  (8, 'Kishter', 'Brazil', '1111', '456 Tains', null, 10, 1, 0, true, 1);
   
 insert into 
   PhoneNumber (id, number, defaultNumber, contactInfo, contactType, indexColumn, version)
@@ -223,7 +243,11 @@ values
   (1, '+123 45 678 9012', true, 1, 1, 0, 1),
   (2, '+234 56 789 0123', true, 2, 1, 0, 1),
   (3, '+456 78 901 2345', true, 3, 1, 0, 1),
-  (4, '+567 89 012 3456', true, 4, 1, 0, 1);
+  (4, '+567 89 012 3456', true, 4, 1, 0, 1),
+  (5, '+456 78 901 2347', true, 7, 1, 0, 1),
+  (6, '+567 89 012 3458', true, 8, 1, 0, 1),
+  (7, '+56 78 901 2347', true, 9, 1, 0, 1),
+  (8, '+67 89 012 3458', true, 10, 1, 0, 1);
   
 insert into
   ContactURLType (id, name, version, archived)
@@ -325,18 +349,6 @@ values
   (2, 'StudentActivityType #2', 1, false);
   
 insert into 
-  Person (id, version, birthday, sex, socialSecurityNumber, basicInfo, secureInfo)
-values 
-  (3, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'FEMALE', '123456-7890', 'Test student #1', false),
-  (4, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false);
-  
-insert into 
-  User (id, person_id, firstName, lastName, contactInfo, version)
-values 
-  (3, 3, 'Tanya', 'Test #1', 3, 1),
-  (4, 4, 'David', 'Test #2', 4, 1);
-  
-insert into 
   Student (id, studyProgramme, nickname, previousStudies, studyStartDate, 
     additionalInfo, activityType, educationalLevel, language, municipality, nationality, school, 
     examinationType, education, lodging, archived)
@@ -370,7 +382,20 @@ values
 insert into
    ClientApplicationAuthorizationCode (id, authorizationCode, redirectUrl, user_id, app_id)
 values
-    (1, 'ff81d5b8500c773e7a1776a7963801e3', 'https://localhost:8443/oauth2ClientTest/success', 1, 1);
+/**   
+Old. Needed anymore?
+(1, 'ff81d5b8500c773e7a1776a7963801e3', 'https://localhost:8443/oauth2ClientTest/success', 1, 1),
+**/
+/** GUEST ROLE**/
+    (2, 'ff81d5b8500c773e7a1776a7963801e4', 'https://localhost:8443/oauth2ClientTest/success', 1, 1),
+/** USER ROLE**/    
+    (3, 'ff81d5b8500c773e7a1776a7963801e5', 'https://localhost:8443/oauth2ClientTest/success', 5, 1),
+/** MANAGER ROLE**/
+    (4, 'ff81d5b8500c773e7a1776a7963801e6', 'https://localhost:8443/oauth2ClientTest/success', 6, 1),
+/** ADMINISTRATOER ROLE**/
+    (5, 'ff81d5b8500c773e7a1776a7963801e7', 'https://localhost:8443/oauth2ClientTest/success', 7, 1),
+/** STUDENT ROLE**/
+    (6, 'ff81d5b8500c773e7a1776a7963801e8', 'https://localhost:8443/oauth2ClientTest/success', 8, 1);
   
 insert into CourseStaffMemberRole (id, name, version) values (1, 'Teacher', 1), (2, 'Tutor', 1);
     
@@ -386,8 +411,10 @@ insert into
   CourseStaffMember (id, staffMember_id, role_id)
 values 
   (1, 1, 1),
-  (2, 2, 2);
-  
+  (2, 2, 2),
+  (3, 5, 1),
+  (4, 6, 1);
+
 insert into 
   CourseStudent (id, archived, enrolmentTime, lodging, optionality, billingDetails, enrolmentType, participationType, student)
 values
