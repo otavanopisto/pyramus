@@ -59,7 +59,7 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
         
         if(clientApplication.getSkipPrompt()){
           ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO = DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO();
-          StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffDAO();
+          StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
           HttpSession session = request.getSession();
           Long userId = (Long) session.getAttribute("loggedUserId");
           
