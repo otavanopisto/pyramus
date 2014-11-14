@@ -37,7 +37,7 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
   public void filter(ContainerRequestContext requestContext) throws IOException {
     ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker");
     Method method = methodInvoker.getMethod();
-    if(method == null){
+    if (method == null){
       requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build());
     }
     if (!method.isAnnotationPresent(Unsecure.class)) {
@@ -53,11 +53,6 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
           if (currentTime > clientApplicationAccessToken.getExpires()) {
             requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
           }
-//          else {
-//            
-//            clientApplicationAccessToken.getClientApplicationAuthorizationCode().getUser()
-//
-//          }
         }
 
       } catch (OAuthProblemException e) {

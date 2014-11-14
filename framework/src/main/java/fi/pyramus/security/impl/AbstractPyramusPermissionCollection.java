@@ -4,13 +4,15 @@ import fi.muikku.security.AbstractPermissionCollection;
 
 public class AbstractPyramusPermissionCollection extends AbstractPermissionCollection {
   
-  public static final String EVERYONE = "Everyone";
+  public static final String EVERYONE = "EVERYONE";
 
-  public static final String ADMIN = "Admin";
-  public static final String MANAGER = "Manager";
-  public static final String TEACHER = "Teacher";
-  public static final String STUDENT = "Student";
-    
+  public static final String ADMINISTRATOR = "ADMINISTRATOR";
+  public static final String MANAGER = "MANAGER";
+  public static final String USER = "USER";
+  public static final String GUEST = "GUEST";
+
+  public static final String STUDENT = "STUDENT";
+
   protected String[] getDefaultRoles(Class<?> collectionClass, String permission) throws NoSuchFieldException {
     DefaultPermissionRoles annotation = collectionClass.getField(permission).getAnnotation(DefaultPermissionRoles.class);
 

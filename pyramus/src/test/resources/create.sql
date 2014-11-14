@@ -461,6 +461,11 @@
         primary key (id)
     );
 
+    create table EnvironmentRolePermission (
+        id bigint not null,
+        primary key (id)
+    );
+
     create table File (
         id bigint not null,
         archived boolean not null,
@@ -648,6 +653,13 @@
         primary key (id)
     );
 
+    create table Permission (
+        id bigint not null,
+        name varchar(255) not null,
+        scope varchar(255) not null,
+        primary key (id)
+    );
+
     create table Person (
         id bigint not null,
         basicInfo clob,
@@ -760,6 +772,13 @@
         archived boolean not null,
         name varchar(255),
         version bigint not null,
+        primary key (id)
+    );
+
+    create table RolePermission (
+        id bigint not null,
+        role varchar(255) not null,
+        permission_id bigint,
         primary key (id)
     );
 
@@ -1184,6 +1203,9 @@
     alter table MagicKey 
         add constraint UK_3c73v1x7o1a8b2bqcaojh4bq7  unique (name);
 
+    alter table Permission 
+        add constraint UK_m3j6m9ksltume23qomatoes1r  unique (name);
+
     alter table PluginRepository 
         add constraint UK_oa6tjb0q8x7s16o1i59s15981  unique (repositoryId);
 
@@ -1532,6 +1554,11 @@
         foreign key (contactType) 
         references ContactType;
 
+    alter table EnvironmentRolePermission 
+        add constraint FK_fkqtxkwx67k7il9hdhl2i8cgo 
+        foreign key (id) 
+        references RolePermission;
+
     alter table File 
         add constraint FK_p39k3e3t8kff359g2rkhjjovt 
         foreign key (creator) 
@@ -1716,6 +1743,11 @@
         add constraint FK_t58ubqwynff69fm5tpco4ye47 
         foreign key (category) 
         references ResourceCategory;
+
+    alter table RolePermission 
+        add constraint FK_sso4kx05y6klpbhf2bif56hwm 
+        foreign key (permission_id) 
+        references Permission;
 
     alter table School 
         add constraint FK_5wwaivsnowvhspfqdmqjrtrxj 

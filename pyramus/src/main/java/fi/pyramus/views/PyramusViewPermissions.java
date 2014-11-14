@@ -11,7 +11,7 @@ import fi.pyramus.security.impl.PyramusPermissionCollection;
 public class PyramusViewPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMIN, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
   public static final String SEARCH_STUDENTS = "SEARCH_STUDENTS";
   
   @Override

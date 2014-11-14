@@ -17,6 +17,7 @@ import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.users.User;
 
 @Stateful
+@LocalSession
 @SessionScoped
 public class SessionControllerImpl implements SessionController {
   

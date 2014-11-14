@@ -21,6 +21,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.muikku.security.Permit;
+import fi.muikku.security.Permit.Handle;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
@@ -31,6 +33,8 @@ import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
+import fi.pyramus.rest.controller.permissions.CommonPermissions;
+import fi.pyramus.rest.controller.permissions.ModulePermissions;
 
 @Path("/modules")
 @Produces("application/json")
@@ -50,6 +54,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/modules")
   @POST
+  @Permit (handle = Handle.EXCEPTION, value = ModulePermissions.CREATE_MODULE)
   public Response createModule(fi.pyramus.rest.model.Module entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -81,6 +86,7 @@ public class ModuleRESTService extends AbstractRESTService{
 
   @Path("/modules")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = ModulePermissions.LIST_MODULES)
   public Response listModules(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<Module> modules;
     if (filterArchived) {
@@ -98,6 +104,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/modules/{ID:[0-9]*}")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = ModulePermissions.FIND_MODULE)
   public Response findModuleById(@PathParam("ID") Long id) {
     Module module = moduleController.findModuleById(id);
     if (module == null) {
@@ -115,6 +122,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/modules/{ID:[0-9]*}")
   @PUT
+  @Permit (handle = Handle.EXCEPTION, value = ModulePermissions.UPDATE_MODULE)
   public Response updateModule(@PathParam("ID") Long id, fi.pyramus.rest.model.Module entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -149,6 +157,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/modules/{ID:[0-9]*}")
   @DELETE
+  @Permit (handle = Handle.EXCEPTION, value = ModulePermissions.DELETE_MODULE)
   public Response deleteModule(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     Module module = moduleController.findModuleById(id);
     if (module == null) {
@@ -166,6 +175,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/modules/{MODULEID:[0-9]*}/components")
   @POST
+  @Permit (handle = Handle.EXCEPTION, value = ModulePermissions.CREATE_MODULECOMPONENT)
   public Response createModuleComponent(@PathParam("MODULEID") Long moduleId, fi.pyramus.rest.model.ModuleComponent entity) {
     Module module = moduleController.findModuleById(moduleId);
     if (module == null) {
@@ -201,6 +211,7 @@ public class ModuleRESTService extends AbstractRESTService{
 
   @Path("/modules/{ID:[0-9]*}/components")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = ModulePermissions.LIST_MODULECOMPONENTS)
   public Response listModuleComponents(@PathParam("ID") Long moduleId) {
     Module module = moduleController.findModuleById(moduleId);
     if (module == null) {
@@ -221,6 +232,7 @@ public class ModuleRESTService extends AbstractRESTService{
 
   @Path("/modules/{MODULEID:[0-9]*}/components/{ID:[0-9]*}")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = ModulePermissions.FIND_MODULECOMPONENT)
   public Response findModuleComponentById(@PathParam("MODULEID") Long moduleId, @PathParam("ID") Long componentId) {
     Module module = moduleController.findModuleById(moduleId);
     if (module == null) {
@@ -249,6 +261,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/modules/{MODULEID:[0-9]*}/components/{COMPONENTID:[0-9]*}")
   @PUT
+  @Permit (handle = Handle.EXCEPTION, value = ModulePermissions.UPDATE_MODULECOMPONENT)
   public Response updateModuleComponent(@PathParam("MODULEID") Long moduleId, @PathParam("COMPONENTID") Long courseComponentId, fi.pyramus.rest.model.ModuleComponent entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -293,6 +306,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/modules/{MODULEID:[0-9]*}/components/{COMPONENTID:[0-9]*}")
   @DELETE
+  @Permit (handle = Handle.EXCEPTION, value = ModulePermissions.DELETE_MODULECOMPONENT)
   public Response deleteModuleComponent(@PathParam("MODULEID") Long moduleId, @PathParam("COMPONENTID") Long componentId, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     if (moduleId == null || componentId == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -323,6 +337,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/modules/{ID:[0-9]*}/courses")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = ModulePermissions.LIST_COURSESBYMODULE)
   public Response listCourses(@PathParam("ID") Long id) {
     Module module = moduleController.findModuleById(id);
     if (module == null) {
@@ -343,6 +358,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/modules/{ID:[0-9]*}/projects")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = ModulePermissions.LIST_PROJECTSBYMODULE)
   public Response listProjects(@PathParam("ID") Long id) {
     Module module = moduleController.findModuleById(id);
     if (module == null) {
@@ -363,6 +379,7 @@ public class ModuleRESTService extends AbstractRESTService{
 
   @Path("/variables")
   @POST
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.CREATE_COURSEBASEVARIABLEKEY)
   public Response createVariable(fi.pyramus.rest.model.VariableKey entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -394,6 +411,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/variables")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.LIST_COURSEBASEVARIABLEKEYS)
   public Response listVariables() {
     List<CourseBaseVariableKey> variableKeys = commonController.listCourseBaseVariableKeys();
     if (variableKeys.isEmpty()) {
@@ -405,6 +423,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/variables/{KEY}")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.FIND_COURSEBASEVARIABLEKEY)
   public Response findVariable(@PathParam ("KEY") String key) {
     CourseBaseVariableKey courseBaseVariableKey = commonController.findCourseBaseVariableKeyByVariableKey(key);
     if (courseBaseVariableKey == null) {
@@ -416,6 +435,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/variables/{KEY}")
   @PUT
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.UPDATE_COURSEBASEVARIABLEKEY)
   public Response updateVariable(@PathParam ("KEY") String key, fi.pyramus.rest.model.VariableKey entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -453,6 +473,7 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Path("/variables/{KEY}")
   @DELETE
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.DELETE_COURSEBASEVARIABLEKEY)
   public Response deleteVariable(@PathParam ("KEY") String key) {
     CourseBaseVariableKey courseBaseVariableKey = commonController.findCourseBaseVariableKeyByVariableKey(key);
     if (courseBaseVariableKey == null) {
