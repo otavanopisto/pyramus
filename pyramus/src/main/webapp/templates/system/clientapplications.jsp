@@ -51,54 +51,64 @@
             dataType: 'text',
             editable: false,
             paramName: 'appSecret'
-          },{
-              right: 34,
-              width: 22,
-              dataType: 'button',
-              paramName: 'regenerateSecretBtn',
-              imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/refresh.png',
-              tooltip: '<fmt:message key="system.clientapplications.regenTooltip"/>',
-              onclick: function (event) {
-                var table = event.tableComponent;
-                table.setCellValue(event.row, table.getNamedColumnIndex('regenerateSecret'), 1);
-                table.hideCell(event.row, table.getNamedColumnIndex('regenerateSecretBtn'));
-              }
-            },{
-              right: 8,
-              width: 22,
-              dataType: 'button',
-              paramName: 'deleteButton',
-              imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/mail-mark-junk.png',
-              tooltip: '<fmt:message key="system.clientapplications.removeTooltip"/>',
-              onclick: function (event) {
+          }, {
+            header : '<fmt:message key="system.clientapplications.skipHeader"/>',
+            right : 60,
+            width : 80,
+            dataType : 'checkbox',
+            editable : true,
+            paramName : 'skipPrompt'
+          }, {
+            right: 34,
+            width: 22,
+            dataType: 'button',
+            paramName: 'regenerateSecretBtn',
+            imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/refresh.png',
+            tooltip: '<fmt:message key="system.clientapplications.regenTooltip"/>',
+            onclick: function (event) {
+               var table = event.tableComponent;
+               table.setCellValue(event.row, table.getNamedColumnIndex('regenerateSecret'), 1);
+               table.hideCell(event.row, table.getNamedColumnIndex('regenerateSecretBtn'));
+            }
+          }, {
+            right: 8,
+            width: 22,
+            dataType: 'button',
+            paramName: 'deleteButton',
+            imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/mail-mark-junk.png',
+            tooltip: '<fmt:message key="system.clientapplications.removeTooltip"/>',
+            onclick: function (event) {
                 var table = event.tableComponent;
                 table.setCellValue(event.row, table.getNamedColumnIndex('remove'), 1);
                 table.disableRow(event.row);
                 table.hideCell(event.row, table.getNamedColumnIndex('deleteButton'));
                 table.showCell(event.row, table.getNamedColumnIndex('undeleteButton'));
                 table.enableCellEditor(event.row, table.getNamedColumnIndex('undeleteButton'));
-              }
-            }, {
-              right: 8,
-              width: 22,
-              dataType: 'button',
-              paramName: 'undeleteButton',
-              hidden: true,
-              imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/mail-mark-not-junk.png',
-              tooltip: '<fmt:message key="system.clientapplications.restoreTooltip"/>',
-              onclick: function (event) {
-                var table = event.tableComponent;
-                table.setCellValue(event.row, table.getNamedColumnIndex('remove'), 0);
-                table.enableRow(event.row);
-                table.showCell(event.row, table.getNamedColumnIndex('deleteButton'));
-                table.enableCellEditor(event.row, table.getNamedColumnIndex('deleteButton'));
-                table.hideCell(event.row, table.getNamedColumnIndex('undeleteButton'));
-              }
-            }]
+            }
+          }, {
+            right: 8,
+            width: 22,
+            dataType: 'button',
+            paramName: 'undeleteButton',
+            hidden: true,
+            imgsrc: GLOBAL_contextPath + '/gfx/icons/16x16/actions/mail-mark-not-junk.png',
+            tooltip: '<fmt:message key="system.clientapplications.restoreTooltip"/>',
+            onclick: function (event) {
+              var table = event.tableComponent;
+              table.setCellValue(event.row, table.getNamedColumnIndex('remove'), 0);
+              table.enableRow(event.row);
+              table.showCell(event.row, table.getNamedColumnIndex('deleteButton'));
+              table.enableCellEditor(event.row, table.getNamedColumnIndex('deleteButton'));
+              table.hideCell(event.row, table.getNamedColumnIndex('undeleteButton'));
+            }
+          }]
         });
 
         var rows = new Array();
         <c:forEach var="clientApplication" items="${clientApplications}">
+         
+          var skipPrompt = '${clientApplication.skipPrompt}' === 'true' ? 1 : 0;
+      
           rows.push([
             '${clientApplication.id}',
             0,
@@ -106,6 +116,7 @@
             '${clientApplication.clientName}',
             '${clientApplication.clientId}',
             '${clientApplication.clientSecret}',
+            skipPrompt,
             null,
             null,
             null,
@@ -116,7 +127,7 @@
       
       function addClientApplication() {
           var table = getIxTableById('clientApplicationsTable');
-          rowIndex = table.addRow(['', 0, 0, '', '', '', null, null, null]);
+          rowIndex = table.addRow(['', 0, 0, '', '', '',null, null, null, null]);
       }
       
     </script>

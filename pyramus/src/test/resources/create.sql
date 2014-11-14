@@ -109,12 +109,14 @@
         clientId varchar(255) not null,
         clientName varchar(255) not null,
         clientSecret varchar(255) not null,
+        skipPrompt boolean not null,
         primary key (id)
     );
 
     create table ClientApplicationAccessToken (
         id bigint not null,
         accessToken varchar(255) not null,
+        refreshToken varchar(255) not null,
         expires bigint not null,
         app_id bigint not null,
         clientApplicationAuthorizationCode bigint,
