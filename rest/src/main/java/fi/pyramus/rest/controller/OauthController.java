@@ -10,6 +10,7 @@ import fi.pyramus.dao.clientapplications.ClientApplicationDAO;
 import fi.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
+import fi.pyramus.domainmodel.users.User;
 
 @Dependent
 @Stateless
@@ -26,6 +27,10 @@ public class OauthController {
 
   public ClientApplicationAccessToken createAccessToken(String accessToken, String refreshToken, Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode) {
     return clientApplicationAccessTokenDAO.create(accessToken, refreshToken, expires, clientApplication, clientApplicationAuthorizationCode);
+  }
+  
+  public ClientApplicationAuthorizationCode createAuthorizationCode(User user, ClientApplication clientApplication, String authorizationCode, String redirectUrl){
+    return clientApplicationAuthorizationCodeDAO.create(user, clientApplication, authorizationCode, redirectUrl);
   }
 
   public ClientApplicationAccessToken findByAccessToken(String accessToken) {
