@@ -74,8 +74,8 @@ values
   (4, 4, 'David', 'Test #2', 4, 1),
   (5, 5, 'Test User', 'User #3', 7, 1),
   (6, 6, 'Test Manager', 'User #4', 8, 1),
-  (7, 6, 'Test Administrator', 'User #5', 9, 1),
-  (8, 6, 'Test Student', 'User #4', 10, 1);
+  (7, 7, 'Test Administrator', 'User #5', 9, 1),
+  (8, 8, 'Test Student', 'User #4', 10, 1);
 
 insert into
   StaffMember (id, authProvider, externalId, role, title)
