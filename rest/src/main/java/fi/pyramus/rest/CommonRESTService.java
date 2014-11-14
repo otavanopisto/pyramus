@@ -21,6 +21,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.muikku.security.Permit;
+import fi.muikku.security.Permit.Handle;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.ContactURLType;
 import fi.pyramus.domainmodel.base.EducationSubtype;
@@ -32,6 +34,8 @@ import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
+import fi.pyramus.rest.controller.permissions.CommonPermissions;
+import fi.pyramus.rest.controller.permissions.CoursePermissions;
 
 @Path("/common")
 @Produces(MediaType.APPLICATION_JSON)
@@ -51,6 +55,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/educationTypes")
   @POST
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.CREATE_EDUCATIONTYPE)
   public Response createEducationType(EducationType educationTypeEntity) {
     String name = educationTypeEntity.getName();
     String code = educationTypeEntity.getCode();
@@ -66,6 +71,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/educationTypes")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.LIST_EDUCATIONTYPES)
   public Response listEducationTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<EducationType> educationTypes;
     if (filterArchived) {
@@ -83,6 +89,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/educationTypes/{ID:[0-9]*}")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.FIND_EDUCATIONTYPE)
   public Response findEducationTypeById(@PathParam("ID") Long id) {
     EducationType educationType = commonController.findEducationTypeById(id);
     if (educationType == null) {
@@ -98,6 +105,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/educationTypes/{ID:[0-9]*}")
   @PUT
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.UPDATE_EDUCATIONTYPE)
   public Response updateEducationType(@PathParam("ID") Long id, fi.pyramus.rest.model.EducationType entity) {
     EducationType educationType = commonController.findEducationTypeById(id);
     if (educationType == null) {
@@ -120,6 +128,7 @@ public class CommonRESTService extends AbstractRESTService {
       
   @Path("/educationTypes/{ID:[0-9]*}")
   @DELETE
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.DELETE_EDUCATIONTYPE)
   public Response deleteEducationType(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     EducationType educationType = commonController.findEducationTypeById(id);
     if (educationType == null) {
@@ -137,6 +146,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/educationTypes/{ID}/subtypes")
   @POST
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.CREATE_EDUCATIONSUBTYPE)
   public Response createEducationSubtype(@PathParam ("ID") Long educationTypeId, fi.pyramus.rest.model.EducationSubtype entity) {
     String name = entity.getName();
     String code = entity.getCode();
@@ -161,6 +171,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/educationTypes/{ID}/subtypes")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.LIST_EDUCATIONTYPES)
   public Response listEducationTypes(@PathParam ("ID") Long educationTypeId) {
     if (educationTypeId == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -181,6 +192,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/educationTypes/{EDUCATIONTYPEID}/subtypes/{EDUCATIONSUBTYPEID:[0-9]*}")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.FIND_EDUCATIONTYPE)
   public Response findEducationTypeById(@PathParam("EDUCATIONTYPEID") Long educationTypeId, @PathParam ("EDUCATIONSUBTYPEID") Long educationSubtypeId) {
     if ((educationTypeId == null) || (educationSubtypeId == null)) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -213,6 +225,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/educationTypes/{EDUCATIONTYPEID}/subtypes/{EDUCATIONSUBTYPEID:[0-9]*}")
   @PUT
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.UPDATE_EDUCATIONSUBTYPE)
   public Response updateEducationSubtype(@PathParam("EDUCATIONTYPEID") Long educationTypeId, @PathParam ("EDUCATIONSUBTYPEID") Long educationSubtypeId, fi.pyramus.rest.model.EducationSubtype entity) {
     if ((educationTypeId == null) || (educationSubtypeId == null)) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -252,6 +265,7 @@ public class CommonRESTService extends AbstractRESTService {
       
   @Path("/educationTypes/{EDUCATIONTYPEID}/subtypes/{EDUCATIONSUBTYPEID:[0-9]*}")
   @DELETE
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.DELETE_EDUCATIONSUBTYPE)
   public Response deleteEducationSubtype(@PathParam("EDUCATIONTYPEID") Long educationTypeId, @PathParam ("EDUCATIONSUBTYPEID") Long educationSubtypeId, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     if ((educationTypeId == null) || (educationSubtypeId == null)) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -290,6 +304,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/educationTypes/{ID:[0-9]*}/subjects")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.LIST_SUBJECTSBYEDUCATIONTYPE)
   public Response findSubjectsByEducationType(@PathParam("ID") Long id) {
     EducationType educationType = commonController.findEducationTypeById(id);
     if (educationType == null) {
@@ -307,6 +322,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/subjects")
   @POST
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.CREATE_SUBJECT)
   public Response createSubject(fi.pyramus.rest.model.Subject entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -333,6 +349,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/subjects")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.LIST_SUBJECTS)
   public Response listSubjects(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<Subject> subjects;
     
@@ -353,6 +370,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/subjects/{ID:[0-9]*}")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.FIND_SUBJECT)
   public Response findSubject(@PathParam("ID") Long id) {
     Subject subject = commonController.findSubjectById(id);
     if (subject == null) {
@@ -370,6 +388,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/subjects/{ID:[0-9]*}")
   @PUT
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.UPDATE_SUBJECT)
   public Response updateSubject(@PathParam("ID") Long id, fi.pyramus.rest.model.Subject entity) {
     Subject subject = commonController.findSubjectById(id);
     if (subject == null) {
@@ -401,6 +420,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/subjects/{ID:[0-9]*}")
   @DELETE
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.ARCHIVE_SUBJECT)
   public Response archiveSubject(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     Subject subject = commonController.findSubjectById(id);
     if (subject == null) {
@@ -418,6 +438,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/subjects/{ID:[0-9]*}/courses")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSESBYSUBJECT)
   public Response listCoursesBySubject(@PathParam("ID") Long id) {
     Subject subject = commonController.findSubjectById(id);
     if (subject == null) {
@@ -437,6 +458,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/gradingScales")
   @POST
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.CREATE_GRADINGSCALE)
   public Response createGradingScale(fi.pyramus.rest.model.GradingScale entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -454,6 +476,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/gradingScales")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.LIST_GRADINGSCALES)
   public Response findGradingScales(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<GradingScale> gradingScales;
     if (filterArchived) {
@@ -471,6 +494,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/gradingScales/{ID:[0-9]*}")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.FIND_GRADINGSCALE)
   public Response findGradingScalesById(@PathParam("ID") Long id) {
     GradingScale gradingScale = commonController.findGradingScaleById(id);
     if (gradingScale == null) {
@@ -486,6 +510,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/gradingScales/{ID:[0-9]*}")
   @PUT
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.UPDATE_GRADINGSCALE)
   public Response updateGradingScale(@PathParam("ID") Long id, GradingScale entity) {
     fi.pyramus.domainmodel.grading.GradingScale gradingScale = commonController.findGradingScaleById(id);
     if (gradingScale == null) {
@@ -509,6 +534,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/gradingScales/{ID:[0-9]*}")
   @DELETE
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.DELETE_GRADINGSCALE)
   public Response deleteGradingScale(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     GradingScale gradingScale = commonController.findGradingScaleById(id);
     if (gradingScale == null) {
@@ -526,6 +552,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/gradingScales/{SCALEID:[0-9]*}/grades")
   @POST
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.CREATE_GRADE)
   public Response createGrade(@PathParam ("SCALEID") Long gradingScaleId, fi.pyramus.rest.model.Grade entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -555,6 +582,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/gradingScales/{SCALEID:[0-9]*}/grades")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.LIST_GRADES)
   public Response listGrades(@PathParam ("SCALEID") Long gradingScaleId) {
     GradingScale gradingScale = commonController.findGradingScaleById(gradingScaleId);
     if (gradingScale == null) {
@@ -576,6 +604,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/gradingScales/{SCALEID:[0-9]*}/grades/{ID:[0-9]*}")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.FIND_GRADE)
   public Response findGrade(@PathParam ("SCALEID") Long gradingScaleId, @PathParam("ID") Long id) {
     GradingScale gradingScale = commonController.findGradingScaleById(gradingScaleId);
     if (gradingScale == null) {
@@ -604,6 +633,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/gradingScales/{SCALEID:[0-9]*}/grades/{ID:[0-9]*}")
   @PUT
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.UPDATE_GRADE)
   public Response updateGrade(@PathParam ("SCALEID") Long gradingScaleId, @PathParam("ID") Long id, fi.pyramus.rest.model.Grade entity) {
     GradingScale gradingScale = commonController.findGradingScaleById(gradingScaleId);
     if (gradingScale == null) {
@@ -648,6 +678,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/gradingScales/{SCALEID:[0-9]*}/grades/{ID:[0-9]*}")
   @DELETE
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.DELETE_GRADE)
   public Response deleteGrade(@PathParam ("SCALEID") Long gradingScaleId, @PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     GradingScale gradingScale = commonController.findGradingScaleById(gradingScaleId);
     if (gradingScale == null) {
@@ -674,6 +705,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/educationalTimeUnits") 
   @POST
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.CREATE_EDUCATIONALTIMEUNIT)
   public Response createEducationalTimeUnit(fi.pyramus.rest.model.EducationalTimeUnit entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -697,6 +729,7 @@ public class CommonRESTService extends AbstractRESTService {
     
   @Path("/educationalTimeUnits")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.LIST_EDUCATIONALTIMEUNITS)
   public Response listEducationalTimeUnits(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     
     List<EducationalTimeUnit> educationalTimeUnits;
@@ -717,6 +750,7 @@ public class CommonRESTService extends AbstractRESTService {
     
   @Path("/educationalTimeUnits/{ID:[0-9]*}")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.FIND_EDUCATIONALTIMEUNIT)
   public Response findEducationalTimeUnitsById(@PathParam("ID") Long id) {
     EducationalTimeUnit educationalTimeUnit = commonController.findEducationalTimeUnitById(id);
     
@@ -735,6 +769,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/educationalTimeUnits/{ID:[0-9]*}")
   @PUT
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.UPDATE_EDUCATIONALTIMEUNIT)
   public Response updateEducationalTimeUnit(@PathParam("ID") Long id, fi.pyramus.rest.model.EducationalTimeUnit entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -768,6 +803,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/educationalTimeUnits/{ID:[0-9]*}")
   @DELETE
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.ARCHIVE_EDUCATIONALTIMEUNIT)
   public Response archiveEducationalTimeUnit(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     EducationalTimeUnit educationalTimeUnit = commonController.findEducationalTimeUnitById(id);
     
@@ -786,6 +822,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/contactTypes")
   @POST
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.CREATE_CONTACTTYPE)
   public Response createContactType(fi.pyramus.rest.model.ContactType entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -802,6 +839,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/contactTypes")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.LIST_CONTACTTYPES)
   public Response listContactTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<ContactType> contactTypes;
     
@@ -822,6 +860,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/contactTypes/{ID:[0-9]*}")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.FIND_CONTACTTYPE)
   public Response findContactType(@PathParam("ID") Long id) {
     ContactType contactType = commonController.findContactTypeById(id);
     if (contactType == null) {
@@ -839,6 +878,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/contactTypes/{ID:[0-9]*}")
   @PUT
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.UPDATE_CONTACTTYPE)
   public Response updateContactType(@PathParam("ID") Long id, fi.pyramus.rest.model.ContactType entity) {
     ContactType contactType = commonController.findContactTypeById(id);
     if (contactType == null) {
@@ -860,6 +900,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/contactTypes/{ID:[0-9]*}")
   @DELETE
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.DELETE_CONTACTTYPE)
   public Response deleteContactType(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     ContactType contactType = commonController.findContactTypeById(id);
     if (contactType == null) {
@@ -877,6 +918,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/contactURLTypes")
   @POST
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.CREATE_CONTACTURLTYPE)
   public Response createContactURLType(fi.pyramus.rest.model.ContactURLType entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -893,6 +935,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/contactURLTypes")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.LIST_CONTACTURLTYPES)
   public Response listContactURLTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<ContactURLType> contactURLTypes;
     
@@ -913,6 +956,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/contactURLTypes/{ID:[0-9]*}")
   @GET
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.FIND_CONTACTURLTYPE)
   public Response findContactURLType(@PathParam("ID") Long id) {
     ContactURLType contactURLType = commonController.findContactURLTypeById(id);
     if (contactURLType == null) {
@@ -930,6 +974,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/contactURLTypes/{ID:[0-9]*}")
   @PUT
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.UPDATE_CONTACTURLTYPE)
   public Response updateContactURLType(@PathParam("ID") Long id, fi.pyramus.rest.model.ContactURLType entity) {
     ContactURLType contactURLType = commonController.findContactURLTypeById(id);
     if (contactURLType == null) {
@@ -951,6 +996,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/contactURLTypes/{ID:[0-9]*}")
   @DELETE
+  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.DELETE_CONTACTURLTYPE)
   public Response deleteContactURLType(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     ContactURLType contactURLType = commonController.findContactURLTypeById(id);
     if (contactURLType == null) {

@@ -101,5 +101,9 @@
 			<artifactId>persistence</artifactId>
 		</dependency>
 
+		<dependency>
+		  <groupId>fi.pyramus</groupId>
+		  <artifactId>framework</artifactId>
+		</dependency>
 	</dependencies>
 </project>

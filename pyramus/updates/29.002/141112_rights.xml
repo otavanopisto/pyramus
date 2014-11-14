@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table primaryKeys="id" name="Permission">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="name" type="java.lang.String" nullable="false" unique="true" />
+        <field name="scope" type="java.lang.String" nullable="false" unique="false" />
+      </fields>
+    </table>
+
+    <table primaryKeys="id" name="RolePermission">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="permission_id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="role" type="java.lang.String" nullable="false" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="permission_id" referencedTable="Permission" name="FK_ROLEPERMISSION_PERMISSION_ID"/>
+      </foreignKeys>
+    </table>
+
+    <table primaryKeys="id" name="EnvironmentRolePermission">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="id" referencedTable="RolePermission" name="FK_ENVIRONMENTROLEPERMISSION_ROLEPERMISSION"/>
+      </foreignKeys>
+    </table>
+  </createTables>
+
+</update>
