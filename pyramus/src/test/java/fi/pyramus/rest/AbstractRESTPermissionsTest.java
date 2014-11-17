@@ -100,6 +100,14 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     return false;
   }
   
+  public void assertOk(String path, List<String> allowedRoles){
+    if(roleIsAllowed(getRole(), allowedRoles)){
+      given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(200);
+    }else{
+      given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(403);
+    }
+  }
+  
   protected String getRole() {
     return this.role;
   }
