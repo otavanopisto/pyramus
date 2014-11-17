@@ -84,8 +84,7 @@ values
   (2, 'TEST', 'TEST-GUEST-2', 'GUEST', null),
   (5, 'TEST', 'TEST-USER-1', 'USER', null),
   (6, 'TEST', 'TEST-MANAGER-1', 'MANAGER', null),
-  (7, 'TEST', 'TEST-ADMINISTRATOR-1', 'ADMINISTRATOR', null),
-  (8, 'TEST', 'TEST-STUDENT-1', 'STUDENT', null);
+  (7, 'TEST', 'TEST-ADMINISTRATOR-1', 'ADMINISTRATOR', null);
   
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
@@ -355,7 +354,7 @@ insert into
 values 
   (3, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false, false),
   (4, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false, false);
-  
+  (8, 1, 'TEST-User', 0 PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', false, false);
 insert into StudentGroupStudent
   (id, studentGroup, student, version)
 values 
