@@ -26,7 +26,12 @@ public abstract class AbstractIntegrationTest {
 
   @Before
   public void baseSetupSql() throws Exception {
-    Method method = getClass().getMethod(testName.getMethodName(), new Class<?>[] {});
+    String methodName = testName.getMethodName();
+    int paramIndex = methodName.indexOf('[');
+    if (paramIndex > 0) {
+      methodName = methodName.substring(0, paramIndex);
+    }
+    Method method = getClass().getMethod(methodName, new Class<?>[] {});
     SqlBefore annotation = method.getAnnotation(SqlBefore.class);
     if (annotation != null) {
       String[] sqlFiles = annotation.value();
@@ -47,7 +52,12 @@ public abstract class AbstractIntegrationTest {
   
   @After
   public void baseTearDownSql() throws Exception {
-    Method method = getClass().getMethod(testName.getMethodName(), new Class<?>[] {});
+    String methodName = testName.getMethodName();
+    int paramIndex = methodName.indexOf('[');
+    if (paramIndex > 0) {
+      methodName = methodName.substring(0, paramIndex);
+    }
+    Method method = getClass().getMethod(methodName, new Class<?>[] {});
     SqlAfter annotation = method.getAnnotation(SqlAfter.class);
     if (annotation != null) {
       String[] sqlFiles = annotation.value();
