@@ -50,8 +50,8 @@ values
   (6, 'guest2@bogusmail.com', true, 6, 1, 0, 1),
   (7, 'user1@bogusmail.com', true, 7, 1, 0, 1),
   (8, 'manager1@bogusmail.com', true, 8, 1, 0, 1),
-  (9, 'administrator1@bogusmail.com', true, 9, 1, 0, 1),,
-  (10, 'student1@bogusmail.com', true, 10, 1, 0, 1),;
+  (9, 'administrator1@bogusmail.com', true, 9, 1, 0, 1),
+  (10, 'student1@bogusmail.com', true, 10, 1, 0, 1);
 
 insert into 
   Person (id, version, birthday, sex, socialSecurityNumber, basicInfo, secureInfo)
@@ -59,7 +59,7 @@ values
   (1, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '123411-7890', 'Test staff #1', false),
   (2, 1, PARSEDATETIME('1 1 1970', 'd M yyyy'), 'MALE', '012345535-8901', 'Test staff #2', false),
   (3, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'FEMALE', '123456-7890', 'Test student #1', false),
-  (4, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false);
+  (4, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false),
   (5, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121213-7890', 'Test User #1', false),
   (6, 1, PARSEDATETIME('1 1 1970', 'd M yyyy'), 'MALE', '131214-8901', 'Test Manager #1', false),
   (7, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121216-7891', 'Test administrator #1', false),
@@ -353,8 +353,8 @@ insert into
     examinationType, education, lodging, archived)
 values 
   (3, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false, false),
-  (4, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false, false);
-  (8, 1, 'TEST-User', 0 PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', false, false);
+  (4, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false, false),
+  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', false, false);
 insert into StudentGroupStudent
   (id, studentGroup, student, version)
 values 
@@ -364,8 +364,8 @@ values
 insert into StudentStudyEndReason 
   (id, name, parentReason, version)
 values 
-  (1, 'StudentStudyEndReason #1', null ,1),
-  (2, 'StudentStudyEndReason #2', 1 ,1);
+  (1, 'StudentStudyEndReason #1', null, 1),
+  (2, 'StudentStudyEndReason #2', 1, 1);
   
 insert into 
   StudentContactLogEntry (id, creatorName, entryDate, text, type, student, version, archived)
@@ -383,8 +383,9 @@ insert into
 values
 /**   
 Old. Needed anymore?
-(1, 'ff81d5b8500c773e7a1776a7963801e3', 'https://localhost:8443/oauth2ClientTest/success', 1, 1),
 **/
+(1, 'ff81d5b8500c773e7a1776a7963801e3', 'https://localhost:8443/oauth2ClientTest/success', 1, 1),
+
 /** GUEST ROLE**/
     (2, 'ff81d5b8500c773e7a1776a7963801e4', 'https://localhost:8443/oauth2ClientTest/success', 1, 1),
 /** USER ROLE**/    
