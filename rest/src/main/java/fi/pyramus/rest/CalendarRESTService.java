@@ -25,12 +25,12 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
-import fi.muikku.security.Permit;
-import fi.muikku.security.Permit.Handle;
 import fi.pyramus.domainmodel.base.AcademicTerm;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.persistence.search.SearchTimeFilterMode;
+import fi.pyramus.rest.annotation.RESTPermit;
+import fi.pyramus.rest.annotation.RESTPermit.Handle;
 import fi.pyramus.rest.controller.CalendarController;
 import fi.pyramus.rest.controller.permissions.CalendarPermissions;
 
@@ -49,7 +49,7 @@ public class CalendarRESTService extends AbstractRESTService {
   
   @Path("/academicTerms")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = CalendarPermissions.CREATE_ACADEMICTERM)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CalendarPermissions.CREATE_ACADEMICTERM)
   public Response createAcademidTerm(fi.pyramus.rest.model.AcademicTerm entity) {
     String name = entity.getName();
     DateTime startDate = entity.getStartDate();
@@ -70,7 +70,7 @@ public class CalendarRESTService extends AbstractRESTService {
   
   @Path("/academicTerms")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CalendarPermissions.LIST_ACADEMICTERMS)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CalendarPermissions.LIST_ACADEMICTERMS)
   public Response listAcademicTerms(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<AcademicTerm> academicTerms;
     if (filterArchived) {
@@ -88,7 +88,7 @@ public class CalendarRESTService extends AbstractRESTService {
   
   @Path("/academicTerms/{ID:[0-9]*}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CalendarPermissions.FIND_ACADEMICTERM)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CalendarPermissions.FIND_ACADEMICTERM)
   public Response findAcademicTerms(@PathParam("ID") Long id) throws JAXBException, IOException {
     AcademicTerm academicTerm = calendarController.findAcademicTermById(id);
     if (academicTerm == null) {
@@ -104,7 +104,7 @@ public class CalendarRESTService extends AbstractRESTService {
   
   @Path("/academicTerms/{ID:[0-9]*}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = CalendarPermissions.UPDATE_ACADEMICTERM)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CalendarPermissions.UPDATE_ACADEMICTERM)
   public Response updateAcademicTerm(@PathParam("ID") Long id, fi.pyramus.rest.model.AcademicTerm entity) {
     AcademicTerm academicTerm = calendarController.findAcademicTermById(id);
     String name = entity.getName();
@@ -126,7 +126,7 @@ public class CalendarRESTService extends AbstractRESTService {
   
   @Path("/academicTerms/{ID:[0-9]*}")
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = CalendarPermissions.DELETE_ACADEMICTERM)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CalendarPermissions.DELETE_ACADEMICTERM)
   public Response deleteAcademicTerm(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     AcademicTerm academicTerm = calendarController.findAcademicTermById(id);
     if (academicTerm == null) {
@@ -144,7 +144,7 @@ public class CalendarRESTService extends AbstractRESTService {
   
   @Path("/academicTerms/{ID:[0-9]*}/courses")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CalendarPermissions.FIND_COURSESBYACADEMICTERM)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CalendarPermissions.FIND_COURSESBYACADEMICTERM)
   public Response findCoursesByTerm(@PathParam("ID") Long id, @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     AcademicTerm academicTerm = calendarController.findAcademicTermById(id);
     if (academicTerm == null) {

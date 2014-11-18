@@ -21,13 +21,13 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fi.muikku.security.Permit;
-import fi.muikku.security.Permit.Handle;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.projects.Project;
 import fi.pyramus.domainmodel.projects.ProjectModule;
 import fi.pyramus.domainmodel.projects.ProjectModuleOptionality;
+import fi.pyramus.rest.annotation.RESTPermit;
+import fi.pyramus.rest.annotation.RESTPermit.Handle;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
@@ -54,7 +54,7 @@ public class ProjectRESTService extends AbstractRESTService {
   
   @Path("/projects")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = ProjectPermissions.CREATE_PROJECT)
+  @RESTPermit (handle = Handle.EXCEPTION, value = ProjectPermissions.CREATE_PROJECT)
   public Response createProject(fi.pyramus.rest.model.Project entity) {
     EducationalTimeUnit optionalStudiesLengthUnit = entity.getOptionalStudiesLengthUnitId() != null ? commonController.findEducationalTimeUnitById(entity.getOptionalStudiesLengthUnitId()) : null;
     Double optionalStudiesLength = entity.getOptionalStudiesLength();
@@ -78,7 +78,7 @@ public class ProjectRESTService extends AbstractRESTService {
 
   @Path("/projects")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = ProjectPermissions.LIST_PROJECTS)
+  @RESTPermit (handle = Handle.EXCEPTION, value = ProjectPermissions.LIST_PROJECTS)
   public Response listProjects(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<Project> projects;
     if (filterArchived) {
@@ -96,7 +96,7 @@ public class ProjectRESTService extends AbstractRESTService {
   
   @Path("/projects/{ID:[0-9]*}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = ProjectPermissions.FIND_PROJECT)
+  @RESTPermit (handle = Handle.EXCEPTION, value = ProjectPermissions.FIND_PROJECT)
   public Response findProjectById(@PathParam("ID") Long id) {
     Project project = projectController.findProjectById(id);
     if (project == null) {
@@ -112,7 +112,7 @@ public class ProjectRESTService extends AbstractRESTService {
 
   @Path("/projects/{ID:[0-9]*}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = ProjectPermissions.UPDATE_PROJECT)
+  @RESTPermit (handle = Handle.EXCEPTION, value = ProjectPermissions.UPDATE_PROJECT)
   public Response updateProject(@PathParam("ID") Long id, fi.pyramus.rest.model.Project entity) {
     Project project = projectController.findProjectById(id);
     if (project == null) {
@@ -139,7 +139,7 @@ public class ProjectRESTService extends AbstractRESTService {
   
   @Path("/projects/{ID:[0-9]*}")
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = ProjectPermissions.DELETE_PROJECT)
+  @RESTPermit (handle = Handle.EXCEPTION, value = ProjectPermissions.DELETE_PROJECT)
   public Response deleteProject(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     Project project = projectController.findProjectById(id);
     if (project == null) {
@@ -157,7 +157,7 @@ public class ProjectRESTService extends AbstractRESTService {
     
   @Path("/projects/{ID:[0-9]*}/modules")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = ProjectPermissions.CREATE_PROJECTMODULE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = ProjectPermissions.CREATE_PROJECTMODULE)
   public Response createProjectModule(@PathParam("ID") Long id, fi.pyramus.rest.model.ProjectModule moduleEntity) {
     Project project = projectController.findProjectById(id);
     if (project == null) {
@@ -194,7 +194,7 @@ public class ProjectRESTService extends AbstractRESTService {
   
   @Path("/projects/{PROJECTID:[0-9]*}/modules")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = ProjectPermissions.LIST_PROJECTMODULES)
+  @RESTPermit (handle = Handle.EXCEPTION, value = ProjectPermissions.LIST_PROJECTMODULES)
   public Response listProjectModules(@PathParam("PROJECTID") Long projectId) {
     Project project = projectController.findProjectById(projectId);
     if (project == null) {
@@ -215,7 +215,7 @@ public class ProjectRESTService extends AbstractRESTService {
   
   @Path("/projects/{PROJECTID:[0-9]*}/modules/{ID:[0-9]*}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = ProjectPermissions.FIND_PROJECTMODULE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = ProjectPermissions.FIND_PROJECTMODULE)
   public Response listProjectModules(@PathParam("PROJECTID") Long projectId, @PathParam("ID") Long id) {
     Project project = projectController.findProjectById(projectId);
     if (project == null) {
@@ -244,7 +244,7 @@ public class ProjectRESTService extends AbstractRESTService {
   
   @Path("/projects/{PROJECTID:[0-9]*}/modules/{ID:[0-9]*}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = ProjectPermissions.UPDATE_PROJECTMODULE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = ProjectPermissions.UPDATE_PROJECTMODULE)
   public Response updateProjectModule(@PathParam("PROJECTID") Long projectId, @PathParam("ID") Long id, fi.pyramus.rest.model.ProjectModule entity) {
     Project project = projectController.findProjectById(projectId);
     if (project == null) {
@@ -283,7 +283,7 @@ public class ProjectRESTService extends AbstractRESTService {
 
   @Path("/projects/{PROJECTID:[0-9]*}/modules/{ID:[0-9]*}")
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = ProjectPermissions.DELETE_PROJECTMODULE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = ProjectPermissions.DELETE_PROJECTMODULE)
   public Response deleteProjectModule(@PathParam("PROJECTID") Long projectId, @PathParam("ID") Long id) {
     Project project = projectController.findProjectById(projectId);
     if (project == null) {
