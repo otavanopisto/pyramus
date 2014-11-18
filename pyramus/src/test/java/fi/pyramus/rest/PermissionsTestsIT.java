@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -28,19 +27,21 @@ public class PermissionsTestsIT extends AbstractRESTPermissionsTest {
    * corresponds to a parameter in the constructor.
    */
   @Parameters
-  public static Collection<Object[]> generateData() {
+  public static List<Object[]> generateData() {
     // The parameter generator returns a List of
-    // arrays. Each array has two elements: { role, authcode}.
+    // arrays. Each array has two elements: { role }.
     return Arrays.asList(new Object[][] {
-        { "GUEST" },
-        { "USER" },
-        { "STUDENT" },
-        { "MANAGER" },
-        { "ADMINISTRATOR" } });
+        { "GUEST"},
+        { "USER"},
+        { "STUDENT"},
+        { "MANAGER"},
+        { "ADMINISTRATOR"}
+      }
+    );
   }
 
   public PermissionsTestsIT(String role) {
-    setRole(role);
+    this.Role = role;
   }
   
   @Test
@@ -75,6 +76,7 @@ public class PermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     assertOk("/calendar/academicTerms/1", allowedRolesList); 
   }
+  
   @Test
   public void testPermissionsUpdateAcademicTerm() throws NoSuchFieldException{
     String[] permissions = new CalendarPermissions().getDefaultRoles(fi.pyramus.rest.controller.permissions.CalendarPermissions.UPDATE_ACADEMICTERM);

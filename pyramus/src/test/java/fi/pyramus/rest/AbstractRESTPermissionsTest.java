@@ -11,6 +11,8 @@ import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
@@ -49,6 +51,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   
   @Before
   public void createAccessToken(){
+    
     OAuthClientRequest tokenRequest = null;
     try {
       tokenRequest = OAuthClientRequest
@@ -57,7 +60,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
           .setClientId(fi.pyramus.Common.CLIENT_ID)
           .setClientSecret(fi.pyramus.Common.CLIENT_SECRET)
           .setRedirectURI(fi.pyramus.Common.REDIRECT_URL)
-          .setCode(fi.pyramus.Common.ROLEAUTHS.get(role))
+          .setCode(fi.pyramus.Common.ROLEAUTHS.get(Role))
           .buildBodyMessage();
     } catch (OAuthSystemException e) {
       e.printStackTrace();
@@ -109,14 +112,14 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   }
   
   protected String getRole() {
-    return this.role;
+    return Role;
   }
 
   protected void setRole(String role) {
-     this.role = role;
+     Role = role;
   }
   
-  private String role;
+  protected String Role;
   private String AccessToken;
-  
+
 }
