@@ -29,8 +29,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
-import fi.muikku.security.Permit;
-import fi.muikku.security.Permit.Handle;
 import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -47,6 +45,8 @@ import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.rest.annotation.RESTPermit;
+import fi.pyramus.rest.annotation.RESTPermit.Handle;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
@@ -83,7 +83,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSE)
   public Response createCourse(fi.pyramus.rest.model.Course courseEntity) {
     if (courseEntity.getModuleId() == null) {
       return Response.status(Status.BAD_REQUEST).entity("moduleId is required").build();
@@ -149,7 +149,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses/{ID:[0-9]*}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSE)
   public Response getCourse(@PathParam("ID") Long id, @Context Request request) {
     Course course = courseController.findCourseById(id);
     if (course != null) {
@@ -178,7 +178,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSES)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSES)
   public Response listCourses(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults, @DefaultValue("true") @QueryParam("filterArchived") boolean filterArchived) {
     List<Course> courses;
     
@@ -197,7 +197,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses/{ID:[0-9]*}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSE)
   public Response updateCourse(@PathParam("ID") Long id, fi.pyramus.rest.model.Course courseEntity) {
     Course course = courseController.findCourseById(id);
     if (course == null) {
@@ -262,7 +262,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses/{ID:[0-9]*}")
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_COURSE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_COURSE)
   public Response deleteCourse(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     User loggedUser = getLoggedUser();
     
@@ -282,7 +282,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses/{COURSEID:[0-9]*}/components")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSECOMPONENT)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSECOMPONENT)
   public Response createCourseComponent(@PathParam("COURSEID") Long courseId, fi.pyramus.rest.model.CourseComponent courseComponent) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
@@ -314,7 +314,7 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/courses/{ID:[0-9]*}/components")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSECOMPONENTS)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSECOMPONENTS)
   public Response listCourseComponents(@PathParam("ID") Long courseId) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
@@ -331,7 +331,7 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/courses/{CID:[0-9]*}/components/{ID:[0-9]*}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSECOMPONENT)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSECOMPONENT)
   public Response findCourseComponentById(@PathParam("CID") Long courseId, @PathParam("ID") Long componentId) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
@@ -356,7 +356,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses/{COURSEID:[0-9]*}/components/{COMPONENTID:[0-9]*}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSECOMPONENT)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSECOMPONENT)
   public Response updateCourseComponent(@PathParam("COURSEID") Long courseId, @PathParam("COMPONENTID") Long courseComponentId, fi.pyramus.rest.model.CourseComponent courseComponentEntity) {
     if (courseComponentEntity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -401,7 +401,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses/{COURSEID:[0-9]*}/components/{COMPONENTID:[0-9]*}")
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_COURSECOMPONENT)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_COURSECOMPONENT)
   public Response deleteCourseComponent(@PathParam("COURSEID") Long courseId, @PathParam("COMPONENTID") Long componentId, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     if (courseId == null || componentId == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -432,7 +432,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses/{COURSEID:[0-9]*}/students")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSESTUDENT)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSESTUDENT)
   public Response createCourseStudent(@PathParam("COURSEID") Long courseId, fi.pyramus.rest.model.CourseStudent entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).entity("Request payload missing").build(); 
@@ -497,7 +497,7 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/courses/{ID:[0-9]*}/students")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSESTUDENTS)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSESTUDENTS)
   public Response listCourseStudents(@PathParam("ID") Long courseId) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
@@ -514,7 +514,7 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/courses/{CID:[0-9]*}/students/{ID:[0-9]*}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSESTUDENT)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSESTUDENT)
   public Response findCourseStudentById(@PathParam("CID") Long courseId, @PathParam("ID") Long id) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
@@ -539,7 +539,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses/{COURSEID:[0-9]*}/students/{ID:[0-9]*}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSESTUDENT)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSESTUDENT)
   public Response updateCourseStudent(@PathParam("COURSEID") Long courseId, @PathParam("ID") Long id, fi.pyramus.rest.model.CourseStudent entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build(); 
@@ -615,7 +615,7 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/courses/{COURSEID:[0-9]*}/students/{ID:[0-9]*}")
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_COURSESTUDENT)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_COURSESTUDENT)
   public Response deleteCourseStudent(@PathParam("COURSEID") Long courseId, @PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
@@ -642,7 +642,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses/{COURSEID:[0-9]*}/staffMembers")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSESTAFFMEMBER)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSESTAFFMEMBER)
   public Response createCourseStaffMember(@PathParam("COURSEID") Long courseId, fi.pyramus.rest.model.CourseStaffMember entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build(); 
@@ -678,7 +678,7 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/courses/{ID:[0-9]*}/staffMembers")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSESTAFFMEMBERS)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSESTAFFMEMBERS)
   public Response listCourseStaffMembers(@PathParam("ID") Long courseId) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
@@ -695,7 +695,7 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/courses/{CID:[0-9]*}/staffMembers/{ID:[0-9]*}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSESTAFFMEMBER)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSESTAFFMEMBER)
   public Response findCourseStaffMemberById(@PathParam("CID") Long courseId, @PathParam("ID") Long id) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
@@ -716,7 +716,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses/{COURSEID:[0-9]*}/staffMembers/{ID:[0-9]*}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSESTAFFMEMBER)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSESTAFFMEMBER)
   public Response updateCourseStaffMember(@PathParam("COURSEID") Long courseId, @PathParam("ID") Long id, fi.pyramus.rest.model.CourseStaffMember entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -757,7 +757,7 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/courses/{COURSEID:[0-9]*}/staffMembers/{ID:[0-9]*}")
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_COURSESTAFFMEMBER)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_COURSESTAFFMEMBER)
   public Response deleteCourseStaffMember(@PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
@@ -780,7 +780,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courseStates")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSESTATE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSESTATE)
   public Response createCourseState(fi.pyramus.rest.model.CourseState entity) {
     if (StringUtils.isBlank(entity.getName())) {
       return Response.status(Status.BAD_REQUEST).entity("name is required").build();
@@ -794,7 +794,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courseStates")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSESTATES)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSESTATES)
   public Response listCourseStates(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<CourseState> courseStates;
     
@@ -813,7 +813,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courseStates/{ID:[0-9]*}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSESTATE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSESTATE)
   public Response findCourseStateById(@PathParam("ID") Long id) {
     CourseState courseState = courseController.findCourseStateById(id);
     if (courseState == null) {
@@ -829,7 +829,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courseStates/{ID:[0-9]*}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSESTATE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSESTATE)
   public Response updateCourseState(@PathParam("ID") Long id, fi.pyramus.rest.model.CourseState entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -856,7 +856,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courseStates/{ID:[0-9]*}") 
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.ARCHIVE_COURSESTATE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.ARCHIVE_COURSESTATE)
   public Response archiveCourseState(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     CourseState courseState = courseController.findCourseStateById(id);
     if (courseState == null) {
@@ -874,7 +874,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/enrolmentTypes")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSEENROLMENTTYPE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSEENROLMENTTYPE)
   public Response createCourseEnrolmentType(CourseEnrolmentType entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -889,7 +889,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/enrolmentTypes")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSEENROLMENTTYPES)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSEENROLMENTTYPES)
   public Response listCourseEnrolmentTypes() {
     List<fi.pyramus.domainmodel.courses.CourseEnrolmentType> courseEnrolmentTypes = courseController.listCourseEnrolmentTypes();
     
@@ -903,7 +903,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/enrolmentTypes/{ID:[0-9]*}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSEENROLMENTTYPE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSEENROLMENTTYPE)
   public Response findCourseEnrolmentType(@PathParam("ID") Long id) {
     fi.pyramus.domainmodel.courses.CourseEnrolmentType enrolmentType = courseController.findCourseEnrolmentTypeById(id);
     if (enrolmentType == null) {
@@ -917,7 +917,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/enrolmentTypes/{ID:[0-9]*}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSEENROLMENTTYPE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSEENROLMENTTYPE)
   public Response updateCourseEnrolmentType(@PathParam("ID") Long id, CourseEnrolmentType entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -943,7 +943,7 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/enrolmentTypes/{ID:[0-9]*}")
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_COURSEENROLMENTTYPE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_COURSEENROLMENTTYPE)
   public Response deleteCourseEnrolmentType(@PathParam("ID") Long id) {
     fi.pyramus.domainmodel.courses.CourseEnrolmentType enrolmentType = courseController.findCourseEnrolmentTypeById(id);
     if (enrolmentType == null) {
@@ -957,7 +957,7 @@ public class CourseRESTService extends AbstractRESTService {
     
   @Path("/participationTypes")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSEPARTICIPATIONTYPE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSEPARTICIPATIONTYPE)
   public Response createCourseParticipationType(fi.pyramus.rest.model.CourseParticipationType entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -973,7 +973,7 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/participationTypes")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSEPARTICIPATIONTYPES)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSEPARTICIPATIONTYPES)
   public Response listCourseParticipationTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<CourseParticipationType> participationTypes;
     
@@ -994,7 +994,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/participationTypes/{ID:[0-9]*}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSEPARTICIPATIONTYPE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSEPARTICIPATIONTYPE)
   public Response findCourseParticipationType(@PathParam("ID") Long id) {
     CourseParticipationType participationType = courseController.findCourseParticipationTypeById(id);
     if (participationType == null) {
@@ -1012,7 +1012,7 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/participationTypes/{ID:[0-9]*}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSEPARTICIPATIONTYPE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSEPARTICIPATIONTYPE)
   public Response updateCourseParticipationType(@PathParam("ID") Long id, CourseParticipationType entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -1036,7 +1036,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/participationTypes/{ID:[0-9]*}")
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.ARCHIVE_COURSEPARTICIPATIONTYPE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.ARCHIVE_COURSEPARTICIPATIONTYPE)
   public Response archiveCourseParticipationType(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     CourseParticipationType participationType = courseController.findCourseParticipationTypeById(id);
     if (participationType == null) {
@@ -1054,7 +1054,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/descriptionCategories")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSEDESCRIPTIONCATEGORY)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_COURSEDESCRIPTIONCATEGORY)
   public Response createCourseDescriptionCategory(fi.pyramus.rest.model.CourseDescriptionCategory entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -1071,7 +1071,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/descriptionCategories")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSEDESCRIPTIONCATEGORIES)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_COURSEDESCRIPTIONCATEGORIES)
   public Response listCourseDescriptionCategories(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<CourseDescriptionCategory> categories;
     if (filterArchived) {
@@ -1091,7 +1091,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/descriptionCategories/{ID:[0-9]*}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSEDESCRIPTIONCATEGORY)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_COURSEDESCRIPTIONCATEGORY)
   public Response findCourseDescriptionCategoryById(@PathParam("ID") Long id) {
     CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(id);
     if (category == null) {
@@ -1109,7 +1109,7 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/descriptionCategories/{ID:[0-9]*}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSEDESCRIPTIONCATEGORY)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_COURSEDESCRIPTIONCATEGORY)
   public Response updateCourseDescriptionCategory(@PathParam("ID") Long id, fi.pyramus.rest.model.CourseDescriptionCategory entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -1133,7 +1133,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/descriptionCategories/{ID:[0-9]*}")
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_COURSEDESCRIPTIONCATEGORY)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_COURSEDESCRIPTIONCATEGORY)
   public Response deleteCourseDescriptionCategory(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(id);
     if (category == null) {
@@ -1151,7 +1151,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/variables")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.CREATE_COURSEBASEVARIABLEKEY)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CommonPermissions.CREATE_COURSEBASEVARIABLEKEY)
   public Response createVariable(fi.pyramus.rest.model.VariableKey entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -1183,7 +1183,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/variables")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.LIST_COURSEBASEVARIABLEKEYS)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CommonPermissions.LIST_COURSEBASEVARIABLEKEYS)
   public Response listVariables() {
     List<CourseBaseVariableKey> variableKeys = commonController.listCourseBaseVariableKeys();
     if (variableKeys.isEmpty()) {
@@ -1195,7 +1195,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/variables/{KEY}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.FIND_COURSEBASEVARIABLEKEY)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CommonPermissions.FIND_COURSEBASEVARIABLEKEY)
   public Response findVariable(@PathParam ("KEY") String key) {
     CourseBaseVariableKey courseBaseVariableKey = commonController.findCourseBaseVariableKeyByVariableKey(key);
     if (courseBaseVariableKey == null) {
@@ -1207,7 +1207,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/variables/{KEY}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.UPDATE_COURSEBASEVARIABLEKEY)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CommonPermissions.UPDATE_COURSEBASEVARIABLEKEY)
   public Response updateVariable(@PathParam ("KEY") String key, fi.pyramus.rest.model.VariableKey entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -1245,7 +1245,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/variables/{KEY}")
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = CommonPermissions.DELETE_COURSEBASEVARIABLEKEY)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CommonPermissions.DELETE_COURSEBASEVARIABLEKEY)
   public Response deleteVariable(@PathParam ("KEY") String key) {
     CourseBaseVariableKey courseBaseVariableKey = commonController.findCourseBaseVariableKeyByVariableKey(key);
     if (courseBaseVariableKey == null) {
@@ -1259,7 +1259,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/staffMemberRoles")
   @POST
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_STAFFMEMBERROLE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.CREATE_STAFFMEMBERROLE)
   public Response createStaffMemberRole(fi.pyramus.rest.model.CourseStaffMemberRole entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -1276,7 +1276,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/staffMemberRoles")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_STAFFMEMBERROLES)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.LIST_STAFFMEMBERROLES)
   public Response listStaffMemberRoles() {
     List<CourseStaffMemberRole> staffMemberRoles = courseController.listStaffMemberRoles();
     if (staffMemberRoles.isEmpty()) {
@@ -1288,7 +1288,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/staffMemberRoles/{ID}")
   @GET
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_STAFFMEMBERROLE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.FIND_STAFFMEMBERROLE)
   public Response findStaffMemberRrole(@PathParam ("ID") Long id) {
     CourseStaffMemberRole staffMemberRole = courseController.findStaffMemberRoleById(id);
     if (staffMemberRole == null) {
@@ -1300,7 +1300,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/staffMemberRoles/{ID}")
   @PUT
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_STAFFMEMBERROLE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.UPDATE_STAFFMEMBERROLE)
   public Response updateStaffMemberRrole(@PathParam ("ID") Long id, fi.pyramus.rest.model.CourseStaffMemberRole entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -1322,7 +1322,7 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/staffMemberRoles/{ID}")
   @DELETE
-  @Permit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_STAFFMEMBERROLE)
+  @RESTPermit (handle = Handle.EXCEPTION, value = CoursePermissions.DELETE_STAFFMEMBERROLE)
   public Response deleteStaffMemberRrole(@PathParam ("ID") Long id) {
     CourseStaffMemberRole staffMemberRole = courseController.findStaffMemberRoleById(id);
     if (staffMemberRole == null) {

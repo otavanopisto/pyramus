@@ -20,6 +20,10 @@ import org.jboss.resteasy.core.ResourceMethodInvoker;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
 import fi.pyramus.rest.annotation.Unsecure;
 import fi.pyramus.rest.controller.OauthController;
+import fi.pyramus.rest.security.RESTSecurity;
+import fi.pyramus.rest.session.RestSession;
+import fi.pyramus.security.impl.SessionController;
+import fi.pyramus.security.impl.SessionControllerDelegate;
 
 @Provider
 public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFilter {
@@ -33,8 +37,20 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
   @Inject
   private OauthController oauthController;
 
+  @Inject
+  private SessionControllerDelegate sessionControllerDelegate;
+  
+  @Inject
+  @RestSession
+  private SessionController sessionController;
+
+  @Inject
+  private RESTSecurity restSecurity;
+  
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
+    sessionControllerDelegate.setImplementation(sessionController);
+    
     ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker");
     Method method = methodInvoker.getMethod();
     if (method == null){
@@ -52,9 +68,12 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
           Long currentTime = System.currentTimeMillis() / 1000L;
           if (currentTime > clientApplicationAccessToken.getExpires()) {
             requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
+          } else {
+            if (!restSecurity.hasPermission(method)) {
+              requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
+            }
           }
         }
-
       } catch (OAuthProblemException e) {
         requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST).entity(e.getMessage()).build());
       } catch (OAuthSystemException e) {
@@ -63,4 +82,5 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
     }
   }
 
+  
 }
