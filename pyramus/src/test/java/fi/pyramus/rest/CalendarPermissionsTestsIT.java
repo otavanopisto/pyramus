@@ -43,7 +43,7 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
   }
 
   public CalendarPermissionsTestsIT(String role) {
-    this.Role = role;
+    this.role = role;
   }
   
   @Test

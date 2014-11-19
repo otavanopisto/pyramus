@@ -37,7 +37,7 @@ public class MunicipalityTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
-  public void listLangauegs() {
+  public void listMunicipalities() {
     given().headers(getAuthHeaders())
       .get("/students/municipalities")
       .then()
