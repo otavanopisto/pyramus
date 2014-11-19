@@ -1,0 +1,1 @@
+delete from AcademicTerm where id in (3);
