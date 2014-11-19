@@ -8,7 +8,7 @@ public final class Common {
   public static String CLIENT_SECRET = "cqJ4J1if8ca5RMUqaYyFPYToxfFxt2YT8PXL3pNygPClnjJdt55lrFs6k1SZ6colJN24YEtZ7bhFW29S";
   public static String REDIRECT_URL = "https://localhost:8443/oauth2ClientTest/success";
   public static String AUTH_URL = "https://dev.pyramus.fi:8443/users/authorize.page";
-  public static String AUTH_CODE = "ff81d5b8500c773e7a1776a7963801e3";
+  public static String AUTH_CODE = "ff81d5b8500c773e7a1776a7963801e7";
   public static Map<String, String> ROLEAUTHS = new HashMap<String, String>();
   static {
     ROLEAUTHS.put("GUEST", "ff81d5b8500c773e7a1776a7963801e4");
