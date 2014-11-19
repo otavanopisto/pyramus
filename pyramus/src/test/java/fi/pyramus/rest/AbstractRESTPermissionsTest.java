@@ -3,6 +3,7 @@ package fi.pyramus.rest;
 import static com.jayway.restassured.RestAssured.certificate;
 import static com.jayway.restassured.RestAssured.given;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,8 @@ import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory;
 import com.jayway.restassured.response.Response;
 
 import fi.pyramus.AbstractIntegrationTest;
+import fi.pyramus.rest.controller.permissions.LanguagePermissions;
+import fi.pyramus.security.impl.PyramusPermissionCollection;
 
 public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest {
 
@@ -100,6 +103,16 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     }
   }
 
+  public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission) throws NoSuchFieldException {
+    List<String> allowedRoles = Arrays.asList(permissionCollection.getDefaultRoles(permission));
+    
+    if (roleIsAllowed(getRole(), allowedRoles)) {
+      response.then().assertThat().statusCode(200);
+    } else {
+      response.then().assertThat().statusCode(403);
+    }
+  }
+  
   protected String getRole() {
     return role;
   }
