@@ -96,8 +96,6 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     for (String str : allowedRoles) {
       if (str.trim().contains(role)) {
         return true;
-      } else {
-        return false;
       }
     }
     return false;
