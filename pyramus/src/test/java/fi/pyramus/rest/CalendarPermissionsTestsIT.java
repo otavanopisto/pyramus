@@ -20,7 +20,7 @@ import fi.pyramus.rest.controller.permissions.CalendarPermissions;
 import fi.pyramus.rest.model.AcademicTerm;
 
 @RunWith(Parameterized.class)
-public class PermissionsTestsIT extends AbstractRESTPermissionsTest {
+public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
   /*
    * This method is called the the JUnit parameterized test runner and returns a
    * Collection of Arrays. For each Array in the Collection, each array element
@@ -40,7 +40,7 @@ public class PermissionsTestsIT extends AbstractRESTPermissionsTest {
     );
   }
 
-  public PermissionsTestsIT(String role) {
+  public CalendarPermissionsTestsIT(String role) {
     this.Role = role;
   }
   
