@@ -78,10 +78,8 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     assertOk("/calendar/academicTerms/1", allowedRolesList); 
   }
-  
+//  TODO: create term for update
   @Test
-  @SqlBefore ("sql/permissionsAcademicTermUpdate-before.sql")
-  @SqlAfter ("sql/permissionsAcademicTermUpdate-after.sql")
   public void testPermissionsUpdateAcademicTerm() throws NoSuchFieldException{
     String[] permissions = new CalendarPermissions().getDefaultRoles(fi.pyramus.rest.controller.permissions.CalendarPermissions.UPDATE_ACADEMICTERM);
     List<String> allowedRolesList = Arrays.asList(permissions);
@@ -98,32 +96,46 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
   }
 
   @Test
-  @SqlBefore ("sql/permissionsAcademicTermDelete-before.sql")
-  @SqlAfter ("sql/permissionsAcademicTermDelete-after.sql")
   public void testPermissionsDeleteAcademicTerm() throws NoSuchFieldException{
     String[] permissions = new CalendarPermissions().getDefaultRoles(fi.pyramus.rest.controller.permissions.CalendarPermissions.DELETE_ACADEMICTERM);
     List<String> allowedRolesList = Arrays.asList(permissions);
     
+    AcademicTerm academicTerm = new AcademicTerm(null, "to be deleted", getDate(2010, 02, 03), getDate(2010, 06, 12), Boolean.FALSE);
+
+    Response response = given().headers(getAdminAuthHeaders()).contentType("application/json").body(academicTerm)
+        .post("/calendar/academicTerms");
+
+    Long id = new Long(response.body().jsonPath().getInt("id"));
+    assertNotNull(id);
+
+    given().headers(getAdminAuthHeaders()).get("/calendar/academicTerms/{ID}", id).then().statusCode(200);
+    
     if(roleIsAllowed(getRole(), allowedRolesList)){
-      given().headers(getAuthHeaders()).delete("/calendar/academicTerms/{ID}", 3).then().statusCode(204);
+      given().headers(getAuthHeaders()).delete("/calendar/academicTerms/{ID}", id).then().statusCode(204);
     }else{
-      given().headers(getAuthHeaders()).delete("/calendar/academicTerms/{ID}", 3).then().statusCode(403);
+      given().headers(getAuthHeaders()).delete("/calendar/academicTerms/{ID}", id).then().statusCode(403);
     }
   }
   
-//  @Test
-//  public void testCoursesByTerm() {
-//    AcademicTerm academicTerm = new AcademicTerm(null, "2010 spring", getDate(2010, 01, 01), getDate(2010, 06, 1), Boolean.FALSE);
-//
-//    Response response = given().headers(getAuthHeaders()).contentType("application/json").body(academicTerm)
-//        .post("/calendar/academicTerms");
-//
-//    Long id = new Long(response.body().jsonPath().getInt("id"));
-//    assertNotNull(id);
-//
-//    given().headers(getAuthHeaders()).get("/calendar/academicTerms/{ID}/courses", id).then().statusCode(200)
-//        .body("id.size()", is(1)).body("id[0]", is(1000));
-//
-//    given().headers(getAuthHeaders()).delete("/calendar/academicTerms/{ID}?permanent=true", id).then().statusCode(204);
-//  }
+  @Test
+  public void testPermissionsCoursesByTerm() throws NoSuchFieldException {
+    String[] permissions = new CalendarPermissions().getDefaultRoles(fi.pyramus.rest.controller.permissions.CalendarPermissions.FIND_COURSESBYACADEMICTERM);
+    List<String> allowedRolesList = Arrays.asList(permissions);
+    
+    AcademicTerm academicTerm = new AcademicTerm(null, "2010 spring", getDate(2010, 01, 01), getDate(2010, 06, 1), Boolean.FALSE);
+
+    Response response = given().headers(getAdminAuthHeaders()).contentType("application/json").body(academicTerm)
+        .post("/calendar/academicTerms");
+
+    Long id = new Long(response.body().jsonPath().getInt("id"));
+    assertNotNull(id);
+
+    if(roleIsAllowed(getRole(), allowedRolesList)){
+      given().headers(getAuthHeaders()).get("/calendar/academicTerms/{ID}/courses", id).then().statusCode(200);
+    }else{
+      given().headers(getAuthHeaders()).get("/calendar/academicTerms/{ID}/courses", id).then().statusCode(403);
+    }
+    
+    given().headers(getAdminAuthHeaders()).delete("/calendar/academicTerms/{ID}?permanent=true", id).then().statusCode(204);
+  }
 }
