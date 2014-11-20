@@ -3,14 +3,11 @@ package fi.pyramus.rest.session;
 import java.util.Locale;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
 
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -25,16 +22,12 @@ import fi.pyramus.rest.controller.OauthController;
 import fi.pyramus.security.impl.AbstractSessionControllerImpl;
 import fi.pyramus.security.impl.SessionController;
 
-@Stateful
-@RequestScoped
 @RestSession
+@RequestScoped
 public class RestSessionControllerImpl extends AbstractSessionControllerImpl implements SessionController {
   
-  @Context
+  @Inject
   private HttpServletRequest request;
-
-  @Context
-  private HttpServletResponse response;
 
   @Inject
   private OauthController oauthController;
@@ -115,8 +108,13 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
     return hasPermission(permission, null);
   }
   
-  private Locale locale;
+  @Override
+  public boolean isLoggedIn() {
+    return getUser() != null;
+  }
   
+  private Locale locale;
+
   
 //  @Inject
 //  private CourseEntityDAO courseDAO;

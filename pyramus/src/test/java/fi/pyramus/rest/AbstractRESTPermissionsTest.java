@@ -22,7 +22,6 @@ import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory;
 import com.jayway.restassured.response.Response;
 
 import fi.pyramus.AbstractIntegrationTest;
-import fi.pyramus.rest.controller.permissions.LanguagePermissions;
 import fi.pyramus.security.impl.PyramusPermissionCollection;
 
 public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest {
@@ -111,6 +110,29 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     } else {
       response.then().assertThat().statusCode(403);
     }
+  }
+  
+  public static List<Object[]> getGeneratedRoleData() {
+    // The parameter generator returns a List of
+    // arrays. Each array has two elements: { role }.
+    
+//    List<Object[]> data = new ArrayList<Object[]>();
+//    
+//    for (Role role : Role.values()) {
+//      data.add(new Object[] { 
+//        role.name() 
+//      });
+//    }
+//    
+//    return data;
+    return Arrays.asList(new Object[][] {
+        { "GUEST"},
+        { "USER"},
+        { "STUDENT"},
+        { "MANAGER"},
+        { "ADMINISTRATOR"}
+      }
+    );
   }
   
   protected String getRole() {

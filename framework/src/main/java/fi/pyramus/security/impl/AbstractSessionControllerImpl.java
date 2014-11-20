@@ -12,9 +12,6 @@ import javax.inject.Inject;
 
 import fi.muikku.security.ContextReference;
 import fi.muikku.security.PermissionResolver;
-import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.StaffMemberDAO;
-import fi.pyramus.domainmodel.users.User;
 
 @Stateful
 @SessionScoped
@@ -25,10 +22,10 @@ public abstract class AbstractSessionControllerImpl implements SessionController
 //  	this.loggedUserId = userId;
 //  }
 
-  @Override
-  public void logout() {
-    loggedUserId = null;
-  }
+//  @Override
+//  public void logout() {
+//    loggedUserId = null;
+//  }
 
   @Override
   public Locale getLocale() {
@@ -43,13 +40,13 @@ public abstract class AbstractSessionControllerImpl implements SessionController
     this.locale = locale;
   }
 
-  public boolean isLoggedIn() {
-    return loggedUserId != null;
-  }
+//  public boolean isLoggedIn() {
+//    return loggedUserId != null;
+//  }
 
   @PostConstruct
   private void init() {
-    loggedUserId = null;
+//    loggedUserId = null;
   }
 
   @Override
@@ -78,17 +75,17 @@ public abstract class AbstractSessionControllerImpl implements SessionController
   
   private Locale locale;
 
-  private Long loggedUserId;
+//  private Long loggedUserId;
 
-  @Override
-  public User getUser() {
-    if (isLoggedIn()) {
-      StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
-      
-      return userDAO.findById(loggedUserId);
-    } else
-      return null;
-  }
+//  @Override
+//  public User getUser() {
+//    if (isLoggedIn()) {
+//      StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
+//      
+//      return userDAO.findById(loggedUserId);
+//    } else
+//      return null;
+//  }
 
   @Override
   public boolean isSuperuser() {

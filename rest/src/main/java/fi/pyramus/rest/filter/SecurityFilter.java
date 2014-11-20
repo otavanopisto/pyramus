@@ -56,6 +56,7 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
     if (method == null){
       requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build());
     }
+    
     if (!method.isAnnotationPresent(Unsecure.class)) {
       try {
         OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);

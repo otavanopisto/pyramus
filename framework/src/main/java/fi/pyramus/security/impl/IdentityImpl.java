@@ -1,6 +1,5 @@
 package fi.pyramus.security.impl;
 
-import javax.ejb.Stateful;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -8,7 +7,6 @@ import fi.muikku.security.ContextReference;
 import fi.muikku.security.Identity;
 
 @ApplicationScoped
-@Stateful
 public class IdentityImpl implements Identity {
 
   @Inject
