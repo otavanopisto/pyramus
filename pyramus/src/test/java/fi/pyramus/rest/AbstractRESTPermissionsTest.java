@@ -62,11 +62,29 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     }
     Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
         .post("/oauth/token");
-
     String accessToken = response.body().jsonPath().getString("access_token");
     setAccessToken(accessToken);
   }
 
+  @Before
+  public void createAdminAccessToken() {
+
+    OAuthClientRequest tokenRequest = null;
+    try {
+      tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
+          .setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(fi.pyramus.Common.CLIENT_ID)
+          .setClientSecret(fi.pyramus.Common.CLIENT_SECRET).setRedirectURI(fi.pyramus.Common.REDIRECT_URL)
+          .setCode(fi.pyramus.Common.ROLEAUTHS.get("ADMINISTRATOR")).buildBodyMessage();
+    } catch (OAuthSystemException e) {
+      e.printStackTrace();
+    }
+    Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
+        .post("/oauth/token");
+
+    String adminAccessToken = response.body().jsonPath().getString("access_token");
+    setAdminAccessToken(adminAccessToken);
+  }
+  
   public String getAccessToken() {
     return accessToken;
   }
@@ -74,12 +92,30 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   public void setAccessToken(String accessToken) {
     this.accessToken = accessToken;
   }
+  
+  public String getAdminAccessToken() {
+    return adminAccessToken;
+  }
+
+  public void setAdminAccessToken(String adminAccesToken) {
+    this.adminAccessToken = adminAccesToken;
+  }
 
   public Map<String, String> getAuthHeaders() {
     OAuthClientRequest bearerClientRequest = null;
     try {
       bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi")
           .setAccessToken(this.getAccessToken()).buildHeaderMessage();
+    } catch (OAuthSystemException e) {
+    }
+    return bearerClientRequest.getHeaders();
+  }
+  
+  public Map<String, String> getAdminAuthHeaders() {
+    OAuthClientRequest bearerClientRequest = null;
+    try {
+      bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi")
+          .setAccessToken(this.getAdminAccessToken()).buildHeaderMessage();
     } catch (OAuthSystemException e) {
     }
     return bearerClientRequest.getHeaders();
@@ -145,5 +181,5 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 
   protected String role;
   private String accessToken;
-
+  private String adminAccessToken;
 }
