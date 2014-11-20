@@ -139,10 +139,14 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   }
 
   public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission) throws NoSuchFieldException {
+    assertOk(response, permissionCollection, permission, 200);
+  }
+  
+  public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission, int successStatusCode) throws NoSuchFieldException {
     List<String> allowedRoles = Arrays.asList(permissionCollection.getDefaultRoles(permission));
     
     if (roleIsAllowed(getRole(), allowedRoles)) {
-      response.then().assertThat().statusCode(200);
+      response.then().assertThat().statusCode(successStatusCode);
     } else {
       response.then().assertThat().statusCode(403);
     }
