@@ -78,20 +78,36 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     assertOk("/calendar/academicTerms/1", allowedRolesList); 
   }
-//  TODO: create term for update
+  
   @Test
   public void testPermissionsUpdateAcademicTerm() throws NoSuchFieldException{
     String[] permissions = new CalendarPermissions().getDefaultRoles(fi.pyramus.rest.controller.permissions.CalendarPermissions.UPDATE_ACADEMICTERM);
     List<String> allowedRolesList = Arrays.asList(permissions);
-    Long id = (long) 3;
-    AcademicTerm updateAcademicTerm = new AcademicTerm(id, "updated", getDate(2010, 03, 04), getDate(2010, 07, 13), Boolean.FALSE);
- 
-    if(roleIsAllowed(getRole(), allowedRolesList)){
-      given().headers(getAuthHeaders()).contentType("application/json").body(updateAcademicTerm)
-      .put("/calendar/academicTerms/{ID}", id).then().assertThat().statusCode(200);
-    }else{
-      given().headers(getAuthHeaders()).contentType("application/json").body(updateAcademicTerm)
-      .put("/calendar/academicTerms/{ID}", id).then().assertThat().statusCode(403);
+    
+    AcademicTerm academicTerm = new AcademicTerm(null, "not updated", getDate(2010, 02, 03), getDate(2010, 06, 12), Boolean.FALSE);
+
+    Response response = given().headers(getAdminAuthHeaders()).contentType("application/json").body(academicTerm)
+        .post("/calendar/academicTerms");
+
+    Long id = new Long(response.body().jsonPath().getInt("id"));
+    assertNotNull(id);
+
+    try {
+      response.then().body("id", not(is((Long) null))).body("name", is(academicTerm.getName())).body("startDate", is(academicTerm.getStartDate().toString()))
+          .body("endDate", is(academicTerm.getEndDate().toString())).body("archived", is(academicTerm.getArchived()));
+
+      AcademicTerm updateAcademicTerm = new AcademicTerm(id, "updated", getDate(2010, 03, 04), getDate(2010, 07, 13), Boolean.FALSE);
+      
+      if(roleIsAllowed(getRole(), allowedRolesList)){
+        given().headers(getAuthHeaders()).contentType("application/json").body(updateAcademicTerm)
+        .put("/calendar/academicTerms/{ID}", id).then().assertThat().statusCode(200);
+      }else{
+        given().headers(getAuthHeaders()).contentType("application/json").body(updateAcademicTerm)
+        .put("/calendar/academicTerms/{ID}", id).then().assertThat().statusCode(403);
+      }
+
+    } finally {
+      given().headers(getAuthHeaders()).delete("/calendar/academicTerms/{ID}?permanent=true", id).then().statusCode(204);
     }
   }
 
