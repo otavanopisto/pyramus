@@ -37,7 +37,7 @@ public class NationalityTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
-  public void listLangauegs() {
+  public void testListNationalities() {
     given().headers(getAuthHeaders())
       .get("/students/nationalities")
       .then()

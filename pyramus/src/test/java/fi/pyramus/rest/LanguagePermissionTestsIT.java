@@ -89,9 +89,7 @@ public class LanguagePermissionTestsIT extends AbstractRESTPermissionsTest {
       assertOk(response, languagePermissions, LanguagePermissions.UPDATE_LANGUAGE);
     } finally {
       given().headers(getAdminAuthHeaders())
-        .delete("/students/languages/{ID}?permanent=true", id)
-        .then()
-        .statusCode(204);
+        .delete("/students/languages/{ID}?permanent=true", id);
     }
   }
   
