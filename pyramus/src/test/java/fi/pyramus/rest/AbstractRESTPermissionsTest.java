@@ -26,10 +26,6 @@ import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.security.impl.PyramusPermissionCollection;
 
 public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest {
-
-  public AbstractRESTPermissionsTest(String role){
-    this.role = role;
-  }
   
   @Before
   public void setupRestAssured() {
