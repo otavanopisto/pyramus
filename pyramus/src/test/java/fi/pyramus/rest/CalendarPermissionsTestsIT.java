@@ -30,24 +30,15 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
    */
   @Parameters
   public static List<Object[]> generateData() {
-    // The parameter generator returns a List of
-    // arrays. Each array has two elements: { role }.
-    return Arrays.asList(new Object[][] {
-        { "GUEST"},
-        { "USER"},
-        { "STUDENT"},
-        { "MANAGER"},
-        { "ADMINISTRATOR"}
-      }
-    );
+    return getGeneratedRoleData();
   }
 
   public CalendarPermissionsTestsIT(String role) {
-    this.role = role;
+    super(role);
   }
   
   @Test
-  public void testPermissionCreateAcademicTerm() throws NoSuchFieldException {
+  public void testPermissionsCreateAcademicTerm() throws NoSuchFieldException {
     DateTime start = getDate(2010, 02, 03);
     DateTime end = getDate(2010, 06, 12);
     
@@ -80,6 +71,8 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
   }
   
   @Test
+//  @SqlBefore("sql/permissionsAcademicTermUpdate-before.sql")
+//  @SqlAfter("sql/permissionsAcademicTermUpdate-after.sql")
   public void testPermissionsUpdateAcademicTerm() throws NoSuchFieldException{
     String[] permissions = new CalendarPermissions().getDefaultRoles(fi.pyramus.rest.controller.permissions.CalendarPermissions.UPDATE_ACADEMICTERM);
     List<String> allowedRolesList = Arrays.asList(permissions);
@@ -107,7 +100,7 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
       }
 
     } finally {
-      given().headers(getAuthHeaders()).delete("/calendar/academicTerms/{ID}?permanent=true", id).then().statusCode(204);
+      given().headers(getAdminAuthHeaders()).delete("/calendar/academicTerms/{ID}?permanent=true", id).then().statusCode(204);
     }
   }
 
