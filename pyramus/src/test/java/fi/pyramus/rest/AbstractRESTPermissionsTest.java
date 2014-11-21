@@ -26,6 +26,10 @@ import fi.pyramus.security.impl.PyramusPermissionCollection;
 
 public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest {
 
+  public AbstractRESTPermissionsTest(String role){
+    this.role = role;
+  }
+  
   @Before
   public void setupRestAssured() {
 
@@ -56,7 +60,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
       tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
           .setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(fi.pyramus.Common.CLIENT_ID)
           .setClientSecret(fi.pyramus.Common.CLIENT_SECRET).setRedirectURI(fi.pyramus.Common.REDIRECT_URL)
-          .setCode(fi.pyramus.Common.ROLEAUTHS.get(role)).buildBodyMessage();
+          .setCode(fi.pyramus.Common.ROLEAUTHS.get(getRole())).buildBodyMessage();
     } catch (OAuthSystemException e) {
       e.printStackTrace();
     }
@@ -65,7 +69,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     String accessToken = response.body().jsonPath().getString("access_token");
     setAccessToken(accessToken);
   }
-
+  
   @Before
   public void createAdminAccessToken() {
 
@@ -100,7 +104,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   public void setAdminAccessToken(String adminAccesToken) {
     this.adminAccessToken = adminAccesToken;
   }
-
+  
   public Map<String, String> getAuthHeaders() {
     OAuthClientRequest bearerClientRequest = null;
     try {
