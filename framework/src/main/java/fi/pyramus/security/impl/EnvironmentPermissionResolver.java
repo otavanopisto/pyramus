@@ -32,22 +32,24 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
 
   @Override
   public boolean hasPermission(String permission, ContextReference contextReference, User user) {
-    System.out.println("Checking permission " + permission + " for: " + user);
-
     Permission perm = permissionDAO.findByName(permission);
     fi.pyramus.domainmodel.users.User userEntity = getUser(user);
+    
+    boolean allowed = environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(userEntity.getRole(), perm);
+    System.out.println("Checking permission " + permission + " for: userId=" + userEntity.getId() + " role=" + userEntity.getRole() + " p=" + allowed);
 
-    return environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(userEntity.getRole(), perm);
+    return allowed;
   }
 
   @Override
   public boolean hasEveryonePermission(String permission, ContextReference contextReference) {
-    System.out.println("Checking permission " + permission + " for: everyone");
-
     Role everyoneRole = getEveryoneRole();
     Permission perm = permissionDAO.findByName(permission);
     
-    return environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(everyoneRole, perm);
+    boolean allowed = environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(everyoneRole, perm);
+    System.out.println("Checking permission " + permission + " for: everyone p=" + allowed);
+    
+    return allowed;
   }
 
 }
