@@ -34,7 +34,7 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
   }
 
   public CalendarPermissionsTestsIT(String role) {
-    super(role);
+    this.role = role;
   }
   
   @Test
@@ -71,8 +71,6 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
   }
   
   @Test
-//  @SqlBefore("sql/permissionsAcademicTermUpdate-before.sql")
-//  @SqlAfter("sql/permissionsAcademicTermUpdate-after.sql")
   public void testPermissionsUpdateAcademicTerm() throws NoSuchFieldException{
     String[] permissions = new CalendarPermissions().getDefaultRoles(fi.pyramus.rest.controller.permissions.CalendarPermissions.UPDATE_ACADEMICTERM);
     List<String> allowedRolesList = Arrays.asList(permissions);
