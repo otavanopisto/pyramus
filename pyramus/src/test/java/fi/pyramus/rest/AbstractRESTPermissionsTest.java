@@ -22,6 +22,7 @@ import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory;
 import com.jayway.restassured.response.Response;
 
 import fi.pyramus.AbstractIntegrationTest;
+import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.security.impl.PyramusPermissionCollection;
 
 public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest {
@@ -165,12 +166,13 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 //    }
 //    
 //    return data;
+    
     return Arrays.asList(new Object[][] {
-        { "GUEST"},
-        { "USER"},
-        { "STUDENT"},
-        { "MANAGER"},
-        { "ADMINISTRATOR"}
+        { Role.GUEST.name() },
+        { Role.USER.name() },
+        { Role.STUDENT.name() },
+        { Role.MANAGER.name() },
+        { Role.ADMINISTRATOR.name() }
       }
     );
   }
