@@ -84,6 +84,11 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
       if (clientApplicationAccessToken != null) {
         Long currentTime = System.currentTimeMillis() / 1000L;
         if (currentTime <= clientApplicationAccessToken.getExpires()) {
+//          System.out.println("RESTSession.getUser: " +
+//              " UserId=" + clientApplicationAccessToken.getClientApplicationAuthorizationCode().getUser().getId().toString() +
+//              " role=" + clientApplicationAccessToken.getClientApplicationAuthorizationCode().getUser().getRole().toString() +
+//              " accessToken=" + accessToken);
+
           return clientApplicationAccessToken.getClientApplicationAuthorizationCode().getUser();
         }
       }
@@ -94,6 +99,7 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
       throw new RuntimeException(e);
     }
 
+//    System.out.println("RESTSession.getUser NULL");
     return null;
   }
   
