@@ -122,6 +122,15 @@ public class SubjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
       .delete("/common/subjects/{ID}", id);
     
     assertOk(deleteResponse, commonPermissions, CommonPermissions.DELETE_SUBJECT, 204);
+    
+    Long statusCode = new Long(deleteResponse.statusCode());
+    if(statusCode.equals(204)){
+      id = new Long(response.body().jsonPath().getInt("id"));
+      if (!id.equals(null)) {
+        given().headers(getAuthHeaders())
+        .delete("/common/subjects/{ID}?permanent=true", id);
+      }
+    }
   }
 //  TODO: testPermissionsListCoursesBySubject ?
 }

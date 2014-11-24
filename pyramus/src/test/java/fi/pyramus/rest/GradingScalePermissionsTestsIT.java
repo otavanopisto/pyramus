@@ -15,6 +15,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.jayway.restassured.response.Response;
 
 import fi.pyramus.rest.controller.permissions.CommonPermissions;
+import fi.pyramus.rest.controller.permissions.LanguagePermissions;
 import fi.pyramus.rest.model.GradingScale;
 
 @RunWith(Parameterized.class)
@@ -36,20 +37,19 @@ public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTest 
     GradingScale gradingScale = new GradingScale(null, "create scale", "grading scale for testing creation", Boolean.FALSE);
     Long id = null;
     Response response = null;
-    try {
-      response = given().headers(getAuthHeaders())
-          .contentType("application/json").body(gradingScale)
-          .post("/common/gradingScales");
 
-      assertOk(response, commonPermissions,
-          CommonPermissions.CREATE_GRADINGSCALE, 200);
-    } finally {
-      if (!response.body().equals(null)) {
-        id = new Long(response.body().jsonPath().getInt("id"));
-        if (!id.equals(null)) {
-          given().headers(getAdminAuthHeaders())
-              .delete("/common/gradingScales/{ID}?permanent=true", id);
-        }
+    response = given().headers(getAuthHeaders())
+        .contentType("application/json").body(gradingScale)
+        .post("/common/gradingScales");
+
+    assertOk(response, commonPermissions, CommonPermissions.CREATE_GRADINGSCALE, 200);
+
+    Long statusCode = new Long(response.statusCode());
+    if (statusCode.equals(200)) {
+      id = new Long(response.body().jsonPath().getInt("id"));
+      if (!id.equals(null)) {
+        given().headers(getAdminAuthHeaders()).delete(
+            "/common/gradingScales/{ID}?permanent=true", id);
       }
     }
   }
@@ -106,27 +106,24 @@ public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTest 
 
   @Test
   public void testPermissionsDeleteGradingScale() throws NoSuchFieldException {
-    GradingScale gradingScale = new GradingScale(null, "to be deleted",
-        "grading scale to be deleted", Boolean.FALSE);
+    GradingScale gradingScale = new GradingScale(null, "to be deleted", "grading scale to be deleted", Boolean.FALSE);
 
     Response response = given().headers(getAdminAuthHeaders())
-        .contentType("application/json").body(gradingScale)
-        .post("/common/gradingScales");
+      .contentType("application/json").body(gradingScale)
+      .post("/common/gradingScales");
 
     Long id = new Long(response.body().jsonPath().getInt("id"));
-    assertNotNull(id);
 
     given().headers(getAuthHeaders()).get("/common/gradingScales/{ID}", id)
         .then().statusCode(200);
 
     try {
-      Response deleteResponse = given().headers(getAuthHeaders()).delete(
-          "/common/gradingScales/{ID}", id);
-      assertOk(deleteResponse, commonPermissions,
-          CommonPermissions.DELETE_GRADINGSCALE, 204);
+      Response deleteResponse = given().headers(getAuthHeaders())
+          .delete("/common/gradingScales/{ID}", id);
+      assertOk(deleteResponse, commonPermissions, CommonPermissions.DELETE_GRADINGSCALE, 204);
     } finally {
       given().headers(getAdminAuthHeaders()).delete(
           "/common/gradingScales/{ID}?permanent=true", id);
-    }
+    }  
   }
 }
