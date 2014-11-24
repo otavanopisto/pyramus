@@ -44,10 +44,12 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
 
     assertOk(response, studyProgrammePermissions, StudyProgrammePermissions.CREATE_STUDYPROGRAMME);
     
-//    int id = response.body().jsonPath().getInt("id");
-//    
-//    given().headers(getAdminAuthHeaders())
-//      .delete("/students/studyProgrammes/{ID}?permanent=true", id);
+    if (response.getStatusCode() == 200) {
+      int id = response.body().jsonPath().getInt("id");
+      
+      given().headers(getAdminAuthHeaders())
+        .delete("/students/studyProgrammes/{ID}?permanent=true", id);
+    }
   }
   
   @Test

@@ -44,12 +44,12 @@ public class LanguagePermissionTestsIT extends AbstractRESTPermissionsTest {
 
     assertOk(response, languagePermissions, LanguagePermissions.CREATE_LANGUAGE);
       
-//    int id = response.body().jsonPath().getInt("id");
-//    
-//    given().headers(getAuthHeaders())
-//      .delete("/students/languages/{ID}?permanent=true", id)
-//      .then()
-//      .statusCode(204);
+    if (response.getStatusCode() == 200) {
+      int id = response.body().jsonPath().getInt("id");
+      
+      given().headers(getAdminAuthHeaders())
+        .delete("/students/languages/{ID}?permanent=true", id);
+    }
   }
   
   @Test
@@ -108,5 +108,8 @@ public class LanguagePermissionTestsIT extends AbstractRESTPermissionsTest {
       .delete("/students/languages/{ID}", id);
 
     assertOk(response, languagePermissions, LanguagePermissions.DELETE_LANGUAGE, 204);
+
+    given().headers(getAdminAuthHeaders())
+      .delete("/students/languages/{ID}?permanent=true", id);
   }
 }

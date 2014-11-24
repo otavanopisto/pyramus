@@ -45,12 +45,12 @@ public class MunicipalityPermissionTestsIT extends AbstractRESTPermissionsTest {
 
     assertOk(response, municipalityPermissions, MunicipalityPermissions.CREATE_MUNICIPALITY);
       
-//    int id = response.body().jsonPath().getInt("id");
-//    
-//    given().headers(getAuthHeaders())
-//      .delete("/students/municipalities/{ID}?permanent=true", id)
-//      .then()
-//      .statusCode(204);
+    if (response.getStatusCode() == 200) {
+      int id = response.body().jsonPath().getInt("id");
+      
+      given().headers(getAdminAuthHeaders())
+        .delete("/students/municipalities/{ID}?permanent=true", id);
+    }
   }
   
   @Test
@@ -109,5 +109,8 @@ public class MunicipalityPermissionTestsIT extends AbstractRESTPermissionsTest {
       .delete("/students/municipalities/{ID}", id);
 
     assertOk(response, municipalityPermissions, MunicipalityPermissions.DELETE_MUNICIPALITY, 204);
+
+    given().headers(getAdminAuthHeaders())
+      .delete("/students/municipalities/{ID}?permanent=true", id);
   }
 }

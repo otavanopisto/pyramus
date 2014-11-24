@@ -44,12 +44,12 @@ public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTest {
 
     assertOk(response, nationalityPermissions, NationalityPermissions.CREATE_NATIONALITY);
       
-//    int id = response.body().jsonPath().getInt("id");
-//    
-//    given().headers(getAuthHeaders())
-//      .delete("/students/nationalities/{ID}?permanent=true", id)
-//      .then()
-//      .statusCode(204);
+    if (response.getStatusCode() == 200) {
+      int id = response.body().jsonPath().getInt("id");
+    
+      given().headers(getAdminAuthHeaders())
+        .delete("/students/nationalities/{ID}?permanent=true", id);
+    }
   }
   
   @Test
@@ -108,5 +108,8 @@ public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTest {
       .delete("/students/nationalities/{ID}", id);
 
     assertOk(response, nationalityPermissions, NationalityPermissions.DELETE_NATIONALITY, 204);
+
+    given().headers(getAdminAuthHeaders())
+      .delete("/students/nationalities/{ID}?permanent=true", id);
   }
 }

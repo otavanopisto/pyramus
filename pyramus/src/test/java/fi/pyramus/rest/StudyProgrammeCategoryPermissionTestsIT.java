@@ -44,10 +44,12 @@ public class StudyProgrammeCategoryPermissionTestsIT extends AbstractRESTPermiss
 
     assertOk(response, studyProgrammeCategoryPermissions, StudyProgrammeCategoryPermissions.CREATE_STUDYPROGRAMMECATEGORY);
     
-//    int id = response.body().jsonPath().getInt("id");
-//
-//    given().headers(getAdminAuthHeaders())
-//      .delete("/students/studyProgrammeCategories/{ID}?permanent=true", id);
+    if (response.getStatusCode() == 200) {
+      int id = response.body().jsonPath().getInt("id");
+  
+      given().headers(getAdminAuthHeaders())
+        .delete("/students/studyProgrammeCategories/{ID}?permanent=true", id);
+    }
   }
   
   @Test
