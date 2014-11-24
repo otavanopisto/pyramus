@@ -27,6 +27,7 @@ public class EducationTypePermissionsTestsIT extends AbstractRESTPermissionsTest
   public static List<Object[]> generateData() {
     return getGeneratedRoleData();
   }
+  
   public EducationTypePermissionsTestsIT(String role) {
     this.role = role;
   }
@@ -35,16 +36,21 @@ public class EducationTypePermissionsTestsIT extends AbstractRESTPermissionsTest
   public void testPermissionsCreateEducationType() throws NoSuchFieldException {
     EducationType educationType = new EducationType(null, "create type", "TST", Boolean.FALSE);
     
-    Response response = given().headers(getAdminAuthHeaders())
+    Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(educationType)
       .post("/common/educationTypes");
 
     assertOk(response, commonPermissions, CommonPermissions.CREATE_EDUCATIONTYPE, 200);
-      
-    int id = response.body().jsonPath().getInt("id");
-    given().headers(getAuthHeaders())
-      .delete("/common/educationTypes/{ID}?permanent=true", id);
+    Long statusCode = new Long(response.statusCode());
+    Long id = null;
+    if(statusCode.equals(200)){
+      id = new Long(response.body().jsonPath().getInt("id"));
+      if (!id.equals(null)) {
+        given().headers(getAdminAuthHeaders())
+          .delete("/common/educationTypes/{ID}?permanent=true", id);
+      }
+    }
   }
   
   @Test
@@ -97,39 +103,39 @@ public class EducationTypePermissionsTestsIT extends AbstractRESTPermissionsTest
     }
   }
 //  hmm dur?
-  @Test
-  public void testPermissionsEducationType() {
-    EducationType educationType = new EducationType(null, "create type", "TST", Boolean.FALSE);
-    
-    Response response = given().headers(getAuthHeaders())
-      .contentType("application/json")
-      .body(educationType)
-      .post("/common/educationTypes");
-    
-    Long id = new Long(response.body().jsonPath().getInt("id"));
-    assertNotNull(id);
-    
-    given().headers(getAuthHeaders()).get("/common/educationTypes/{ID}", id)
-      .then()
-      .statusCode(200);
-    
-    given().headers(getAuthHeaders())
-      .delete("/common/educationTypes/{ID}", id)
-      .then()
-      .statusCode(204);
-    
-    given().headers(getAuthHeaders()).get("/common/educationTypes/{ID}", id)
-      .then()
-      .statusCode(404);
-    
-    given().headers(getAuthHeaders())
-      .delete("/common/educationTypes/{ID}?permanent=true", id)
-      .then()
-      .statusCode(204);
-    
-    given().headers(getAuthHeaders()).get("/common/educationTypes/{ID}", id)
-      .then()
-      .statusCode(404);
-  }
+//  @Test
+//  public void testPermissionsEducationType() {
+//    EducationType educationType = new EducationType(null, "create type", "TST", Boolean.FALSE);
+//    
+//    Response response = given().headers(getAuthHeaders())
+//      .contentType("application/json")
+//      .body(educationType)
+//      .post("/common/educationTypes");
+//    
+//    Long id = new Long(response.body().jsonPath().getInt("id"));
+//    assertNotNull(id);
+//    
+//    given().headers(getAuthHeaders()).get("/common/educationTypes/{ID}", id)
+//      .then()
+//      .statusCode(200);
+//    
+//    given().headers(getAuthHeaders())
+//      .delete("/common/educationTypes/{ID}", id)
+//      .then()
+//      .statusCode(204);
+//    
+//    given().headers(getAuthHeaders()).get("/common/educationTypes/{ID}", id)
+//      .then()
+//      .statusCode(404);
+//    
+//    given().headers(getAuthHeaders())
+//      .delete("/common/educationTypes/{ID}?permanent=true", id)
+//      .then()
+//      .statusCode(204);
+//    
+//    given().headers(getAuthHeaders()).get("/common/educationTypes/{ID}", id)
+//      .then()
+//      .statusCode(404);
+//  }
   
 }
