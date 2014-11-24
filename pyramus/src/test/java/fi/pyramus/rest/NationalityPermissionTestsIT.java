@@ -57,7 +57,7 @@ public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTest {
     Response response = given().headers(getAuthHeaders())
       .get("/students/nationalities");
 
-    assertOk(response, nationalityPermissions, NationalityPermissions.CREATE_NATIONALITY);
+    assertOk(response, nationalityPermissions, NationalityPermissions.LIST_NATIONALITIES);
   }
   
   @Test
@@ -65,14 +65,14 @@ public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTest {
     Response response = given().headers(getAuthHeaders())
       .get("/students/nationalities/{ID}", 1);
 
-    assertOk(response, nationalityPermissions, NationalityPermissions.CREATE_NATIONALITY);
+    assertOk(response, nationalityPermissions, NationalityPermissions.FIND_NATIONALITY);
   }
   
   @Test
   public void testUpdateNationality() throws NoSuchFieldException {
     Nationality nationality = new Nationality(null, "Not Updated", "NOT", Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
       .body(nationality)
       .post("/students/nationalities");
@@ -88,7 +88,7 @@ public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTest {
 
       assertOk(response, nationalityPermissions, NationalityPermissions.UPDATE_NATIONALITY);
     } finally {
-      given().headers(getAuthHeaders())
+      given().headers(getAdminAuthHeaders())
         .delete("/students/nationalities/{ID}?permanent=true", id);
     }
   }
@@ -97,7 +97,7 @@ public class NationalityPermissionTestsIT extends AbstractRESTPermissionsTest {
   public void testDeleteNationality() throws NoSuchFieldException {
     Nationality nationality = new Nationality(null, "create type", "TST", Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
       .body(nationality)
       .post("/students/nationalities");
