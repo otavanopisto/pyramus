@@ -98,7 +98,7 @@ public class MunicipalityPermissionTestsIT extends AbstractRESTPermissionsTest {
   public void testDeleteMunicipality() throws NoSuchFieldException {
     Municipality municipality = new Municipality(null, "create type", "TST", Boolean.FALSE);
     
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
       .body(municipality)
       .post("/students/municipalities");

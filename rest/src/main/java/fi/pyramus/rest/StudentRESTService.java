@@ -801,7 +801,7 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/studyProgrammes")
   @POST
-  @RESTPermit (handle = Handle.EXCEPTION, value = StudyProgrammeCategoryPermissions.CREATE_STUDYPROGRAMMECATEGORY)
+  @RESTPermit (handle = Handle.EXCEPTION, value = StudyProgrammePermissions.CREATE_STUDYPROGRAMME)
   public Response createStudyProgramme(fi.pyramus.rest.model.StudyProgramme entity) {
     String name = entity.getName();
     String code = entity.getCode();
