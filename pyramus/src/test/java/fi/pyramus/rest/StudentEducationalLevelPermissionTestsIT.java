@@ -47,7 +47,7 @@ public class StudentEducationalLevelPermissionTestsIT extends AbstractRESTPermis
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
       
-      given().headers(getAuthHeaders())
+      given().headers(getAdminAuthHeaders())
         .delete("/students/educationalLevels/{ID}?permanent=true", id);
     }
   }
