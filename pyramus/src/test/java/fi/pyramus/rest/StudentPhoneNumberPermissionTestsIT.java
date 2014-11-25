@@ -1,0 +1,94 @@
+package fi.pyramus.rest;
+
+import static com.jayway.restassured.RestAssured.given;
+
+import java.util.List;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import com.jayway.restassured.response.Response;
+
+import fi.pyramus.rest.controller.permissions.StudentPermissions;
+import fi.pyramus.rest.model.PhoneNumber;
+
+@RunWith(Parameterized.class)
+public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissionsTest {
+
+  public StudentPhoneNumberPermissionTestsIT(String role) {
+    this.role = role;
+  }
+  
+  /*
+   * This method is called the the JUnit parameterized test runner and returns a
+   * Collection of Arrays. For each Array in the Collection, each array element
+   * corresponds to a parameter in the constructor.
+   */
+  @Parameters
+  public static List<Object[]> generateData() {
+    return getGeneratedRoleData();
+  }
+  
+  private StudentPermissions studentPermissions = new StudentPermissions();
+  
+  private final static long TEST_STUDENT_ID = 3l;
+
+  @Test
+  public void testCreateStudentPhoneNumber() throws NoSuchFieldException {
+    PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
+    
+    Response response = given().headers(getAuthHeaders())
+      .contentType("application/json")
+      .body(phoneNumber)
+      .post("/students/students/{ID}/phoneNumbers", TEST_STUDENT_ID);
+
+    assertOk(response, studentPermissions, StudentPermissions.CREATE_STUDENTPHONENUMBER);
+    
+    if (response.getStatusCode() == 200) {
+      int id = response.body().jsonPath().getInt("id");
+      
+      given().headers(getAdminAuthHeaders())
+        .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, id);
+    }
+  }
+  
+  @Test
+  public void testListStudentPhoneNumbers() throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders())
+      .get("/students/students/{ID}/phoneNumbers", TEST_STUDENT_ID);
+
+    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTPHONENUMBERS);
+  }
+  
+  @Test
+  public void testFindStudentPhoneNumber() throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders())
+      .get("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, 3l);
+    
+    assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTPHONENUMBER);
+  }  
+
+  @Test
+  public void testDeleteStudentPhoneNumber() throws NoSuchFieldException {
+    PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
+    
+    Response response = given().headers(getAdminAuthHeaders())
+      .contentType("application/json")
+      .body(phoneNumber)
+      .post("/students/students/{STUDENTID}/phoneNumbers", TEST_STUDENT_ID);
+
+    Long id = new Long(response.body().jsonPath().getInt("id"));
+    
+    response = given().headers(getAuthHeaders())
+      .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, id);
+    
+    assertOk(response, studentPermissions, StudentPermissions.DELETE_STUDENTPHONENUMBER, 204);
+
+    if (response.getStatusCode() != 204) {
+      given().headers(getAdminAuthHeaders())
+        .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, id);
+    }
+  }
+}
