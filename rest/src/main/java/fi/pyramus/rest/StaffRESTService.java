@@ -20,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.rest.annotation.RESTPermit;
-import fi.pyramus.rest.annotation.RESTPermit.Handle;
 import fi.pyramus.rest.controller.UserController;
 import fi.pyramus.rest.controller.permissions.UserPermissions;
 
@@ -39,7 +38,7 @@ public class StaffRESTService extends AbstractRESTService {
 
   @Path("/members")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = UserPermissions.LIST_STAFFMEMBERS)
+  @RESTPermit (UserPermissions.LIST_STAFFMEMBERS)
   public Response listUsers(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults, @QueryParam ("email") String email) {
     List<StaffMember> staffMembers = null;
     
@@ -58,7 +57,7 @@ public class StaffRESTService extends AbstractRESTService {
   
   @Path("/members/{ID:[0-9]*}")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = UserPermissions.FIND_STAFFMEMBER)
+  @RESTPermit (UserPermissions.FIND_STAFFMEMBER)
   public Response findUserById(@PathParam("ID") Long id) {
     StaffMember user = userController.findStaffMemberById(id);
     if (user == null) {
@@ -70,7 +69,7 @@ public class StaffRESTService extends AbstractRESTService {
 
   @Path("/members/{ID:[0-9]*}/emails")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = UserPermissions.LIST_STAFFMEMBER_EMAILS)
+  @RESTPermit (UserPermissions.LIST_STAFFMEMBER_EMAILS)
   public Response listUserEmails(@PathParam("ID") Long id) {
     StaffMember user = userController.findStaffMemberById(id);
     if (user == null) {
