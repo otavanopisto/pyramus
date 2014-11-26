@@ -115,5 +115,9 @@ public class EducationSubtypePermissionsTestsIT extends AbstractRESTPermissionsT
       .delete("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), id);
     
     assertOk(deleteResponse, commonPermissions, CommonPermissions.DELETE_EDUCATIONSUBTYPE, 204);
+    Long statusCode = new Long(deleteResponse.statusCode());
+    if(!statusCode.equals(204))
+      given().headers(getAdminAuthHeaders())
+      .delete("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), id);
   }
 }

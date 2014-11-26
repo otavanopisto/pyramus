@@ -105,7 +105,9 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
       .delete("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, id);
     assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSESTUDENT, 204);
 
-    given().headers(getAdminAuthHeaders())
-      .get("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, id);
+    Long statusCode = new Long(deleteResponse.statusCode());
+    if(!statusCode.equals(204))
+      given().headers(getAdminAuthHeaders())
+      .delete("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, id);
   }
 }

@@ -105,5 +105,11 @@ public class CourseEnrolmentTypePermissionsTestsIT extends AbstractRESTPermissio
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/courses/enrolmentTypes/{ID}", id);
     assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSEENROLMENTTYPE, 204);
+    
+    Long statusCode = new Long(deleteResponse.statusCode());
+    if(!statusCode.equals(204))
+      given().headers(getAdminAuthHeaders())
+      .delete("/courses/enrolmentTypes/{ID}", id);
+    
   }
 }

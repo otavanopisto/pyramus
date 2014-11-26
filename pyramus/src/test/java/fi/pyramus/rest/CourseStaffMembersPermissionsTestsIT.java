@@ -107,5 +107,10 @@ public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermission
     Response deleteResponse = given().headers(getAuthHeaders()).delete("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, id);
     
     assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSESTAFFMEMBER, 204);
+    
+    Long statusCode = new Long(deleteResponse.statusCode());
+    if(!statusCode.equals(204))
+      given().headers(getAdminAuthHeaders()).delete("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, id);
+    
   }
 }

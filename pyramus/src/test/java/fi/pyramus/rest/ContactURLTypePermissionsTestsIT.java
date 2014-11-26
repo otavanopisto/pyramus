@@ -107,8 +107,6 @@ public class ContactURLTypePermissionsTestsIT extends AbstractRESTPermissionsTes
     assertOk(deleteResponse, commonPermissions, CommonPermissions.DELETE_CONTACTURLTYPE, 204);
     
     given().headers(getAdminAuthHeaders())
-      .delete("/common/contactURLTypes/{ID}?permanent=true", id)
-      .then()
-      .statusCode(204);
+      .delete("/common/contactURLTypes/{ID}?permanent=true", id);
   }
 }

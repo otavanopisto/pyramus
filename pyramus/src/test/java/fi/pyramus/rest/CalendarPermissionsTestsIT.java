@@ -23,6 +23,9 @@ import fi.pyramus.rest.model.AcademicTerm;
 
 @RunWith(Parameterized.class)
 public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
+
+  private CalendarPermissions calendarPermissions = new CalendarPermissions();
+
   /*
    * This method is called the the JUnit parameterized test runner and returns a
    * Collection of Arrays. For each Array in the Collection, each array element
@@ -104,24 +107,19 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
 
   @Test
   public void testPermissionsDeleteAcademicTerm() throws NoSuchFieldException{
-    String[] permissions = new CalendarPermissions().getDefaultRoles(fi.pyramus.rest.controller.permissions.CalendarPermissions.DELETE_ACADEMICTERM);
-    List<String> allowedRolesList = Arrays.asList(permissions);
-    
     AcademicTerm academicTerm = new AcademicTerm(null, "to be deleted", getDate(2010, 02, 03), getDate(2010, 06, 12), Boolean.FALSE);
 
     Response response = given().headers(getAdminAuthHeaders()).contentType("application/json").body(academicTerm)
         .post("/calendar/academicTerms");
 
     Long id = new Long(response.body().jsonPath().getInt("id"));
-    assertNotNull(id);
-
-    given().headers(getAdminAuthHeaders()).get("/calendar/academicTerms/{ID}", id).then().statusCode(200);
     
-    if(roleIsAllowed(getRole(), allowedRolesList)){
-      given().headers(getAuthHeaders()).delete("/calendar/academicTerms/{ID}", id).then().statusCode(204);
-    }else{
-      given().headers(getAuthHeaders()).delete("/calendar/academicTerms/{ID}", id).then().statusCode(403);
-    }
+    Response deleteResponse = given().headers(getAuthHeaders()).delete("/calendar/academicTerms/{ID}", id);    
+    assertOk(deleteResponse, calendarPermissions, CalendarPermissions.DELETE_ACADEMICTERM, 204);
+    
+    Long statusCode = new Long(deleteResponse.statusCode());
+    if(!statusCode.equals(204))
+      given().headers(getAdminAuthHeaders()).delete("/calendar/academicTerms/{ID}", id);
   }
   
   @Test
