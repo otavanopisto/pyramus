@@ -32,7 +32,6 @@ import fi.pyramus.domainmodel.base.SchoolField;
 import fi.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.rest.annotation.RESTPermit;
-import fi.pyramus.rest.annotation.RESTPermit.Handle;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.permissions.SchoolPermissions;
@@ -55,7 +54,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools")
   @POST
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.CREATE_SCHOOL)
+  @RESTPermit (SchoolPermissions.CREATE_SCHOOL)
   public Response createSchool(fi.pyramus.rest.model.School entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -101,7 +100,7 @@ public class SchoolRESTService extends AbstractRESTService {
 
   @Path("/schools")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.LIST_SCHOOLS)
+  @RESTPermit (SchoolPermissions.LIST_SCHOOLS)
   public Response listSchools(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<School> schools;
     
@@ -120,7 +119,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{ID:[0-9]*}")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.FIND_SCHOOL)
+  @RESTPermit (SchoolPermissions.FIND_SCHOOL)
   public Response findSchool(@PathParam("ID") Long id) {
     School school = schoolController.findSchoolById(id);
     if (school == null) {
@@ -136,7 +135,7 @@ public class SchoolRESTService extends AbstractRESTService {
 
   @Path("/schools/{ID:[0-9]*}")
   @PUT
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.UPDATE_SCHOOL)
+  @RESTPermit (SchoolPermissions.UPDATE_SCHOOL)
   public Response updateSchool(@PathParam("ID") Long id, fi.pyramus.rest.model.School entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -177,7 +176,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{ID:[0-9]*}")
   @DELETE
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.DELETE_SCHOOL)
+  @RESTPermit (SchoolPermissions.DELETE_SCHOOL)
   public Response deleteSchool(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     School school = schoolController.findSchoolById(id);
     if (school == null) {
@@ -195,7 +194,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/emails")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.LIST_SCHOOLEMAILS)
+  @RESTPermit (SchoolPermissions.LIST_SCHOOLEMAILS)
   public Response listSchoolEmails(@PathParam("SCHOOLID") Long schoolId) {
     School school = schoolController.findSchoolById(schoolId);
     if (school == null) {
@@ -216,7 +215,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/emails")
   @POST
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.CREATE_SCHOOLEMAIL)
+  @RESTPermit (SchoolPermissions.CREATE_SCHOOLEMAIL)
   public Response createSchoolEmail(@PathParam("SCHOOLID") Long schoolId, fi.pyramus.rest.model.Email email) {
     if (email == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -249,7 +248,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/emails/{ID:[0-9]*}")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.FIND_SCHOOLEMAIL)
+  @RESTPermit (SchoolPermissions.FIND_SCHOOLEMAIL)
   public Response findSchoolEmail(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
     School school = schoolController.findSchoolById(schoolId);
     if (school == null) {
@@ -274,7 +273,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/emails/{ID:[0-9]*}")
   @DELETE
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.DELETE_SCHOOLEMAIL)
+  @RESTPermit (SchoolPermissions.DELETE_SCHOOLEMAIL)
   public Response deleteSchoolEmail(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
     School school = schoolController.findSchoolById(schoolId);
     if (school == null) {
@@ -301,7 +300,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/addresses")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.LIST_SCHOOLADDRESSS)
+  @RESTPermit (SchoolPermissions.LIST_SCHOOLADDRESSS)
   public Response listSchoolAddresses(@PathParam("SCHOOLID") Long schoolId) {
     School school = schoolController.findSchoolById(schoolId);
     if (school == null) {
@@ -322,7 +321,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/addresses")
   @POST
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.CREATE_SCHOOLADDRESS)
+  @RESTPermit (SchoolPermissions.CREATE_SCHOOLADDRESS)
   public Response createSchoolAddress(@PathParam("SCHOOLID") Long schoolId, fi.pyramus.rest.model.Address address) {
     if (address == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -359,7 +358,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/addresses/{ID:[0-9]*}")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.FIND_SCHOOLADDRESS)
+  @RESTPermit (SchoolPermissions.FIND_SCHOOLADDRESS)
   public Response findSchoolAddress(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
     School school = schoolController.findSchoolById(schoolId);
     if (school == null) {
@@ -384,7 +383,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/addresses/{ID:[0-9]*}")
   @DELETE
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.DELETE_SCHOOLADDRESS)
+  @RESTPermit (SchoolPermissions.DELETE_SCHOOLADDRESS)
   public Response deleteSchoolAddress(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
     School school = schoolController.findSchoolById(schoolId);
     if (school == null) {
@@ -411,7 +410,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/phoneNumbers")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.LIST_SCHOOLPHONENUMBERS)
+  @RESTPermit (SchoolPermissions.LIST_SCHOOLPHONENUMBERS)
   public Response listSchoolPhoneNumbers(@PathParam("SCHOOLID") Long schoolId) {
     School school = schoolController.findSchoolById(schoolId);
     if (school == null) {
@@ -432,7 +431,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/phoneNumbers")
   @POST
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.CREATE_SCHOOLPHONENUMBER)
+  @RESTPermit (SchoolPermissions.CREATE_SCHOOLPHONENUMBER)
   public Response createSchoolPhoneNumber(@PathParam("SCHOOLID") Long schoolId, fi.pyramus.rest.model.PhoneNumber phoneNumber) {
     if (phoneNumber == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -465,7 +464,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/phoneNumbers/{ID:[0-9]*}")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.FIND_SCHOOLPHONENUMBER)
+  @RESTPermit (SchoolPermissions.FIND_SCHOOLPHONENUMBER)
   public Response findSchoolPhoneNumber(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
     School school = schoolController.findSchoolById(schoolId);
     if (school == null) {
@@ -490,7 +489,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/phoneNumbers/{ID:[0-9]*}")
   @DELETE
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.DELETE_SCHOOLPHONENUMBER)
+  @RESTPermit (SchoolPermissions.DELETE_SCHOOLPHONENUMBER)
   public Response deleteSchoolPhoneNumber(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
     School school = schoolController.findSchoolById(schoolId);
     if (school == null) {
@@ -517,7 +516,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/contactURLs")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.LIST_SCHOOLCONTACTURLS)
+  @RESTPermit (SchoolPermissions.LIST_SCHOOLCONTACTURLS)
   public Response listSchoolContactURLs(@PathParam("SCHOOLID") Long schoolId) {
     School school = schoolController.findSchoolById(schoolId);
     if (school == null) {
@@ -538,7 +537,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/contactURLs")
   @POST
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.CREATE_SCHOOLCONTACTURL)
+  @RESTPermit (SchoolPermissions.CREATE_SCHOOLCONTACTURL)
   public Response createSchoolContactURL(@PathParam("SCHOOLID") Long schoolId, fi.pyramus.rest.model.ContactURL contactURL) {
     if (contactURL == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -570,7 +569,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/contactURLs/{ID:[0-9]*}")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.FIND_SCHOOLCONTACTURL)
+  @RESTPermit (SchoolPermissions.FIND_SCHOOLCONTACTURL)
   public Response findSchoolContactURL(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
     School school = schoolController.findSchoolById(schoolId);
     if (school == null) {
@@ -595,7 +594,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schools/{SCHOOLID:[0-9]*}/contactURLs/{ID:[0-9]*}")
   @DELETE
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.DELETE_SCHOOLCONTACTURL)
+  @RESTPermit (SchoolPermissions.DELETE_SCHOOLCONTACTURL)
   public Response deleteSchoolContactURL(@PathParam("SCHOOLID") Long schoolId, @PathParam("ID") Long id) {
     School school = schoolController.findSchoolById(schoolId);
     if (school == null) {
@@ -622,7 +621,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schoolFields")
   @POST
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.CREATE_SCHOOLFIELD)
+  @RESTPermit (SchoolPermissions.CREATE_SCHOOLFIELD)
   public Response createSchoolField(fi.pyramus.rest.model.SchoolField entity) {
     String name = entity.getName();
     if (StringUtils.isBlank(name)) {
@@ -634,7 +633,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schoolFields")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.LIST_SCHOOLFIELDS)
+  @RESTPermit (SchoolPermissions.LIST_SCHOOLFIELDS)
   public Response listSchoolFields() {
     List<SchoolField> schoolFields = schoolController.listSchoolFields();
     if (schoolFields.isEmpty()) {
@@ -646,7 +645,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schoolFields/{ID:[0-9]*}")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.FIND_SCHOOLFIELD)
+  @RESTPermit (SchoolPermissions.FIND_SCHOOLFIELD)
   public Response findSchoolFieldByID(@PathParam("ID") Long id) {
     SchoolField schoolField = schoolController.findSchoolFieldById(id);
     if (schoolField == null) {
@@ -662,7 +661,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/schoolFields/{ID:[0-9]*}")
   @PUT
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.UPDATE_SCHOOLFIELD)
+  @RESTPermit (SchoolPermissions.UPDATE_SCHOOLFIELD)
   public Response updateSchoolField(@PathParam("ID") Long id, fi.pyramus.rest.model.SchoolField entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -684,7 +683,7 @@ public class SchoolRESTService extends AbstractRESTService {
     
   @Path("/schoolFields/{ID:[0-9]*}")
   @DELETE
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.DELETE_SCHOOLFIELD)
+  @RESTPermit (SchoolPermissions.DELETE_SCHOOLFIELD)
   public Response deleteSchoolField(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     SchoolField schoolField = schoolController.findSchoolFieldById(id);
     if (schoolField == null) {
@@ -702,7 +701,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/variables")
   @POST
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.CREATE_SCHOOLVARIABLEKEY)
+  @RESTPermit (SchoolPermissions.CREATE_SCHOOLVARIABLEKEY)
   public Response createVariable(fi.pyramus.rest.model.VariableKey entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -734,7 +733,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/variables")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.LIST_SCHOOLVARIABLEKEYS)
+  @RESTPermit (SchoolPermissions.LIST_SCHOOLVARIABLEKEYS)
   public Response listVariables() {
     List<SchoolVariableKey> variableKeys = schoolController.listSchoolVariableKeys();
     if (variableKeys.isEmpty()) {
@@ -746,7 +745,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/variables/{KEY}")
   @GET
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.FIND_SCHOOLVARIABLEKEY)
+  @RESTPermit (SchoolPermissions.FIND_SCHOOLVARIABLEKEY)
   public Response findVariable(@PathParam ("KEY") String key) {
     SchoolVariableKey schoolVariableKey = schoolController.findSchoolVariableKeyByVariableKey(key);
     if (schoolVariableKey == null) {
@@ -758,7 +757,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/variables/{KEY}")
   @PUT
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.UPDATE_SCHOOLVARIABLEKEY)
+  @RESTPermit (SchoolPermissions.UPDATE_SCHOOLVARIABLEKEY)
   public Response updateVariable(@PathParam ("KEY") String key, fi.pyramus.rest.model.VariableKey entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -796,7 +795,7 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Path("/variables/{KEY}")
   @DELETE
-  @RESTPermit (handle = Handle.EXCEPTION, value = SchoolPermissions.DELETE_SCHOOLVARIABLEKEY)
+  @RESTPermit (SchoolPermissions.DELETE_SCHOOLVARIABLEKEY)
   public Response deleteVariable(@PathParam ("KEY") String key) {
     SchoolVariableKey schoolVariableKey = schoolController.findSchoolVariableKeyByVariableKey(key);
     if (schoolVariableKey == null) {

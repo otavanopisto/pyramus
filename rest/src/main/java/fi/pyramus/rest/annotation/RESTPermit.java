@@ -8,8 +8,6 @@ import java.lang.annotation.Target;
 import javax.enterprise.util.Nonbinding;
 import javax.interceptor.InterceptorBinding;
 
-import fi.muikku.security.AuthorizationException;
-
 /**
  * Marks method as permission restricted method. Defines Permissions that allow access to method.
  * 
@@ -32,20 +30,8 @@ public @interface RESTPermit {
    */
   Style style() default Style.OR;
   
-  /**
-   * How to handle permission exception, default is just silent ignore of method call
-   */
-  Handle handle() default Handle.SILENT;
-  
-  Class<? extends Exception> exceptionClass() default AuthorizationException.class;
-  
   enum Style {
     OR,
     AND
-  }
-  
-  enum Handle {
-    SILENT,
-    EXCEPTION
   }
 }
