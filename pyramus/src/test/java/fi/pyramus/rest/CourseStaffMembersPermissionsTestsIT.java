@@ -94,7 +94,7 @@ public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermission
   }
   
   @Test
-  public void testDeleteCourseStaffMember() throws NoSuchFieldException {
+  public void testPermissionsDeleteCourseStaffMember() throws NoSuchFieldException {
     CourseStaffMember entity = new CourseStaffMember(null, COURSE_ID, 1l, 1l);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -107,9 +107,5 @@ public class CourseStaffMembersPermissionsTestsIT extends AbstractRESTPermission
     Response deleteResponse = given().headers(getAuthHeaders()).delete("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, id);
     
     assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSESTAFFMEMBER, 204);
-    
-    given().headers(getAuthHeaders())
-      .delete("/courses/courses/{COURSEID}/staffMembers/{ID}", COURSE_ID, id);
-
   }
 }
