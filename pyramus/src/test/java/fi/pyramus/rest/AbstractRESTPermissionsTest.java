@@ -3,6 +3,7 @@ package fi.pyramus.rest;
 import static com.jayway.restassured.RestAssured.certificate;
 import static com.jayway.restassured.RestAssured.given;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -53,18 +54,23 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   public void createAccessTokens() {
 
     OAuthClientRequest tokenRequest = null;
-    try {
-      tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
-          .setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(fi.pyramus.Common.CLIENT_ID)
-          .setClientSecret(fi.pyramus.Common.CLIENT_SECRET).setRedirectURI(fi.pyramus.Common.REDIRECT_URL)
-          .setCode(fi.pyramus.Common.ROLEAUTHS.get(role)).buildBodyMessage();
-    } catch (OAuthSystemException e) {
-      e.printStackTrace();
+
+    if (!Role.EVERYONE.name().equals(role)) {
+      try {
+        tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
+            .setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(fi.pyramus.Common.CLIENT_ID)
+            .setClientSecret(fi.pyramus.Common.CLIENT_SECRET).setRedirectURI(fi.pyramus.Common.REDIRECT_URL)
+            .setCode(fi.pyramus.Common.ROLEAUTHS.get(role)).buildBodyMessage();
+      } catch (OAuthSystemException e) {
+        e.printStackTrace();
+      }
+      Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
+          .post("/oauth/token");
+      String accessToken = response.body().jsonPath().getString("access_token");
+      setAccessToken(accessToken);
+    } else {
+      setAccessToken("");
     }
-    Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
-        .post("/oauth/token");
-    String accessToken = response.body().jsonPath().getString("access_token");
-    setAccessToken(accessToken);
 
     /**
      * AdminAccessToken
@@ -79,7 +85,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
       } catch (OAuthSystemException e) {
         e.printStackTrace();
       }
-      response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
+      Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
           .post("/oauth/token");
   
       String adminAccessToken = response.body().jsonPath().getString("access_token");
@@ -106,13 +112,22 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   }
 
   public Map<String, String> getAuthHeaders() {
-    OAuthClientRequest bearerClientRequest = null;
-    try {
-      bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi")
-          .setAccessToken(this.getAccessToken()).buildHeaderMessage();
-    } catch (OAuthSystemException e) {
-    }
-    return bearerClientRequest.getHeaders();
+//    if (!Role.EVERYONE.name().equals(role)) {
+      OAuthClientRequest bearerClientRequest = null;
+      try {
+        bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi")
+            .setAccessToken(this.getAccessToken()).buildHeaderMessage();
+      } catch (OAuthSystemException e) {
+      }
+      return bearerClientRequest.getHeaders();
+//    } else {
+//      OAuthClientRequest bearerClientRequest = null;
+//      try {
+//        bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi").buildHeaderMessage();
+//      } catch (OAuthSystemException e) {
+//      }
+//      return bearerClientRequest.getHeaders();
+//    }
   }
   
   public Map<String, String> getAdminAuthHeaders() {
@@ -125,15 +140,21 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     return bearerClientRequest.getHeaders();
   }
 
+  
   public boolean roleIsAllowed(String role, List<String> allowedRoles) {
+    // Everyone -> every role has access
+    if (allowedRoles.contains(Role.EVERYONE.name()))
+      return true;
+    
     for (String str : allowedRoles) {
-      if (str.trim().contains(role)) {
+      if (str.equals(role)) {
         return true;
       }
     }
     return false;
   }
 
+  @Deprecated
   public void assertOk(String path, List<String> allowedRoles) {
     if (roleIsAllowed(getRole(), allowedRoles)) {
       given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(200);
@@ -147,37 +168,42 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   }
   
   public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission, int successStatusCode) throws NoSuchFieldException {
-    List<String> allowedRoles = Arrays.asList(permissionCollection.getDefaultRoles(permission));
-    
-    if (roleIsAllowed(getRole(), allowedRoles)) {
-      response.then().assertThat().statusCode(successStatusCode);
-    } else {
-      response.then().assertThat().statusCode(403);
+    if (!Role.EVERYONE.name().equals(getRole())) {
+      List<String> allowedRoles = Arrays.asList(permissionCollection.getDefaultRoles(permission));
+      
+      if (roleIsAllowed(getRole(), allowedRoles)) {
+        response.then().assertThat().statusCode(successStatusCode);
+      } else {
+          response.then().assertThat().statusCode(403);
+      }
     }
+    else
+      response.then().assertThat().statusCode(400);
   }
   
   public static List<Object[]> getGeneratedRoleData() {
     // The parameter generator returns a List of
     // arrays. Each array has two elements: { role }.
     
-//    List<Object[]> data = new ArrayList<Object[]>();
-//    
-//    for (Role role : Role.values()) {
-//      data.add(new Object[] { 
-//        role.name() 
-//      });
-//    }
-//    
-//    return data;
+    List<Object[]> data = new ArrayList<Object[]>();
     
-    return Arrays.asList(new Object[][] {
-        { Role.GUEST.name() },
-        { Role.USER.name() },
-        { Role.STUDENT.name() },
-        { Role.MANAGER.name() },
-        { Role.ADMINISTRATOR.name() }
-      }
-    );
+    for (Role role : Role.values()) {
+      data.add(new Object[] { 
+        role.name() 
+      });
+    }
+    
+    return data;
+    
+//    return Arrays.asList(new Object[][] {
+//        { Role.EVERYONE.name() },
+//        { Role.GUEST.name() },
+//        { Role.USER.name() },
+//        { Role.STUDENT.name() },
+//        { Role.MANAGER.name() },
+//        { Role.ADMINISTRATOR.name() }
+//      }
+//    );
   }
   
   protected String getRole() {

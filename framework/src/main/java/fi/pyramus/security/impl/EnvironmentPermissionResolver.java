@@ -38,6 +38,9 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     boolean allowed = environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(userEntity.getRole(), perm);
     System.out.println("Checking permission " + permission + " for: userId=" + userEntity.getId() + " role=" + userEntity.getRole() + " p=" + allowed);
 
+    if (!allowed)
+      allowed = hasEveryonePermission(permission, contextReference);
+    
     return allowed;
   }
 
