@@ -154,13 +154,16 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     return false;
   }
 
-  @Deprecated
   public void assertOk(String path, List<String> allowedRoles) {
-    if (roleIsAllowed(getRole(), allowedRoles)) {
-      given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(200);
-    } else {
-      given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(403);
+    if (!Role.EVERYONE.name().equals(getRole())) {
+      if (roleIsAllowed(getRole(), allowedRoles)) {
+        given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(200);
+      } else {
+        given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(403);
+      }
     }
+    else
+      given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(400);
   }
 
   public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission) throws NoSuchFieldException {
