@@ -15,15 +15,15 @@ public class SchoolPermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_SCHOOL = "CREATE_SCHOOL";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String LIST_SCHOOLS = "LIST_SCHOOLS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String SEARCH_SCHOOLS = "SEARCH_SCHOOLS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String FIND_SCHOOL = "FIND_SCHOOL";
   
   @Scope (PermissionScope.ENVIRONMENT)

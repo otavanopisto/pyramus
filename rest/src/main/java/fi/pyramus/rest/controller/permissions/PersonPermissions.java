@@ -15,11 +15,11 @@ public class PersonPermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_PERSON = "CREATE_PERSON";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
   public static final String LIST_PERSONS = "LIST_PERSONS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
   public static final String FIND_PERSON = "FIND_PERSON";
   
   @Scope (PermissionScope.ENVIRONMENT)

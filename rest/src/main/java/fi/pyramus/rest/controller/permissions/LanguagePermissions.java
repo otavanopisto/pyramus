@@ -15,11 +15,11 @@ public class LanguagePermissions extends AbstractPyramusPermissionCollection imp
   public static final String CREATE_LANGUAGE = "CREATE_LANGUAGE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String LIST_LANGUAGES = "LIST_LANGUAGES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String FIND_LANGUAGE = "FIND_LANGUAGE";
   
   @Scope (PermissionScope.ENVIRONMENT)

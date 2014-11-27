@@ -75,6 +75,7 @@ import fi.pyramus.rest.controller.StudentStudyEndReasonController;
 import fi.pyramus.rest.controller.StudyProgrammeCategoryController;
 import fi.pyramus.rest.controller.StudyProgrammeController;
 import fi.pyramus.rest.controller.UserController;
+import fi.pyramus.rest.controller.UserEmailInUseException;
 import fi.pyramus.rest.controller.permissions.LanguagePermissions;
 import fi.pyramus.rest.controller.permissions.MunicipalityPermissions;
 import fi.pyramus.rest.controller.permissions.NationalityPermissions;
@@ -1827,7 +1828,11 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    return Response.ok(objectFactory.createModel(studentController.addStudentEmail(student, contactType, address, defaultAddress))).build();
+    try {
+      return Response.ok(objectFactory.createModel(studentController.addStudentEmail(student, contactType, address, defaultAddress))).build();
+    } catch (UserEmailInUseException ueiue) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
   }
   
   @Path("/students/{STUDENTID:[0-9]*}/emails/{ID:[0-9]*}")

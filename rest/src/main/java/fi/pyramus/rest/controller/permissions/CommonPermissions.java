@@ -19,15 +19,15 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_EDUCATIONTYPE = "CREATE_EDUCATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String LIST_EDUCATIONTYPES = "LIST_EDUCATIONTYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String LIST_SUBJECTSBYEDUCATIONTYPE = "LIST_SUBJECTSBYEDUCATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String FIND_EDUCATIONTYPE = "FIND_EDUCATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)

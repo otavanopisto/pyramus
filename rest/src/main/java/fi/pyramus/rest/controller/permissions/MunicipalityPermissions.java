@@ -15,11 +15,11 @@ public class MunicipalityPermissions extends AbstractPyramusPermissionCollection
   public static final String CREATE_MUNICIPALITY = "CREATE_MUNICIPALITY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String LIST_MUNICIPALITIES = "LIST_MUNICIPALITIES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String FIND_MUNICIPALITY = "FIND_MUNICIPALITY";
   
   @Scope (PermissionScope.ENVIRONMENT)

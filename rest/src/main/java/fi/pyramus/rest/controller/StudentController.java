@@ -198,9 +198,9 @@ public class StudentController {
     return studentDAO.listByEmailAndArchived(email, archived, firstResult, maxResults);
   }
   
-  public Email addStudentEmail(Student student, ContactType contactType, String address, Boolean defaultAddress) {
+  public Email addStudentEmail(Student student, ContactType contactType, String address, Boolean defaultAddress) throws UserEmailInUseException {
     if (!UserUtils.isAllowedEmail(address, student.getPerson().getId()))
-      throw new RuntimeException("Email address is in use.");
+      throw new UserEmailInUseException();
     
     return emailDAO.create(student.getContactInfo(), contactType, defaultAddress, address);
   }

@@ -15,11 +15,11 @@ public class StudentExaminationTypePermissions extends AbstractPyramusPermission
   public static final String CREATE_STUDENTEXAMINATIONTYPE = "CREATE_STUDENTEXAMINATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String LIST_STUDENTEXAMINATIONTYPES = "LIST_STUDENTEXAMINATIONTYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String FIND_STUDENTEXAMINATIONTYPE = "FIND_STUDENTEXAMINATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
