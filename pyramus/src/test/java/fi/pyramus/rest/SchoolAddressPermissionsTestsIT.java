@@ -81,6 +81,6 @@ public class SchoolAddressPermissionsTestsIT extends AbstractRESTPermissionsTest
     
     Long statusCode = new Long(deleteResponse.statusCode());
     if(!statusCode.equals(204))
-      given().headers(getAdminAuthHeaders()).delete("/schools/schools/{SCHOOLID}/addresses/{ID}", 1l, id);;
+      given().headers(getAdminAuthHeaders()).delete("/schools/schools/{SCHOOLID}/addresses/{ID}", 1l, id);
   }
 }
