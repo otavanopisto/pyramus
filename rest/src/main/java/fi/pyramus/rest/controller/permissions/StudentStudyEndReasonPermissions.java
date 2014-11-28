@@ -15,11 +15,11 @@ public class StudentStudyEndReasonPermissions extends AbstractPyramusPermissionC
   public static final String CREATE_STUDENTSTUDYENDREASON = "CREATE_STUDENTSTUDYENDREASON";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String LIST_STUDENTSTUDYENDREASONS = "LIST_STUDENTSTUDYENDREASONS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String FIND_STUDENTSTUDYENDREASON = "FIND_STUDENTSTUDYENDREASON";
   
   @Scope (PermissionScope.ENVIRONMENT)

@@ -15,11 +15,11 @@ public class StudyProgrammeCategoryPermissions extends AbstractPyramusPermission
   public static final String CREATE_STUDYPROGRAMMECATEGORY = "CREATE_STUDYPROGRAMMECATEGORY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String LIST_STUDYPROGRAMMECATEGORIES = "LIST_STUDYPROGRAMMECATEGORIES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String FIND_STUDYPROGRAMMECATEGORY = "FIND_STUDYPROGRAMMECATEGORY";
   
   @Scope (PermissionScope.ENVIRONMENT)

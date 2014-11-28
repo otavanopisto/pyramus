@@ -11,7 +11,7 @@ import fi.pyramus.security.impl.PyramusPermissionCollection;
 public class UserPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String CREATE_STAFFMEMBER = "CREATE_STAFFMEMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)

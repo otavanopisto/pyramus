@@ -15,11 +15,11 @@ public class CalendarPermissions extends AbstractPyramusPermissionCollection imp
   public static final String CREATE_ACADEMICTERM = "CREATE_ACADEMICTERM";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String LIST_ACADEMICTERMS = "LIST_ACADEMICTERMS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String FIND_ACADEMICTERM = "FIND_ACADEMICTERM";
   
   @Scope (PermissionScope.ENVIRONMENT)

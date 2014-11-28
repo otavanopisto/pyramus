@@ -15,11 +15,11 @@ public class NationalityPermissions extends AbstractPyramusPermissionCollection 
   public static final String CREATE_NATIONALITY = "CREATE_NATIONALITY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String LIST_NATIONALITIES = "LIST_NATIONALITIES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String FIND_NATIONALITY = "FIND_NATIONALITY";
   
   @Scope (PermissionScope.ENVIRONMENT)

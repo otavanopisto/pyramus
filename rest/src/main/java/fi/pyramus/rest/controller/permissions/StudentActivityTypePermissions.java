@@ -15,11 +15,11 @@ public class StudentActivityTypePermissions extends AbstractPyramusPermissionCol
   public static final String CREATE_STUDENTACTIVITYTYPE = "CREATE_STUDENTACTIVITYTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String LIST_STUDENTACTIVITYTYPES = "LIST_STUDENTACTIVITYTYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String FIND_STUDENTACTIVITYTYPE = "FIND_STUDENTACTIVITYTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)

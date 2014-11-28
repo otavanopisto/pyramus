@@ -15,11 +15,11 @@ public class StudentEducationalLevelPermissions extends AbstractPyramusPermissio
   public static final String CREATE_STUDENTEDUCATIONALLEVEL = "CREATE_STUDENTEDUCATIONALLEVEL";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String LIST_STUDENTEDUCATIONALLEVELS = "LIST_STUDENTEDUCATIONALLEVELS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ EVERYONE })
   public static final String FIND_STUDENTEDUCATIONALLEVEL = "FIND_STUDENTEDUCATIONALLEVEL";
   
   @Scope (PermissionScope.ENVIRONMENT)
