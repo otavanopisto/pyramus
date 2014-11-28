@@ -53,10 +53,10 @@ public class SchoolPermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
-        given().headers(getAuthHeaders())
+        given().headers(getAdminAuthHeaders())
         .delete("/schools/schools/{ID}?permanent=true", id);
       }
     }

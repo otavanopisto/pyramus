@@ -48,11 +48,11 @@ public class ModuleComponentPermissionsTestsIT extends AbstractRESTPermissionsTe
     
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
-        given().headers(getAuthHeaders())
-        .delete("/modules/modules/{MODULEID}/components/{COMPONENTID}?permanent=true", moduleId, id);
+        given().headers(getAdminAuthHeaders())
+          .delete("/modules/modules/{MODULEID}/components/{COMPONENTID}?permanent=true", moduleId, id);
       }
     }
   }
@@ -131,9 +131,7 @@ public class ModuleComponentPermissionsTestsIT extends AbstractRESTPermissionsTe
       .delete("/modules/modules/{MODULEID}/components/{COMPONENTID}", moduleId, id);
     assertOk(deleteResponse, modulePermissions, ModulePermissions.DELETE_MODULECOMPONENT, 204);
     
-    Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.equals(204))
-      given().headers(getAdminAuthHeaders())
-        .delete("/modules/modules/{MODULEID}/components/{COMPONENTID}?permanent=true", moduleId, id);
+    given().headers(getAdminAuthHeaders())
+      .delete("/modules/modules/{MODULEID}/components/{COMPONENTID}?permanent=true", moduleId, id);
   }
 }

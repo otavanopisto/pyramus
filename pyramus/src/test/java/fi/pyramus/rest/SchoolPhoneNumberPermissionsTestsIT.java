@@ -42,10 +42,10 @@ public class SchoolPhoneNumberPermissionsTestsIT extends AbstractRESTPermissions
 
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
-        given().headers(getAuthHeaders())
+        given().headers(getAdminAuthHeaders())
         .delete("/schools/schools/{SCHOOLID}/phoneNumbers/{ID}", 1l, id);
       }
     }
@@ -78,7 +78,7 @@ public class SchoolPhoneNumberPermissionsTestsIT extends AbstractRESTPermissions
       .delete("/schools/schools/{SCHOOLID}/phoneNumbers/{ID}", 1l, id);
     assertOk(deleteResponse, schoolPermissions, SchoolPermissions.DELETE_SCHOOLPHONENUMBER, 204);
     Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.equals(204))
+    if(!statusCode.toString().equals("204"))
       given().headers(getAdminAuthHeaders())
       .delete("/schools/schools/{SCHOOLID}/phoneNumbers/{ID}", 1l, id);
   }

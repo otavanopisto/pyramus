@@ -44,10 +44,10 @@ public class CourseEnrolmentTypePermissionsTestsIT extends AbstractRESTPermissio
     
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
-        given().headers(getAuthHeaders())
+        given().headers(getAdminAuthHeaders())
         .delete("/courses/enrolmentTypes/{ID}", id);
       }
     }
@@ -107,9 +107,9 @@ public class CourseEnrolmentTypePermissionsTestsIT extends AbstractRESTPermissio
     assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSEENROLMENTTYPE, 204);
     
     Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.equals(204))
+    if(!statusCode.toString().equals("204")){
       given().headers(getAdminAuthHeaders())
       .delete("/courses/enrolmentTypes/{ID}", id);
-    
+    }   
   }
 }

@@ -44,7 +44,7 @@ public class EducationTypePermissionsTestsIT extends AbstractRESTPermissionsTest
     assertOk(response, commonPermissions, CommonPermissions.CREATE_EDUCATIONTYPE, 200);
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
         given().headers(getAdminAuthHeaders())
@@ -97,9 +97,7 @@ public class EducationTypePermissionsTestsIT extends AbstractRESTPermissionsTest
       assertOk(updateResponse, commonPermissions, CommonPermissions.UPDATE_EDUCATIONTYPE, 200);
     } finally {
       given().headers(getAdminAuthHeaders())
-        .delete("/common/educationTypes/{ID}?permanent=true", id)
-        .then()
-        .statusCode(204);
+        .delete("/common/educationTypes/{ID}?permanent=true", id);
     }
   }
 //  hmm dur?

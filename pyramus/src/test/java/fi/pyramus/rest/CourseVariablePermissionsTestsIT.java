@@ -43,12 +43,9 @@ public class CourseVariablePermissionsTestsIT extends AbstractRESTPermissionsTes
     assertOk(response, commonPermissions, CommonPermissions.CREATE_COURSEBASEVARIABLEKEY, 200);
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
-      id = new Long(response.body().jsonPath().getInt("id"));
-      if (!id.equals(null)) {
-        given().headers(getAdminAuthHeaders())
-        .delete("/courses/variables/{KEY}", courseVariable.getKey());
-      }
+    if(statusCode.toString().equals("200")){
+      given().headers(getAdminAuthHeaders())
+      .delete("/courses/variables/{KEY}", courseVariable.getKey());
     }
   }
 
@@ -106,7 +103,7 @@ public class CourseVariablePermissionsTestsIT extends AbstractRESTPermissionsTes
     assertOk(deleteResponse, commonPermissions, CommonPermissions.DELETE_COURSEBASEVARIABLEKEY, 204);
     
     Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.equals(204))
+    if(!statusCode.toString().equals("204"))
       given().headers(getAdminAuthHeaders()).delete("/courses/variables/{KEY}", courseVariable.getKey());
   }
 }

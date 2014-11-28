@@ -44,10 +44,10 @@ public class SubjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
-        given().headers(getAuthHeaders())
+        given().headers(getAdminAuthHeaders())
         .delete("/common/subjects/{ID}?permanent=true", id);
       }
     }
@@ -112,16 +112,11 @@ public class SubjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
       .post("/common/subjects");
     
     Long id = new Long(response.body().jsonPath().getInt("id"));
-    assertNotNull(id);
-    
-    given().headers(getAdminAuthHeaders()).get("/common/subjects/{ID}", id)
-      .then()
-      .statusCode(200);
-    
+
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/common/subjects/{ID}", id);
     
-    assertOk(deleteResponse, commonPermissions, CommonPermissions.DELETE_SUBJECT, 204);
+    assertOk(deleteResponse, commonPermissions, CommonPermissions.ARCHIVE_SUBJECT, 204);
 
     given().headers(getAdminAuthHeaders())
       .delete("/common/subjects/{ID}?permanent=true", id);

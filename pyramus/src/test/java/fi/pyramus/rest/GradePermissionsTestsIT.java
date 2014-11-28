@@ -45,10 +45,10 @@ public class GradePermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
-        given().headers(getAuthHeaders())
+        given().headers(getAdminAuthHeaders())
         .delete("/common/gradingScales/{SCALEID}/grades/{ID}?permanent=true", grade.getGradingScaleId(), id);
       }
     }
@@ -60,7 +60,7 @@ public class GradePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .get("/common/gradingScales/1/grades");
     assertOk(response, commonPermissions, CommonPermissions.LIST_GRADES, 200);
   }
-//  TODO: Jatka tästä
+
   @Test
   public void testPermissionsFindGradingScale() throws NoSuchFieldException {
     Response response = given().headers(getAuthHeaders())
@@ -88,7 +88,7 @@ public class GradePermissionsTestsIT extends AbstractRESTPermissionsTest {
         .put("/common/gradingScales/{SCALEID}/grades/{ID}", updateGrade.getGradingScaleId(), id);
       assertOk(updateResponse, commonPermissions, CommonPermissions.UPDATE_GRADE, 200);
     } finally {
-      given().headers(getAuthHeaders())
+      given().headers(getAdminAuthHeaders())
         .delete("/common/gradingScales/{SCALEID}/grades/{ID}?permanent=true", grade.getGradingScaleId(), id);
     }
   }
@@ -107,10 +107,8 @@ public class GradePermissionsTestsIT extends AbstractRESTPermissionsTest {
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/common/gradingScales/{SCALEID}/grades/{ID}", grade.getGradingScaleId(), id);
     assertOk(deleteResponse, commonPermissions, CommonPermissions.DELETE_GRADE, 204);
-    
-    Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.equals(204))
-      given().headers(getAdminAuthHeaders())
+
+    given().headers(getAdminAuthHeaders())
       .delete("/common/gradingScales/{SCALEID}/grades/{ID}?permanent=true", grade.getGradingScaleId(), id);
   }
 }

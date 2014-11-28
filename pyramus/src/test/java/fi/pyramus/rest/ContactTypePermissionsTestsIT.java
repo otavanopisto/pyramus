@@ -42,7 +42,7 @@ public class ContactTypePermissionsTestsIT extends AbstractRESTPermissionsTest {
     assertOk(response, commonPermissions, CommonPermissions.CREATE_CONTACTTYPE, 200);
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
         given().headers(getAdminAuthHeaders())

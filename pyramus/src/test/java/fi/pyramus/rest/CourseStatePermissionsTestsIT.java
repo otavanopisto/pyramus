@@ -43,10 +43,10 @@ public class CourseStatePermissionsTestsIT extends AbstractRESTPermissionsTest {
     assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSESTATE, 200);
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
-        given().headers(getAuthHeaders())
+        given().headers(getAdminAuthHeaders())
         .delete("/courses/courseStates/{ID}?permanent=true", id);
       }
     }   
