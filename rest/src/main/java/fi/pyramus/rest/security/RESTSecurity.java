@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import fi.muikku.security.ContextReference;
 import fi.muikku.security.Identity;
 import fi.pyramus.rest.annotation.RESTPermit;
+import fi.pyramus.rest.annotation.RESTPermit.Handling;
 
 /**
  * RESTSecurity is essentially a copy of PermitInterceptor in muikku.security. But as CDI Interceptor
@@ -33,13 +34,17 @@ public class RESTSecurity {
     RESTPermit permit = method.getAnnotation(RESTPermit.class);
 
     if (permit != null) {
+      // Inline checks are handled in the rest endpoint code so they are skipped here. 
+      if (permit.handling() == Handling.INLINE)
+        return true;
+      
       String[] permissions = permit.value();
       RESTPermit.Style style = permit.style();
       ContextReference permitContext = null;
       
       return hasPermission(permissions, permitContext, style);
     } else
-      return true;
+      return false;
   }
 
   public boolean hasPermission(String[] permissions) {

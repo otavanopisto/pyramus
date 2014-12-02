@@ -99,6 +99,10 @@
     <!-- Pyramus -->
     
     <pyramus.version>0.7.3-SNAPSHOT</pyramus.version>
+    
+    <!-- Muikku-Security -->
+    
+    <muikku-security.version>1.0.5-SNAPSHOT</muikku-security.version>
   </properties>
   
   <dependencyManagement>
@@ -339,6 +343,14 @@
         <groupId>fi.pyramus</groupId>
         <artifactId>smvcj</artifactId>
         <version>${pyramus.version}</version>
+      </dependency>
+
+      <!-- Muikku-Security -->
+
+      <dependency>
+        <groupId>fi.muikku</groupId>
+        <artifactId>security</artifactId>
+        <version>${muikku-security.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

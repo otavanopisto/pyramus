@@ -82,6 +82,5 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
       }
     }
   }
-
   
 }

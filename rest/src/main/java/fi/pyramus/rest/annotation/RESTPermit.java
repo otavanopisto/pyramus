@@ -34,4 +34,15 @@ public @interface RESTPermit {
     OR,
     AND
   }
+  
+  /**
+   * How method permit checking is done. Declaration checks are done automatically
+   * by SecurityFilter, Inline checks are performed by inline code.  
+   */
+  Handling handling() default Handling.DECLARATION;
+
+  enum Handling {
+    DECLARATION,
+    INLINE
+  }
 }

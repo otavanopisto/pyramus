@@ -58,6 +58,8 @@ import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.rest.annotation.RESTPermit;
+import fi.pyramus.rest.annotation.RESTPermit.Handling;
+import fi.pyramus.rest.annotation.RESTPermit.Style;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.LanguageController;
@@ -90,6 +92,7 @@ import fi.pyramus.rest.controller.permissions.StudentStudyEndReasonPermissions;
 import fi.pyramus.rest.controller.permissions.StudyProgrammeCategoryPermissions;
 import fi.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.pyramus.rest.controller.permissions.UserPermissions;
+import fi.pyramus.rest.security.RESTSecurity;
 
 @Path("/students")
 @Produces("application/json")
@@ -98,6 +101,9 @@ import fi.pyramus.rest.controller.permissions.UserPermissions;
 @RequestScoped
 public class StudentRESTService extends AbstractRESTService {
 
+  @Inject
+  private RESTSecurity restSecurity;
+  
   @Inject
   private UserController userController;
 
@@ -1450,10 +1456,15 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/students/{ID:[0-9]*}")
   @PUT
-  @RESTPermit (StudentPermissions.UPDATE_STUDENT)
+  @RESTPermit (handling = Handling.INLINE)
+//  @RESTPermit ({ StudentPermissions.UPDATE_STUDENT, StudentPermissions.OWNER })
   public Response updateStudent(@PathParam("ID") Long id, fi.pyramus.rest.model.Student entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.UPDATE_STUDENT, StudentPermissions.OWNER }, entity, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     Long personId = entity.getPersonId();

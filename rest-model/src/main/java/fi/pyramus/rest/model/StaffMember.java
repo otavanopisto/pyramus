@@ -3,7 +3,9 @@ package fi.pyramus.rest.model;
 import java.util.List;
 import java.util.Map;
 
-public class StaffMember {
+import fi.muikku.security.ContextReference;
+
+public class StaffMember implements ContextReference {
 
   public StaffMember() {
     super();
