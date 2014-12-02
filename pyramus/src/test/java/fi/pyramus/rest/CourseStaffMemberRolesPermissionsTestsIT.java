@@ -44,7 +44,7 @@ public class CourseStaffMemberRolesPermissionsTestsIT extends AbstractRESTPermis
     
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
         given().headers(getAdminAuthHeaders())
@@ -113,7 +113,7 @@ public class CourseStaffMemberRolesPermissionsTestsIT extends AbstractRESTPermis
     assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_STAFFMEMBERROLE, 204);
     
     Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.equals(204))
-      given().headers(getAuthHeaders()).get("/courses/staffMemberRoles/{ID}", id);
+    if(!statusCode.toString().equals("204"))
+      given().headers(getAdminAuthHeaders()).delete("/courses/staffMemberRoles/{ID}", id);
   }
 }

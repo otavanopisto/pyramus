@@ -48,10 +48,21 @@ public class AcademicTermTestsIT extends AbstractRESTServiceTest {
     DateTime start2 = getDate(2015, 1, 4);
     DateTime end2 = getDate(2015, 5, 30);
 
-    given().headers(getAuthHeaders()).get("/calendar/academicTerms").then().statusCode(200).body("id.size()", is(2))
-        .body("id[0]", is(1)).body("name[0]", is("fall")).body("startDate[0]", is(start1.toString())).body("endDate[0]", is(end1.toString()))
-        .body("archived[0]", is(false)).body("id[1]", is(2)).body("name[1]", is("spring")).body("startDate[1]", is(start2.toString()))
-        .body("endDate[1]", is(end2.toString())).body("archived[1]", is(false));
+    given().headers(getAuthHeaders())
+      .get("/calendar/academicTerms")
+      .then()
+      .statusCode(200)
+      .body("id.size()", is(2))
+      .body("id[0]", is(1))
+      .body("name[0]", is("fall"))
+      .body("startDate[0]", is(start1.toString()))
+      .body("endDate[0]", is(end1.toString()))
+      .body("archived[0]", is(false))
+      .body("id[1]", is(2))
+      .body("name[1]", is("spring"))
+      .body("startDate[1]", is(start2.toString()))
+      .body("endDate[1]", is(end2.toString()))
+      .body("archived[1]", is(false));
   }
 
   @Test

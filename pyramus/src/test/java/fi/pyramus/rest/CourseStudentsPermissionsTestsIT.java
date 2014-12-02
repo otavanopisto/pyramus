@@ -44,11 +44,11 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
     assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSESTUDENT, 200);
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
         given().headers(getAdminAuthHeaders())
-        .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id);
+          .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id);
       }
     }
   }
@@ -106,7 +106,7 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
     assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSESTUDENT, 204);
 
     Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.equals(204))
+    if(!statusCode.toString().equals("204"))
       given().headers(getAdminAuthHeaders())
       .delete("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, id);
   }

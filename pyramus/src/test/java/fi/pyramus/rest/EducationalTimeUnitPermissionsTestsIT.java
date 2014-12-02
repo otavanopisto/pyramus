@@ -41,7 +41,7 @@ private CommonPermissions commonPermissions = new CommonPermissions();
     
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
         given().headers(getAdminAuthHeaders())
@@ -86,9 +86,7 @@ private CommonPermissions commonPermissions = new CommonPermissions();
       assertOk(updateResponse, commonPermissions, CommonPermissions.UPDATE_EDUCATIONALTIMEUNIT, 200);
     } finally {
       given().headers(getAdminAuthHeaders())
-        .delete("/common/educationalTimeUnits/{ID}?permanent=true", id)
-        .then()
-        .statusCode(204);
+        .delete("/common/educationalTimeUnits/{ID}?permanent=true", id);
     }
   }
   
@@ -106,7 +104,7 @@ private CommonPermissions commonPermissions = new CommonPermissions();
     
     Response deleteResponse = given().headers(getAuthHeaders())
       .delete("/common/educationalTimeUnits/{ID}", id);
-    assertOk(deleteResponse, commonPermissions, CommonPermissions.DELETE_EDUCATIONALTIMEUNIT, 204);
+    assertOk(deleteResponse, commonPermissions, CommonPermissions.ARCHIVE_EDUCATIONALTIMEUNIT, 204);
     
     given().headers(getAdminAuthHeaders())
       .delete("/common/educationalTimeUnits/{ID}?permanent=true", id);

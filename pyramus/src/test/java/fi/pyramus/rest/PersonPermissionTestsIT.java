@@ -23,11 +23,6 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
     this.role = role;
   }
   
-  /*
-   * This method is called the the JUnit parameterized test runner and returns a
-   * Collection of Arrays. For each Array in the Collection, each array element
-   * corresponds to a parameter in the constructor.
-   */
   @Parameters
   public static List<Object[]> generateData() {
     return getGeneratedRoleData();
@@ -50,7 +45,7 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
       
-      given().headers(getAuthHeaders())
+      given().headers(getAdminAuthHeaders())
         .delete("/students/persons/{ID}", id);
     }
   }

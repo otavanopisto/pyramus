@@ -44,7 +44,7 @@ public class CourseStaffMembersTestsIT extends AbstractRESTServiceTest {
       .get("/courses/courses/{COURSEID}/staffMembers", COURSE_ID)
       .then()
       .statusCode(200)
-      .body("id.size()", is(2))
+      .body("id.size()", is(4))
       .body("id[0]", is(1))
       .body("roleId[0]", is(1))
       .body("courseId[0]", is((int) COURSE_ID)) 

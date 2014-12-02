@@ -35,7 +35,6 @@ public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTest 
   @Test
   public void testPermissionsCreateGradingScale() throws NoSuchFieldException {
     GradingScale gradingScale = new GradingScale(null, "create scale", "grading scale for testing creation", Boolean.FALSE);
-    Long id = null;
     Response response = null;
 
     response = given().headers(getAuthHeaders())
@@ -45,7 +44,8 @@ public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTest 
     assertOk(response, commonPermissions, CommonPermissions.CREATE_GRADINGSCALE, 200);
 
     Long statusCode = new Long(response.statusCode());
-    if (statusCode.equals(200)) {
+    Long id = null;
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
         given().headers(getAdminAuthHeaders()).delete(
@@ -109,13 +109,11 @@ public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTest 
     GradingScale gradingScale = new GradingScale(null, "to be deleted", "grading scale to be deleted", Boolean.FALSE);
 
     Response response = given().headers(getAdminAuthHeaders())
-      .contentType("application/json").body(gradingScale)
+      .contentType("application/json")
+      .body(gradingScale)
       .post("/common/gradingScales");
 
     Long id = new Long(response.body().jsonPath().getInt("id"));
-
-    given().headers(getAuthHeaders()).get("/common/gradingScales/{ID}", id)
-        .then().statusCode(200);
 
     try {
       Response deleteResponse = given().headers(getAuthHeaders())
