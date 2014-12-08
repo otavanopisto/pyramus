@@ -23,6 +23,7 @@ import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory;
 import com.jayway.restassured.response.Response;
 
 import fi.pyramus.AbstractIntegrationTest;
+import fi.pyramus.Common;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.security.impl.PyramusPermissionCollection;
 
@@ -112,22 +113,14 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   }
 
   public Map<String, String> getAuthHeaders() {
-//    if (!Role.EVERYONE.name().equals(role)) {
-      OAuthClientRequest bearerClientRequest = null;
-      try {
-        bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi")
-            .setAccessToken(this.getAccessToken()).buildHeaderMessage();
-      } catch (OAuthSystemException e) {
-      }
-      return bearerClientRequest.getHeaders();
-//    } else {
-//      OAuthClientRequest bearerClientRequest = null;
-//      try {
-//        bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi").buildHeaderMessage();
-//      } catch (OAuthSystemException e) {
-//      }
-//      return bearerClientRequest.getHeaders();
-//    }
+    OAuthClientRequest bearerClientRequest = null;
+    try {
+      bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi")
+          .setAccessToken(this.getAccessToken()).buildHeaderMessage();
+    } catch (OAuthSystemException e) {
+    }
+
+    return bearerClientRequest.getHeaders();
   }
   
   public Map<String, String> getAdminAuthHeaders() {
@@ -140,6 +133,9 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     return bearerClientRequest.getHeaders();
   }
 
+  public Long getUserIdForRole(String role) {
+    return Common.ROLEUSERS.get(role);
+  }
   
   public boolean roleIsAllowed(String role, List<String> allowedRoles) {
     // Everyone -> every role has access
@@ -177,7 +173,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
       if (roleIsAllowed(getRole(), allowedRoles)) {
         response.then().assertThat().statusCode(successStatusCode);
       } else {
-          response.then().assertThat().statusCode(403);
+        response.then().assertThat().statusCode(403);
       }
     }
     else

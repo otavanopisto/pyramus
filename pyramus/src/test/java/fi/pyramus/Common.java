@@ -10,11 +10,19 @@ public final class Common {
   public static String AUTH_URL = "https://dev.pyramus.fi:8443/users/authorize.page";
   public static String AUTH_CODE = "ff81d5b8500c773e7a1776a7963801e7";
   public static Map<String, String> ROLEAUTHS = new HashMap<String, String>();
+  public static Map<String, Long> ROLEUSERS = new HashMap<String, Long>();
+  
   static {
     ROLEAUTHS.put("GUEST", "ff81d5b8500c773e7a1776a7963801e4");
     ROLEAUTHS.put("USER", "ff81d5b8500c773e7a1776a7963801e5");
     ROLEAUTHS.put("STUDENT", "ff81d5b8500c773e7a1776a7963801e8");
     ROLEAUTHS.put("MANAGER", "ff81d5b8500c773e7a1776a7963801e6");
     ROLEAUTHS.put("ADMINISTRATOR", "ff81d5b8500c773e7a1776a7963801e7");
+
+    ROLEUSERS.put("GUEST", 4l);
+    ROLEUSERS.put("USER", 5l);
+    ROLEUSERS.put("STUDENT", 8l);
+    ROLEUSERS.put("MANAGER", 6l);
+    ROLEUSERS.put("ADMINISTRATOR", 7l);
   }
 }
