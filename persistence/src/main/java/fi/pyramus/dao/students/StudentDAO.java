@@ -46,12 +46,16 @@ import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.domainmodel.users.UserVariable_;
 import fi.pyramus.events.StudentArchivedEvent;
 import fi.pyramus.events.StudentCreatedEvent;
+import fi.pyramus.events.StudentUpdatedEvent;
 
 @Stateless
 public class StudentDAO extends PyramusEntityDAO<Student> {
   
   @Inject
   private Event<StudentCreatedEvent> studentCreatedEvent;
+  
+  @Inject
+  private Event<StudentUpdatedEvent> studentUpdatedEvent;
   
   @Inject
   private Event<StudentArchivedEvent> studentArchivedEvent;
@@ -108,6 +112,8 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
       Student student = (Student) entity;
 
       personDAO.forceReindex(student.getPerson());
+      
+      studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
     }
   }
 
@@ -182,6 +188,8 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setLodging(lodging);
 
     entityManager.persist(student);
+    
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
   }
 
   public void updateStudentMunicipality(Student student, Municipality municipality) {
@@ -191,12 +199,14 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
 
     entityManager.persist(student);
 
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
   }
 
   public void updateSchool(Student student, School school) {
     EntityManager entityManager = getEntityManager();
     student.setSchool(school);
     entityManager.persist(student);
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
   }
 
   public Student setStudentTags(Student student, Set<Tag> tags) {
@@ -206,6 +216,8 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     
     entityManager.persist(student);
 
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
+    
     return student;
   }
 
@@ -216,6 +228,8 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     
     entityManager.persist(student);
 
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
+    
     return student;
   }
 
@@ -225,6 +239,8 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setStudyEndReason(endReason);
     student.setStudyEndText(endReasonText);
     entityManager.persist(student);
+
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
   }
   
   public Long countByStudyEndReason(StudentStudyEndReason studyEndReason) {
@@ -433,16 +449,28 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
       getEntityManager().persist(person);
     }
 
-    return persist(student);
+    persist(student);
+
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
+
+    return student;
   }
 
   public Student removeTag(Student student, Tag tag) {
     student.removeTag(tag);
-    return persist(student);
+    persist(student);
+
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
+
+    return student;
   }
 
   public Student addTag(Student student, Tag tag) {
     student.addTag(tag);
-    return persist(student);
+    persist(student);
+
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
+
+    return student;
   }
 }

@@ -7,3 +7,4 @@
 /.cargo
 /.tern-project
 /target/
+/.DS_Store

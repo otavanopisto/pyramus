@@ -7,7 +7,7 @@
   <parent>
     <groupId>fi.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.3-SNAPSHOT</version>
+    <version>0.7.4-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   
@@ -79,6 +79,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>2.5</version>
         <configuration>
           <archive>
             <manifestEntries>
