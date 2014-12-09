@@ -11,6 +11,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.jayway.restassured.response.Response;
 
+import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.pyramus.rest.model.PhoneNumber;
 
@@ -55,6 +56,27 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
   }
   
   @Test
+  public void testCreateStudentPhoneNumberOwner() throws NoSuchFieldException {
+    if (Role.STUDENT.name().equals(this.role)) {
+      PhoneNumber phoneNumber = new PhoneNumber(null, 1l, Boolean.FALSE, "(123) 12 234 5678");
+      
+      Response response = given().headers(getAuthHeaders())
+        .contentType("application/json")
+        .body(phoneNumber)
+        .post("/students/students/{ID}/phoneNumbers", getUserIdForRole(this.getRole()));
+  
+      assertOk(response, studentPermissions, StudentPermissions.CREATE_STUDENTPHONENUMBER);
+      
+      if (response.getStatusCode() == 200) {
+        int id = response.body().jsonPath().getInt("id");
+        
+        given().headers(getAdminAuthHeaders())
+          .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", getUserIdForRole(this.getRole()), id);
+      }
+    }
+  }
+  
+  @Test
   public void testListStudentPhoneNumbers() throws NoSuchFieldException {
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{ID}/phoneNumbers", TEST_STUDENT_ID);
@@ -63,11 +85,31 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
   }
   
   @Test
+  public void testListStudentPhoneNumbersOwner() throws NoSuchFieldException {
+    if (Role.STUDENT.name().equals(this.role)) {
+      Response response = given().headers(getAuthHeaders())
+          .get("/students/students/{ID}/phoneNumbers", getUserIdForRole(this.role));
+
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTPHONENUMBERS);
+    }
+  }
+  
+  @Test
   public void testFindStudentPhoneNumber() throws NoSuchFieldException {
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, 3l);
     
     assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTPHONENUMBER);
+  }  
+
+  @Test
+  public void testFindStudentPhoneNumberOwner() throws NoSuchFieldException {
+    if (Role.STUDENT.name().equals(this.role)) {
+      Response response = given().headers(getAuthHeaders())
+        .get("/students/students/{STUDENTID}/phoneNumbers/{ID}", getUserIdForRole(this.role), 6l);
+      
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTPHONENUMBER);
+    }
   }  
 
   @Test

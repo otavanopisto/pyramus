@@ -38,8 +38,8 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
   public static final String UPDATE_STUDENT = "UPDATE_STUDENT";
   
-  @Scope (PermissionScope.OWNER)
-  public static final String OWNER = "OWNER";
+  @Scope (PermissionScope.STUDENT_OWNER)
+  public static final String STUDENT_OWNER = "STUDENT_OWNER";
   
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })

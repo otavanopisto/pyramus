@@ -11,6 +11,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.jayway.restassured.response.Response;
 
+import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.pyramus.rest.model.Address;
 
@@ -55,6 +56,27 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
   }
   
   @Test
+  public void testCreateStudentAddressOwner() throws NoSuchFieldException {
+    if (Role.STUDENT.name().equals(this.role)) {
+      Address address = new Address(null, 1l, Boolean.FALSE, "Caleb Great", "24916 Nicole Land", "59903-2455", "Porthaven", "Uruguay");
+      
+      Response response = given().headers(getAuthHeaders())
+        .contentType("application/json")
+        .body(address)
+        .post("/students/students/{ID}/addresses", getUserIdForRole(getRole()));
+  
+      assertOk(response, studentPermissions, StudentPermissions.CREATE_STUDENTADDRESS);
+  
+      if (response.getStatusCode() == 200) {
+        int id = response.body().jsonPath().getInt("id");
+        
+        given().headers(getAdminAuthHeaders())
+          .delete("/students/students/{STUDENTID}/addresses/{ID}", getUserIdForRole(getRole()), id);
+      }
+    }
+  }
+  
+  @Test
   public void testListStudentAddresses() throws NoSuchFieldException {
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{ID}/addresses", TEST_STUDENT_ID);
@@ -63,11 +85,31 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
   }
   
   @Test
+  public void testListStudentAddressesOwner() throws NoSuchFieldException {
+    if (Role.STUDENT.name().equals(this.role)) {
+      Response response = given().headers(getAuthHeaders())
+        .get("/students/students/{ID}/addresses", getUserIdForRole(getRole()));
+      
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTADDRESSS);
+    }
+  }
+  
+  @Test
   public void testFindStudentAddress() throws NoSuchFieldException {
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/addresses/{ID}", TEST_STUDENT_ID, 3l);
 
     assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTADDRESS);
+  }  
+
+  @Test
+  public void testFindStudentAddressOwner() throws NoSuchFieldException {
+    if (Role.STUDENT.name().equals(this.role)) {
+      Response response = given().headers(getAuthHeaders())
+        .get("/students/students/{STUDENTID}/addresses/{ID}", getUserIdForRole(getRole()), 8l);
+  
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTADDRESS);
+    }
   }  
 
   @Test

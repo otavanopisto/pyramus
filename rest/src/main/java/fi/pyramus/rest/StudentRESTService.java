@@ -1463,7 +1463,16 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.UPDATE_STUDENT, StudentPermissions.OWNER }, entity, Style.OR)) {
+    Student student = studentController.findStudentById(id);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.UPDATE_STUDENT, StudentPermissions.STUDENT_OWNER }, entity, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -1479,15 +1488,6 @@ public class StudentRESTService extends AbstractRESTService {
     
     if (StringUtils.isBlank(firstName)||StringUtils.isBlank(lastName)) {
       return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    Student student = studentController.findStudentById(id);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
     }
     
     Person person = personController.findPersonById(personId);
@@ -1790,7 +1790,8 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/emails")
   @GET
-  @RESTPermit (StudentPermissions.LIST_STUDENTEMAILS)
+  @RESTPermit (handling = Handling.INLINE)
+//  @RESTPermit (StudentPermissions.LIST_STUDENTEMAILS)
   public Response listStudentEmails(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
@@ -1801,6 +1802,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTEMAILS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     List<Email> emails = student.getContactInfo().getEmails();
     if (emails.isEmpty()) {
       return Response.noContent().build();
@@ -1811,17 +1816,10 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/emails")
   @POST
-  @RESTPermit (StudentPermissions.CREATE_STUDENTEMAIL)
+  @RESTPermit (handling = Handling.INLINE)
+//  @RESTPermit (StudentPermissions.CREATE_STUDENTEMAIL)
   public Response createStudentEmail(@PathParam("STUDENTID") Long studentId, fi.pyramus.rest.model.Email email) {
     if (email == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    Long contactTypeId = email.getContactTypeId();
-    Boolean defaultAddress = email.getDefaultAddress();
-    String address = email.getAddress();
-    
-    if ((contactTypeId == null) || (defaultAddress == null) || StringUtils.isBlank(address)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -1832,6 +1830,18 @@ public class StudentRESTService extends AbstractRESTService {
     
     if (student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.CREATE_STUDENTEMAIL, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    Long contactTypeId = email.getContactTypeId();
+    Boolean defaultAddress = email.getDefaultAddress();
+    String address = email.getAddress();
+    
+    if ((contactTypeId == null) || (defaultAddress == null) || StringUtils.isBlank(address)) {
+      return Response.status(Status.BAD_REQUEST).build();
     }
     
     ContactType contactType = commonController.findContactTypeById(contactTypeId);
@@ -1848,7 +1858,8 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/emails/{ID:[0-9]*}")
   @GET
-  @RESTPermit (StudentPermissions.FIND_STUDENTEMAIL)
+  @RESTPermit (handling = Handling.INLINE)
+//  @RESTPermit (StudentPermissions.FIND_STUDENTEMAIL)
   public Response findStudentEmail(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
@@ -1859,6 +1870,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTEMAIL, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     Email email = commonController.findEmailById(id);
     if (email == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -1900,7 +1915,8 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/addresses")
   @GET
-  @RESTPermit (StudentPermissions.LIST_STUDENTADDRESSS)
+  @RESTPermit (handling = Handling.INLINE)
+//  @RESTPermit (StudentPermissions.LIST_STUDENTADDRESSS)
   public Response listStudentAddresses(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
@@ -1911,6 +1927,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTADDRESSS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     List<Address> addresses = student.getContactInfo().getAddresses();
     if (addresses.isEmpty()) {
       return Response.noContent().build();
@@ -1921,12 +1941,26 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/addresses")
   @POST
-  @RESTPermit (StudentPermissions.CREATE_STUDENTADDRESS)
+  @RESTPermit (handling = Handling.INLINE)
+//  @RESTPermit (StudentPermissions.CREATE_STUDENTADDRESS)
   public Response createStudentAddress(@PathParam("STUDENTID") Long studentId, fi.pyramus.rest.model.Address address) {
     if (address == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.UPDATE_STUDENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     Long contactTypeId = address.getContactTypeId();
     Boolean defaultAddress = address.getDefaultAddress();
     String name = address.getName();
@@ -1939,15 +1973,6 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
     ContactType contactType = commonController.findContactTypeById(contactTypeId);
     if (contactType == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -1958,7 +1983,8 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/addresses/{ID:[0-9]*}")
   @GET
-  @RESTPermit (StudentPermissions.FIND_STUDENTADDRESS)
+  @RESTPermit (handling = Handling.INLINE)
+//  @RESTPermit (StudentPermissions.FIND_STUDENTADDRESS)
   public Response findStudentAddress(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
@@ -1969,6 +1995,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTADDRESS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     Address address = commonController.findAddressById(id);
     if (address == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -2010,7 +2040,8 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/phoneNumbers")
   @GET
-  @RESTPermit (StudentPermissions.LIST_STUDENTPHONENUMBERS)
+  @RESTPermit (handling = Handling.INLINE)
+//  @RESTPermit (StudentPermissions.LIST_STUDENTPHONENUMBERS)
   public Response listStudentPhoneNumbers(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
@@ -2021,6 +2052,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTPHONENUMBERS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     List<PhoneNumber> phoneNumbers = student.getContactInfo().getPhoneNumbers();
     if (phoneNumbers.isEmpty()) {
       return Response.noContent().build();
@@ -2031,17 +2066,10 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/phoneNumbers")
   @POST
-  @RESTPermit (StudentPermissions.CREATE_STUDENTPHONENUMBER)
+  @RESTPermit (handling = Handling.INLINE)
+//  @RESTPermit (StudentPermissions.CREATE_STUDENTPHONENUMBER)
   public Response createStudentPhoneNumber(@PathParam("STUDENTID") Long studentId, fi.pyramus.rest.model.PhoneNumber phoneNumber) {
     if (phoneNumber == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    Long contactTypeId = phoneNumber.getContactTypeId();
-    Boolean defaultNumber = phoneNumber.getDefaultNumber();
-    String number = phoneNumber.getNumber();
-    
-    if ((contactTypeId == null) || (defaultNumber == null) || StringUtils.isBlank(number)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -2052,6 +2080,17 @@ public class StudentRESTService extends AbstractRESTService {
     
     if (student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.UPDATE_STUDENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    Long contactTypeId = phoneNumber.getContactTypeId();
+    Boolean defaultNumber = phoneNumber.getDefaultNumber();
+    String number = phoneNumber.getNumber();
+    
+    if ((contactTypeId == null) || (defaultNumber == null) || StringUtils.isBlank(number)) {
+      return Response.status(Status.BAD_REQUEST).build();
     }
     
     ContactType contactType = commonController.findContactTypeById(contactTypeId);
@@ -2064,7 +2103,8 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/phoneNumbers/{ID:[0-9]*}")
   @GET
-  @RESTPermit (StudentPermissions.FIND_STUDENTPHONENUMBER)
+  @RESTPermit (handling = Handling.INLINE)
+//  @RESTPermit (StudentPermissions.FIND_STUDENTPHONENUMBER)
   public Response findStudentPhoneNumber(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
@@ -2075,6 +2115,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTPHONENUMBER, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     PhoneNumber phoneNumber = commonController.findPhoneNumberById(id);
     if (phoneNumber == null) {
       return Response.status(Status.NOT_FOUND).build();

@@ -11,6 +11,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.jayway.restassured.response.Response;
 
+import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.pyramus.rest.model.Email;
 
@@ -55,6 +56,27 @@ public class StudentEmailPermissionTestsIT extends AbstractRESTPermissionsTest {
   }
   
   @Test
+  public void testCreateStudentEmailOwner() throws NoSuchFieldException {
+    if (Role.STUDENT.name().equals(this.role)) {
+      Email email = new Email(null, 1l, Boolean.FALSE, "bogus@norealmail.org");
+      
+      Response response = given().headers(getAuthHeaders())
+        .contentType("application/json")
+        .body(email)
+        .post("/students/students/{ID}/emails", getUserIdForRole(getRole()));
+  
+      assertOk(response, studentPermissions, StudentPermissions.CREATE_STUDENTEMAIL);
+      
+      if (response.getStatusCode() == 200) {
+        int id = response.body().jsonPath().getInt("id");
+        
+        given().headers(getAdminAuthHeaders())
+          .delete("/students/students/{STUDENTID}/emails/{ID}", getUserIdForRole(getRole()), id);
+      }
+    }
+  }
+  
+  @Test
   public void testListStudentEmails() throws NoSuchFieldException {
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{ID}/emails", TEST_STUDENT_ID);
@@ -63,11 +85,31 @@ public class StudentEmailPermissionTestsIT extends AbstractRESTPermissionsTest {
   }
   
   @Test
+  public void testListStudentEmailsOwner() throws NoSuchFieldException {
+    if (Role.STUDENT.name().equals(this.role)) {
+      Response response = given().headers(getAuthHeaders())
+        .get("/students/students/{ID}/emails", getUserIdForRole(this.getRole()));
+  
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTEMAILS);
+    }
+  }
+  
+  @Test
   public void testFindStudentEmail() throws NoSuchFieldException {
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/emails/{ID}", TEST_STUDENT_ID, 3l);
 
     assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTEMAIL);
+  }  
+
+  @Test
+  public void testFindStudentEmailOwner() throws NoSuchFieldException {
+    if (Role.STUDENT.name().equals(this.role)) {
+      Response response = given().headers(getAuthHeaders())
+        .get("/students/students/{STUDENTID}/emails/{ID}", getUserIdForRole(getRole()), 8l);
+  
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTEMAIL);
+    }
   }  
 
   @Test

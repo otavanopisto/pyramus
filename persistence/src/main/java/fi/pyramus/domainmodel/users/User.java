@@ -35,6 +35,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import fi.muikku.security.ContextReference;
 import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.ContactInfo;
 import fi.pyramus.domainmodel.base.Person;
@@ -44,7 +45,7 @@ import fi.pyramus.domainmodel.base.Tag;
 @Indexed
 @Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Inheritance(strategy=InheritanceType.JOINED)
-public class User implements fi.muikku.security.User {
+public class User implements fi.muikku.security.User, ContextReference {
 
   public Long getId() {
     return id;
