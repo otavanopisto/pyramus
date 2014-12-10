@@ -6,21 +6,16 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 
-import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.rest.controller.RestSessionController;
 
 public abstract class AbstractRESTService {
   
   @Inject
-  private StaffMemberDAO userDAO;
-
-  // TODO: Implement this
-  protected Long getLoggedUserId() {
-    return 1l;
-  }
+  private RestSessionController restSessionController;
   
   protected User getLoggedUser() {
-    return userDAO.findById(getLoggedUserId());
+    return restSessionController.getLoggedUser();
   }
   
   protected Date toDate(DateTime dateTime) {

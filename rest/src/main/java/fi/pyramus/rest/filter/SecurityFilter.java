@@ -20,6 +20,7 @@ import org.jboss.resteasy.core.ResourceMethodInvoker;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
 import fi.pyramus.rest.annotation.Unsecure;
 import fi.pyramus.rest.controller.OauthController;
+import fi.pyramus.rest.controller.RestSessionController;
 
 @Provider
 public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFilter {
@@ -32,6 +33,9 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
 
   @Inject
   private OauthController oauthController;
+  
+  @Inject
+  private RestSessionController restSessionController;
 
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -40,6 +44,7 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
     if(method == null){
       requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build());
     }
+    
     if (!method.isAnnotationPresent(Unsecure.class)) {
       try {
         OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
@@ -54,7 +59,8 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
             requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
           }
         }
-
+        
+        restSessionController.setLoggedUserId(clientApplicationAccessToken.getClientApplicationAuthorizationCode().getUser().getId());
       } catch (OAuthProblemException e) {
         requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST).entity(e.getMessage()).build());
       } catch (OAuthSystemException e) {
