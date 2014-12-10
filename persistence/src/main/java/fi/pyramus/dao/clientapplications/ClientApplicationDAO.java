@@ -22,7 +22,7 @@ public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
     clientApplication.setClientSecret(clientSecret);
     clientApplication.setSkipPrompt(skipPrompt);
     
-    entityManager.persist(clientApplication);
+    entityManager.persist(clientApplication); //TODO: use persists methods
     return clientApplication;
   }
   

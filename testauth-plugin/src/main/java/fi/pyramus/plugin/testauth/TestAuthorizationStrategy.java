@@ -17,7 +17,7 @@ public class TestAuthorizationStrategy implements ExternalAuthenticationProvider
   }
   
   public StaffMember processResponse(RequestContext requestContext) throws AuthenticationException {
-    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffDAO();
+    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
     Long userid = requestContext.getLong("testuserid");
     if(userid != null){
       StaffMember user = staffDAO.findById(userid);

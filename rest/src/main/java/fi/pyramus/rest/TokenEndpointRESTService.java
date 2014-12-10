@@ -67,13 +67,10 @@ public class TokenEndpointRESTService extends AbstractRESTService {
       if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(GrantType.AUTHORIZATION_CODE.toString())) {
         clientApplicationAuthorizationCode = oauthController.findByClientApplicationAndAuthorizationCode(clientApplication,
             oauthRequest.getParam(OAuth.OAUTH_CODE));
-        if (clientApplicationAuthorizationCode == null && !clientApplication.getSkipPrompt()) {
+        if (clientApplicationAuthorizationCode == null) {
           OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_FORBIDDEN).setError(OAuthError.TokenResponse.INVALID_GRANT)
               .setErrorDescription("invalid authorization code").buildJSONMessage();
           return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-        }else if(clientApplicationAuthorizationCode == null && clientApplication.getSkipPrompt()){
-          String authorizationCode = oauthIssuerImpl.authorizationCode();
-          clientApplicationAuthorizationCode = oauthController.createAuthorizationCode(getLoggedUser(), clientApplication, authorizationCode, oauthRequest.getRedirectURI()); //TODO: store redirect url with application
         }
       } else if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(GrantType.REFRESH_TOKEN.toString())) {
         refreshing = true;

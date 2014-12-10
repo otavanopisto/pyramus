@@ -72,7 +72,6 @@ public class ClientApplication {
   
   @NotNull
   @Column (nullable = false)
-  @Field
-  private Boolean skipPrompt = Boolean.FALSE;
+  private Boolean skipPrompt;
   
 }
