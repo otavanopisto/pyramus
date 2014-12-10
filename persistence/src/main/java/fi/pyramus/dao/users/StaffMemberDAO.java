@@ -131,22 +131,6 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     return query.getResultList();
   }
   
-  public StaffMember findByExternalIdAndAuthProvider(String externalId, String authProvider) {
-    EntityManager entityManager = getEntityManager(); 
-    
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<StaffMember> criteria = criteriaBuilder.createQuery(StaffMember.class);
-    Root<StaffMember> root = criteria.from(StaffMember.class);
-    criteria.select(root);
-    criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(StaffMember_.externalId), externalId),
-            criteriaBuilder.equal(root.get(StaffMember_.authProvider), authProvider)
-        ));
-    
-    return getSingleResult(entityManager.createQuery(criteria));
-  }
-  
   public StaffMember findByEmail(String email) {
     EntityManager entityManager = getEntityManager(); 
     
@@ -331,24 +315,6 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     staffMember.setTitle(title);
     persist(staffMember);
     
-    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
-    
-    return staffMember;
-  }
-
-  public StaffMember updateAuthProvider(StaffMember staffMember, String authProvider) {
-    staffMember.setAuthProvider(authProvider);
-    persist(staffMember);
-
-    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
-    
-    return staffMember;
-  }
-
-  public StaffMember updateExternalId(StaffMember staffMember, String externalId) {
-    staffMember.setExternalId(externalId);
-    persist(staffMember);
-
     staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
     
     return staffMember;

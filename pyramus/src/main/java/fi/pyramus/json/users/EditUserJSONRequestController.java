@@ -19,6 +19,7 @@ import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
+import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
@@ -50,6 +51,8 @@ public class EditUserJSONRequestController extends JSONRequestController {
    */
   public void process(JSONRequestContext requestContext) {
     StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
@@ -197,7 +200,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
       String authProvider = requestContext.getString("authProvider");
       
       if (!user.getAuthProvider().equals(authProvider)) {
-        staffDAO.updateAuthProvider(user, authProvider);
+        userDAO.updateAuthProvider(user, authProvider);
       }
       
       Integer variableCount = requestContext.getInteger("variablesTable.rowCount");
@@ -224,7 +227,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
         if (internalAuthenticationProvider.canUpdateCredentials()) {
           if ("-1".equals(user.getExternalId())) {
             String externalId = internalAuthenticationProvider.createCredentials(username, password);
-            staffDAO.updateExternalId(user, externalId);
+            userDAO.updateExternalId(user, externalId);
           } else {
             if (!StringUtils.isBlank(username))
               internalAuthenticationProvider.updateUsername(user.getExternalId(), username);

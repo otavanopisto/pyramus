@@ -118,6 +118,7 @@ import fi.pyramus.dao.system.SettingDAO;
 import fi.pyramus.dao.system.SettingKeyDAO;
 import fi.pyramus.dao.users.InternalAuthDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
+import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.dao.webhooks.WebhookDAO;
@@ -287,6 +288,10 @@ public class DAOFactory {
   }
   
   /* Users */
+
+  public UserDAO getUserDAO() {
+    return (UserDAO) findByClass(UserDAO.class);
+  }
   
   public InternalAuthDAO getInternalAuthDAO() {
     return (InternalAuthDAO) findByClass(InternalAuthDAO.class);

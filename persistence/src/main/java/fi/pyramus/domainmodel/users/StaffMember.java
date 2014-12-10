@@ -12,29 +12,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
-import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Indexed
 @Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @PrimaryKeyJoinColumn(name="id")
 public class StaffMember extends User {
-
-  public String getAuthProvider() {
-    return authProvider;
-  }
-  
-  public void setAuthProvider(String authProvider) {
-    this.authProvider = authProvider;
-  }
-  
-  public String getExternalId() {
-    return externalId;
-  }
-  
-  public void setExternalId(String externalId) {
-    this.externalId = externalId;
-  }
   
   public void setRole(Role role) {
     this.role = role;
@@ -51,16 +34,6 @@ public class StaffMember extends User {
   public String getTitle() {
     return title;
   }
-
-  @NotNull
-  @Column (nullable = false)
-  @NotEmpty
-  private String externalId;
-  
-  @NotNull
-  @Column (nullable = false)
-  @NotEmpty
-  private String authProvider;  
 
   private String title;  
   
