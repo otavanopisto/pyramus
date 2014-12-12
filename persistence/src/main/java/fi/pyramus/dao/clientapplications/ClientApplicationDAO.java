@@ -13,15 +13,16 @@ import fi.pyramus.domainmodel.clientapplications.ClientApplication_;
 @Stateless
 public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
   
-  public ClientApplication create(String clientName, String clientId, String clientSecret ){
+  public ClientApplication create(String clientName, String clientId, String clientSecret, Boolean skipPrompt ){
     EntityManager entityManager = getEntityManager();
     
     ClientApplication clientApplication = new ClientApplication();
     clientApplication.setClientId(clientId);
     clientApplication.setClientName(clientName);
     clientApplication.setClientSecret(clientSecret);
+    clientApplication.setSkipPrompt(skipPrompt);
     
-    entityManager.persist(clientApplication);
+    entityManager.persist(clientApplication); //TODO: use persists methods
     return clientApplication;
   }
   
@@ -74,7 +75,13 @@ public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
     clientApplication.setClientSecret(clientSecret);
     entityManager.persist(clientApplication);
     return clientApplication;
-    
+  }
+  
+  public ClientApplication updateSkipPrompt(ClientApplication clientApplication, boolean skipPrompt){
+    EntityManager entityManager = getEntityManager();
+    clientApplication.setSkipPrompt(skipPrompt);
+    entityManager.persist(clientApplication);
+    return clientApplication;
   }
   
   public void delete(ClientApplication clientApplication) {

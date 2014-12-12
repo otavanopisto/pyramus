@@ -10,6 +10,7 @@ import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.domainmodel.users.StaffMember;
+import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
@@ -42,13 +43,15 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
     try {
       AuthenticationProviderVault authenticationProviders = AuthenticationProviderVault.getInstance();
       ExternalAuthenticationProvider authenticationProvider = authenticationProviders.getExternalAuthenticationProviders().get(0);
-      StaffMember user = authenticationProvider.processResponse(requestContext);
+      User user = authenticationProvider.processResponse(requestContext);
       if (user != null) { 
         // User has been authorized, so store him in the session
         
         session.setAttribute("loggedUserId", user.getId());
         session.setAttribute("loggedUserName", user.getFullName());
-        session.setAttribute("loggedUserRole", UserRole.valueOf(user.getRole().name()));
+        if (user instanceof StaffMember) {
+          session.setAttribute("loggedUserRole", UserRole.valueOf(((StaffMember) user).getRole().name()));
+        }
         
         PyramusRights.login(user.getId());
         

@@ -24,6 +24,7 @@ import fi.pyramus.rest.security.RESTSecurity;
 import fi.pyramus.rest.session.RestSession;
 import fi.pyramus.security.impl.SessionController;
 import fi.pyramus.security.impl.SessionControllerDelegate;
+import fi.pyramus.rest.controller.RestSessionController;
 
 @Provider
 public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFilter {
@@ -36,6 +37,9 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
 
   @Inject
   private OauthController oauthController;
+  
+  @Inject
+  private RestSessionController restSessionController;
 
   @Inject
   private SessionControllerDelegate sessionControllerDelegate;
@@ -75,6 +79,9 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
             }
           }
         }
+        
+        restSessionController.setLoggedUserId(clientApplicationAccessToken.getClientApplicationAuthorizationCode().getUser().getId());
+
       } catch (OAuthProblemException e) {
         requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST).entity(e.getMessage()).build());
       } catch (OAuthSystemException e) {

@@ -12,6 +12,7 @@ import fi.pyramus.dao.base.ContactTypeDAO;
 import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
+import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Email;
@@ -66,7 +67,7 @@ public class UsersService extends PyramusService {
   }
 
   public UserEntity getUserByExternalId(@WebParam(name = "externalId") String externalId, @WebParam(name = "authProvider") String authProvider) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     return EntityFactoryVault.buildFromDomainObject(userDAO.findByExternalIdAndAuthProvider(externalId, authProvider));
   }
 

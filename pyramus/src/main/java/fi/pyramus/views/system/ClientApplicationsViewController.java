@@ -32,7 +32,6 @@ public class ClientApplicationsViewController extends PyramusFormViewController 
     ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO = DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO();
     ClientApplicationAccessTokenDAO clientApplicationAccessTokenDAO = DAOFactory.getInstance().getClientApplicationAccessTokenDAO();
 
-
     Long clientApplicationsRowCount = requestContext.getLong("clientApplicationsTable.rowCount");
     for (int i = 0; i < clientApplicationsRowCount; i++) {
       String colPrefix = "clientApplicationsTable." + i;
@@ -40,6 +39,7 @@ public class ClientApplicationsViewController extends PyramusFormViewController 
       Long id = requestContext.getLong(colPrefix + ".id");
       Boolean remove = "1".equals(requestContext.getString(colPrefix + ".remove"));
       Boolean regenerateSecret = "1".equals(requestContext.getString(colPrefix + ".regenerateSecret"));
+      Boolean skipPrompt = "1".equals(requestContext.getString(colPrefix + ".skipPrompt"));
       String clientName = requestContext.getString(colPrefix + ".appName");
       String clientId = requestContext.getString(colPrefix + ".appId");
       String clientSecret = requestContext.getString(colPrefix + ".appSecret");
@@ -47,7 +47,7 @@ public class ClientApplicationsViewController extends PyramusFormViewController 
       if (id == null && !remove) {
         clientId = UUID.randomUUID().toString();
         clientSecret = new OauthClientSecretGenerator(80).nextString();
-        clientApplicationDAO.create(clientName, clientId, clientSecret);
+        clientApplicationDAO.create(clientName, clientId, clientSecret, skipPrompt);
       } else if(id != null) {
         ClientApplication clientApplication = clientApplicationDAO.findById(id);
 
@@ -66,14 +66,12 @@ public class ClientApplicationsViewController extends PyramusFormViewController 
             clientSecret = new OauthClientSecretGenerator(80).nextString();
             clientApplicationDAO.updateClientSecret(clientApplication, clientSecret);
           }
-
           clientApplicationDAO.updateName(clientApplication, clientName);
+          clientApplicationDAO.updateSkipPrompt(clientApplication, skipPrompt);
         }
       }
     }
-
     processForm(requestContext);
-
   }
 
   @Override

@@ -11,7 +11,7 @@ public class ClientApplicationAPI {
   
   public Long create(String clientName, String clientId, String clientSecret)
   {
-    ClientApplication app = DAOFactory.getInstance().getClientApplicationDAO().create(clientName, clientId, clientSecret);
+    ClientApplication app = DAOFactory.getInstance().getClientApplicationDAO().create(clientName, clientId, clientSecret, false);
     if (app == null) {
       return null;
     } else {

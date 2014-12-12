@@ -308,10 +308,16 @@
         <artifactId>framework</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>fi.pyramus</groupId>
         <artifactId>openid-plugin</artifactId>
+        <version>${pyramus.version}</version>
+      </dependency>    
+      
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>googleoauth-plugin</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
       

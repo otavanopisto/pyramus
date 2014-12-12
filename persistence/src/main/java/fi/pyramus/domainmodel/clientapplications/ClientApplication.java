@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.search.annotations.Field;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
@@ -40,6 +41,14 @@ public class ClientApplication {
   public void setClientSecret(String clientSecret) {
     this.clientSecret = clientSecret;
   }
+  
+  public Boolean getSkipPrompt() {
+    return skipPrompt;
+  }
+
+  public void setSkipPrompt(Boolean skipPrompt) {
+    this.skipPrompt = skipPrompt;
+  }
 
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE, generator = "ClientApplication")
@@ -60,5 +69,9 @@ public class ClientApplication {
   @NotEmpty
   @Column(nullable = false)
   private String clientSecret;
+  
+  @NotNull
+  @Column (nullable = false)
+  private Boolean skipPrompt;
   
 }

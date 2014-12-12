@@ -23,6 +23,8 @@ import fi.pyramus.util.dataimport.scripting.api.NationalityAPI;
 import fi.pyramus.util.dataimport.scripting.api.PersonAPI;
 import fi.pyramus.util.dataimport.scripting.api.SchoolAPI;
 import fi.pyramus.util.dataimport.scripting.api.SchoolFieldAPI;
+import fi.pyramus.util.dataimport.scripting.api.SettingAPI;
+import fi.pyramus.util.dataimport.scripting.api.SettingKeyAPI;
 import fi.pyramus.util.dataimport.scripting.api.StaffMemberAPI;
 import fi.pyramus.util.dataimport.scripting.api.StudentAPI;
 import fi.pyramus.util.dataimport.scripting.api.StudentGroupAPI;
@@ -76,6 +78,14 @@ public class ImportAPI {
   
   public StudentAPI getStudents() {
     return new StudentAPI(loggedUserId);
+  }
+  
+  public SettingKeyAPI getSettingKeys(){
+    return new SettingKeyAPI(loggedUserId);
+  }
+  
+  public SettingAPI getSettings(){
+    return new SettingAPI(loggedUserId);
   }
   
   public ActivityTypeAPI getActivityTypes() {

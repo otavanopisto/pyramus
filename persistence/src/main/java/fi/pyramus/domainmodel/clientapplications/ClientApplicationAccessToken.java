@@ -52,7 +52,13 @@ public class ClientApplicationAccessToken {
     this.clientApplicationAuthorizationCode = clientApplicationAuthorizationCode;
   }
 
+  /*public String getRefreshToken() { TODO: re-enable refresh token support
+    return refreshToken;
+  }
 
+  public void setRefreshToken(String refreshToken) {
+    this.refreshToken = refreshToken;
+  }*/
 
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE, generator = "ClientApplicationAccessToken")
@@ -64,6 +70,12 @@ public class ClientApplicationAccessToken {
   @Column(nullable = false, unique=true)
   private String accessToken;
 
+  /*@NotNull TODO: re-enable refresh token support
+  @NotEmpty
+  @Column(nullable = false)
+  private String refreshToken;
+  */
+  
   @NotNull
   @Column(nullable = false)
   private Long expires;

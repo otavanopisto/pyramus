@@ -49,9 +49,9 @@ public class TokenEndpointRESTService extends AbstractRESTService {
   public Response authorize(@Context HttpServletResponse res, @Context HttpServletRequest req) throws OAuthSystemException {
 
     OAuthTokenRequest oauthRequest = null;
+    //boolean refreshing = false;
 
     OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
-
     try {
       oauthRequest = new OAuthTokenRequest(req);
 
@@ -62,7 +62,7 @@ public class TokenEndpointRESTService extends AbstractRESTService {
             .setErrorDescription("Invalid client").buildJSONMessage();
         return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
       }
-
+      
       ClientApplicationAuthorizationCode clientApplicationAuthorizationCode = null;
       if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(GrantType.AUTHORIZATION_CODE.toString())) {
         clientApplicationAuthorizationCode = oauthController.findByClientApplicationAndAuthorizationCode(clientApplication,
@@ -73,24 +73,34 @@ public class TokenEndpointRESTService extends AbstractRESTService {
           return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
         }
       } else if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(GrantType.REFRESH_TOKEN.toString())) {
-        // TODO: add support for refresh token
-        OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_NOT_IMPLEMENTED).setError(OAuthError.TokenResponse.INVALID_REQUEST)
-            .setErrorDescription("Refresh token not supported").buildJSONMessage();
+        /*refreshing = true;*/ //TODO: re-enable refresh token support
+        OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_NOT_IMPLEMENTED).setError(OAuthError.TokenResponse.UNSUPPORTED_GRANT_TYPE)
+            .setErrorDescription("not implemented yet").buildJSONMessage();
         return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-      }else {
+      } else {
         return Response.status(HttpServletResponse.SC_NOT_IMPLEMENTED).build();
       }
 
       String accessToken = oauthIssuerImpl.accessToken();
+      String refreshToken = "";
       Long expires = (System.currentTimeMillis() / 1000L) + TOKEN_LIFETIME;
       ClientApplicationAccessToken clientApplicationAccessToken = oauthController.findByClientApplicationAuthorizationCode(clientApplicationAuthorizationCode);
-      if(clientApplicationAccessToken == null){
-        oauthController.createAccessToken(accessToken, expires, clientApplication, clientApplicationAuthorizationCode);
-      }else{
-        oauthController.refresh(clientApplicationAccessToken, expires, accessToken);
-      }
 
-      OAuthResponse response = OAuthASResponse.tokenResponse(HttpServletResponse.SC_OK).setAccessToken(accessToken)
+      /*if (refreshing) { TODO: re-enable refresh token support
+        refreshToken = oauthRequest.getParam(OAuth.OAUTH_REFRESH_TOKEN);
+        if (clientApplicationAccessToken.getRefreshToken().equals(refreshToken)) {
+          oauthController.refresh(clientApplicationAccessToken, expires, accessToken);
+        }
+      } else {*/
+        if (clientApplicationAccessToken == null) {
+          //refreshToken = oauthIssuerImpl.refreshToken();
+          oauthController.createAccessToken(accessToken, /*refreshToken,*/ expires, clientApplication, clientApplicationAuthorizationCode);
+        } else {
+          oauthController.refresh(clientApplicationAccessToken, expires, accessToken); // TODO:remove when Muikku has refresh token support
+        }
+      //}
+
+      OAuthResponse response = OAuthASResponse.tokenResponse(HttpServletResponse.SC_OK).setAccessToken(accessToken).setRefreshToken(refreshToken)
           .setExpiresIn(String.valueOf(TOKEN_LIFETIME)).buildJSONMessage();
       return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
 
