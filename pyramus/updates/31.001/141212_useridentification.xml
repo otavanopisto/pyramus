@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
-
   <createTables>
     <table primaryKeys="id" name="UserIdentification">
       <fields>
@@ -14,9 +13,9 @@
       </foreignKeys>
     </table>
   </createTables>
-
   <sql>alter table UserIdentification add constraint UK_externalId_authSource unique (externalId, authSource);</sql>
-
+  <sql>insert into UserIdentification (id, externalId, authSource, person_id) select s.externalId, s.externalId, s.authProvider, u.person_id from StaffMember s, User u where s.authProvider = 'internal' and s.externalId != '-1' and s.id = u.id</sql>
+  
   <alterTables>
     <table name="Person">
       <addFields>
@@ -33,8 +32,6 @@
       </dropFields>
     </table>
   </alterTables>
-
-  <sql>update Person p, StaffMember s, User u set p.defaultUser_id=u.id where p.id = u.person_id AND p.id = s.id</sql>
   <sql>update Person p, (
     select 
     id,
@@ -56,5 +53,8 @@
     set 
     p.defaultUser_id = v.id;
   </sql>
-
+  <sql>update Person p, UserVariable uv, User u set p.defaultUser_id=u.id where p.id = u.person_id AND u.id = uv.user and uv.variableKey = (select id from uservariablekey where variableKey = 'nexusid') and uv.value is not null</sql>
+  <sql>update Person p, StaffMember s, User u set p.defaultUser_id=u.id where p.id = u.person_id AND u.id = s.id</sql>
+  <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'UserIdentification', coalesce(max(id) + 1, 1) from UserIdentification</sql>
+  
 </update>
