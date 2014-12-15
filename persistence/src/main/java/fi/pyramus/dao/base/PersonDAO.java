@@ -9,6 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +27,10 @@ import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 
 import fi.pyramus.dao.PyramusEntityDAO;
+import fi.pyramus.domainmodel.base.ContactInfo;
+import fi.pyramus.domainmodel.base.ContactInfo_;
+import fi.pyramus.domainmodel.base.Email;
+import fi.pyramus.domainmodel.base.Email_;
 import fi.pyramus.domainmodel.base.Language;
 import fi.pyramus.domainmodel.base.Municipality;
 import fi.pyramus.domainmodel.base.Nationality;
@@ -34,6 +40,10 @@ import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
+import fi.pyramus.domainmodel.users.StaffMember;
+import fi.pyramus.domainmodel.users.StaffMember_;
+import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.User_;
 import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.persistence.search.PersonFilter;
 
@@ -61,7 +71,30 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     person.setSecureInfo(secureInfo);
     entityManager.persist(person);
   }
+  
+  public Person findByEmail(String email){
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Person> criteria = criteriaBuilder.createQuery(Person.class);
+    Root<Person> root = criteria.from(Person.class);
+    ListJoin<Person, User> userJoin = root.join(Person_.users);
+    Join<User, ContactInfo> contactInfoJoin = userJoin.join(User_.contactInfo);
+    ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.equal(emailJoin.get(Email_.address), email)
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
 
+  public Person updateDefaultUser(Person person, User defaultUser){
+    person.setDefaultUser(defaultUser);
+    return persist(person);
+  }
+  
   /**
    * Returns an abstract student with the given social security number.
    * 

@@ -60,15 +60,13 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   @Inject
   private Event<StaffMemberDeletedEvent> staffMemberDeletedEvent;
   
-  public StaffMember create(String firstName, String lastName, String externalId, String authProvider, Role role, Person person) {
+  public StaffMember create(String firstName, String lastName, Role role, Person person) {
     ContactInfo contactInfo = new ContactInfo();
     
     StaffMember staffMember = new StaffMember();
 
     staffMember.setFirstName(firstName);
     staffMember.setLastName(lastName);
-    staffMember.setAuthProvider(authProvider);
-    staffMember.setExternalId(externalId);
     staffMember.setRole(role);
     staffMember.setContactInfo(contactInfo);
     staffMember.setPerson(person);

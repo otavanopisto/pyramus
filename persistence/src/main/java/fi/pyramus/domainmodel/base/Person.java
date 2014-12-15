@@ -21,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
@@ -987,6 +988,14 @@ public class Person {
     this.users = users;
   }
 
+  public User getDefaultUser() {
+    return defaultUser;
+  }
+
+  public void setDefaultUser(User defaultUser) {
+    this.defaultUser = defaultUser;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE, generator = "Person")
   @TableGenerator(name = "Person", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -1024,4 +1033,7 @@ public class Person {
   @JoinColumn(name = "person_id")
   @IndexedEmbedded
   private List<User> users = new ArrayList<User>();
+  
+  @OneToOne
+  private User defaultUser;
 }

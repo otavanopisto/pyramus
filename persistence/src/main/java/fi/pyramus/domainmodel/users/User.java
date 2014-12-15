@@ -66,22 +66,6 @@ public class User implements fi.muikku.security.User, ContextReference {
   public void setLastName(String lastName) {
     this.lastName = lastName;
   }
-
-  public String getAuthProvider() {
-    return authProvider;
-  }
-  
-  public void setAuthProvider(String authProvider) {
-    this.authProvider = authProvider;
-  }
-  
-  public String getExternalId() {
-    return externalId;
-  }
-  
-  public void setExternalId(String externalId) {
-    this.externalId = externalId;
-  }
   
   @Transient
   @Field(analyze = Analyze.NO, store = Store.YES)
@@ -181,17 +165,7 @@ public class User implements fi.muikku.security.User, ContextReference {
   @GeneratedValue(strategy=GenerationType.TABLE, generator="User")  
   @TableGenerator(name="User", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   @DocumentId
-  private Long id;
-
-  @NotNull
-  @Column (nullable = false)
-  @NotEmpty
-  private String externalId;
-  
-  @NotNull
-  @Column (nullable = false)
-  @NotEmpty
-  private String authProvider;  
+  private Long id; 
   
   @ManyToOne
   private Person person;
