@@ -15,8 +15,10 @@ import javax.ws.rs.core.Response.Status;
 
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.rest.annotation.RESTPermit;
 import fi.pyramus.rest.annotation.Unsecure;
 import fi.pyramus.rest.model.WhoAmI;
+import fi.pyramus.rest.controller.permissions.SystemPermissions;
 
 @Path("/system")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,6 +37,7 @@ public class SystemRESTService extends AbstractRESTService {
   
   @GET
   @Path ("/whoami")
+  @RESTPermit (SystemPermissions.WHOAMI)
   public Response getWhoAmI() {
     User loggedUser = getLoggedUser();
     if (loggedUser == null) {
