@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table primaryKeys="id" name="UserIdentification">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="true" />
+        <field name="externalId" type="java.lang.String" nullable="false" />
+        <field name="authSource" type="java.lang.String" nullable="false" />
+        <field name="person_id" type="java.lang.Long" />
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="person_id" referencedTable="Person" />
+      </foreignKeys>
+    </table>
+  </createTables>
+
+  <sql>alter table UserIdentification add constraint UK_externalId_authSource unique (externalId, authSource);</sql>
+
+  <alterTables>
+    <table name="Person">
+      <addFields>
+        <field name="defaultUser_id" type="java.lang.Long" />
+      </addFields>
+      <addForeignKeys>
+        <key referencedColumns="id" columns="defaultUser_id" referencedTable="User" />
+      </addForeignKeys>
+    </table>
+    <table name="StaffMember">
+      <dropFields>
+        <field name="externalId" />
+        <field name="authProvider" />
+      </dropFields>
+    </table>
+  </alterTables>
+
+  <sql>update Person p, StaffMember s, User u set p.defaultUser_id=u.id where p.id = u.person_id AND p.id = s.id</sql>
+  <sql>update Person p, (
+    select 
+    id,
+    case
+    when not isnull(studyStartDate) and isnull(studyEndDate) then 1
+    when isnull(studyStartDate) and isnull(studyEndDate) then 2
+    when isnull(studyEndDate) then 3 
+    else 4
+    end as val 
+    from 
+    Student
+    where 
+    archived = false
+    group by 
+    id 
+    having 
+    min(val)
+  ) v
+    set 
+    p.defaultUser_id = v.id;
+  </sql>
+
+</update>
