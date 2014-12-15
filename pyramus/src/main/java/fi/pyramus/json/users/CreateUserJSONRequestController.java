@@ -125,6 +125,9 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     if (title != null)
       userDAO.updateTitle(user, title);
     
+    if(person.getDefaultUser() == null){
+      personDAO.updateDefaultUser(person, user);
+    }
     // Tags
     
     userDAO.updateTags(user, tagEntities);
