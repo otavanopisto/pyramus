@@ -198,10 +198,10 @@ public class EditUserJSONRequestController extends JSONRequestController {
 
     if (Role.ADMINISTRATOR.equals(loggedUserRole)) {
       String authProvider = requestContext.getString("authProvider");
-      
-      if (!user.getAuthProvider().equals(authProvider)) {
+      //FIXME
+      /*if (!user.getAuthProvider().equals(authProvider)) {
         userDAO.updateAuthProvider(user, authProvider);
-      }
+      }*/
       
       Integer variableCount = requestContext.getInteger("variablesTable.rowCount");
       for (int i = 0; i < (variableCount != null ? variableCount : 0); i++) {
@@ -221,7 +221,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
           throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
       }
       
-      AuthenticationProvider authenticationProvider = AuthenticationProviderVault.getInstance().getAuthenticationProvider(user.getAuthProvider());
+      /*FIXME: AuthenticationProvider authenticationProvider = AuthenticationProviderVault.getInstance().getAuthenticationProvider(user.getAuthProvider());
       if (authenticationProvider instanceof InternalAuthenticationProvider) {
         InternalAuthenticationProvider internalAuthenticationProvider = (InternalAuthenticationProvider) authenticationProvider;
         if (internalAuthenticationProvider.canUpdateCredentials()) {
@@ -236,7 +236,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
               internalAuthenticationProvider.updatePassword(user.getExternalId(), password);
           }
         }
-      }
+      }*/
     }
     
     if (requestContext.getLoggedUserId().equals(user.getId())) {

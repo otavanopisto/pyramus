@@ -45,9 +45,10 @@ public class UsersService extends PyramusService {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
     // TODO: should not create if user exists
+    // FIXME: userIdentification / defaultUser
     Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
     Role userRole = EnumType.valueOf(Role.class, role);
-    User user = userDAO.create(firstName, lastName, externalId, authProvider, userRole, person);
+    User user = userDAO.create(firstName, lastName, userRole, person);
     validateEntity(user);
     return EntityFactoryVault.buildFromDomainObject(user);
   }
@@ -68,7 +69,9 @@ public class UsersService extends PyramusService {
 
   public UserEntity getUserByExternalId(@WebParam(name = "externalId") String externalId, @WebParam(name = "authProvider") String authProvider) {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-    return EntityFactoryVault.buildFromDomainObject(userDAO.findByExternalIdAndAuthProvider(externalId, authProvider));
+    //FIXME: ZZZ
+    //return EntityFactoryVault.buildFromDomainObject(userDAO.findByExternalIdAndAuthProvider(externalId, authProvider));
+    return null;
   }
 
   public UserEntity getUserByEmail(@WebParam(name = "email") String email) {

@@ -65,9 +65,10 @@ public class EditUserViewController extends PyramusViewController implements Bre
         InternalAuthenticationProvider internalAuthenticationProvider = (InternalAuthenticationProvider) authenticationProvider;
         canUpdateCredentials = internalAuthenticationProvider.canUpdateCredentials();
 
-        if (internalAuthenticationProvider.getName().equals(user.getAuthProvider())) {
+        //FIXME
+        /*if (internalAuthenticationProvider.getName().equals(user.getAuthProvider())) {
           username = internalAuthenticationProvider.getUsername(user.getExternalId());
-        }
+        }*/
       } else {
         canUpdateCredentials = false;
       }

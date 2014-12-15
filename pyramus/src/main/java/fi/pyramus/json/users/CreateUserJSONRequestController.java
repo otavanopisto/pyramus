@@ -18,11 +18,13 @@ import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
+import fi.pyramus.dao.users.UserIdentificationDAO;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.StaffMember;
+import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
@@ -52,6 +54,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
 
     Long personId = requestContext.getLong("personId");
     
@@ -109,6 +112,8 @@ public class CreateUserJSONRequestController extends JSONRequestController {
         }
 
         externalId = internalAuthenticationProvider.createCredentials(username, password);
+        //FIXME: UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId(authSource, externalId);
+        
       }
     } 
     
@@ -116,7 +121,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
 
     Person person = personId != null ? personDAO.findById(personId) : personDAO.create(null, null, null, null, Boolean.FALSE);
     
-    StaffMember user = userDAO.create(firstName, lastName, externalId, authProvider, role, person);
+    StaffMember user = userDAO.create(firstName, lastName, role, person);
     if (title != null)
       userDAO.updateTitle(user, title);
     

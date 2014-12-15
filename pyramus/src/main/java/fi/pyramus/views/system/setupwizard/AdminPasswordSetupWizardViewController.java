@@ -9,10 +9,13 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.users.InternalAuthDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
+import fi.pyramus.dao.users.UserIdentificationDAO;
 import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.users.InternalAuth;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.StaffMember;
+import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.framework.UserRole;
 
 public class AdminPasswordSetupWizardViewController extends SetupWizardController {
@@ -36,10 +39,13 @@ public class AdminPasswordSetupWizardViewController extends SetupWizardControlle
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
     
     InternalAuth internalAuth = internalAuthDAO.create(username, passwordMD5);
     Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
-    userDAO.create(firstName, lastName, String.valueOf(internalAuth.getId()), "internal", Role.ADMINISTRATOR, person);
+    userIdentificationDAO.create(person, "internal", String.valueOf(internalAuth.getId()));
+    User user = userDAO.create(firstName, lastName, Role.ADMINISTRATOR, person);
+    personDAO.updateDefaultUser(person, user);
   }
 
   @Override

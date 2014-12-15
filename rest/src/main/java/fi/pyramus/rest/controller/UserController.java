@@ -35,8 +35,8 @@ public class UserController {
 
   /* Users */
 
-  public StaffMember createStaffMember(String firstName, String lastName, String externalId, String authProvider, Role role, Person person) {
-    return staffMemberDAO.create(firstName, lastName, externalId, authProvider, role, person);
+  public StaffMember createStaffMember(String firstName, String lastName, Role role, Person person) {
+    return staffMemberDAO.create(firstName, lastName, role, person);
   }
   
   public StaffMember findStaffMemberById(Long userId) {
