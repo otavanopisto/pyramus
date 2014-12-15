@@ -19,7 +19,7 @@ public class UserIdentificationDAO extends PyramusEntityDAO<UserIdentification> 
 	private static final long serialVersionUID = -3862910101039448995L;
 
 	public UserIdentification create(Person person, String authSource, String externalId) {
-    fi.pyramus.domainmodel.users.UserIdentification userIdentification = new UserIdentification();
+    UserIdentification userIdentification = new UserIdentification();
     userIdentification.setAuthSource(authSource);
     userIdentification.setExternalId(externalId);
     userIdentification.setPerson(person);
