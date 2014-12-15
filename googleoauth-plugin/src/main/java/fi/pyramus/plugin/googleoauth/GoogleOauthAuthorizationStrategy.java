@@ -17,10 +17,14 @@ import org.scribe.oauth.OAuthService;
 
 import fi.internetix.smvc.controllers.RequestContext;
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.system.SettingDAO;
 import fi.pyramus.dao.system.SettingKeyDAO;
 import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.UserIdentificationDAO;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.plugin.auth.AuthenticationException;
 import fi.pyramus.plugin.auth.ExternalAuthenticationProvider;
 import fi.pyramus.plugin.googleoauth.scribe.GoogleApi20;
@@ -74,23 +78,33 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
     JSONObject userInfo = JSONObject.fromObject(response.getBody());
 
     if (userInfo != null) {
-      User user = userDAO.findByExternalIdAndAuthProvider(userInfo.getString("id"), getName());
-      if (user == null) {
-        user = userDAO.findByEmail(userInfo.getString("email"));
-        if (user != null && getName().equals(user.getAuthProvider())) {
-            userDAO.updateExternalId(user, userInfo.getString("id"));
-        } else {
-          logger.log(Level.SEVERE, "Local user not found with correct authentication provider.");
-          throw new AuthenticationException(AuthenticationException.LOCAL_USER_MISSING);
-        }
-      }
-      return user;
-      
+      return processLogin(userInfo.getString("id"), userInfo.getString("email"));
     } else {
-      throw new AuthenticationException(AuthenticationException.LOCAL_USER_MISSING);
+      throw new AuthenticationException(AuthenticationException.EXTERNAL_LOGIN_SERVER_ERROR);
     }
   }
 
+  private User processLogin(String externalId, String email) throws AuthenticationException{
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    
+    Person emailPerson = personDAO.findByEmail(email);
+    if(emailPerson == null){
+      throw new AuthenticationException(AuthenticationException.LOCAL_USER_MISSING);
+    }
+    UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId(getName(), externalId);
+    if (userIdentification != null) {
+      // User has identified by this auth source before
+      if (emailPerson.getId() != userIdentification.getPerson().getId()) {
+        throw new AuthenticationException(AuthenticationException.EMAIL_BELONGS_TO_ANOTHER_PERSON);
+      }
+    }else{
+      userIdentificationDAO.create(emailPerson, getName(), externalId);
+    }
+    return emailPerson.getDefaultUser();
+  }
+  
   private String getClientId() {
     SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
     SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO(); 

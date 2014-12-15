@@ -9,6 +9,11 @@ public class AuthenticationException extends Exception {
   public static final int UNAUTHORIZED = 1;
   /** Constant for local user missing */
   public static final int LOCAL_USER_MISSING = 2;
+  /** Constant for email belonging to another person */
+  public static final int EMAIL_BELONGS_TO_ANOTHER_PERSON = 3;
+  /** Constant for problem caused by external authentication server */
+  public static final int EXTERNAL_LOGIN_SERVER_ERROR = 4;
+  
 
   /**
    * Constructor specifying the error code of this exception. The code should be one of the
