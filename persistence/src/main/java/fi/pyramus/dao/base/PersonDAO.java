@@ -40,12 +40,10 @@ import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
-import fi.pyramus.domainmodel.users.StaffMember;
-import fi.pyramus.domainmodel.users.StaffMember_;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.User_;
-import fi.pyramus.persistence.search.SearchResult;
 import fi.pyramus.persistence.search.PersonFilter;
+import fi.pyramus.persistence.search.SearchResult;
 
 @Stateless
 public class PersonDAO extends PyramusEntityDAO<Person> {
@@ -83,9 +81,9 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
     
     criteria.select(root);
-    criteria.where(
-        criteriaBuilder.equal(emailJoin.get(Email_.address), email)
-    );
+    criteria
+      .where(criteriaBuilder.equal(emailJoin.get(Email_.address), email))
+      .distinct(true);
     
     return getSingleResult(entityManager.createQuery(criteria));
   }
