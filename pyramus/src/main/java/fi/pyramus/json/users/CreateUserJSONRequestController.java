@@ -128,15 +128,20 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     
     // UserIdentification
     
-    List<UserIdentification> userIdentifications = userIdentificationDAO.listByPerson(person);
-    if(userIdentifications.size() > 1) {
-      //TODO: Currently only 1 UserIdentification for person is supported, this may change in the future.
-      throw new SmvcRuntimeException(PyramusStatusCode.MULTIPLE_IDENTIFICATIONS_FOR_PERSON, "Multiple UserIdentifications found for person");
-    } else if(userIdentifications == null || userIdentifications.size() == 0) {
-      userIdentificationDAO.create(person, authProvider, externalId);
-    }else{
-      UserIdentification userIdentification = userIdentificationDAO.updateAuthSource(userIdentifications.get(0), authProvider);
-      userIdentificationDAO.updateExternalId(userIdentification, externalId);
+    /**
+     * Create userIdentification only for internal authentication providers, external providers will create the identification during first login
+     */
+    if(authenticationProvider instanceof InternalAuthenticationProvider){
+      List<UserIdentification> userIdentifications = userIdentificationDAO.listByPerson(person);
+      if(userIdentifications.size() > 1) {
+        //TODO: Currently only 1 UserIdentification for person is supported, this may change in the future.
+        throw new SmvcRuntimeException(PyramusStatusCode.MULTIPLE_IDENTIFICATIONS_FOR_PERSON, "Multiple UserIdentifications found for person");
+      } else if(userIdentifications == null || userIdentifications.size() == 0) {
+        userIdentificationDAO.create(person, authProvider, externalId);
+      }else{
+        UserIdentification userIdentification = userIdentificationDAO.updateAuthSource(userIdentifications.get(0), authProvider);
+        userIdentificationDAO.updateExternalId(userIdentification, externalId);
+      } 
     }
     
     // Tags
