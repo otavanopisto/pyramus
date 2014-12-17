@@ -13,6 +13,7 @@ import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.UserIdentificationDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Email;
@@ -20,6 +21,7 @@ import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.services.entities.EntityFactoryVault;
 import fi.pyramus.services.entities.users.UserEntity;
 
@@ -43,12 +45,13 @@ public class UsersService extends PyramusService {
       @WebParam(name = "externalId") String externalId, @WebParam(name = "authProvider") String authProvider, @WebParam(name = "role") String role) {
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
-    
+    UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
     // TODO: should not create if user exists
-    // FIXME: userIdentification / defaultUser
     Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
+    userIdentificationDAO.create(person, authProvider, externalId);
     Role userRole = EnumType.valueOf(Role.class, role);
     User user = userDAO.create(firstName, lastName, userRole, person);
+    personDAO.updateDefaultUser(person, user);
     validateEntity(user);
     return EntityFactoryVault.buildFromDomainObject(user);
   }
@@ -68,9 +71,15 @@ public class UsersService extends PyramusService {
   }
 
   public UserEntity getUserByExternalId(@WebParam(name = "externalId") String externalId, @WebParam(name = "authProvider") String authProvider) {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-    //FIXME: ZZZ
-    //return EntityFactoryVault.buildFromDomainObject(userDAO.findByExternalIdAndAuthProvider(externalId, authProvider));
+    UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId(authProvider, externalId);
+    if(userIdentification != null){
+      StaffMember staffMember = staffDAO.findByPerson(userIdentification.getPerson());
+      if(staffMember != null){
+        return EntityFactoryVault.buildFromDomainObject(staffMember);
+      }
+    }
     return null;
   }
 
