@@ -1,7 +1,5 @@
 package fi.pyramus.plugin.googleoauth;
 
-import java.util.logging.Logger;
-
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
@@ -19,7 +17,6 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.system.SettingDAO;
 import fi.pyramus.dao.system.SettingKeyDAO;
-import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserIdentificationDAO;
 import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.users.User;
@@ -29,8 +26,6 @@ import fi.pyramus.plugin.auth.ExternalAuthenticationProvider;
 import fi.pyramus.plugin.googleoauth.scribe.GoogleApi20;
 
 public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationProvider {
-  
-  private static Logger logger = Logger.getLogger(GoogleOauthAuthorizationStrategy.class.getName());
   
   public GoogleOauthAuthorizationStrategy() {
   }
@@ -52,10 +47,7 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
     requestContext.setRedirectURL(service.getAuthorizationUrl(null));
   }
 
-  @SuppressWarnings("unchecked")
   public User processResponse(RequestContext requestContext) throws AuthenticationException {
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-
     HttpServletRequest req = requestContext.getRequest();
     String authCode = req.getParameter("code");
     Verifier verifier = new Verifier(authCode);
@@ -84,7 +76,6 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
   }
 
   private User processLogin(String externalId, String email) throws AuthenticationException{
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
@@ -95,7 +86,7 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
     UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId(getName(), externalId);
     if (userIdentification != null) {
       // User has identified by this auth source before
-      if (emailPerson.getId() != userIdentification.getPerson().getId()) {
+      if (emailPerson.getId().equals(userIdentification.getPerson().getId())) {
         throw new AuthenticationException(AuthenticationException.EMAIL_BELONGS_TO_ANOTHER_PERSON);
       }
     }else{
