@@ -20,6 +20,7 @@ import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.UserIdentificationDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
@@ -28,6 +29,7 @@ import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.StaffMember;
+import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
@@ -59,6 +61,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
+    UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
 
     Long loggedUserId = requestContext.getLoggedUserId();
     StaffMember loggedUser = staffDAO.findById(loggedUserId);
@@ -68,6 +71,15 @@ public class EditUserJSONRequestController extends JSONRequestController {
 
     StaffMember user = staffDAO.findById(userId);
 
+    List<UserIdentification> userIdentifications = userIdentificationDAO.listByPerson(user.getPerson());
+    
+    //TODO: Currently only 1 UserIdentification for person is supported, this may change in the future.
+    if(userIdentifications.size() > 1) {
+      throw new SmvcRuntimeException(PyramusStatusCode.MULTIPLE_IDENTIFICATIONS_FOR_PERSON, "Multiple UserIdentifications found for person");
+    }
+    
+    UserIdentification userIdentification = userIdentifications.get(0);
+    
     String firstName = requestContext.getString("firstName");
     String lastName = requestContext.getString("lastName");
     String title = requestContext.getString("title");
@@ -198,10 +210,9 @@ public class EditUserJSONRequestController extends JSONRequestController {
 
     if (Role.ADMINISTRATOR.equals(loggedUserRole)) {
       String authProvider = requestContext.getString("authProvider");
-      //FIXME
-      /*if (!user.getAuthProvider().equals(authProvider)) {
-        userDAO.updateAuthProvider(user, authProvider);
-      }*/
+      if (!userIdentification.getAuthSource().equals(authProvider)) {
+        userIdentificationDAO.updateAuthSource(userIdentification, authProvider);
+      }
       
       Integer variableCount = requestContext.getInteger("variablesTable.rowCount");
       for (int i = 0; i < (variableCount != null ? variableCount : 0); i++) {
@@ -221,22 +232,22 @@ public class EditUserJSONRequestController extends JSONRequestController {
           throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
       }
       
-      /*FIXME: AuthenticationProvider authenticationProvider = AuthenticationProviderVault.getInstance().getAuthenticationProvider(user.getAuthProvider());
+      AuthenticationProvider authenticationProvider = AuthenticationProviderVault.getInstance().getAuthenticationProvider(userIdentification.getAuthSource());
       if (authenticationProvider instanceof InternalAuthenticationProvider) {
         InternalAuthenticationProvider internalAuthenticationProvider = (InternalAuthenticationProvider) authenticationProvider;
         if (internalAuthenticationProvider.canUpdateCredentials()) {
-          if ("-1".equals(user.getExternalId())) {
+          if ("-1".equals(userIdentification.getExternalId())) {
             String externalId = internalAuthenticationProvider.createCredentials(username, password);
-            userDAO.updateExternalId(user, externalId);
+            userIdentificationDAO.updateExternalId(userIdentification, externalId);
           } else {
             if (!StringUtils.isBlank(username))
-              internalAuthenticationProvider.updateUsername(user.getExternalId(), username);
+              internalAuthenticationProvider.updateUsername(userIdentification.getExternalId(), username);
           
             if (!StringUtils.isBlank(password))
-              internalAuthenticationProvider.updatePassword(user.getExternalId(), password);
+              internalAuthenticationProvider.updatePassword(userIdentification.getExternalId(), password);
           }
         }
-      }*/
+      }
     }
     
     if (requestContext.getLoggedUserId().equals(user.getId())) {

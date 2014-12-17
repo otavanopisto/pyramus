@@ -57,5 +57,15 @@ public class UserIdentificationDAO extends PyramusEntityDAO<UserIdentification> 
     
     return entityManager.createQuery(criteria).getResultList();
   }
+  
+  public UserIdentification updateAuthSource(UserIdentification userIdentification, String authSource){
+    userIdentification.setAuthSource(authSource);
+    return persist(userIdentification);
+  }
+  
+  public UserIdentification updateExternalId(UserIdentification userIdentification, String externalId){
+    userIdentification.setExternalId(externalId);
+    return persist(userIdentification);
+  }
 
 }

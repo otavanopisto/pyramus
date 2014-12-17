@@ -6,8 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.xml.ws.http.HTTPException;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
@@ -15,6 +18,7 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.ContactTypeDAO;
 import fi.pyramus.dao.base.ContactURLTypeDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
+import fi.pyramus.dao.users.UserIdentificationDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.ContactType;
@@ -22,8 +26,10 @@ import fi.pyramus.domainmodel.base.ContactURLType;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.StaffMember;
+import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
+import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.plugin.auth.AuthenticationProvider;
@@ -50,8 +56,19 @@ public class EditUserViewController extends PyramusViewController implements Bre
     UserVariableKeyDAO variableKeyDAO = DAOFactory.getInstance().getUserVariableKeyDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     ContactURLTypeDAO contactURLTypeDAO = DAOFactory.getInstance().getContactURLTypeDAO();
-
+    UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    
     StaffMember user = staffDAO.findById(pageRequestContext.getLong("userId"));
+    
+    List<UserIdentification> userIdentifications = userIdentificationDAO.listByPerson(user.getPerson());
+    
+    //TODO: Currently only 1 UserIdentification for person is supported, this may change in the future.
+    if(userIdentifications.size() > 1) {
+      throw new SmvcRuntimeException(PyramusStatusCode.MULTIPLE_IDENTIFICATIONS_FOR_PERSON, "Multiple UserIdentifications found for person");
+    }
+    
+    UserIdentification userIdentification = userIdentifications.get(0);
+    
     String username = "";
     
     List<AuthenticationProviderInfoBean> authenticationProviders = new ArrayList<AuthenticationProviderInfoBean>();
@@ -64,11 +81,10 @@ public class EditUserViewController extends PyramusViewController implements Bre
       if (authenticationProvider instanceof InternalAuthenticationProvider) {
         InternalAuthenticationProvider internalAuthenticationProvider = (InternalAuthenticationProvider) authenticationProvider;
         canUpdateCredentials = internalAuthenticationProvider.canUpdateCredentials();
-
-        //FIXME
-        /*if (internalAuthenticationProvider.getName().equals(user.getAuthProvider())) {
-          username = internalAuthenticationProvider.getUsername(user.getExternalId());
-        }*/
+        
+        if (internalAuthenticationProvider.getName().equals(userIdentification.getAuthSource())) {
+          username = internalAuthenticationProvider.getUsername(userIdentification.getExternalId());
+        }
       } else {
         canUpdateCredentials = false;
       }
@@ -109,6 +125,7 @@ public class EditUserViewController extends PyramusViewController implements Bre
     
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());
     pageRequestContext.getRequest().setAttribute("user", user);
+    pageRequestContext.getRequest().setAttribute("userIdentification", userIdentification);
     pageRequestContext.getRequest().setAttribute("username", username);
     pageRequestContext.getRequest().setAttribute("contactTypes", contactTypes);
     pageRequestContext.getRequest().setAttribute("contactURLTypes", contactURLTypes);

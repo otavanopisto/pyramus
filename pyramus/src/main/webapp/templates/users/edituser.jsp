@@ -121,7 +121,7 @@
         var authProvider;
         
         if (!inputElement)
-          authProvider = "${user.authProvider}";
+          authProvider = "${userIdentification.authSource}";
         else
           authProvider = inputElement.value;
         
@@ -511,7 +511,7 @@
 	                    </c:choose>
 	                    
 	                    <c:choose>
-	                      <c:when test="${authenticationProvider.name eq user.authProvider}">
+	                      <c:when test="${authenticationProvider.name eq userIdentification.authSource}">
 	                        <option value="${authenticationProvider.name}" selected="selected">${authenticationProviderName}</option>
 	                      </c:when>
 	                      <c:otherwise>
