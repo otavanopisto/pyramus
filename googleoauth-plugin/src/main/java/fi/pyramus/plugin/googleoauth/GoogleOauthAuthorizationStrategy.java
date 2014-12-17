@@ -86,7 +86,7 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
     UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId(getName(), externalId);
     if (userIdentification != null) {
       // User has identified by this auth source before
-      if (emailPerson.getId().equals(userIdentification.getPerson().getId())) {
+      if (!emailPerson.getId().equals(userIdentification.getPerson().getId())) {
         throw new AuthenticationException(AuthenticationException.EMAIL_BELONGS_TO_ANOTHER_PERSON);
       }
     }else{
