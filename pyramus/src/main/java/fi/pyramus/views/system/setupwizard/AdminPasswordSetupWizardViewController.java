@@ -15,7 +15,6 @@ import fi.pyramus.domainmodel.users.InternalAuth;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
-import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.framework.UserRole;
 
 public class AdminPasswordSetupWizardViewController extends SetupWizardController {

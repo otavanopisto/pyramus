@@ -2,8 +2,6 @@ package fi.pyramus.util.dataimport.scripting.api;
 
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.domainmodel.base.Person;
-import fi.pyramus.domainmodel.users.Role;
-import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.util.dataimport.scripting.InvalidScriptException;
 

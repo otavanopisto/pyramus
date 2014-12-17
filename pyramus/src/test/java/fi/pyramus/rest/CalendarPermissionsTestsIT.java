@@ -3,8 +3,6 @@ package fi.pyramus.rest;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.*;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,8 +14,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.jayway.restassured.response.Response;
 
-import fi.pyramus.SqlAfter;
-import fi.pyramus.SqlBefore;
 import fi.pyramus.rest.controller.permissions.CalendarPermissions;
 import fi.pyramus.rest.model.AcademicTerm;
 

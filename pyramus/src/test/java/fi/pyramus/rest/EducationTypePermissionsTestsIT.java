@@ -1,11 +1,6 @@
 package fi.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;

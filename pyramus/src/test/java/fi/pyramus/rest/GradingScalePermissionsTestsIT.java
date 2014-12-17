@@ -15,7 +15,6 @@ import org.junit.runners.Parameterized.Parameters;
 import com.jayway.restassured.response.Response;
 
 import fi.pyramus.rest.controller.permissions.CommonPermissions;
-import fi.pyramus.rest.controller.permissions.LanguagePermissions;
 import fi.pyramus.rest.model.GradingScale;
 
 @RunWith(Parameterized.class)

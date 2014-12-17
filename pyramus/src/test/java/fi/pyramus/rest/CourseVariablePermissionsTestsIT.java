@@ -1,8 +1,6 @@
 package fi.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
-
 import java.util.List;
 
 import org.junit.Test;
@@ -13,7 +11,6 @@ import org.junit.runners.Parameterized.Parameters;
 import com.jayway.restassured.response.Response;
 
 import fi.pyramus.rest.controller.permissions.CommonPermissions;
-import fi.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.pyramus.rest.model.VariableKey;
 import fi.pyramus.rest.model.VariableType;
 
