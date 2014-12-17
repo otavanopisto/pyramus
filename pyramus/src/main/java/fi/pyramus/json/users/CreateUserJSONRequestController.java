@@ -24,6 +24,7 @@ import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.StaffMember;
+import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
