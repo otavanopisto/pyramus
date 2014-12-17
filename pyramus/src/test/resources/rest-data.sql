@@ -85,13 +85,13 @@ values
   (8, 8, 'Test Student', 'User #4', 10, 1);
 
 insert into
-  StaffMember (id, authProvider, externalId, role, title)
+  StaffMember (id, role, title)
 values 
-  (1, 'TEST', 'TEST-GUEST-1', 'GUEST', null),
-  (2, 'TEST', 'TEST-GUEST-2', 'GUEST', null),
-  (5, 'TEST', 'TEST-USER-1', 'USER', null),
-  (6, 'TEST', 'TEST-MANAGER-1', 'MANAGER', null),
-  (7, 'TEST', 'TEST-ADMINISTRATOR-1', 'ADMINISTRATOR', null);
+  (1, 'GUEST', null),
+  (2, 'GUEST', null),
+  (5, 'USER', null),
+  (6, 'MANAGER', null),
+  (7, 'ADMINISTRATOR', null);
   
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
