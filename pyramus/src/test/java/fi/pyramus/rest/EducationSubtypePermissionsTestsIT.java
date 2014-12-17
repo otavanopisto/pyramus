@@ -47,8 +47,7 @@ public class EducationSubtypePermissionsTestsIT extends AbstractRESTPermissionsT
     if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
-        given().headers(getAdminAuthHeaders())
-        .delete("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}?permanent=true", educationSubtype.getEducationTypeId(), id);
+        deleteEducationSubtype(educationSubtype.getEducationTypeId(), id);
       }
     }
   }
@@ -80,19 +79,20 @@ public class EducationSubtypePermissionsTestsIT extends AbstractRESTPermissionsT
       .post("/common/educationTypes/{EDUCATIONTYPE}/subtypes", educationSubtype.getEducationTypeId());
 
     Long id = new Long(response.body().jsonPath().getInt("id"));
-    try {
-      EducationSubtype updateSubtype = new EducationSubtype(id, "Updated", "UPD", updateEducationTypeId, Boolean.FALSE);
 
-      Response updateResponse = given().headers(getAuthHeaders())
-        .contentType("application/json")
-        .body(updateSubtype)
-        .put("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), updateSubtype.getId());
-      
-      assertOk(updateResponse, commonPermissions, CommonPermissions.UPDATE_EDUCATIONSUBTYPE, 200);
+    EducationSubtype updateSubtype = new EducationSubtype(id, "Updated", "UPD", updateEducationTypeId, Boolean.FALSE);
 
-    } finally {
-      given().headers(getAdminAuthHeaders())
-        .delete("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}?permanent=true", educationSubtype.getEducationTypeId(), id);
+    Response updateResponse = given().headers(getAuthHeaders())
+      .contentType("application/json")
+      .body(updateSubtype)
+      .put("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), updateSubtype.getId());
+    
+    assertOk(updateResponse, commonPermissions, CommonPermissions.UPDATE_EDUCATIONSUBTYPE, 200);
+
+    if (updateResponse.getStatusCode() == 200) {
+      deleteEducationSubtype(updateEducationTypeId, id);
+    } else {
+      deleteEducationSubtype(educationSubtype.getEducationTypeId(), id);
     }
   }
   
@@ -111,9 +111,13 @@ public class EducationSubtypePermissionsTestsIT extends AbstractRESTPermissionsT
       .delete("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), id);
     
     assertOk(deleteResponse, commonPermissions, CommonPermissions.DELETE_EDUCATIONSUBTYPE, 204);
-    Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.toString().equals("204"))
-      given().headers(getAdminAuthHeaders())
-      .delete("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}", educationSubtype.getEducationTypeId(), id);
+    deleteEducationSubtype(educationSubtype.getEducationTypeId(), id);
+  }
+
+  private void deleteEducationSubtype(Long educationTypeId, Long id) {
+    given().headers(getAdminAuthHeaders())
+      .delete("/common/educationTypes/{EDUCATIONTYPE}/subtypes/{ID}?permanent=true", educationTypeId, id)
+      .then()
+      .statusCode(204);
   }
 }

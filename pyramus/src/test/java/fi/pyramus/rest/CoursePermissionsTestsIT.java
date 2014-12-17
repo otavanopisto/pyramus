@@ -1,11 +1,6 @@
 package fi.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.security.KeyStoreException;
@@ -57,8 +52,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
-        given().headers(getAdminAuthHeaders())
-        .delete("/courses/courses/{ID}?permanent=true", id);
+        deleteCourse(id);
       }
     }
   }
@@ -79,11 +73,10 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     Long statusCode = new Long(response.statusCode());
     Long id = null;
-    if(statusCode.equals(200)){
+    if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
-        given().headers(getAdminAuthHeaders())
-        .delete("/courses/courses/{ID}?permanent=true", id);
+        deleteCourse(id);
       }
     }
   }
@@ -127,8 +120,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .put("/courses/courses/{ID}", course.getId());
     assertOk(updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSE, 200);
     
-    given().headers(getAdminAuthHeaders())
-      .delete("/courses/courses/{ID}?permanent=true", course.getId());
+    deleteCourse(course.getId());
   }
   
   @Test
@@ -158,8 +150,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .put("/courses/courses/{ID}", course.getId());
     assertOk(updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSE, 200);
     
-    given().headers(getAuthHeaders())
-      .delete("/courses/courses/{ID}?permanent=true", course.getId());
+    deleteCourse(course.getId());
   }
   
   @Test
@@ -180,8 +171,14 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .delete("/courses/courses/{ID}", id);
     assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSE, 204);
 
+    deleteCourse(id);
+  }
+
+  private void deleteCourse(Long id) {
     given().headers(getAdminAuthHeaders())
-      .delete("/courses/courses/{ID}?permanent=true", id);
+      .delete("/courses/courses/{ID}?permanent=true", id)
+      .then()
+      .statusCode(204);
   }
   
 }

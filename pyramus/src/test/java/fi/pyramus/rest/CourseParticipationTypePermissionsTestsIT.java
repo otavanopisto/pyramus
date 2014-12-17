@@ -1,9 +1,7 @@
 package fi.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -41,14 +39,12 @@ public class CourseParticipationTypePermissionsTestsIT extends AbstractRESTPermi
       .post("/courses/participationTypes");
     
     assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSEPARTICIPATIONTYPE, 200);
-    
     Long statusCode = new Long(response.statusCode());
     Long id = null;
     if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
-        given().headers(getAdminAuthHeaders())
-        .delete("/courses/participationTypes/{ID}?permanent=true", id);
+        deleteParticipationType(id);
       }
     }
   }
@@ -89,8 +85,7 @@ public class CourseParticipationTypePermissionsTestsIT extends AbstractRESTPermi
       .put("/courses/participationTypes/{ID}", id);
     assertOk(updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSEPARTICIPATIONTYPE, 200);
     
-    given().headers(getAdminAuthHeaders())
-      .delete("/courses/participationTypes/{ID}?permanent=true", id);
+    deleteParticipationType(id);
   }
   
   @Test
@@ -109,7 +104,12 @@ public class CourseParticipationTypePermissionsTestsIT extends AbstractRESTPermi
     
     assertOk(deleteResponse, coursePermissions, CoursePermissions.ARCHIVE_COURSEPARTICIPATIONTYPE, 204);
 
-    given().headers(getAuthHeaders())
+    deleteParticipationType(id);
+  }
+
+  private void deleteParticipationType(Long id) {
+    Response response = given().headers(getAdminAuthHeaders())
       .delete("/courses/participationTypes/{ID}?permanent=true", id);
+    assertEquals(204, response.getStatusCode());
   }
 }
