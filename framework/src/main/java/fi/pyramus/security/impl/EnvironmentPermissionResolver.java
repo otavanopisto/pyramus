@@ -1,5 +1,8 @@
 package fi.pyramus.security.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -14,6 +17,9 @@ import fi.pyramus.domainmodel.users.Role;
 @Stateless
 public class EnvironmentPermissionResolver extends AbstractPermissionResolver implements PermissionResolver {
 
+  @Inject
+  private Logger logger;
+  
   @Inject
   private PermissionDAO permissionDAO;
   
@@ -36,7 +42,7 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     fi.pyramus.domainmodel.users.User userEntity = getUser(user);
     
     boolean allowed = environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(userEntity.getRole(), perm);
-    System.out.println("Checking permission " + permission + " for: userId=" + userEntity.getId() + " role=" + userEntity.getRole() + " p=" + allowed);
+    logger.log(Level.FINEST, "Checking permission " + permission + " for: userId=" + userEntity.getId() + " role=" + userEntity.getRole() + " p=" + allowed);
 
     if (!allowed)
       allowed = hasEveryonePermission(permission, contextReference);
@@ -50,7 +56,7 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     Permission perm = permissionDAO.findByName(permission);
     
     boolean allowed = environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(everyoneRole, perm);
-    System.out.println("Checking permission " + permission + " for: everyone p=" + allowed);
+    logger.log(Level.FINEST, "Checking permission " + permission + " for: everyone p=" + allowed);
     
     return allowed;
   }
