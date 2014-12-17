@@ -19,7 +19,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.clientapplications.ClientApplicationAuthorizationCodeDAO;
 import fi.pyramus.dao.clientapplications.ClientApplicationDAO;
-import fi.pyramus.dao.users.StaffMemberDAO;
+import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.PyramusFormViewController;
@@ -59,7 +59,7 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
         
         if(clientApplication.getSkipPrompt()){
           ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO = DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO();
-          StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
+          UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
           HttpSession session = request.getSession();
           Long userId = (Long) session.getAttribute("loggedUserId");
           
@@ -94,7 +94,7 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
 
   @Override
   public void processSend(PageRequestContext requestContext) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     ClientApplicationDAO clientApplicationDAO = DAOFactory.getInstance().getClientApplicationDAO();
     ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO = DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO();
 
@@ -130,7 +130,7 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
 
   @Override
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.USER, UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] {UserRole.GUEST, UserRole.USER, UserRole.MANAGER, UserRole.ADMINISTRATOR };
   }
 
 }

@@ -13,9 +13,8 @@ import fi.internetix.smvc.controllers.PageController;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
 import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.StaffMemberDAO;
-import fi.pyramus.domainmodel.users.Role;
-import fi.pyramus.domainmodel.users.StaffMember;
+import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.domainmodel.users.User;
 
 public abstract class PyramusViewController implements PageController {
 
@@ -58,14 +57,31 @@ public abstract class PyramusViewController implements PageController {
       else {
         Long loggedUserId = requestContext.getLoggedUserId();
         
-        StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
-        StaffMember user = userDAO.findById(loggedUserId);
+        UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+        User user = userDAO.findById(loggedUserId);
+        UserRole userRole = null;
         
-        Role role = user.getRole();
-        
-        // TODO Ugly hax
-        UserRole userRole = UserRole.getRole(role.getValue());
-        
+        switch (user.getRole()) {
+          case ADMINISTRATOR:
+            userRole = UserRole.ADMINISTRATOR;
+            break;
+          case EVERYONE:
+            userRole = UserRole.EVERYONE;
+            break;
+          case MANAGER:
+            userRole = UserRole.MANAGER;
+            break;
+          case GUEST:
+          case STUDENT:
+            userRole = UserRole.GUEST;
+            break;
+          case USER:
+            userRole = UserRole.USER;
+            break;
+          default:
+            break;
+        }
+
         if (!contains(roles, userRole))
           throw new AccessDeniedException(requestContext.getRequest().getLocale());
       }
