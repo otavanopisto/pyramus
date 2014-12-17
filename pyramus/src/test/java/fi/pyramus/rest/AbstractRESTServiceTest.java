@@ -60,14 +60,19 @@ public abstract class AbstractRESTServiceTest extends AbstractIntegrationTest {
 
     String accessToken = response.body().jsonPath().getString("access_token");
     setAccessToken(accessToken);
+    
+    setUserId(new Long(given().headers(getAuthHeaders())
+        .contentType("application/json")
+        .get("/system/whoami")
+        .body().jsonPath().getInt("id")));
   }
 
   public String getAccessToken() {
-    return AccessToken;
+    return accessToken;
   }
 
   public void setAccessToken(String accessToken) {
-    AccessToken = accessToken;
+    this.accessToken = accessToken;
   }
 
   public Map<String, String> getAuthHeaders() {
@@ -87,13 +92,22 @@ public abstract class AbstractRESTServiceTest extends AbstractIntegrationTest {
   }
 
   public String getSessionId() {
-    return SessionId;
+    return sessionId;
   }
 
   public void setSessionId(String sessionId) {
-    SessionId = sessionId;
+    this.sessionId = sessionId;
+  }
+  
+  public Long getUserId() {
+    return userId;
+  }
+  
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 
-  private String SessionId;
-  private String AccessToken;
+  private String sessionId;
+  private String accessToken;
+  private Long userId;
 }

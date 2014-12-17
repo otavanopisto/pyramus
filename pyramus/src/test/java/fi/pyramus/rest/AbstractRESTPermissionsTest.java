@@ -134,6 +134,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   }
 
   public Long getUserIdForRole(String role) {
+    // TODO: could this use the /system/whoami end-point?
     return Common.ROLEUSERS.get(role);
   }
   
