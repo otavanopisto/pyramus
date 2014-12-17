@@ -30,7 +30,8 @@ public class PersonPermissions extends AbstractPyramusPermissionCollection imple
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String DELETE_PERSON = "DELETE_PERSON";
   
-  
+  @Scope (PermissionScope.PERSON_OWNER)
+  public static final String PERSON_OWNER = "PERSON_OWNER";
   
   @Override
   public List<String> listPermissions() {

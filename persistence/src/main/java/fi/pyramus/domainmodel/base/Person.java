@@ -39,6 +39,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
 
+import fi.muikku.security.ContextReference;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.StaffMember;
@@ -53,7 +54,7 @@ import fi.pyramus.persistence.search.filters.StudentIdFilterFactory;
      impl=StudentIdFilterFactory.class
   )
 )
-public class Person {
+public class Person implements ContextReference {
   
   /**
    * Returns unique identifier for this Person
