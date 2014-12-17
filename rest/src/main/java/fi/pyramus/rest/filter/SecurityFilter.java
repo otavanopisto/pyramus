@@ -55,30 +55,30 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
     Method method = methodInvoker.getMethod();
     if (method == null){
       requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build());
-    }
-    
-    if (!method.isAnnotationPresent(Unsecure.class)) {
-      try {
-        OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
-        String accessToken = oauthRequest.getAccessToken();
-
-        ClientApplicationAccessToken clientApplicationAccessToken = oauthController.findByAccessToken(accessToken);
-        if (clientApplicationAccessToken == null) {
-          requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
-        } else {
-          Long currentTime = System.currentTimeMillis() / 1000L;
-          if (currentTime > clientApplicationAccessToken.getExpires()) {
+    } else {
+      if (!method.isAnnotationPresent(Unsecure.class)) {
+        try {
+          OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
+          String accessToken = oauthRequest.getAccessToken();
+  
+          ClientApplicationAccessToken clientApplicationAccessToken = oauthController.findByAccessToken(accessToken);
+          if (clientApplicationAccessToken == null) {
             requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
           } else {
-            if (!restSecurity.hasPermission(method)) {
+            Long currentTime = System.currentTimeMillis() / 1000L;
+            if (currentTime > clientApplicationAccessToken.getExpires()) {
               requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
+            } else {
+              if (!restSecurity.hasPermission(method)) {
+                requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
+              }
             }
           }
+        } catch (OAuthProblemException e) {
+          requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST).entity(e.getMessage()).build());
+        } catch (OAuthSystemException e) {
+          requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
         }
-      } catch (OAuthProblemException e) {
-        requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST).entity(e.getMessage()).build());
-      } catch (OAuthSystemException e) {
-        requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
       }
     }
   }
