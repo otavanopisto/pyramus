@@ -34,6 +34,7 @@ import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.pyramus.rest.controller.permissions.ModulePermissions;
+import fi.pyramus.security.impl.SessionController;
 
 @Path("/modules")
 @Produces("application/json")
@@ -47,6 +48,9 @@ public class ModuleRESTService extends AbstractRESTService{
   
   @Inject
   private CommonController commonController;
+
+  @Inject
+  private SessionController sessionController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -70,7 +74,7 @@ public class ModuleRESTService extends AbstractRESTService{
     Double length = entity.getLength();
     String description = entity.getDescription();
     Long maxParticipantCount = entity.getMaxParticipantCount();
-    Module module = moduleController.createModule(name, subject, courseNumber, length, lengthUnit, description, maxParticipantCount, getLoggedUser());
+    Module module = moduleController.createModule(name, subject, courseNumber, length, lengthUnit, description, maxParticipantCount, sessionController.getUser());
     
     if (entity.getTags() != null) {
       for (String tag : entity.getTags()) {
@@ -149,7 +153,7 @@ public class ModuleRESTService extends AbstractRESTService{
     Long maxParticipantCount = entity.getMaxParticipantCount();
     
     module = moduleController.updateModuleTags(module, entity.getTags() == null ? new ArrayList<String>() : entity.getTags());
-    module = moduleController.updateModule(module, name, subject, courseNumber, length, lengthUnit, description, maxParticipantCount, getLoggedUser());
+    module = moduleController.updateModule(module, name, subject, courseNumber, length, lengthUnit, description, maxParticipantCount, sessionController.getUser());
     
     return Response.ok(objectFactory.createModel(module)).build();
   }
@@ -166,7 +170,7 @@ public class ModuleRESTService extends AbstractRESTService{
     if (permanent) {
       moduleController.deleteModule(module);
     } else {
-      moduleController.archiveModule(module, getLoggedUser());
+      moduleController.archiveModule(module, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -328,7 +332,7 @@ public class ModuleRESTService extends AbstractRESTService{
     if (permanent) {
       moduleController.deleteModuleComponent(moduleComponent);
     } else {
-      moduleController.archiveModuleComponent(moduleComponent, getLoggedUser());
+      moduleController.archiveModuleComponent(moduleComponent, sessionController.getUser());
     }
     
     return Response.status(Status.NO_CONTENT).build();

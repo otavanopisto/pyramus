@@ -54,6 +54,7 @@ import fi.pyramus.rest.controller.UserController;
 import fi.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.pyramus.rest.model.CourseEnrolmentType;
+import fi.pyramus.security.impl.SessionController;
 
 @Path("/courses")
 @Produces("application/json")
@@ -76,6 +77,9 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Inject
   private CommonController commonController;
+
+  @Inject
+  private SessionController sessionController;
 
   @Inject
   private ObjectFactory objectFactory;
@@ -131,7 +135,7 @@ public class CourseRESTService extends AbstractRESTService {
     Long maxParticipantCount = courseEntity.getMaxParticipantCount();
     Date enrolmentTimeEnd = toDate(courseEntity.getEnrolmentTimeEnd());
     
-    User loggedUser = getLoggedUser();
+    User loggedUser = sessionController.getUser();
     
     Course course = courseController.createCourse(module, name, nameExtension, state, subject, courseNumber, 
         toDate(beginDate), toDate(endDate), courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, 
@@ -248,7 +252,7 @@ public class CourseRESTService extends AbstractRESTService {
     String description = courseEntity.getDescription();
     Long maxParticipantCount = courseEntity.getMaxParticipantCount();
     Date enrolmentTimeEnd = toDate(courseEntity.getEnrolmentTimeEnd());
-    User loggedUser = getLoggedUser();
+    User loggedUser = sessionController.getUser();
     
     Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, subject, courseNumber, toDate(beginDate), toDate(endDate), courseLength,
         courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, description,
@@ -263,7 +267,7 @@ public class CourseRESTService extends AbstractRESTService {
   @DELETE
   @RESTPermit (CoursePermissions.DELETE_COURSE)
   public Response deleteCourse(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
-    User loggedUser = getLoggedUser();
+    User loggedUser = sessionController.getUser();
     
     Course course = courseController.findCourseById(id);
     if (course != null) {
@@ -423,7 +427,7 @@ public class CourseRESTService extends AbstractRESTService {
     if (permanent) {
       courseController.deleteCourseComponent(courseComponent);
     } else {
-      courseController.archiveCourseComponent(courseComponent, getLoggedUser());
+      courseController.archiveCourseComponent(courseComponent, sessionController.getUser());
     }
     
     return Response.status(Status.NO_CONTENT).build();
@@ -633,7 +637,7 @@ public class CourseRESTService extends AbstractRESTService {
     if (permanent) {
       courseController.deleteCourseStudent(courseStudent);
     } else {
-      courseController.archiveCourseStudent(courseStudent, getLoggedUser());
+      courseController.archiveCourseStudent(courseStudent, sessionController.getUser());
     }
     
     return Response.status(Status.NO_CONTENT).build();
@@ -865,7 +869,7 @@ public class CourseRESTService extends AbstractRESTService {
     if (permanent) {
       courseController.deleteCourseState(courseState);
     } else {
-      courseController.archiveCourseState(courseState, getLoggedUser());
+      courseController.archiveCourseState(courseState, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -1045,7 +1049,7 @@ public class CourseRESTService extends AbstractRESTService {
     if (permanent) {
       courseController.deleteCourseParticipationType(participationType);
     } else {
-      courseController.archiveCourseParticipationType(participationType, getLoggedUser());
+      courseController.archiveCourseParticipationType(participationType, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -1142,7 +1146,7 @@ public class CourseRESTService extends AbstractRESTService {
     if (permanent) {
       courseController.deleteCourseDescriptionCategory(category);
     } else {
-      courseController.archiveCourseDescriptionCategory(category, getLoggedUser());
+      courseController.archiveCourseDescriptionCategory(category, sessionController.getUser());
     }
 
     return Response.noContent().build();

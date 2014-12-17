@@ -32,6 +32,7 @@ import fi.pyramus.persistence.search.SearchTimeFilterMode;
 import fi.pyramus.rest.annotation.RESTPermit;
 import fi.pyramus.rest.controller.CalendarController;
 import fi.pyramus.rest.controller.permissions.CalendarPermissions;
+import fi.pyramus.security.impl.SessionController;
 
 @Path("/calendar")
 @Produces(MediaType.APPLICATION_JSON)
@@ -42,6 +43,9 @@ public class CalendarRESTService extends AbstractRESTService {
   
   @Inject
   private CalendarController calendarController;
+
+  @Inject
+  private SessionController sessionController;
 
   @Inject
   private ObjectFactory objectFactory;
@@ -135,7 +139,7 @@ public class CalendarRESTService extends AbstractRESTService {
     if (permanent) {
       calendarController.deleteAcademicTerm(academicTerm);
     } else {
-      calendarController.archiveAcademicTerm(academicTerm, getLoggedUser());
+      calendarController.archiveAcademicTerm(academicTerm, sessionController.getUser());
     }
     
     return Response.noContent().build();

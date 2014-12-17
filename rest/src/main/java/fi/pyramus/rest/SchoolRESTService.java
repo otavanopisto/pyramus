@@ -35,6 +35,7 @@ import fi.pyramus.rest.annotation.RESTPermit;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.permissions.SchoolPermissions;
+import fi.pyramus.security.impl.SessionController;
 
 @Path("/schools")
 @Produces("application/json")
@@ -48,6 +49,9 @@ public class SchoolRESTService extends AbstractRESTService {
   
   @Inject
   private CommonController commonController;
+
+  @Inject
+  private SessionController sessionController;
 
   @Inject
   private ObjectFactory objectFactory;
@@ -186,7 +190,7 @@ public class SchoolRESTService extends AbstractRESTService {
     if (permanent) {
       schoolController.deleteSchool(school);
     } else {
-      schoolController.archiveSchool(school, getLoggedUser());
+      schoolController.archiveSchool(school, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -693,7 +697,7 @@ public class SchoolRESTService extends AbstractRESTService {
     if (permanent) {
       schoolController.deleteSchoolField(schoolField);
     } else {
-      schoolController.archiveSchoolField(schoolField, getLoggedUser());
+      schoolController.archiveSchoolField(schoolField, sessionController.getUser());
     }
     
     return Response.noContent().build();

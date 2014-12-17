@@ -45,7 +45,6 @@ import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.pyramus.domainmodel.base.VariableType;
-import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentContactLogEntry;
@@ -81,7 +80,6 @@ import fi.pyramus.rest.controller.UserEmailInUseException;
 import fi.pyramus.rest.controller.permissions.LanguagePermissions;
 import fi.pyramus.rest.controller.permissions.MunicipalityPermissions;
 import fi.pyramus.rest.controller.permissions.NationalityPermissions;
-import fi.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.pyramus.rest.controller.permissions.StudentActivityTypePermissions;
 import fi.pyramus.rest.controller.permissions.StudentContactLogEntryPermissions;
 import fi.pyramus.rest.controller.permissions.StudentEducationalLevelPermissions;
@@ -93,6 +91,7 @@ import fi.pyramus.rest.controller.permissions.StudyProgrammeCategoryPermissions;
 import fi.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.pyramus.rest.controller.permissions.UserPermissions;
 import fi.pyramus.rest.security.RESTSecurity;
+import fi.pyramus.security.impl.SessionController;
 
 @Path("/students")
 @Produces("application/json")
@@ -155,6 +154,9 @@ public class StudentRESTService extends AbstractRESTService {
   @Inject
   private CourseController courseController;
 
+  @Inject
+  private SessionController sessionController;
+  
   @Inject
   private ObjectFactory objectFactory;
 
@@ -243,7 +245,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (permanent) {
       languageController.deleteLanguage(language);
     } else {
-      languageController.archiveLanguage(language, getLoggedUser());
+      languageController.archiveLanguage(language, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -334,7 +336,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (permanent) {
       municipalityController.deleteMunicipality(municipality);
     } else {
-      municipalityController.archiveMunicipality(municipality, getLoggedUser());
+      municipalityController.archiveMunicipality(municipality, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -425,7 +427,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (permanent) {
       nationalityController.deleteNationality(nationality);
     } else {
-      nationalityController.archiveNationality(nationality, getLoggedUser());
+      nationalityController.archiveNationality(nationality, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -514,7 +516,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (permanent) {
       studentActivityTypeController.deleteStudentActivityType(studentActivityType);
     } else {
-      studentActivityTypeController.archiveStudentActivityType(studentActivityType, getLoggedUser());
+      studentActivityTypeController.archiveStudentActivityType(studentActivityType, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -603,7 +605,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (permanent) {
       studentEducationalLevelController.deleteStudentEducationalLevel(studentEducationalLevel);
     } else {
-      studentEducationalLevelController.archiveStudentEducationalLevel(studentEducationalLevel, getLoggedUser());
+      studentEducationalLevelController.archiveStudentEducationalLevel(studentEducationalLevel, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -692,7 +694,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (permanent) {
       studentExaminationTypeController.deleteStudentExaminationType(studentExaminationType);
     } else {
-      studentExaminationTypeController.archiveStudentExaminationType(studentExaminationType, getLoggedUser());
+      studentExaminationTypeController.archiveStudentExaminationType(studentExaminationType, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -799,7 +801,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (permanent) {
       studyProgrammeCategoryController.deleteStudyProgrammeCategory(studyProgrammeCategory);
     } else {
-      studyProgrammeCategoryController.archiveStudyProgrammeCategory(studyProgrammeCategory, getLoggedUser());
+      studyProgrammeCategoryController.archiveStudyProgrammeCategory(studyProgrammeCategory, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -914,7 +916,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (permanent) {
       studyProgrammeController.deleteStudyProgramme(studyProgramme);
     } else {
-      studyProgrammeController.archiveStudyProgramme(studyProgramme, getLoggedUser());
+      studyProgrammeController.archiveStudyProgramme(studyProgramme, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -932,7 +934,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    StudentGroup studentGroup = studentGroupController.createStudentGroup(name, description, toDate(beginDate), getLoggedUser());
+    StudentGroup studentGroup = studentGroupController.createStudentGroup(name, description, toDate(beginDate), sessionController.getUser());
     
     for (String tag : entity.getTags()) {
       studentGroupController.createStudentGroupTag(studentGroup, tag);
@@ -1001,7 +1003,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    studentGroupController.updateStudentGroup(studentGroup, name, description, toDate(beginDate), getLoggedUser());
+    studentGroupController.updateStudentGroup(studentGroup, name, description, toDate(beginDate), sessionController.getUser());
     studentGroupController.updateStudentGroupTags(studentGroup, entity.getTags());
     
     return Response.ok(objectFactory.createModel(studentGroup)).build();
@@ -1019,7 +1021,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (permanent) {
       studentGroupController.deleteStudentGroup(studentGroup);
     } else {
-      studentGroupController.archiveStudentGroup(studentGroup, getLoggedUser());
+      studentGroupController.archiveStudentGroup(studentGroup, sessionController.getUser());
     }
 
     return Response.noContent().build();
@@ -1051,7 +1053,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    StudentGroupStudent studentGroupStudent = studentGroupController.createStudentGroupStudent(studentGroup, student, getLoggedUser());
+    StudentGroupStudent studentGroupStudent = studentGroupController.createStudentGroupStudent(studentGroup, student, sessionController.getUser());
     
     return Response.ok(objectFactory.createModel(studentGroupStudent)).build();
   }
@@ -1236,117 +1238,6 @@ public class StudentRESTService extends AbstractRESTService {
     studentStudyEndReasonController.deleteStudentStudyEndReason(studyEndReason);
     
     return Response.noContent().build();
-  }
-  
-  @Path("/persons")
-  @POST
-  @RESTPermit (PersonPermissions.CREATE_PERSON)
-  public Response createPerson(fi.pyramus.rest.model.Person entity) {
-    if (entity == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    if ((entity.getSex() == null) || (entity.getSecureInfo() == null)) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    Sex sex = null;
-    
-    switch (entity.getSex()) {
-      case FEMALE:
-        sex = Sex.FEMALE;
-      break;
-      case MALE:
-        sex = Sex.MALE;
-      break;
-    }
-    
-    return Response.ok(objectFactory.createModel(personController.createPerson(toDate(entity.getBirthday()), 
-        entity.getSocialSecurityNumber(), sex, entity.getBasicInfo(), entity.getSecureInfo()))).build();
-  }
-  
-  @Path("/persons")
-  @GET
-  @RESTPermit (PersonPermissions.LIST_PERSONS)
-  public Response findPersons(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-    List<Person> persons;
-    if (filterArchived) {
-      persons = personController.findUnarchivedPersons();
-    } else {
-      persons = personController.findPersons();
-    }
-    
-    return Response.ok(objectFactory.createModel(persons)).build();
-  }
-
-  @Path("/persons/{ID:[0-9]*}")
-  @GET
-  @RESTPermit (PersonPermissions.FIND_PERSON)
-  public Response findPersonById(@PathParam("ID") Long id) {
-    Person person = personController.findPersonById(id);
-    if (person == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    return Response.ok(objectFactory.createModel(person)).build();
-  }
-
-  @Path("/persons/{ID:[0-9]*}")
-  @PUT
-  @RESTPermit (PersonPermissions.UPDATE_PERSON)
-  public Response updatePerson(@PathParam("ID") Long id, fi.pyramus.rest.model.Person entity) {
-    if (entity == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    if ((entity.getSex() == null) || (entity.getSecureInfo() == null)) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    Sex sex = null;
-    
-    switch (entity.getSex()) {
-      case FEMALE:
-        sex = Sex.FEMALE;
-      break;
-      case MALE:
-        sex = Sex.MALE;
-      break;
-    }
-    
-    Person person = personController.findPersonById(id);
-    if (person == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    return Response.ok(objectFactory.createModel(personController.updatePerson(person, toDate(entity.getBirthday()), 
-        entity.getSocialSecurityNumber(), sex, entity.getBasicInfo(), entity.getSecureInfo()))).build();
-  }
-
-  @Path("/persons/{ID:[0-9]*}")
-  @DELETE
-  @RESTPermit (PersonPermissions.DELETE_PERSON)
-  public Response deletePerson(@PathParam("ID") Long id) {
-    Person person = personController.findPersonById(id);
-    if (person == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    personController.deletePerson(person);
-    
-    return Response.noContent().build();
-  }
-
-  @Path("/persons/{ID:[0-9]*}/students")
-  @GET
-  @RESTPermit (StudentPermissions.LIST_STUDENTSBYPERSON)
-  public Response listStudentsByPerson(@PathParam("ID") Long id) {
-    Person person = personController.findPersonById(id);
-    if (person == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    return Response.ok(objectFactory.createModel(studentController.listStudentByPerson(person))).build();
   }
   
   @Path("/students")
@@ -1539,7 +1430,7 @@ public class StudentRESTService extends AbstractRESTService {
       
       studentController.deleteStudent(student);
     } else {
-      studentController.archiveStudent(student, getLoggedUser());
+      studentController.archiveStudent(student, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -1674,7 +1565,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (permanent) {
       studentContactLogEntryController.deleteStudentContactLogEntry(contactLogEntry);
     } else {
-      studentContactLogEntryController.archiveStudentContactLogEntry(contactLogEntry, getLoggedUser());
+      studentContactLogEntryController.archiveStudentContactLogEntry(contactLogEntry, sessionController.getUser());
     }
       
     return Response.noContent().build();

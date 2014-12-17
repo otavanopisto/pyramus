@@ -8,7 +8,7 @@ public class Person {
     super();
   }
 
-  public Person(Long id, DateTime birthday, String socialSecurityNumber, Sex sex, Boolean secureInfo, String basicInfo) {
+  public Person(Long id, DateTime birthday, String socialSecurityNumber, Sex sex, Boolean secureInfo, String basicInfo, Long defaultUserId) {
     super();
     this.id = id;
     this.birthday = birthday;
@@ -16,6 +16,7 @@ public class Person {
     this.sex = sex;
     this.secureInfo = secureInfo;
     this.basicInfo = basicInfo;
+    this.defaultUserId = defaultUserId;
   }
 
   public Long getId() {
@@ -65,6 +66,14 @@ public class Person {
   public void setBasicInfo(String basicInfo) {
     this.basicInfo = basicInfo;
   }
+  
+  public Long getDefaultUserId() {
+    return defaultUserId;
+  }
+  
+  public void setDefaultUserId(Long defaultUserId) {
+    this.defaultUserId = defaultUserId;
+  }
 
   private Long id;
   private DateTime birthday;
@@ -72,4 +81,5 @@ public class Person {
   private Sex sex;
   private Boolean secureInfo;
   private String basicInfo;
+  private Long defaultUserId;
 }

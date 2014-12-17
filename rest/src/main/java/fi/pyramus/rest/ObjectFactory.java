@@ -428,7 +428,8 @@ public class ObjectFactory {
               break;
             }
             
-            return new fi.pyramus.rest.model.Person(entity.getId(), toDateTime(entity.getBirthday()), entity.getSocialSecurityNumber(), sex, entity.getSecureInfo(), entity.getBasicInfo());
+            Long defaultUserId = entity.getDefaultUser() != null ? entity.getDefaultUser().getId() : null;
+            return new fi.pyramus.rest.model.Person(entity.getId(), toDateTime(entity.getBirthday()), entity.getSocialSecurityNumber(), sex, entity.getSecureInfo(), entity.getBasicInfo(), defaultUserId);
           }
         },
           
@@ -604,8 +605,9 @@ public class ObjectFactory {
           
           UserRole role = UserRole.valueOf(entity.getRole().name());
           String additionalContactInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
+          Long personId = entity.getPerson() != null ? entity.getPerson().getId() : null;
           
-          return new fi.pyramus.rest.model.StaffMember(entity.getId(), additionalContactInfo, 
+          return new fi.pyramus.rest.model.StaffMember(entity.getId(), personId, additionalContactInfo, 
               entity.getFirstName(), entity.getLastName(), entity.getTitle(), role, tags, variables);
         }
       }

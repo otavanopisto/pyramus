@@ -18,6 +18,8 @@ import fi.pyramus.rest.model.Sex;
 
 @RunWith(Parameterized.class)
 public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
+  
+  // TODO: tests for default person
 
   public PersonPermissionTestsIT(String role) {
     this.role = role;
@@ -33,12 +35,12 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
 
   @Test
   public void testCreatePerson() throws NoSuchFieldException {
-    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be created");
+    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be created", null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(person)
-      .post("/students/persons");
+      .post("/persons/persons");
 
     assertOk(response, personPermissions, PersonPermissions.CREATE_PERSON);
 
@@ -46,14 +48,14 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
       int id = response.body().jsonPath().getInt("id");
       
       given().headers(getAdminAuthHeaders())
-        .delete("/students/persons/{ID}", id);
+        .delete("/persons/persons/{ID}", id);
     }
   }
   
   @Test
   public void testListPersons() throws NoSuchFieldException {
     Response response = given().headers(getAuthHeaders())
-      .get("/students/persons");
+      .get("/persons/persons");
     
     assertOk(response, personPermissions, PersonPermissions.LIST_PERSONS);
   }
@@ -61,62 +63,62 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
   @Test
   public void testFindPerson() throws NoSuchFieldException {
     Response response = given().headers(getAuthHeaders())
-      .get("/students/persons/{ID}", 3);
+      .get("/persons/persons/{ID}", 3);
     
     assertOk(response, personPermissions, PersonPermissions.FIND_PERSON);
   }
   
   @Test
   public void testUpdatePerson() throws NoSuchFieldException {
-    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "not updated");
+    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "not updated", null);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
       .body(person)
-      .post("/students/persons");
+      .post("/persons/persons");
 
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      Person updateStudent = new Person(id, getDate(1991, 7, 7), "1234567-9876", Sex.MALE, true, "updated");
+      Person updateStudent = new Person(id, getDate(1991, 7, 7), "1234567-9876", Sex.MALE, true, "updated", null);
 
       response = given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateStudent)
-        .put("/students/persons/{ID}", id);
+        .put("/persons/persons/{ID}", id);
 
       assertOk(response, personPermissions, PersonPermissions.UPDATE_PERSON);
     } finally {
       given().headers(getAdminAuthHeaders())
-        .delete("/students/persons/{ID}", id);
+        .delete("/persons/persons/{ID}", id);
     }
   }
   
   @Test
   public void testDeletePerson() throws NoSuchFieldException {
-    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be deleted");
+    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be deleted", null);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
       .body(person)
-      .post("/students/persons");
+      .post("/persons/persons");
 
     int id = response.body().jsonPath().getInt("id");
 
     response = given().headers(getAuthHeaders())
-      .delete("/students/persons/{ID}", id);
+      .delete("/persons/persons/{ID}", id);
     
     assertOk(response, personPermissions, PersonPermissions.DELETE_PERSON, 204);
     
     if (response.getStatusCode() != 204) {
       given().headers(getAdminAuthHeaders())
-        .delete("/students/persons/{ID}", id);
+        .delete("/persons/persons/{ID}", id);
     }
   }
   
   @Test
   public void testListStudents() throws NoSuchFieldException {
     Response response = given().headers(getAuthHeaders())   
-      .get("/students/persons/{ID}/students", 3l);
+      .get("/persons/persons/{ID}/students", 3l);
     
     assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTSBYPERSON);
   }

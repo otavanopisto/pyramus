@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -19,6 +20,7 @@ import fi.pyramus.rest.annotation.RESTPermit;
 import fi.pyramus.rest.annotation.Unsecure;
 import fi.pyramus.rest.model.WhoAmI;
 import fi.pyramus.rest.controller.permissions.SystemPermissions;
+import fi.pyramus.security.impl.SessionController;
 
 @Path("/system")
 @Produces(MediaType.APPLICATION_JSON)
@@ -27,6 +29,9 @@ import fi.pyramus.rest.controller.permissions.SystemPermissions;
 @RequestScoped
 public class SystemRESTService extends AbstractRESTService {
 
+  @Inject
+  private SessionController sessionController;
+  
   @GET
   @Unsecure
   @Path ("/ping")
@@ -39,7 +44,7 @@ public class SystemRESTService extends AbstractRESTService {
   @Path ("/whoami")
   @RESTPermit (SystemPermissions.WHOAMI)
   public Response getWhoAmI() {
-    User loggedUser = getLoggedUser();
+    User loggedUser = sessionController.getUser();
     if (loggedUser == null) {
       return Response.status(Status.FORBIDDEN).build();
     }

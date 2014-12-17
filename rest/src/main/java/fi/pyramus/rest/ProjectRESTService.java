@@ -31,6 +31,7 @@ import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.ProjectController;
 import fi.pyramus.rest.controller.permissions.ProjectPermissions;
+import fi.pyramus.security.impl.SessionController;
 
 @Path("/projects")
 @Produces("application/json")
@@ -49,6 +50,9 @@ public class ProjectRESTService extends AbstractRESTService {
   private ModuleController moduleController;
 
   @Inject
+  private SessionController sessionController;
+
+  @Inject
   private ObjectFactory objectFactory;
   
   @Path("/projects")
@@ -64,7 +68,7 @@ public class ProjectRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    Project project = projectController.createProject(name, description, optionalStudiesLength, optionalStudiesLengthUnit, getLoggedUser());
+    Project project = projectController.createProject(name, description, optionalStudiesLength, optionalStudiesLengthUnit, sessionController.getUser());
     
     if (entity.getTags() != null) {
       for (String tag : entity.getTags()) {
@@ -133,7 +137,7 @@ public class ProjectRESTService extends AbstractRESTService {
     
     project = projectController.updateProjectTags(project, entity.getTags() == null ? new ArrayList<String>() : entity.getTags());
     
-    return Response.ok(objectFactory.createModel(projectController.updateProject(project, name, description, optionalStudiesLength, optionalStudiesLengthUnit, getLoggedUser()))).build();
+    return Response.ok(objectFactory.createModel(projectController.updateProject(project, name, description, optionalStudiesLength, optionalStudiesLengthUnit, sessionController.getUser()))).build();
   }
   
   @Path("/projects/{ID:[0-9]*}")
@@ -148,7 +152,7 @@ public class ProjectRESTService extends AbstractRESTService {
     if (permanent) {
       projectController.deleteProject(project);
     } else {
-      projectController.archiveProject(project, getLoggedUser());
+      projectController.archiveProject(project, sessionController.getUser());
     }
     
     return Response.noContent().build();

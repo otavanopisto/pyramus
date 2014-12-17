@@ -20,14 +20,16 @@ import fi.pyramus.rest.model.Student;
 
 public class PersonTestsIT extends AbstractRESTServiceTest {
 
+  // TODO: tests for default person
+
   @Test
   public void testCreatePerson() {
-    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be created");
+    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be created", null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(person)
-      .post("/students/persons");
+      .post("/persons/persons");
 
     response.then()
       .body("id", not(is((Long) null)))
@@ -40,7 +42,7 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
     int id = response.body().jsonPath().getInt("id");
     
     given().headers(getAuthHeaders())
-      .delete("/students/persons/{ID}", id)
+      .delete("/persons/persons/{ID}", id)
       .then()
       .statusCode(204);
   }
@@ -48,7 +50,7 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testListPersons() {
     given().headers(getAuthHeaders())
-      .get("/students/persons")
+      .get("/persons/persons")
       .then()
       .statusCode(200)
       .body("id.size()", is(8))
@@ -67,7 +69,7 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testFindPerson() {
     given().headers(getAuthHeaders())
-      .get("/students/persons/{ID}", 3)
+      .get("/persons/persons/{ID}", 3)
       .then()
       .statusCode(200)
       .body("id", is(3) )
@@ -79,12 +81,12 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdatePerson() {
-    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "not updated");
+    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "not updated", null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(person)
-      .post("/students/persons");
+      .post("/persons/persons");
 
     response.then()
       .body("id", not(is((Long) null)))
@@ -95,12 +97,12 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       .body("sex", is(person.getSex().toString() ));
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      Person updateStudent = new Person(id, getDate(1991, 7, 7), "1234567-9876", Sex.MALE, true, "updated");
+      Person updateStudent = new Person(id, getDate(1991, 7, 7), "1234567-9876", Sex.MALE, true, "updated", null);
 
       given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateStudent)
-        .put("/students/persons/{ID}", id)
+        .put("/persons/persons/{ID}", id)
         .then()
         .statusCode(200)
         .body("id", is(updateStudent.getId().intValue() ))
@@ -112,7 +114,7 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
 
     } finally {
       given().headers(getAuthHeaders())
-        .delete("/students/persons/{ID}", id)
+        .delete("/persons/persons/{ID}", id)
         .then()
         .statusCode(204);
     }
@@ -120,12 +122,12 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeletePerson() {
-    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be deleted");
+    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be deleted", null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(person)
-      .post("/students/persons");
+      .post("/persons/persons");
 
     response.then()
       .body("id", not(is((Long) null)))
@@ -138,17 +140,17 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
     assertNotNull(id);
     
     given().headers(getAuthHeaders())
-      .get("/students/persons/{ID}", id)
+      .get("/persons/persons/{ID}", id)
       .then()
       .statusCode(200);
     
     given().headers(getAuthHeaders())
-      .delete("/students/persons/{ID}", id)
+      .delete("/persons/persons/{ID}", id)
       .then()
       .statusCode(204);
     
     given().headers(getAuthHeaders())
-      .get("/students/persons/{ID}", id)
+      .get("/persons/persons/{ID}", id)
       .then()
       .statusCode(404);
   }
@@ -156,7 +158,7 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testListStudents() {
     given().headers(getAuthHeaders())   
-      .get("/students/persons/{ID}/students", 3l)
+      .get("/persons/persons/{ID}/students", 3l)
       .then()
       .statusCode(200)
       .body("id.size()", is(1))
@@ -189,19 +191,19 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testEmailUniquityRestriction() {
-    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be created");
+    Person person = new Person(null, getDate(1990, 6, 6), "1234567-0987", Sex.FEMALE, false, "to be created", null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(person)
-      .post("/students/persons");
+      .post("/persons/persons");
 
     int person1Id = response.body().jsonPath().getInt("id");
 
     response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(person)
-      .post("/students/persons");
+      .post("/persons/persons");
 
     int person2Id = response.body().jsonPath().getInt("id");
     
@@ -316,12 +318,12 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       .statusCode(204);
 
     given().headers(getAuthHeaders())
-      .delete("/students/persons/{ID}", person1Id)
+      .delete("/persons/persons/{ID}", person1Id)
       .then()
       .statusCode(204);
   
     given().headers(getAuthHeaders())
-      .delete("/students/persons/{ID}", person2Id)
+      .delete("/persons/persons/{ID}", person2Id)
       .then()
       .statusCode(204);
   }

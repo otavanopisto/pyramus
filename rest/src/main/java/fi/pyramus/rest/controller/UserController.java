@@ -10,6 +10,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.pyramus.dao.users.StaffMemberDAO;
+import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.Person;
@@ -25,6 +26,9 @@ import fi.pyramus.domainmodel.users.UserVariableKey;
 public class UserController {
 
   @Inject
+  private UserDAO userDAO;
+  
+  @Inject
   private StaffMemberDAO staffMemberDAO;
   
   @Inject
@@ -32,8 +36,16 @@ public class UserController {
 
   @Inject
   private UserVariableKeyDAO userVariableKeyDAO;
-
+  
   /* Users */
+  
+  public User findUserById(Long defaultUserId) {
+    return userDAO.findById(defaultUserId);
+  }
+  
+  // TODO: StaffMemberController?
+
+  /* StaffMember */
 
   public StaffMember createStaffMember(String firstName, String lastName, Role role, Person person) {
     return staffMemberDAO.create(firstName, lastName, role, person);

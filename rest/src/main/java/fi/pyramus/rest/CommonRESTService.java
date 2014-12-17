@@ -35,6 +35,7 @@ import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.pyramus.rest.controller.permissions.CoursePermissions;
+import fi.pyramus.security.impl.SessionController;
 
 @Path("/common")
 @Produces(MediaType.APPLICATION_JSON)
@@ -48,6 +49,9 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Inject
   private CourseController courseController;
+
+  @Inject
+  private SessionController sessionController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -137,7 +141,7 @@ public class CommonRESTService extends AbstractRESTService {
     if (permanent) {
       commonController.deleteEducationType(educationType);
     } else {
-      commonController.archiveEducationType(educationType, getLoggedUser());
+      commonController.archiveEducationType(educationType, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -295,7 +299,7 @@ public class CommonRESTService extends AbstractRESTService {
     if (permanent) {
       commonController.deleteEducationSubtype(educationSubtype);
     } else {
-      commonController.archiveEducationSubtype(educationSubtype, getLoggedUser());
+      commonController.archiveEducationSubtype(educationSubtype, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -429,7 +433,7 @@ public class CommonRESTService extends AbstractRESTService {
     if (permanent) {
       commonController.deleteSubject(subject);
     } else {
-      commonController.archiveSubject(subject, getLoggedUser());
+      commonController.archiveSubject(subject, sessionController.getUser());
     }
 
     return Response.noContent().build();
@@ -543,7 +547,7 @@ public class CommonRESTService extends AbstractRESTService {
     if (permanent) {
       commonController.deleteGradingScale(gradingScale);
     } else {
-      commonController.archiveGradingScale(gradingScale, getLoggedUser());
+      commonController.archiveGradingScale(gradingScale, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -696,7 +700,7 @@ public class CommonRESTService extends AbstractRESTService {
     if (permanent) {
       commonController.deleteGrade(grade);
     } else {
-      commonController.archiveGrade(grade, getLoggedUser());
+      commonController.archiveGrade(grade, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -813,7 +817,7 @@ public class CommonRESTService extends AbstractRESTService {
     if (permanent) {
       commonController.deleteEducationalTimeUnit(educationalTimeUnit);
     } else {
-      commonController.archiveEducationalTimeUnit(educationalTimeUnit, getLoggedUser());
+      commonController.archiveEducationalTimeUnit(educationalTimeUnit, sessionController.getUser());
     }
     
     return Response.status(Status.NO_CONTENT).build();
@@ -909,7 +913,7 @@ public class CommonRESTService extends AbstractRESTService {
     if (permanent) {
       commonController.deleteContactType(contactType);
     } else {
-      commonController.archiveContactType(contactType, getLoggedUser());
+      commonController.archiveContactType(contactType, sessionController.getUser());
     }
 
     return Response.noContent().build();
@@ -1005,7 +1009,7 @@ public class CommonRESTService extends AbstractRESTService {
     if (permanent) {
       commonController.deleteContactURLType(contactURLType);
     } else {
-      commonController.archiveContactURLType(contactURLType, getLoggedUser());
+      commonController.archiveContactURLType(contactURLType, sessionController.getUser());
     }
 
     return Response.noContent().build();

@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.students.Sex;
+import fi.pyramus.domainmodel.users.User;
 
 @Dependent
 @Stateless
@@ -41,6 +42,10 @@ public class PersonController {
   public Person updatePerson(Person person, Date birthday, String socialSecurityNumber, Sex sex, String basicInfo, Boolean secureInfo) {
     personDAO.update(person, birthday, socialSecurityNumber, sex, basicInfo, secureInfo);
     return person;
+  }
+
+  public Person updatePersonDefaultUser(Person person, User defaultUser) {
+    return personDAO.updateDefaultUser(person, defaultUser);
   }
 
   public void deletePerson(Person person) {

@@ -11,9 +11,10 @@ public class StaffMember implements ContextReference {
     super();
   }
 
-  public StaffMember(Long id, String additionalContactInfo, String firstName, String lastName, String title, UserRole role, List<String> tags, Map<String, String> variables) {
+  public StaffMember(Long id, Long personId, String additionalContactInfo, String firstName, String lastName, String title, UserRole role, List<String> tags, Map<String, String> variables) {
     super();
     this.id = id;
+    this.personId = personId;
     this.additionalContactInfo = additionalContactInfo;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -29,6 +30,14 @@ public class StaffMember implements ContextReference {
 
   public void setId(Long id) {
     this.id = id;
+  }
+  
+  public Long getPersonId() {
+    return personId;
+  }
+  
+  public void setPersonId(Long personId) {
+    this.personId = personId;
   }
 
   public String getAdditionalContactInfo() {
@@ -88,6 +97,7 @@ public class StaffMember implements ContextReference {
   }
 
   private Long id;
+  private Long personId;
   private String additionalContactInfo;
   private String firstName;
   private String lastName;
