@@ -280,7 +280,7 @@ public class CommonRESTService extends AbstractRESTService {
     }    
     
     if (educationType.getArchived()) {
-      return Response.status(Status.NOT_FOUND).entity("Could not find educationType/A").build();
+      return Response.status(Status.NOT_FOUND).entity("Could not find educationType").build();
     }    
     
     EducationSubtype educationSubtype = commonController.findEducationSubtypeById(educationSubtypeId);
@@ -288,12 +288,12 @@ public class CommonRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).entity("Could not find subtype").build();
     }    
     
-    if (educationSubtype.getArchived()) {
-      return Response.status(Status.NOT_FOUND).entity("Could not find subtype/2").build();
+    if (educationSubtype.getArchived() && permanent != true) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find subtype").build();
     }    
     
     if (!educationSubtype.getEducationType().getId().equals(educationTypeId)) {
-      return Response.status(Status.NOT_FOUND).entity("Could not find subtype/3 " + educationSubtype.getEducationType().getId() + " != " + educationTypeId).build();
+      return Response.status(Status.NOT_FOUND).entity("Could not find subtype " + educationSubtype.getEducationType().getId() + " != " + educationTypeId).build();
     }  
     
     if (permanent) {

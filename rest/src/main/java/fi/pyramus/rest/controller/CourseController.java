@@ -282,6 +282,11 @@ public class CourseController {
   }
 
   public void deleteCourse(Course course) {
+    Set<Tag> tags = new HashSet<>(course.getTags());
+    for (Tag tag : tags) {
+      removeCourseTag(course, tag);
+    }
+    
     courseDAO.delete(course);
   }
   

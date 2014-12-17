@@ -137,6 +137,11 @@ public class StudentController {
   }
   
   public void deleteStudent(Student student) {
+    Set<Tag> tags = new HashSet<>(student.getTags());
+    for (Tag tag : tags) {
+      studentDAO.removeTag(student, tag);
+    }
+    
     studentDAO.delete(student);
   }
   

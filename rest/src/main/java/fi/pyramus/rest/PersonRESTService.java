@@ -119,10 +119,6 @@ public class PersonRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if (entity.getDefaultUserId() == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
     Sex sex = null;
     
     switch (entity.getSex()) {
@@ -143,9 +139,12 @@ public class PersonRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    User defaultUser = userController.findUserById(entity.getDefaultUserId());
-    if (defaultUser == null || !defaultUser.getPerson().getId().equals(person.getId())) {
-      return Response.status(Status.BAD_REQUEST).build();
+    User defaultUser = null;
+    if (entity.getDefaultUserId() != null) {
+      defaultUser = userController.findUserById(entity.getDefaultUserId());
+      if (!defaultUser.getPerson().getId().equals(person.getId())) {
+        return Response.status(Status.BAD_REQUEST).build();
+      }
     }
     
     personController.updatePersonDefaultUser(person, defaultUser);
