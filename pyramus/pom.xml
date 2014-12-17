@@ -710,7 +710,7 @@
                   <execute-commands>
                     <batch>${it.wildfly.cli-batch}</batch>
                     <commands>
-                      <command>/system-property=pyramus.workspace:add(value="/home/heikkikurhinen/workspace/pyramus")</command>
+                      <command>/system-property=pyramus.workspace:add(value="${basedir}/..")</command>
                       <command>/system-property=PyramusWSAllowedIPs:add(value="127.0.0.1")</command>
                       <command>/system-property=pyramus-url:add(value="${it.host}:${it.port.https}")</command>
                       <command>/core-service=management/security-realm=ssl-realm:add()</command>

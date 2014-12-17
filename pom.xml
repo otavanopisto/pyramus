@@ -43,6 +43,7 @@
     <module>common</module>
     <module>framework</module>
     <module>googleoauth-plugin</module>
+    <module>testauth-plugin</module>
     <module>persistence</module>
     <module>plugin-core</module>
     <module>rest-model</module>
