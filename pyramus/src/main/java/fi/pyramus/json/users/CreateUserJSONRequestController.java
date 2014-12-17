@@ -112,15 +112,12 @@ public class CreateUserJSONRequestController extends JSONRequestController {
         }
 
         externalId = internalAuthenticationProvider.createCredentials(username, password);
-        //FIXME: UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId(authSource, externalId);
-        
       }
     } 
     
     // User
 
     Person person = personId != null ? personDAO.findById(personId) : personDAO.create(null, null, null, null, Boolean.FALSE);
-    
     StaffMember user = userDAO.create(firstName, lastName, role, person);
     if (title != null)
       userDAO.updateTitle(user, title);
@@ -128,8 +125,21 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     if(person.getDefaultUser() == null){
       personDAO.updateDefaultUser(person, user);
     }
-    // Tags
     
+    // UserIdentification
+    
+    List<UserIdentification> userIdentifications = userIdentificationDAO.listByPerson(person);
+    if(userIdentifications.size() > 1) {
+      //TODO: Currently only 1 UserIdentification for person is supported, this may change in the future.
+      throw new SmvcRuntimeException(PyramusStatusCode.MULTIPLE_IDENTIFICATIONS_FOR_PERSON, "Multiple UserIdentifications found for person");
+    } else if(userIdentifications == null || userIdentifications.size() == 0) {
+      userIdentificationDAO.create(person, authProvider, externalId);
+    }else{
+      UserIdentification userIdentification = userIdentificationDAO.updateAuthSource(userIdentifications.get(0), authProvider);
+      userIdentificationDAO.updateExternalId(userIdentification, externalId);
+    }
+    
+    // Tags
     userDAO.updateTags(user, tagEntities);
     
     // Addresses
