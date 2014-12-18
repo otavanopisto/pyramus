@@ -2,6 +2,8 @@ package fi.pyramus.views.users;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
@@ -22,7 +24,14 @@ public class LogoutViewController extends PyramusViewController {
       HttpSession session = requestContext.getRequest().getSession(false);
       session.invalidate();
     }
-    requestContext.setRedirectURL(requestContext.getRequest().getContextPath() + "/index.page");
+    
+    String redirectUrl = requestContext.getString("redirectUrl");
+    
+    if (StringUtils.isBlank(redirectUrl)) {
+      redirectUrl = requestContext.getRequest().getContextPath() + "/index.page";
+    }
+    
+    requestContext.setRedirectURL(redirectUrl);
   }
   
   /**
@@ -32,7 +41,7 @@ public class LogoutViewController extends PyramusViewController {
    * @return The roles allowed to access this page
    */
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.GUEST, UserRole.USER, UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.EVERYONE };
   }
   
 }
