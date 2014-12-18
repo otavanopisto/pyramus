@@ -419,13 +419,15 @@ public class ObjectFactory {
           
           public Object map(Person entity) {
             Sex sex = null;
-            switch (entity.getSex()) {
-              case FEMALE:
-                sex = Sex.FEMALE;
-              break;
-              case MALE:
-                sex = Sex.MALE;
-              break;
+            if (entity.getSex() != null) { 
+              switch (entity.getSex()) {
+                case FEMALE:
+                  sex = Sex.FEMALE;
+                break;
+                case MALE:
+                  sex = Sex.MALE;
+                break;
+              }
             }
             
             Long defaultUserId = entity.getDefaultUser() != null ? entity.getDefaultUser().getId() : null;
