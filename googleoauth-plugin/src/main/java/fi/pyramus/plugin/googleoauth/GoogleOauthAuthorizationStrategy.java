@@ -108,7 +108,9 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
   }
 
   private String getRedirectUrl() {
-    return "https://dev.pyramus.fi:8443/users/externallogin.page";
+    SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
+    SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO(); 
+    return settingDAO.findByKey(settingKeyDAO.findByName("google.oauth.redirecturl")).getValue();
   }
 
   private String getScope() {
