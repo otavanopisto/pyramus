@@ -96,11 +96,16 @@ public class PersonRESTService extends AbstractRESTService {
 
   @Path("/persons/{ID:[0-9]*}")
   @GET
-  @RESTPermit (PersonPermissions.FIND_PERSON)
+  @RESTPermit (handling = Handling.INLINE)
+//@RESTPermit ({PersonPermissions.FIND_PERSON, PersonPermissions.PERSON_OWNER })
   public Response findPersonById(@PathParam("ID") Long id) {
     Person person = personController.findPersonById(id);
     if (person == null) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { PersonPermissions.FIND_PERSON, PersonPermissions.PERSON_OWNER }, person, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
     
     return Response.ok(objectFactory.createModel(person)).build();
