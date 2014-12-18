@@ -164,6 +164,12 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
 
     studentDAO.setStudentTags(student, tagEntities);
     
+    // Default user
+    
+    if(person.getDefaultUser() == null){
+      personDAO.updateDefaultUser(person, student);
+    }
+    
     // Contact info
     
     contactInfoDAO.update(student.getContactInfo(), otherContactInfo);
