@@ -45,13 +45,14 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
         request.getSession().setAttribute("clientAppId", oauthRequest.getClientId());
         String responseType = oauthRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE);
 
-        String authorizationCode = "";
-        
-        if (responseType.equals(ResponseType.CODE.toString())) {
-          authorizationCode = oauthIssuerImpl.authorizationCode();
-          request.getSession().setAttribute("pendingAuthCode", authorizationCode);
+        if (!responseType.equals(ResponseType.CODE.toString())) {
+          requestContext.setIncludeJSP("/templates/generic/errorpage.jsp");
+          throw new SmvcRuntimeException(HttpServletResponse.SC_NOT_IMPLEMENTED, String.format("Response type: %s not supported", responseType));
         }
-
+        
+        String authorizationCode = oauthIssuerImpl.authorizationCode();
+        request.getSession().setAttribute("pendingAuthCode", authorizationCode);
+        
         String redirectURI = oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
 
         request.getSession().setAttribute("pendingOauthRedirectUrl", redirectURI);

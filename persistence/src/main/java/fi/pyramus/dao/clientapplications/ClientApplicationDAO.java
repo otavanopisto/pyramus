@@ -50,31 +50,23 @@ public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
   }
 
   public ClientApplication updateName(ClientApplication clientApplication, String clientName) {
-    EntityManager entityManager = getEntityManager();
     clientApplication.setClientName(clientName);
-    entityManager.persist(clientApplication);
-    return clientApplication;
+    return persist(clientApplication);
   }
 
   public ClientApplication updateClientId(ClientApplication clientApplication, String clientId) {
-    EntityManager entityManager = getEntityManager();
     clientApplication.setClientId(clientId);
-    entityManager.persist(clientApplication);
-    return clientApplication;
+    return persist(clientApplication);
   }
 
   public ClientApplication updateClientSecret(ClientApplication clientApplication, String clientSecret) {
-    EntityManager entityManager = getEntityManager();
     clientApplication.setClientSecret(clientSecret);
-    entityManager.persist(clientApplication);
-    return clientApplication;
+    return persist(clientApplication);
   }
 
   public ClientApplication updateSkipPrompt(ClientApplication clientApplication, boolean skipPrompt) {
-    EntityManager entityManager = getEntityManager();
     clientApplication.setSkipPrompt(skipPrompt);
-    entityManager.persist(clientApplication);
-    return clientApplication;
+    return persist(clientApplication);
   }
 
   public void delete(ClientApplication clientApplication) {
