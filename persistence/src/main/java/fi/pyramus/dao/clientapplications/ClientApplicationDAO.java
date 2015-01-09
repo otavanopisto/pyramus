@@ -12,78 +12,71 @@ import fi.pyramus.domainmodel.clientapplications.ClientApplication_;
 
 @Stateless
 public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {
-  
-  public ClientApplication create(String clientName, String clientId, String clientSecret, Boolean skipPrompt ){
-    EntityManager entityManager = getEntityManager();
-    
+
+  public ClientApplication create(String clientName, String clientId, String clientSecret, Boolean skipPrompt) {
+
     ClientApplication clientApplication = new ClientApplication();
     clientApplication.setClientId(clientId);
     clientApplication.setClientName(clientName);
     clientApplication.setClientSecret(clientSecret);
     clientApplication.setSkipPrompt(skipPrompt);
-    
+
     return persist(clientApplication);
-    
   }
-  
-  public ClientApplication findByClientId(String clientId){
-    EntityManager entityManager = getEntityManager(); 
-    
+
+  public ClientApplication findByClientId(String clientId) {
+    EntityManager entityManager = getEntityManager();
+
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<ClientApplication> criteria = criteriaBuilder.createQuery(ClientApplication.class);
     Root<ClientApplication> root = criteria.from(ClientApplication.class);
     criteria.select(root);
-    criteria.where(
-            criteriaBuilder.equal(root.get(ClientApplication_.clientId), clientId)
-        );
-    
+    criteria.where(criteriaBuilder.equal(root.get(ClientApplication_.clientId), clientId));
+
     return getSingleResult(entityManager.createQuery(criteria));
   }
-  
-  public ClientApplication findByClientIdAndClientSecret(String clientId, String clientSecret){
-    EntityManager entityManager = getEntityManager(); 
-    
+
+  public ClientApplication findByClientIdAndClientSecret(String clientId, String clientSecret) {
+    EntityManager entityManager = getEntityManager();
+
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<ClientApplication> criteria = criteriaBuilder.createQuery(ClientApplication.class);
     Root<ClientApplication> root = criteria.from(ClientApplication.class);
     criteria.select(root);
-    criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(ClientApplication_.clientId), clientId),
-            criteriaBuilder.equal(root.get(ClientApplication_.clientSecret), clientSecret)
-        ));
-    
+    criteria.where(criteriaBuilder.and(criteriaBuilder.equal(root.get(ClientApplication_.clientId), clientId),
+        criteriaBuilder.equal(root.get(ClientApplication_.clientSecret), clientSecret)));
+
     return getSingleResult(entityManager.createQuery(criteria));
   }
-  
-  public ClientApplication updateName(ClientApplication clientApplication, String clientName){
-    EntityManager entityManager = getEntityManager(); 
+
+  public ClientApplication updateName(ClientApplication clientApplication, String clientName) {
+    EntityManager entityManager = getEntityManager();
     clientApplication.setClientName(clientName);
     entityManager.persist(clientApplication);
     return clientApplication;
   }
-  
-  public ClientApplication updateClientId(ClientApplication clientApplication, String clientId){
+
+  public ClientApplication updateClientId(ClientApplication clientApplication, String clientId) {
     EntityManager entityManager = getEntityManager();
     clientApplication.setClientId(clientId);
     entityManager.persist(clientApplication);
     return clientApplication;
   }
-  
-  public ClientApplication updateClientSecret(ClientApplication clientApplication, String clientSecret){
+
+  public ClientApplication updateClientSecret(ClientApplication clientApplication, String clientSecret) {
     EntityManager entityManager = getEntityManager();
     clientApplication.setClientSecret(clientSecret);
     entityManager.persist(clientApplication);
     return clientApplication;
   }
-  
-  public ClientApplication updateSkipPrompt(ClientApplication clientApplication, boolean skipPrompt){
+
+  public ClientApplication updateSkipPrompt(ClientApplication clientApplication, boolean skipPrompt) {
     EntityManager entityManager = getEntityManager();
     clientApplication.setSkipPrompt(skipPrompt);
     entityManager.persist(clientApplication);
     return clientApplication;
   }
-  
+
   public void delete(ClientApplication clientApplication) {
     super.delete(clientApplication);
   }
