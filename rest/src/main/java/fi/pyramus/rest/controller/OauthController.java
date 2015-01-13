@@ -37,6 +37,10 @@ public class OauthController {
     return clientApplicationAccessTokenDAO.findByAccessToken(accessToken);
   }
   
+  public ClientApplicationAccessToken findByRefreshToken(String refreshToken) {
+    return clientApplicationAccessTokenDAO.findByRefreshToken(refreshToken);
+  }
+  
   public ClientApplication findByClientIdAndClientSecret(String clientId, String clientSecret) {
     return clientApplicationDAO.findByClientIdAndClientSecret(clientId, clientSecret);
   }
@@ -52,5 +56,10 @@ public class OauthController {
   public ClientApplicationAccessToken refresh(ClientApplicationAccessToken clientApplicationAccessToken, Long expires, String accessToken){
     return clientApplicationAccessTokenDAO.updateAccessToken(clientApplicationAccessTokenDAO.updateExpires(clientApplicationAccessToken, expires), accessToken);
   }
+  
+  public void deleteAccessToken(ClientApplicationAccessToken clientApplicationAccessToken){
+    clientApplicationAccessTokenDAO.delete(clientApplicationAccessToken);
+  }
+  
 
 }
