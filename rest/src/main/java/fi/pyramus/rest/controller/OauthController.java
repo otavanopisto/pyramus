@@ -25,8 +25,8 @@ public class OauthController {
   @Inject
   private ClientApplicationAccessTokenDAO clientApplicationAccessTokenDAO;
 
-  public ClientApplicationAccessToken createAccessToken(String accessToken,/* String refreshToken,*/ Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode) {
-    return clientApplicationAccessTokenDAO.create(accessToken,/* refreshToken,*/ expires, clientApplication, clientApplicationAuthorizationCode);
+  public ClientApplicationAccessToken createAccessToken(String accessToken, String refreshToken, Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode) {
+    return clientApplicationAccessTokenDAO.create(accessToken, refreshToken, expires, clientApplication, clientApplicationAuthorizationCode);
   }
   
   public ClientApplicationAuthorizationCode createAuthorizationCode(User user, ClientApplication clientApplication, String authorizationCode, String redirectUrl){

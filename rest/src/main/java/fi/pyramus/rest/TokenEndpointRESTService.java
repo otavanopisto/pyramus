@@ -97,7 +97,7 @@ public class TokenEndpointRESTService extends AbstractRESTService {
       } else {
         if (clientApplicationAccessToken == null) {
           refreshToken = oauthIssuerImpl.refreshToken();
-          oauthController.createAccessToken(accessToken, /*refreshToken,*/ expires, clientApplication, clientApplicationAuthorizationCode);
+          oauthController.createAccessToken(accessToken, refreshToken, expires, clientApplication, clientApplicationAuthorizationCode);
         } else {
           oauthController.refresh(clientApplicationAccessToken, expires, accessToken); // TODO:remove when Muikku has refresh token support
         }
