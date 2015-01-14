@@ -196,7 +196,7 @@
       
       function addRepository() {
         var table = getIxTableById('repositoriesTable');
-        rowIndex = table.addRow(['', false, '', null, null], true);
+        rowIndex = table.addRow(['', false, '', '', null, null], true);
       }
     
       function onLoad(event) {
