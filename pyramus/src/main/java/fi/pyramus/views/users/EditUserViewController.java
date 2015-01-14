@@ -67,7 +67,7 @@ public class EditUserViewController extends PyramusViewController implements Bre
       throw new SmvcRuntimeException(PyramusStatusCode.MULTIPLE_IDENTIFICATIONS_FOR_PERSON, "Multiple UserIdentifications found for person");
     }
     
-    UserIdentification userIdentification = userIdentifications.get(0);
+    UserIdentification userIdentification = userIdentifications.isEmpty() ? null : userIdentifications.get(0);
     
     String username = "";
     
@@ -82,7 +82,7 @@ public class EditUserViewController extends PyramusViewController implements Bre
         InternalAuthenticationProvider internalAuthenticationProvider = (InternalAuthenticationProvider) authenticationProvider;
         canUpdateCredentials = internalAuthenticationProvider.canUpdateCredentials();
         
-        if (internalAuthenticationProvider.getName().equals(userIdentification.getAuthSource())) {
+        if ((userIdentification != null) && internalAuthenticationProvider.getName().equals(userIdentification.getAuthSource())) {
           username = internalAuthenticationProvider.getUsername(userIdentification.getExternalId());
         }
       } else {

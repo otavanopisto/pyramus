@@ -54,7 +54,6 @@ public class EditUserJSONRequestController extends JSONRequestController {
   public void process(JSONRequestContext requestContext) {
     StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
@@ -78,7 +77,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
       throw new SmvcRuntimeException(PyramusStatusCode.MULTIPLE_IDENTIFICATIONS_FOR_PERSON, "Multiple UserIdentifications found for person");
     }
     
-    UserIdentification userIdentification = userIdentifications.get(0);
+    UserIdentification userIdentification = userIdentifications.isEmpty() ? null : userIdentifications.get(0);
     
     String firstName = requestContext.getString("firstName");
     String lastName = requestContext.getString("lastName");
@@ -209,9 +208,11 @@ public class EditUserJSONRequestController extends JSONRequestController {
     }
 
     if (Role.ADMINISTRATOR.equals(loggedUserRole)) {
-      String authProvider = requestContext.getString("authProvider");
-      if (!userIdentification.getAuthSource().equals(authProvider)) {
-        userIdentificationDAO.updateAuthSource(userIdentification, authProvider);
+      if (userIdentification != null) {
+        String authProvider = requestContext.getString("authProvider");
+        if (!userIdentification.getAuthSource().equals(authProvider)) {
+          userIdentificationDAO.updateAuthSource(userIdentification, authProvider);
+        }
       }
       
       Integer variableCount = requestContext.getInteger("variablesTable.rowCount");
@@ -232,19 +233,21 @@ public class EditUserJSONRequestController extends JSONRequestController {
           throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
       }
       
-      AuthenticationProvider authenticationProvider = AuthenticationProviderVault.getInstance().getAuthenticationProvider(userIdentification.getAuthSource());
-      if (authenticationProvider instanceof InternalAuthenticationProvider) {
-        InternalAuthenticationProvider internalAuthenticationProvider = (InternalAuthenticationProvider) authenticationProvider;
-        if (internalAuthenticationProvider.canUpdateCredentials()) {
-          if ("-1".equals(userIdentification.getExternalId())) {
-            String externalId = internalAuthenticationProvider.createCredentials(username, password);
-            userIdentificationDAO.updateExternalId(userIdentification, externalId);
-          } else {
-            if (!StringUtils.isBlank(username))
-              internalAuthenticationProvider.updateUsername(userIdentification.getExternalId(), username);
-          
-            if (!StringUtils.isBlank(password))
-              internalAuthenticationProvider.updatePassword(userIdentification.getExternalId(), password);
+      if (userIdentification != null) {
+        AuthenticationProvider authenticationProvider = AuthenticationProviderVault.getInstance().getAuthenticationProvider(userIdentification.getAuthSource());
+        if (authenticationProvider instanceof InternalAuthenticationProvider) {
+          InternalAuthenticationProvider internalAuthenticationProvider = (InternalAuthenticationProvider) authenticationProvider;
+          if (internalAuthenticationProvider.canUpdateCredentials()) {
+            if ("-1".equals(userIdentification.getExternalId())) {
+              String externalId = internalAuthenticationProvider.createCredentials(username, password);
+              userIdentificationDAO.updateExternalId(userIdentification, externalId);
+            } else {
+              if (!StringUtils.isBlank(username))
+                internalAuthenticationProvider.updateUsername(userIdentification.getExternalId(), username);
+            
+              if (!StringUtils.isBlank(password))
+                internalAuthenticationProvider.updatePassword(userIdentification.getExternalId(), password);
+            }
           }
         }
       }
