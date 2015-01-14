@@ -15,12 +15,12 @@ import fi.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationC
 @Stateless
 public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientApplicationAccessToken> {
 
-  public ClientApplicationAccessToken create(String accessToken,/* String refreshToken,*/ Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode) {
+  public ClientApplicationAccessToken create(String accessToken, String refreshToken, Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode) {
     EntityManager entityManager = getEntityManager();
 
     ClientApplicationAccessToken clientApplicationAccessToken = new ClientApplicationAccessToken();
     clientApplicationAccessToken.setAccessToken(accessToken);
-    //clientApplicationAccessToken.setRefreshToken(refreshToken);
+    clientApplicationAccessToken.setRefreshToken(refreshToken);
     clientApplicationAccessToken.setClientApplication(clientApplication);
     clientApplicationAccessToken.setExpires(expires);
     clientApplicationAccessToken.setClientApplicationAuthorizationCode(clientApplicationAuthorizationCode);
@@ -38,6 +38,20 @@ public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientAppl
     criteria.select(root);
     criteria.where(
             criteriaBuilder.equal(root.get(ClientApplicationAccessToken_.accessToken), accessToken)
+        );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+  
+  public ClientApplicationAccessToken findByRefreshToken(String refreshToken){
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ClientApplicationAccessToken> criteria = criteriaBuilder.createQuery(ClientApplicationAccessToken.class);
+    Root<ClientApplicationAccessToken> root = criteria.from(ClientApplicationAccessToken.class);
+    criteria.select(root);
+    criteria.where(
+            criteriaBuilder.equal(root.get(ClientApplicationAccessToken_.refreshToken), refreshToken)
         );
     
     return getSingleResult(entityManager.createQuery(criteria));

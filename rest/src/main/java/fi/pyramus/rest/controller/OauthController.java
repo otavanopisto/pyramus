@@ -25,8 +25,8 @@ public class OauthController {
   @Inject
   private ClientApplicationAccessTokenDAO clientApplicationAccessTokenDAO;
 
-  public ClientApplicationAccessToken createAccessToken(String accessToken,/* String refreshToken,*/ Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode) {
-    return clientApplicationAccessTokenDAO.create(accessToken,/* refreshToken,*/ expires, clientApplication, clientApplicationAuthorizationCode);
+  public ClientApplicationAccessToken createAccessToken(String accessToken, String refreshToken, Long expires, ClientApplication clientApplication, ClientApplicationAuthorizationCode clientApplicationAuthorizationCode) {
+    return clientApplicationAccessTokenDAO.create(accessToken, refreshToken, expires, clientApplication, clientApplicationAuthorizationCode);
   }
   
   public ClientApplicationAuthorizationCode createAuthorizationCode(User user, ClientApplication clientApplication, String authorizationCode, String redirectUrl){
@@ -35,6 +35,10 @@ public class OauthController {
 
   public ClientApplicationAccessToken findByAccessToken(String accessToken) {
     return clientApplicationAccessTokenDAO.findByAccessToken(accessToken);
+  }
+  
+  public ClientApplicationAccessToken findByRefreshToken(String refreshToken) {
+    return clientApplicationAccessTokenDAO.findByRefreshToken(refreshToken);
   }
   
   public ClientApplication findByClientIdAndClientSecret(String clientId, String clientSecret) {
@@ -52,5 +56,10 @@ public class OauthController {
   public ClientApplicationAccessToken refresh(ClientApplicationAccessToken clientApplicationAccessToken, Long expires, String accessToken){
     return clientApplicationAccessTokenDAO.updateAccessToken(clientApplicationAccessTokenDAO.updateExpires(clientApplicationAccessToken, expires), accessToken);
   }
+  
+  public void deleteAccessToken(ClientApplicationAccessToken clientApplicationAccessToken){
+    clientApplicationAccessTokenDAO.delete(clientApplicationAccessToken);
+  }
+  
 
 }
