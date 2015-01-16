@@ -85,7 +85,7 @@ public class ClientApplicationAccessToken {
   
   @NotNull
   @OneToOne
-  @JoinColumn(name = "clientApplicationAuthorizationCode")
+  @JoinColumn(name = "clientApplicationAuthorizationCode", unique = true)
   private ClientApplicationAuthorizationCode clientApplicationAuthorizationCode;
 
 }
