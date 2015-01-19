@@ -9,4 +9,15 @@
     </table>
   </alterTables>
   
+  <alterData>
+    <update table="PluginRepository">
+      <set>
+        <value type="java.lang.String" column="repositoryId" value="central"/>
+      </set>
+      <where>
+        <equals type="java.lang.String" column="url" value="http://repo1.maven.org/maven2"/>
+      </where>
+    </update> 
+  </alterData>
+   
 </update>
