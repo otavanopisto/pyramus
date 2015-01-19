@@ -22,6 +22,7 @@ import fi.pyramus.util.dataimport.scripting.api.MunicipalityAPI;
 import fi.pyramus.util.dataimport.scripting.api.NationalityAPI;
 import fi.pyramus.util.dataimport.scripting.api.PersonAPI;
 import fi.pyramus.util.dataimport.scripting.api.PluginAPI;
+import fi.pyramus.util.dataimport.scripting.api.PluginRepositoryAPI;
 import fi.pyramus.util.dataimport.scripting.api.SchoolAPI;
 import fi.pyramus.util.dataimport.scripting.api.SchoolFieldAPI;
 import fi.pyramus.util.dataimport.scripting.api.SettingAPI;
@@ -148,6 +149,10 @@ public class ImportAPI {
   
   public PluginAPI getPlugins() {
     return new PluginAPI(loggedUserId);
+  }
+
+  public PluginRepositoryAPI getPluginRepositories() {
+    return new PluginRepositoryAPI(loggedUserId);
   }
   
   public StaffMemberAPI getStaffMembers() {
