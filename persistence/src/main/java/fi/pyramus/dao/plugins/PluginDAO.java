@@ -29,6 +29,23 @@ public class PluginDAO extends PyramusEntityDAO<Plugin> {
     return plugin;
   }
 
+  public Plugin findByGroupIdAndArtifactId(String groupId, String artifactId) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Plugin> criteria = criteriaBuilder.createQuery(Plugin.class);
+    Root<Plugin> root = criteria.from(Plugin.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Plugin_.groupId), groupId),
+        criteriaBuilder.equal(root.get(Plugin_.artifactId), artifactId)
+      )
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+
   public List<Plugin> listByEnabled(Boolean enabled) {
     EntityManager entityManager = getEntityManager(); 
     
