@@ -84,6 +84,11 @@ public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientAppl
     entityManager.persist(clientApplicationAccessToken);
     return clientApplicationAccessToken;
   }
+
+  public ClientApplicationAccessToken updateRefreshToken(ClientApplicationAccessToken clientApplicationAccessToken, String refreshToken) {
+    clientApplicationAccessToken.setRefreshToken(refreshToken);
+    return persist(clientApplicationAccessToken);
+  }
   
   public void delete(ClientApplicationAccessToken clientApplicationAccessToken){
     super.delete(clientApplicationAccessToken);
