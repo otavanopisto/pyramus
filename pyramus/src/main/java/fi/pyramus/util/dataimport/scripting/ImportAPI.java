@@ -21,6 +21,7 @@ import fi.pyramus.util.dataimport.scripting.api.ModuleAPI;
 import fi.pyramus.util.dataimport.scripting.api.MunicipalityAPI;
 import fi.pyramus.util.dataimport.scripting.api.NationalityAPI;
 import fi.pyramus.util.dataimport.scripting.api.PersonAPI;
+import fi.pyramus.util.dataimport.scripting.api.PluginAPI;
 import fi.pyramus.util.dataimport.scripting.api.SchoolAPI;
 import fi.pyramus.util.dataimport.scripting.api.SchoolFieldAPI;
 import fi.pyramus.util.dataimport.scripting.api.SettingAPI;
@@ -143,6 +144,10 @@ public class ImportAPI {
   
   public ClientApplicationAuthorizationCodeAPI getClientApplicationAuthorizationCodes() {
     return new ClientApplicationAuthorizationCodeAPI(loggedUserId);
+  }
+  
+  public PluginAPI getPlugins() {
+    return new PluginAPI(loggedUserId);
   }
   
   public StaffMemberAPI getStaffMembers() {
