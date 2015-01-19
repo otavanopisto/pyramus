@@ -35,6 +35,16 @@ public class PersonAPI {
     Person person = personDAO.findBySSN(socialSecurityNumber);
     return person != null ? person.getId() : null;
   }
+  
+  public Long findIdByEmail(String email) {
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    Person person = personDAO.findByEmail(email);
+    if (person != null) {
+      return person.getId();
+    }
+    
+    return null;
+  }
 
   @SuppressWarnings("unused")
   private Long loggedUserId;
