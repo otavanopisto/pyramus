@@ -43,13 +43,13 @@ public class StudentTestsBase extends AbstractUITest {
     login(ADMIN_USERNAME, ADMIN_PASSWORD);
     getWebDriver().get(getAppUrl(true) + "/students/searchstudents.page");
     waitForUrlNotMatches(".*/index.*");
-    getWebDriver().findElement(By.cssSelector("#searchStudentsSearchContainer .basicSearchQueryField")).sendKeys("Tanya");
+    getWebDriver().findElement(By.cssSelector("#searchStudentsSearchContainer .basicSearchQueryField")).sendKeys("Tony");
     getWebDriver().findElement(By.name("query")).click();
 //  TODO: No usable name, class or id for this element.
     waitForElementToBePresent(By.cssSelector(".ixTableCell:nth-of-type(2) span"));
     String studentName = getWebDriver().findElement(By.cssSelector(".ixTableCell:nth-of-type(2) span")).getText();
         
-    assertEquals("Test #1, Tanya", studentName);
+    assertEquals("Tony, Tester", studentName);
   }
 
   @Test
