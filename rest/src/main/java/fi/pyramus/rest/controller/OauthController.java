@@ -56,6 +56,13 @@ public class OauthController {
   public ClientApplicationAccessToken refresh(ClientApplicationAccessToken clientApplicationAccessToken, Long expires, String accessToken){
     return clientApplicationAccessTokenDAO.updateAccessToken(clientApplicationAccessTokenDAO.updateExpires(clientApplicationAccessToken, expires), accessToken);
   }
+
+  public ClientApplicationAccessToken renewAccessToken(ClientApplicationAccessToken clientApplicationAccessToken, Long expires, String accessToken, String refreshToken) {
+    clientApplicationAccessTokenDAO.updateRefreshToken(clientApplicationAccessToken, refreshToken);
+    clientApplicationAccessTokenDAO.updateAccessToken(clientApplicationAccessToken, accessToken);
+    clientApplicationAccessTokenDAO.updateExpires(clientApplicationAccessToken, expires);
+    return clientApplicationAccessToken;
+  }
   
   public void deleteAccessToken(ClientApplicationAccessToken clientApplicationAccessToken){
     clientApplicationAccessTokenDAO.delete(clientApplicationAccessToken);

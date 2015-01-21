@@ -1317,7 +1317,8 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{ID:[0-9]*}")
   @GET
-  @RESTPermit (StudentPermissions.FIND_STUDENT)
+  @RESTPermit (handling = Handling.INLINE)
+  //@RESTPermit (StudentPermissions.FIND_STUDENT)
   public Response findStudentById(@PathParam("ID") Long id, @Context Request request) {
     Student student = studentController.findStudentById(id);
     if (student == null) {
@@ -1326,6 +1327,10 @@ public class StudentRESTService extends AbstractRESTService {
 
     if (student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(student.getVersion())));

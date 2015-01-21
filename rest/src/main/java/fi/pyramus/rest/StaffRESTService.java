@@ -20,8 +20,11 @@ import org.apache.commons.lang3.StringUtils;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.rest.annotation.RESTPermit;
+import fi.pyramus.rest.annotation.RESTPermit.Handling;
+import fi.pyramus.rest.annotation.RESTPermit.Style;
 import fi.pyramus.rest.controller.UserController;
 import fi.pyramus.rest.controller.permissions.UserPermissions;
+import fi.pyramus.rest.security.RESTSecurity;
 
 @Path("/staff")
 @Produces("application/json")
@@ -35,6 +38,9 @@ public class StaffRESTService extends AbstractRESTService {
   
   @Inject
   private ObjectFactory objectFactory;
+
+  @Inject
+  private RESTSecurity restSecurity;
 
   @Path("/members")
   @GET
@@ -57,13 +63,16 @@ public class StaffRESTService extends AbstractRESTService {
   
   @Path("/members/{ID:[0-9]*}")
   @GET
-  @RESTPermit (UserPermissions.FIND_STAFFMEMBER)
+  @RESTPermit (handling = Handling.INLINE)
+  //@RESTPermit (UserPermissions.FIND_STAFFMEMBER)
   public Response findUserById(@PathParam("ID") Long id) {
     StaffMember user = userController.findStaffMemberById(id);
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.FIND_STAFFMEMBER, UserPermissions.USER_OWNER }, user, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
     if (user == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    
     return Response.ok(objectFactory.createModel(user)).build();
   }
 

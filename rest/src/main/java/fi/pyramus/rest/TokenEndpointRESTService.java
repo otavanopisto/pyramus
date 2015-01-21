@@ -98,8 +98,7 @@ public class TokenEndpointRESTService extends AbstractRESTService {
         if (clientApplicationAccessToken == null) {
           oauthController.createAccessToken(accessToken, refreshToken, expires, clientApplication, clientApplicationAuthorizationCode);
         } else {
-          oauthController.deleteAccessToken(clientApplicationAccessToken); //TODO: is this good?
-          oauthController.createAccessToken(accessToken, refreshToken, expires, clientApplication, clientApplicationAuthorizationCode);
+          oauthController.renewAccessToken(clientApplicationAccessToken, expires, accessToken, refreshToken);
         }
       }
 
