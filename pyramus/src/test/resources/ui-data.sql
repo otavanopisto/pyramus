@@ -23,14 +23,67 @@ values
 insert into 
   InternalAuth (password, username, id, version) 
 values 
-('b9a58c1892016f48e330ce62010609c4', 'devadmin', 1, 0);
+('b9a58c1892016f48e330ce62010609c4', 'devadmin', 1, 0),
+('b9a58c1892016f48e330ce62010609c4', 'tonyt', 2, 0);
+
+insert into 
+  ContactInfo (id, additionalInfo, version)
+values   
+  (1, 'For test school #1', 1),
+  (2, 'For test school #2', 1),
+  (3, 'For test student #3', 1),
+  (4, 'For test student #4', 1),
+  (5, 'Test Guest #1', 1),
+  (6, 'Test Guest #2', 1),
+  (7, 'Test User  #1', 1),
+  (8, 'Test Manager #1', 1),
+  (9, 'Test Administrator #1', 1),
+  (10, 'Test Student #1', 1);
+
+SET foreign_key_checks = 0;
+
+insert into 
+  Person (id, version, birthday, sex, socialSecurityNumber, basicInfo, secureInfo, defaultUser_id)
+values 
+  (1, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '123411-7890', 'Test staff #1', false, 1),
+  (2, 1, PARSEDATETIME('1 1 1970', 'd M yyyy'), 'MALE', '012345535-8901', 'Test staff #2', false, 2),
+  (3, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'FEMALE', '123456-7890', 'Test student #1', false, 3),
+  (4, 1, PARSEDATETIME('1 1 1990', 'd M yyyy'), 'MALE', '01234567-8901', 'Test student #2', false, 4),
+  (5, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121213-7890', 'Test User #1', false, 5),
+  (6, 1, PARSEDATETIME('1 1 1970', 'd M yyyy'), 'MALE', '131214-8901', 'Test Manager #1', false, 6),
+  (7, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121216-7891', 'Test administrator #1', false, 7),
+  (8, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121217-7892', 'Test Student #1', false, 8);
   
 insert into
-  User (id, authProvider, externalId, firstName, lastName, role, contactInfo, version, title)
+  User (id, person_id, firstName, lastName, contactInfo, version)
 values 
-  (1, 'TEST', 'TEST-GUEST-1', 'Test Guest', 'User #1', 'GUEST', null, 1, null),
-  (2, 'TEST', 'TEST-GUEST-2', 'Test Guest', 'User #2', 'GUEST', null, 1, null), 
-  (5, 'internal', '1', 'Dev' , 'Aava', 'ADMINISTRATOR', null, 1, null);
+  (1, 1, 'Test Guest', 'User #1', 5, 1),
+  (2, 2, 'Test Guest', 'User #2', 6, 1),
+  (3, 3, 'Tanya', 'Test #1', 3, 1),
+  (4, 4, 'David', 'Test #2', 4, 1),
+  (5, 5, 'Test User', 'User #3', 7, 1),
+  (6, 6, 'Test Manager', 'User #4', 8, 1),
+  (7, 7, 'Test Administrator', 'User #5', 9, 1),
+  (8, 8, 'Tony', 'Tester', 10, 1);
+
+SET foreign_key_checks = 1;
+
+insert into
+  UserIdentification (id, externalId, authSource, person_id)
+values
+  (1, '1', 'internal', 7),
+  (2, '2', 'internal', 8);
+  
+
+insert into
+  StaffMember (id, role, title)
+values 
+  (1, 'GUEST', null),
+  (2, 'GUEST', null),
+  (5, 'USER', null),
+  (6, 'MANAGER', null),
+  (7, 'ADMINISTRATOR', null);
+  
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
 values 
@@ -168,13 +221,7 @@ insert into
 values 
   (1, 'Field #1', false),
   (2, 'Field #2', false);
-  
-insert into 
-  ContactInfo (id, additionalInfo, version)
-values   
-  (1, 'For test school #1', 1),
-  (2, 'For test school #2', 1);
-  
+
 insert into 
   ContactType (id, name, version, archived)
 values 
@@ -300,6 +347,42 @@ insert into StudentStudyEndReason
 values 
   (1, 'StudentStudyEndReason #1', null ,1),
   (2, 'StudentStudyEndReason #2', 1 ,1);
+  
+insert into ClientApplication 
+  (id, clientName, clientId, clientSecret, skipPrompt)
+values 
+  (1, 'dev.muikku.fi', '854885cf-2284-4b17-b63c-a8b189535f8d' ,'cqJ4J1if8ca5RMUqaYyFPYToxfFxt2YT8PXL3pNygPClnjJdt55lrFs6k1SZ6colJN24YEtZ7bhFW29S', 0),
+  (2, 'dev.suikku.fi', '567765cf-1114-4b17-b63c-awbe89535f8d' ,'cqJ4J1if8ca5RMUqaYyFPYToxfFxt2YT8PXL3pNygPClnjJdt55lrFs6k1SZ6colJN24YEtZ7bhasAS5', 1);
+
+insert into 
+  Student (id, language, studyStartDate, studyEndReason, previousStudies, additionalInfo, municipality, 
+  studyTimeEnd, studyProgramme, educationalLevel, studyEndDate, archived, nationality, lodging, 
+  examinationType, studyEndText, education, school, activityType, nickname)
+values
+  (8, null, PARSEDATETIME('1 1 2010', 'd M yyyy'), null, null, null, null, null, 1, null, null, 0, null, 0, null, null, null, null, null, null);
+
+insert into StudentGroupStudent
+  (id, studentGroup, student, version)
+values 
+  (1, 1, 8, 1);
+ 
+insert into
+  CourseUser (id, version, course)
+values
+  (1, 0, 1000),
+  (2, 0, 1001); 
+
+insert into 
+  CourseStudent (archived, enrolmentTime, lodging, optionality, id, billingDetails, enrolmentType, 
+  participationType, student)
+values 
+  (0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 0, 'OPTIONAL', 1, NULL, NULL, 1, 8);
+
+insert into 
+  StudentContactLogEntry (id, creatorName, entryDate, text, type, student, version, archived)
+values
+  (1, 'Tester #1', PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test text #1', 'LETTER', 8, 1, false),
+  (2, 'Tester #2', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'Test text #2', 'PHONE', 8, 1, false);
 
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'InternalAuth', max(id) + 1 from InternalAuth;  
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
@@ -344,4 +427,12 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudyProgramme', max(id) + 1 from StudyProgramme;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroup', max(id) + 1 from StudentGroup;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentStudyEndReason', max(id) + 1 from StudentStudyEndReason;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentContactLogEntry', max(id) + 1 from StudentContactLogEntry;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Person', max(id) + 1 from Person;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StaffMember', max(id) + 1 from StaffMember;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ClientApplication', max(id) + 1 from ClientApplication;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentGroupStudent', max(id) + 1 from StudentGroupStudent;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Student', max(id) + 1 from Student;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseUser', max(id) + 1 from CourseUser;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStudent', max(id) + 1 from CourseStudent;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'StudentContactLogEntry', max(id) + 1 from StudentContactLogEntry;
