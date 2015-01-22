@@ -106,6 +106,10 @@
       <param-name>decodeGETUtf</param-name>
       <param-value>true</param-value>
     </init-param>
+    <init-param>
+      <param-name>platformErrorListener</param-name>
+      <param-value>fi.pyramus.util.PyramusErrorListener</param-value>
+    </init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>pyramus</servlet-name>
