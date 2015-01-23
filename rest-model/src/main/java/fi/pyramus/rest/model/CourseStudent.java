@@ -2,7 +2,9 @@ package fi.pyramus.rest.model;
 
 import org.joda.time.DateTime;
 
-public class CourseStudent {
+import fi.muikku.security.ContextReference;
+
+public class CourseStudent implements ContextReference {
 
   public CourseStudent() {
     super();

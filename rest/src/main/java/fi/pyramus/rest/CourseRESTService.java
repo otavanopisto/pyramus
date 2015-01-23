@@ -46,6 +46,8 @@ import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.rest.annotation.RESTPermit;
+import fi.pyramus.rest.annotation.RESTPermit.Handling;
+import fi.pyramus.rest.annotation.RESTPermit.Style;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
@@ -53,7 +55,9 @@ import fi.pyramus.rest.controller.StudentController;
 import fi.pyramus.rest.controller.UserController;
 import fi.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.pyramus.rest.controller.permissions.CoursePermissions;
+import fi.pyramus.rest.controller.permissions.UserPermissions;
 import fi.pyramus.rest.model.CourseEnrolmentType;
+import fi.pyramus.rest.security.RESTSecurity;
 import fi.pyramus.security.impl.SessionController;
 
 @Path("/courses")
@@ -62,6 +66,9 @@ import fi.pyramus.security.impl.SessionController;
 @Stateful
 @RequestScoped
 public class CourseRESTService extends AbstractRESTService {
+  
+  @Inject
+  private RESTSecurity restSecurity;
   
   @Inject
   private CourseController courseController;
@@ -435,7 +442,8 @@ public class CourseRESTService extends AbstractRESTService {
   
   @Path("/courses/{COURSEID:[0-9]*}/students")
   @POST
-  @RESTPermit (CoursePermissions.CREATE_COURSESTUDENT)
+  @RESTPermit (handling = Handling.INLINE)
+//  @RESTPermit (CoursePermissions.CREATE_COURSESTUDENT)
   public Response createCourseStudent(@PathParam("COURSEID") Long courseId, fi.pyramus.rest.model.CourseStudent entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).entity("Request payload missing").build(); 
@@ -453,6 +461,10 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("enrolmentTime is missing").build(); 
     }
     
+    if (!restSecurity.hasPermission(new String[] { CoursePermissions.CREATE_COURSESTUDENT, UserPermissions.USER_OWNER }, entity, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
