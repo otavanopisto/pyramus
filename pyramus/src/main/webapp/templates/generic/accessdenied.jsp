@@ -5,7 +5,7 @@
 
 <html>
 <head>
-  <title><fmt:message key="generic.applicationTitle" /></title>
+  <title>Access Denied!</title>
   <jsp:include page="/templates/generic/head_generic.jsp"></jsp:include>
   <link href="${pageContext.request.contextPath}/css/index.css" rel="stylesheet">
 </head>
@@ -17,7 +17,16 @@
     <a href="#" onclick="setLocale('fi_FI');">FI</a><a href="#" onclick="setLocale('en_US');">EN</a>
   -->
 
-  Access denied!
+  <div class="errorPageTitleContainer">
+    <div class="errorPageTitleIconContainer">
+      <img src="${pageContext.request.contextPath}/gfx/icons/32x32/status/dialog-error.png"/>
+    </div>
+    <div class="errorPageTitle">
+      <fmt:message key="generic.errorPage.errorPageTitle">
+        <fmt:param>Access denied!</fmt:param>
+      </fmt:message>
+    </div>
+  </div>
 
   <jsp:include page="/templates/generic/footer.jsp"></jsp:include>
 </body>

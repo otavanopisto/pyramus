@@ -93,8 +93,25 @@ public class AbstractUITest extends AbstractIntegrationTest {
     } catch (InterruptedException e) {
     }
   }
+  
+  protected void assertStudentDenied(String page) {
+    login(STUDENT_USERNAME, STUDENT_PASSWORD);
+    getWebDriver().get(getAppUrl(true) + page);
+    waitForUrlNotMatches(".*/" + page);
+    String cUrl = getWebDriver().getCurrentUrl();
+    assertEquals(true, cUrl.endsWith("accessdenied.page"));
+  }
+  
+  protected void assertStudentAllowed(String page) {
+    login(STUDENT_USERNAME, STUDENT_PASSWORD);
+    getWebDriver().get(getAppUrl(true) + page);
+    String cUrl = getWebDriver().getCurrentUrl();
+    assertEquals(true, cUrl.endsWith(page));
+  }
 
   private RemoteWebDriver webDriver;
   protected static final String ADMIN_USERNAME = "devadmin";
   protected static final String ADMIN_PASSWORD = "passi";
+  protected static final String STUDENT_USERNAME = "tonyt";
+  protected static final String STUDENT_PASSWORD = "passi";
 }
