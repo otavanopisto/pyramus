@@ -2,4 +2,5 @@
 <jboss-web>
   <context-root></context-root>
   <security-domain>WebServices</security-domain>
+  <virtual-host>pyramus</virtual-host>
 </jboss-web>
