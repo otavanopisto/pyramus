@@ -13,6 +13,7 @@ import fi.pyramus.util.dataimport.scripting.api.ClientApplicationAuthorizationCo
 import fi.pyramus.util.dataimport.scripting.api.ContactTypeAPI;
 import fi.pyramus.util.dataimport.scripting.api.CourseAPI;
 import fi.pyramus.util.dataimport.scripting.api.CourseStudentAPI;
+import fi.pyramus.util.dataimport.scripting.api.CourseVariableKeyAPI;
 import fi.pyramus.util.dataimport.scripting.api.EducationTypeAPI;
 import fi.pyramus.util.dataimport.scripting.api.EducationalLevelAPI;
 import fi.pyramus.util.dataimport.scripting.api.ExaminationTypeAPI;
@@ -65,6 +66,10 @@ public class ImportAPI {
   
   public CourseAPI getCourses() {
     return new CourseAPI(loggedUserId);
+  }
+
+  public CourseVariableKeyAPI getCourseVariableKeys() {
+    return new CourseVariableKeyAPI(loggedUserId);
   }
   
   public StudyProgrammeCategoryAPI getStudyProgrammeCategories() {
