@@ -1,5 +1,7 @@
 package fi.pyramus.dao.base;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -11,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.PyramusEntityDAO;
+import fi.pyramus.domainmodel.base.CourseBase;
 import fi.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.CourseBaseVariable_;
@@ -19,7 +22,7 @@ import fi.pyramus.domainmodel.courses.Course;
 @Stateless
 public class CourseBaseVariableDAO extends PyramusEntityDAO<CourseBaseVariable> {
 
-  private CourseBaseVariable create(Course course, CourseBaseVariableKey key, String value) {
+  public CourseBaseVariable create(Course course, CourseBaseVariableKey key, String value) {
     EntityManager entityManager = getEntityManager();
 
     CourseBaseVariable courseBaseVariable = new CourseBaseVariable();
@@ -34,7 +37,7 @@ public class CourseBaseVariableDAO extends PyramusEntityDAO<CourseBaseVariable> 
     return courseBaseVariable;
   }
 
-  private CourseBaseVariable findByCourseAndVariableKey(Course course, CourseBaseVariableKey key) {
+  public CourseBaseVariable findByCourseAndVariableKey(Course course, CourseBaseVariableKey key) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -62,7 +65,7 @@ public class CourseBaseVariableDAO extends PyramusEntityDAO<CourseBaseVariable> 
     }
   }
 
-  private CourseBaseVariable update(CourseBaseVariable courseBaseVariable, String value) {
+  public CourseBaseVariable update(CourseBaseVariable courseBaseVariable, String value) {
     EntityManager entityManager = getEntityManager();
     courseBaseVariable.setValue(value);
     entityManager.persist(courseBaseVariable);
@@ -89,6 +92,20 @@ public class CourseBaseVariableDAO extends PyramusEntityDAO<CourseBaseVariable> 
     else {
       throw new PersistenceException("Unknown VariableKey");
     }
+  }
+
+  public List<CourseBaseVariable> listByCourseBase(CourseBase courseBase) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseBaseVariable> criteria = criteriaBuilder.createQuery(CourseBaseVariable.class);
+    Root<CourseBaseVariable> root = criteria.from(CourseBaseVariable.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(CourseBaseVariable_.courseBase), courseBase)
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
   
 }

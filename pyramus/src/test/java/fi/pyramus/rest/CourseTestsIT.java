@@ -48,6 +48,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l,
         1l, 
         1l, 
+        null,
         null);
 
     Response response = given().headers(getAuthHeaders())
@@ -102,6 +103,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l,
         1l, 
         1l, 
+        null,
         Arrays.asList("tag1", "tag2", "tag3"));
 
     Response response = given().headers(getAuthHeaders())
@@ -262,6 +264,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l,
         1l, 
         1l, 
+        null,
         null);
 
     Response response = given().headers(getAuthHeaders())
@@ -339,6 +342,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l,
         1l, 
         1l, 
+        null,
         Arrays.asList("tag1", "tag2", "tag3"));
 
     Response response = given().headers(getAuthHeaders())
@@ -421,6 +425,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l,
         1l, 
         1l, 
+        null,
         null);
 
     Response response = given().headers(getAuthHeaders())

@@ -21,6 +21,7 @@ import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.ContactURL;
 import fi.pyramus.domainmodel.base.ContactURLType;
+import fi.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
@@ -65,6 +66,7 @@ import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
+import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.SchoolController;
 import fi.pyramus.rest.controller.UserController;
 import fi.pyramus.rest.model.AcademicTerm;
@@ -87,6 +89,9 @@ public class ObjectFactory {
 
   @Inject
   private UserController userController;
+
+  @Inject
+  private CourseController courseController;
   
   @PostConstruct
   public void init() {
@@ -148,12 +153,19 @@ public class ObjectFactory {
             Long moduleId = entity.getModule() != null ? entity.getModule().getId() : null;
             Long stateId = entity.getState() != null ? entity.getState().getId() : null;
             
+            List<CourseBaseVariable> entityVariables = courseController.listCourseVariablesByCourse(entity);
+
+            Map<String, String> variables = new HashMap<>();
+            for (CourseBaseVariable entityVariable : entityVariables) {
+              variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
+            };
+            
             return new fi.pyramus.rest.model.Course(entity.getId(), entity.getName(), created, 
                 lastModified, entity.getDescription(), entity.getArchived(), entity.getCourseNumber(), 
                 entity.getMaxParticipantCount(), beginDate, endDate, entity.getNameExtension(), 
                 entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingDays(), 
                 entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, creatorId, 
-                lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, tags);
+                lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, variables, tags);
           }
         }, 
         

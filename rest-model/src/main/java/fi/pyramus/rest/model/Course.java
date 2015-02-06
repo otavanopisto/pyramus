@@ -1,6 +1,7 @@
 package fi.pyramus.rest.model;
 
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 
@@ -12,16 +13,16 @@ public class Course {
   public Course(String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, List<String> tags) {
+      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Map<String, String> variables, List<String> tags) {
     this(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
-        creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, tags);
+        creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, variables, tags);
   }
 
   public Course(Long id, String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, List<String> tags) {
+      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Map<String, String> variables, List<String> tags) {
     super();
     this.id = id;
     this.name = name;
@@ -48,6 +49,7 @@ public class Course {
     this.moduleId = moduleId;
     this.stateId = stateId;
     this.tags = tags;
+    this.variables = variables;
   }
 
   public Long getId() {
@@ -249,6 +251,14 @@ public class Course {
   public void setTags(List<String> tags) {
     this.tags = tags;
   }
+  
+  public Map<String, String> getVariables() {
+    return variables;
+  }
+  
+  public void setVariables(Map<String, String> variables) {
+    this.variables = variables;
+  }
 
   private Long id;
   private String name;
@@ -274,5 +284,6 @@ public class Course {
   private Long lengthUnitId;
   private Long moduleId;
   private Long stateId;
+  private Map<String, String> variables;
   private List<String> tags;
 }

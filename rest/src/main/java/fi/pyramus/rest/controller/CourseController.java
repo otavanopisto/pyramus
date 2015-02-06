@@ -3,12 +3,15 @@ package fi.pyramus.rest.controller;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.CourseBaseVariableDAO;
+import fi.pyramus.dao.base.CourseBaseVariableKeyDAO;
 import fi.pyramus.dao.base.DefaultsDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.courses.CourseComponentDAO;
@@ -21,10 +24,13 @@ import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.domainmodel.base.BillingDetails;
+import fi.pyramus.domainmodel.base.CourseBaseVariable;
+import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.CourseOptionality;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseComponent;
 import fi.pyramus.domainmodel.courses.CourseDescriptionCategory;
@@ -73,6 +79,12 @@ public class CourseController {
   @Inject
   private CourseStudentDAO courseStudentDAO;
 
+  @Inject
+  private CourseBaseVariableDAO courseBaseVariableDAO;
+
+  @Inject
+  private CourseBaseVariableKeyDAO courseBaseVariableKeyDAO;
+  
   @Inject
   private DefaultsDAO defaultsDAO;
   
@@ -441,6 +453,96 @@ public class CourseController {
 
   public CourseParticipationType getDefaultCourseParticipationType() {
     return defaultsDAO.getDefaults().getInitialCourseParticipationType();
+  }
+
+  /* Variables */
+
+  public Course updateCourseVariables(Course course, Map<String, String> variables) {
+    Set<String> newKeys = new HashSet<>(variables.keySet());
+    Set<String> oldKeys = new HashSet<>();
+    Set<String> updateKeys = new HashSet<>();
+    
+    List<CourseBaseVariable> courseVariables = courseBaseVariableDAO.listByCourseBase(course);
+    
+    for (CourseBaseVariable variable : courseVariables) {
+      oldKeys.add(variable.getKey().getVariableKey());
+    }
+
+    for (String oldKey : oldKeys) {
+      if (!newKeys.contains(oldKey)) {
+        CourseBaseVariableKey key = findCourseBaseVariableKeyByVariableKey(oldKey);
+        CourseBaseVariable courseVariable = findCourseVariableByCourseAndKey(course, key);
+        deleteCourseVariable(courseVariable);
+      } else {
+        updateKeys.add(oldKey);
+      }
+      
+      newKeys.remove(oldKey);
+    }
+    
+    for (String newKey : newKeys) {
+      String value = variables.get(newKey);
+      CourseBaseVariableKey key = findCourseBaseVariableKeyByVariableKey(newKey);
+      createCourseVariable(course, key, value);
+    }
+    
+    for (String updateKey : updateKeys) {
+      String value = variables.get(updateKey);
+      CourseBaseVariableKey key = findCourseBaseVariableKeyByVariableKey(updateKey);
+      CourseBaseVariable userVariable = findCourseVariableByCourseAndKey(course, key);
+      updateCourseVariable(userVariable, value);
+    }
+    
+    return course;
+  }
+  
+  public CourseBaseVariable createCourseVariable(Course course, CourseBaseVariableKey key, String value) {
+    return courseBaseVariableDAO.create(course, key, value);
+  }
+
+  public CourseBaseVariable findCourseVariableById(Long id) {
+    return courseBaseVariableDAO.findById(id);
+  }
+
+  public CourseBaseVariable findCourseVariableByCourseAndKey(Course course, CourseBaseVariableKey key) {
+    return courseBaseVariableDAO.findByCourseAndVariableKey(course, key);
+  }
+
+  public void deleteCourseVariable(CourseBaseVariable variable) {
+    courseBaseVariableDAO.delete(variable);
+  }
+
+  public CourseBaseVariable updateCourseVariable(CourseBaseVariable variable, String value) {
+    return courseBaseVariableDAO.update(variable, value);
+  }
+  
+  public CourseBaseVariableKey findCourseBaseVariableKeyByVariableKey(String variableKey) {
+    return courseBaseVariableKeyDAO.findByVariableKey(variableKey);
+  }
+
+  public List<CourseBaseVariable> listCourseVariablesByCourse(Course course) {
+    return courseBaseVariableDAO.listByCourseBase(course);
+  }
+  
+  /* Variable Keys */
+
+  public CourseBaseVariableKey createCourseVariableKey(String key, String name, VariableType variableType, Boolean userEditable) {
+    return courseBaseVariableKeyDAO.create(key, name, variableType, userEditable);
+  }
+
+  public List<CourseBaseVariableKey> listCourseVariableKeys() {
+    return courseBaseVariableKeyDAO.listAll();
+  }
+
+  public CourseBaseVariableKey updateCourseVariableKey(CourseBaseVariableKey courseVariableKey, String name, VariableType variableType, Boolean userEditable) {
+    courseBaseVariableKeyDAO.updateVariableName(courseVariableKey, name);
+    courseBaseVariableKeyDAO.updateVariableType(courseVariableKey, variableType);
+    courseBaseVariableKeyDAO.updateUserEditable(courseVariableKey, userEditable);
+    return courseVariableKey;
+  }
+
+  public void deleteCourseVariableKey(CourseBaseVariableKey courseVariableKey) {
+    courseBaseVariableKeyDAO.delete(courseVariableKey);
   }
   
 }
