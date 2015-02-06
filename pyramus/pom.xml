@@ -716,6 +716,9 @@
                       <command>/core-service=management/security-realm=ssl-realm:add()</command>
                       <command>/core-service=management/security-realm=ssl-realm/server-identity=ssl:add(keystore-path="${it.keystore.file}",keystore-password="${it.keystore.pass}",alias="${it.keystore.alias}")</command>
                       <command>/subsystem=undertow/server=default-server/https-listener=https:add(socket-binding="https",security-realm="ssl-realm")</command>
+                      <command>/subsystem=undertow/server=default-server/host=pyramus:add()</command>
+                      <command>/subsystem=undertow/server=default-server/host=pyramus:write-attribute(name=alias,value=["dev.pyramus.fi"])</command>
+                      <command>/subsystem=undertow/server=default-server/host=pyramus:write-attribute(name=default-web-module,value=ROOT.war)</command>
                       <command>/subsystem=security/security-domain=WebServices:add(cache-type=default)</command>
                       <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=&gt;"RealmUsersRoles","flag"=&gt;"required","module-options"=&gt;[("realm"=&gt;"WebServices"),("password-stacking"=&gt;"useFirstPass"),("rolesProperties"=&gt;"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=&gt;"\${jboss.server.config.dir}/application-users.properties")]}])</command>
                     </commands>
@@ -1064,6 +1067,9 @@
                       <command>/core-service=management/security-realm=ssl-realm:add()</command>
                       <command>/core-service=management/security-realm=ssl-realm/server-identity=ssl:add(keystore-path="${it.keystore.file}",keystore-password="${it.keystore.pass}",alias="${it.keystore.alias}")</command>
                       <command>/subsystem=undertow/server=default-server/https-listener=https:add(socket-binding="https",security-realm="ssl-realm")</command>
+                      <command>/subsystem=undertow/server=default-server/host=pyramus:add()</command>
+                      <command>/subsystem=undertow/server=default-server/host=pyramus:write-attribute(name=alias,value=["dev.pyramus.fi"])</command>
+                      <command>/subsystem=undertow/server=default-server/host=pyramus:write-attribute(name=default-web-module,value=ROOT.war)</command>
                       <command>/subsystem=security/security-domain=WebServices:add(cache-type=default)</command>
                       <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=&gt;"RealmUsersRoles","flag"=&gt;"required","module-options"=&gt;[("realm"=&gt;"WebServices"),("password-stacking"=&gt;"useFirstPass"),("rolesProperties"=&gt;"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=&gt;"\${jboss.server.config.dir}/application-users.properties")]}])</command>
                     </commands>
