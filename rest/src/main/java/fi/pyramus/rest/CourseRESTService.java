@@ -271,7 +271,7 @@ public class CourseRESTService extends AbstractRESTService {
         maxParticipantCount, enrolmentTimeEnd, loggedUser);
     
     courseController.updateCourseTags(updatedCourse, courseEntity.getTags() == null ? new ArrayList<String>() : courseEntity.getTags());
-    courseController.updateCourseVariables(course, courseEntity.getVariables() == null ? new HashMap<String, String>() : courseEntity.getVariables());
+    courseController.updateCourseVariables(updatedCourse, courseEntity.getVariables() == null ? new HashMap<String, String>() : courseEntity.getVariables());
     
     return Response.ok().entity(objectFactory.createModel(updatedCourse)).build();
   }

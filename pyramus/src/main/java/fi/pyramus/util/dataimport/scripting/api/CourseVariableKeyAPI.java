@@ -27,7 +27,7 @@ public class CourseVariableKeyAPI {
     }
   }
   
-  public Long findByKey(String key) {
+  public Long findIdByKey(String key) {
     CourseBaseVariableKeyDAO courseBaseVariableKeyDAO = DAOFactory.getInstance().getCourseBaseVariableKeyDAO();
     CourseBaseVariableKey variableKey = courseBaseVariableKeyDAO.findByVariableKey(key);
     return variableKey != null ? variableKey.getId() : null;

@@ -489,8 +489,8 @@ public class CourseController {
     for (String updateKey : updateKeys) {
       String value = variables.get(updateKey);
       CourseBaseVariableKey key = findCourseBaseVariableKeyByVariableKey(updateKey);
-      CourseBaseVariable userVariable = findCourseVariableByCourseAndKey(course, key);
-      updateCourseVariable(userVariable, value);
+      CourseBaseVariable courseVariable = findCourseVariableByCourseAndKey(course, key);
+      updateCourseVariable(courseVariable, value);
     }
     
     return course;
