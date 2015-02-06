@@ -57,6 +57,8 @@ public class CourseBaseVariable {
   @TableGenerator(name="CourseBaseVariable", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
 	private Long id;
 	
+	// TODO: Shouldn't courseBase + key be unique?
+	
 	@ManyToOne
   @JoinColumn(name = "courseBase")
 	private CourseBase courseBase;

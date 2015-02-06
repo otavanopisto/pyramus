@@ -74,6 +74,7 @@ public class CourseBaseVariableKey {
   @Column (nullable = false)
   private Boolean userEditable = Boolean.FALSE;
 
+  // TODO: Shouldn't this be unique?
   @NotNull
   @Column (nullable = false)
   @NotEmpty
