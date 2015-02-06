@@ -2,6 +2,7 @@ package fi.pyramus.rest;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateful;
@@ -154,6 +155,10 @@ public class CourseRESTService extends AbstractRESTService {
       }
     }
     
+    if (courseEntity.getVariables() != null) {
+      courseController.updateCourseVariables(course, courseEntity.getVariables());
+    }
+    
     return Response.ok().entity(objectFactory.createModel(course)).build();
   }
   
@@ -266,6 +271,7 @@ public class CourseRESTService extends AbstractRESTService {
         maxParticipantCount, enrolmentTimeEnd, loggedUser);
     
     courseController.updateCourseTags(updatedCourse, courseEntity.getTags() == null ? new ArrayList<String>() : courseEntity.getTags());
+    courseController.updateCourseVariables(course, courseEntity.getVariables() == null ? new HashMap<String, String>() : courseEntity.getVariables());
     
     return Response.ok().entity(objectFactory.createModel(updatedCourse)).build();
   }

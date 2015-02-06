@@ -5,12 +5,16 @@ import java.util.Date;
 import java.util.List;
 
 import fi.pyramus.dao.DAOFactory;
+import fi.pyramus.dao.base.CourseBaseVariableDAO;
+import fi.pyramus.dao.base.CourseBaseVariableKeyDAO;
 import fi.pyramus.dao.base.DefaultsDAO;
 import fi.pyramus.dao.base.SubjectDAO;
 import fi.pyramus.dao.courses.CourseDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
+import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.Subject;
+import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.modules.Module;
@@ -92,6 +96,38 @@ public class CourseAPI {
     }
     
     return result.toArray(new Long[0]);
+  }
+  
+  public void addVariableKey(String key, String name, VariableType variableType, Boolean userEditable) {
+    CourseBaseVariableKeyDAO courseBaseVariableKeyDAO = DAOFactory.getInstance().getCourseBaseVariableKeyDAO();
+    CourseBaseVariableKey variableKey = courseBaseVariableKeyDAO.findByVariableKey(key);
+    if (variableKey == null) {
+      courseBaseVariableKeyDAO.create(key, name, variableType, userEditable);
+    }
+  }
+  
+  public String getVariable(Long courseId, String key) throws InvalidScriptException {
+    CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
+    CourseBaseVariableDAO courseBaseVariableDAO = DAOFactory.getInstance().getCourseBaseVariableDAO();
+    
+    Course course = courseDAO.findById(courseId);
+    if (course == null) {
+      throw new InvalidScriptException(String.format("Course #%d could not be found", courseId));
+    }
+    
+    return courseBaseVariableDAO.findByCourseAndVariableKey(course, key);
+  }
+  
+  public void setVariable(Long courseId, String key, String value) throws InvalidScriptException {
+    CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
+    CourseBaseVariableDAO courseBaseVariableDAO = DAOFactory.getInstance().getCourseBaseVariableDAO();
+  
+    Course course = courseDAO.findById(courseId);
+    if (course == null) {
+      throw new InvalidScriptException(String.format("Course #%d could not be found", courseId));
+    }
+    
+    courseBaseVariableDAO.setCourseVariable(course, key, value);
   }
   
   private Long loggedUserId;
