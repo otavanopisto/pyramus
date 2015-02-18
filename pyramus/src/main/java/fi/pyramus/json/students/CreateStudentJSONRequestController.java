@@ -45,7 +45,7 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
-import fi.pyramus.util.UserUtils;
+import fi.pyramus.framework.UserUtils;
 
 public class CreateStudentJSONRequestController extends JSONRequestController {
 
@@ -75,8 +75,9 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     for (int i = 0; i < emailCount2; i++) {
       String colPrefix = "emailTable." + i;
       String email = requestContext.getString(colPrefix + ".email");
+      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       if (email != null) {
-        if (!UserUtils.isAllowedEmail(email, personId)) {
+        if (!UserUtils.isAllowedEmail(email, contactType, personId)) {
           throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
         }
       }

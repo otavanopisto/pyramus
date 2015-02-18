@@ -23,7 +23,7 @@ public class ContactTypesSetupWizardViewController extends SetupWizardController
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "contactTypesTable." + i;
       String name = requestContext.getString(colPrefix + ".name");
-      contactTypeDAO.create(name);
+      contactTypeDAO.create(name, Boolean.FALSE);
     }  
   }
 

@@ -12,7 +12,6 @@ import fi.pyramus.dao.base.ContactTypeDAO;
 import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
-import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserIdentificationDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.ContactType;
@@ -22,6 +21,7 @@ import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.UserIdentification;
+import fi.pyramus.framework.UserUtils;
 import fi.pyramus.services.entities.EntityFactoryVault;
 import fi.pyramus.services.entities.users.UserEntity;
 
@@ -94,11 +94,12 @@ public class UsersService extends PyramusService {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     StaffMember user = userDAO.findById(userId);
     
-    if (!isAllowedEmail(address, user.getPerson().getId()))
-      throw new RuntimeException("Email address is in use");
-
     // TODO contact type, default address
     ContactType contactType = contactTypeDAO.findById(new Long(1));
+
+    if (!UserUtils.isAllowedEmail(address, contactType, user.getPerson().getId()))
+      throw new RuntimeException("Email address is in use");
+
     Email email = emailDAO.create(user.getContactInfo(), contactType, Boolean.TRUE, address);
     validateEntity(email);
   }

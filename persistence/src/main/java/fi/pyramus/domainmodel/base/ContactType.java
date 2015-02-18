@@ -47,6 +47,14 @@ public class ContactType implements ArchivableEntity {
     return version;
   }
 
+  public Boolean getNonUnique() {
+    return nonUnique;
+  }
+
+  public void setNonUnique(Boolean nonUnique) {
+    this.nonUnique = nonUnique;
+  }
+
   @Id 
   @DocumentId
   @GeneratedValue(strategy=GenerationType.TABLE, generator="ContactType")  
@@ -58,6 +66,11 @@ public class ContactType implements ArchivableEntity {
   @Column (nullable = false)
   @Field
   private String name;
+
+  @NotNull
+  @Column (nullable = false)
+  @Field
+  private Boolean nonUnique = Boolean.FALSE;
 
   @NotNull
   @Column (nullable = false)

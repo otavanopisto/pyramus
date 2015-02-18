@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.ContactTypeDAO;
 import fi.pyramus.dao.base.EmailDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Language;
@@ -99,6 +100,16 @@ public class StudentAPI {
     return (student.getId());
   }
 
+  public void updateStudentPerson(Long studentId, Long personId) {
+    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    
+    Student student = studentDAO.findById(studentId);
+    Person person = personDAO.findById(personId);
+    
+    studentDAO.updatePerson(student, person);
+  }
+  
   @SuppressWarnings("unused")
   private Long loggedUserId;
 }

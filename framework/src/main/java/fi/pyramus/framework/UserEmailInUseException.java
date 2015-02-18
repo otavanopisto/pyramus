@@ -1,4 +1,4 @@
-package fi.pyramus.rest.controller;
+package fi.pyramus.framework;
 
 public class UserEmailInUseException extends Exception {
 

@@ -50,7 +50,7 @@ import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
-import fi.pyramus.util.UserUtils;
+import fi.pyramus.framework.UserUtils;
 
 public class EditStudentJSONRequestController extends JSONRequestController {
 
@@ -97,8 +97,8 @@ public class EditStudentJSONRequestController extends JSONRequestController {
       for (int i = 0; i < rowCount; i++) {
         String colPrefix = "emailTable." + student.getId() + "." + i;
         String email = requestContext.getString(colPrefix + ".email");
-        
-        if (!UserUtils.isAllowedEmail(email, person.getId()))
+        ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
+        if (!UserUtils.isAllowedEmail(email, contactType, person.getId()))
           throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
       }
     }

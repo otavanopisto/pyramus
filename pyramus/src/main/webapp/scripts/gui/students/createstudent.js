@@ -65,7 +65,6 @@ function onLoad(event) {
       dataType : 'text',
       editable : true,
       paramName : 'email',
-      required : true,
       editorClassNames : 'email'
     }, {
       width : 30,

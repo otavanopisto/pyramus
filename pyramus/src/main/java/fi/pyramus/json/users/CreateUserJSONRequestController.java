@@ -28,10 +28,10 @@ import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.framework.UserUtils;
 import fi.pyramus.plugin.auth.AuthenticationProvider;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
-import fi.pyramus.util.UserUtils;
 
 /**
  * The controller responsible of creating a new Pyramus user. 
@@ -62,8 +62,9 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     for (int i = 0; i < emailCount2; i++) {
       String colPrefix = "emailTable." + i;
       String email = requestContext.getString(colPrefix + ".email");
+      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       if (email != null) {
-        if (!UserUtils.isAllowedEmail(email, personId)) {
+        if (!UserUtils.isAllowedEmail(email, contactType, personId)) {
           throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
         }
       }

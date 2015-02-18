@@ -44,6 +44,7 @@ import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.pyramus.framework.UserUtils;
 import fi.pyramus.services.entities.EntityFactoryVault;
 import fi.pyramus.services.entities.base.AddressEntity;
 import fi.pyramus.services.entities.base.PersonEntity;
@@ -345,11 +346,12 @@ public class StudentsService extends PyramusService {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     Student student = studentDAO.findById(studentId);
     
-    if (!isAllowedEmail(address, student.getPerson().getId()))
-      throw new RuntimeException("Email address is in use");
-
     // TODO contactType
     ContactType contactType = contactTypeDAO.findById(new Long(1));
+
+    if (!UserUtils.isAllowedEmail(address, contactType, student.getPerson().getId()))
+      throw new RuntimeException("Email address is in use");
+
     Email email = emailDAO.create(student.getContactInfo(), contactType, defaultAddress, address);
     validateEntity(email);
   }

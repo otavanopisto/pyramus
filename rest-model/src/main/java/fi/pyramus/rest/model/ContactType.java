@@ -36,7 +36,16 @@ public class ContactType {
     this.archived = archived;
   }
 
+  public Boolean getNonUnique() {
+    return nonUnique;
+  }
+
+  public void setNonUnique(Boolean nonUnique) {
+    this.nonUnique = nonUnique;
+  }
+
   private Long id;
   private String name;
+  private Boolean nonUnique;
   private Boolean archived;
 }

@@ -37,6 +37,7 @@ import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.framework.UserUtils;
 import fi.pyramus.persistence.search.SearchResult;
 
 @Dependent
@@ -348,7 +349,7 @@ public class CommonController {
 
   // TODO: allowed email check is better handled when email is created through staffmember or student, maybe it should be always context-aware creation
   public Email createEmail(ContactInfo contactInfo, ContactType contactType, Boolean defaultAddress, String address) {
-    if (!UserUtils.isAllowedEmail(address))
+    if (!UserUtils.isAllowedEmail(address, contactType))
       throw new RuntimeException("Email address is in use.");
 
     return emailDAO.create(contactInfo, contactType, defaultAddress, address);
@@ -364,16 +365,16 @@ public class CommonController {
   
   /* ContactType */
   
-  public ContactType createContactType(String name) {
-    return contactTypeDAO.create(name);
+  public ContactType createContactType(String name, Boolean nonUnique) {
+    return contactTypeDAO.create(name, nonUnique);
   }
 
   public ContactType findContactTypeById(Long contactTypeId) {
     return contactTypeDAO.findById(contactTypeId);
   }
 
-  public ContactType updateContactType(ContactType contactType, String name) {
-    return contactTypeDAO.update(contactType, name);
+  public ContactType updateContactType(ContactType contactType, String name, Boolean nonUnique) {
+    return contactTypeDAO.update(contactType, name, nonUnique);
   }
 
   public void archiveContactType(ContactType contactType, User user) {

@@ -19,7 +19,6 @@ import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
-import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserIdentificationDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.Address;
@@ -33,10 +32,10 @@ import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.framework.UserUtils;
 import fi.pyramus.plugin.auth.AuthenticationProvider;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
-import fi.pyramus.util.UserUtils;
 
 /**
  * The controller responsible of editing an existing Pyramus user. 
@@ -92,8 +91,9 @@ public class EditUserJSONRequestController extends JSONRequestController {
     for (int i = 0; i < emailCount2; i++) {
       String colPrefix = "emailTable." + i;
       String email = requestContext.getString(colPrefix + ".email");
+      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
 
-      if (!UserUtils.isAllowedEmail(email, user.getPerson().getId()))
+      if (!UserUtils.isAllowedEmail(email, contactType, user.getPerson().getId()))
         throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
     }
     

@@ -35,6 +35,8 @@ import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.framework.UserEmailInUseException;
+import fi.pyramus.framework.UserUtils;
 
 @Dependent
 @Stateless
@@ -204,7 +206,7 @@ public class StudentController {
   }
   
   public Email addStudentEmail(Student student, ContactType contactType, String address, Boolean defaultAddress) throws UserEmailInUseException {
-    if (!UserUtils.isAllowedEmail(address, student.getPerson().getId()))
+    if (!UserUtils.isAllowedEmail(address, contactType, student.getPerson().getId()))
       throw new UserEmailInUseException();
     
     return emailDAO.create(student.getContactInfo(), contactType, defaultAddress, address);
