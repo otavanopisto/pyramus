@@ -5,11 +5,12 @@ public class ContactType {
   public ContactType() {
   }
 
-  public ContactType(Long id, String name, Boolean archived) {
+  public ContactType(Long id, String name, Boolean archived, Boolean nonUnique) {
     super();
     this.id = id;
     this.name = name;
     this.archived = archived;
+    this.nonUnique = nonUnique;
   }
 
   public Long getId() {

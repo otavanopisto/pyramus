@@ -549,7 +549,7 @@ public class ObjectFactory {
         new Mapper<ContactType>() {
           @Override
           public Object map(ContactType entity) {
-            return new fi.pyramus.rest.model.ContactType(entity.getId(), entity.getName(), entity.getArchived());
+            return new fi.pyramus.rest.model.ContactType(entity.getId(), entity.getName(), entity.getArchived(), entity.getNonUnique());
           }
         }, 
         

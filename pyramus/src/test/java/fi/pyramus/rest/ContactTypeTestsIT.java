@@ -15,7 +15,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateContactType() {
-    ContactType contactType = new ContactType(null, "create", Boolean.FALSE);
+    ContactType contactType = new ContactType(null, "create", Boolean.FALSE, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -60,7 +60,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateContactType() {
-    ContactType contactType = new ContactType(null, "Not Updated", Boolean.FALSE);
+    ContactType contactType = new ContactType(null, "Not Updated", Boolean.FALSE, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -74,7 +74,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
     
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      ContactType updateContactType = new ContactType(id, "Updated", Boolean.FALSE);
+      ContactType updateContactType = new ContactType(id, "Updated", Boolean.FALSE, Boolean.FALSE);
 
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -96,7 +96,7 @@ public class ContactTypeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteContactType() {
-    ContactType contactType = new ContactType(null, "create type", Boolean.FALSE);
+    ContactType contactType = new ContactType(null, "create type", Boolean.FALSE, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
