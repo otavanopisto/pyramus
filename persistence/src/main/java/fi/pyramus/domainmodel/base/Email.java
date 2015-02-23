@@ -85,7 +85,7 @@ public class Email {
   @Column (nullable = false)
   @NotEmpty
   @Field (store = Store.NO)
-  // TODO Email annotation?
+  @org.hibernate.validator.constraints.Email
   private String address;
 
   @ManyToOne
