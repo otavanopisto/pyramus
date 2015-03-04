@@ -12,6 +12,8 @@ public class AbstractPyramusPermissionCollection extends AbstractPermissionColle
   public static final String GUEST = "GUEST";
 
   public static final String STUDENT = "STUDENT";
+  
+  public static final String TRUSTED_SYSTEM = "TRUSTED_SYSTEM";
 
   protected String[] getDefaultRoles(Class<?> collectionClass, String permission) throws NoSuchFieldException {
     DefaultPermissionRoles annotation = collectionClass.getField(permission).getAnnotation(DefaultPermissionRoles.class);

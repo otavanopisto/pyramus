@@ -24,7 +24,12 @@ public enum UserRole {
     /**
      * Administrator privileges. Full control over all application features.
      */
-    ADMINISTRATOR  (4);
+    ADMINISTRATOR  (4),
+    
+    /**
+     * Trusted system privileges. Limited access.
+     */
+    TRUSTED_SYSTEM (5);
     
     /**
      * Constructor specifying the role.

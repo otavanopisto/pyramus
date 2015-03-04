@@ -10,6 +10,8 @@ public enum UserRole {
 
   ADMINISTRATOR,
   
-  STUDENT
+  STUDENT,
+  
+  TRUSTED_SYSTEM
   
 }

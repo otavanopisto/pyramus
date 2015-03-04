@@ -15,15 +15,15 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_COURSE = "CREATE_COURSE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
   public static final String LIST_COURSES = "LIST_COURSES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
   public static final String LIST_COURSESBYSUBJECT = "LIST_COURSESBYSUBJECT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
   public static final String FIND_COURSE = "FIND_COURSE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -43,11 +43,11 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_COURSECOMPONENT = "CREATE_COURSECOMPONENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String LIST_COURSECOMPONENTS = "LIST_COURSECOMPONENTS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String FIND_COURSECOMPONENT = "FIND_COURSECOMPONENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -67,11 +67,11 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_COURSESTUDENT = "CREATE_COURSESTUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String LIST_COURSESTUDENTS = "LIST_COURSESTUDENTS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String FIND_COURSESTUDENT = "FIND_COURSESTUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -115,11 +115,11 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_COURSESTAFFMEMBER = "CREATE_COURSESTAFFMEMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String LIST_COURSESTAFFMEMBERS = "LIST_COURSESTAFFMEMBERS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String FIND_COURSESTAFFMEMBER = "FIND_COURSESTAFFMEMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -139,11 +139,11 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_COURSEENROLMENTTYPE = "CREATE_COURSEENROLMENTTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String LIST_COURSEENROLMENTTYPES = "LIST_COURSEENROLMENTTYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String FIND_COURSEENROLMENTTYPE = "FIND_COURSEENROLMENTTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -163,11 +163,11 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_COURSEPARTICIPATIONTYPE = "CREATE_COURSEPARTICIPATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String LIST_COURSEPARTICIPATIONTYPES = "LIST_COURSEPARTICIPATIONTYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String FIND_COURSEPARTICIPATIONTYPE = "FIND_COURSEPARTICIPATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -211,11 +211,11 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_STAFFMEMBERROLE = "CREATE_STAFFMEMBERROLE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String LIST_STAFFMEMBERROLES = "LIST_STAFFMEMBERROLES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String FIND_STAFFMEMBERROLE = "FIND_STAFFMEMBERROLE";
   
   @Scope (PermissionScope.ENVIRONMENT)

@@ -27,7 +27,12 @@ public enum Role {
   /**
    * Student privileges.
    */
-  STUDENT  (5);
+  STUDENT  (5),
+  
+  /**
+   * Trusted system account
+   */
+  TRUSTED_SYSTEM (6);
   
   /**
    * Constructor specifying the role.
