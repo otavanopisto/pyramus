@@ -11,7 +11,6 @@ import fi.pyramus.services.entities.base.AddressEntity;
 import fi.pyramus.services.entities.base.LanguageEntity;
 import fi.pyramus.services.entities.base.MunicipalityEntity;
 import fi.pyramus.services.entities.base.NationalityEntity;
-import fi.pyramus.services.entities.base.PersonEntity;
 import fi.pyramus.services.entities.base.SchoolEntity;
 import fi.pyramus.services.entities.base.StudyProgrammeEntity;
 
@@ -23,7 +22,7 @@ public class StudentEntityFactory implements EntityFactory<StudentEntity> {
     
     Student student = (Student) domainObject;
     
-    PersonEntity personEntity = EntityFactoryVault.buildFromDomainObject(student.getPerson());
+    AbstractStudentEntity personEntity = EntityFactoryVault.buildFromDomainObject(student.getPerson());
     NationalityEntity nationalityEntity = EntityFactoryVault.buildFromDomainObject(student.getNationality());
     LanguageEntity languageEntity = EntityFactoryVault.buildFromDomainObject(student.getLanguage()); 
     MunicipalityEntity municipalityEntity = EntityFactoryVault.buildFromDomainObject(student.getMunicipality()); 
