@@ -47,7 +47,7 @@ import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.framework.UserUtils;
 import fi.pyramus.services.entities.EntityFactoryVault;
 import fi.pyramus.services.entities.base.AddressEntity;
-import fi.pyramus.services.entities.base.PersonEntity;
+import fi.pyramus.services.entities.students.AbstractStudentEntity;
 import fi.pyramus.services.entities.students.StudentEntity;
 
 @Stateless
@@ -56,12 +56,12 @@ import fi.pyramus.services.entities.students.StudentEntity;
 @RolesAllowed("WebServices")
 public class StudentsService extends PyramusService {
 
-  public PersonEntity getPersonById(@WebParam (name="personId") Long personId) {
+  public AbstractStudentEntity getAbstractStudentById(@WebParam (name="abstractStudentId") Long abstractStudentId) {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
-    return EntityFactoryVault.buildFromDomainObject(personDAO.findById(personId));
+    return EntityFactoryVault.buildFromDomainObject(personDAO.findById(abstractStudentId));
   }
 
-  public PersonEntity getPersonBySSN(@WebParam (name="ssn") String ssn) {
+  public AbstractStudentEntity getAbstractStudentBySSN(@WebParam (name="ssn") String ssn) {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     return EntityFactoryVault.buildFromDomainObject(personDAO.findBySSN(ssn));
   }
@@ -135,7 +135,7 @@ public class StudentsService extends PyramusService {
     return EntityFactoryVault.buildFromDomainObject(newStudent);
   }
 
-  public PersonEntity createPerson(@WebParam (name="birthday") Date birthday, @WebParam (name="socialSecurityNumber") String socialSecurityNumber, @WebParam (name="sex") String sex) {
+  public AbstractStudentEntity createAbstractStudent(@WebParam (name="birthday") Date birthday, @WebParam (name="socialSecurityNumber") String socialSecurityNumber, @WebParam (name="sex") String sex) {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
     // TODO: Parameterize?
@@ -183,20 +183,20 @@ public class StudentsService extends PyramusService {
     return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listByStudyProgramme(studyProgramme));
   }
   
-  public StudentEntity[] listStudentsByPerson(@WebParam (name="personId") Long personId) {
+  public StudentEntity[] listStudentsByAbstractStudent(@WebParam (name="abstractStudentId") Long abstractStudentId) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
-    Person person = personDAO.findById(personId);
+    Person person = personDAO.findById(abstractStudentId);
 
     return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listByPerson(person));
   }
   
-  public StudentEntity[] listActiveStudentsByPerson(@WebParam (name="personId") Long personId) {
+  public StudentEntity[] listActiveStudentsByAbstractStudent(@WebParam (name="abstractStudentId") Long abstractStudentId) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
-    Person person = personDAO.findById(personId);
+    Person person = personDAO.findById(abstractStudentId);
 
     return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listActiveStudentsByPerson(person));
   }
@@ -214,7 +214,7 @@ public class StudentsService extends PyramusService {
   }
   
   public StudentEntity createStudent(
-      @WebParam (name="personId") Long personId, 
+      @WebParam (name="abstractStudentId") Long abstractStudentId, 
       @WebParam (name="firstName") String firstName, 
       @WebParam (name="lastName") String lastName, 
       @WebParam (name="nickname") String nickname, 
@@ -253,7 +253,7 @@ public class StudentsService extends PyramusService {
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
 
-    Person person = personDAO.findById(personId);
+    Person person = personDAO.findById(abstractStudentId);
     Nationality nationality = nationalityId == null ? null : nationalityDAO.findById(nationalityId);
     Municipality municipality = municipalityId == null ? null : municipalityDAO.findById(municipalityId);
     Language language = languageId == null ? null : languageDAO.findById(languageId);

@@ -56,8 +56,6 @@ import fi.pyramus.services.entities.base.MunicipalityEntity;
 import fi.pyramus.services.entities.base.MunicipalityEntityFactory;
 import fi.pyramus.services.entities.base.NationalityEntity;
 import fi.pyramus.services.entities.base.NationalityEntityFactory;
-import fi.pyramus.services.entities.base.PersonEntity;
-import fi.pyramus.services.entities.base.PersonEntityFactory;
 import fi.pyramus.services.entities.base.SchoolEntity;
 import fi.pyramus.services.entities.base.SchoolEntityFactory;
 import fi.pyramus.services.entities.base.StudyProgrammeCategoryEntity;
@@ -104,6 +102,8 @@ import fi.pyramus.services.entities.modules.ModuleComponentEntity;
 import fi.pyramus.services.entities.modules.ModuleComponentEntityFactory;
 import fi.pyramus.services.entities.modules.ModuleEntity;
 import fi.pyramus.services.entities.modules.ModuleEntityFactory;
+import fi.pyramus.services.entities.students.AbstractStudentEntity;
+import fi.pyramus.services.entities.students.AbstractStudentEntityFactory;
 import fi.pyramus.services.entities.students.StudentEntity;
 import fi.pyramus.services.entities.students.StudentEntityFactory;
 import fi.pyramus.services.entities.users.UserEntity;
@@ -131,8 +131,8 @@ public class EntityFactoryVault {
     return (GradingScaleEntity) getEntityFactory(GradingScaleEntity.class).buildFromDomainObject(gradingScale);
   }
   
-  public static PersonEntity buildFromDomainObject(Person person) {
-    return (PersonEntity) EntityFactoryVault.getEntityFactory(PersonEntity.class).buildFromDomainObject(person);
+  public static AbstractStudentEntity buildFromDomainObject(Person person) {
+    return (AbstractStudentEntity) EntityFactoryVault.getEntityFactory(AbstractStudentEntity.class).buildFromDomainObject(person);
   }
 
   public static StudentEntity buildFromDomainObject(Student student) {
@@ -305,7 +305,7 @@ public class EntityFactoryVault {
     registerEntityFactory(Subject.class, SubjectEntity.class, new SubjectEntityFactory());
     registerEntityFactory(StudyProgramme.class, StudyProgrammeEntity.class, new StudyProgrammeEntityFactory());
     registerEntityFactory(StudyProgrammeCategory.class, StudyProgrammeCategoryEntity.class, new StudyProgrammeCategoryEntityFactory());
-    registerEntityFactory(Person.class ,PersonEntity.class, new PersonEntityFactory());
+    registerEntityFactory(Person.class ,AbstractStudentEntity.class, new AbstractStudentEntityFactory());
     
     /* Users */ 
     
