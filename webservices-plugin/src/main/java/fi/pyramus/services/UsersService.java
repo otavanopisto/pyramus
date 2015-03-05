@@ -85,7 +85,7 @@ public class UsersService extends PyramusService {
 
   public UserEntity getUserByEmail(@WebParam(name = "email") String email) {
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
-    return EntityFactoryVault.buildFromDomainObject(userDAO.findByEmail(email));
+    return EntityFactoryVault.buildFromDomainObject(userDAO.findByUniqueEmail(email));
   }
 
   public void addUserEmail(@WebParam(name = "userId") Long userId, @WebParam(name = "address") String address) {

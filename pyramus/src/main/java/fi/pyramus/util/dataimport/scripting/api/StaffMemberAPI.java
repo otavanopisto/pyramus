@@ -51,13 +51,13 @@ public class StaffMemberAPI {
       throw new InvalidScriptException("StaffMember could not be found");
     }
     
-    Person person = personDAO.findByEmail(address);
+    Person person = personDAO.findByUniqueEmail(address);
     if (person != null) {
       if (!staffMember.getPerson().getId().equals(person.getId())) {
         throw new InvalidScriptException("Email is already defined for another user");
       }
       
-      StaffMember emailStaffMember = staffMemberDAO.findByEmail(address);
+      StaffMember emailStaffMember = staffMemberDAO.findByUniqueEmail(address);
       if (emailStaffMember != null && emailStaffMember.getId().equals(staffMemberId)) {
         throw new InvalidScriptException("Email is already defined for this staff member");
       }

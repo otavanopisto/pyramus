@@ -118,31 +118,7 @@ public class PageRequestContext extends RequestContext {
   }
   
   private void handleIncludeUrl() throws IOException {
-    String includeUrl = getIncludeUrl();
-    boolean isRelative = !includeUrl.startsWith("/");
-    
-    // TODO: This is not quite correct because if this request is secure it doesn't mean that include request would be 
-    String protocol = "http";
-    if (getRequest().isSecure()) {
-      protocol = "https";
-    }
-    
-    // TODO: Do we need support for external urls?
-    String serverName = getRequest().getServerName();
-    
-    StringBuilder urlBuilder = new StringBuilder();
-    if (isRelative) {
-      urlBuilder
-        .append(getRequest().getContextPath())
-        .append(getRequest().getPathInfo())
-        .append('/')
-        .append(includeUrl);
-    } else {
-      urlBuilder.append(includeUrl);
-    }
-      
-    URL includeURL = new URL(protocol, serverName, getRequest().getLocalPort(), urlBuilder.toString());
-    
+    URL includeURL = new URL(getIncludeUrl());
     HttpURLConnection connection = (HttpURLConnection) includeURL.openConnection(); 
     
     connection.setDoInput(true);

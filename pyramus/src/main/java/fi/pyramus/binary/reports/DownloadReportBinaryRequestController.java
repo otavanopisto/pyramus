@@ -19,6 +19,7 @@ import fi.pyramus.domainmodel.base.MagicKeyScope;
 import fi.pyramus.domainmodel.reports.Report;
 import fi.pyramus.framework.BinaryRequestController;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.util.ReportUtils;
 
 /** A binary request controller responsible for serving reports
  * in various binary file formats.
@@ -64,7 +65,6 @@ public class DownloadReportBinaryRequestController extends BinaryRequestControll
     Report report = reportDAO.findById(reportId);
     
     String reportName = report.getName().toLowerCase().replaceAll("[^a-z0-9\\.]", "_");
-    String reportsContextPath = System.getProperty("reports.contextPath");
     
     String localeAdd = "";
     Locale locale = binaryRequestContext.getRequest().getLocale();
@@ -79,7 +79,7 @@ public class DownloadReportBinaryRequestController extends BinaryRequestControll
     }
     
     StringBuilder urlBuilder = new StringBuilder()
-      .append(reportsContextPath)
+      .append(ReportUtils.getReportsUrl(binaryRequestContext.getRequest()))
       .append("/preview")
       .append("?magicKey=")
       .append(magicKey.getName())

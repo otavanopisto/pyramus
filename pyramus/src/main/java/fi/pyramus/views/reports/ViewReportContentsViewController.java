@@ -20,6 +20,7 @@ import fi.pyramus.domainmodel.base.MagicKeyScope;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.util.ReportUtils;
 
 /**
  * The controller responsible of the List Reports view.
@@ -35,7 +36,6 @@ public class ViewReportContentsViewController extends PyramusViewController impl
     MagicKeyDAO magicKeyDAO = DAOFactory.getInstance().getMagicKeyDAO();
 
     Long reportId = pageRequestContext.getLong("reportId");
-    String reportsContextPath = System.getProperty("reports.contextPath");
     String outputMethod = "preview"; // output or preview
     
     StringBuilder magicKeyBuilder = new StringBuilder()
@@ -60,7 +60,7 @@ public class ViewReportContentsViewController extends PyramusViewController impl
     }
     
     StringBuilder urlBuilder = new StringBuilder()
-      .append(reportsContextPath)
+      .append(ReportUtils.getReportsUrl(pageRequestContext.getRequest()))
       .append("/")
       .append(outputMethod)
       .append("?magicKey=")

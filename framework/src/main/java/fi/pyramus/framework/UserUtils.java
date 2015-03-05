@@ -39,7 +39,7 @@ public class UserUtils {
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
 
-    StaffMember staffMember = staffMemberDAO.findByEmail(emailAddress);
+    StaffMember staffMember = staffMemberDAO.findByUniqueEmail(emailAddress);
     List<Student> students = studentDAO.listByEmail(emailAddress);
 
     if (personId != null) {

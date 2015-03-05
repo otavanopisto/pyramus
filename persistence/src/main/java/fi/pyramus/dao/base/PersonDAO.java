@@ -29,6 +29,8 @@ import org.hibernate.search.jpa.Search;
 import fi.pyramus.dao.PyramusEntityDAO;
 import fi.pyramus.domainmodel.base.ContactInfo;
 import fi.pyramus.domainmodel.base.ContactInfo_;
+import fi.pyramus.domainmodel.base.ContactType;
+import fi.pyramus.domainmodel.base.ContactType_;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Email_;
 import fi.pyramus.domainmodel.base.Language;
@@ -70,7 +72,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     entityManager.persist(person);
   }
   
-  public Person findByEmail(String email){
+  public Person findByUniqueEmail(String email){
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -79,11 +81,16 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     ListJoin<Person, User> userJoin = root.join(Person_.users);
     Join<User, ContactInfo> contactInfoJoin = userJoin.join(User_.contactInfo);
     ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
+    Join<Email, ContactType> contactTypeJoin = emailJoin.join(Email_.contactType);
     
     criteria.select(root);
-    criteria
-      .where(criteriaBuilder.equal(emailJoin.get(Email_.address), email))
-      .distinct(true);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(emailJoin.get(Email_.address), email),
+            criteriaBuilder.equal(userJoin.get(User_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(contactTypeJoin.get(ContactType_.nonUnique), Boolean.FALSE)
+        )
+    ).distinct(true);
     
     return getSingleResult(entityManager.createQuery(criteria));
   }

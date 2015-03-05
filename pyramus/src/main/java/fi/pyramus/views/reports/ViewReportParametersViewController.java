@@ -19,6 +19,7 @@ import fi.pyramus.domainmodel.reports.ReportContext;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.util.ReportUtils;
 
 /**
  * The controller responsible of the List Reports view.
@@ -36,7 +37,6 @@ public class ViewReportParametersViewController extends PyramusViewController im
 
     Long reportId = pageRequestContext.getLong("reportId");
     Report report = reportDAO.findById(reportId);
-    String reportsContextPath = System.getProperty("reports.contextPath");
     
     StringBuilder magicKeyBuilder = new StringBuilder()
       .append(Long.toHexString(reportId))
@@ -60,7 +60,7 @@ public class ViewReportParametersViewController extends PyramusViewController im
     }
     
     StringBuilder urlBuilder = new StringBuilder()
-      .append(reportsContextPath)
+      .append(ReportUtils.getReportsUrl(pageRequestContext.getRequest()))
       .append("/parameter?magicKey=")
       .append(magicKey.getName())
       .append(localeAdd)

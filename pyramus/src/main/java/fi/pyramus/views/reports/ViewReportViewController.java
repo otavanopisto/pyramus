@@ -33,7 +33,6 @@ public class ViewReportViewController extends PyramusViewController implements B
     handleContextParameters(pageRequestContext, report);
     
     pageRequestContext.getRequest().setAttribute("report", report);
-    pageRequestContext.getRequest().setAttribute("reportsContextPath", System.getProperty("reports.contextPath"));
     
     pageRequestContext.setIncludeJSP("/templates/reports/viewreport.jsp");
   }

@@ -32,6 +32,8 @@ import fi.pyramus.dao.PyramusEntityDAO;
 import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.ContactInfo;
 import fi.pyramus.domainmodel.base.ContactInfo_;
+import fi.pyramus.domainmodel.base.ContactType;
+import fi.pyramus.domainmodel.base.ContactType_;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Email_;
 import fi.pyramus.domainmodel.base.Person;
@@ -43,6 +45,7 @@ import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.domainmodel.users.UserVariable_;
+import fi.pyramus.domainmodel.users.User_;
 import fi.pyramus.events.StaffMemberCreatedEvent;
 import fi.pyramus.events.StaffMemberDeletedEvent;
 import fi.pyramus.events.StaffMemberUpdatedEvent;
@@ -70,6 +73,8 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     staffMember.setRole(role);
     staffMember.setContactInfo(contactInfo);
     staffMember.setPerson(person);
+    // TODO: allow archive on StaffMember
+    staffMember.setArchived(false);
     
     persist(staffMember);
     
@@ -90,11 +95,14 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<User> criteria = criteriaBuilder.createQuery(User.class);
     Root<UserVariable> root = criteria.from(UserVariable.class);
+    Join<UserVariable, User> userJoin = root.join(UserVariable_.user);
+    
     criteria.select(root.get(UserVariable_.user));
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(UserVariable_.key), userVariableKey),
-            criteriaBuilder.equal(root.get(UserVariable_.value), value)
+            criteriaBuilder.equal(root.get(UserVariable_.value), value),
+            criteriaBuilder.equal(userJoin.get(User_.archived), Boolean.FALSE)
         ));
     
     return entityManager.createQuery(criteria).getResultList();
@@ -113,7 +121,10 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     criteria.select(root);
     
     criteria.where(
-      criteriaBuilder.notEqual(root.get(StaffMember_.role), role)
+        criteriaBuilder.and(
+            criteriaBuilder.notEqual(root.get(StaffMember_.role), role),
+            criteriaBuilder.notEqual(root.get(StaffMember_.archived), Boolean.FALSE)
+        )
     );
     
     TypedQuery<StaffMember> query = entityManager.createQuery(criteria);
@@ -129,7 +140,7 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     return query.getResultList();
   }
   
-  public StaffMember findByEmail(String email) {
+  public StaffMember findByUniqueEmail(String email) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -138,10 +149,14 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     
     Join<StaffMember, ContactInfo> contactInfoJoin = root.join(StaffMember_.contactInfo);
     ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
+    Join<Email, ContactType> contactTypeJoin = emailJoin.join(Email_.contactType);
     
     criteria.select(root);
     criteria.where(
-        criteriaBuilder.equal(emailJoin.get(Email_.address), email)
+        criteriaBuilder.and(
+            criteriaBuilder.equal(emailJoin.get(Email_.address), email),
+            criteriaBuilder.equal(contactTypeJoin.get(ContactType_.nonUnique), Boolean.FALSE)
+        )
     );
     
     return getSingleResult(entityManager.createQuery(criteria));
@@ -156,7 +171,10 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     Root<StaffMember> root = criteria.from(StaffMember.class);
     criteria.select(root);
     criteria.where(
-        criteriaBuilder.equal(root.get(StaffMember_.person), person)
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(StaffMember_.person), person),
+            criteriaBuilder.equal(root.get(StaffMember_.archived), Boolean.FALSE)
+        )
     );
     
     return getSingleResult(entityManager.createQuery(criteria));
