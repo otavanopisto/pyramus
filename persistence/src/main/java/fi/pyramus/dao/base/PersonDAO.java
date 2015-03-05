@@ -87,6 +87,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(emailJoin.get(Email_.address), email),
+            criteriaBuilder.equal(userJoin.get(User_.archived), Boolean.FALSE),
             criteriaBuilder.equal(contactTypeJoin.get(ContactType_.nonUnique), Boolean.FALSE)
         )
     ).distinct(true);
