@@ -18,8 +18,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Resolution;
@@ -34,16 +32,9 @@ import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.User;
-import fi.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
 @Entity
 @Indexed
-@FullTextFilterDefs (
-  @FullTextFilterDef (
-     name="ArchivedStudent",
-     impl=ArchivedEntityFilterFactory.class
-  )
-)
 @PrimaryKeyJoinColumn(name="id")
 public class Student extends User implements ArchivableEntity {
 

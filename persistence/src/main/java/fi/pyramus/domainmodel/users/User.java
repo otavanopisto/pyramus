@@ -208,7 +208,7 @@ public class User implements fi.muikku.security.User, ContextReference {
   @NotNull
   @Column (nullable = false)
   @Field
-  private Boolean archived = Boolean.FALSE;
+  private Boolean archived;
   
   @Version
   @Column(nullable = false)
