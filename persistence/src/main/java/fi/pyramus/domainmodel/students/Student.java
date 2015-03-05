@@ -165,14 +165,6 @@ public class Student extends User implements ArchivableEntity {
     return school;
   }
   
-  public void setArchived(Boolean archived) {
-    this.archived = archived;
-  }
-  
-  public Boolean getArchived() {
-    return archived;
-  }
-  
   public StudyProgramme getStudyProgramme() {
     return studyProgramme;
   }
@@ -313,11 +305,6 @@ public class Student extends User implements ArchivableEntity {
   @JoinColumn (name = "school")
   @IndexedEmbedded (depth = 1)
   private School school;
-  
-  @NotNull
-  @Column (nullable = false)
-  @Field
-  private Boolean archived = Boolean.FALSE;
   
   @ManyToOne
   @JoinColumn (name = "activityType")

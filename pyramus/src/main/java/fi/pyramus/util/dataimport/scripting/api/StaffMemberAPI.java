@@ -57,7 +57,7 @@ public class StaffMemberAPI {
         throw new InvalidScriptException("Email is already defined for another user");
       }
       
-      StaffMember emailStaffMember = staffMemberDAO.findByEmail(address);
+      StaffMember emailStaffMember = staffMemberDAO.findByUniqueEmail(address);
       if (emailStaffMember != null && emailStaffMember.getId().equals(staffMemberId)) {
         throw new InvalidScriptException("Email is already defined for this staff member");
       }

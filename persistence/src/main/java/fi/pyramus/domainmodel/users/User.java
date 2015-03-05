@@ -161,6 +161,14 @@ public class User implements fi.muikku.security.User, ContextReference {
     this.person = person;
   }
 
+  public Boolean getArchived() {
+    return archived;
+  }
+  
+  public void setArchived(Boolean archived) {
+    this.archived = archived;
+  }
+  
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="User")  
   @TableGenerator(name="User", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -196,6 +204,11 @@ public class User implements fi.muikku.security.User, ContextReference {
   @JoinTable (name="__UserTags", joinColumns=@JoinColumn(name="user"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
   private Set<Tag> tags = new HashSet<Tag>();
+  
+  @NotNull
+  @Column (nullable = false)
+  @Field
+  private Boolean archived = Boolean.FALSE;
   
   @Version
   @Column(nullable = false)

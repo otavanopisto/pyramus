@@ -56,7 +56,7 @@ public class UserController {
   }
 
   public StaffMember findStaffMemberByEmail(String email) {
-    return staffMemberDAO.findByEmail(email);
+    return staffMemberDAO.findByUniqueEmail(email);
   }
 
   public List<StaffMember> listStaffMembers() {
