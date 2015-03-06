@@ -208,8 +208,12 @@ public class Servlet extends HttpServlet {
 
       Logging.logInfo("404 - " + getCurrentUrl(request, true));
       statusCode = pnfe.getStatusCode();
-      requestContext.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
-      requestContext.addMessage(Severity.WARNING, pnfe.getMessage());
+      if (requestContext != null) {
+        requestContext.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
+        requestContext.addMessage(Severity.WARNING, pnfe.getMessage());
+      } else {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      }
     }
     catch (AccessDeniedException ade) {
       if (platformErrorListener != null)

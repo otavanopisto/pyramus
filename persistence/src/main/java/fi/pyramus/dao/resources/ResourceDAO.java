@@ -142,9 +142,12 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
               .setFirstResult(firstResult)
               .setMaxResults(resultsPerPage);
           break;
+          default:
+            throw new PersistenceException("Invalid resource type");
         }
+          
       }
-
+      
       query.setFirstResult(firstResult).setMaxResults(resultsPerPage);
 
       if (filterArchived) {

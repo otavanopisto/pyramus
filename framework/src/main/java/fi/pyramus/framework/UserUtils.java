@@ -49,15 +49,17 @@ public class UserUtils {
       allowed = allowed && (staffMember != null ? personId.equals(staffMember.getPerson().getId()) : true);
       
       for (Student student : students) {
-        for (Email email : student.getContactInfo().getEmails()) {
-          if (emailAddress.equalsIgnoreCase(email.getAddress())) {
-            /**
-             * allowed if
-             *  - contacttype of the email in use is non-unique (ie. used as contact person etc)
-             *  - person that owns the used email is the same as the person receiving the address 
-             */
-            
-            allowed = allowed && (email.getContactType().getNonUnique() || (student != null ? personId.equals(student.getPerson().getId()) : true));
+        if (student.getContactInfo().getEmails() != null) {
+          for (Email email : student.getContactInfo().getEmails()) {
+            if (emailAddress.equalsIgnoreCase(email.getAddress())) {
+              /**
+               * allowed if
+               *  - contacttype of the email in use is non-unique (ie. used as contact person etc)
+               *  - person that owns the used email is the same as the person receiving the address 
+               */
+              
+              allowed = allowed && (email.getContactType().getNonUnique() || (student != null ? personId.equals(student.getPerson().getId()) : true));
+            }
           }
         }
       }
