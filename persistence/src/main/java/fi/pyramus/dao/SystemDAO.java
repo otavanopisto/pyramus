@@ -16,6 +16,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
 
+import org.hibernate.CacheMode;
+import org.hibernate.search.MassIndexer;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
@@ -89,35 +91,13 @@ public class SystemDAO {
     return result;
   }
 
-  public void reindexHibernateSearchObjects(Class<?> entityClass, int batchSize) throws InterruptedException {
-    EntityManager entityManager = getEntityManager();
-    
-    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
-    
-    int i = 0;
-
-    while (true) {
-      Query query = fullTextEntityManager.createQuery("select o from " + entityClass.getName() + " o");
-      query.setFirstResult(i);
-      query.setMaxResults(batchSize);
-
-      List<?> result = query.getResultList();
-      if (result.size() == 0)
-        break;
-
-      for (Object entity : result) {
-        fullTextEntityManager.index(entity);
-      }
-
-      fullTextEntityManager.flushToIndexes();
-
-      if (result.size() < batchSize)
-        break;
-
-      i += batchSize;
-    }
-    
-    fullTextEntityManager.flushToIndexes();
+  public void reindexHibernateSearchObjects(Class<?> entity, int batchSize) throws InterruptedException {
+    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(getEntityManager());
+    MassIndexer massIndexer = fullTextEntityManager.createIndexer(entity);
+    massIndexer.batchSizeToLoadObjects(batchSize);
+    massIndexer.threadsToLoadObjects(1);
+    massIndexer.cacheMode(CacheMode.IGNORE);
+    massIndexer.startAndWait();
   }
   
   private EntityManager getEntityManager() {
