@@ -9,8 +9,9 @@ public class ClassLoaderTemplateLoader extends URLTemplateLoader {
   public ClassLoaderTemplateLoader(ClassLoader classLoader, String path) {
     this.classLoader = classLoader;
     this.path = canonicalizePrefix(path);
-    if (this.path.startsWith("/"));
+    if (this.path.startsWith("/")) {
       this.path = this.path.substring(1);
+    }
   }
 
   protected URL getURL(String name) {

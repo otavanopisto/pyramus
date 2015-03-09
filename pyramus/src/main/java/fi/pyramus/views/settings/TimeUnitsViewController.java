@@ -44,8 +44,8 @@ public class TimeUnitsViewController extends PyramusViewController implements Br
       public int compare(EducationalTimeUnit o1, EducationalTimeUnit o2) {
         Double units1 = o1.getBaseUnits();
         Double units2 = o2.getBaseUnits();
-
-        if (units1 == units2)
+        
+        if (units1.equals(units2))
           return 0;
         
         if (o1.equals(baseTimeUnit))

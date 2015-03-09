@@ -134,12 +134,12 @@ public class CreateUserJSONRequestController extends JSONRequestController {
      */
     if(authenticationProvider instanceof InternalAuthenticationProvider){
       List<UserIdentification> userIdentifications = userIdentificationDAO.listByPerson(person);
-      if(userIdentifications.size() > 1) {
+      if (userIdentifications == null || userIdentifications.size() == 0) {
+        userIdentificationDAO.create(person, authProvider, externalId);
+      } else if (userIdentifications.size() > 1) {
         //TODO: Currently only 1 UserIdentification for person is supported, this may change in the future.
         throw new SmvcRuntimeException(PyramusStatusCode.MULTIPLE_IDENTIFICATIONS_FOR_PERSON, "Multiple UserIdentifications found for person");
-      } else if(userIdentifications == null || userIdentifications.size() == 0) {
-        userIdentificationDAO.create(person, authProvider, externalId);
-      }else{
+      } else {
         UserIdentification userIdentification = userIdentificationDAO.updateAuthSource(userIdentifications.get(0), authProvider);
         userIdentificationDAO.updateExternalId(userIdentification, externalId);
       } 

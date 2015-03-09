@@ -157,7 +157,7 @@ public class DataImportStrategyProvider {
         if (studyProgramme != null) {
           DataImportUtils.setFieldValue(student, DataImportUtils.getField(student, "studyProgramme"), studyProgramme);
         } else {
-           new SmvcRuntimeException(PyramusStatusCode.VALIDATION_FAILURE, "StudyProgramme not found with name: " + fieldValue);
+          throw new SmvcRuntimeException(PyramusStatusCode.VALIDATION_FAILURE, "StudyProgramme not found with name: " + fieldValue);
         } 
       }
     });

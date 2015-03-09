@@ -1,6 +1,5 @@
 package fi.pyramus.dao;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -103,7 +102,7 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
   }
   
   protected String getSearchFormattedDate(Date date) {
-    return COURSE_SEARCH_DATE_FORMAT.format(date);
+    return new SimpleDateFormat("yyyyMMdd").format(date);
   }
   
   private String escapeSearchCriteria(String value) {
@@ -114,5 +113,4 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
   
   private static final String DATERANGE_INFINITY_LOW = "00000000";
   private static final String DATERANGE_INFINITY_HIGH = "99999999";
-  private static final DateFormat COURSE_SEARCH_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 }
