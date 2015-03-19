@@ -40,6 +40,7 @@ import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseState;
+import fi.pyramus.domainmodel.courses.CourseType;
 import fi.pyramus.domainmodel.courses.Course_;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.users.User;
@@ -131,7 +132,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
    * @param description Course description
    * @param user The user making the update, stored as the last modifier of the course
    */
-  public void update(Course course, String name, String nameExtension, CourseState courseState, Subject subject,
+  public void update(Course course, String name, String nameExtension, CourseState courseState, CourseType type, Subject subject,
       Integer courseNumber, Date beginDate, Date endDate, Double courseLength,
       EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, 
       Double planningHours, Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User user) {
@@ -149,6 +150,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setName(name);
     course.setNameExtension(nameExtension);
     course.setState(courseState);
+    course.setType(type);
     course.setDescription(description);
     course.setSubject(subject);
     course.setCourseNumber(courseNumber);
