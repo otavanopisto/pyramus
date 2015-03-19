@@ -54,6 +54,14 @@ public class EducationalTimeUnit implements ArchivableEntity {
   public Long getVersion() {
     return version;
   }
+  
+  public void setSymbol(String symbol) {
+    this.symbol = symbol;
+  }
+  
+  public String getSymbol() {
+    return symbol;
+  }
 
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="EducationalTimeUnit")  
@@ -76,4 +84,8 @@ public class EducationalTimeUnit implements ArchivableEntity {
   @Version
   @Column(nullable = false)
   private Long version;
+  
+  @NotNull
+  @Column(nullable = false)
+  private String symbol;
 }
