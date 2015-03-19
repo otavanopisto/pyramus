@@ -1,3 +1,6 @@
 /.project
 /.DS_Store
 /.settings
+/pyramus-data/oauthCredentials_dev.js
+/pyramus-data/perustiedot_muikkuun_dev.js
+.tern-project
