@@ -50,7 +50,7 @@ public class UsersService extends PyramusService {
     Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
     userIdentificationDAO.create(person, authProvider, externalId);
     Role userRole = EnumType.valueOf(Role.class, role);
-    User user = userDAO.create(firstName, lastName, userRole, person);
+    User user = userDAO.create(firstName, lastName, userRole, person, false);
     personDAO.updateDefaultUser(person, user);
     validateEntity(user);
     return EntityFactoryVault.buildFromDomainObject(user);

@@ -77,7 +77,7 @@ public class DebugDataViewController extends PyramusViewController {
     else if ("student".equals(type)) {
       for (int i = start; i < (start + count); i++) {
         Person person = personDAO.create(new Date(), "030310-123R", Sex.MALE, null, Boolean.FALSE);
-        studentDAO.create(person, "Etunimi " + i, "Sukunimi " + i, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, Boolean.FALSE);
+        studentDAO.create(person, "Etunimi " + i, "Sukunimi " + i, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, Boolean.FALSE, false);
       }
     }
   }

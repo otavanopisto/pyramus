@@ -48,7 +48,7 @@ public class UserController {
   /* StaffMember */
 
   public StaffMember createStaffMember(String firstName, String lastName, Role role, Person person) {
-    return staffMemberDAO.create(firstName, lastName, role, person);
+    return staffMemberDAO.create(firstName, lastName, role, person, false);
   }
   
   public StaffMember findStaffMemberById(Long userId) {

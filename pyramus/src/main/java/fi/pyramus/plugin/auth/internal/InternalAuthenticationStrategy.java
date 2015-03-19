@@ -56,7 +56,7 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
       // TODO: Should not create always
       Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
       //FIXME: Create identification? / set default?
-      User user = userDAO.create(firstName, lastName, role, person);
+      User user = userDAO.create(firstName, lastName, role, person, false);
       // TODO Default contact type?
       emailDAO.create(user.getContactInfo(), null, Boolean.TRUE, email);
       return user;

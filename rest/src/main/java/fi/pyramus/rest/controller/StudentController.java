@@ -70,7 +70,7 @@ public class StudentController {
 
     Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType,
         educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies, studyStartDate, studyEndDate,
-        studyEndReason, studyEndText, lodging);
+        studyEndReason, studyEndText, lodging, false);
 
     return student;
   }
