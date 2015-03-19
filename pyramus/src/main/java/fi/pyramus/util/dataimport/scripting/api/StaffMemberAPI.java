@@ -23,7 +23,7 @@ public class StaffMemberAPI {
       throw new InvalidScriptException("Person not found");
     }
     
-    StaffMember staffMember = staffMemberDAO.create(firstName, lastName, Role.valueOf(role), person);
+    StaffMember staffMember = staffMemberDAO.create(firstName, lastName, Role.valueOf(role), person, false);
     if (staffMember == null) {
       throw new InvalidScriptException("Failed to create new staff member");
     } else {

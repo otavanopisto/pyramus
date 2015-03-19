@@ -63,7 +63,7 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   @Inject
   private Event<StaffMemberDeletedEvent> staffMemberDeletedEvent;
   
-  public StaffMember create(String firstName, String lastName, Role role, Person person) {
+  public StaffMember create(String firstName, String lastName, Role role, Person person, Boolean archived) {
     ContactInfo contactInfo = new ContactInfo();
     
     StaffMember staffMember = new StaffMember();
@@ -74,7 +74,7 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     staffMember.setContactInfo(contactInfo);
     staffMember.setPerson(person);
     // TODO: allow archive on StaffMember
-    staffMember.setArchived(false);
+    staffMember.setArchived(archived);
     
     persist(staffMember);
     

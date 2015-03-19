@@ -81,7 +81,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
 
     Student newStudent = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd,
         activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies,
-        studyStartTime, studyEndTime, studyEndReason, studyEndText, lodging);
+        studyStartTime, studyEndTime, studyEndReason, studyEndText, lodging, false);
     
     // Contact info
     
