@@ -195,6 +195,14 @@ public class Course extends CourseBase implements ArchivableEntity {
   public CourseState getState() {
     return state;
   }
+  
+  public CourseType getType() {
+    return type;
+  }
+  
+  public void setType(CourseType type) {
+    this.type = type;
+  }
 
   public void setTeachingHours(Double teachingHours) {
     this.teachingHours = teachingHours;
@@ -268,6 +276,9 @@ public class Course extends CourseBase implements ArchivableEntity {
   @JoinColumn(name="state")
   @IndexedEmbedded
   private CourseState state;
+  
+  @ManyToOne
+  private CourseType type;
   
   @Field
   private String nameExtension;

@@ -63,6 +63,7 @@ import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
 import fi.pyramus.dao.courses.CourseStudentVariableDAO;
 import fi.pyramus.dao.courses.CourseStudentVariableKeyDAO;
+import fi.pyramus.dao.courses.CourseTypeDAO;
 import fi.pyramus.dao.courses.CourseUserDAO;
 import fi.pyramus.dao.courses.GradeCourseResourceDAO;
 import fi.pyramus.dao.courses.OtherCostDAO;
@@ -234,6 +235,10 @@ public class DAOFactory {
   
   public CourseStateDAO getCourseStateDAO() {
     return (CourseStateDAO) findByClass(CourseStateDAO.class);
+  }
+  
+  public CourseTypeDAO getCourseTypeDAO() {
+    return (CourseTypeDAO) findByClass(CourseTypeDAO.class);
   }
   
   public CourseStudentDAO getCourseStudentDAO() {
