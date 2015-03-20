@@ -28,16 +28,17 @@ public class SaveTimeUnitsJSONRequestController extends JSONRequestController {
       Boolean baseUnit = "1".equals(jsonRequestContext.getString(colPrefix + ".baseUnit"));
       Double baseUnits = jsonRequestContext.getDouble(colPrefix + ".baseUnits");
       String name = jsonRequestContext.getRequest().getParameter(colPrefix + ".name");
+      String symbol = jsonRequestContext.getRequest().getParameter(colPrefix + ".symbol");
       
       if (baseUnit) {
         baseUnits = new Double(1);
       }
         
       if (timeUnitId == -1) {
-        timeUnit = educationalTimeUnitDAO.create(baseUnits, name); 
+        timeUnit = educationalTimeUnitDAO.create(baseUnits, name, symbol); 
       } else {
         timeUnit = educationalTimeUnitDAO.findById(timeUnitId);
-        educationalTimeUnitDAO.update(timeUnit, baseUnits, name);
+        educationalTimeUnitDAO.update(timeUnit, baseUnits, name, symbol);
       }
       
       if (baseUnit) {

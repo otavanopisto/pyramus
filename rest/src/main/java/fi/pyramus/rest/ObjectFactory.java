@@ -235,7 +235,7 @@ public class ObjectFactory {
         new Mapper<EducationalTimeUnit>() {
           @Override
           public Object map(EducationalTimeUnit entity) {
-            return new fi.pyramus.rest.model.EducationalTimeUnit(entity.getId(), entity.getName(), entity.getBaseUnits(), entity.getArchived());
+            return new fi.pyramus.rest.model.EducationalTimeUnit(entity.getId(), entity.getName(), entity.getSymbol(), entity.getBaseUnits(), entity.getArchived());
           }
         }, 
         
