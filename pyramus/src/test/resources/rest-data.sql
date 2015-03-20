@@ -11,9 +11,9 @@ values
   (2, 2, 'TestAuth');
   
 insert into 
-  ContactType (id, name, version, archived)
+  ContactType (id, name, version, nonUnique, archived)
 values 
-  (1, 'Home', 1, false);
+  (1, 'Home', 1, false, false);
 
 insert into
   Plugin (id, artifactId, enabled, groupId, version)
@@ -73,16 +73,16 @@ values
   (8, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121217-7892', 'Test Student #1', false);
   
 insert into
-  User (id, person_id, firstName, lastName, contactInfo, version)
+  User (id, person_id, firstName, lastName, contactInfo, version, archived)
 values 
-  (1, 1, 'Test Guest', 'User #1', 5, 1),
-  (2, 2, 'Test Guest', 'User #2', 6, 1),
-  (3, 3, 'Tanya', 'Test #1', 3, 1),
-  (4, 4, 'David', 'Test #2', 4, 1),
-  (5, 5, 'Test User', 'User #3', 7, 1),
-  (6, 6, 'Test Manager', 'User #4', 8, 1),
-  (7, 7, 'Test Administrator', 'User #5', 9, 1),
-  (8, 8, 'Test Student', 'User #4', 10, 1);
+  (1, 1, 'Test Guest', 'User #1', 5, 1, false),
+  (2, 2, 'Test Guest', 'User #2', 6, 1, false),
+  (3, 3, 'Tanya', 'Test #1', 3, 1, false),
+  (4, 4, 'David', 'Test #2', 4, 1, false),
+  (5, 5, 'Test User', 'User #3', 7, 1, false),
+  (6, 6, 'Test Manager', 'User #4', 8, 1, false),
+  (7, 7, 'Test Administrator', 'User #5', 9, 1, false),
+  (8, 8, 'Test Student', 'User #4', 10, 1, false);
 
 insert into
   StaffMember (id, role, title)
@@ -357,11 +357,11 @@ values
 insert into 
   Student (id, studyProgramme, nickname, previousStudies, studyStartDate, 
     additionalInfo, activityType, educationalLevel, language, municipality, nationality, school, 
-    examinationType, education, lodging, archived)
+    examinationType, education, lodging)
 values 
-  (3, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false, false),
-  (4, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false, false),
-  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', false, false);
+  (3, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false),
+  (4, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false),
+  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', false);
 insert into StudentGroupStudent
   (id, studentGroup, student, version)
 values 

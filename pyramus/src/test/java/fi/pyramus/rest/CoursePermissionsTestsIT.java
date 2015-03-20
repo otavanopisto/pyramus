@@ -38,7 +38,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     Course course = new Course("Create test", new DateTime(), new DateTime(),
         "Course for testing course creation", Boolean.FALSE, 111, 222l,
         new DateTime(), new DateTime(), "Extension", 333d, 444d, 555d, 666d,
-        777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null);
+        777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null, null);
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -62,7 +62,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     Course course = new Course("Create test", new DateTime(), new DateTime(),
         "Course for testing course creation", Boolean.FALSE, 111, 222l,
         new DateTime(), new DateTime(), "Extension", 333d, 444d, 555d, 666d,
-        777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, Arrays.asList("tag1", "tag2", "tag3"));
+        777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null, Arrays.asList("tag1", "tag2", "tag3"));
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -100,7 +100,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     Course course = new Course("Update test", new DateTime(), new DateTime(),
         "Course for testing course updating", Boolean.FALSE, 111, 222l,
         new DateTime(), new DateTime(), "Extension", 333d, 444d, 555d, 666d,
-        777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null);
+        777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null, null);
 
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -128,7 +128,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     Course course = new Course("Update test", new DateTime(), new DateTime(),
         "Course for testing course updating", Boolean.FALSE, 111, 222l,
         new DateTime(), new DateTime(), "Extension", 333d, 444d, 555d, 666d,
-        777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, Arrays.asList(
+        777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null, Arrays.asList(
             "tag1", "tag2", "tag3"));
 
     Response response = given().headers(getAdminAuthHeaders())
@@ -158,7 +158,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     Course course = new Course("Update test", new DateTime(), new DateTime(),
         "Course for testing course updating", Boolean.FALSE, 111, 222l,
         new DateTime(), new DateTime(), "Extension", 333d, 444d, 555d, 666d,
-        777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null);
+        777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null, null);
 
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
