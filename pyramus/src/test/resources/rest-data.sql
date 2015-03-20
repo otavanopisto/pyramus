@@ -44,7 +44,8 @@ values
   (7, 'Test User  #1', 1),
   (8, 'Test Manager #1', 1),
   (9, 'Test Administrator #1', 1),
-  (10, 'Test Student #1', 1);;
+  (10, 'Test Student #1', 1),
+  (11, 'Trusted System', 1);
   
 insert into 
   Email (id, address, defaultAddress, contactInfo, contactType, indexColumn, version)
@@ -58,7 +59,8 @@ values
   (7, 'user1@bogusmail.com', true, 7, 1, 0, 1),
   (8, 'manager1@bogusmail.com', true, 8, 1, 0, 1),
   (9, 'administrator1@bogusmail.com', true, 9, 1, 0, 1),
-  (10, 'student1@bogusmail.com', true, 10, 1, 0, 1);
+  (10, 'student1@bogusmail.com', true, 10, 1, 0, 1),
+  (11, 'trusted@bogusmail.com', true, 11, 1, 0, 1);
 
 insert into 
   Person (id, version, birthday, sex, socialSecurityNumber, basicInfo, secureInfo)
@@ -70,7 +72,8 @@ values
   (5, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121213-7890', 'Test User #1', false),
   (6, 1, PARSEDATETIME('1 1 1970', 'd M yyyy'), 'MALE', '131214-8901', 'Test Manager #1', false),
   (7, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121216-7891', 'Test administrator #1', false),
-  (8, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121217-7892', 'Test Student #1', false);
+  (8, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121217-7892', 'Test Student #1', false),
+  (9, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '000000-0000', 'Trusted System', false);
   
 insert into
   User (id, person_id, firstName, lastName, contactInfo, version, archived)
@@ -82,7 +85,8 @@ values
   (5, 5, 'Test User', 'User #3', 7, 1, false),
   (6, 6, 'Test Manager', 'User #4', 8, 1, false),
   (7, 7, 'Test Administrator', 'User #5', 9, 1, false),
-  (8, 8, 'Test Student', 'User #4', 10, 1, false);
+  (8, 8, 'Test Student', 'User #4', 10, 1, false),
+  (9, 9, 'Trusted System', 'Trusted system user', 11, 1, false);
 
 insert into
   StaffMember (id, role, title)
@@ -91,7 +95,8 @@ values
   (2, 'GUEST', null),
   (5, 'USER', null),
   (6, 'MANAGER', null),
-  (7, 'ADMINISTRATOR', null);
+  (7, 'ADMINISTRATOR', null),
+  (9, 'TRUSTED_SYSTEM', null);
   
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
@@ -409,7 +414,9 @@ Old. Needed anymore?
 /** ADMINISTRATOER ROLE**/
     (5, 'ff81d5b8500c773e7a1776a7963801e7', 'https://localhost:8443/oauth2ClientTest/success', 7, 1),
 /** STUDENT ROLE**/
-    (6, 'ff81d5b8500c773e7a1776a7963801e8', 'https://localhost:8443/oauth2ClientTest/success', 8, 1);
+    (6, 'ff81d5b8500c773e7a1776a7963801e8', 'https://localhost:8443/oauth2ClientTest/success', 8, 1),
+/** TRUSTED_SYSTEM ROLE**/
+    (7, 'ff81d5b8500c773e7a1776a7963801e9', 'https://localhost:8443/oauth2ClientTest/success', 9, 1);
   
 insert into CourseStaffMemberRole (id, name, version) values (1, 'Teacher', 1), (2, 'Tutor', 1);
     
