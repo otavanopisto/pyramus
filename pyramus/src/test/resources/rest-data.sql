@@ -151,10 +151,10 @@ values
   (2, 'Passed', 1, 1, false);
  
 insert into 
-  EducationalTimeUnit (id, archived, baseUnits, name, version)
+  EducationalTimeUnit (id, archived, baseUnits, name, symbol, version)
 values 
-  (1, false, 1, 'Hour', 1),
-  (2, false, 168, 'Week', 1);
+  (1, false, 1, 'Hour', 'h', 1),
+  (2, false, 168, 'Week', 'w', 1);
 
 insert into
   EducationalLength (id, units, unit, version)
