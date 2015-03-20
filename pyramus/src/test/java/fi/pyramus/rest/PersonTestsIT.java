@@ -53,7 +53,7 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       .get("/persons/persons")
       .then()
       .statusCode(200)
-      .body("id.size()", is(8))
+      .body("id.size()", is(9))
       .body("id[2]", is(3) )
       .body("birthday[2]", is(getDate(1990, 1, 1).toString() ))
       .body("sex[2]", is("FEMALE") )
