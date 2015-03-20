@@ -64,15 +64,16 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
         .contentType("application/json")
         .body(address)
         .post("/students/students/{ID}/addresses", getUserIdForRole(getRole()));
+      
+      response
+        .then()
+        .assertThat()
+        .statusCode(200);
   
-      assertOk(response, studentPermissions, StudentPermissions.CREATE_STUDENTADDRESS);
-  
-      if (response.getStatusCode() == 200) {
-        int id = response.body().jsonPath().getInt("id");
-        
-        given().headers(getAdminAuthHeaders())
-          .delete("/students/students/{STUDENTID}/addresses/{ID}", getUserIdForRole(getRole()), id);
-      }
+      int id = response.body().jsonPath().getInt("id");
+      
+      given().headers(getAdminAuthHeaders())
+        .delete("/students/students/{STUDENTID}/addresses/{ID}", getUserIdForRole(getRole()), id);
     }
   }
   
@@ -87,10 +88,12 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
   @Test
   public void testListStudentAddressesOwner() throws NoSuchFieldException {
     if (Role.STUDENT.name().equals(this.role)) {
-      Response response = given().headers(getAuthHeaders())
-        .get("/students/students/{ID}/addresses", getUserIdForRole(getRole()));
-      
-      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTADDRESSS);
+      given()
+        .headers(getAuthHeaders())
+        .get("/students/students/{ID}/addresses", getUserIdForRole(getRole()))
+        .then()
+        .assertThat()
+        .statusCode(200);
     }
   }
   
@@ -105,10 +108,12 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
   @Test
   public void testFindStudentAddressOwner() throws NoSuchFieldException {
     if (Role.STUDENT.name().equals(this.role)) {
-      Response response = given().headers(getAuthHeaders())
-        .get("/students/students/{STUDENTID}/addresses/{ID}", getUserIdForRole(getRole()), 8l);
-  
-      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTADDRESS);
+      given()
+        .headers(getAuthHeaders())
+        .get("/students/students/{STUDENTID}/addresses/{ID}", getUserIdForRole(getRole()), 8l)
+        .then()
+        .assertThat()
+        .statusCode(200);
     }
   }  
 

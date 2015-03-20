@@ -64,15 +64,17 @@ public class StudentEmailPermissionTestsIT extends AbstractRESTPermissionsTest {
         .contentType("application/json")
         .body(email)
         .post("/students/students/{ID}/emails", getUserIdForRole(getRole()));
-  
-      assertOk(response, studentPermissions, StudentPermissions.CREATE_STUDENTEMAIL);
       
-      if (response.getStatusCode() == 200) {
-        int id = response.body().jsonPath().getInt("id");
-        
-        given().headers(getAdminAuthHeaders())
-          .delete("/students/students/{STUDENTID}/emails/{ID}", getUserIdForRole(getRole()), id);
-      }
+      response
+        .then()
+        .assertThat()
+        .statusCode(200);
+      
+      int id = response.body().jsonPath().getInt("id");
+      
+      given()
+        .headers(getAdminAuthHeaders())
+        .delete("/students/students/{STUDENTID}/emails/{ID}", getUserIdForRole(getRole()), id);
     }
   }
   
@@ -87,10 +89,12 @@ public class StudentEmailPermissionTestsIT extends AbstractRESTPermissionsTest {
   @Test
   public void testListStudentEmailsOwner() throws NoSuchFieldException {
     if (Role.STUDENT.name().equals(this.role)) {
-      Response response = given().headers(getAuthHeaders())
-        .get("/students/students/{ID}/emails", getUserIdForRole(this.getRole()));
-  
-      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTEMAILS);
+      given()
+        .headers(getAuthHeaders())
+        .get("/students/students/{ID}/emails", getUserIdForRole(this.getRole()))
+        .then()
+        .assertThat()
+        .statusCode(200);
     }
   }
   
@@ -105,10 +109,12 @@ public class StudentEmailPermissionTestsIT extends AbstractRESTPermissionsTest {
   @Test
   public void testFindStudentEmailOwner() throws NoSuchFieldException {
     if (Role.STUDENT.name().equals(this.role)) {
-      Response response = given().headers(getAuthHeaders())
-        .get("/students/students/{STUDENTID}/emails/{ID}", getUserIdForRole(getRole()), 8l);
-  
-      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTEMAIL);
+      given()
+        .headers(getAuthHeaders())
+        .get("/students/students/{STUDENTID}/emails/{ID}", getUserIdForRole(getRole()), 10l)
+        .then()
+        .assertThat()
+        .statusCode(200);
     }
   }  
 

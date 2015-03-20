@@ -64,15 +64,17 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
         .contentType("application/json")
         .body(phoneNumber)
         .post("/students/students/{ID}/phoneNumbers", getUserIdForRole(this.getRole()));
-  
-      assertOk(response, studentPermissions, StudentPermissions.CREATE_STUDENTPHONENUMBER);
       
-      if (response.getStatusCode() == 200) {
-        int id = response.body().jsonPath().getInt("id");
+      response
+        .then()
+        .assertThat()
+        .statusCode(200);
+
+      int id = response.body().jsonPath().getInt("id");
         
-        given().headers(getAdminAuthHeaders())
-          .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", getUserIdForRole(this.getRole()), id);
-      }
+      given()
+        .headers(getAdminAuthHeaders())
+        .delete("/students/students/{STUDENTID}/phoneNumbers/{ID}", getUserIdForRole(this.getRole()), id);
     }
   }
   
@@ -87,10 +89,11 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
   @Test
   public void testListStudentPhoneNumbersOwner() throws NoSuchFieldException {
     if (Role.STUDENT.name().equals(this.role)) {
-      Response response = given().headers(getAuthHeaders())
-          .get("/students/students/{ID}/phoneNumbers", getUserIdForRole(this.role));
-
-      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTPHONENUMBERS);
+      given().headers(getAuthHeaders())
+        .get("/students/students/{ID}/phoneNumbers", getUserIdForRole(this.role))
+        .then()
+        .assertThat()
+        .statusCode(200);
     }
   }
   
@@ -105,10 +108,11 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
   @Test
   public void testFindStudentPhoneNumberOwner() throws NoSuchFieldException {
     if (Role.STUDENT.name().equals(this.role)) {
-      Response response = given().headers(getAuthHeaders())
-        .get("/students/students/{STUDENTID}/phoneNumbers/{ID}", getUserIdForRole(this.role), 6l);
-      
-      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTPHONENUMBER);
+      given().headers(getAuthHeaders())
+        .get("/students/students/{STUDENTID}/phoneNumbers/{ID}", getUserIdForRole(this.role), 8l)        
+        .then()
+        .assertThat()
+        .statusCode(200);
     }
   }  
 
