@@ -715,6 +715,7 @@ public class CommonRESTService extends AbstractRESTService {
     }
     
     String name = entity.getName();
+    String symbol = entity.getSymbol();
     Double baseUnits = entity.getBaseUnits();
     
     if (StringUtils.isBlank(name)) {
@@ -726,7 +727,7 @@ public class CommonRESTService extends AbstractRESTService {
     }
     
     return Response.ok()
-      .entity(objectFactory.createModel(commonController.createEducationalTimeUnit(baseUnits, name)))
+      .entity(objectFactory.createModel(commonController.createEducationalTimeUnit(baseUnits, name, symbol)))
       .build();
   }
     
@@ -789,6 +790,7 @@ public class CommonRESTService extends AbstractRESTService {
     }
     
     String name = entity.getName();
+    String symbol = entity.getSymbol();
     Double baseUnits = entity.getBaseUnits();
     
     if (StringUtils.isBlank(name)) {
@@ -800,7 +802,7 @@ public class CommonRESTService extends AbstractRESTService {
     }
     
     return Response.ok()
-      .entity(objectFactory.createModel(commonController.updateEducationalTimeUnit(educationalTimeUnit, baseUnits, name)))
+      .entity(objectFactory.createModel(commonController.updateEducationalTimeUnit(educationalTimeUnit, baseUnits, name, symbol)))
       .build();
   }
   

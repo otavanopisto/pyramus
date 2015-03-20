@@ -172,7 +172,7 @@ function onLoad(event) {
   timeUnitsTable.detachFromDom();
   for ( var i = 0, l = timeUnits.length; i < l; i++) {
     var timeUnit = timeUnits[i];
-    rowIndex = timeUnitsTable.addRow([ '', timeUnit.id == baseTimeUnit.id, timeUnit.baseUnits, jsonEscapeHtml(timeUnit.symbol), jsonEscapeHTML(timeUnit.name), '', '', timeUnit.id ]);
+    rowIndex = timeUnitsTable.addRow([ '', timeUnit.id == baseTimeUnit.id, timeUnit.baseUnits, jsonEscapeHTML(timeUnit.symbol), jsonEscapeHTML(timeUnit.name), '', '', timeUnit.id ]);
     if (timeUnit.id == baseTimeUnit.id) {
       timeUnitsTable.hideCell(rowIndex, timeUnitsTable.getNamedColumnIndex("baseUnits"));
     }

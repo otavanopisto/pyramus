@@ -1,6 +1,6 @@
 function addTimeUnitsTableRow() {
   var table = getIxTableById('timeUnitsTable');
-  var rowIndex = table.addRow([ false, 0, '', '' ]);
+  var rowIndex = table.addRow([ false, 0, '', '', '' ]);
 
   if (rowIndex == 0) {
     table.setCellValue(0, table.getNamedColumnIndex("baseUnit"), true);

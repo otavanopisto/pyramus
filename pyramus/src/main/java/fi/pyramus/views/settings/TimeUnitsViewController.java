@@ -57,7 +57,7 @@ public class TimeUnitsViewController extends PyramusViewController implements Br
       }
     });
     
-    String jsonTimeUnits = new JSONArrayExtractor("id", "baseUnits", "name").extractString(timeUnits);
+    String jsonTimeUnits = new JSONArrayExtractor("id", "baseUnits", "name", "symbol").extractString(timeUnits);
     JSONObject joBaseTimeUnit = new JSONObject();
     if (baseTimeUnit != null) {
       joBaseTimeUnit.put("id", baseTimeUnit.getId());

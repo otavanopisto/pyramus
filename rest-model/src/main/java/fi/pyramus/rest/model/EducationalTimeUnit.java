@@ -45,8 +45,17 @@ public class EducationalTimeUnit {
     this.archived = archived;
   }
 
+  public String getSymbol() {
+    return symbol;
+  }
+
+  public void setSymbol(String symbol) {
+    this.symbol = symbol;
+  }
+
   private Long id;
   private String name;
+  private String symbol;
   private Double baseUnits;
   private Boolean archived;
 }

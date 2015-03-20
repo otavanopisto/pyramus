@@ -227,8 +227,8 @@ public class CommonController {
   
   /* EducationalTimeUnit */
   
-  public EducationalTimeUnit createEducationalTimeUnit(Double baseUnits, String name) {
-    EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.create(baseUnits, name);
+  public EducationalTimeUnit createEducationalTimeUnit(Double baseUnits, String name, String symbol) {
+    EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.create(baseUnits, name, symbol);
     return educationalTimeUnit;
   }  
   
@@ -247,8 +247,8 @@ public class CommonController {
     return educationalTimeUnits;
   }
   
-  public EducationalTimeUnit updateEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, Double baseUnits, String name) {
-    educationalTimeUnitDAO.update(educationalTimeUnit, baseUnits, name);
+  public EducationalTimeUnit updateEducationalTimeUnit(EducationalTimeUnit educationalTimeUnit, Double baseUnits, String name, String symbol) {
+    educationalTimeUnitDAO.update(educationalTimeUnit, baseUnits, name, symbol);
     return educationalTimeUnit;
   }
   
