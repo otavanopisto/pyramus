@@ -109,7 +109,7 @@ public class CourseRESTService extends AbstractRESTService {
     String name = courseEntity.getName();
     String nameExtension = courseEntity.getNameExtension();
     CourseState state = courseController.findCourseStateById(courseEntity.getStateId());
-    CourseType type = courseController.findCourseTypeById(courseEntity.getTypeId());
+    CourseType type = courseEntity.getTypeId() != null ? courseController.findCourseTypeById(courseEntity.getTypeId()) : null;
 
     Subject subject = null;
     if (courseEntity.getSubjectId() != null) {
@@ -232,7 +232,7 @@ public class CourseRESTService extends AbstractRESTService {
     String name = courseEntity.getName();
     String nameExtension = courseEntity.getNameExtension();
     CourseState state = courseController.findCourseStateById(courseEntity.getStateId());
-    CourseType type = courseController.findCourseTypeById(courseEntity.getTypeId());
+    CourseType type = courseEntity.getTypeId() != null ? courseController.findCourseTypeById(courseEntity.getTypeId()) : null;
 
     Subject subject = null;
     if (courseEntity.getSubjectId() != null) {
