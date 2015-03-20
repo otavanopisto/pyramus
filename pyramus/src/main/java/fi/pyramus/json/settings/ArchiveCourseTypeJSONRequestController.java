@@ -18,8 +18,8 @@ public class ArchiveCourseTypeJSONRequestController extends JSONRequestControlle
    */
   public void process(JSONRequestContext jsonRequestContext) {
     CourseTypeDAO courseTypeDAO = DAOFactory.getInstance().getCourseTypeDAO();
-    Long categoryId = jsonRequestContext.getLong("courseTypeId");
-    courseTypeDAO.archive(courseTypeDAO.findById(categoryId));
+    Long courseTypeId = jsonRequestContext.getLong("courseTypeId");
+    courseTypeDAO.archive(courseTypeDAO.findById(courseTypeId));
   }
 
   public UserRole[] getAllowedRoles() {
