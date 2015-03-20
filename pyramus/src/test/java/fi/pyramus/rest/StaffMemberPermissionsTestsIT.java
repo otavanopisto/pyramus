@@ -33,7 +33,7 @@ public class StaffMemberPermissionsTestsIT extends AbstractRESTPermissionsTest {
   @Test
   public void testListStaffMembersByEmail() throws NoSuchFieldException {
     assertOk(given().headers(getAuthHeaders())
-      .get("/staff/members?email=guest1@bogusmail.com"), userPermissions, UserPermissions.LIST_STAFFMEMBER_EMAILS, 200);
+      .get("/staff/members?email=guest1@bogusmail.com"), userPermissions, UserPermissions.LIST_STAFFMEMBERS, 200);
   }
   
   @Test
