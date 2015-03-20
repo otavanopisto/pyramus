@@ -726,7 +726,7 @@ public class CommonRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    if (symbol == null) {
+    if (StringUtils.isEmpty(symbol)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -805,7 +805,7 @@ public class CommonRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    if (symbol == null) {
+    if (StringUtils.isEmpty(symbol)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
