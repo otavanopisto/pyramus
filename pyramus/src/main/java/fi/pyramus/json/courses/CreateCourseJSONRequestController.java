@@ -35,6 +35,7 @@ import fi.pyramus.dao.courses.CourseStaffMemberDAO;
 import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
+import fi.pyramus.dao.courses.CourseTypeDAO;
 import fi.pyramus.dao.courses.GradeCourseResourceDAO;
 import fi.pyramus.dao.courses.OtherCostDAO;
 import fi.pyramus.dao.courses.StudentCourseResourceDAO;
@@ -56,6 +57,7 @@ import fi.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
+import fi.pyramus.domainmodel.courses.CourseType;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.resources.Resource;
 import fi.pyramus.domainmodel.resources.ResourceType;
@@ -218,6 +220,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     ResourceDAO resourceDAO = DAOFactory.getInstance().getResourceDAO();
     CourseStateDAO courseStateDAO = DAOFactory.getInstance().getCourseStateDAO();
+    CourseTypeDAO courseTypeDAO = DAOFactory.getInstance().getCourseTypeDAO();
     CourseParticipationTypeDAO participationTypeDAO = DAOFactory.getInstance().getCourseParticipationTypeDAO();
     CourseEnrolmentTypeDAO enrolmentTypeDAO = DAOFactory.getInstance().getCourseEnrolmentTypeDAO();
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
@@ -245,7 +248,9 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     String name = requestContext.getString("name");
     String nameExtension = requestContext.getString("nameExtension");
     Long courseStateId = requestContext.getLong("state");
+    Long courseTypeId = requestContext.getLong("type");
     CourseState courseState = courseStateDAO.findById(courseStateId);
+    CourseType courseType = courseTypeId != null ? courseTypeDAO.findById(courseTypeId) : null;
     String description = requestContext.getString("description");
     Module module = moduleDAO.findById(requestContext.getLong("module"));
     Subject subject = subjectDAO.findById(requestContext.getLong("subject"));
@@ -278,7 +283,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       }
     }
     
-    Course course = courseDAO.create(module, name, nameExtension, courseState, subject, courseNumber, beginDate, endDate,
+    Course course = courseDAO.create(module, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
         courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, 
         description, maxParticipantCount, enrolmentTimeEnd, loggedUser);
 

@@ -77,7 +77,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
    * 
    * @return The created course
    */
-  public Course create(Module module, String name, String nameExtension, CourseState state, Subject subject,
+  public Course create(Module module, String name, String nameExtension, CourseState state, CourseType type, Subject subject,
       Integer courseNumber, Date beginDate, Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, 
       Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double planningHours, 
       Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User creatingUser) {
@@ -91,6 +91,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setModule(module);
     course.setName(name);
     course.setState(state);
+    course.setType(type);
     course.setNameExtension(nameExtension);
     course.setDescription(description);
     course.setSubject(subject);
