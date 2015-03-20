@@ -932,7 +932,7 @@ public class CourseRESTService extends AbstractRESTService {
   @Path("/courseTypes/{ID:[0-9]*}")
   @GET
   @RESTPermit (CoursePermissions.FIND_COURSETYPE)
-  public Response findCourseTypeById(@PathParam("ID") Long id) {
+  public Response findCourseTypeById(@PathParam("ID") Long id, @Context Request request) {
     CourseType courseType = courseController.findCourseTypeById(id);
     if (courseType == null) {
       return Response.status(Status.NOT_FOUND).build(); 
@@ -942,7 +942,20 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build(); 
     }    
     
-    return Response.ok().entity(objectFactory.createModel(courseType)).build();
+    EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(courseType.getVersion())));
+    
+    ResponseBuilder builder = request.evaluatePreconditions(tag);
+    if (builder != null) {
+      return builder.build();
+    }
+    
+    CacheControl cacheControl = new CacheControl();
+    cacheControl.setMustRevalidate(true);
+    
+    return Response.ok()
+      .cacheControl(cacheControl)
+      .tag(tag)
+      .entity(objectFactory.createModel(courseType)).build();
   }
   
   @Path("/courseTypes/{ID:[0-9]*}")
