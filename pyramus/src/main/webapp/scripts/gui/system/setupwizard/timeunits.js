@@ -40,7 +40,7 @@ function onLoad(event) {
           header : getLocale().getText(
               "settings.timeUnits.timeUnitsTableSymbolHeader"),
           left : 234,
-          width : 30,
+          width : 70,
           dataType : 'text',
           editable : false,
           paramName : 'symbol',
@@ -49,7 +49,7 @@ function onLoad(event) {
         {
           header : getLocale().getText(
               "settings.timeUnits.timeUnitsTableNameHeader"),
-          left : 272,
+          left : 312,
           right : 46,
           dataType : 'text',
           editable : false,
