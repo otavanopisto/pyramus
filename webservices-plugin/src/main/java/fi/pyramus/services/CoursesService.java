@@ -55,6 +55,7 @@ import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.courses.CourseStaffMember;
+import fi.pyramus.domainmodel.courses.CourseType;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.students.Student;
@@ -115,10 +116,11 @@ public class CoursesService extends PyramusService {
     }
     
     CourseState state = defaultsDAO.getDefaults().getInitialCourseState();
-
+    CourseType type = null;
+    
     // Course creation
 
-    Course course = courseDAO.create(module, name, nameExtension, state, subject, courseNumber, beginDate, endDate,
+    Course course = courseDAO.create(module, name, nameExtension, state, type, subject, courseNumber, beginDate, endDate,
         courseLength, courseLengthTimeUnit, null, null, null, null, null, description, null, null, creatingUser);
     
     validateEntity(course);
@@ -184,7 +186,7 @@ public class CoursesService extends PyramusService {
     EducationalTimeUnit courseLengthTimeUnit = courseLengthTimeUnitId == null ? null : educationalTimeUnitDAO.findById(courseLengthTimeUnitId);
     User modifyingUser = userDAO.findById(modifyingUserId);
 
-    courseDAO.update(course, name, nameExtension, course.getState(), subject, courseNumber, beginDate, endDate, courseLength,
+    courseDAO.update(course, name, nameExtension, course.getState(), course.getType(), subject, courseNumber, beginDate, endDate, courseLength,
         courseLengthTimeUnit, course.getDistanceTeachingDays(), course.getLocalTeachingDays(), course.getTeachingHours(), 
         course.getPlanningHours(), course.getAssessingHours(), description, course.getMaxParticipantCount(), course.getEnrolmentTimeEnd(), modifyingUser);
     validateEntity(course);
