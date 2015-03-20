@@ -42,6 +42,7 @@ import fi.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
+import fi.pyramus.domainmodel.courses.CourseType;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.StaffMember;
@@ -108,6 +109,7 @@ public class CourseRESTService extends AbstractRESTService {
     String name = courseEntity.getName();
     String nameExtension = courseEntity.getNameExtension();
     CourseState state = courseController.findCourseStateById(courseEntity.getStateId());
+    CourseType type = courseController.findCourseTypeById(courseEntity.getTypeId());
 
     Subject subject = null;
     if (courseEntity.getSubjectId() != null) {
@@ -145,7 +147,7 @@ public class CourseRESTService extends AbstractRESTService {
     
     User loggedUser = sessionController.getUser();
     
-    Course course = courseController.createCourse(module, name, nameExtension, state, subject, courseNumber, 
+    Course course = courseController.createCourse(module, name, nameExtension, state, type, subject, courseNumber, 
         toDate(beginDate), toDate(endDate), courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, 
         planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, loggedUser);
     
@@ -230,6 +232,7 @@ public class CourseRESTService extends AbstractRESTService {
     String name = courseEntity.getName();
     String nameExtension = courseEntity.getNameExtension();
     CourseState state = courseController.findCourseStateById(courseEntity.getStateId());
+    CourseType type = courseController.findCourseTypeById(courseEntity.getTypeId());
 
     Subject subject = null;
     if (courseEntity.getSubjectId() != null) {
@@ -266,7 +269,7 @@ public class CourseRESTService extends AbstractRESTService {
     Date enrolmentTimeEnd = toDate(courseEntity.getEnrolmentTimeEnd());
     User loggedUser = sessionController.getUser();
     
-    Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, subject, courseNumber, toDate(beginDate), toDate(endDate), courseLength,
+    Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, type, subject, courseNumber, toDate(beginDate), toDate(endDate), courseLength,
         courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, description,
         maxParticipantCount, enrolmentTimeEnd, loggedUser);
     

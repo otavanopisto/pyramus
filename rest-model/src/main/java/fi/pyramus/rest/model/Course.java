@@ -13,16 +13,18 @@ public class Course {
   public Course(String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Map<String, String> variables, List<String> tags) {
+      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
+      Map<String, String> variables, List<String> tags) {
     this(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
-        creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, variables, tags);
+        creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
   }
 
   public Course(Long id, String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Map<String, String> variables, List<String> tags) {
+      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
+      Map<String, String> variables, List<String> tags) {
     super();
     this.id = id;
     this.name = name;
@@ -48,6 +50,7 @@ public class Course {
     this.lengthUnitId = lengthUnitId;
     this.moduleId = moduleId;
     this.stateId = stateId;
+    this.typeId = typeId;
     this.tags = tags;
     this.variables = variables;
   }
@@ -243,6 +246,14 @@ public class Course {
   public void setStateId(Long stateId) {
     this.stateId = stateId;
   }
+  
+  public Long getTypeId() {
+    return typeId;
+  }
+  
+  public void setTypeId(Long typeId) {
+    this.typeId = typeId;
+  }
 
   public List<String> getTags() {
     return tags;
@@ -284,6 +295,7 @@ public class Course {
   private Long lengthUnitId;
   private Long moduleId;
   private Long stateId;
+  private Long typeId;
   private Map<String, String> variables;
   private List<String> tags;
 }

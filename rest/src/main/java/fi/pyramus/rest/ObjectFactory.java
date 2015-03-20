@@ -152,6 +152,7 @@ public class ObjectFactory {
             Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
             Long moduleId = entity.getModule() != null ? entity.getModule().getId() : null;
             Long stateId = entity.getState() != null ? entity.getState().getId() : null;
+            Long typeId = entity.getType() != null ? entity.getType().getId() : null;
             
             List<CourseBaseVariable> entityVariables = courseController.listCourseVariablesByCourse(entity);
 
@@ -165,7 +166,7 @@ public class ObjectFactory {
                 entity.getMaxParticipantCount(), beginDate, endDate, entity.getNameExtension(), 
                 entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingDays(), 
                 entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, creatorId, 
-                lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, variables, tags);
+                lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
           }
         }, 
         
