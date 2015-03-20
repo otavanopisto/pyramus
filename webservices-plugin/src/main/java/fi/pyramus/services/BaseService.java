@@ -121,7 +121,7 @@ public class BaseService extends PyramusService {
 
   public EducationalTimeUnitEntity createEducationalTimeUnit(@WebParam (name = "baseUnits") Double baseUnits, @WebParam (name = " name") String name) {
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
-    EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.create(baseUnits, name, "");
+    EducationalTimeUnit educationalTimeUnit = educationalTimeUnitDAO.create(baseUnits, name, "undefined");
     validateEntity(educationalTimeUnit);
     return EntityFactoryVault.buildFromDomainObject(educationalTimeUnit);
   }

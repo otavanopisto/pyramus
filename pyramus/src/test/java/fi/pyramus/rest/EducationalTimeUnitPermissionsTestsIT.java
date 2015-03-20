@@ -30,7 +30,7 @@ private CommonPermissions commonPermissions = new CommonPermissions();
 
   @Test
   public void testPermissionsCreateEducationalTimeUnit() throws NoSuchFieldException {
-    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "create unit", "", 1d, Boolean.FALSE);
+    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "create unit", "sym", 1d, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")

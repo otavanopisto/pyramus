@@ -725,6 +725,10 @@ public class CommonRESTService extends AbstractRESTService {
     if (baseUnits == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
+
+    if (symbol == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
     
     return Response.ok()
       .entity(objectFactory.createModel(commonController.createEducationalTimeUnit(baseUnits, name, symbol)))
@@ -798,6 +802,10 @@ public class CommonRESTService extends AbstractRESTService {
     }
 
     if (baseUnits == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    if (symbol == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     

@@ -16,7 +16,8 @@ public class EducationalTimeUnitDAO extends PyramusEntityDAO<EducationalTimeUnit
    *          The number of base units this unit is
    * @param name
    *          The unit name
-   * @param symbol TODO
+   * @param symbol
+   *          The unit symbol
    * @return The created education time unit
    */
   public EducationalTimeUnit create(Double baseUnits, String name, String symbol) {

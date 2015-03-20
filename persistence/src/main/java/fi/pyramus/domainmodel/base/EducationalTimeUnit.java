@@ -86,6 +86,7 @@ public class EducationalTimeUnit implements ArchivableEntity {
   private Long version;
   
   @NotNull
+  @NotEmpty
   @Column(nullable = false)
   private String symbol;
 }
