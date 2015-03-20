@@ -49,6 +49,7 @@ import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
+import fi.pyramus.domainmodel.courses.CourseType;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.modules.Module;
@@ -120,6 +121,13 @@ public class ObjectFactory {
         new Mapper<CourseState>() {
           @Override
           public Object map(CourseState entity) {
+            return new fi.pyramus.rest.model.CourseState(entity.getId(), entity.getName(), entity.getArchived());
+          }
+        }, 
+        
+        new Mapper<CourseType>() {
+          @Override
+          public Object map(CourseType entity) {
             return new fi.pyramus.rest.model.CourseState(entity.getId(), entity.getName(), entity.getArchived());
           }
         }, 

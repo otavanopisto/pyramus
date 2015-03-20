@@ -83,7 +83,7 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   public static final String DELETE_COURSESTUDENT = "DELETE_COURSESTUDENT";
 
   /**
-   * COURSEStaffMember
+   * COURSEState
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -105,6 +105,30 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String ARCHIVE_COURSESTATE = "ARCHIVE_COURSESTATE";
+
+  /**
+   * course types
+   */
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String CREATE_COURSETYPE = "CREATE_COURSETYPE";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String LIST_COURSETYPES = "LIST_COURSETYPES";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String FIND_COURSETYPE = "FIND_COURSETYPE";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String UPDATE_COURSETYPE = "UPDATE_COURSETYPE";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  public static final String ARCHIVE_COURSETYPE = "ARCHIVE_COURSETYPE";
   
   /**
    * COURSEStudent

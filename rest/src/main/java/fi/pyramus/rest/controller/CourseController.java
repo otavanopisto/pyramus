@@ -119,11 +119,6 @@ public class CourseController {
     return enrolmentType;
   }
   
-  public CourseState createCourseState(String name) {
-    CourseState courseState = courseStateDAO.create(name);
-    return courseState;
-  }
-  
   public CourseParticipationType createCourseParticipationType(String name) {
     CourseParticipationType courseParticipationType = courseParticipationTypeDAO.create(name);
     return courseParticipationType;
@@ -223,23 +218,76 @@ public class CourseController {
     courseEnrolmentTypeDAO.delete(enrolmentType);
   }
   
-  public List<CourseState> findCourseStates() {
-    List<CourseState> courseStates = courseStateDAO.listAll();
-    return courseStates;
+  /* States */
+
+  public CourseState createCourseState(String name) {
+    return courseStateDAO.create(name);
   }
   
-  public List<CourseState> findUnarchivedCourseStates() {
-    List<CourseState> courseStates = courseStateDAO.listUnarchived();
-    return courseStates;
+  public List<CourseState> listCourseStates() {
+    return courseStateDAO.listAll();
+  }
+  
+  public List<CourseState> listUnarchivedCourseStates() {
+    return courseStateDAO.listUnarchived();
   }
   
   public CourseState findCourseStateById(Long id) {
-    CourseState state = courseStateDAO.findById(id);
-    return state;
+    return courseStateDAO.findById(id);
+  }
+  
+  public CourseState updateCourseState(CourseState courseState, String name) {
+    return courseStateDAO.update(courseState, name);
+  }
+  
+  public CourseState unarchiveCourseState(CourseState courseState, User user) {
+    courseStateDAO.unarchive(courseState, user);
+    return courseState;
+  }
+  
+  public CourseState archiveCourseState(CourseState courseState, User user) {
+    courseStateDAO.archive(courseState, user);
+    return courseState;
+  }
+
+  public void deleteCourseState(CourseState courseState) {
+    courseStateDAO.delete(courseState);
+  }
+  
+  /* Types */
+  
+  public CourseType createCourseType(String name) {
+    return courseTypeDAO.create(name);
+  }
+  
+  public List<CourseType> listCourseTypes() {
+    return courseTypeDAO.listAll();
+  }
+  
+  public List<CourseType> listUnarchivedCourseTypes() {
+    return courseTypeDAO.listUnarchived();
   }
   
   public CourseType findCourseTypeById(Long id) {
     return courseTypeDAO.findById(id);
+  }
+
+  public CourseType updateCourseType(CourseType courseType, String name) {
+    return courseTypeDAO.updateName(courseType, name);
+  }
+  
+  public CourseType unarchiveCourseType(CourseType courseType, User user) {
+    courseTypeDAO.unarchive(courseType, user);
+    return courseType;
+  }
+  
+  public CourseType archiveCourseType(CourseType courseType, User user) {
+    courseTypeDAO.archive(courseType, user);
+    return courseType;
+  }
+
+  public void deleteCourseType(CourseType courseType) {
+    courseTypeDAO.delete(courseType);
   }
   
   public List<CourseParticipationType> findCourseParticiPationTypes() {
@@ -279,11 +327,6 @@ public class CourseController {
   
   public CourseDescriptionCategory updateCourseDescriptionCategory(CourseDescriptionCategory courseDescriptionCategory, String name) {
     CourseDescriptionCategory updated = courseDescriptionCategoryDAO.update(courseDescriptionCategory, name);
-    return updated;
-  }
-  
-  public CourseState updateCourseState(CourseState courseState, String name) {
-    CourseState updated = courseStateDAO.update(courseState, name);
     return updated;
   }
   
@@ -337,20 +380,6 @@ public class CourseController {
 
   public void deleteCourseDescriptionCategory(CourseDescriptionCategory category) {
     courseDescriptionCategoryDAO.delete(category);;
-  }
-  
-  public CourseState archiveCourseState(CourseState courseState, User user) {
-    courseStateDAO.archive(courseState, user);
-    return courseState;
-  }
-  
-  public CourseState unarchiveCourseState(CourseState courseState, User user) {
-    courseStateDAO.unarchive(courseState, user);
-    return courseState;
-  }
-
-  public void deleteCourseState(CourseState courseState) {
-    courseStateDAO.delete(courseState);
   }
   
   public CourseParticipationType archiveCourseParticipationType(CourseParticipationType courseParticipationType, User user) {
@@ -553,5 +582,4 @@ public class CourseController {
   public void deleteCourseVariableKey(CourseBaseVariableKey courseVariableKey) {
     courseBaseVariableKeyDAO.delete(courseVariableKey);
   }
-  
 }

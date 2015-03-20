@@ -823,9 +823,9 @@ public class CourseRESTService extends AbstractRESTService {
     List<CourseState> courseStates;
     
     if (filterArchived) {
-      courseStates = courseController.findUnarchivedCourseStates();
+      courseStates = courseController.listUnarchivedCourseStates();
     } else {
-      courseStates = courseController.findCourseStates();
+      courseStates = courseController.listCourseStates();
     }
     
     if (courseStates.isEmpty()) {
@@ -891,6 +891,100 @@ public class CourseRESTService extends AbstractRESTService {
       courseController.deleteCourseState(courseState);
     } else {
       courseController.archiveCourseState(courseState, sessionController.getUser());
+    }
+    
+    return Response.noContent().build();
+  }
+  
+  @Path("/courseTypes")
+  @POST
+  @RESTPermit (CoursePermissions.CREATE_COURSETYPE)
+  public Response createCourseType(fi.pyramus.rest.model.CourseType entity) {
+    if (StringUtils.isBlank(entity.getName())) {
+      return Response.status(Status.BAD_REQUEST).entity("name is required").build();
+    }
+    
+    return Response
+      .status(Status.OK)
+      .entity(objectFactory.createModel(courseController.createCourseType(entity.getName())))
+      .build();
+  }
+  
+  @Path("/courseTypes")
+  @GET
+  @RESTPermit (CoursePermissions.LIST_COURSETYPES)
+  public Response listCourseTypes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<CourseType> courseTypes;
+    
+    if (filterArchived) {
+      courseTypes = courseController.listUnarchivedCourseTypes();
+    } else {
+      courseTypes = courseController.listCourseTypes();
+    }
+    
+    if (courseTypes.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(courseTypes)).build();
+  }
+  
+  @Path("/courseTypes/{ID:[0-9]*}")
+  @GET
+  @RESTPermit (CoursePermissions.FIND_COURSETYPE)
+  public Response findCourseTypeById(@PathParam("ID") Long id) {
+    CourseType courseType = courseController.findCourseTypeById(id);
+    if (courseType == null) {
+      return Response.status(Status.NOT_FOUND).build(); 
+    }
+    
+    if (courseType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build(); 
+    }    
+    
+    return Response.ok().entity(objectFactory.createModel(courseType)).build();
+  }
+  
+  @Path("/courseTypes/{ID:[0-9]*}")
+  @PUT
+  @RESTPermit (CoursePermissions.UPDATE_COURSETYPE)
+  public Response updateCourseType(@PathParam("ID") Long id, fi.pyramus.rest.model.CourseType entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    CourseType courseType = courseController.findCourseTypeById(id);
+    if (courseType == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (courseType.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (StringUtils.isBlank(entity.getName())) {
+      return Response.status(Status.BAD_REQUEST).entity("Name is required").build();
+    }
+    
+    return Response
+        .status(Status.OK)
+        .entity(objectFactory.createModel(courseController.updateCourseType(courseType, entity.getName())))
+        .build();
+  }
+  
+  @Path("/courseTypes/{ID:[0-9]*}") 
+  @DELETE
+  @RESTPermit (CoursePermissions.ARCHIVE_COURSETYPE)
+  public Response deleteCourseType(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    CourseType type = courseController.findCourseTypeById(id);
+    if (type == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      courseController.deleteCourseType(type);
+    } else {
+      courseController.archiveCourseType(type, sessionController.getUser());
     }
     
     return Response.noContent().build();
@@ -1357,5 +1451,4 @@ public class CourseRESTService extends AbstractRESTService {
     
     return Response.noContent().build();
   }
-  
 }
