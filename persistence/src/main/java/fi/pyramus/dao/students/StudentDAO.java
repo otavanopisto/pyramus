@@ -120,7 +120,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
   public Student create(Person person, String firstName, String lastName, String nickname, String additionalInfo,
       Date studyTimeEnd, StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
       Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Double previousStudies,
-      Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, String studyEndText, Boolean lodging) {
+      Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, String studyEndText, Boolean lodging, Boolean archived) {
 
     EntityManager entityManager = getEntityManager();
 
@@ -148,6 +148,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setStudyEndText(studyEndText);
     student.setLodging(lodging);
     student.setContactInfo(contactInfo);
+    student.setArchived(archived);
 
     entityManager.persist(student);
 

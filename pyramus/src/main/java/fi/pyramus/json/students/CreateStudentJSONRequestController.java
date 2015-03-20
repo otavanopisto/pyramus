@@ -159,7 +159,7 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     
     Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo,
         studyTimeEnd, activityType, examinationType, educationalLevel, education, nationality, municipality,
-        language, school, studyProgramme, previousStudies, studyStartTime, studyEndTime, studyEndReason, studyEndText, lodging);
+        language, school, studyProgramme, previousStudies, studyStartTime, studyEndTime, studyEndReason, studyEndText, lodging, false);
 
     // Tags
 

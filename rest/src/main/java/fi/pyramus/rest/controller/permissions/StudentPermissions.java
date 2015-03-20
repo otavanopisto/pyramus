@@ -78,11 +78,11 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   public static final String CREATE_STUDENTEMAIL = "CREATE_STUDENTEMAIL";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String LIST_STUDENTEMAILS = "LIST_STUDENTEMAILS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String FIND_STUDENTEMAIL = "FIND_STUDENTEMAIL";
   
   @Scope (PermissionScope.ENVIRONMENT)

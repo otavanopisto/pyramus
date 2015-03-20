@@ -86,7 +86,7 @@ public class StudentAPI {
 
     Student student = studentDAO.create(personEntity, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityTypeEntity,
         examinationTypeEntity, educationalLevelEntity, education, nationalityEntity, municipalityEntity, languageEntity, school, studyProgramme,
-        previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging);
+        previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging, false);
 
     if (StringUtils.isNotBlank(email)) {
       ContactType emailContactType = contactTypeDAO.findById(emailContactTypeId);
