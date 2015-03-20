@@ -5,10 +5,11 @@ public class EducationalTimeUnit {
   public EducationalTimeUnit() {
   }
 
-  public EducationalTimeUnit(Long id, String name, Double baseUnits, Boolean archived) {
+  public EducationalTimeUnit(Long id, String name, String symbol, Double baseUnits, Boolean archived) {
     super();
     this.id = id;
     this.name = name;
+    this.symbol = symbol;
     this.baseUnits = baseUnits;
     this.archived = archived;
   }
