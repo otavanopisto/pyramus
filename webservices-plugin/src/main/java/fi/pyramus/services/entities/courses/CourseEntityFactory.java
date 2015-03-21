@@ -2,6 +2,7 @@ package fi.pyramus.services.entities.courses;
 
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.courses.Course;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.services.entities.EntityFactory;
 import fi.pyramus.services.entities.EntityFactoryVault;
 import fi.pyramus.services.entities.base.SubjectEntity;
@@ -15,8 +16,8 @@ public class CourseEntityFactory implements EntityFactory<CourseEntity> {
 
     Course course = (Course) domainObject;
 
-    UserEntity creator = EntityFactoryVault.buildFromDomainObject(course.getCreator());
-    UserEntity lastModifier = EntityFactoryVault.buildFromDomainObject(course.getLastModifier());
+    UserEntity creator = EntityFactoryVault.buildFromDomainObject((StaffMember) course.getCreator());
+    UserEntity lastModifier = EntityFactoryVault.buildFromDomainObject((StaffMember) course.getLastModifier());
     SubjectEntity subject = EntityFactoryVault.buildFromDomainObject(course.getSubject());
     CourseComponentEntity[] components = (CourseComponentEntity[]) EntityFactoryVault.buildFromDomainObjects(course.getCourseComponents());
     CourseEducationTypeEntity[] educationTypes = (CourseEducationTypeEntity[]) EntityFactoryVault.buildFromDomainObjects(course.getCourseEducationTypes());

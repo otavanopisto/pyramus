@@ -19,7 +19,6 @@ import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.StaffMember;
-import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.framework.UserUtils;
 import fi.pyramus.services.entities.EntityFactoryVault;
@@ -37,23 +36,23 @@ public class UsersService extends PyramusService {
   }
 
   public UserEntity[] listUsersByUserVariable(@WebParam(name = "key") String key, @WebParam(name = "value") String value) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
-    return (UserEntity[]) EntityFactoryVault.buildFromDomainObjects(userDAO.listByUserVariable(key, value));
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    return (UserEntity[]) EntityFactoryVault.buildFromDomainObjects(staffMemberDAO.listByUserVariable(key, value));
   }
 
   public UserEntity createUser(@WebParam(name = "firstName") String firstName, @WebParam(name = "lastName") String lastName,
       @WebParam(name = "externalId") String externalId, @WebParam(name = "authProvider") String authProvider, @WebParam(name = "role") String role) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
     // TODO: should not create if user exists
     Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
     userIdentificationDAO.create(person, authProvider, externalId);
     Role userRole = EnumType.valueOf(Role.class, role);
-    User user = userDAO.create(firstName, lastName, userRole, person, false);
-    personDAO.updateDefaultUser(person, user);
-    validateEntity(user);
-    return EntityFactoryVault.buildFromDomainObject(user);
+    StaffMember staffMember = staffMemberDAO.create(firstName, lastName, userRole, person, false);
+    personDAO.updateDefaultUser(person, staffMember);
+    validateEntity(staffMember);
+    return EntityFactoryVault.buildFromDomainObject(staffMember);
   }
 
   public void updateUser(@WebParam(name = "userId") Long userId, @WebParam(name = "firstName") String firstName, @WebParam(name = "lastName") String lastName,
