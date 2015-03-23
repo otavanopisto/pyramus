@@ -128,7 +128,7 @@ public class ObjectFactory {
         new Mapper<CourseType>() {
           @Override
           public Object map(CourseType entity) {
-            return new fi.pyramus.rest.model.CourseState(entity.getId(), entity.getName(), entity.getArchived());
+            return new fi.pyramus.rest.model.CourseType(entity.getId(), entity.getName(), entity.getArchived());
           }
         }, 
         
