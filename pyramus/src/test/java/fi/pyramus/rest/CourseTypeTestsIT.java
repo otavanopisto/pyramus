@@ -100,7 +100,7 @@ public class CourseTypeTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
-  public void testDeleteCourseComponent() {
+  public void testDeleteCourseType() {
     CourseType courseType = new CourseType("Delete Test", Boolean.FALSE);
 
     Response response = given().headers(getAuthHeaders())
