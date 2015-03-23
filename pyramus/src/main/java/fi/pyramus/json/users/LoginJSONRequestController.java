@@ -2,7 +2,6 @@ package fi.pyramus.json.users;
 
 import java.util.Locale;
 
-import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -16,7 +15,6 @@ import fi.pyramus.framework.UserRole;
 import fi.pyramus.plugin.auth.AuthenticationException;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
-import fi.pyramus.security.impl.PyramusRights;
 
 /**
  * The controller responsible of logging in the user with the credentials he has provided. 
@@ -69,8 +67,6 @@ public class LoginJSONRequestController extends JSONRequestController {
             session.setAttribute("loggedUserRole", UserRole.valueOf(((StaffMember) user).getRole().name()));
           }
           
-          PyramusRights.login(user.getId());
-          
           // If the session contains a followup URL, redirect there and if not, redirect to the index page 
           
           if (session.getAttribute("loginRedirectUrl") != null) {
@@ -88,8 +84,6 @@ public class LoginJSONRequestController extends JSONRequestController {
           throw new SmvcRuntimeException(PyramusStatusCode.LOCAL_USER_MISSING, Messages.getInstance().getText(locale, "users.login.localUserMissing"));
         else 
           throw new SmvcRuntimeException(ae);
-      } catch (NamingException e) {
-        throw new SmvcRuntimeException(e);
       }
     }
     

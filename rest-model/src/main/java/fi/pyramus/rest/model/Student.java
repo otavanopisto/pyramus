@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 
-import fi.muikku.security.ContextReference;
+import fi.otavanopisto.security.ContextReference;
 
 public class Student implements ContextReference {
 

@@ -5,7 +5,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import fi.muikku.security.ContextReference;
+import fi.otavanopisto.security.ContextReference;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.User;
 
@@ -20,7 +20,7 @@ public abstract class AbstractPermissionResolver {
     return Role.EVERYONE;
   }
   
-  protected User getUser(fi.muikku.security.User user) {
+  protected User getUser(fi.otavanopisto.security.User user) {
     return (User) user;
   }
 

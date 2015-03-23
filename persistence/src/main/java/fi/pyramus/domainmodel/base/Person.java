@@ -39,7 +39,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
 
-import fi.muikku.security.ContextReference;
+import fi.otavanopisto.security.ContextReference;
 import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.StaffMember;

@@ -17,7 +17,6 @@ import fi.pyramus.framework.UserRole;
 import fi.pyramus.plugin.auth.AuthenticationException;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.ExternalAuthenticationProvider;
-import fi.pyramus.security.impl.PyramusRights;
 import fi.pyramus.security.impl.SessionController;
 
 public class ExternalLoginLoginViewController extends PyramusViewController {
@@ -26,9 +25,6 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
     return new UserRole[] { UserRole.EVERYONE };
   }
 
-  @Inject
-  private SessionController sessionController;
-  
   // TODO: Does not support multiple external strategies
   public void process(PageRequestContext requestContext) {
     // Ensure that the user trying to login isn't already logged in
@@ -53,8 +49,6 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
           session.setAttribute("loggedUserRole", UserRole.valueOf(((StaffMember) user).getRole().name()));
         }
         
-        PyramusRights.login(user.getId());
-        
         // If the session contains a followup URL, redirect there and if not, redirect to the index page 
         
         if (session.getAttribute("loginRedirectUrl") != null) {
@@ -74,8 +68,6 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
         throw new SmvcRuntimeException(PyramusStatusCode.LOCAL_USER_MISSING, Messages.getInstance().getText(locale, "users.login.localUserMissing"));
       else 
         throw new SmvcRuntimeException(ae);
-    } catch (NamingException e) {
-      throw new SmvcRuntimeException(e);
     }
   }
 

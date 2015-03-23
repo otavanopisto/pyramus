@@ -2,7 +2,7 @@ package fi.pyramus.rest.controller.permissions;
 
 import java.util.List;
 
-import fi.muikku.security.Scope;
+import fi.otavanopisto.security.Scope;
 import fi.pyramus.security.impl.AbstractPyramusPermissionCollection;
 import fi.pyramus.security.impl.DefaultPermissionRoles;
 import fi.pyramus.security.impl.PermissionScope;
