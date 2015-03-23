@@ -17,9 +17,9 @@ public class CourseTypeAPI {
     return create(name, false);
   }
   
-  public Long create(String name, Boolean nonUnique) {
+  public Long create(String name, Boolean archived) {
     CourseTypeDAO courseTypeDAO = DAOFactory.getInstance().getCourseTypeDAO();
-    return courseTypeDAO.create(name, nonUnique).getId();
+    return courseTypeDAO.create(name, archived).getId();
   }
   
   public Long[] listIdsByName(String name) {
