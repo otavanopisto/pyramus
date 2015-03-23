@@ -15,7 +15,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateEducationalTimeUnit() {
-    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "create unit", 1d, Boolean.FALSE);
+    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "create unit", "sym", 1d, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -25,6 +25,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
     response.then()
       .body("id", not(is((Long) null)))
       .body("name", is(educationalTimeUnit.getName()))
+      .body("symbol", is(educationalTimeUnit.getSymbol()))
       .body("baseUnits", is(educationalTimeUnit.getBaseUnits().floatValue() ))
       .body("archived", is( educationalTimeUnit.getArchived() ));
       
@@ -67,7 +68,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateEducationalTimeUnit() {
-    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "not updated unit", 1d, Boolean.FALSE);
+    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "not updated unit", "sym", 1d, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -77,12 +78,13 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
     response.then()
       .body("id", not(is((Long) null)))
       .body("name", is(educationalTimeUnit.getName()))
+      .body("symbol", is(educationalTimeUnit.getSymbol()))
       .body("baseUnits", is(educationalTimeUnit.getBaseUnits().floatValue() ))
       .body("archived", is( educationalTimeUnit.getArchived() ));
       
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      EducationalTimeUnit updateTimeUnit = new EducationalTimeUnit(id, "updated unit", 2d, Boolean.FALSE);
+      EducationalTimeUnit updateTimeUnit = new EducationalTimeUnit(id, "updated unit", "sym", 2d, Boolean.FALSE);
 
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -92,6 +94,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
         .statusCode(200)
         .body("id", is( updateTimeUnit.getId().intValue() ))
         .body("name", is(updateTimeUnit.getName()))
+        .body("symbol", is(educationalTimeUnit.getSymbol()))
         .body("baseUnits", is(updateTimeUnit.getBaseUnits().floatValue() ))
         .body("archived", is( updateTimeUnit.getArchived() ));
 
@@ -105,7 +108,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteEducationalTimeUnit() {
-    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "not updated unit", 1d, Boolean.FALSE);
+    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "not updated unit", "sym", 1d, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -115,6 +118,7 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
     response.then()
       .body("id", not(is((Long) null)))
       .body("name", is(educationalTimeUnit.getName()))
+      .body("symbol", is(educationalTimeUnit.getSymbol()))
       .body("baseUnits", is(educationalTimeUnit.getBaseUnits().floatValue() ))
       .body("archived", is( educationalTimeUnit.getArchived() ));
       

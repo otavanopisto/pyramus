@@ -29,12 +29,13 @@ public class TimeUnitsSetupWizardViewController extends SetupWizardController {
       Boolean baseUnit = "1".equals(requestContext.getString(colPrefix + ".baseUnit"));
       Double baseUnits = requestContext.getDouble(colPrefix + ".baseUnits");
       String name = requestContext.getRequest().getParameter(colPrefix + ".name");
+      String symbol = requestContext.getRequest().getParameter(colPrefix + ".symbol");
       
       if (baseUnit) {
         baseUnits = new Double(1);
       }
 
-      EducationalTimeUnit timeUnit = educationalTimeUnitDAO.create(baseUnits, name); 
+      EducationalTimeUnit timeUnit = educationalTimeUnitDAO.create(baseUnits, name, symbol); 
       
       if (baseUnit) {
         if (baseTimeUnit != null) {

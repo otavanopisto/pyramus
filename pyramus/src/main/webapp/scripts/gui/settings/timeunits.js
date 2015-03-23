@@ -3,7 +3,7 @@ var baseTimeUnit = JSDATA["baseTimeUnit"].evalJSON();
 
 function addTimeUnitsTableRow() {
   var table = getIxTableById('timeUnitsTable');
-  var rowIndex = table.addRow([ '', false, 0, '', '', '', -1 ]);
+  var rowIndex = table.addRow([ '', false, 0, '', '', '', '', -1 ]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -57,8 +57,17 @@ function onLoad(event) {
           required : true
         },
         {
-          header : getLocale().getText("settings.timeUnits.timeUnitsTableNameHeader"),
+          header : getLocale().getText("settings.timeUnits.timeUnitsTableSymbolHeader"),
           left : 234,
+          width : 70,
+          dataType : 'text',
+          editable : false,
+          paramName : 'symbol',
+          required : true
+        },
+        {
+          header : getLocale().getText("settings.timeUnits.timeUnitsTableNameHeader"),
+          left : 312,
           right : 46,
           dataType : 'text',
           editable : false,
@@ -163,7 +172,7 @@ function onLoad(event) {
   timeUnitsTable.detachFromDom();
   for ( var i = 0, l = timeUnits.length; i < l; i++) {
     var timeUnit = timeUnits[i];
-    rowIndex = timeUnitsTable.addRow([ '', timeUnit.id == baseTimeUnit.id, timeUnit.baseUnits, jsonEscapeHTML(timeUnit.name), '', '', timeUnit.id ]);
+    rowIndex = timeUnitsTable.addRow([ '', timeUnit.id == baseTimeUnit.id, timeUnit.baseUnits, jsonEscapeHTML(timeUnit.symbol), jsonEscapeHTML(timeUnit.name), '', '', timeUnit.id ]);
     if (timeUnit.id == baseTimeUnit.id) {
       timeUnitsTable.hideCell(rowIndex, timeUnitsTable.getNamedColumnIndex("baseUnits"));
     }

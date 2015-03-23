@@ -30,7 +30,7 @@ private CommonPermissions commonPermissions = new CommonPermissions();
 
   @Test
   public void testPermissionsCreateEducationalTimeUnit() throws NoSuchFieldException {
-    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "create unit", 1d, Boolean.FALSE);
+    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "create unit", "sym", 1d, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -68,7 +68,7 @@ private CommonPermissions commonPermissions = new CommonPermissions();
   
   @Test
   public void testPermissionsUpdateEducationalTimeUnit() throws NoSuchFieldException {
-    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "not updated unit", 1d, Boolean.FALSE);
+    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "not updated unit", "sym", 1d, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -77,7 +77,7 @@ private CommonPermissions commonPermissions = new CommonPermissions();
 
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      EducationalTimeUnit updateTimeUnit = new EducationalTimeUnit(id, "updated unit", 2d, Boolean.FALSE);
+      EducationalTimeUnit updateTimeUnit = new EducationalTimeUnit(id, "updated unit", "sym", 2d, Boolean.FALSE);
 
       Response updateResponse = given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -92,7 +92,7 @@ private CommonPermissions commonPermissions = new CommonPermissions();
   
   @Test
   public void testPermissionsDeleteEducationalTimeUnit() throws NoSuchFieldException {
-    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "not updated unit", 1d, Boolean.FALSE);
+    EducationalTimeUnit educationalTimeUnit = new EducationalTimeUnit(null, "not updated unit", "sym", 1d, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
