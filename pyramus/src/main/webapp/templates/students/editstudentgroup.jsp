@@ -151,8 +151,8 @@
 
         <c:forEach var="user" items="${studentGroup.users}">
           usersTable.addRow([
-            ${user.user.id},
-            '${fn:escapeXml(user.user.fullName)}',
+            ${user.staffMember.id},
+            '${fn:escapeXml(user.staffMember.fullName)}',
             '',
             ${user.id}
           ]);
