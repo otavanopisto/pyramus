@@ -102,7 +102,7 @@
     
     <!-- Webapp-permission -->
     
-    <webapp-permission.version>1.0.1-SNAPSHOT</webapp-permission.version>
+    <webapp-permission.version>1.0.0</webapp-permission.version>
   </properties>
   
   <dependencyManagement>
