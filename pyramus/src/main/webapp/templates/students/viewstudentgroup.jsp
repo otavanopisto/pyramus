@@ -219,7 +219,7 @@
           </jsp:include>
           <div>
             <c:forEach var="user" items="${studentGroup.users}">
-              <div>${user.user.fullName}</div>
+              <div>${user.staffMember.fullName}</div>
             </c:forEach>
           </div>
         </div>          

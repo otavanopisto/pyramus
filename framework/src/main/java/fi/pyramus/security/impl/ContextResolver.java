@@ -1,6 +1,6 @@
 package fi.pyramus.security.impl;
 
-import fi.muikku.security.ContextReference;
+import fi.otavanopisto.security.ContextReference;
 
 
 public interface ContextResolver {

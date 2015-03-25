@@ -3,8 +3,8 @@ package fi.pyramus.security.impl;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.muikku.security.ContextReference;
-import fi.muikku.security.Identity;
+import fi.otavanopisto.security.ContextReference;
+import fi.otavanopisto.security.Identity;
 
 @ApplicationScoped
 public class IdentityImpl implements Identity {

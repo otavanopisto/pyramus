@@ -79,17 +79,16 @@
       <artifactId>jboss-ejb-api_3.2_spec</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>fi.muikku</groupId>
-      <artifactId>security</artifactId>
-      <version>1.0.8-SNAPSHOT</version>
-    </dependency>
     
     <!-- Pyramus -->
     
     <dependency>
       <groupId>fi.pyramus</groupId>
       <artifactId>common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>fi.otavanopisto</groupId>
+      <artifactId>webapp-permission</artifactId>
     </dependency>
   </dependencies>
 

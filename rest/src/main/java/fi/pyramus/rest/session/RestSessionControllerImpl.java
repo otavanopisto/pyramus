@@ -15,8 +15,8 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 
-import fi.muikku.security.ContextReference;
-import fi.muikku.security.PermissionResolver;
+import fi.otavanopisto.security.ContextReference;
+import fi.otavanopisto.security.PermissionResolver;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.rest.controller.OauthController;

@@ -1,6 +1,6 @@
 package fi.pyramus.security.impl;
 
-import fi.muikku.security.PermissionCollection;
+import fi.otavanopisto.security.PermissionCollection;
 
 public interface PyramusPermissionCollection extends PermissionCollection {
 

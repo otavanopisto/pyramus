@@ -6,8 +6,8 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import fi.muikku.security.ContextReference;
-import fi.muikku.security.Identity;
+import fi.otavanopisto.security.ContextReference;
+import fi.otavanopisto.security.Identity;
 import fi.pyramus.rest.annotation.RESTPermit;
 import fi.pyramus.rest.annotation.RESTPermit.Handling;
 
