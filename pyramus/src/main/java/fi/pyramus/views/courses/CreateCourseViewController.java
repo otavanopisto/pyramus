@@ -22,6 +22,7 @@ import fi.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.pyramus.dao.courses.CourseParticipationTypeDAO;
+import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.modules.ModuleComponentDAO;
 import fi.pyramus.dao.modules.ModuleDAO;
@@ -54,6 +55,7 @@ public class CreateCourseViewController extends PyramusViewController implements
    */
   public void process(PageRequestContext pageRequestContext) {
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
+    CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
     CourseDescriptionCategoryDAO descriptionCategoryDAO = DAOFactory.getInstance().getCourseDescriptionCategoryDAO();
     CourseDescriptionDAO descriptionDAO = DAOFactory.getInstance().getCourseDescriptionDAO();
     CourseStateDAO stateDAO = DAOFactory.getInstance().getCourseStateDAO();
@@ -133,8 +135,7 @@ public class CreateCourseViewController extends PyramusViewController implements
 
     pageRequestContext.getRequest().setAttribute("educationSubtypes", educationSubtypes);
     pageRequestContext.getRequest().setAttribute("states", stateDAO.listUnarchived());
-//    FIXME: roles
-//    pageRequestContext.getRequest().setAttribute("roles", userRoleDAO.listAll());
+    pageRequestContext.getRequest().setAttribute("roles", courseStaffMemberRoleDAO.listAll());
     pageRequestContext.getRequest().setAttribute("subjectsByNoEducationType", subjectsByNoEducationType);
     pageRequestContext.getRequest().setAttribute("subjectsByEducationType", subjectsByEducationType);
     pageRequestContext.getRequest().setAttribute("courseParticipationTypes", courseParticipationTypes);
