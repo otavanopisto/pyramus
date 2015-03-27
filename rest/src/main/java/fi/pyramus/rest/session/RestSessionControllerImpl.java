@@ -1,6 +1,7 @@
 package fi.pyramus.rest.session;
 
 import java.util.Locale;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -14,8 +15,8 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 
-import fi.muikku.security.ContextReference;
-import fi.muikku.security.PermissionResolver;
+import fi.otavanopisto.security.ContextReference;
+import fi.otavanopisto.security.PermissionResolver;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.rest.controller.OauthController;
@@ -25,6 +26,9 @@ import fi.pyramus.security.impl.SessionController;
 @RestSession
 @RequestScoped
 public class RestSessionControllerImpl extends AbstractSessionControllerImpl implements SessionController {
+  
+  @Inject
+  private Logger logger;
   
   @Inject
   private HttpServletRequest request;
@@ -53,6 +57,10 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
   @Override
   public boolean hasPermission(String permission, ContextReference contextReference) {
     PermissionResolver permissionResolver = getPermissionResolver(permission);
+    if (permissionResolver == null) {
+      logger.severe(String.format("Could not find permissionResolver for permission %s", permission));
+      return false;
+    }
     
     if (isLoggedIn()) {
       return isSuperuser() || permissionResolver.hasPermission(permission, contextReference, getUser());

@@ -30,12 +30,12 @@ public class SetupWizardPageFlowController {
     "academicterms",
     "schoolfields", 
     "schools", 
-    
     "municipalities", 
     
     // Course
     
     "coursestates", 
+    "coursetypes", 
     "courseparticipationtypes", 
     
     // Student

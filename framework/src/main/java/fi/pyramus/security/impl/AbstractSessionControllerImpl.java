@@ -10,8 +10,8 @@ import javax.enterprise.inject.Instance;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
-import fi.muikku.security.ContextReference;
-import fi.muikku.security.PermissionResolver;
+import fi.otavanopisto.security.ContextReference;
+import fi.otavanopisto.security.PermissionResolver;
 
 @Stateful
 @SessionScoped

@@ -1,6 +1,6 @@
 package fi.pyramus.security.impl;
 
-import fi.muikku.security.AbstractPermissionCollection;
+import fi.otavanopisto.security.AbstractPermissionCollection;
 
 public class AbstractPyramusPermissionCollection extends AbstractPermissionCollection {
   

@@ -965,6 +965,19 @@
                 </c:forEach>
               </select>
             </div>
+      
+            <div class="genericFormSection">  
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="courses.createCourse.typeTitle"/>
+                <jsp:param name="helpLocale" value="courses.createCourse.typeHelp"/>
+              </jsp:include>
+              <select name="type">           
+                <option></option> 
+                <c:forEach var="type" items="${types}">
+                  <option value="${type.id}">${type.name}</option> 
+                </c:forEach>
+              </select>
+            </div>
 
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">

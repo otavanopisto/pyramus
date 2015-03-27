@@ -69,7 +69,7 @@ public class EducationTypePermissionsTestsIT extends AbstractRESTPermissionsTest
     Response response = given().headers(getAuthHeaders())
         .get("/common/educationTypes/{ID}/subjects", 2);
     
-    assertOk(response, commonPermissions, CommonPermissions.LIST_SUBJECTS, 200);
+    assertOk(response, commonPermissions, CommonPermissions.LIST_SUBJECTSBYEDUCATIONTYPE, 200);
   }
   
   @Test

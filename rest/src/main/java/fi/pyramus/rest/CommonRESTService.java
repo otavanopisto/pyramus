@@ -174,7 +174,7 @@ public class CommonRESTService extends AbstractRESTService {
 
   @Path("/educationTypes/{ID}/subtypes")
   @GET
-  @RESTPermit (CommonPermissions.LIST_EDUCATIONTYPES)
+  @RESTPermit (CommonPermissions.LIST_EDUCATIONSUBTYPES)
   public Response listEducationTypes(@PathParam ("ID") Long educationTypeId) {
     if (educationTypeId == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -195,7 +195,7 @@ public class CommonRESTService extends AbstractRESTService {
   
   @Path("/educationTypes/{EDUCATIONTYPEID}/subtypes/{EDUCATIONSUBTYPEID:[0-9]*}")
   @GET
-  @RESTPermit (CommonPermissions.FIND_EDUCATIONTYPE)
+  @RESTPermit (CommonPermissions.FIND_EDUCATIONSUBTYPE)
   public Response findEducationTypeById(@PathParam("EDUCATIONTYPEID") Long educationTypeId, @PathParam ("EDUCATIONSUBTYPEID") Long educationSubtypeId) {
     if ((educationTypeId == null) || (educationSubtypeId == null)) {
       return Response.status(Status.BAD_REQUEST).build();

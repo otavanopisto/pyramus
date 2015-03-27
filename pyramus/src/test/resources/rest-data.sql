@@ -11,14 +11,14 @@ values
   (2, 2, 'TestAuth');
   
 insert into 
-  ContactType (id, name, version, archived)
+  ContactType (id, name, version, nonUnique, archived)
 values 
-  (1, 'Home', 1, false);
+  (1, 'Home', 1, false, false);
 
 insert into
   Plugin (id, artifactId, enabled, groupId, version)
 values
-  (1, 'testauth-plugin', true, 'fi.pyramus', '0.7.4-SNAPSHOT');
+  (1, 'testauth-plugin', true, 'fi.pyramus', '0.7.15-SNAPSHOT');
   
 insert into 
   GradingScale (id, archived, name, description, version)
@@ -44,7 +44,8 @@ values
   (7, 'Test User  #1', 1),
   (8, 'Test Manager #1', 1),
   (9, 'Test Administrator #1', 1),
-  (10, 'Test Student #1', 1);;
+  (10, 'Test Student #1', 1),
+  (11, 'Trusted System', 1);
   
 insert into 
   Email (id, address, defaultAddress, contactInfo, contactType, indexColumn, version)
@@ -58,7 +59,8 @@ values
   (7, 'user1@bogusmail.com', true, 7, 1, 0, 1),
   (8, 'manager1@bogusmail.com', true, 8, 1, 0, 1),
   (9, 'administrator1@bogusmail.com', true, 9, 1, 0, 1),
-  (10, 'student1@bogusmail.com', true, 10, 1, 0, 1);
+  (10, 'student1@bogusmail.com', true, 10, 1, 0, 1),
+  (11, 'trusted@bogusmail.com', true, 11, 1, 0, 1);
 
 insert into 
   Person (id, version, birthday, sex, socialSecurityNumber, basicInfo, secureInfo)
@@ -70,19 +72,21 @@ values
   (5, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121213-7890', 'Test User #1', false),
   (6, 1, PARSEDATETIME('1 1 1970', 'd M yyyy'), 'MALE', '131214-8901', 'Test Manager #1', false),
   (7, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121216-7891', 'Test administrator #1', false),
-  (8, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121217-7892', 'Test Student #1', false);
+  (8, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '121217-7892', 'Test Student #1', false),
+  (9, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '000000-0000', 'Trusted System', false);
   
 insert into
-  User (id, person_id, firstName, lastName, contactInfo, version)
+  User (id, person_id, firstName, lastName, contactInfo, version, archived)
 values 
-  (1, 1, 'Test Guest', 'User #1', 5, 1),
-  (2, 2, 'Test Guest', 'User #2', 6, 1),
-  (3, 3, 'Tanya', 'Test #1', 3, 1),
-  (4, 4, 'David', 'Test #2', 4, 1),
-  (5, 5, 'Test User', 'User #3', 7, 1),
-  (6, 6, 'Test Manager', 'User #4', 8, 1),
-  (7, 7, 'Test Administrator', 'User #5', 9, 1),
-  (8, 8, 'Test Student', 'User #4', 10, 1);
+  (1, 1, 'Test Guest', 'User #1', 5, 1, false),
+  (2, 2, 'Test Guest', 'User #2', 6, 1, false),
+  (3, 3, 'Tanya', 'Test #1', 3, 1, false),
+  (4, 4, 'David', 'Test #2', 4, 1, false),
+  (5, 5, 'Test User', 'User #3', 7, 1, false),
+  (6, 6, 'Test Manager', 'User #4', 8, 1, false),
+  (7, 7, 'Test Administrator', 'User #5', 9, 1, false),
+  (8, 8, 'Test Student', 'User #4', 10, 1, false),
+  (9, 9, 'Trusted System', 'Trusted system user', 11, 1, false);
 
 insert into
   StaffMember (id, role, title)
@@ -91,7 +95,8 @@ values
   (2, 'GUEST', null),
   (5, 'USER', null),
   (6, 'MANAGER', null),
-  (7, 'ADMINISTRATOR', null);
+  (7, 'ADMINISTRATOR', null),
+  (9, 'TRUSTED_SYSTEM', null);
   
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
@@ -128,6 +133,12 @@ values
   (3, false, 'Ended', 1);
   
 insert into
+  CourseType (id, archived, name, version)
+values 
+  (1, false, 'Non-stop', 1),
+  (2, false, 'Group Work', 1);
+  
+insert into
   CourseEnrolmentType (id, name, version)
 values 
   (1, 'Manual', 1),
@@ -140,10 +151,10 @@ values
   (2, 'Passed', 1, 1, false);
  
 insert into 
-  EducationalTimeUnit (id, archived, baseUnits, name, version)
+  EducationalTimeUnit (id, archived, baseUnits, name, symbol, version)
 values 
-  (1, false, 1, 'Hour', 1),
-  (2, false, 168, 'Week', 1);
+  (1, false, 1, 'Hour', 'h', 1),
+  (2, false, 168, 'Week', 'w', 1);
 
 insert into
   EducationalLength (id, units, unit, version)
@@ -357,11 +368,11 @@ values
 insert into 
   Student (id, studyProgramme, nickname, previousStudies, studyStartDate, 
     additionalInfo, activityType, educationalLevel, language, municipality, nationality, school, 
-    examinationType, education, lodging, archived)
+    examinationType, education, lodging)
 values 
-  (3, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false, false),
-  (4, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false, false),
-  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', false, false);
+  (3, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false),
+  (4, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false),
+  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', false);
 insert into StudentGroupStudent
   (id, studentGroup, student, version)
 values 
@@ -403,7 +414,9 @@ Old. Needed anymore?
 /** ADMINISTRATOER ROLE**/
     (5, 'ff81d5b8500c773e7a1776a7963801e7', 'https://localhost:8443/oauth2ClientTest/success', 7, 1),
 /** STUDENT ROLE**/
-    (6, 'ff81d5b8500c773e7a1776a7963801e8', 'https://localhost:8443/oauth2ClientTest/success', 8, 1);
+    (6, 'ff81d5b8500c773e7a1776a7963801e8', 'https://localhost:8443/oauth2ClientTest/success', 8, 1),
+/** TRUSTED_SYSTEM ROLE**/
+    (7, 'ff81d5b8500c773e7a1776a7963801e9', 'https://localhost:8443/oauth2ClientTest/success', 9, 1);
   
 insert into CourseStaffMemberRole (id, name, version) values (1, 'Teacher', 1), (2, 'Tutor', 1);
     
@@ -434,6 +447,7 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationType', max(id) + 1 from EducationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseState', max(id) + 1 from CourseState;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseType', max(id) + 1 from CourseType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseEnrolmentType', max(id) + 1 from CourseEnrolmentType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseParticipationType', max(id) + 1 from CourseParticipationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationalTimeUnit', max(id) + 1 from EducationalTimeUnit;

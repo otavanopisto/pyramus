@@ -100,9 +100,9 @@
     
     <pyramus.version>0.7.15-SNAPSHOT</pyramus.version>
     
-    <!-- Muikku-Security -->
+    <!-- Webapp-permission -->
     
-    <muikku-security.version>1.0.5-SNAPSHOT</muikku-security.version>
+    <webapp-permission.version>1.0.0</webapp-permission.version>
   </properties>
   
   <dependencyManagement>
@@ -351,12 +351,12 @@
         <version>${pyramus.version}</version>
       </dependency>
 
-      <!-- Muikku-Security -->
+      <!-- Webapp-permission -->
 
       <dependency>
-        <groupId>fi.muikku</groupId>
-        <artifactId>security</artifactId>
-        <version>1.0.8-SNAPSHOT</version>
+        <groupId>fi.otavanopisto</groupId>
+        <artifactId>webapp-permission</artifactId>
+        <version>${webapp-permission.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

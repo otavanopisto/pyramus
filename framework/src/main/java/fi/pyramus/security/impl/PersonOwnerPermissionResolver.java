@@ -3,9 +3,9 @@ package fi.pyramus.security.impl;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import fi.muikku.security.ContextReference;
-import fi.muikku.security.PermissionResolver;
-import fi.muikku.security.User;
+import fi.otavanopisto.security.ContextReference;
+import fi.otavanopisto.security.PermissionResolver;
+import fi.otavanopisto.security.User;
 import fi.pyramus.dao.security.PermissionDAO;
 import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.security.Permission;

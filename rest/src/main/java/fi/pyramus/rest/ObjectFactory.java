@@ -49,6 +49,7 @@ import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
+import fi.pyramus.domainmodel.courses.CourseType;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.modules.Module;
@@ -124,6 +125,13 @@ public class ObjectFactory {
           }
         }, 
         
+        new Mapper<CourseType>() {
+          @Override
+          public Object map(CourseType entity) {
+            return new fi.pyramus.rest.model.CourseType(entity.getId(), entity.getName(), entity.getArchived());
+          }
+        }, 
+        
         new Mapper<Course>() {
           @Override
           public Object map(Course entity) {
@@ -152,6 +160,7 @@ public class ObjectFactory {
             Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
             Long moduleId = entity.getModule() != null ? entity.getModule().getId() : null;
             Long stateId = entity.getState() != null ? entity.getState().getId() : null;
+            Long typeId = entity.getType() != null ? entity.getType().getId() : null;
             
             List<CourseBaseVariable> entityVariables = courseController.listCourseVariablesByCourse(entity);
 
@@ -165,7 +174,7 @@ public class ObjectFactory {
                 entity.getMaxParticipantCount(), beginDate, endDate, entity.getNameExtension(), 
                 entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingDays(), 
                 entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, creatorId, 
-                lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, variables, tags);
+                lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
           }
         }, 
         

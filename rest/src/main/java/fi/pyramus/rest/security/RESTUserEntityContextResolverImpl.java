@@ -2,7 +2,7 @@ package fi.pyramus.rest.security;
 
 import javax.inject.Inject;
 
-import fi.muikku.security.ContextReference;
+import fi.otavanopisto.security.ContextReference;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.users.User;

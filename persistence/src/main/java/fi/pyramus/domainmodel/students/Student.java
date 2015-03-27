@@ -49,7 +49,7 @@ public class Student extends User implements ArchivableEntity {
     return getFirstName() + ' ' + getLastName();
   }
   
-  @Transient 
+  @Transient  
   public Email getPrimaryEmail() {
     for (Email email : getContactInfo().getEmails()) {
       if (email.getDefaultAddress())

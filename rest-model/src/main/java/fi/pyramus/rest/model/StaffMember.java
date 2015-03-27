@@ -3,7 +3,7 @@ package fi.pyramus.rest.model;
 import java.util.List;
 import java.util.Map;
 
-import fi.muikku.security.ContextReference;
+import fi.otavanopisto.security.ContextReference;
 
 public class StaffMember implements ContextReference {
 

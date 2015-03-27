@@ -1496,6 +1496,26 @@
               </select>
             </div>
 
+            <div class="genericFormSection">  
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="courses.editCourse.typeTitle"/>
+                <jsp:param name="helpLocale" value="courses.editCourse.typeHelp"/>
+              </jsp:include>    
+              <select name="type">           
+                <option></option>
+                <c:forEach var="type" items="${types}">
+                  <c:choose>
+                    <c:when test="${type.id eq course.type.id}">
+                      <option value="${type.id}" selected="selected">${type.name}</option>
+                    </c:when>
+                    <c:otherwise>
+                      <option value="${type.id}">${type.name}</option> 
+                    </c:otherwise>
+                  </c:choose>
+                </c:forEach>
+              </select>
+            </div>
+
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="courses.editCourse.educationTypesTitle"/>

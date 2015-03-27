@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import javax.enterprise.context.RequestScoped;
 
-import fi.muikku.security.ContextReference;
+import fi.otavanopisto.security.ContextReference;
 import fi.pyramus.domainmodel.users.User;
 
 @RequestScoped

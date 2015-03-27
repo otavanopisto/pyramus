@@ -42,7 +42,7 @@ function onLoad(event) {
           left : 234,
           width : 70,
           dataType : 'text',
-          editable : false,
+          editable : true,
           paramName : 'symbol',
           required : true
         },
@@ -52,7 +52,7 @@ function onLoad(event) {
           left : 312,
           right : 46,
           dataType : 'text',
-          editable : false,
+          editable : true,
           paramName : 'name',
           required : true
         },

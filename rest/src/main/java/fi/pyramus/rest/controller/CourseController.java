@@ -23,6 +23,7 @@ import fi.pyramus.dao.courses.CourseStaffMemberDAO;
 import fi.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.pyramus.dao.courses.CourseStateDAO;
 import fi.pyramus.dao.courses.CourseStudentDAO;
+import fi.pyramus.dao.courses.CourseTypeDAO;
 import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
@@ -40,6 +41,7 @@ import fi.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
+import fi.pyramus.domainmodel.courses.CourseType;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.StaffMember;
@@ -54,6 +56,9 @@ public class CourseController {
   
   @Inject
   private CourseStateDAO courseStateDAO;
+  
+  @Inject
+  private CourseTypeDAO courseTypeDAO;
   
   @Inject
   private TagDAO tagDAO;
@@ -88,12 +93,12 @@ public class CourseController {
   @Inject
   private DefaultsDAO defaultsDAO;
   
-  public Course createCourse(Module module, String name, String nameExtension, CourseState state, Subject subject, Integer courseNumber, Date beginDate,
+  public Course createCourse(Module module, String name, String nameExtension, CourseState state, CourseType type, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
       Double planningHours, Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User creatingUser) {
     
     Course course = courseDAO
-        .create(module, name, nameExtension, state, subject, courseNumber, beginDate, endDate, courseLength, courseLengthTimeUnit, distanceTeachingDays,
+        .create(module, name, nameExtension, state, type, subject, courseNumber, beginDate, endDate, courseLength, courseLengthTimeUnit, distanceTeachingDays,
             localTeachingDays, teachingHours, planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, creatingUser);
 
     return course;
@@ -112,11 +117,6 @@ public class CourseController {
   public CourseEnrolmentType createCourseEnrolmentType(String name) {
     CourseEnrolmentType enrolmentType = courseEnrolmentTypeDAO.create(name);
     return enrolmentType;
-  }
-  
-  public CourseState createCourseState(String name) {
-    CourseState courseState = courseStateDAO.create(name);
-    return courseState;
   }
   
   public CourseParticipationType createCourseParticipationType(String name) {
@@ -218,19 +218,76 @@ public class CourseController {
     courseEnrolmentTypeDAO.delete(enrolmentType);
   }
   
-  public List<CourseState> findCourseStates() {
-    List<CourseState> courseStates = courseStateDAO.listAll();
-    return courseStates;
+  /* States */
+
+  public CourseState createCourseState(String name) {
+    return courseStateDAO.create(name);
   }
   
-  public List<CourseState> findUnarchivedCourseStates() {
-    List<CourseState> courseStates = courseStateDAO.listUnarchived();
-    return courseStates;
+  public List<CourseState> listCourseStates() {
+    return courseStateDAO.listAll();
+  }
+  
+  public List<CourseState> listUnarchivedCourseStates() {
+    return courseStateDAO.listUnarchived();
   }
   
   public CourseState findCourseStateById(Long id) {
-    CourseState state = courseStateDAO.findById(id);
-    return state;
+    return courseStateDAO.findById(id);
+  }
+  
+  public CourseState updateCourseState(CourseState courseState, String name) {
+    return courseStateDAO.update(courseState, name);
+  }
+  
+  public CourseState unarchiveCourseState(CourseState courseState, User user) {
+    courseStateDAO.unarchive(courseState, user);
+    return courseState;
+  }
+  
+  public CourseState archiveCourseState(CourseState courseState, User user) {
+    courseStateDAO.archive(courseState, user);
+    return courseState;
+  }
+
+  public void deleteCourseState(CourseState courseState) {
+    courseStateDAO.delete(courseState);
+  }
+  
+  /* Types */
+  
+  public CourseType createCourseType(String name) {
+    return courseTypeDAO.create(name);
+  }
+  
+  public List<CourseType> listCourseTypes() {
+    return courseTypeDAO.listAll();
+  }
+  
+  public List<CourseType> listUnarchivedCourseTypes() {
+    return courseTypeDAO.listUnarchived();
+  }
+  
+  public CourseType findCourseTypeById(Long id) {
+    return courseTypeDAO.findById(id);
+  }
+
+  public CourseType updateCourseType(CourseType courseType, String name) {
+    return courseTypeDAO.updateName(courseType, name);
+  }
+  
+  public CourseType unarchiveCourseType(CourseType courseType, User user) {
+    courseTypeDAO.unarchive(courseType, user);
+    return courseType;
+  }
+  
+  public CourseType archiveCourseType(CourseType courseType, User user) {
+    courseTypeDAO.archive(courseType, user);
+    return courseType;
+  }
+
+  public void deleteCourseType(CourseType courseType) {
+    courseTypeDAO.delete(courseType);
   }
   
   public List<CourseParticipationType> findCourseParticiPationTypes() {
@@ -248,11 +305,11 @@ public class CourseController {
     return courseParticipationType;
   }
   
-  public Course updateCourse(Course course, String name, String nameExtension, CourseState courseState, Subject subject, Integer courseNumber, Date beginDate,
+  public Course updateCourse(Course course, String name, String nameExtension, CourseState courseState, CourseType type, Subject subject, Integer courseNumber, Date beginDate,
       Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
       Double planningHours, Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User user) {
     
-    courseDAO.update(course, name, nameExtension, courseState, subject, courseNumber, beginDate, endDate, courseLength, courseLengthTimeUnit,
+    courseDAO.update(course, name, nameExtension, courseState, type, subject, courseNumber, beginDate, endDate, courseLength, courseLengthTimeUnit,
         distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, user);
     
     return course;
@@ -270,11 +327,6 @@ public class CourseController {
   
   public CourseDescriptionCategory updateCourseDescriptionCategory(CourseDescriptionCategory courseDescriptionCategory, String name) {
     CourseDescriptionCategory updated = courseDescriptionCategoryDAO.update(courseDescriptionCategory, name);
-    return updated;
-  }
-  
-  public CourseState updateCourseState(CourseState courseState, String name) {
-    CourseState updated = courseStateDAO.update(courseState, name);
     return updated;
   }
   
@@ -328,20 +380,6 @@ public class CourseController {
 
   public void deleteCourseDescriptionCategory(CourseDescriptionCategory category) {
     courseDescriptionCategoryDAO.delete(category);;
-  }
-  
-  public CourseState archiveCourseState(CourseState courseState, User user) {
-    courseStateDAO.archive(courseState, user);
-    return courseState;
-  }
-  
-  public CourseState unarchiveCourseState(CourseState courseState, User user) {
-    courseStateDAO.unarchive(courseState, user);
-    return courseState;
-  }
-
-  public void deleteCourseState(CourseState courseState) {
-    courseStateDAO.delete(courseState);
   }
   
   public CourseParticipationType archiveCourseParticipationType(CourseParticipationType courseParticipationType, User user) {
@@ -544,5 +582,4 @@ public class CourseController {
   public void deleteCourseVariableKey(CourseBaseVariableKey courseVariableKey) {
     courseBaseVariableKeyDAO.delete(courseVariableKey);
   }
-  
 }
