@@ -6,13 +6,13 @@ import java.util.Set;
 
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.base.Tag;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.services.entities.EntityFactory;
 
 public class UserEntityFactory implements EntityFactory<UserEntity> {
   
   public UserEntity buildFromDomainObject(Object domainObject) {
-    User user = (User) domainObject;
+    StaffMember user = (StaffMember) domainObject;
     
     Set<String> emails = new HashSet<String>();
     for (Email email : user.getContactInfo().getEmails())

@@ -39,7 +39,7 @@ import fi.pyramus.domainmodel.grading.TransferCredit;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.students.Student;
-import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.services.entities.base.AcademicTermEntity;
 import fi.pyramus.services.entities.base.AcademicTermEntityFactory;
 import fi.pyramus.services.entities.base.AddressEntity;
@@ -143,8 +143,8 @@ public class EntityFactoryVault {
     return (NationalityEntity) EntityFactoryVault.getEntityFactory(NationalityEntity.class).buildFromDomainObject(nationality);
   }
   
-  public static UserEntity buildFromDomainObject(User user) {
-    return (UserEntity) EntityFactoryVault.getEntityFactory(UserEntity.class).buildFromDomainObject(user);
+  public static UserEntity buildFromDomainObject(StaffMember staffMember) {
+    return (UserEntity) EntityFactoryVault.getEntityFactory(UserEntity.class).buildFromDomainObject(staffMember);
   }
 
   public static AddressEntity buildFromDomainObject(Address address) {
@@ -309,7 +309,7 @@ public class EntityFactoryVault {
     
     /* Users */ 
     
-    registerEntityFactory(User.class, UserEntity.class, new UserEntityFactory());
+    registerEntityFactory(StaffMember.class, UserEntity.class, new UserEntityFactory());
     
     /* Students */ 
     

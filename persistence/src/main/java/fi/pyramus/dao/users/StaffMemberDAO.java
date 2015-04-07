@@ -86,22 +86,25 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     return staffMember;
   }
 
-  public List<User> listByUserVariable(String key, String value) {
+  public List<StaffMember> listByUserVariable(String key, String value) {
     UserVariableKeyDAO variableKeyDAO = DAOFactory.getInstance().getUserVariableKeyDAO();
     UserVariableKey userVariableKey = variableKeyDAO.findByVariableKey(key);
 
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<User> criteria = criteriaBuilder.createQuery(User.class);
-    Root<UserVariable> root = criteria.from(UserVariable.class);
-    Join<UserVariable, User> userJoin = root.join(UserVariable_.user);
+    CriteriaQuery<StaffMember> criteria = criteriaBuilder.createQuery(StaffMember.class);
+    Root<UserVariable> uvRoot = criteria.from(UserVariable.class);
+    Root<StaffMember> smRoot = criteria.from(StaffMember.class);
     
-    criteria.select(root.get(UserVariable_.user));
+    Join<UserVariable, User> userJoin = uvRoot.join(UserVariable_.user);
+    
+    criteria.select(smRoot);
     criteria.where(
         criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(UserVariable_.key), userVariableKey),
-            criteriaBuilder.equal(root.get(UserVariable_.value), value),
+            criteriaBuilder.equal(uvRoot.get(UserVariable_.user), smRoot),
+            criteriaBuilder.equal(uvRoot.get(UserVariable_.key), userVariableKey),
+            criteriaBuilder.equal(uvRoot.get(UserVariable_.value), value),
             criteriaBuilder.equal(userJoin.get(User_.archived), Boolean.FALSE)
         ));
     
