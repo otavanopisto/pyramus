@@ -375,7 +375,12 @@
       function resetCommentForm(studentId) {
         var entryForm = $("newContactEntryCommentForm." + studentId);
         entryForm.commentCreatorName.value = '${loggedUserName}';
-        entryForm["commentDate." + studentId].value = new Date().getTime();
+
+        // Set time to zero (UTC), same as with datepicker
+        var commentDate = new Date();
+        commentDate.setUTCHours(0, 0, 0, 0);
+        
+        entryForm["commentDate." + studentId].value = commentDate.getTime();
         entryForm["commentText." + studentId].value = '';
         CKEDITOR.instances["commentText." + studentId].setData('');
         entryForm.entryId.value = '-1';
