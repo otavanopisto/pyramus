@@ -170,9 +170,6 @@ public class CourseRESTService extends AbstractRESTService {
   public Response getCourse(@PathParam("ID") Long id, @Context Request request) {
     Course course = courseController.findCourseById(id);
     if (course != null) {
-      if (course.getArchived()) {
-        return Response.status(Status.NOT_FOUND).build();
-      }
       
       EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(course.getLastModified().getTime())));
       
