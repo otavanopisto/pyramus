@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>fi.pyramus</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.7.16</version>
+		<version>0.7.17-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
