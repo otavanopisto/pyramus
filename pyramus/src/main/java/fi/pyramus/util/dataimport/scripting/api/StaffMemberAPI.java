@@ -40,6 +40,7 @@ public class StaffMemberAPI {
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
+    address = address != null ? address.trim() : null;
     
     ContactType contactType = contactTypeDAO.findById(contactTypeId);
     if (contactType == null) {
@@ -50,7 +51,7 @@ public class StaffMemberAPI {
     if (staffMember == null) {
       throw new InvalidScriptException("StaffMember could not be found");
     }
-    
+
     Person person = personDAO.findByUniqueEmail(address);
     if (person != null) {
       if (!staffMember.getPerson().getId().equals(person.getId())) {

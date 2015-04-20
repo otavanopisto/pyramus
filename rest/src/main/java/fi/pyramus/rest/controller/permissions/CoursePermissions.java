@@ -119,7 +119,7 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   public static final String LIST_COURSETYPES = "LIST_COURSETYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
   public static final String FIND_COURSETYPE = "FIND_COURSETYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)

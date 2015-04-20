@@ -38,6 +38,10 @@ public class PersonAPI {
   
   public Long findIdByEmail(String email) {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+
+    // Trim the email address
+    email = email != null ? email.trim() : null;
+
     Person person = personDAO.findByUniqueEmail(email);
     if (person != null) {
       return person.getId();

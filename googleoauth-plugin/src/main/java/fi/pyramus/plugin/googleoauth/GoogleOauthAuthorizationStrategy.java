@@ -79,6 +79,9 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
+    // Trim the email address
+    email = email != null ? email.trim() : null;
+    
     Person emailPerson = personDAO.findByUniqueEmail(email);
     if(emailPerson == null){
       throw new AuthenticationException(AuthenticationException.LOCAL_USER_MISSING);

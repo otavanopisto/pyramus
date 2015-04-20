@@ -36,6 +36,8 @@ public class UserUtils {
     if (contactType.getNonUnique())
       return true;
     
+    emailAddress = emailAddress != null ? emailAddress.trim() : null;
+    
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
 

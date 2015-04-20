@@ -93,6 +93,9 @@ public class UsersService extends PyramusService {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     StaffMember user = userDAO.findById(userId);
     
+    // Trim the email address
+    address = address != null ? address.trim() : null;
+
     // TODO contact type, default address
     ContactType contactType = contactTypeDAO.findById(new Long(1));
 
@@ -120,6 +123,10 @@ public class UsersService extends PyramusService {
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     fi.pyramus.domainmodel.users.User user = userDAO.findById(userId);
+    
+    // Trim the email address
+    toAddress = toAddress != null ? toAddress.trim() : null;
+
     for (Email email : user.getContactInfo().getEmails()) {
       if (email.getAddress().equals(fromAddress)) {
         email = emailDAO.update(email, email.getContactType(), email.getDefaultAddress(), toAddress);

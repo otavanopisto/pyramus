@@ -36,6 +36,7 @@ public class StudentAPI {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
+    email = email != null ? email.trim() : null;
     
     Person personEntity = null;
     if (personId != null) {
