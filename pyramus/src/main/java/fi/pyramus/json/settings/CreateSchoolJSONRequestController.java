@@ -100,6 +100,10 @@ public class CreateSchoolJSONRequestController extends JSONRequestController {
       Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
       ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
       String email = requestContext.getString(colPrefix + ".email");
+      
+      // Trim the email address
+      email = email != null ? email.trim() : null;
+
       if (email != null) {
         emailDAO.create(school.getContactInfo(), contactType, defaultAddress, email);
       }

@@ -301,6 +301,9 @@ public class SchoolController {
   /* Email */
 
   public Email addSchoolEmail(School school, ContactType contactType, String address, Boolean defaultAddress) {
+    // Trim the email address
+    address = address != null ? address.trim() : null;
+
     return emailDAO.create(school.getContactInfo(), contactType, defaultAddress, address);
   }
   

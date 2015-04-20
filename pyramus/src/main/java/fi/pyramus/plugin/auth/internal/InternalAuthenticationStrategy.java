@@ -48,6 +48,8 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
+    // Trim the email address
+    email = email != null ? email.trim() : null;
 
     try {
       String passwordEncoded = EncodingUtils.md5EncodeString(password);

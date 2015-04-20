@@ -206,6 +206,9 @@ public class StudentController {
   }
   
   public Email addStudentEmail(Student student, ContactType contactType, String address, Boolean defaultAddress) throws UserEmailInUseException {
+    // Trim the email address
+    address = address != null ? address.trim() : null;
+
     if (!UserUtils.isAllowedEmail(address, contactType, student.getPerson().getId()))
       throw new UserEmailInUseException();
     

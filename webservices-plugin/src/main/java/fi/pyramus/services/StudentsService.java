@@ -346,6 +346,8 @@ public class StudentsService extends PyramusService {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     Student student = studentDAO.findById(studentId);
     
+    address = address != null ? address.trim() : null;
+    
     // TODO contactType
     ContactType contactType = contactTypeDAO.findById(new Long(1));
 
@@ -372,6 +374,9 @@ public class StudentsService extends PyramusService {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     Student student = studentDAO.findById(studentId);
+    // Trim the email address
+    toAddress = toAddress != null ? toAddress.trim() : null;
+
     for (Email email : student.getContactInfo().getEmails()) {
       if (email.getAddress().equals(fromAddress)) {
         email = emailDAO.update(email, email.getContactType(), email.getDefaultAddress(), toAddress);
