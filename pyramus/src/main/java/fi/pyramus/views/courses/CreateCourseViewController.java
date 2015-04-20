@@ -137,6 +137,7 @@ public class CreateCourseViewController extends PyramusViewController implements
 
     pageRequestContext.getRequest().setAttribute("educationSubtypes", educationSubtypes);
     pageRequestContext.getRequest().setAttribute("states", courseStateDAO.listUnarchived());
+    pageRequestContext.getRequest().setAttribute("types", courseTypeDAO.listUnarchived());
     pageRequestContext.getRequest().setAttribute("roles", courseStaffMemberRoleDAO.listAll());
     pageRequestContext.getRequest().setAttribute("subjectsByNoEducationType", subjectsByNoEducationType);
     pageRequestContext.getRequest().setAttribute("subjectsByEducationType", subjectsByEducationType);
