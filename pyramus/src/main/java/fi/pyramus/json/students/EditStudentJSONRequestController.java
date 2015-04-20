@@ -234,14 +234,16 @@ public class EditStudentJSONRequestController extends JSONRequestController {
 	      // Trim the email address
 	      email = email != null ? email.trim() : null;
 
-	      Long emailId = requestContext.getLong(colPrefix + ".emailId");
-	      if (emailId == -1) {
-	        emailId = emailDAO.create(student.getContactInfo(), contactType, defaultAddress, email).getId(); 
+	      if (email != null) {
+  	      Long emailId = requestContext.getLong(colPrefix + ".emailId");
+  	      if (emailId == -1) {
+  	        emailId = emailDAO.create(student.getContactInfo(), contactType, defaultAddress, email).getId(); 
+  	      }
+  	      else {
+  	        emailDAO.update(emailDAO.findById(emailId), contactType, defaultAddress, email);
+  	      }
+  	      existingEmails.add(emailId);
 	      }
-	      else {
-	        emailDAO.update(emailDAO.findById(emailId), contactType, defaultAddress, email);
-	      }
-	      existingEmails.add(emailId);
 	    }
 	    List<Email> emails = student.getContactInfo().getEmails();
 	    for (int i = emails.size() - 1; i >= 0; i--) {
