@@ -4,6 +4,7 @@ jdk:
 - openjdk7
 branches:
   only:
+  - master
   - develop
 env:
   global:
