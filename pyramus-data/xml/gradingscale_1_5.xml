@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<initialData>
+  <entity package="fi.pyramus.domainmodel.grading" class="GradingScale"> 
+    <e name="1 - 5" description="Ammattikoulujen ja ammattikorkeakoulujen käyttämä asteikko">
+      <list name="grades" method="addGrade">
+        <e name="0" passingGrade="false" qualification="Hylätty">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+        <e name="1" passingGrade="true" qualification="Välttävä">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+        <e name="2" passingGrade="true" qualification="Kohtalainen">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+        <e name="3" passingGrade="true" qualification="Tyydyttävä">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+        <e name="4" passingGrade="true" qualification="Hyvä">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+        <e name="5" passingGrade="true" qualification="Erinomainen">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+      </list>
+    </e>
+  </entity>
+</initialData>
