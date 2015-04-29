@@ -1743,7 +1743,7 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(newCourseAssessment)).build();
   }
 
-  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessments/")
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessments/{ID}")
   @DELETE
   @RESTPermit(CourseAssessmentPermissions.DELETE_COURSEASSESSMENT)
   public Response deleteCourseAssessment(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
