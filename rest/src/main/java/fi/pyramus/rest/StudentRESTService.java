@@ -1576,51 +1576,60 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
 
-  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessment/")
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/")
   @POST
   @RESTPermit(CourseAssessmentPermissions.CREATE_COURSEASSESSMENT)
   public Response createCourseAssessment(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId,
       fi.pyramus.rest.model.CourseAssessment entity) {
-    
-    Student student = studentController.findStudentById(studentId);
-    Course course = courseController.findCourseById(courseId);
 
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
+    Student student = studentController.findStudentById(studentId);
+    
     if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND).entity("Could not find student").build();
     }
 
     if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND).entity("Student is archieved").build();
     }
 
+    Course course = courseController.findCourseById(courseId);
+    
     if (course == null) {
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND).entity("Could not find course").build();
     }
 
     if (course.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND).entity("Course is archieved").build();
     }
 
     CourseStudent courseStudent = courseController.findCourseStudentById(entity.getCourseStudentId());
     
     if(courseStudent == null){
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.BAD_REQUEST).entity("Could not find coursestudent").build();
+    }
+    
+    if(courseStudent.getArchived()){
+      return Response.status(Status.BAD_REQUEST).entity("Coursestudent is archieved").build();
+    }
+    
+    if(!courseStudent.getStudent().getId().equals(student.getId())){
+      return Response.status(Status.BAD_REQUEST).entity("Coursestudent doesnt match student").build();
     }
     
     StaffMember assessor = userController.findStaffMemberById(entity.getAssessorId());
     
     if(assessor == null){
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.BAD_REQUEST).entity("Could not find assessor").build();
     }
     
     Grade grade = commonController.findGradeByIdId(entity.getGradeId());
     
     if(grade == null){
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.BAD_REQUEST).entity("Could not find grade").build();
     }
     
     CourseAssessment courseAssessment = assessmentController.createCourseCourseAssessment(courseStudent, assessor, grade, entity.getDate().toDate(), entity.getVerbalAssessment());
@@ -1628,13 +1637,12 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(courseAssessment)).build();
   }
   
-  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessments")
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/")
   @GET
   @RESTPermit(CourseAssessmentPermissions.LIST_COURSEASSESSMENT)
   public Response listCourseAssessments(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
     
     Student student = studentController.findStudentById(studentId);
-    Course course = courseController.findCourseById(courseId);
 
     if (student == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -1644,6 +1652,8 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
+    Course course = courseController.findCourseById(courseId);
+    
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -1657,13 +1667,12 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(courseAssessments)).build();
   }
   
-  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessments/{ID}")
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/{ID:[0-9]*}")
   @GET
   @RESTPermit(CourseAssessmentPermissions.FIND_COURSEASSESSMENT)
   public Response findCourseAssessmentById(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
     
     Student student = studentController.findStudentById(studentId);
-    Course course = courseController.findCourseById(courseId);
 
     if (student == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -1673,6 +1682,8 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
+    Course course = courseController.findCourseById(courseId);
+    
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -1686,7 +1697,7 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(courseAssessment)).build();
   }
   
-  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessments/{ID}")
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/{ID:[0-9]*}")
   @PUT
   @RESTPermit(CourseAssessmentPermissions.UPDATE_COURSEASSESSMENT)
   public Response updateCourseAssessment(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id, 
