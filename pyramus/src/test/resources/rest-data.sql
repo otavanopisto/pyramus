@@ -441,6 +441,16 @@ insert into
 values
   (3, false, PARSEDATETIME('1 1 2010', 'd M yyyy'), false, 'OPTIONAL', null, 1, 1, 3),
   (4, false, PARSEDATETIME('1 1 2011', 'd M yyyy'), true, 'MANDATORY', null, 2, 2, 4);
+
+insert into
+  CourseAssessment (id, courseStudent)
+values
+  (1, 4);
+
+insert into
+  Credit (id, archived, verbalAssessment, date, creditType, version, assessor_id, grade)
+values
+  (1, false, 'TEST ASSESSMENT', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'CourseAssessment', 1, 6, 2)
   
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Person', max(id) + 1 from Person;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
