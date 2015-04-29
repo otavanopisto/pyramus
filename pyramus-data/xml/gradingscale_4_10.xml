@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<initialData>
+  <entity package="fi.pyramus.domainmodel.grading" class="GradingScale"> 
+    <e name="4 - 10" description="Lukioiden ja peruskoulujen käyttämä asteikko">
+      <list name="grades" method="addGrade">
+        <e name="4" passingGrade="false" qualification="Hylätty" storeVariable="grade_4_10_4">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+        <e name="5" passingGrade="true" qualification="Välttävä" storeVariable="grade_4_10_5">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+        <e name="6" passingGrade="true" qualification="Kohtalainen" storeVariable="grade_4_10_6">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+        <e name="7" passingGrade="true" qualification="Tyydyttävä" storeVariable="grade_4_10_7">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+        <e name="8" passingGrade="true" qualification="Hyvä" storeVariable="grade_4_10_8">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+        <e name="9" passingGrade="true" qualification="Kiitettävä" storeVariable="grade_4_10_9">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+        <e name="10" passingGrade="true" qualification="Erinomainen" storeVariable="grade_4_10_10">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+      </list>
+    </e>
+  </entity>
+  
+</initialData>

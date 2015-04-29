@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<initialData>
+  
+  <entity package="fi.pyramus.domainmodel.grading" class="GradingScale">
+    
+    <e name="Hyväksytty / Hylätty">
+      <list name="grades" method="addGrade">
+        <e name="Hylätty" passingGrade="false">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+        <e name="Hyväksytty" passingGrade="true">
+          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+        </e>
+      </list>
+    </e>
+  </entity>
+
+</initialData>
