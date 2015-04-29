@@ -1657,7 +1657,7 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(courseAssessments)).build();
   }
   
-  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessments/")
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessments/{ID}")
   @GET
   @RESTPermit(CourseAssessmentPermissions.FIND_COURSEASSESSMENT)
   public Response findCourseAssessmentById(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
