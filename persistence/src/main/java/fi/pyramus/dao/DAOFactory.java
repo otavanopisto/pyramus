@@ -104,6 +104,8 @@ import fi.pyramus.dao.resources.MaterialResourceDAO;
 import fi.pyramus.dao.resources.ResourceCategoryDAO;
 import fi.pyramus.dao.resources.ResourceDAO;
 import fi.pyramus.dao.resources.WorkResourceDAO;
+import fi.pyramus.dao.security.EnvironmentRolePermissionDAO;
+import fi.pyramus.dao.security.PermissionDAO;
 import fi.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.pyramus.dao.students.StudentContactLogEntryCommentDAO;
 import fi.pyramus.dao.students.StudentContactLogEntryDAO;
@@ -647,7 +649,16 @@ public class DAOFactory {
   public AccessLogEntryPathDAO getAccessLogEntryPathDAO() {
     return (AccessLogEntryPathDAO) findByClass(AccessLogEntryPathDAO.class);
   }
+
+  /* Security */
   
+  public PermissionDAO getPermissionDAO() {
+    return (PermissionDAO) findByClass(PermissionDAO.class);
+  }
+  
+  public EnvironmentRolePermissionDAO getEnvironmentRolePermissionDAO() {
+    return (EnvironmentRolePermissionDAO) findByClass(EnvironmentRolePermissionDAO.class);
+  }
   
   private String getAppName() throws NamingException {
     String appName = "";
