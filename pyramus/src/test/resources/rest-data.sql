@@ -426,8 +426,10 @@ values
   (1, 1000, 1),
   (2, 1000, 1),
   (3, 1000, 1),
-  (4, 1000, 1);
-
+  (4, 1000, 1),
+  (5, 1000, 1),
+  (6, 1000, 1);
+  
 insert into 
   CourseStaffMember (id, staffMember_id, role_id)
 values 
@@ -439,8 +441,18 @@ values
 insert into 
   CourseStudent (id, archived, enrolmentTime, lodging, optionality, billingDetails, enrolmentType, participationType, student)
 values
-  (3, false, PARSEDATETIME('1 1 2010', 'd M yyyy'), false, 'OPTIONAL', null, 1, 1, 3),
-  (4, false, PARSEDATETIME('1 1 2011', 'd M yyyy'), true, 'MANDATORY', null, 2, 2, 4);
+  (5, false, PARSEDATETIME('1 1 2010', 'd M yyyy'), false, 'OPTIONAL', null, 1, 1, 3),
+  (6, false, PARSEDATETIME('1 1 2011', 'd M yyyy'), true, 'MANDATORY', null, 2, 2, 4);
+
+insert into
+  Credit (id, archived, verbalAssessment, date, creditType, version, assessor_id, grade)
+values
+  (1, false, 'TEST ASSESSMENT', PARSEDATETIME('1 1 2011', 'd M yyyy'), 'CourseAssessment', 1, 6, 2);
+  
+insert into
+  CourseAssessment (id, courseStudent)
+values
+  (1, 5);
   
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Person', max(id) + 1 from Person;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;
@@ -493,3 +505,6 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'ClientApplicationAuthorizationCode', max(id) + 1 from ClientApplicationAuthorizationCode;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStaffMemberRole', max(id) + 1 from CourseStaffMemberRole;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseUser', max(id) + 1 from CourseUser;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Credit', max(id) + 1 from Credit;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseAssessment', max(id) + 1 from CourseAssessment;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStudent', max(id) + 1 from CourseStudent;
