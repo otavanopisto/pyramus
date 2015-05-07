@@ -23,7 +23,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testCreateCourseAssessment() {
-    CourseAssessment courseAssessment = new CourseAssessment(null, 6l, TEST_GRADEID, TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.");
+    CourseAssessment courseAssessment = new CourseAssessment(null, 6l, TEST_GRADEID, 1l,TEST_ASSESSORID, getDate(2015, 1, 1), "Test assessment for test student on test course.");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -76,7 +76,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateCourseAssessment() {
-    CourseAssessment courseAssessment = new CourseAssessment(null, 6l, TEST_GRADEID, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.");
+    CourseAssessment courseAssessment = new CourseAssessment(null, 6l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 1, 1), "Not Updated.");
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -93,7 +93,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
     
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, TEST_GRADEID, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated");
+      CourseAssessment updatedCourseAssessment = new CourseAssessment(id, 6l, TEST_GRADEID, 1l, TEST_ASSESSORID, getDate(2015, 2, 1), "Updated");
 
       given().headers(getAuthHeaders())
         .contentType("application/json")

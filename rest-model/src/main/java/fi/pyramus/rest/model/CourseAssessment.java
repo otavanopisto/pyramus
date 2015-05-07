@@ -8,11 +8,12 @@ public class CourseAssessment {
     super();
   }
 
-  public CourseAssessment(Long id, Long courseStudentId, Long gradeId, Long assessorId, DateTime date, String verbalAssessment) {
+  public CourseAssessment(Long id, Long courseStudentId, Long gradeId, Long gradingScaleId, Long assessorId, DateTime date, String verbalAssessment) {
     super();
     this.id = id;
     this.courseStudentId = courseStudentId;
     this.gradeId = gradeId;
+    this.gradingScaleId = gradingScaleId;
     this.assessorId = assessorId;
     this.date = date;
     this.verbalAssessment = verbalAssessment;
@@ -66,9 +67,18 @@ public class CourseAssessment {
     this.verbalAssessment = verbalAssessment;
   }
 
+  public Long getGradingScaleId() {
+    return gradingScaleId;
+  }
+
+  public void setGradingScaleId(Long gradingScaleId) {
+    this.gradingScaleId = gradingScaleId;
+  }
+
   private Long id;
   private Long courseStudentId;
   private Long gradeId;
+  private Long gradingScaleId;
   private Long assessorId;
   private DateTime date;
   private String verbalAssessment;
