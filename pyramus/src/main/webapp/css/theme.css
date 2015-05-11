@@ -2406,3 +2406,66 @@ img.studentContactEntryEditButton, img.studentContactEntryArchiveButton{
   background-repeat: no-repeat;
   background-position: right center;
 }
+
+/*  login */
+
+.clear {
+  clear:both;
+}
+
+#login {
+  width:400px;
+  
+}
+
+.internalLoginProviderWrapper {
+  float:left;
+  width:160px;
+  margin-right:10px;
+}
+
+.externalLoginProviderWrapper {
+  float: right;
+  width: 215px;
+  padding: 0 0 0 10px;
+  border-left: 1px solid #A0BFF7;
+  margin-top: 10px;
+  min-height: 115px;
+}
+
+.login-wrapper.google {
+  margin:5px 0;
+  position:relative;
+}
+
+.login-wrapper.google .login-icon {
+  width:32px;
+  height:32px;
+  background:url('../gfx/icons/32x32/google-auth-icon.png') no-repeat;
+  border-radius:5px;
+  margin:0 5px 0 0;
+}
+
+.login-wrapper.google .login-container {
+  position:absolute;
+  right:0;
+  top:0;
+  bottom:0;
+  left:35px;
+}
+
+.login-wrapper.google .login-link {
+  padding:10px 8px 10px 8px;
+  height:1em;
+  text-transform:uppercase;
+  text-decoration:none;
+  background:#3480af;
+  color:#fff;
+  display:block;
+  border-radius:5px;
+  opacity:0.9;
+}
+
+.login-wrapper.google .login-link:hover {
+  opacity:1;
+}

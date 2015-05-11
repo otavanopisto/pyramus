@@ -32,30 +32,38 @@
         </div>
         
         <div id="login" class="tabContent">
-          <form action="login.json" method="post" ix:jsonform="true">
-            <div class="genericFormSection">  
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="users.login.usernameTitle"/>
-                <jsp:param name="helpLocale" value="users.login.usernameHelp"/>
-              </jsp:include>     
-              <input type="text" name="username" class="required" size="25"/>
-            </div>
-            <div class="genericFormSection">  
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="users.login.passwordTitle"/>
-                <jsp:param name="helpLocale" value="users.login.passwordHelp"/>
-              </jsp:include>     
-              <input type="password" name="password" class="required" size="20">
-            </div>
-            <div class="genericFormSubmitSection">
-              <input type="submit" name="login" value="<fmt:message key="users.login.loginButton"/>">
-            </div>
-          </form>
+          <div class="internalLoginProviderWrapper">
+            <form action="login.json" method="post" ix:jsonform="true">
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="users.login.usernameTitle"/>
+                  <jsp:param name="helpLocale" value="users.login.usernameHelp"/>
+                </jsp:include>     
+                <input type="text" name="username" class="required" size="25"/>
+              </div>
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="users.login.passwordTitle"/>
+                  <jsp:param name="helpLocale" value="users.login.passwordHelp"/>
+                </jsp:include>     
+                <input type="password" name="password" class="required" size="25">
+              </div>
+              <div class="genericFormSubmitSection">
+                <input type="submit" name="login" value="<fmt:message key="users.login.loginButton"/>">
+              </div>
+            </form>
+          </div>
           
+          <div class="externalLoginProviderWrapper">
           <c:forEach var="externalProvider" items="${externalProviders}">
-            <a href="?external=${externalProvider.name}">${externalProvider.name}</a>
+            <div class="login-wrapper google">
+              <div class="login-icon"></div>
+              <div class="login-container"><a class="login-link" href="?external=${externalProvider.name}">${externalProvider.name}</a></div>
+            </div>
+            
           </c:forEach>
-          
+          </div>
+          <div class="clear"></div>
         </div>
       </div>
     </div>
