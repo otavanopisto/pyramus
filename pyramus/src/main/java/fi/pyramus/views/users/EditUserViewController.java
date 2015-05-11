@@ -1,16 +1,12 @@
 package fi.pyramus.views.users;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import javax.xml.ws.http.HTTPException;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
@@ -29,10 +25,8 @@ import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
-import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
-import fi.pyramus.plugin.auth.AuthenticationProvider;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.pyramus.util.StringAttributeComparator;
@@ -57,41 +51,26 @@ public class EditUserViewController extends PyramusViewController implements Bre
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     ContactURLTypeDAO contactURLTypeDAO = DAOFactory.getInstance().getContactURLTypeDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
-    
+
     StaffMember user = staffDAO.findById(pageRequestContext.getLong("userId"));
-    
-    List<UserIdentification> userIdentifications = userIdentificationDAO.listByPerson(user.getPerson());
-    
-    //TODO: Currently only 1 UserIdentification for person is supported, this may change in the future.
-    if(userIdentifications.size() > 1) {
-      throw new SmvcRuntimeException(PyramusStatusCode.MULTIPLE_IDENTIFICATIONS_FOR_PERSON, "Multiple UserIdentifications found for person");
-    }
-    
-    UserIdentification userIdentification = userIdentifications.isEmpty() ? null : userIdentifications.get(0);
-    
     String username = "";
-    
-    List<AuthenticationProviderInfoBean> authenticationProviders = new ArrayList<AuthenticationProviderInfoBean>();
-    for (String authenticationProviderName : AuthenticationProviderVault.getAuthenticationProviderClasses().keySet()) {
-      boolean active = AuthenticationProviderVault.getInstance().getAuthenticationProvider(authenticationProviderName) != null;
-      boolean canUpdateCredentials;
-      
-      AuthenticationProvider authenticationProvider = AuthenticationProviderVault.getInstance().getAuthenticationProvider(authenticationProviderName);
-      
-      if (authenticationProvider instanceof InternalAuthenticationProvider) {
-        InternalAuthenticationProvider internalAuthenticationProvider = (InternalAuthenticationProvider) authenticationProvider;
-        canUpdateCredentials = internalAuthenticationProvider.canUpdateCredentials();
-        
-        if ((userIdentification != null) && internalAuthenticationProvider.getName().equals(userIdentification.getAuthSource())) {
-          username = internalAuthenticationProvider.getUsername(userIdentification.getExternalId());
+    boolean hasInternalAuthenticationStrategies = AuthenticationProviderVault.getInstance().hasInternalStrategies();
+    if (hasInternalAuthenticationStrategies) {
+      // TODO: Support for multiple internal authentication providers
+      List<InternalAuthenticationProvider> internalAuthenticationProviders = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
+      if (internalAuthenticationProviders.size() == 1) {
+        InternalAuthenticationProvider internalAuthenticationProvider = internalAuthenticationProviders.get(0);
+        if (internalAuthenticationProvider != null) {
+          UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), user.getPerson());
+          if (internalAuthenticationProvider.canUpdateCredentials()) {
+            if (userIdentification != null) {
+              username = internalAuthenticationProvider.getUsername(userIdentification.getExternalId());
+            }
+          }
         }
-      } else {
-        canUpdateCredentials = false;
       }
-      
-      authenticationProviders.add(new AuthenticationProviderInfoBean(authenticationProviderName, active, canUpdateCredentials));
     }
-    
+
     StringBuilder tagsBuilder = new StringBuilder();
     Iterator<Tag> tagIterator = user.getTags().iterator();
     while (tagIterator.hasNext()) {
@@ -125,11 +104,10 @@ public class EditUserViewController extends PyramusViewController implements Bre
     
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());
     pageRequestContext.getRequest().setAttribute("user", user);
-    pageRequestContext.getRequest().setAttribute("userIdentification", userIdentification);
+    pageRequestContext.getRequest().setAttribute("hasInternalAuthenticationStrategies", hasInternalAuthenticationStrategies);
     pageRequestContext.getRequest().setAttribute("username", username);
     pageRequestContext.getRequest().setAttribute("contactTypes", contactTypes);
     pageRequestContext.getRequest().setAttribute("contactURLTypes", contactURLTypes);
-    pageRequestContext.getRequest().setAttribute("authenticationProviders", authenticationProviders);
     
     pageRequestContext.setIncludeJSP("/templates/users/edituser.jsp");
   }

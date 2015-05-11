@@ -1,6 +1,5 @@
 package fi.pyramus.views.users;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -18,9 +17,7 @@ import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
-import fi.pyramus.plugin.auth.AuthenticationProvider;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
-import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.pyramus.util.JSONArrayExtractor;
 import fi.pyramus.util.StringAttributeComparator;
 
@@ -42,6 +39,7 @@ public class CreateUserViewController extends PyramusViewController implements B
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     
     Long studentId = pageRequestContext.getLong("studentId");
+    boolean hasInternalAuthenticationStrategies = AuthenticationProviderVault.getInstance().hasInternalStrategies();
     
     if (studentId != null) {
       Student student = studentDAO.findById(studentId);
@@ -57,23 +55,6 @@ public class CreateUserViewController extends PyramusViewController implements B
       setJsDataVariable(pageRequestContext, "createuser_addresses", addresses);
       setJsDataVariable(pageRequestContext, "createuser_phones", phones);
     }
-    
-    List<AuthenticationProviderInfoBean> authenticationProviders = new ArrayList<AuthenticationProviderInfoBean>();
-    for (String authenticationProviderName : AuthenticationProviderVault.getAuthenticationProviderClasses().keySet()) {
-      boolean active = AuthenticationProviderVault.getInstance().getAuthenticationProvider(authenticationProviderName) != null;
-      boolean canUpdateCredentials;
-      
-      AuthenticationProvider authenticationProvider = AuthenticationProviderVault.getInstance().getAuthenticationProvider(authenticationProviderName);
-      
-      if (authenticationProvider instanceof InternalAuthenticationProvider) {
-        InternalAuthenticationProvider internalAuthenticationProvider = (InternalAuthenticationProvider) authenticationProvider;
-        canUpdateCredentials = internalAuthenticationProvider.canUpdateCredentials();
-      } else {
-        canUpdateCredentials = false;
-      }
-      
-      authenticationProviders.add(new AuthenticationProviderInfoBean(authenticationProviderName, active, canUpdateCredentials));
-    }
 
     List<ContactURLType> contactURLTypes = contactURLTypeDAO.listUnarchived();
     Collections.sort(contactURLTypes, new StringAttributeComparator("getName"));
@@ -83,7 +64,7 @@ public class CreateUserViewController extends PyramusViewController implements B
 
     pageRequestContext.getRequest().setAttribute("contactTypes", contactTypes);
     pageRequestContext.getRequest().setAttribute("contactURLTypes", contactURLTypes);
-    pageRequestContext.getRequest().setAttribute("authenticationProviders", authenticationProviders);
+    pageRequestContext.getRequest().setAttribute("hasInternalAuthenticationStrategies", hasInternalAuthenticationStrategies);
     
     pageRequestContext.setIncludeJSP("/templates/users/createuser.jsp");
   }
