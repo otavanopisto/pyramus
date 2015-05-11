@@ -16,8 +16,6 @@ import javax.persistence.criteria.Root;
 @Stateless
 public class UserIdentificationDAO extends PyramusEntityDAO<UserIdentification> {
 
-	private static final long serialVersionUID = -3862910101039448995L;
-
 	public UserIdentification create(Person person, String authSource, String externalId) {
     UserIdentification userIdentification = new UserIdentification();
     userIdentification.setAuthSource(authSource);
@@ -37,6 +35,23 @@ public class UserIdentificationDAO extends PyramusEntityDAO<UserIdentification> 
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(UserIdentification_.externalId), externalId),
+            criteriaBuilder.equal(root.get(UserIdentification_.authSource), authSource)
+        )
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+  
+  public UserIdentification findByAuthSourceAndPerson(String authSource, Person person) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<UserIdentification> criteria = criteriaBuilder.createQuery(UserIdentification.class);
+    Root<UserIdentification> root = criteria.from(UserIdentification.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(UserIdentification_.person), person),
             criteriaBuilder.equal(root.get(UserIdentification_.authSource), authSource)
         )
     );
