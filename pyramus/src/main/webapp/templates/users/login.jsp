@@ -37,20 +37,25 @@
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="users.login.usernameTitle"/>
                 <jsp:param name="helpLocale" value="users.login.usernameHelp"/>
-              </jsp:include>                  
+              </jsp:include>     
               <input type="text" name="username" class="required" size="25"/>
             </div>
             <div class="genericFormSection">  
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="users.login.passwordTitle"/>
                 <jsp:param name="helpLocale" value="users.login.passwordHelp"/>
-              </jsp:include>    
+              </jsp:include>     
               <input type="password" name="password" class="required" size="20">
             </div>
             <div class="genericFormSubmitSection">
               <input type="submit" name="login" value="<fmt:message key="users.login.loginButton"/>">
             </div>
           </form>
+          
+          <c:forEach var="externalProvider" items="${externalProviders}">
+            <a href="?external=${externalProvider.name}">${externalProvider.name}</a>
+          </c:forEach>
+          
         </div>
       </div>
     </div>
