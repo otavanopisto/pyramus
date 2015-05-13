@@ -100,56 +100,11 @@
         });   
       }
       
-      function canUpdateCredentials(strategyName) {
-        <c:if test="${fn:length(authenticationProviders) gt 0}">
-          switch (strategyName) {
-            <c:forEach var="authenticationProvider" items="${authenticationProviders}">
-              <c:choose>
-                <c:when test="${authenticationProvider.active eq true}">
-                  case '${authenticationProvider.name}':
-                    return ${authenticationProvider.canUpdateCredentials};
-                </c:when>
-              </c:choose>
-            </c:forEach>
-          }
-        </c:if>
-        return false;
-      }
-      
-      function updateCredentialsVisibility() {
-        var inputElement = $$('select[name="authProvider"]')[0];
-        var authProvider;
-        
-        if (!inputElement)
-          authProvider = "${userIdentification.authSource}";
-        else
-          authProvider = inputElement.value;
-        
-        $('editUserCredentialsContainer').setStyle({
-          display: canUpdateCredentials(authProvider) ? 'block' : 'none'
-        });     
-      }
-      
-      function setupAuthSelect() {
-        Event.observe($$('select[name="authProvider"]')[0], "change", function (event) {
-          updateCredentialsVisibility();
-          revalidateAll();
-        });
-      }
-      
       function onLoad(event) {
         var tabControl = new IxProtoTabs($('tabs'));
         
         setupTags();
         setupRelatedCommandsBasic();
-        
-        <c:choose>
-          <c:when test="${loggedUserRole == 'ADMINISTRATOR'}">
-		        setupAuthSelect();
-		      </c:when>
-		    </c:choose>
-
-		    updateCredentialsVisibility();
 		        
         var addressTable = new IxTable($('addressTable'), {
           id : "addressTable",
@@ -490,65 +445,34 @@
               </jsp:include>                  
               <input type="text" name="title" value="${fn:escapeXml(user.title)}" size="30">
             </div>
-            
-            <c:choose>
-	            <c:when test="${loggedUserRole == 'ADMINISTRATOR'}">
-	              <div class="genericFormSection">  
-	                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-	                  <jsp:param name="titleLocale" value="users.editUser.authenticationMethodTitle"/>
-	                  <jsp:param name="helpLocale" value="users.editUser.authenticationMethodHelp"/>
-	                </jsp:include>                  
-	    
-	                <select name="authProvider">
-	                  <c:forEach var="authenticationProvider" items="${authenticationProviders}">
-	                    <c:choose>
-	                      <c:when test="${authenticationProvider.active eq true}">
-	                        <c:set var="authenticationProviderName">${authenticationProvider.name}</c:set>
-	                      </c:when>
-	                      <c:otherwise>
-	                        <c:set var="authenticationProviderName">${authenticationProvider.name} (<fmt:message key="users.editUser.authenticationMethodDisabled"/>)</c:set>
-	                      </c:otherwise>
-	                    </c:choose>
-	                    
-	                    <c:choose>
-	                      <c:when test="${authenticationProvider.name eq userIdentification.authSource}">
-	                        <option value="${authenticationProvider.name}" selected="selected">${authenticationProviderName}</option>
-	                      </c:when>
-	                      <c:otherwise>
-	                        <option value="${authenticationProvider.name}">${authenticationProviderName}</option>
-	                      </c:otherwise>
-	                    </c:choose>
-	                  </c:forEach>
-	                </select>
-	              </div>
-	            </c:when>
-	          </c:choose>
-          
-            <div id="editUserCredentialsContainer">
-              <div class="genericFormSection">  
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="users.editUser.usernameTitle"/>
-                  <jsp:param name="helpLocale" value="users.editUser.usernameHelp"/>
-                </jsp:include>                  
-                <input type="text" name="username" value="${username}" size="30">
+
+            <c:if test="${hasInternalAuthenticationStrategies}">
+              <div id="editUserCredentialsContainer">
+                <div class="genericFormSection">  
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="users.editUser.usernameTitle"/>
+                    <jsp:param name="helpLocale" value="users.editUser.usernameHelp"/>
+                  </jsp:include>                  
+                  <input type="text" name="username" value="${username}" size="30">
+                </div>
+                
+                <div class="genericFormSection">  
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="users.editUser.password1Title"/>
+                    <jsp:param name="helpLocale" value="users.editUser.password1Help"/>
+                  </jsp:include>                  
+                  <input type="password" class="equals equals-password2" name="password1" value="" size="30">
+                </div>
+                
+                <div class="genericFormSection">  
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="users.editUser.password2Title"/>
+                    <jsp:param name="helpLocale" value="users.editUser.password2Help"/>
+                  </jsp:include>                  
+                  <input type="password" class="equals equals-password1" name="password2" value="" size="30">
+                </div>
               </div>
-              
-              <div class="genericFormSection">  
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="users.editUser.password1Title"/>
-                  <jsp:param name="helpLocale" value="users.editUser.password1Help"/>
-                </jsp:include>                  
-                <input type="password" class="equals equals-password2" name="password1" value="" size="30">
-              </div>
-              
-              <div class="genericFormSection">  
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="users.editUser.password2Title"/>
-                  <jsp:param name="helpLocale" value="users.editUser.password2Help"/>
-                </jsp:include>                  
-                <input type="password" class="equals equals-password1" name="password2" value="" size="30">
-              </div>
-            </div>
+            </c:if>
 
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">

@@ -149,6 +149,7 @@
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/reindexhibernateobjects.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.reindexHibernateEntities"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/elementcheatsheet.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.layoutElementsCheatSheet"/></a></li>
             <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/clientapplications.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.clientApplications"/></a></li>
+            <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/system/managepermissions.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.managePermissions"/></a></li>
             <ix:extensionHook name="generic.navigation.systemMenu"/>
           </ul>
         </li>

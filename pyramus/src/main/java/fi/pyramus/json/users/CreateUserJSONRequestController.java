@@ -24,12 +24,10 @@ import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.StaffMember;
-import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.framework.UserUtils;
-import fi.pyramus.plugin.auth.AuthenticationProvider;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
 
@@ -77,7 +75,6 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     String title = requestContext.getString("title");
     Role role = Role.getRole(requestContext.getInteger("role"));
     String tagsText = requestContext.getString("tags");
-    String authProvider = requestContext.getString("authProvider");
     String username = requestContext.getString("username");
     String password = requestContext.getString("password1");
     String password2 = requestContext.getString("password2");
@@ -95,27 +92,6 @@ public class CreateUserJSONRequestController extends JSONRequestController {
       }
     }
     
-    // Authentication
-    
-    String externalId = "-1";
-
-    AuthenticationProvider authenticationProvider = AuthenticationProviderVault.getInstance().getAuthenticationProvider(authProvider);
-    if (authenticationProvider instanceof InternalAuthenticationProvider) {
-      InternalAuthenticationProvider internalAuthenticationProvider = (InternalAuthenticationProvider) authenticationProvider;
-      
-      boolean usernameBlank = StringUtils.isBlank(username);
-      boolean passwordBlank = StringUtils.isBlank(password);
-      
-      if (!usernameBlank||!passwordBlank) {
-        if (!passwordBlank) {
-          if (!password.equals(password2))
-            throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
-        }
-
-        externalId = internalAuthenticationProvider.createCredentials(username, password);
-      }
-    } 
-    
     // User
 
     Person person = personId != null ? personDAO.findById(personId) : personDAO.create(null, null, null, null, Boolean.FALSE);
@@ -127,22 +103,24 @@ public class CreateUserJSONRequestController extends JSONRequestController {
       personDAO.updateDefaultUser(person, user);
     }
     
-    // UserIdentification
+    // Authentication
     
-    /**
-     * Create userIdentification only for internal authentication providers, external providers will create the identification during first login
-     */
-    if(authenticationProvider instanceof InternalAuthenticationProvider){
-      List<UserIdentification> userIdentifications = userIdentificationDAO.listByPerson(person);
-      if (userIdentifications == null || userIdentifications.size() == 0) {
-        userIdentificationDAO.create(person, authProvider, externalId);
-      } else if (userIdentifications.size() > 1) {
-        //TODO: Currently only 1 UserIdentification for person is supported, this may change in the future.
-        throw new SmvcRuntimeException(PyramusStatusCode.MULTIPLE_IDENTIFICATIONS_FOR_PERSON, "Multiple UserIdentifications found for person");
-      } else {
-        UserIdentification userIdentification = userIdentificationDAO.updateAuthSource(userIdentifications.get(0), authProvider);
-        userIdentificationDAO.updateExternalId(userIdentification, externalId);
-      } 
+    if (AuthenticationProviderVault.getInstance().hasInternalStrategies()) {
+      boolean usernameBlank = StringUtils.isBlank(username);
+      boolean passwordBlank = StringUtils.isBlank(password);
+      
+      // TODO: Support multiple internal authentication sources
+      if (!usernameBlank) {
+        InternalAuthenticationProvider internalAuthenticationProvider = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders().get(0);
+        
+        if (!passwordBlank) {
+          if (!password.equals(password2))
+            throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
+        }
+
+        String externalId = internalAuthenticationProvider.createCredentials(username, password);
+        userIdentificationDAO.create(person, internalAuthenticationProvider.getName(), externalId);
+      }
     }
     
     // Tags

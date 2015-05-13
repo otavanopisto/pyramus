@@ -198,7 +198,7 @@ public class ObjectFactory {
         new Mapper<CourseAssessment>(){
           @Override
           public Object map(CourseAssessment entity) {
-            return new fi.pyramus.rest.model.CourseAssessment(entity.getId(), entity.getCourseStudent().getId(), entity.getGrade().getId(), entity.getAssessor().getId(), new DateTime(entity.getDate()), entity.getVerbalAssessment());
+            return new fi.pyramus.rest.model.CourseAssessment(entity.getId(), entity.getCourseStudent().getId(), entity.getGrade().getId(),entity.getGrade().getGradingScale().getId(), entity.getAssessor().getId(), new DateTime(entity.getDate()), entity.getVerbalAssessment());
           }
         },
         
