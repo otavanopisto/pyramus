@@ -8,6 +8,7 @@ input[type='text']{
   padding:1px 0px 2px 0px;
   font-family: "trebuchet ms";
   height:17px;
+  max-width:100%;
 }
 
 textarea{
@@ -36,7 +37,8 @@ input[type='password']{
   -webkit-border-radius:3px;
   border-radius:3px;
   border:1px solid #739de7;
-  padding:2px 0px 3px 0px;
+  padding:1px 0px 2px 0px;
+  max-width:100%;
 }
 
 input[type='checkbox']{

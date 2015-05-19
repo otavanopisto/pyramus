@@ -2424,6 +2424,15 @@ img.studentContactEntryEditButton, img.studentContactEntryArchiveButton{
   margin-right:10px;
 }
 
+.internalLoginProviderWrapper input[type="text"],
+.internalLoginProviderWrapper input[type="password"] {
+  max-width:100%;
+  width:100%;
+  box-sizing:border-box;
+  padding:2px 4px;
+  height:25px;
+}
+
 .externalLoginProviderWrapper {
   float: right;
   width: 215px;
