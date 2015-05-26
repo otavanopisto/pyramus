@@ -23,6 +23,9 @@ import fi.pyramus.events.CourseStudentArchivedEvent;
 import fi.pyramus.events.CourseStudentCreatedEvent;
 import fi.pyramus.events.CourseStudentUpdatedEvent;
 import fi.pyramus.events.CourseUpdatedEvent;
+import fi.pyramus.events.PersonArchivedEvent;
+import fi.pyramus.events.PersonCreatedEvent;
+import fi.pyramus.events.PersonUpdatedEvent;
 import fi.pyramus.events.StaffMemberCreatedEvent;
 import fi.pyramus.events.StaffMemberDeletedEvent;
 import fi.pyramus.events.StaffMemberUpdatedEvent;
@@ -72,6 +75,20 @@ public class Webhooks {
     webhookController.sendWebhookNotifications(webhooks, new WebhookCourseArchivePayload(event.getCourseId()));
   }
   
+  /* Person */
+
+  public void onPersonCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) PersonCreatedEvent event) {
+    webhookController.sendWebhookNotifications(webhooks, new WebhookPersonCreatePayload(event.getPersonId()));
+  }
+
+  public void onPersonUpdated(@Observes(during=TransactionPhase.AFTER_SUCCESS) PersonUpdatedEvent event) {
+    webhookController.sendWebhookNotifications(webhooks, new WebhookPersonUpdatePayload(event.getPersonId()));
+  }
+
+  public void onPersonArchived(@Observes(during=TransactionPhase.AFTER_SUCCESS) PersonArchivedEvent event) {
+    webhookController.sendWebhookNotifications(webhooks, new WebhookPersonArchivePayload(event.getPersonId()));
+  }
+
   /* Student */
   
   public void onStudentCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentCreatedEvent event) {

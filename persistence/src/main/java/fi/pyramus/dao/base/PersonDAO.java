@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -44,12 +46,20 @@ import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.User_;
+import fi.pyramus.events.PersonCreatedEvent;
+import fi.pyramus.events.PersonUpdatedEvent;
 import fi.pyramus.persistence.search.PersonFilter;
 import fi.pyramus.persistence.search.SearchResult;
 
 @Stateless
 public class PersonDAO extends PyramusEntityDAO<Person> {
 
+  @Inject
+  private Event<PersonCreatedEvent> personCreatedEvent;
+  
+  @Inject
+  private Event<PersonUpdatedEvent> personUpdatedEvent;
+  
   public Person create(Date birthday, String socialSecurityNumber, Sex sex, String basicInfo, Boolean secureInfo) {
     Person person = new Person();
 
@@ -59,7 +69,11 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     person.setBasicInfo(basicInfo);
     person.setSecureInfo(secureInfo);
 
-    return persist(person);
+    person = persist(person);
+    
+    personCreatedEvent.fire(new PersonCreatedEvent(person.getId()));
+    
+    return person;
   }
 
   public void update(Person person, Date birthday, String socialSecurityNumber, Sex sex, String basicInfo, Boolean secureInfo) {
@@ -70,6 +84,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     person.setBasicInfo(basicInfo);
     person.setSecureInfo(secureInfo);
     entityManager.persist(person);
+    
+    personUpdatedEvent.fire(new PersonUpdatedEvent(person.getId()));
   }
   
   public Person findByUniqueEmail(String email){
@@ -97,7 +113,11 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
 
   public Person updateDefaultUser(Person person, User defaultUser){
     person.setDefaultUser(defaultUser);
-    return persist(person);
+    person = persist(person);
+    
+    personUpdatedEvent.fire(new PersonUpdatedEvent(person.getId()));
+
+    return person;
   }
   
   /**
