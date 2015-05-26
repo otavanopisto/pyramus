@@ -813,6 +813,8 @@ h1.genericPageHeader{
   vertical-align: middle;
   width: 400px;
   cursor:pointer;
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
 
 .listReportsEditReportContainer {

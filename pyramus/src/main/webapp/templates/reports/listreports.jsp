@@ -53,7 +53,7 @@
           </c:if>
           <div class="listReportsReportContainer">
             <div class="listReportsNameContainer" title="<fmt:message key="reports.listReports.viewReportTooltip"/>" onclick="redirectTo(GLOBAL_contextPath + '/reports/viewreport.page?reportId=<c:out value="${report.id}"/>');"><c:out value="${report.name}"/></div>
-            <div class="listReportsEditReportContainer" title="<fmt:message key="reports.listReports.editReportTooltip"/>" onclick="redirectTo(GLOBAL_contextPath + '/reports/editreport.page?reportId=<c:out value="${report.id}"/>');"></div>
+<%--             <div class="listReportsEditReportContainer" title="<fmt:message key="reports.listReports.editReportTooltip"/>" onclick="redirectTo(GLOBAL_contextPath + '/reports/editreport.page?reportId=<c:out value="${report.id}"/>');"></div> --%>
           </div>
         </c:forEach>
         <div class="listReportsSpacer"></div>
