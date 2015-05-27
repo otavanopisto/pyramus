@@ -122,8 +122,10 @@ public class UserUtils {
   }
   
   public static boolean allowEditCredentials(User editor, Person whose) {
-    return (editor.getRole() == Role.ADMINISTRATOR) ||
-        ((editor.getRole() == Role.MANAGER) && (UserUtils.getHighestPersonRole(whose) == Role.ADMINISTRATOR));
+    return
+        (editor.getRole() == Role.ADMINISTRATOR) ||
+        (editor.getPerson().getId().equals(whose.getId())) ||
+        ((editor.getRole() == Role.MANAGER) && (UserUtils.getHighestPersonRole(whose) != Role.ADMINISTRATOR));
   }
   
 }
