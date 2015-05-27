@@ -588,7 +588,7 @@
               <fmt:message key="students.editStudent.studentBasicInfoTabLabel"/>
             </a>
 
-            <c:if test="${hasInternalAuthenticationStrategies}">
+            <c:if test="${hasInternalAuthenticationStrategies and allowEditCredentials}">
               <a class="tabLabel" href="#credentials">
                 <fmt:message key="students.editStudent.studentCredentialsTabLabel"/>
               </a>
@@ -681,7 +681,7 @@
             <ix:extensionHook name="students.editStudent.tabs.basic"/>
           </div>
 
-          <c:if test="${hasInternalAuthenticationStrategies}">
+          <c:if test="${hasInternalAuthenticationStrategies and allowEditCredentials}">
             <div id="credentials" class="tabContent">    
               <div id="basicRelatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
   

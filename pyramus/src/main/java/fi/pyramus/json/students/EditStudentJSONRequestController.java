@@ -31,6 +31,7 @@ import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
+import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserIdentificationDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.Address;
@@ -50,6 +51,9 @@ import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.pyramus.domainmodel.users.Role;
+import fi.pyramus.domainmodel.users.StaffMember;
+import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.PyramusStatusCode;
@@ -80,7 +84,10 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
 
+    User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
+    
     Long personId = NumberUtils.createLong(requestContext.getRequest().getParameter("personId"));
     Person person = personDAO.findById(personId);
 
@@ -93,40 +100,42 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     String username = requestContext.getString("username");
     String password = requestContext.getString("password1");
     String password2 = requestContext.getString("password2");
-    
-    if (!person.getVersion().equals(version))
-      throw new StaleObjectStateException(Person.class.getName(), person.getId());
 
-    boolean usernameBlank = StringUtils.isBlank(username);
-    boolean passwordBlank = StringUtils.isBlank(password);
-
-    if (!usernameBlank||!passwordBlank) {
-      if (!passwordBlank) {
-        if (!password.equals(password2))
-          throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
-      }
-      
-      // TODO: Support for multiple internal authentication providers
-      List<InternalAuthenticationProvider> internalAuthenticationProviders = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
-      if (internalAuthenticationProviders.size() == 1) {
-        InternalAuthenticationProvider internalAuthenticationProvider = internalAuthenticationProviders.get(0);
-        if (internalAuthenticationProvider != null) {
-          UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), person);
-          
-          if (internalAuthenticationProvider.canUpdateCredentials()) {
-            if (userIdentification == null) {
-              String externalId = internalAuthenticationProvider.createCredentials(username, password);
-              userIdentificationDAO.create(person, internalAuthenticationProvider.getName(), externalId);
-            } else {
-              if ("-1".equals(userIdentification.getExternalId())) {
+    if (UserUtils.allowEditCredentials(loggedUser, person)) {
+      if (!person.getVersion().equals(version))
+        throw new StaleObjectStateException(Person.class.getName(), person.getId());
+  
+      boolean usernameBlank = StringUtils.isBlank(username);
+      boolean passwordBlank = StringUtils.isBlank(password);
+  
+      if (!usernameBlank||!passwordBlank) {
+        if (!passwordBlank) {
+          if (!password.equals(password2))
+            throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
+        }
+        
+        // TODO: Support for multiple internal authentication providers
+        List<InternalAuthenticationProvider> internalAuthenticationProviders = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
+        if (internalAuthenticationProviders.size() == 1) {
+          InternalAuthenticationProvider internalAuthenticationProvider = internalAuthenticationProviders.get(0);
+          if (internalAuthenticationProvider != null) {
+            UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), person);
+            
+            if (internalAuthenticationProvider.canUpdateCredentials()) {
+              if (userIdentification == null) {
                 String externalId = internalAuthenticationProvider.createCredentials(username, password);
-                userIdentificationDAO.updateExternalId(userIdentification, externalId);
+                userIdentificationDAO.create(person, internalAuthenticationProvider.getName(), externalId);
               } else {
-                if (!StringUtils.isBlank(username))
-                  internalAuthenticationProvider.updateUsername(userIdentification.getExternalId(), username);
-              
-                if (!StringUtils.isBlank(password))
-                  internalAuthenticationProvider.updatePassword(userIdentification.getExternalId(), password);
+                if ("-1".equals(userIdentification.getExternalId())) {
+                  String externalId = internalAuthenticationProvider.createCredentials(username, password);
+                  userIdentificationDAO.updateExternalId(userIdentification, externalId);
+                } else {
+                  if (!StringUtils.isBlank(username))
+                    internalAuthenticationProvider.updateUsername(userIdentification.getExternalId(), username);
+                
+                  if (!StringUtils.isBlank(password))
+                    internalAuthenticationProvider.updatePassword(userIdentification.getExternalId(), password);
+                }
               }
             }
           }

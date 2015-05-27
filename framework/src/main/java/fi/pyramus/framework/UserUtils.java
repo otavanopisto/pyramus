@@ -7,8 +7,11 @@ import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Email;
+import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.students.Student;
+import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.StaffMember;
+import fi.pyramus.domainmodel.users.User;
 
 public class UserUtils {
 
@@ -72,4 +75,55 @@ public class UserUtils {
       return (staffMember == null) && (students.size() == 0);
     }
   }
+  
+  public static Role getHighestPersonRole(Person person) {
+    List<StaffMember> staffMembers = person.getStaffMembers();
+    
+    Role role = Role.EVERYONE;
+    
+    for (StaffMember staffMember : staffMembers) {
+      if (isHigherOrEqualRole(staffMember.getRole(), role))
+        role = staffMember.getRole();
+    }
+    
+    return role;
+  }
+  
+  public static boolean isHigherOrEqualRole(Role r, Role test) {
+    // Administrator --> Manager --> User --> Student --> Trusted System --> Guest --> Everyone
+    
+    if (r == test)
+      return true;
+    
+    switch (test) {
+      case ADMINISTRATOR:
+        return false; // Only true if role is administrator too, and checked before so we will never end up here
+
+      case MANAGER:
+        return (r == Role.ADMINISTRATOR);
+      
+      case USER:
+        return (r == Role.ADMINISTRATOR) || (r == Role.MANAGER);
+        
+      case STUDENT:
+        return (r == Role.ADMINISTRATOR) || (r == Role.MANAGER) || (r == Role.USER);
+      
+      case TRUSTED_SYSTEM:
+        return (r == Role.ADMINISTRATOR) || (r == Role.MANAGER) || (r == Role.USER) || (r == Role.STUDENT);
+
+      case GUEST:
+        return (r == Role.ADMINISTRATOR) || (r == Role.MANAGER) || (r == Role.USER) || (r == Role.STUDENT) || (r == Role.TRUSTED_SYSTEM);
+      
+      case EVERYONE:
+        return true; // Any other role is higher or equal to everyone
+    }
+    
+    return false;
+  }
+  
+  public static boolean allowEditCredentials(User editor, Person whose) {
+    return (editor.getRole() == Role.ADMINISTRATOR) ||
+        ((editor.getRole() == Role.MANAGER) && (UserUtils.getHighestPersonRole(whose) == Role.ADMINISTRATOR));
+  }
+  
 }
