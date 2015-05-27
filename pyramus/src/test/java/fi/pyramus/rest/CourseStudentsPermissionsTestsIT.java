@@ -60,7 +60,7 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
   @Test
   public void testPermissionsFindCourseStudent() throws NoSuchFieldException  {
     Response response = given().headers(getAuthHeaders())
-    .get("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, 3l);
+    .get("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, 5l);
     assertOk(response, coursePermissions, CoursePermissions.FIND_COURSESTUDENT, 200);
   }
   

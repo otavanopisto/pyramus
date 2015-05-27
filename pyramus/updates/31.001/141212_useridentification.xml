@@ -32,26 +32,39 @@
       </dropFields>
     </table>
   </alterTables>
-  <sql>update Person p, (
-    select 
-    id,
-    case
-    when not isnull(studyStartDate) and isnull(studyEndDate) then 1
-    when isnull(studyStartDate) and isnull(studyEndDate) then 2
-    when isnull(studyEndDate) then 3 
-    else 4
-    end as val 
+  <sql>
+update 
+    Person p,
+    (select 
+        Student.id as id,
+        Person.id as personId,
+        case
+            when not isnull(studyStartDate) and isnull(studyEndDate) then 1
+            when isnull(studyStartDate) and isnull(studyEndDate) then 2
+            when isnull(studyEndDate) then 3 
+            else 4
+        end as val 
     from 
-    Student
+        Student
+    inner join
+        User
+    on
+        Student.id = User.id
+    inner join
+        Person 
+    on
+        User.person_id = Person.id
     where 
-    archived = false
+        User.archived = false
     group by 
-    id 
+        Student.id 
     having 
-    min(val)
-  ) v
-    set 
-    p.defaultUser_id = v.id;
+        min(val)
+    ) v
+set 
+    p.defaultUser_id = v.id
+where
+    p.id = v.personId
   </sql>
   <sql>update Person p, UserVariable uv, User u set p.defaultUser_id=u.id where p.id = u.person_id AND u.id = uv.user and uv.variableKey = (select id from uservariablekey where variableKey = 'nexusid') and uv.value is not null</sql>
   <sql>update Person p, StaffMember s, User u set p.defaultUser_id=u.id where p.id = u.person_id AND u.id = s.id</sql>
