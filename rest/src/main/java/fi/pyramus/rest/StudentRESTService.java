@@ -1703,6 +1703,13 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(id);
+    if (!course.getId().equals(courseAssessment.getCourseStudent().getCourse().getId())) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find a course assessment for course student course").build();
+    }
+    
+    if (!student.getId().equals(courseAssessment.getCourseStudent().getStudent().getId())) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find a course assessment for course student student").build();
+    }
     
     return Response.ok(objectFactory.createModel(courseAssessment)).build();
   }
