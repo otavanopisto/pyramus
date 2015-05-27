@@ -71,7 +71,7 @@
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/star.png',
           iconOpacity: (studentId == defaultUserId) ? 1.0 : 0.4, 
-          text: '<fmt:message key="students.editStudent.basicTabRelatedActionsSetAsDefaultUserLabel"/>',
+          text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsSetAsDefaultUserLabel"/>',
           onclick: function (event) {
             JSONRequest.request("users/setdefaultuser.json", {
               parameters: {
@@ -79,7 +79,7 @@
                 userId: studentId
               },
               onSuccess: function (jsonResponse) {
-                window.location.reload();
+                window.location.reload(true);
               }
             }); 
           }  
@@ -1197,7 +1197,7 @@
           staffMemberTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
             iconURL: GLOBAL_contextPath + '/gfx/star.png',
             iconOpacity: (${staffMember.id} == defaultUserId) ? 1.0 : 0.4, 
-            text: '<fmt:message key="students.editStudent.staffMemberTabRelatedActionsSetAsDefaultUserLabel"/>',
+            text: '<fmt:message key="students.viewStudent.staffMemberTabRelatedActionsSetAsDefaultUserLabel"/>',
             onclick: function (event) {
               JSONRequest.request("users/setdefaultuser.json", {
                 parameters: {
@@ -1205,7 +1205,7 @@
                   userId: ${staffMember.id}
                 },
                 onSuccess: function (jsonResponse) {
-                  window.location.reload();
+                  window.location.reload(true);
                 }
               }); 
             }  

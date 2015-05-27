@@ -9,19 +9,8 @@ import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
 
-/**
- * The controller responsible of modifying an existing student group.
- * 
- * @see fi.pyramus.views.students.EditStudentGroupViewController
- */
 public class SetDefaultUserJSONRequestController extends JSONRequestController {
 
-  /**
-   * Processes the request to edit a student group.
-   * 
-   * @param requestContext
-   *          The JSON request context
-   */
   public void process(JSONRequestContext requestContext) {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
