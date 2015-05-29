@@ -66,7 +66,10 @@ IxHoverMenuItem = Class.create(
     this.domNode.appendChild(this._textNode);
     
     if (options.iconURL) {
-      this._iconNode = new Element("div", {className: "IxHoverMenuItemIcon", style: "background-image: url(" + options.iconURL + ')'});
+      if (options.iconOpacity)
+        this._iconNode = new Element("div", {className: "IxHoverMenuItemIcon", style: "background-image: url(" + options.iconURL + "); opacity: " + options.iconOpacity});
+      else
+        this._iconNode = new Element("div", {className: "IxHoverMenuItemIcon", style: "background-image: url(" + options.iconURL + ')'});
       this.domNode.appendChild(this._iconNode);
     }
   }

@@ -3,14 +3,11 @@ package fi.pyramus.rest;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNotNull;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.jayway.restassured.response.Response;
 
-import fi.pyramus.rest.model.ContactType;
 import fi.pyramus.rest.model.CourseAssessment;
 
 public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
@@ -64,7 +61,7 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
   @Test
   public void testFindCourseAssessment() {
     given().headers(getAuthHeaders())
-      .get("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/{ID}",4, TEST_COURSEID, 1)
+      .get("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/{ID}", TEST_STUDENTID, TEST_COURSEID, 1)
       .then()
       .statusCode(200)
       .body("id", is(1) )

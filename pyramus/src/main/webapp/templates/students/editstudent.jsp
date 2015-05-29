@@ -588,6 +588,12 @@
               <fmt:message key="students.editStudent.studentBasicInfoTabLabel"/>
             </a>
 
+            <c:if test="${hasInternalAuthenticationStrategies and allowEditCredentials}">
+              <a class="tabLabel" href="#credentials">
+                <fmt:message key="students.editStudent.studentCredentialsTabLabel"/>
+              </a>
+            </c:if>
+
             <c:forEach var="student" items="${students}">
               <a class="tabLabel" href="#student.${student.id}">
                 <c:choose>
@@ -674,6 +680,41 @@
             </div>
             <ix:extensionHook name="students.editStudent.tabs.basic"/>
           </div>
+
+          <c:if test="${hasInternalAuthenticationStrategies and allowEditCredentials}">
+            <div id="credentials" class="tabContent">    
+              <div id="basicRelatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
+  
+              <div id="editUserCredentialsContainer">
+                <div class="genericFormSection">  
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="students.editStudent.usernameTitle"/>
+                    <jsp:param name="helpLocale" value="students.editStudent.usernameHelp"/>
+                  </jsp:include>                  
+                  <input type="text" name="username" value="${username}" size="30">
+                </div>
+                
+                <div class="genericFormSection">  
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="students.editStudent.password1Title"/>
+                    <jsp:param name="helpLocale" value="students.editStudent.password1Help"/>
+                  </jsp:include>                  
+                  <input type="password" class="equals equals-password2" name="password1" value="" size="30">
+                </div>
+                
+                <div class="genericFormSection">  
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="students.editStudent.password2Title"/>
+                    <jsp:param name="helpLocale" value="students.editStudent.password2Help"/>
+                  </jsp:include>                  
+                  <input type="password" class="equals equals-password1" name="password2" value="" size="30">
+                </div>
+              </div>
+              
+              <ix:extensionHook name="students.editStudent.tabs.credentials"/>
+            </div>
+          </c:if>
+          
 
           <c:forEach var="student" items="${students}">
             <div id="student.${student.id}" class="tabContent">

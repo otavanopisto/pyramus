@@ -11,6 +11,7 @@ import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.internetix.smvc.controllers.RequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.breadcrumbs.Breadcrumbable;
 import fi.pyramus.dao.DAOFactory;
@@ -30,6 +31,8 @@ import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
+import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.UserIdentificationDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
 import fi.pyramus.domainmodel.base.ContactType;
@@ -41,10 +44,15 @@ import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.students.Student;
+import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.domainmodel.users.UserVariable;
 import fi.pyramus.domainmodel.users.UserVariableKey;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.framework.UserUtils;
+import fi.pyramus.plugin.auth.AuthenticationProviderVault;
+import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.pyramus.util.StringAttributeComparator;
 
 public class EditStudentViewController extends PyramusViewController implements Breadcrumbable {
@@ -68,7 +76,11 @@ public class EditStudentViewController extends PyramusViewController implements 
     CreditLinkDAO creditLinkDAO = DAOFactory.getInstance().getCreditLinkDAO();
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
+    UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
 
+    User loggedUser = userDAO.findById(pageRequestContext.getLoggedUserId());
+    
     Long personId = pageRequestContext.getLong("person");
     Person person = personDAO.findById(personId);
     
@@ -162,6 +174,27 @@ public class EditStudentViewController extends PyramusViewController implements 
     List<ContactType> contactTypes = contactTypeDAO.listUnarchived();
     Collections.sort(contactTypes, new StringAttributeComparator("getName"));
     
+    String username = "";
+    boolean hasInternalAuthenticationStrategies = AuthenticationProviderVault.getInstance().hasInternalStrategies();
+
+    if (UserUtils.allowEditCredentials(loggedUser, person)) {
+      if (hasInternalAuthenticationStrategies) {
+        // TODO: Support for multiple internal authentication providers
+        List<InternalAuthenticationProvider> internalAuthenticationProviders = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
+        if (internalAuthenticationProviders.size() == 1) {
+          InternalAuthenticationProvider internalAuthenticationProvider = internalAuthenticationProviders.get(0);
+          if (internalAuthenticationProvider != null) {
+            UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), person);
+            if (internalAuthenticationProvider.canUpdateCredentials()) {
+              if (userIdentification != null) {
+                username = internalAuthenticationProvider.getUsername(userIdentification.getExternalId());
+              }
+            }
+          }
+        }
+      }
+    }
+    
     pageRequestContext.getRequest().setAttribute("tags", studentTags);
     pageRequestContext.getRequest().setAttribute("person", person);
     pageRequestContext.getRequest().setAttribute("students", students);
@@ -178,6 +211,9 @@ public class EditStudentViewController extends PyramusViewController implements 
     pageRequestContext.getRequest().setAttribute("studyEndReasons", studyEndReasonDAO.listByParentReason(null));
     pageRequestContext.getRequest().setAttribute("variableKeys", userVariableKeys);
     pageRequestContext.getRequest().setAttribute("studentHasCredits", studentHasCredits);
+    pageRequestContext.getRequest().setAttribute("hasInternalAuthenticationStrategies", hasInternalAuthenticationStrategies);
+    pageRequestContext.getRequest().setAttribute("username", username);
+    pageRequestContext.getRequest().setAttribute("allowEditCredentials", UserUtils.allowEditCredentials(loggedUser, person));
     
     pageRequestContext.setIncludeJSP("/templates/students/editstudent.jsp");
   }

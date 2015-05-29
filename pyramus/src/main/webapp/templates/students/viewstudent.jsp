@@ -65,6 +65,25 @@
             link: GLOBAL_contextPath + '/users/createuser.page?studentId=' + studentId 
           }));
         </c:if>
+
+        var defaultUserId = "${person.defaultUser.id}";
+        
+        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
+          iconURL: GLOBAL_contextPath + '/gfx/star.png',
+          iconOpacity: (studentId == defaultUserId) ? 1.0 : 0.4, 
+          text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsSetAsDefaultUserLabel"/>',
+          onclick: function (event) {
+            JSONRequest.request("users/setdefaultuser.json", {
+              parameters: {
+                personId: personId,
+                userId: studentId
+              },
+              onSuccess: function (jsonResponse) {
+                window.location.reload(true);
+              }
+            }); 
+          }  
+        }));      
         
         var extensionHoverMenuLinks = $$('#extensionHoverMenuLinks a');
         for (var i=0, l=extensionHoverMenuLinks.length; i<l; i++) {
@@ -1172,7 +1191,26 @@
             text: '<fmt:message key="students.viewStudent.staffMemberTabRelatedActionsEditUserLabel"/>',
             link: GLOBAL_contextPath + '/users/edituser.page?userId=${staffMember.id}' 
           }));
-  
+
+          var defaultUserId = "${person.defaultUser.id}";
+
+          staffMemberTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
+            iconURL: GLOBAL_contextPath + '/gfx/star.png',
+            iconOpacity: (${staffMember.id} == defaultUserId) ? 1.0 : 0.4, 
+            text: '<fmt:message key="students.viewStudent.staffMemberTabRelatedActionsSetAsDefaultUserLabel"/>',
+            onclick: function (event) {
+              JSONRequest.request("users/setdefaultuser.json", {
+                parameters: {
+                  personId: ${person.id},
+                  userId: ${staffMember.id}
+                },
+                onSuccess: function (jsonResponse) {
+                  window.location.reload(true);
+                }
+              }); 
+            }  
+          }));      
+          
           <c:if test="${empty students}">
             staffMemberTabRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
               iconURL: GLOBAL_contextPath + '/gfx/list-add.png',

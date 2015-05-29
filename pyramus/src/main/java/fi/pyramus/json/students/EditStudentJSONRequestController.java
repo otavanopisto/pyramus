@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.StaleObjectStateException;
 
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.pyramus.I18N.Messages;
 import fi.pyramus.dao.DAOFactory;
@@ -30,6 +31,8 @@ import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.pyramus.dao.students.StudentStudyEndReasonDAO;
+import fi.pyramus.dao.users.UserDAO;
+import fi.pyramus.dao.users.UserIdentificationDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
@@ -48,9 +51,16 @@ import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.pyramus.domainmodel.users.Role;
+import fi.pyramus.domainmodel.users.StaffMember;
+import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.framework.JSONRequestController;
+import fi.pyramus.framework.PyramusStatusCode;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.framework.UserUtils;
+import fi.pyramus.plugin.auth.AuthenticationProviderVault;
+import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
 
 public class EditStudentJSONRequestController extends JSONRequestController {
 
@@ -73,7 +83,11 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
+    UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
 
+    User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
+    
     Long personId = NumberUtils.createLong(requestContext.getRequest().getParameter("personId"));
     Person person = personDAO.findById(personId);
 
@@ -83,10 +97,52 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     String basicInfo = requestContext.getString("basicInfo");
     Long version = requestContext.getLong("version"); 
     Boolean secureInfo = requestContext.getBoolean("secureInfo");
-    
-    if (!person.getVersion().equals(version))
-      throw new StaleObjectStateException(Person.class.getName(), person.getId());
+    String username = requestContext.getString("username");
+    String password = requestContext.getString("password1");
+    String password2 = requestContext.getString("password2");
 
+    if (UserUtils.allowEditCredentials(loggedUser, person)) {
+      if (!person.getVersion().equals(version))
+        throw new StaleObjectStateException(Person.class.getName(), person.getId());
+  
+      boolean usernameBlank = StringUtils.isBlank(username);
+      boolean passwordBlank = StringUtils.isBlank(password);
+  
+      if (!usernameBlank||!passwordBlank) {
+        if (!passwordBlank) {
+          if (!password.equals(password2))
+            throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
+        }
+        
+        // TODO: Support for multiple internal authentication providers
+        List<InternalAuthenticationProvider> internalAuthenticationProviders = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
+        if (internalAuthenticationProviders.size() == 1) {
+          InternalAuthenticationProvider internalAuthenticationProvider = internalAuthenticationProviders.get(0);
+          if (internalAuthenticationProvider != null) {
+            UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), person);
+            
+            if (internalAuthenticationProvider.canUpdateCredentials()) {
+              if (userIdentification == null) {
+                String externalId = internalAuthenticationProvider.createCredentials(username, password);
+                userIdentificationDAO.create(person, internalAuthenticationProvider.getName(), externalId);
+              } else {
+                if ("-1".equals(userIdentification.getExternalId())) {
+                  String externalId = internalAuthenticationProvider.createCredentials(username, password);
+                  userIdentificationDAO.updateExternalId(userIdentification, externalId);
+                } else {
+                  if (!StringUtils.isBlank(username))
+                    internalAuthenticationProvider.updateUsername(userIdentification.getExternalId(), username);
+                
+                  if (!StringUtils.isBlank(password))
+                    internalAuthenticationProvider.updatePassword(userIdentification.getExternalId(), password);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
     // Abstract student
     personDAO.update(person, birthday, ssecId, sex, basicInfo, secureInfo);
 
@@ -280,7 +336,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
         }
       }
     }
-    
+
     // Contact information of a student won't be reflected to Person
     // used when searching students, so a manual re-index is needed
 

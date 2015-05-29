@@ -1639,7 +1639,8 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/")
   @GET
-  @RESTPermit(CourseAssessmentPermissions.LIST_COURSEASSESSMENT)
+  @RESTPermit(handling = Handling.INLINE)
+//  @RESTPermit(CourseAssessmentPermissions.LIST_COURSEASSESSMENT)
   public Response listCourseAssessments(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
     
     Student student = studentController.findStudentById(studentId);
@@ -1650,6 +1651,10 @@ public class StudentRESTService extends AbstractRESTService {
 
     if (student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     Course course = courseController.findCourseById(courseId);
@@ -1669,7 +1674,8 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/{ID:[0-9]*}")
   @GET
-  @RESTPermit(CourseAssessmentPermissions.FIND_COURSEASSESSMENT)
+  @RESTPermit(handling = Handling.INLINE)
+  // @RESTPermit(CourseAssessmentPermissions.FIND_COURSEASSESSMENT)
   public Response findCourseAssessmentById(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
     
     Student student = studentController.findStudentById(studentId);
@@ -1680,6 +1686,10 @@ public class StudentRESTService extends AbstractRESTService {
 
     if (student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.FIND_COURSEASSESSMENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     Course course = courseController.findCourseById(courseId);
@@ -1693,6 +1703,13 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(id);
+    if (!course.getId().equals(courseAssessment.getCourseStudent().getCourse().getId())) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find a course assessment for course student course").build();
+    }
+    
+    if (!student.getId().equals(courseAssessment.getCourseStudent().getStudent().getId())) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find a course assessment for course student student").build();
+    }
     
     return Response.ok(objectFactory.createModel(courseAssessment)).build();
   }

@@ -813,6 +813,8 @@ h1.genericPageHeader{
   vertical-align: middle;
   width: 400px;
   cursor:pointer;
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
 
 .listReportsEditReportContainer {
@@ -2422,6 +2424,15 @@ img.studentContactEntryEditButton, img.studentContactEntryArchiveButton{
   float:left;
   width:160px;
   margin-right:10px;
+}
+
+.internalLoginProviderWrapper input[type="text"],
+.internalLoginProviderWrapper input[type="password"] {
+  max-width:100%;
+  width:100%;
+  box-sizing:border-box;
+  padding:2px 4px;
+  height:25px;
 }
 
 .externalLoginProviderWrapper {
