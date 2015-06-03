@@ -36,11 +36,12 @@ public class StudentAPI {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     email = email != null ? email.trim() : null;
     
     Person personEntity = null;
     if (personId != null) {
-      personEntity = DAOFactory.getInstance().getPersonDAO().findById(personId);
+      personEntity = personDAO.findById(personId);
     }
     StudentActivityType activityTypeEntity = null;
     if (activityType != null) {
@@ -88,7 +89,13 @@ public class StudentAPI {
     Student student = studentDAO.create(personEntity, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityTypeEntity,
         examinationTypeEntity, educationalLevelEntity, education, nationalityEntity, municipalityEntity, languageEntity, school, studyProgramme,
         previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging, false);
-
+    
+    // Default user
+    
+    if (personEntity.getDefaultUser() == null) {
+      personDAO.updateDefaultUser(personEntity, student);
+    }
+    
     if (StringUtils.isNotBlank(email)) {
       ContactType emailContactType = contactTypeDAO.findById(emailContactTypeId);
       if (emailContactType == null) {

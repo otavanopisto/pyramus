@@ -13,6 +13,7 @@ import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.ContactInfoDAO;
 import fi.pyramus.dao.base.ContactURLDAO;
 import fi.pyramus.dao.base.EmailDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.students.StudentDAO;
@@ -63,6 +64,9 @@ public class StudentController {
   @Inject
   private ContactInfoDAO contactInfoDAO;
 
+  @Inject
+  private PersonDAO personDAO;
+  
   public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
       Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Double previousStudies,
@@ -72,6 +76,12 @@ public class StudentController {
         educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies, studyStartDate, studyEndDate,
         studyEndReason, studyEndText, lodging, false);
 
+    // Default user
+    
+    if (person.getDefaultUser() == null) {
+      personDAO.updateDefaultUser(person, student);
+    }
+    
     return student;
   }
 

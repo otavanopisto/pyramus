@@ -10,6 +10,7 @@ import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.base.ContactInfoDAO;
 import fi.pyramus.dao.base.EmailDAO;
+import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.pyramus.dao.grading.CreditLinkDAO;
@@ -49,6 +50,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
 
     Long studentId = requestContext.getLong("studentId");
     Student oldStudent = studentDAO.findById(studentId);
@@ -86,7 +88,13 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     // Contact info
     
     contactInfoDAO.update(newStudent.getContactInfo(), oldStudent.getContactInfo().getAdditionalInfo());
-
+    
+    // Default user
+    
+    if (person.getDefaultUser() == null) {
+      personDAO.updateDefaultUser(person, newStudent);
+    }
+    
     // Addresses
 
     List<Address> addresses = oldStudent.getContactInfo().getAddresses();

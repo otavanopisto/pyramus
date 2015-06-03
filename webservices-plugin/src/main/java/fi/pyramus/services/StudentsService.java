@@ -74,6 +74,7 @@ public class StudentsService extends PyramusService {
     ContactInfoDAO contactInfoDAO = DAOFactory.getInstance().getContactInfoDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
 
     Student oldStudent = studentDAO.findById(studentId);
 
@@ -107,6 +108,12 @@ public class StudentsService extends PyramusService {
 
     contactInfoDAO.update(newStudent.getContactInfo(), oldStudent.getContactInfo().getAdditionalInfo());
 
+    // Default user
+    
+    if (person.getDefaultUser() == null) {
+      personDAO.updateDefaultUser(person, newStudent);
+    }
+    
     // Addresses
 
     List<Address> addresses = oldStudent.getContactInfo().getAddresses();
@@ -277,6 +284,12 @@ public class StudentsService extends PyramusService {
     
     contactInfoDAO.update(student.getContactInfo(), parentalInfo);
 
+    // Default user
+    
+    if (person.getDefaultUser() == null) {
+      personDAO.updateDefaultUser(person, student);
+    }
+    
     validateEntity(student);
     return EntityFactoryVault.buildFromDomainObject(student);
   }
