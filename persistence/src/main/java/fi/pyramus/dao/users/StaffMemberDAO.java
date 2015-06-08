@@ -158,7 +158,8 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(emailJoin.get(Email_.address), email),
-            criteriaBuilder.equal(contactTypeJoin.get(ContactType_.nonUnique), Boolean.FALSE)
+            criteriaBuilder.equal(contactTypeJoin.get(ContactType_.nonUnique), Boolean.FALSE),
+            criteriaBuilder.equal(root.get(StaffMember_.archived), Boolean.FALSE)
         )
     );
     
