@@ -200,6 +200,25 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
     return true;
   }
 
+  @Override
+  public boolean validatePassword(String externalId, String password) {
+    InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
+
+    try {
+      InternalAuth internalAuth = internalAuthDAO.findById(NumberUtils.createLong(externalId));
+
+      String passwordEncoded = EncodingUtils.md5EncodeString(password);
+      
+      return passwordEncoded.equals(internalAuth.getPassword());
+    }
+    catch (UnsupportedEncodingException e) {
+      throw new SmvcRuntimeException(e);
+    }
+    catch (NoSuchAlgorithmException e) {
+      throw new SmvcRuntimeException(e);
+    }
+  }
+
   /**
    * Returns the name of this authentication provider.
    * 

@@ -61,4 +61,13 @@ public interface InternalAuthenticationProvider extends AuthenticationProvider {
    * @param password The new password of the user
    */
   public void updatePassword(String externalId, String password);
+
+  /**
+   * Validates the given password for given identifier
+   * 
+   * @param externalId
+   * @param oldPassword
+   * @return
+   */
+  public boolean validatePassword(String externalId, String password);
 }

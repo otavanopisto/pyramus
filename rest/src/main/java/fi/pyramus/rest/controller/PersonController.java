@@ -39,6 +39,11 @@ public class PersonController {
     return person;
   }
   
+  public Person findUniquePersonByEmail(String email) {
+    Person person = personDAO.findByUniqueEmail(email);
+    return person;
+  }
+  
   public Person updatePerson(Person person, Date birthday, String socialSecurityNumber, Sex sex, String basicInfo, Boolean secureInfo) {
     personDAO.update(person, birthday, socialSecurityNumber, sex, basicInfo, secureInfo);
     return person;

@@ -91,19 +91,25 @@
 
 		<!-- Pyramus -->
       
-    <dependency>
-      <groupId>fi.pyramus</groupId>
-      <artifactId>rest-model</artifactId>
-    </dependency>
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>rest-model</artifactId>
+      </dependency>
+  
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>persistence</artifactId>
+      </dependency>
+    
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>framework</artifactId>
+      </dependency>
 
-		<dependency>
-			<groupId>fi.pyramus</groupId>
-			<artifactId>persistence</artifactId>
-		</dependency>
+      <dependency>
+        <groupId>fi.pyramus</groupId>
+        <artifactId>plugin-core</artifactId>
+      </dependency>
 
-		<dependency>
-		  <groupId>fi.pyramus</groupId>
-		  <artifactId>framework</artifactId>
-		</dependency>
 	</dependencies>
 </project>
