@@ -332,77 +332,77 @@ public class PersonRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
-  @Path("/resetpasswordbyemail")
-  @GET
-  @Unsecure
-  public Response resetPasswordByEmail(@QueryParam(value = "email") String email) {
-    Person person = personController.findUniquePersonByEmail(email);
-    if (person == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    byte[] sec = new byte[4096];
-    SecureRandom R = new SecureRandom();
-    R.nextBytes(sec);
-    
-    Date date = new Date();
-    
-    // Secret is for the communication purposes which will be authenticated by clientapplication with it's own secret
-    String secret = DigestUtils.md5Hex(sec);
-
-    // ConfirmSecret is the hash of secret + clientapplications secret
-    ClientApplication clientApplication = clientApplicationController.getClientApplication();
-    
-    if (clientApplication != null) {
-      String confirmSecret = DigestUtils.md5Hex(secret + clientApplication.getClientSecret());
-      
-      passwordResetRequestDAO.create(person, confirmSecret, date);
-  
-      // We return secret which cannot validate a reset by itself because it needs the client secret as authentication
-      return Response.ok(secret).build();
-    } else {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-  }
-
-  @Path("/resetpasswordbyemail")
-  @POST
-  @Unsecure
-  public Response confirmResetPasswordByEmail(UserCredentialReset reset) {
-    PasswordResetRequest resetRequest = passwordResetRequestDAO.findBySecret(reset.getSecret());
-    
-    if (resetRequest == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
-    String newPassword = reset.getNewPassword();
-    Person person = resetRequest.getPerson();
-    
-    boolean passwordBlank = StringUtils.isBlank(newPassword);
-
-    if (!passwordBlank) {
-      // TODO: Support for multiple internal authentication providers
-      List<InternalAuthenticationProvider> internalAuthenticationProviders = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
-      if (internalAuthenticationProviders.size() == 1) {
-        InternalAuthenticationProvider internalAuthenticationProvider = internalAuthenticationProviders.get(0);
-        if (internalAuthenticationProvider != null) {
-          UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), person);
-          
-          if (internalAuthenticationProvider.canUpdateCredentials()) {
-            if (userIdentification != null) {
-              if (!"-1".equals(userIdentification.getExternalId())) {
-                if (!StringUtils.isBlank(newPassword))
-                  internalAuthenticationProvider.updatePassword(userIdentification.getExternalId(), newPassword);
-              }
-            }
-          }
-        }
-      }
-    }
-    
-    passwordResetRequestDAO.delete(resetRequest);
-    
-    return Response.noContent().build();
-  }
+//  @Path("/resetpasswordbyemail")
+//  @GET
+//  @Unsecure
+//  public Response resetPasswordByEmail(@QueryParam(value = "email") String email) {
+//    Person person = personController.findUniquePersonByEmail(email);
+//    if (person == null) {
+//      return Response.status(Status.NOT_FOUND).build();
+//    }
+//
+//    byte[] sec = new byte[4096];
+//    SecureRandom R = new SecureRandom();
+//    R.nextBytes(sec);
+//    
+//    Date date = new Date();
+//    
+//    // Secret is for the communication purposes which will be authenticated by clientapplication with it's own secret
+//    String secret = DigestUtils.md5Hex(sec);
+//
+//    // ConfirmSecret is the hash of secret + clientapplications secret
+//    ClientApplication clientApplication = clientApplicationController.getClientApplication();
+//    
+//    if (clientApplication != null) {
+//      String confirmSecret = DigestUtils.md5Hex(secret + clientApplication.getClientSecret());
+//      
+//      passwordResetRequestDAO.create(person, confirmSecret, date);
+//  
+//      // We return secret which cannot validate a reset by itself because it needs the client secret as authentication
+//      return Response.ok(secret).build();
+//    } else {
+//      return Response.status(Status.BAD_REQUEST).build();
+//    }
+//  }
+//
+//  @Path("/resetpasswordbyemail")
+//  @POST
+//  @Unsecure
+//  public Response confirmResetPasswordByEmail(UserCredentialReset reset) {
+//    PasswordResetRequest resetRequest = passwordResetRequestDAO.findBySecret(reset.getSecret());
+//    
+//    if (resetRequest == null) {
+//      return Response.status(Status.NOT_FOUND).build();
+//    }
+//    
+//    String newPassword = reset.getNewPassword();
+//    Person person = resetRequest.getPerson();
+//    
+//    boolean passwordBlank = StringUtils.isBlank(newPassword);
+//
+//    if (!passwordBlank) {
+//      // TODO: Support for multiple internal authentication providers
+//      List<InternalAuthenticationProvider> internalAuthenticationProviders = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
+//      if (internalAuthenticationProviders.size() == 1) {
+//        InternalAuthenticationProvider internalAuthenticationProvider = internalAuthenticationProviders.get(0);
+//        if (internalAuthenticationProvider != null) {
+//          UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), person);
+//          
+//          if (internalAuthenticationProvider.canUpdateCredentials()) {
+//            if (userIdentification != null) {
+//              if (!"-1".equals(userIdentification.getExternalId())) {
+//                if (!StringUtils.isBlank(newPassword))
+//                  internalAuthenticationProvider.updatePassword(userIdentification.getExternalId(), newPassword);
+//              }
+//            }
+//          }
+//        }
+//      }
+//    }
+//    
+//    passwordResetRequestDAO.delete(resetRequest);
+//    
+//    return Response.noContent().build();
+//  }
   
 }
