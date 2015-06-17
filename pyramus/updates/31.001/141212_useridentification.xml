@@ -55,7 +55,7 @@ update
     on
         User.person_id = Person.id
     where 
-        User.archived = false
+        Student.archived = false
     group by 
         Student.id 
     having 
