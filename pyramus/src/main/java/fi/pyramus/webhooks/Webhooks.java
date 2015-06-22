@@ -31,6 +31,15 @@ import fi.pyramus.events.StaffMemberDeletedEvent;
 import fi.pyramus.events.StaffMemberUpdatedEvent;
 import fi.pyramus.events.StudentArchivedEvent;
 import fi.pyramus.events.StudentCreatedEvent;
+import fi.pyramus.events.StudentGroupArchivedEvent;
+import fi.pyramus.events.StudentGroupCreatedEvent;
+import fi.pyramus.events.StudentGroupStaffMemberCreatedEvent;
+import fi.pyramus.events.StudentGroupStaffMemberRemovedEvent;
+import fi.pyramus.events.StudentGroupStaffMemberUpdatedEvent;
+import fi.pyramus.events.StudentGroupStudentCreatedEvent;
+import fi.pyramus.events.StudentGroupStudentRemovedEvent;
+import fi.pyramus.events.StudentGroupStudentUpdatedEvent;
+import fi.pyramus.events.StudentGroupUpdatedEvent;
 import fi.pyramus.events.StudentUpdatedEvent;
 
 @ApplicationScoped 
@@ -186,6 +195,51 @@ public class Webhooks {
     webhookController.sendWebhookNotifications(webhooks, new WebhookStaffMemberDeletePayload(event.getStaffMemberId()));
   }
  
+  /* StudentGroup */
+  
+  public void onStudentGroupCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupCreatedEvent event) {
+    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupCreatePayload(event.getStudentGroupId()));
+  }
+
+  public void onStudentGroupUpdated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupUpdatedEvent event) {
+    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupUpdatePayload(event.getStudentGroupId()));
+  }
+
+  public void onStudentGroupArchived(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupArchivedEvent event) {
+    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupArchivePayload(event.getStudentGroupId()));
+  }
+
+  public void onStudentGroupStaffMemberCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStaffMemberCreatedEvent event) {
+    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupStaffMemberCreatePayload(
+        event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStaffMemberId()));
+  }
+
+  public void onStudentGroupStaffMemberUpdated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStaffMemberUpdatedEvent event) {
+    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupStaffMemberUpdatePayload(
+        event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStaffMemberId()));
+  }
+
+  public void onStudentGroupStaffMemberRemoved(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStaffMemberRemovedEvent event) {
+    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupStaffMemberRemovePayload(
+        event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStaffMemberId()));
+  }
+
+  public void onStudentGroupStudentCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStudentCreatedEvent event) {
+    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupStudentCreatePayload(
+        event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStudentId()));
+  }
+
+  public void onStudentGroupStudentUpdated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStudentUpdatedEvent event) {
+    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupStudentUpdatePayload(
+        event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStudentId()));
+  }
+
+  public void onStudentGroupStudentRemoved(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStudentRemovedEvent event) {
+    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupStudentRemovePayload(
+        event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStudentId()));
+  }
+
+  
   private List<fi.pyramus.webhooks.Webhook> webhooks;
 
 }

@@ -64,6 +64,7 @@ import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
+import fi.pyramus.domainmodel.students.StudentGroupUser;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.UserVariable;
@@ -527,6 +528,14 @@ public class ObjectFactory {
           public Object map(StudentGroupStudent entity) {
             Long studentId = entity.getStudent() != null ? entity.getStudent().getId() : null;
             return new fi.pyramus.rest.model.StudentGroupStudent(entity.getId(), studentId);
+          }
+        },
+        
+        new Mapper<StudentGroupUser>() {
+          @Override
+          public Object map(StudentGroupUser entity) {
+            Long staffMemberId = entity.getStaffMember() != null ? entity.getStaffMember().getId() : null;
+            return new fi.pyramus.rest.model.StudentGroupUser(entity.getId(), staffMemberId);
           }
         },
         

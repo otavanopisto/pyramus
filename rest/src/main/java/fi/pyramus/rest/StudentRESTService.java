@@ -57,6 +57,7 @@ import fi.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.pyramus.domainmodel.students.StudentExaminationType;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
+import fi.pyramus.domainmodel.students.StudentGroupUser;
 import fi.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.UserVariable;
@@ -1016,6 +1017,117 @@ public class StudentRESTService extends AbstractRESTService {
     } else {
       studentGroupController.archiveStudentGroup(studentGroup, sessionController.getUser());
     }
+
+    return Response.noContent().build();
+  }
+
+  @Path("/studentGroups/{ID:[0-9]*}/staffmembers")
+  @POST
+  @RESTPermit(StudentGroupPermissions.CREATE_STUDENTGROUPSTAFFMEMBER)
+  public Response createStudentGroupStaffMember(@PathParam("ID") Long id, fi.pyramus.rest.model.StudentGroupUser entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    if (entity.getStaffMemberId() == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (studentGroup.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    StaffMember staffMember = userController.findStaffMemberById(entity.getStaffMemberId());
+    if (staffMember == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    StudentGroupUser studentGroupUser = studentGroupController.createStudentGroupStaffMember(studentGroup, staffMember, sessionController.getUser());
+
+    return Response.ok(objectFactory.createModel(studentGroupUser)).build();
+  }
+
+  @Path("/studentGroups/{ID:[0-9]*}/staffmembers")
+  @GET
+  @RESTPermit(StudentGroupPermissions.LIST_STUDENTGROUPSTAFFMEMBERS)
+  public Response listStudentGroupStaffMembers(@PathParam("ID") Long id) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (studentGroup.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    List<StudentGroupUser> studentGroupUsers = new ArrayList<>(studentGroup.getUsers());
+    if (studentGroupUsers.isEmpty()) {
+      return Response.noContent().build();
+    }
+
+    Collections.sort(studentGroupUsers, new Comparator<StudentGroupUser>() {
+      @Override
+      public int compare(StudentGroupUser o1, StudentGroupUser o2) {
+        return o1.getId().compareTo(o2.getId());
+      }
+    });
+
+    return Response.ok(objectFactory.createModel(studentGroupUsers)).build();
+  }
+
+  @Path("/studentGroups/{GROUPID:[0-9]*}/staffmembers/{ID:[0-9]*}")
+  @GET
+  @RESTPermit(StudentGroupPermissions.FIND_STUDENTGROUPSTAFFMEMBER)
+  public Response findStudentGroupStaffMember(@PathParam("GROUPID") Long studentGroupId, @PathParam("ID") Long id) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(studentGroupId);
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (studentGroup.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    StudentGroupUser studentGroupUser = studentGroupController.findStudentGroupUserById(id);
+    if (studentGroupUser == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!studentGroupUser.getStudentGroup().getId().equals(studentGroup.getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok(objectFactory.createModel(studentGroupUser)).build();
+  }
+
+  @Path("/studentGroups/{GROUPID:[0-9]*}/staffmembers/{ID:[0-9]*}")
+  @DELETE
+  @RESTPermit(StudentGroupPermissions.DELETE_STUDENTGROUPSTAFFMEMBER)
+  public Response deleteStudentGroupStaffMember(@PathParam("GROUPID") Long studentGroupId, @PathParam("ID") Long id) {
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(studentGroupId);
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (studentGroup.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    StudentGroupUser studentGroupUser = studentGroupController.findStudentGroupUserById(id);
+    if (studentGroupUser == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!studentGroupUser.getStudentGroup().getId().equals(studentGroup.getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    studentGroupController.deleteStudentGroupUser(studentGroupUser);
 
     return Response.noContent().build();
   }

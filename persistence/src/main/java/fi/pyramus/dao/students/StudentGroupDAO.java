@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -33,11 +35,22 @@ import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentGroupStudent_;
 import fi.pyramus.domainmodel.students.StudentGroup_;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.events.StudentGroupCreatedEvent;
+import fi.pyramus.events.StudentGroupUpdatedEvent;
 import fi.pyramus.persistence.search.SearchResult;
 
 @Stateless
 public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
 
+  @Inject
+  private Event<StudentGroupCreatedEvent> studentGroupCreatedEvent;
+  
+  @Inject
+  private Event<StudentGroupUpdatedEvent> studentGroupUpdatedEvent;
+  
+//  @Inject
+//  private Event<StudentGroupArchivedEvent> studentGroupRemovedEvent;
+  
   public StudentGroup create(String name, String description, Date beginDate, User creatingUser) {
     EntityManager entityManager = getEntityManager();
 
@@ -55,6 +68,8 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
 
     entityManager.persist(studentGroup);
 
+    studentGroupCreatedEvent.fire(new StudentGroupCreatedEvent(studentGroup.getId()));
+    
     return studentGroup;
   }
 
@@ -65,6 +80,9 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     
     entityManager.persist(studentGroup);
     
+//    TODO: atm tag setting is done in conjunction with update so this would result in double messaging so it's disabled atm
+//    studentGroupUpdatedEvent.fire(new StudentGroupUpdatedEvent(studentGroup.getId()));
+
     return studentGroup;
   }
 
@@ -79,6 +97,9 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     studentGroup.setLastModifier(updatingUser);
 
     entityManager.persist(studentGroup);
+
+    studentGroupUpdatedEvent.fire(new StudentGroupUpdatedEvent(studentGroup.getId()));
+
     return studentGroup;
   }
   

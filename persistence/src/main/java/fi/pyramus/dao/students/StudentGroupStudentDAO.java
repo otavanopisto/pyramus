@@ -3,6 +3,8 @@ package fi.pyramus.dao.students;
 import java.util.Date;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -14,10 +16,22 @@ import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.pyramus.domainmodel.students.StudentGroupStudent_;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.events.StudentGroupStudentCreatedEvent;
+import fi.pyramus.events.StudentGroupStudentRemovedEvent;
+import fi.pyramus.events.StudentGroupStudentUpdatedEvent;
 
 @Stateless
 public class StudentGroupStudentDAO extends PyramusEntityDAO<StudentGroupStudent> {
 
+  @Inject
+  private Event<StudentGroupStudentCreatedEvent> studentCreatedEvent;
+  
+  @Inject
+  private Event<StudentGroupStudentUpdatedEvent> studentUpdatedEvent;
+  
+  @Inject
+  private Event<StudentGroupStudentRemovedEvent> studentRemovedEvent;
+  
   public StudentGroupStudent create(StudentGroup studentGroup, Student student, User updatingUser) {
     EntityManager entityManager = getEntityManager(); 
     StudentGroupStudent sgs = new StudentGroupStudent();
@@ -31,6 +45,8 @@ public class StudentGroupStudentDAO extends PyramusEntityDAO<StudentGroupStudent
 
     entityManager.persist(studentGroup);
     
+    studentCreatedEvent.fire(new StudentGroupStudentCreatedEvent(sgs.getId(), sgs.getStudentGroup().getId(), sgs.getStudent().getId()));
+   
     return sgs;
   }
 
@@ -60,6 +76,8 @@ public class StudentGroupStudentDAO extends PyramusEntityDAO<StudentGroupStudent
     
     studentGroupStudent.setStudent(student);
     entityManager.persist(studentGroupStudent);
+
+    studentUpdatedEvent.fire(new StudentGroupStudentUpdatedEvent(studentGroupStudent.getId(), studentGroup.getId(), student.getId()));
   }
 
   public void remove(StudentGroup studentGroup, StudentGroupStudent student, User updatingUser) {
@@ -71,6 +89,8 @@ public class StudentGroupStudentDAO extends PyramusEntityDAO<StudentGroupStudent
 
     entityManager.persist(studentGroup);
     entityManager.remove(student);
+
+    studentRemovedEvent.fire(new StudentGroupStudentRemovedEvent(student.getId(), studentGroup.getId(), student.getStudent().getId()));
   }
   
 }

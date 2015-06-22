@@ -12,10 +12,13 @@ import javax.inject.Inject;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.students.StudentGroupDAO;
 import fi.pyramus.dao.students.StudentGroupStudentDAO;
+import fi.pyramus.dao.students.StudentGroupUserDAO;
 import fi.pyramus.domainmodel.base.Tag;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentGroup;
 import fi.pyramus.domainmodel.students.StudentGroupStudent;
+import fi.pyramus.domainmodel.students.StudentGroupUser;
+import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
 
 @Dependent
@@ -27,6 +30,9 @@ public class StudentGroupController {
 
   @Inject
   private StudentGroupStudentDAO studentGroupStudentDAO;
+  
+  @Inject
+  private StudentGroupUserDAO studentGroupUserDAO;
   
   @Inject
   private TagDAO tagDAO;
@@ -121,4 +127,17 @@ public class StudentGroupController {
     return studentGroupStudentDAO.create(studentGroup, student, updatingUser);
   }
 
+  /* StudentGroupUser */
+  
+  public StudentGroupUser createStudentGroupStaffMember(StudentGroup studentGroup, StaffMember staffMember, User updatingUser) {
+    return studentGroupUserDAO.create(studentGroup, staffMember, updatingUser);
+  }
+
+  public StudentGroupUser findStudentGroupUserById(Long id) {
+    return studentGroupUserDAO.findById(id);
+  }
+
+  public void deleteStudentGroupUser(StudentGroupUser studentGroupUser) {
+    studentGroupUserDAO.delete(studentGroupUser);
+  }
 }
