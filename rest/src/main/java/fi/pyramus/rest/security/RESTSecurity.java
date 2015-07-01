@@ -69,18 +69,21 @@ public class RESTSecurity {
       case OR:
         // For or we break when permit is true
         for (String permission : permissions) {
-          if (permitted = identity.hasPermission(permission, permitContext))
+          if (identity.hasPermission(permission, permitContext)) {
+            permitted = true;
             break;
+          }
         }
       break;
       
       case AND:
         // And is true by default (as long as at least one permission exists) and breaks if permit hits false
         permitted = permissions.length > 0;
-        
         for (String permission : permissions) {
-          if (permitted = identity.hasPermission(permission, permitContext))
+          if (!identity.hasPermission(permission, permitContext)) {
+            permitted = false;
             break;
+          }
         }
       break;
     }
