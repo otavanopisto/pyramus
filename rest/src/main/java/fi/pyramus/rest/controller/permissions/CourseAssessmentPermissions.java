@@ -31,7 +31,26 @@ public class CourseAssessmentPermissions extends AbstractPyramusPermissionCollec
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER})
   public static final String DELETE_COURSEASSESSMENT = "DELETE_COURSEASSESSMENT";
 
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String CREATE_COURSEASSESSMENTREQUEST = "CREATE_COURSEASSESSMENTREQUEST";
   
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER})
+  public static final String UPDATE_COURSEASSESSMENTREQUEST = "UPDATE_COURSEASSESSMENTREQUEST";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String LIST_COURSEASSESSMENTREQUESTS = "LIST_COURSEASSESSMENTREQUESTS";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String FIND_COURSEASSESSMENTREQUEST = "FIND_COURSEASSESSMENTREQUEST";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER})
+  public static final String DELETE_COURSEASSESSMENTREQUEST = "DELETE_COURSEASSESSMENTREQUEST";
+
   @Override
   public List<String> listPermissions() {
     return super.listPermissions(CourseAssessmentPermissions.class);

@@ -51,6 +51,7 @@ import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.courses.CourseType;
 import fi.pyramus.domainmodel.grading.CourseAssessment;
+import fi.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
 import fi.pyramus.domainmodel.modules.Module;
@@ -200,6 +201,14 @@ public class ObjectFactory {
           @Override
           public Object map(CourseAssessment entity) {
             return new fi.pyramus.rest.model.CourseAssessment(entity.getId(), entity.getCourseStudent().getId(), entity.getGrade().getId(),entity.getGrade().getGradingScale().getId(), entity.getAssessor().getId(), new DateTime(entity.getDate()), entity.getVerbalAssessment());
+          }
+        },
+        
+        new Mapper<CourseAssessmentRequest>(){
+          @Override
+          public Object map(CourseAssessmentRequest entity) {
+            DateTime created = toDateTime(entity.getCreated());
+            return new fi.pyramus.rest.model.CourseAssessmentRequest(entity.getId(), entity.getCourseStudent().getId(), created, entity.getRequestText(), entity.getArchived());
           }
         },
         

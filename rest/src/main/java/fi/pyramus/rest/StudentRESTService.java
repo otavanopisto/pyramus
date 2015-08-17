@@ -46,6 +46,7 @@ import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.courses.Course;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.grading.CourseAssessment;
+import fi.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
@@ -1689,7 +1690,7 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).entity("Student is archieved").build();
+      return Response.status(Status.NOT_FOUND).entity("Student is archived").build();
     }
 
     Course course = courseController.findCourseById(courseId);
@@ -1699,7 +1700,7 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     if (course.getArchived()) {
-      return Response.status(Status.NOT_FOUND).entity("Course is archieved").build();
+      return Response.status(Status.NOT_FOUND).entity("Course is archived").build();
     }
 
     CourseStudent courseStudent = courseController.findCourseStudentById(entity.getCourseStudentId());
@@ -1709,7 +1710,7 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     if(courseStudent.getArchived()){
-      return Response.status(Status.BAD_REQUEST).entity("Coursestudent is archieved").build();
+      return Response.status(Status.BAD_REQUEST).entity("Coursestudent is archived").build();
     }
     
     if(!courseStudent.getStudent().getId().equals(student.getId())){
@@ -1898,6 +1899,242 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     assessmentController.deleteCourseAssessment(courseAssessment);
+    
+    return Response.noContent().build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/")
+  @POST
+  @RESTPermit(handling = Handling.INLINE)
+  public Response createCourseAssessmentRequest(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId,
+      fi.pyramus.rest.model.CourseAssessmentRequest entity) {
+
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    Student student = studentController.findStudentById(studentId);
+    
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find student").build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).entity("Student is archived").build();
+    }
+
+    Course course = courseController.findCourseById(courseId);
+    
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find course").build();
+    }
+
+    if (course.getArchived()) {
+      return Response.status(Status.NOT_FOUND).entity("Course is archived").build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.CREATE_COURSEASSESSMENTREQUEST, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    CourseStudent courseStudent = courseController.findCourseStudentById(entity.getCourseStudentId());
+    
+    if (courseStudent == null) {
+      return Response.status(Status.BAD_REQUEST).entity("Could not find coursestudent").build();
+    }
+    
+    if (courseStudent.getArchived()){
+      return Response.status(Status.BAD_REQUEST).entity("Coursestudent is archived").build();
+    }
+    
+    if (!courseStudent.getStudent().getId().equals(student.getId())){
+      return Response.status(Status.BAD_REQUEST).entity("Coursestudent doesnt match student").build();
+    }
+    
+    if (!courseStudent.getCourse().getId().equals(course.getId())){
+      return Response.status(Status.BAD_REQUEST).entity("Coursestudent doesnt match course").build();
+    }
+    
+    CourseAssessmentRequest courseAssessmentRequest = assessmentController.createCourseAssessmentRequest(courseStudent, entity.getCreated().toDate(), entity.getRequestText());
+    
+    return Response.ok(objectFactory.createModel(courseAssessmentRequest)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentsRequests/")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listCourseAssessmentRequests(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
+    Student student = studentController.findStudentById(studentId);
+
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENTREQUESTS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    Course course = courseController.findCourseById(courseId);
+    
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (course.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByCourseAndStudent(course, student);
+    
+    return Response.ok(objectFactory.createModel(assessmentRequests)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/{ID:[0-9]*}")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response findCourseAssessmentRequestById(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
+    
+    Student student = studentController.findStudentById(studentId);
+
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.FIND_COURSEASSESSMENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    Course course = courseController.findCourseById(courseId);
+    
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (course.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.FIND_COURSEASSESSMENTREQUEST, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestById(id);
+    if (!course.getId().equals(courseAssessmentRequest.getCourseStudent().getCourse().getId())) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find a course assessment for course student course").build();
+    }
+    
+    if (!student.getId().equals(courseAssessmentRequest.getCourseStudent().getStudent().getId())) {
+      return Response.status(Status.NOT_FOUND).entity("Could not find a course assessment for course student student").build();
+    }
+    
+    return Response.ok(objectFactory.createModel(courseAssessmentRequest)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/{ID:[0-9]*}")
+  @PUT
+  @RESTPermit(handling = Handling.INLINE)
+  public Response updateCourseAssessmentRequest(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id, 
+      fi.pyramus.rest.model.CourseAssessmentRequest entity) {
+    
+    Student student = studentController.findStudentById(studentId);
+    Course course = courseController.findCourseById(courseId);
+    CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestById(id);
+
+    if (courseAssessmentRequest == null){
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (course.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!course.getId().equals(courseAssessmentRequest.getCourseStudent().getCourse().getId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Course ids mismatch.").build();
+    }
+    
+    if (!student.getId().equals(courseAssessmentRequest.getCourseStudent().getStudent().getId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Student ids mismatch.").build();
+    }
+
+    if (!courseAssessmentRequest.getCourseStudent().getId().equals(entity.getCourseStudentId())) {
+      return Response.status(Status.BAD_REQUEST).entity("CourseAssessmentRequest ids mismatch.").build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.UPDATE_COURSEASSESSMENTREQUEST, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequest(courseAssessmentRequest, entity.getCreated().toDate(), entity.getRequestText());
+        
+    return Response.ok(objectFactory.createModel(updatedCourseAssessmentRequest)).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessmentRequests/{ID}")
+  @DELETE
+  @RESTPermit(handling = Handling.INLINE)
+  public Response deleteCourseAssessmentRequest(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
+    Student student = studentController.findStudentById(studentId);
+    Course course = courseController.findCourseById(courseId);
+
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (course.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.DELETE_COURSEASSESSMENTREQUEST, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestById(id);
+    
+    if (courseAssessmentRequest == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!course.getId().equals(courseAssessmentRequest.getCourseStudent().getCourse().getId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Course ids mismatch.").build();
+    }
+    
+    if (!student.getId().equals(courseAssessmentRequest.getCourseStudent().getStudent().getId())) {
+      return Response.status(Status.BAD_REQUEST).entity("Student ids mismatch.").build();
+    }
+    
+    assessmentController.deleteCourseAssessmentRequest(courseAssessmentRequest);
     
     return Response.noContent().build();
   }
