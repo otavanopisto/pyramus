@@ -1959,8 +1959,8 @@ public class StudentRESTService extends AbstractRESTService {
     
     return Response.ok(objectFactory.createModel(courseAssessmentRequest)).build();
   }
-  
-  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentsRequests/")
+
+  @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/")
   @GET
   @RESTPermit(handling = Handling.INLINE)
   public Response listCourseAssessmentRequests(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
@@ -1989,6 +1989,29 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByCourseAndStudent(course, student);
+    
+    return Response.ok(objectFactory.createModel(assessmentRequests)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/assessmentRequests/")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentAssessmentRequests(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENTREQUESTS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByStudent(student);
     
     return Response.ok(objectFactory.createModel(assessmentRequests)).build();
   }

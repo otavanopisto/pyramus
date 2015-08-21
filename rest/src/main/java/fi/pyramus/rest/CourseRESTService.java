@@ -43,6 +43,7 @@ import fi.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.pyramus.domainmodel.courses.CourseState;
 import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.courses.CourseType;
+import fi.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.StaffMember;
@@ -50,12 +51,14 @@ import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.rest.annotation.RESTPermit;
 import fi.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.pyramus.rest.annotation.RESTPermit.Style;
+import fi.pyramus.rest.controller.AssessmentController;
 import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.CourseController;
 import fi.pyramus.rest.controller.ModuleController;
 import fi.pyramus.rest.controller.StudentController;
 import fi.pyramus.rest.controller.UserController;
 import fi.pyramus.rest.controller.permissions.CommonPermissions;
+import fi.pyramus.rest.controller.permissions.CourseAssessmentPermissions;
 import fi.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.pyramus.rest.controller.permissions.UserPermissions;
 import fi.pyramus.rest.model.CourseEnrolmentType;
@@ -93,6 +96,9 @@ public class CourseRESTService extends AbstractRESTService {
   @Inject
   private ObjectFactory objectFactory;
   
+  @Inject
+  private AssessmentController assessmentController;
+
   @Path("/courses")
   @POST
   @RESTPermit (CoursePermissions.CREATE_COURSE)
@@ -331,6 +337,29 @@ public class CourseRESTService extends AbstractRESTService {
       .build();
   }
 
+  @Path("/courses/{ID:[0-9]*}/assessmentsRequests/")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentAssessmentRequests(@PathParam("ID") Long courseId) {
+    Course course = courseController.findCourseById(courseId);
+
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (course.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENTREQUESTS }, course, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByCourse(course);
+    
+    return Response.ok(objectFactory.createModel(assessmentRequests)).build();
+  }
+  
   @Path("/courses/{ID:[0-9]*}/components")
   @GET
   @RESTPermit (CoursePermissions.LIST_COURSECOMPONENTS)

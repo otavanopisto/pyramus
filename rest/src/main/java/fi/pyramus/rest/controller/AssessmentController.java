@@ -44,7 +44,7 @@ public class AssessmentController {
     return courseAssessmentDAO.listByStudentAndCourse(student, course);
   }
   
-  public void deleteCourseAssessment(CourseAssessment courseAssessment){
+  public void deleteCourseAssessment(CourseAssessment courseAssessment) {
     courseAssessmentDAO.delete(courseAssessment);
   }
   
@@ -61,12 +61,20 @@ public class AssessmentController {
     return courseAssessmentRequestDAO.findById(id);
   }
   
-  public List<CourseAssessmentRequest> listCourseAssessmentRequestsByCourseAndStudent(Course course, Student student){
+  public List<CourseAssessmentRequest> listCourseAssessmentRequestsByCourse(Course course) {
+    return courseAssessmentRequestDAO.listByCourse(course);
+  }
+  
+  public List<CourseAssessmentRequest> listCourseAssessmentRequestsByStudent(Student student) {
+    return courseAssessmentRequestDAO.listByStudent(student);
+  }
+  
+  public List<CourseAssessmentRequest> listCourseAssessmentRequestsByCourseAndStudent(Course course, Student student) {
     return courseAssessmentRequestDAO.listByCourseAndStudent(course, student);
   }
   
-  public void deleteCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest){
+  public void deleteCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest) {
     courseAssessmentRequestDAO.delete(courseAssessmentRequest);
   }
-  
+
 }
