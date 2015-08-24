@@ -2031,10 +2031,6 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.FIND_COURSEASSESSMENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
-      return Response.status(Status.FORBIDDEN).build();
-    }
-
     Course course = courseController.findCourseById(courseId);
     
     if (course == null) {
