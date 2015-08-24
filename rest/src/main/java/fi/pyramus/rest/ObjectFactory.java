@@ -1,6 +1,7 @@
 package fi.pyramus.rest;
 
 import java.lang.reflect.ParameterizedType;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -154,11 +155,11 @@ public class ObjectFactory {
 
             Double length = entity.getCourseLength() != null ? entity.getCourseLength().getUnits() : null;
             Long lengthUnitId = entity.getCourseLength() != null && entity.getCourseLength().getUnit() != null ? entity.getCourseLength().getUnit().getId() : null;
-            DateTime created = toDateTime(entity.getCreated() );
-            DateTime lastModified = toDateTime(entity.getLastModified() );
-            DateTime beginDate = toDateTime(entity.getBeginDate() );
-            DateTime endDate = toDateTime(entity.getEndDate() );
-            DateTime enrolmentTimeEnd = toDateTime( entity.getEnrolmentTimeEnd() );
+            DateTime created = toDateTime(entity.getCreated());
+            DateTime lastModified = toDateTime(entity.getLastModified());
+            DateTime beginDate = fromDateToDateTime(entity.getBeginDate());
+            DateTime endDate = fromDateToDateTime(entity.getEndDate());
+            DateTime enrolmentTimeEnd = toDateTime( entity.getEnrolmentTimeEnd());
             Long creatorId = entity.getCreator() != null ? entity.getCreator().getId() : null;
             Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
             Long moduleId = entity.getModule() != null ? entity.getModule().getId() : null;
@@ -696,6 +697,14 @@ public class ObjectFactory {
     }
     
     return new DateTime(date.getTime());
+  }
+
+  private DateTime fromDateToDateTime(Date date) {
+    if (date == null) {
+      return null;
+    }
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T00:00:00Z'");
+    return new DateTime(sdf.format(date));
   }
  
   private VariableType toVariableType(fi.pyramus.domainmodel.base.VariableType variableType) {
