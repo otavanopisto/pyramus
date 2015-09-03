@@ -1,10 +1,8 @@
 package fi.pyramus.rest.controller;
 
-import javax.ejb.Stateless;
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
 
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
@@ -12,11 +10,10 @@ import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 import fi.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
 
-@Dependent
-@Stateless
+@RequestScoped
 public class ClientApplicationController {
 
-  @Context
+  @Inject
   private HttpServletRequest httpRequest;
   
   @Inject

@@ -33,12 +33,12 @@ public class StudentOwnerPermissionResolver extends AbstractPermissionResolver i
     fi.pyramus.domainmodel.users.User user1 = getUser(user);
     fi.pyramus.domainmodel.users.User user2 = resolveUser(contextReference);
     
-    System.out.println("Ownercheck: " + 
-        user1 + (user1 != null ? "(" + user1.getId() + ")" : "") + 
-        " vs " + 
-        user2 + (user2 != null ? "(" + user2.getId() + ")" : "") +
-        " @ " + 
-        contextReference);
+//    System.out.println("Ownercheck: " + 
+//        user1 + (user1 != null ? "(" + user1.getId() + ")" : "") + 
+//        " vs " + 
+//        user2 + (user2 != null ? "(" + user2.getId() + ")" : "") +
+//        " @ " + 
+//        contextReference);
     
     if ((user1 != null) && (user2 != null)) {
       // Users must match
