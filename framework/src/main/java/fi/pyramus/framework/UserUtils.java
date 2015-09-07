@@ -1,5 +1,6 @@
 package fi.pyramus.framework;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fi.pyramus.dao.DAOFactory;
@@ -89,36 +90,39 @@ public class UserUtils {
     return role;
   }
   
-  public static boolean isHigherOrEqualRole(Role r, Role test) {
-    // Administrator --> Manager --> User --> Student --> Trusted System --> Guest --> Everyone
+  public static List<Role> getRoleOrder() {
+    List<Role> list = new ArrayList<Role>();
+
+    list.add(Role.ADMINISTRATOR);
+    list.add(Role.MANAGER);
+    list.add(Role.STUDY_GUIDER);
+    list.add(Role.TEACHER);
+    list.add(Role.USER);
+    list.add(Role.STUDENT);
+    list.add(Role.TRUSTED_SYSTEM);
+    list.add(Role.GUEST);
+    list.add(Role.EVERYONE);
     
+    return list;
+  }
+  
+  /**
+   * Tests if r >= test when it comes to roles.
+   * 
+   * @param r
+   * @param test
+   * @return
+   */
+  public static boolean isHigherOrEqualRole(Role r, Role test) {
     if (r == test)
       return true;
-    
-    switch (test) {
-      case ADMINISTRATOR:
-        return false; // Only true if role is administrator too, and checked before so we will never end up here
 
-      case MANAGER:
-        return (r == Role.ADMINISTRATOR);
-      
-      case USER:
-        return (r == Role.ADMINISTRATOR) || (r == Role.MANAGER);
-        
-      case STUDENT:
-        return (r == Role.ADMINISTRATOR) || (r == Role.MANAGER) || (r == Role.USER);
-      
-      case TRUSTED_SYSTEM:
-        return (r == Role.ADMINISTRATOR) || (r == Role.MANAGER) || (r == Role.USER) || (r == Role.STUDENT);
-
-      case GUEST:
-        return (r == Role.ADMINISTRATOR) || (r == Role.MANAGER) || (r == Role.USER) || (r == Role.STUDENT) || (r == Role.TRUSTED_SYSTEM);
-      
-      case EVERYONE:
-        return true; // Any other role is higher or equal to everyone
-    }
+    List<Role> order = getRoleOrder();
     
-    return false;
+    int r_index = order.indexOf(r);
+    int t_index = order.indexOf(test);
+    
+    return r_index != -1 ? r_index <= t_index : false;
   }
   
   public static boolean allowEditCredentials(User editor, Person whose) {

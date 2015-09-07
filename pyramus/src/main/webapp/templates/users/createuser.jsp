@@ -432,6 +432,8 @@
                   <select name="role">
                     <option value="1"><fmt:message key="users.createUser.roleGuestTitle"/></option>
                     <option value="2"><fmt:message key="users.createUser.roleUserTitle"/></option>
+                    <option value="7"><fmt:message key="users.createUser.roleTeacherTitle"/></option>
+                    <option value="8"><fmt:message key="users.createUser.roleStudyGuiderTitle"/></option>
                     <option value="3"><fmt:message key="users.createUser.roleManagerTitle"/></option>
                     <option value="4"><fmt:message key="users.createUser.roleAdministratorTitle"/></option>
                   </select>

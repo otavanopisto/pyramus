@@ -12,6 +12,9 @@ public enum UserRole {
   
   STUDENT,
   
-  TRUSTED_SYSTEM
+  TRUSTED_SYSTEM,
   
+  TEACHER,
+  
+  STUDY_GUIDER
 }

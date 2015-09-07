@@ -32,7 +32,17 @@ public enum Role {
   /**
    * Trusted system account
    */
-  TRUSTED_SYSTEM (6);
+  TRUSTED_SYSTEM (6),
+  
+  /**
+   * Generic teacher (non-course teacher) account
+   */
+  TEACHER (7),
+
+  /**
+   * Study guider account
+   */
+  STUDY_GUIDER (8);
   
   /**
    * Constructor specifying the role.

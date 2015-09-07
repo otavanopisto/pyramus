@@ -517,6 +517,8 @@
                   <select name="role">
                     <option value="1" <c:if test="${user.role == 'GUEST'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleGuestTitle"/></option>
                     <option value="2" <c:if test="${user.role == 'USER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleUserTitle"/></option>
+                    <option value="7" <c:if test="${user.role == 'TEACHER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleTeacherTitle"/></option>
+                    <option value="8" <c:if test="${user.role == 'STUDY_GUIDER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleStudyGuiderTitle"/></option>
                     <option value="3" <c:if test="${user.role == 'MANAGER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleManagerTitle"/></option>
                     <option value="4" <c:if test="${user.role == 'ADMINISTRATOR'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleAdministratorTitle"/></option>
                   </select>
