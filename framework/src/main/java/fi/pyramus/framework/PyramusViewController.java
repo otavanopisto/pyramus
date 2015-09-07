@@ -78,6 +78,12 @@ public abstract class PyramusViewController implements PageController {
           case USER:
             userRole = UserRole.USER;
             break;
+          case TEACHER:
+            userRole = UserRole.TEACHER;
+          break;
+          case STUDY_GUIDER:
+            userRole = UserRole.STUDY_GUIDER;
+          break;
           default:
             break;
         }

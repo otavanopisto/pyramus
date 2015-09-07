@@ -131,7 +131,7 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
 
   @Override
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] {UserRole.GUEST, UserRole.USER, UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.GUEST, UserRole.USER, UserRole.MANAGER, UserRole.ADMINISTRATOR, UserRole.TEACHER, UserRole.STUDY_GUIDER };
   }
 
 }
