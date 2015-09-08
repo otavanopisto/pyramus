@@ -94,12 +94,12 @@ public class CourseController {
   private DefaultsDAO defaultsDAO;
   
   public Course createCourse(Module module, String name, String nameExtension, CourseState state, CourseType type, Subject subject, Integer courseNumber, Date beginDate,
-      Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
+      Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double distanceTeachingHours,
       Double planningHours, Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User creatingUser) {
     
     Course course = courseDAO
         .create(module, name, nameExtension, state, type, subject, courseNumber, beginDate, endDate, courseLength, courseLengthTimeUnit, distanceTeachingDays,
-            localTeachingDays, teachingHours, planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, creatingUser);
+            localTeachingDays, teachingHours, distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, creatingUser);
 
     return course;
   }
@@ -306,11 +306,11 @@ public class CourseController {
   }
   
   public Course updateCourse(Course course, String name, String nameExtension, CourseState courseState, CourseType type, Subject subject, Integer courseNumber, Date beginDate,
-      Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours,
+      Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double distanceTeachingHours,
       Double planningHours, Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User user) {
     
     courseDAO.update(course, name, nameExtension, courseState, type, subject, courseNumber, beginDate, endDate, courseLength, courseLengthTimeUnit,
-        distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, user);
+        distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, user);
     
     return course;
   }

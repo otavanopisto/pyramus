@@ -265,6 +265,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     Double distanceTeachingDays = requestContext.getDouble("distanceTeachingDays");
     Double localTeachingDays = requestContext.getDouble("localTeachingDays");
     Double teachingHours = requestContext.getDouble("teachingHours");
+    Double distanceTeachingHours = requestContext.getDouble("distanceTeachingHours");
     Double planningHours = requestContext.getDouble("planningHours");
     Double assessingHours = requestContext.getDouble("assessingHours");
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
@@ -284,8 +285,8 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     }
     
     Course course = courseDAO.create(module, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
-        courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, 
-        description, maxParticipantCount, enrolmentTimeEnd, loggedUser);
+        courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, 
+        assessingHours, description, maxParticipantCount, enrolmentTimeEnd, loggedUser);
 
     // Tags
     

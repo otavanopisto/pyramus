@@ -621,6 +621,18 @@
             </c:when>
           </c:choose>
           
+          <c:choose>
+            <c:when test="${course.distanceTeachingHours gt 0}">
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="courses.viewCourse.distanceTeachingHoursTitle" />
+                  <jsp:param name="helpLocale" value="courses.viewCourse.distanceTeachingHoursHelp" />
+                </jsp:include>
+                <div class="genericViewFormDataText">${course.distanceTeachingHours}</div>
+              </div>
+            </c:when>
+          </c:choose>
+          
           <div class="genericFormSection">
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
               <jsp:param name="titleLocale" value="courses.viewCourse.personnelTitle" />

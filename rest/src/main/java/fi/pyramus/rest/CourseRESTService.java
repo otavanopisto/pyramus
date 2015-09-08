@@ -145,6 +145,7 @@ public class CourseRESTService extends AbstractRESTService {
     Double distanceTeachingDays = courseEntity.getDistanceTeachingDays();
     Double localTeachingDays = courseEntity.getLocalTeachingDays();
     Double teachingHours = courseEntity.getTeachingHours();
+    Double distanceTeachingHours = courseEntity.getDistanceTeachingHours();
     Double planningHours = courseEntity.getPlanningHours();
     Double assessingHours = courseEntity.getAssessingHours();
     String description = courseEntity.getDescription();
@@ -155,7 +156,7 @@ public class CourseRESTService extends AbstractRESTService {
     
     Course course = courseController.createCourse(module, name, nameExtension, state, type, subject, courseNumber, 
         toDate(beginDate), toDate(endDate), courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, 
-        planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, loggedUser);
+        distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, loggedUser);
     
     if (courseEntity.getTags() != null) {
       for (String tag : courseEntity.getTags()) {
@@ -268,6 +269,7 @@ public class CourseRESTService extends AbstractRESTService {
     Double distanceTeachingDays = courseEntity.getDistanceTeachingDays();
     Double localTeachingDays = courseEntity.getLocalTeachingDays();
     Double teachingHours = courseEntity.getTeachingHours();
+    Double distanceTeachingHours = courseEntity.getDistanceTeachingHours();
     Double planningHours = courseEntity.getPlanningHours();
     Double assessingHours = courseEntity.getAssessingHours();
     String description = courseEntity.getDescription();
@@ -276,7 +278,7 @@ public class CourseRESTService extends AbstractRESTService {
     User loggedUser = sessionController.getUser();
     
     Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, type, subject, courseNumber, toDate(beginDate), toDate(endDate), courseLength,
-        courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, planningHours, assessingHours, description,
+        courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, assessingHours, description,
         maxParticipantCount, enrolmentTimeEnd, loggedUser);
     
     courseController.updateCourseTags(updatedCourse, courseEntity.getTags() == null ? new ArrayList<String>() : courseEntity.getTags());

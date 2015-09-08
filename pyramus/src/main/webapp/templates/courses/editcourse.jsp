@@ -1698,6 +1698,14 @@
   
             <div class="genericFormSection">  
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="courses.editCourse.distanceTeachingHoursTitle"/>
+                <jsp:param name="helpLocale" value="courses.editCourse.distanceTeachingHoursHelp"/>
+              </jsp:include>    
+              <input type="text" class="float" name="distanceTeachingHours" value="${fn:escapeXml(course.distanceTeachingHours)}" size="5">
+            </div>
+  
+            <div class="genericFormSection">  
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="courses.editCourse.assessingHoursTitle"/>
                 <jsp:param name="helpLocale" value="courses.editCourse.assessingHoursHelp"/>
               </jsp:include>    

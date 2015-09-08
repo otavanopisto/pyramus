@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -35,9 +36,9 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
   }
   @Test
   public void testPermissionsCreateCourse() throws NoSuchFieldException {
-    Course course = new Course("Create test", new DateTime(), new DateTime(),
+    Course course = createCourse("Create test", new DateTime(), new DateTime(),
         "Course for testing course creation", Boolean.FALSE, 111, 222l,
-        new DateTime(), new DateTime(), "Extension", 333d, 444d, 555d, 666d,
+        new DateTime(), new DateTime(), "Extension", 333d, 444d, 468d, 555d, 666d,
         777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null, null);
 
     Response response = given().headers(getAuthHeaders())
@@ -59,9 +60,9 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsCreateCourseTags() throws NoSuchFieldException {
-    Course course = new Course("Create test", new DateTime(), new DateTime(),
+    Course course = createCourse("Create test", new DateTime(), new DateTime(),
         "Course for testing course creation", Boolean.FALSE, 111, 222l,
-        new DateTime(), new DateTime(), "Extension", 333d, 444d, 555d, 666d,
+        new DateTime(), new DateTime(), "Extension", 333d, 444d, 468d, 555d, 666d,
         777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null, Arrays.asList("tag1", "tag2", "tag3"));
 
     Response response = given().headers(getAuthHeaders())
@@ -97,9 +98,9 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsUpdateCourse() throws NoSuchFieldException {
-    Course course = new Course("Update test", new DateTime(), new DateTime(),
+    Course course = createCourse("Update test", new DateTime(), new DateTime(),
         "Course for testing course updating", Boolean.FALSE, 111, 222l,
-        new DateTime(), new DateTime(), "Extension", 333d, 444d, 555d, 666d,
+        new DateTime(), new DateTime(), "Extension", 333d, 444d, 468d, 555d, 666d,
         777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null, null);
 
     Response response = given().headers(getAdminAuthHeaders())
@@ -125,9 +126,9 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsUpdateCourseTags() throws NoSuchFieldException {
-    Course course = new Course("Update test", new DateTime(), new DateTime(),
+    Course course = createCourse("Update test", new DateTime(), new DateTime(),
         "Course for testing course updating", Boolean.FALSE, 111, 222l,
-        new DateTime(), new DateTime(), "Extension", 333d, 444d, 555d, 666d,
+        new DateTime(), new DateTime(), "Extension", 333d, 444d, 468d, 555d, 666d,
         777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null, Arrays.asList(
             "tag1", "tag2", "tag3"));
 
@@ -155,9 +156,9 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsDeleteCourse() throws NoSuchFieldException {
-    Course course = new Course("Update test", new DateTime(), new DateTime(),
+    Course course = createCourse("Update test", new DateTime(), new DateTime(),
         "Course for testing course updating", Boolean.FALSE, 111, 222l,
-        new DateTime(), new DateTime(), "Extension", 333d, 444d, 555d, 666d,
+        new DateTime(), new DateTime(), "Extension", 333d, 444d, 468d, 555d, 666d,
         777d, new DateTime(), 1l, 1l, 1l, 777d, 1l, 1l, 1l, null, null, null);
 
     Response response = given().headers(getAdminAuthHeaders())
@@ -179,6 +180,16 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .delete("/courses/courses/{ID}?permanent=true", id)
       .then()
       .statusCode(204);
+  }
+  
+  private Course createCourse(String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
+      Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
+      Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
+      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
+      Map<String, String> variables, List<String> tags) {
+    return new Course(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
+        nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
+        creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
   }
   
 }

@@ -58,13 +58,14 @@ public class CourseAPI {
     Double distanceTeachingDays = null;
     Double localTeachingDays = null;
     Double teachingHours = null;
+    Double distanceTeachingHours = null;
     Double planningHours = null;
     Double assessingHours = null;
     Date enrolmentTimeEnd = null;
     
     return courseDAO.create(module, name, nameExtension, courseState, type, subject, module.getCourseNumber(), beginDate, endDate, 
         module.getCourseLength().getUnits(), module.getCourseLength().getUnit(), distanceTeachingDays, localTeachingDays, 
-        teachingHours, planningHours, assessingHours, description, module.getMaxParticipantCount(), enrolmentTimeEnd, 
+        teachingHours, distanceTeachingHours, planningHours, assessingHours, description, module.getMaxParticipantCount(), enrolmentTimeEnd, 
         loggedUser).getId();
   }
   

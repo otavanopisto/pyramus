@@ -1169,6 +1169,15 @@
   
             <div class="genericFormSection">  
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="courses.createCourse.distanceTeachingHoursTitle"/>
+                <jsp:param name="helpLocale" value="courses.createCourse.distanceTeachingHoursHelp"/>
+              </jsp:include>
+
+              <input type="text" class="float" name="distanceTeachingHours" size="5">
+            </div>
+  
+            <div class="genericFormSection">  
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="courses.createCourse.assessingHoursTitle"/>
                 <jsp:param name="helpLocale" value="courses.createCourse.assessingHoursHelp"/>
               </jsp:include>    

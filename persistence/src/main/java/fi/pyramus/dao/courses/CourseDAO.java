@@ -79,7 +79,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
    */
   public Course create(Module module, String name, String nameExtension, CourseState state, CourseType type, Subject subject,
       Integer courseNumber, Date beginDate, Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, 
-      Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double planningHours, 
+      Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double distanceTeachingHours, Double planningHours, 
       Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User creatingUser) {
     
     Date now = new Date(System.currentTimeMillis());
@@ -106,6 +106,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setAssessingHours(assessingHours);
     course.setMaxParticipantCount(maxParticipantCount);
     course.setEnrolmentTimeEnd(enrolmentTimeEnd);
+    course.setDistanceTeachingHours(distanceTeachingHours);
     
     course.setCreator(creatingUser);
     course.setCreated(now);
@@ -136,7 +137,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
   public void update(Course course, String name, String nameExtension, CourseState courseState, CourseType type, Subject subject,
       Integer courseNumber, Date beginDate, Date endDate, Double courseLength,
       EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, 
-      Double planningHours, Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User user) {
+      Double distanceTeachingHours, Double planningHours, Double assessingHours, String description, Long maxParticipantCount, 
+      Date enrolmentTimeEnd, User user) {
     EntityManager entityManager = getEntityManager();
 
     Date now = new Date(System.currentTimeMillis());
@@ -167,6 +169,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setEnrolmentTimeEnd(enrolmentTimeEnd);
     course.setLastModifier(user);
     course.setLastModified(now);
+    course.setDistanceTeachingHours(distanceTeachingHours);
 
     entityManager.persist(course);
     

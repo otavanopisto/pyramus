@@ -176,9 +176,9 @@ public class ObjectFactory {
             return new fi.pyramus.rest.model.Course(entity.getId(), entity.getName(), created, 
                 lastModified, entity.getDescription(), entity.getArchived(), entity.getCourseNumber(), 
                 entity.getMaxParticipantCount(), beginDate, endDate, entity.getNameExtension(), 
-                entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingDays(), 
-                entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, creatorId, 
-                lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
+                entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingHours(), 
+                entity.getDistanceTeachingDays(), entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, 
+                creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
           }
         }, 
         

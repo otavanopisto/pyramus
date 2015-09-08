@@ -12,6 +12,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -24,7 +26,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateCourse() {
-    Course course = new Course(
+    Course course = createCourse(
         "Create test", 
         new DateTime(), 
         new DateTime(), 
@@ -37,6 +39,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         "Extension",
         333d,
         444d,
+        468d,
         555d,
         666d,
         777d,
@@ -80,7 +83,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testCreateCourseTags() {
-    Course course = new Course(
+    Course course = createCourse(
         "Create test", 
         new DateTime(), 
         new DateTime(), 
@@ -93,6 +96,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         "Extension",
         333d,
         444d,
+        468d,
         555d,
         666d,
         777d,
@@ -242,7 +246,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateCourse() {
-    Course course = new Course(
+    Course course = createCourse(
         "Update test", 
         new DateTime(), 
         new DateTime(), 
@@ -255,6 +259,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         "Extension",
         333d,
         444d,
+        468d,
         555d,
         666d,
         777d,
@@ -321,7 +326,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateCourseTags() {
-    Course course = new Course(
+    Course course = createCourse(
         "Update test", 
         new DateTime(), 
         new DateTime(), 
@@ -334,6 +339,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         "Extension",
         333d,
         444d,
+        468d,
         555d,
         666d,
         777d,
@@ -405,7 +411,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteCourse() {
-    Course course = new Course(
+    Course course = createCourse(
         "Update test", 
         new DateTime(), 
         new DateTime(), 
@@ -418,6 +424,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         "Extension",
         333d,
         444d,
+        468d,
         555d,
         666d,
         777d,
@@ -462,6 +469,16 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
     given().headers(getAuthHeaders()).get("/courses/courses/{ID}", id)
       .then()
       .statusCode(404);
+  }
+  
+  private Course createCourse(String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
+      Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
+      Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
+      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
+      Map<String, String> variables, List<String> tags) {
+    return new Course(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
+        nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
+        creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
   }
   
 }

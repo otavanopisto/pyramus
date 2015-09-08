@@ -12,17 +12,17 @@ public class Course {
   
   public Course(String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
-      Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
+      Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags) {
     this(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
-        nameExtension, localTeachingDays, teachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
+        nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
         creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
   }
 
   public Course(Long id, String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
-      Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
+      Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags) {
     super();
@@ -39,6 +39,7 @@ public class Course {
     this.nameExtension = nameExtension;
     this.localTeachingDays = localTeachingDays;
     this.teachingHours = teachingHours;
+    this.distanceTeachingHours = distanceTeachingHours;
     this.distanceTeachingDays = distanceTeachingDays;
     this.assessingHours = assessingHours;
     this.planningHours = planningHours;
@@ -271,6 +272,14 @@ public class Course {
     this.variables = variables;
   }
 
+  public Double getDistanceTeachingHours() {
+    return distanceTeachingHours;
+  }
+
+  public void setDistanceTeachingHours(Double distanceTeachingHours) {
+    this.distanceTeachingHours = distanceTeachingHours;
+  }
+
   private Long id;
   private String name;
   private DateTime created;
@@ -284,6 +293,7 @@ public class Course {
   private String nameExtension;
   private Double localTeachingDays;
   private Double teachingHours;
+  private Double distanceTeachingHours;
   private Double distanceTeachingDays;
   private Double assessingHours;
   private Double planningHours;

@@ -269,6 +269,14 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
     return enrolmentTimeEnd;
   }
 
+  public Double getDistanceTeachingHours() {
+    return distanceTeachingHours;
+  }
+
+  public void setDistanceTeachingHours(Double distanceTeachingHours) {
+    this.distanceTeachingHours = distanceTeachingHours;
+  }
+
   @ManyToOne
   @JoinColumn(name="module")
   private Module module;
@@ -296,6 +304,8 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   
   private Double distanceTeachingDays;
   
+  private Double distanceTeachingHours;
+
   private Double planningHours; 
   
   private Double localTeachingDays;
