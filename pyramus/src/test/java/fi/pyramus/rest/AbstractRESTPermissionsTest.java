@@ -2,6 +2,8 @@ package fi.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.certificate;
 import static com.jayway.restassured.RestAssured.given;
+import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,7 +63,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
         tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
             .setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(fi.pyramus.Common.CLIENT_ID)
             .setClientSecret(fi.pyramus.Common.CLIENT_SECRET).setRedirectURI(fi.pyramus.Common.REDIRECT_URL)
-            .setCode(fi.pyramus.Common.ROLEAUTHS.get(role)).buildBodyMessage();
+            .setCode(fi.pyramus.Common.getRoleAuth(Common.strToRole(role))).buildBodyMessage();
       } catch (OAuthSystemException e) {
         e.printStackTrace();
       }
@@ -82,7 +84,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
         tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
             .setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(fi.pyramus.Common.CLIENT_ID)
             .setClientSecret(fi.pyramus.Common.CLIENT_SECRET).setRedirectURI(fi.pyramus.Common.REDIRECT_URL)
-            .setCode(fi.pyramus.Common.ROLEAUTHS.get("ADMINISTRATOR")).buildBodyMessage();
+            .setCode(fi.pyramus.Common.getRoleAuth(Role.ADMINISTRATOR)).buildBodyMessage();
       } catch (OAuthSystemException e) {
         e.printStackTrace();
       }
@@ -135,7 +137,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 
   public Long getUserIdForRole(String role) {
     // TODO: could this use the /system/whoami end-point?
-    return Common.ROLEUSERS.get(role);
+    return Common.getUserId(Common.strToRole(role));
   }
   
   public boolean roleIsAllowed(String role, List<String> allowedRoles) {
@@ -170,12 +172,12 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission, int successStatusCode) throws NoSuchFieldException {
     if (!Role.EVERYONE.name().equals(getRole())) {
       List<String> allowedRoles = Arrays.asList(permissionCollection.getDefaultRoles(permission));
+
+      int expectedStatusCode = roleIsAllowed(getRole(), allowedRoles) ? successStatusCode : 403;
       
-      if (roleIsAllowed(getRole(), allowedRoles)) {
-        response.then().assertThat().statusCode(successStatusCode);
-      } else {
-        response.then().assertThat().statusCode(403);
-      }
+      assertThat(String.format("Status code <%d> didn't match expected code <%d> when Role = %s, Permission = %s", 
+          response.statusCode(), expectedStatusCode, getRole(), permission), 
+          response.statusCode(), is(expectedStatusCode));
     }
     else
       response.then().assertThat().statusCode(400);

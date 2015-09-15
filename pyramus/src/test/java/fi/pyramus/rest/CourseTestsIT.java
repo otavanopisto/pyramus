@@ -144,8 +144,8 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   public void testGetCourse() {
     DateTime created = getDate(2011, 1, 1);
     DateTime modified = getDate(2011, 1, 1);
-    DateTime beginDate = getDate(2011, 2, 2);
-    DateTime endDate = getDate(2011, 3, 3);
+    DateTime beginDate = getDateToDateTime(2011, 2, 2);
+    DateTime endDate = getDateToDateTime(2011, 3, 3);
     DateTime enrolmentTimeEnd = getDate(2011, 1, 1);
 
     given().headers(getAuthHeaders())
@@ -196,16 +196,16 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   public void testListCourses() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException {
     DateTime created1 = getDate(2010, 1, 1);
     DateTime modified1 = getDate(2010, 1, 1);
-    DateTime beginDate1 = getDate(2010, 2, 2);
-    DateTime endDate1 = getDate(2010, 3, 3);
+    DateTime beginDate1 = getDateToDateTime(2010, 2, 2);
+    DateTime endDate1 = getDateToDateTime(2010, 3, 3);
     DateTime enrolmentTimeEnd1 = getDate(2010, 1, 1);
     
     DateTime created2 = getDate(2011, 1, 1);
     DateTime modified2 = getDate(2011, 1, 1);
-    DateTime beginDate2 = getDate(2011, 2, 2);
-    DateTime endDate2 = getDate(2011, 3, 3);
+    DateTime beginDate2 = getDateToDateTime(2011, 2, 2);
+    DateTime endDate2 = getDateToDateTime(2011, 3, 3);
     DateTime enrolmentTimeEnd2 = getDate(2011, 1, 1);
-    
+
     given().headers(getAuthHeaders())
       .get("/courses/courses/")
       .then()

@@ -41,7 +41,7 @@ public class StudentGroupStudentPermissionTestsIT extends AbstractRESTPermission
       .body(entity)
       .post("/students/studentGroups/{ID}/students", 2l);
 
-    assertOk(response, studentGroupPermissions, StudentGroupPermissions.LIST_STUDENTGROUPSTUDENTS);
+    assertOk(response, studentGroupPermissions, StudentGroupPermissions.CREATE_STUDENTGROUPSTUDENT);
     
     if (response.getStatusCode() == 200) {
       Long id = new Long(response.body().jsonPath().getInt("id"));

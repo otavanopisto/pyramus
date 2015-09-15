@@ -165,6 +165,7 @@ public class Person implements ContextReference {
   }
 
   public void removeUser(User user) {
+    // TODO: should probably do something with defaultuser too
     if (this.getUsers().contains(user)) {
       user.setPerson(null);
       getUsers().remove(user);
@@ -622,6 +623,7 @@ public class Person implements ContextReference {
     return result;
   }
 
+  // TODO: Naming conventions pls
   @Transient
   @Field
   public String getStaff() {

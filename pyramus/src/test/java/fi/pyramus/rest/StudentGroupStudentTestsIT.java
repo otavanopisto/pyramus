@@ -53,10 +53,10 @@ public class StudentGroupStudentTestsIT extends AbstractRESTServiceTest {
       .then()
       .statusCode(200)
       .body("id.size()", is(2))
-      .body("id[0]", is(1) )
-      .body("studentId[0]", is(3))
-      .body("id[1]", is(2) )
-      .body("studentId[1]", is(4));
+      .body("id[1]", is(1))
+      .body("studentId[1]", is(3))
+      .body("id[0]", is(2))
+      .body("studentId[0]", is(4));
   }
   
   @Test

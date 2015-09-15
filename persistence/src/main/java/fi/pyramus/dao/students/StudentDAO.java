@@ -474,4 +474,14 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
 
     return student;
   }
+  
+  @Override
+  public void delete(Student e) {
+    Person person = e.getPerson();
+    
+    person.removeUser(e);
+    getEntityManager().persist(person);
+    
+    super.delete(e);
+  }
 }

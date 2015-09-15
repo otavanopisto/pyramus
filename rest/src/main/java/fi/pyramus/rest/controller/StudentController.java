@@ -147,14 +147,42 @@ public class StudentController {
     studentDAO.unarchive(student, user);
     return student;
   }
-  
+
   public void deleteStudent(Student student) {
     Set<Tag> tags = new HashSet<>(student.getTags());
     for (Tag tag : tags) {
       studentDAO.removeTag(student, tag);
     }
     
+    User defaultUser = student.getPerson().getDefaultUser();
+    boolean newDefaultUser = false;
+    Long personId = student.getPerson().getId();
+
+    if (defaultUser != null) {
+      if (defaultUser.getId().equals(student.getId())) {
+        newDefaultUser = true;
+        personDAO.updateDefaultUser(student.getPerson(), null);
+      }
+    }
+
+    student = studentDAO.findById(student.getId());
+    
     studentDAO.delete(student);
+
+    // Do a best guess of the new default user
+    if (newDefaultUser) {
+      Person person = personDAO.findById(personId);
+      
+      Student latestStudent = person.getLatestStudent();
+      if (latestStudent != null)
+        personDAO.updateDefaultUser(person, latestStudent);
+      else {
+        if (!person.getStudents().isEmpty())
+          personDAO.updateDefaultUser(person, person.getStudents().get(0));
+        else if (!person.getStaffMembers().isEmpty())
+          personDAO.updateDefaultUser(person, person.getStaffMembers().get(0));
+      }
+    }
   }
   
   /* Tags */

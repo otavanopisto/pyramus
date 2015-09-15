@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -156,6 +158,11 @@ public abstract class AbstractIntegrationTest {
     return System.getProperty("it.keystore.storepass");
   }
 
+  protected DateTime getDateToDateTime(int year, int monthOfYear, int dayOfMonth) {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T00:00:00Z'");
+    return new DateTime(sdf.format(new Date(year - 1900, monthOfYear - 1, dayOfMonth)));
+  }
+  
   protected DateTime getDate(int year, int monthOfYear, int dayOfMonth) {
     return new DateTime(year, monthOfYear, dayOfMonth, 0, 0, 0, 0);
   }

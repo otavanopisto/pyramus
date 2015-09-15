@@ -14,8 +14,8 @@ public class StudentCoursesTestsIT extends AbstractRESTServiceTest {
   public void testStudentListCourses() {
     DateTime created1 = getDate(2010, 1, 1);
     DateTime modified1 = getDate(2010, 1, 1);
-    DateTime beginDate1 = getDate(2010, 2, 2);
-    DateTime endDate1 = getDate(2010, 3, 3);
+    DateTime beginDate1 = getDateToDateTime(2010, 2, 2);
+    DateTime endDate1 = getDateToDateTime(2010, 3, 3);
     DateTime enrolmentTimeEnd1 = getDate(2010, 1, 1);
     given().headers(getAuthHeaders())
       .get("/students/students/{ID}/courses", TEST_STUDENT_ID)

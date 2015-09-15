@@ -1,7 +1,6 @@
 package fi.pyramus;
 
-import java.util.HashMap;
-import java.util.Map;
+import fi.pyramus.domainmodel.users.Role;
 
 public final class Common {
   public static String CLIENT_ID = "854885cf-2284-4b17-b63c-a8b189535f8d";
@@ -9,22 +8,55 @@ public final class Common {
   public static String REDIRECT_URL = "https://localhost:8443/oauth2ClientTest/success";
   public static String AUTH_URL = "https://dev.pyramus.fi:8443/users/authorize.page";
   public static String AUTH_CODE = "ff81d5b8500c773e7a1776a7963801e7";
-  public static Map<String, String> ROLEAUTHS = new HashMap<String, String>();
-  public static Map<String, Long> ROLEUSERS = new HashMap<String, Long>();
   
-  static {
-    ROLEAUTHS.put("GUEST", "ff81d5b8500c773e7a1776a7963801e4");
-    ROLEAUTHS.put("USER", "ff81d5b8500c773e7a1776a7963801e5");
-    ROLEAUTHS.put("STUDENT", "ff81d5b8500c773e7a1776a7963801e8");
-    ROLEAUTHS.put("MANAGER", "ff81d5b8500c773e7a1776a7963801e6");
-    ROLEAUTHS.put("ADMINISTRATOR", "ff81d5b8500c773e7a1776a7963801e7");
-    ROLEAUTHS.put("TRUSTED_SYSTEM", "ff81d5b8500c773e7a1776a7963801e9");
-
-    ROLEUSERS.put("GUEST", 4l);
-    ROLEUSERS.put("USER", 5l);
-    ROLEUSERS.put("STUDENT", 8l);
-    ROLEUSERS.put("MANAGER", 6l);
-    ROLEUSERS.put("ADMINISTRATOR", 7l);
-    ROLEUSERS.put("TRUSTED_SYSTEM", 9l);
+  public static Role strToRole(String roleStr) {
+    return Role.valueOf(roleStr);
   }
+  
+  public static String getRoleAuth(Role role) {
+    switch(role) {
+      case ADMINISTRATOR:
+        return "ff81d5b8500c773e7a1776a7963801e7";
+      case GUEST:
+        return "ff81d5b8500c773e7a1776a7963801e4";
+      case MANAGER:
+        return "ff81d5b8500c773e7a1776a7963801e6";
+      case STUDENT:
+        return "ff81d5b8500c773e7a1776a7963801e8";
+      case STUDY_GUIDER:
+        return "ff81d5b8500c773e7a1776a7963801e0";
+      case TEACHER:
+        return "ff81d5b8500c773e7a1776a7963801e1";
+      case TRUSTED_SYSTEM:
+        return "ff81d5b8500c773e7a1776a7963801e9";
+      case USER:
+        return "ff81d5b8500c773e7a1776a7963801e5";
+      default:
+        throw new RuntimeException("Missing or EVERYONE role auth requested.");
+    }
+  }
+  
+  public static Long getUserId(Role role) {
+    switch(role) {
+      case ADMINISTRATOR:
+        return 7l;
+      case GUEST:
+        return 4l;
+      case MANAGER:
+        return 6l;
+      case STUDENT:
+        return 8l;
+      case STUDY_GUIDER:
+        return 10l;
+      case TEACHER:
+        return 11l;
+      case TRUSTED_SYSTEM:
+        return 9l;
+      case USER:
+        return 5l;
+      default:
+        throw new RuntimeException("Missing or EVERYONE role auth requested.");
+    }
+  }
+  
 }
