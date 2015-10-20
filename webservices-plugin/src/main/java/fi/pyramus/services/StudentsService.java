@@ -109,10 +109,7 @@ public class StudentsService extends PyramusService {
     contactInfoDAO.update(newStudent.getContactInfo(), oldStudent.getContactInfo().getAdditionalInfo());
 
     // Default user
-    
-    if (person.getDefaultUser() == null) {
-      personDAO.updateDefaultUser(person, newStudent);
-    }
+    personDAO.updateDefaultUser(person, newStudent);
     
     // Addresses
 
@@ -285,10 +282,7 @@ public class StudentsService extends PyramusService {
     contactInfoDAO.update(student.getContactInfo(), parentalInfo);
 
     // Default user
-    
-    if (person.getDefaultUser() == null) {
-      personDAO.updateDefaultUser(person, student);
-    }
+    personDAO.updateDefaultUser(person, student);
     
     validateEntity(student);
     return EntityFactoryVault.buildFromDomainObject(student);

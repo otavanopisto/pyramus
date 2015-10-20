@@ -469,54 +469,47 @@
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.editStudent.studentTabRelatedActionsCopyAsNewStudyProgrammeLabel"/>',
           onclick: function (event) {
+            var dialog = new IxDialog({
+              id : 'chooseCopyMethod',
+              contentURL : GLOBAL_contextPath + '/students/studyprogrammecopydialog.page?student=' + studentId,
+              centered : true,
+              showOk : true,  
+              showCancel : true,
+              title : '<fmt:message key="students.copyStudyProgrammePopup.dialogTitle"/>',
+              okLabel : '<fmt:message key="students.copyStudyProgrammePopup.okLabel"/>',
+              cancelLabel : '<fmt:message key="students.copyStudyProgrammePopup.cancelLabel"/>'
+            });
 
-            if (studentHasCredits) {
-              var dialog = new IxDialog({
-                id : 'chooseCopyMethod',
-                contentURL : GLOBAL_contextPath + '/students/studyprogrammecopydialog.page?student=' + studentId,
-                centered : true,
-                showOk : true,  
-                showCancel : true,
-                title : '<fmt:message key="students.copyStudyProgrammePopup.dialogTitle"/>',
-                okLabel : '<fmt:message key="students.copyStudyProgrammePopup.okLabel"/>',
-                cancelLabel : '<fmt:message key="students.copyStudyProgrammePopup.cancelLabel"/>'
-              });
+            var dHeight = studentHasCredits ? "240px" : "160px";
             
-              dialog.setSize("300px", "160px");
-              dialog.addDialogListener( function(event) {
-                var dlg = event.dialog;
-            
-                switch (event.name) {
-                  case 'okClick':
-                    var pelem = $(dlg.getContentDocument().documentElement);
-                    var cbox = pelem.down("input[name='linkStudentCreditsCheckbox']");
-                    var linkCredits = cbox.checked == true ? true : false;
-                    
-                    JSONRequest.request("students/copystudyprogramme.json", {
-                      parameters: {
-                        studentId: studentId,
-                        linkCredits: linkCredits
-                      },
-                      onSuccess: function (jsonResponse) {
-                        window.location.reload();
-                      }
-                    });   
-                  break;
-                }
-              });
-            
-              dialog.open();
-            } else {
-              JSONRequest.request("students/copystudyprogramme.json", {
-                parameters: {
-                  studentId: studentId,
-                  linkCredits: false
-                },
-                onSuccess: function (jsonResponse) {
-                  window.location.reload();
-                }
-              }); 
-            }
+            dialog.setSize("340px", dHeight);
+            dialog.addDialogListener( function(event) {
+              var dlg = event.dialog;
+          
+              switch (event.name) {
+                case 'okClick':
+                  var pelem = $(dlg.getContentDocument().documentElement);
+                  var cbox = pelem.down("input[name='linkStudentCreditsCheckbox']");
+                  var linkCredits = cbox.checked == true ? true : false;
+
+                  var defaultUserCheckBox = pelem.down("input[name='defaultUserCheckBox']");
+                  var setAsDefaultUser = defaultUserCheckBox.checked == true ? true : false;
+                  
+                  JSONRequest.request("students/copystudyprogramme.json", {
+                    parameters: {
+                      studentId: studentId,
+                      linkCredits: linkCredits,
+                      setAsDefaultUser: setAsDefaultUser
+                    },
+                    onSuccess: function (jsonResponse) {
+                      window.location.reload();
+                    }
+                  });   
+                break;
+              }
+            });
+          
+            dialog.open();
           }
         }));       
     
@@ -691,7 +684,7 @@
                     <jsp:param name="titleLocale" value="students.editStudent.usernameTitle"/>
                     <jsp:param name="helpLocale" value="students.editStudent.usernameHelp"/>
                   </jsp:include>                  
-                  <input type="text" name="username" value="${username}" size="30">
+                  <input type="text" name="username" autocomplete="off" value="${username}" size="30">
                 </div>
                 
                 <div class="genericFormSection">  
@@ -699,7 +692,7 @@
                     <jsp:param name="titleLocale" value="students.editStudent.password1Title"/>
                     <jsp:param name="helpLocale" value="students.editStudent.password1Help"/>
                   </jsp:include>                  
-                  <input type="password" class="equals equals-password2" name="password1" value="" size="30">
+                  <input type="password" class="equals equals-password2" autocomplete="off" name="password1" value="" size="30">
                 </div>
                 
                 <div class="genericFormSection">  
@@ -707,7 +700,7 @@
                     <jsp:param name="titleLocale" value="students.editStudent.password2Title"/>
                     <jsp:param name="helpLocale" value="students.editStudent.password2Help"/>
                   </jsp:include>                  
-                  <input type="password" class="equals equals-password1" name="password2" value="" size="30">
+                  <input type="password" class="equals equals-password1" autocomplete="off" name="password2" value="" size="30">
                 </div>
               </div>
               
@@ -715,7 +708,6 @@
             </div>
           </c:if>
           
-
           <c:forEach var="student" items="${students}">
             <div id="student.${student.id}" class="tabContent">
               <input type="hidden" name="studentVersion.${student.id}" value="${student.version}"/>

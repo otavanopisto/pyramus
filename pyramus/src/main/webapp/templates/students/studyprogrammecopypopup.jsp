@@ -11,10 +11,22 @@
   </head>
   <body>
     <div class="studyProgrammeCopyPopupContainer">
-      <div><fmt:message key="students.copyStudyProgrammePopup.dialogMessage">
+      <c:choose>
+        <c:when test="${courseAssessmentCount + transferCreditCount + creditLinkCount gt 0}">
+          <div><fmt:message key="students.copyStudyProgrammePopup.dialogMessage">
+            <fmt:param>${courseAssessmentCount + transferCreditCount + creditLinkCount}</fmt:param>
+          </fmt:message></div>
+          <div><input type="checkbox" id="linkStudentCreditsCheckbox" name="linkStudentCreditsCheckbox" checked="checked" value="1"/> <fmt:message key="students.copyStudyProgrammePopup.checkboxCaption"/></div>
+        </c:when>
+        <c:otherwise>
+          <input type="hidden" id="linkStudentCreditsCheckbox" name="linkStudentCreditsCheckbox" value="0"/>
+        </c:otherwise>
+      </c:choose>
+      
+      <div><fmt:message key="students.copyStudyProgrammePopup.dialogDefaultUserMessage">
         <fmt:param>${courseAssessmentCount + transferCreditCount + creditLinkCount}</fmt:param>
       </fmt:message></div>
-      <div><input type="checkbox" id="linkStudentCreditsCheckbox" name="linkStudentCreditsCheckbox" value="1"/> <fmt:message key="students.copyStudyProgrammePopup.checkboxCaption"/></div>
+      <div><input type="checkbox" id="defaultUserCheckBox" name="defaultUserCheckBox" checked="checked" value="1"/> <fmt:message key="students.copyStudyProgrammePopup.defaultUserCheckboxCaption"/></div>
     </div>
   </body>
 </html>

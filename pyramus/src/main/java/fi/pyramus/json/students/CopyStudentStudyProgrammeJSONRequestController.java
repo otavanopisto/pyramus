@@ -56,6 +56,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     Student oldStudent = studentDAO.findById(studentId);
 
     Boolean linkCredits = requestContext.getBoolean("linkCredits");
+    Boolean setAsDefaultUser = requestContext.getBoolean("setAsDefaultUser");
     
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
     
@@ -91,7 +92,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     
     // Default user
     
-    if (person.getDefaultUser() == null) {
+    if ((person.getDefaultUser() == null) || (Boolean.TRUE.equals(setAsDefaultUser))) {
       personDAO.updateDefaultUser(person, newStudent);
     }
     
