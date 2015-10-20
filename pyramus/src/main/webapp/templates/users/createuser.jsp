@@ -368,7 +368,7 @@
                     <jsp:param name="titleLocale" value="users.createUser.usernameTitle"/>
                     <jsp:param name="helpLocale" value="users.createUser.usernameHelp"/>
                   </jsp:include>                  
-                  <input type="text" name="username" size="30">
+                  <input type="text" autocomplete="off" name="username" size="30">
                 </div>
                 
                 <div class="genericFormSection">  
@@ -376,7 +376,7 @@
                     <jsp:param name="titleLocale" value="users.createUser.password1Title"/>
                     <jsp:param name="helpLocale" value="users.createUser.password1Help"/>
                   </jsp:include>                  
-                  <input type="password" class="equals equals-password2" name="password1" value="" size="30">
+                  <input type="password" autocomplete="off" class="equals equals-password2" name="password1" value="" size="30">
                 </div>
                 
                 <div class="genericFormSection">  
@@ -384,7 +384,7 @@
                     <jsp:param name="titleLocale" value="users.createUser.password2Title"/>
                     <jsp:param name="helpLocale" value="users.createUser.password2Help"/>
                   </jsp:include>                  
-                  <input type="password" class="equals equals-password1" name="password2" value="" size="30">
+                  <input type="password" autocomplete="off" class="equals equals-password1" name="password2" value="" size="30">
                 </div>
               </div>
             </c:if>
