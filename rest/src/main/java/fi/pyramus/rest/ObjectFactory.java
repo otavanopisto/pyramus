@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateful;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -83,7 +82,6 @@ import fi.pyramus.rest.model.UserRole;
 import fi.pyramus.rest.model.VariableType;
 
 @ApplicationScoped
-@Stateful
 public class ObjectFactory {
 
   @Inject
@@ -100,6 +98,8 @@ public class ObjectFactory {
   
   @PostConstruct
   public void init() {
+    mappers = new HashMap<Class<?>, ObjectFactory.Mapper<Object>>();
+    
     addMappers(
         new Mapper<fi.pyramus.domainmodel.base.AcademicTerm>() {
           @Override
@@ -739,5 +739,5 @@ public class ObjectFactory {
     mappers.put(type, (Mapper<Object>) mapper);
   }
   
-  private Map<Class<?>, Mapper<Object>> mappers = new HashMap<Class<?>, ObjectFactory.Mapper<Object>>();
+  private Map<Class<?>, Mapper<Object>> mappers;
 }
