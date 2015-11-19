@@ -12,9 +12,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.pyramus.domainmodel.base.Email;
@@ -45,7 +51,7 @@ public class StaffRESTService extends AbstractRESTService {
   @Path("/members")
   @GET
   @RESTPermit (UserPermissions.LIST_STAFFMEMBERS)
-  public Response listUsers(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults, @QueryParam ("email") String email) {
+  public Response listStaffMembers(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults, @QueryParam ("email") String email) {
     List<StaffMember> staffMembers = null;
     
     if (StringUtils.isNotBlank(email)) {
@@ -65,21 +71,37 @@ public class StaffRESTService extends AbstractRESTService {
   @GET
   @RESTPermit (handling = Handling.INLINE)
   //@RESTPermit (UserPermissions.FIND_STAFFMEMBER)
-  public Response findUserById(@PathParam("ID") Long id) {
-    StaffMember user = userController.findStaffMemberById(id);
-    if (!restSecurity.hasPermission(new String[] { UserPermissions.FIND_STAFFMEMBER, UserPermissions.USER_OWNER }, user, Style.OR)) {
-      return Response.status(Status.FORBIDDEN).build();
-    }
-    if (user == null) {
+  public Response findStaffMemberById(@PathParam("ID") Long id, @Context Request request) {
+    StaffMember staffMember = userController.findStaffMemberById(id);
+    
+    if ((staffMember == null) || (staffMember.getArchived())) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    return Response.ok(objectFactory.createModel(user)).build();
+    
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.FIND_STAFFMEMBER, UserPermissions.USER_OWNER }, staffMember, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(staffMember.getVersion())));
+    ResponseBuilder builder = request.evaluatePreconditions(tag);
+    if (builder != null) {
+      return builder.build();
+    }
+
+    CacheControl cacheControl = new CacheControl();
+    cacheControl.setMustRevalidate(true);
+    
+    return Response
+        .ok(objectFactory.createModel(staffMember))
+        .cacheControl(cacheControl)
+        .tag(tag)
+        .build();
   }
 
   @Path("/members/{ID:[0-9]*}/emails")
   @GET
   @RESTPermit (UserPermissions.LIST_STAFFMEMBER_EMAILS)
-  public Response listUserEmails(@PathParam("ID") Long id) {
+  public Response listStaffMembersEmails(@PathParam("ID") Long id) {
     StaffMember user = userController.findStaffMemberById(id);
     if (user == null) {
       return Response.status(Status.NOT_FOUND).build();

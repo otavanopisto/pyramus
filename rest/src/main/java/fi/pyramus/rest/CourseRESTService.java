@@ -539,7 +539,7 @@ public class CourseRESTService extends AbstractRESTService {
     if (entity.getParticipationTypeId() != null) {
       participantionType = courseController.findCourseParticipationTypeById(entity.getParticipationTypeId());
       if (participantionType == null) {
-        return Response.status(Status.BAD_REQUEST).entity("could not find participantionType #" + entity.getParticipationTypeId()).build();
+        return Response.status(Status.BAD_REQUEST).entity("could not find participationType #" + entity.getParticipationTypeId()).build();
       }
     } else {
       participantionType = courseController.getDefaultCourseParticipationType();
@@ -553,13 +553,26 @@ public class CourseRESTService extends AbstractRESTService {
   @Path("/courses/{ID:[0-9]*}/students")
   @GET
   @RESTPermit (CoursePermissions.LIST_COURSESTUDENTS)
-  public Response listCourseStudents(@PathParam("ID") Long courseId) {
+  public Response listCourseStudents(@PathParam("ID") Long courseId,
+      @QueryParam("participationType") Long[] participationTypes) {
+
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
+
+    List<CourseParticipationType> courseParticipationTypes = new ArrayList<CourseParticipationType>();
+    if (participationTypes != null) {
+      for (int i = 0; i < participationTypes.length; i++) {
+        courseParticipationTypes.add(courseController.findCourseParticipationTypeById(participationTypes[i]));
+      }
+    }
     
-    List<fi.pyramus.domainmodel.courses.CourseStudent> students = courseController.listCourseStudentsByCourse(course);
+    List<fi.pyramus.domainmodel.courses.CourseStudent> students =
+        courseParticipationTypes.isEmpty()
+        ? courseController.listCourseStudentsByCourse(course)
+        : courseController.listCourseStudentsByCourseAndParticipationTypes(course, courseParticipationTypes);
+    
     if (students.isEmpty()) {
       return Response.status(Status.NO_CONTENT).build();
     }

@@ -358,6 +358,10 @@ public class CommonController {
     return emailDAO.create(contactInfo, contactType, defaultAddress, address);
   }
   
+  public Email findDefaultEmailByContactInfo(ContactInfo contactInfo) {
+    return emailDAO.findByContactInfoAndDefaultAddress(contactInfo, Boolean.TRUE);
+  }
+  
   public Email findEmailById(Long id) {
     return emailDAO.findById(id);
   }
