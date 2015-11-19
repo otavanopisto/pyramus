@@ -83,7 +83,24 @@
               }
             }); 
           }  
-        }));      
+        }));     
+
+        <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
+        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
+          iconURL: GLOBAL_contextPath + '/gfx/icons/16x16/apps/attention.png',
+          text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsPoseAsLabel"/>',
+          onclick: function (event) {
+            JSONRequest.request("users/pose.json", {
+              parameters: {
+                userId: studentId
+              },
+              onSuccess: function (jsonResponse) {
+                window.location = GLOBAL_contextPath + "/";
+              }
+            }); 
+          }  
+        }));
+        </c:if>      
         
         var extensionHoverMenuLinks = $$('#extensionHoverMenuLinks a');
         for (var i=0, l=extensionHoverMenuLinks.length; i<l; i++) {
