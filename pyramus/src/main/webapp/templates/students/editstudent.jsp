@@ -559,6 +559,8 @@
         }));
       }
     </script>
+    
+    <ix:extensionHook name="students.editStudent.head" />
   </head>
 
   <body onload="onLoad(event);" ix:enabledrafting="true">
