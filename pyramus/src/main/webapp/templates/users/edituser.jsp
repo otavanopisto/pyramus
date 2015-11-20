@@ -398,6 +398,24 @@
             redirectTo(GLOBAL_contextPath + '/resources/createworkresource.page?name=' + encodeURIComponent('${user.lastName}, ${user.firstName}'));
           }
         }));
+        
+
+        <c:if test="${loggedUserRole == 'ADMINISTRATOR' && user.role ne 'ADMINISTRATOR'}">
+        relatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
+          iconURL: GLOBAL_contextPath + '/gfx/icons/16x16/apps/attention.png',
+          text: '<fmt:message key="users.editUser.basicTabRelatedActionsPoseAsLabel"/>',
+          onclick: function (event) {
+            JSONRequest.request("users/pose.json", {
+              parameters: {
+                userId: ${user.id}
+              },
+              onSuccess: function (jsonResponse) {
+                window.location = GLOBAL_contextPath + "/";
+              }
+            }); 
+          }  
+        }));
+        </c:if>     
       }
     </script>
   </head>
