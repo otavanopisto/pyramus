@@ -214,7 +214,7 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(
-            criteriaBuilder.in(root.get(CourseStudent_.participationType).in(participationTypes)),
+            root.get(CourseStudent_.participationType).in(participationTypes),
             criteriaBuilder.equal(root.get(CourseStudent_.course), course),
             criteriaBuilder.equal(root.get(CourseStudent_.archived), Boolean.FALSE),
             criteriaBuilder.equal(student.get(Student_.archived), Boolean.FALSE)

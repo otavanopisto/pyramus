@@ -554,7 +554,7 @@ public class CourseRESTService extends AbstractRESTService {
   @GET
   @RESTPermit (CoursePermissions.LIST_COURSESTUDENTS)
   public Response listCourseStudents(@PathParam("ID") Long courseId,
-      @QueryParam("participationType") Long[] participationTypes) {
+      @QueryParam("participationTypes") String participationTypes) {
 
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
@@ -562,9 +562,14 @@ public class CourseRESTService extends AbstractRESTService {
     }
 
     List<CourseParticipationType> courseParticipationTypes = new ArrayList<CourseParticipationType>();
-    if (participationTypes != null) {
-      for (int i = 0; i < participationTypes.length; i++) {
-        courseParticipationTypes.add(courseController.findCourseParticipationTypeById(participationTypes[i]));
+    if (StringUtils.isNotEmpty(participationTypes)) {
+      String[] typeArray = participationTypes.split(",");
+      for (int i = 0; i < typeArray.length; i++) {
+        CourseParticipationType participationType = courseController.findCourseParticipationTypeById(Long.valueOf(typeArray[i]));
+        if (participationType != null) {
+          courseParticipationTypes.add(participationType);
+        }
+        // TODO error logging if participation type not found
       }
     }
     
