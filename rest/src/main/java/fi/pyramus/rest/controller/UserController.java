@@ -66,6 +66,10 @@ public class UserController {
   public List<StaffMember> listStaffMembers(Integer firstResult, Integer maxResults) {
     return staffMemberDAO.listAll(firstResult, maxResults);
   }
+
+  public List<StaffMember> listStaffMembersByPerson(Person person) {
+    return staffMemberDAO.listByPerson(person);
+  }
   
   /* Variables */
 
