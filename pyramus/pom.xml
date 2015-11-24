@@ -479,6 +479,7 @@
                 <it.keystore.alias>${it.keystore.alias}</it.keystore.alias>
                 <it.keystore.storepass>${it.keystore.pass}</it.keystore.storepass>
               </systemPropertyVariables>
+              <argLine>-Xmx2G -XX:MaxPermSize=1G</argLine>
             </configuration>
             <executions>
               <execution>
@@ -817,7 +818,6 @@
               <includes>
                 <include>fi/pyramus/ui/**/*IT.java</include>
               </includes>
-              <reuseForks>false</reuseForks>
               <systemPropertyVariables>
                 <it.project.version>${project.version}</it.project.version>
                 <it.host>${it.host}</it.host>
@@ -832,7 +832,6 @@
                 <it.keystore.alias>${it.keystore.alias}</it.keystore.alias>
                 <it.keystore.storepass>${it.keystore.pass}</it.keystore.storepass>
               </systemPropertyVariables>
-              <argLine>-Xmx2G -XX:MaxPermSize=1G</argLine>
             </configuration>
             <executions>
               <execution>
