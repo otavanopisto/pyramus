@@ -328,4 +328,16 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       .statusCode(204);
   }
   
+  @Test
+  public void testListPersonStaffMembers() {
+    given().headers(getAuthHeaders())
+      .get("/persons/persons/{ID}/staffMembers", 1)
+      .then()
+      .statusCode(200)
+      .body("id.size()", is(1))
+      .body("id[0]", is(1))
+      .body("firstName[0]", is("Test Guest"))
+      .body("lastName[0]", is("User #1"))
+      .body("role[0]", is("GUEST"));
+  }
 }
