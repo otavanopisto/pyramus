@@ -622,10 +622,6 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build(); 
     }
     
-    if (entity.getEnrolmentTypeId() == null) {
-      return Response.status(Status.BAD_REQUEST).build(); 
-    }
-    
     if (entity.getEnrolmentTime() == null) {
       return Response.status(Status.BAD_REQUEST).build(); 
     }
@@ -669,9 +665,12 @@ public class CourseRESTService extends AbstractRESTService {
       }
     }
     
-    fi.pyramus.domainmodel.courses.CourseEnrolmentType courseEnrolmentType = courseController.findCourseEnrolmentTypeById(entity.getEnrolmentTypeId());
-    if (courseEnrolmentType == null) {
-      return Response.status(Status.BAD_REQUEST).build();
+    fi.pyramus.domainmodel.courses.CourseEnrolmentType courseEnrolmentType = null;
+    if (entity.getEnrolmentTypeId() != null) {
+      courseEnrolmentType = courseController.findCourseEnrolmentTypeById(entity.getEnrolmentTypeId());
+      if (courseEnrolmentType == null) {
+        return Response.status(Status.BAD_REQUEST).build();
+      }
     }
     
     fi.pyramus.domainmodel.base.CourseOptionality optionality = entity.getOptionality() != null ? fi.pyramus.domainmodel.base.CourseOptionality.valueOf(entity.getOptionality().name()) : null;
