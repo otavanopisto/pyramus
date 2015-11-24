@@ -817,6 +817,7 @@
               <includes>
                 <include>fi/pyramus/ui/**/*IT.java</include>
               </includes>
+              <reuseForks>false</reuseForks>
               <systemPropertyVariables>
                 <it.project.version>${project.version}</it.project.version>
                 <it.host>${it.host}</it.host>
