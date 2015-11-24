@@ -722,6 +722,7 @@
                       <command>/subsystem=undertow/server=default-server/host=pyramus:write-attribute(name=default-web-module,value=ROOT.war)</command>
                       <command>/subsystem=security/security-domain=WebServices:add(cache-type=default)</command>
                       <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=&gt;"RealmUsersRoles","flag"=&gt;"required","module-options"=&gt;[("realm"=&gt;"WebServices"),("password-stacking"=&gt;"useFirstPass"),("rolesProperties"=&gt;"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=&gt;"\${jboss.server.config.dir}/application-users.properties")]}])</command>
+                      <command>/subsystem=logging/logger=javax.ws.rs.NotFoundException:add(level=SEVERE)</command>
                     </commands>
                   </execute-commands>
                 </configuration>
