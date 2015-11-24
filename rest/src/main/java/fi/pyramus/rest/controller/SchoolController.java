@@ -1,5 +1,6 @@
 package fi.pyramus.rest.controller;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -113,6 +114,12 @@ public class SchoolController {
     List<SchoolVariable> variables = schoolVariableDAO.listBySchool(school);
     for (SchoolVariable variable : variables) {
       schoolVariableDAO.delete(variable);
+    }
+    
+    ArrayList<Tag> tags = new ArrayList<>(school.getTags());
+    
+    for (Tag tag : tags) {
+      removeSchoolTag(school, tag);
     }
     
     schoolDAO.delete(school);
