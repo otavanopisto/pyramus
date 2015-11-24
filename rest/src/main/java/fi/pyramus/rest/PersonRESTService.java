@@ -112,12 +112,14 @@ public class PersonRESTService extends AbstractRESTService {
   @Path("/persons")
   @GET
   @RESTPermit (PersonPermissions.LIST_PERSONS)
-  public Response findPersons(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+  public Response findPersons(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived, 
+      @QueryParam("firstResult") Integer firstResult, @QueryParam("maxResults") Integer maxResults) {
+    
     List<Person> persons;
     if (filterArchived) {
-      persons = personController.findUnarchivedPersons();
+      persons = personController.listUnarchivedPersons(firstResult, maxResults);
     } else {
-      persons = personController.findPersons();
+      persons = personController.listPersons(firstResult, maxResults);
     }
     
     return Response.ok(objectFactory.createModel(persons)).build();

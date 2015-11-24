@@ -67,6 +67,25 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
   }
   
   @Test
+  public void testListPersonsLimit() {
+    given().headers(getAuthHeaders())
+      .get("/persons/persons?firstResult=2&maxResults=3")
+      .then()
+      .statusCode(200)
+      .body("id.size()", is(3))
+      .body("id[0]", is(3) )
+      .body("birthday[0]", is(getDate(1990, 1, 1).toString() ))
+      .body("sex[0]", is( Sex.FEMALE.name() ) )
+      .body("socialSecurityNumber[0]", is("123456-7890") )
+      .body("secureInfo[0]", is(Boolean.FALSE) )
+      .body("id[1]", is(4) )
+      .body("birthday[1]", is(getDate(1990, 1, 1).toString() ))
+      .body("sex[1]", is( Sex.MALE.name() ) )
+      .body("socialSecurityNumber[1]", is("01234567-8901") )
+      .body("secureInfo[1]", is(Boolean.FALSE) );
+  }
+  
+  @Test
   public void testFindPerson() {
     given().headers(getAuthHeaders())
       .get("/persons/persons/{ID}", 3)
