@@ -831,6 +831,7 @@
                 <it.keystore.alias>${it.keystore.alias}</it.keystore.alias>
                 <it.keystore.storepass>${it.keystore.pass}</it.keystore.storepass>
               </systemPropertyVariables>
+              <argLine>-Xmx1G -XX:MaxPermSize=512m</argLine>
             </configuration>
             <executions>
               <execution>
