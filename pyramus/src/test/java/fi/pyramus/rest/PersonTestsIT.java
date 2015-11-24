@@ -17,6 +17,7 @@ import fi.pyramus.rest.model.Email;
 import fi.pyramus.rest.model.Person;
 import fi.pyramus.rest.model.Sex;
 import fi.pyramus.rest.model.Student;
+import fi.pyramus.rest.model.UserRole;
 
 public class PersonTestsIT extends AbstractRESTServiceTest {
 
@@ -357,6 +358,6 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       .body("id[0]", is(1))
       .body("firstName[0]", is("Test Guest"))
       .body("lastName[0]", is("User #1"))
-      .body("role[0]", is("GUEST"));
+      .body("role[0]", is(UserRole.GUEST.name()));
   }
 }
