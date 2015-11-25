@@ -2344,6 +2344,28 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
   }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/defaultemail")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  // @RESTPermit (StudentPermissions.FIND_STUDENTEMAIL)
+  public Response findStudentDefaultEmail(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTEMAIL, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    Email email = commonController.findDefaultEmailByContactInfo(student.getContactInfo());
+    if (email == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok(objectFactory.createModel(email)).build();
+  }
 
   @Path("/students/{STUDENTID:[0-9]*}/emails/{ID:[0-9]*}")
   @GET

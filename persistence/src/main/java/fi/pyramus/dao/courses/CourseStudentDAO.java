@@ -203,6 +203,26 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  public List<CourseStudent> listByCourseAndParticipationTypes(Course course, List<CourseParticipationType> participationTypes) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseStudent> criteria = criteriaBuilder.createQuery(CourseStudent.class);
+    Root<CourseStudent> root = criteria.from(CourseStudent.class);
+    Join<CourseStudent, Student> student = root.join(CourseStudent_.student);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            root.get(CourseStudent_.participationType).in(participationTypes),
+            criteriaBuilder.equal(root.get(CourseStudent_.course), course),
+            criteriaBuilder.equal(root.get(CourseStudent_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(student.get(Student_.archived), Boolean.FALSE)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   public Long countByCourse(Course course) {
     EntityManager entityManager = getEntityManager(); 
     

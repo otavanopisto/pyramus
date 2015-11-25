@@ -462,6 +462,10 @@ public class CourseController {
     return courseStudentDAO.listByCourse(course);
   }
 
+  public List<CourseStudent> listCourseStudentsByCourseAndParticipationTypes(Course course, List<CourseParticipationType> participationTypes) {
+    return courseStudentDAO.listByCourseAndParticipationTypes(course, participationTypes);
+  }
+
   public List<CourseStudent> listCourseStudentsByStudent(Student student) {
     return courseStudentDAO.listByStudent(student);
   }
