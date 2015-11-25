@@ -105,6 +105,30 @@ public class UserPermissions extends AbstractPyramusPermissionCollection impleme
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String DELETE_STAFFMEMBERADDRESS = "DELETE_STAFFMEMBERADDRESS";
   
+  /*
+   * Phone numbers
+   */
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String CREATE_STAFFMEMBERPHONENUMBER = "CREATE_STAFFMEMBERPHONENUMBER";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String LIST_STAFFMEMBERPHONENUMBERS = "LIST_STAFFMEMBERPHONENUMBERS";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String FIND_STAFFMEMBERPHONENUMBER = "FIND_STAFFMEMBERPHONENUMBER";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String UPDATE_STAFFMEMBERPHONENUMBER = "UPDATE_STAFFMEMBERPHONENUMBER";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  public static final String DELETE_STAFFMEMBERPHONENUMBER = "DELETE_STAFFMEMBERPHONENUMBER";
+  
   @Override
   public List<String> listPermissions() {
     return super.listPermissions(UserPermissions.class);
