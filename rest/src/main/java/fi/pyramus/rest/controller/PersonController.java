@@ -24,14 +24,20 @@ public class PersonController {
     return person;
   }
   
-  public List<Person> findPersons() {
-    List<Person> persons = personDAO.listAll();
-    return persons;
+  public List<Person> listPersons() {
+    return listPersons(null, null);
   }
   
-  public List<Person> findUnarchivedPersons() {
-    List<Person> persons = personDAO.listUnarchived();
-    return persons;
+  public List<Person> listPersons(Integer firstResult, Integer maxResults) {
+    return personDAO.listAll(firstResult, maxResults);
+  }
+  
+  public List<Person> listUnarchivedPersons() {
+    return listUnarchivedPersons(null, null);
+  }
+  
+  public List<Person> listUnarchivedPersons(Integer firstResult, Integer maxResults) {
+    return personDAO.listUnarchived(firstResult, maxResults);
   }
   
   public Person findPersonById(Long id) {

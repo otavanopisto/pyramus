@@ -1,6 +1,8 @@
 package fi.pyramus.rest;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ejb.Stateful;
@@ -1172,6 +1174,15 @@ public class StudentRESTService extends AbstractRESTService {
     if (studentGroupStudents.isEmpty()) {
       return Response.noContent().build();
     }
+    
+    Collections.sort(studentGroupStudents, new Comparator<StudentGroupStudent>() {
+
+      @Override
+      public int compare(StudentGroupStudent o1, StudentGroupStudent o2) {
+        return o2.getId().compareTo(o1.getId());
+      }
+      
+    });
 
     return Response.ok(objectFactory.createModel(studentGroupStudents)).build();
   }
