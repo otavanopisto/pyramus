@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Email;
+import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.rest.annotation.RESTPermit;
 import fi.pyramus.rest.annotation.RESTPermit.Handling;
@@ -229,4 +230,127 @@ public class StaffRESTService extends AbstractRESTService {
 
     return Response.noContent().build();
   }
+  
+  @Path("/members/{STAFFMEMBERID:[0-9]*}/phoneNumbers")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStaffMemberPhoneNumbers(@PathParam("STAFFMEMBERID") Long staffMemberId) {
+    StaffMember staffMember = userController.findStaffMemberById(staffMemberId);
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (staffMember.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STAFFMEMBERPHONENUMBERS }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    List<PhoneNumber> phoneNumbers = staffMember.getContactInfo().getPhoneNumbers();
+    if (phoneNumbers.isEmpty()) {
+      return Response.noContent().build();
+    }
+
+    return Response.ok(objectFactory.createModel(phoneNumbers)).build();
+  }
+
+  @Path("/members/{STAFFMEMBERID:[0-9]*}/phoneNumbers")
+  @POST
+  @RESTPermit(handling = Handling.INLINE)
+  public Response createStaffMemberPhoneNumber(@PathParam("STAFFMEMBERID") Long staffMemberId, fi.pyramus.rest.model.PhoneNumber phoneNumber) {
+    if (phoneNumber == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    StaffMember staffMember = userController.findStaffMemberById(staffMemberId);
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (staffMember.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.CREATE_STAFFMEMBERPHONENUMBER }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    Long contactTypeId = phoneNumber.getContactTypeId();
+    Boolean defaultNumber = phoneNumber.getDefaultNumber();
+    String number = phoneNumber.getNumber();
+
+    if ((contactTypeId == null) || (defaultNumber == null) || StringUtils.isBlank(number)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    ContactType contactType = commonController.findContactTypeById(contactTypeId);
+    if (contactType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    return Response.ok(objectFactory.createModel(userController.addStaffMemberPhoneNumber(staffMember, contactType, number, defaultNumber))).build();
+  }
+
+  @Path("/members/{STAFFMEMBERID:[0-9]*}/phoneNumbers/{ID:[0-9]*}")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response findStaffMemberPhoneNumber(@PathParam("STAFFMEMBERID") Long staffMemberId, @PathParam("ID") Long id) {
+    StaffMember staffMember = userController.findStaffMemberById(staffMemberId);
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (staffMember.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.FIND_STAFFMEMBERPHONENUMBER }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    PhoneNumber phoneNumber = commonController.findPhoneNumberById(id);
+    if (phoneNumber == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!phoneNumber.getContactInfo().getId().equals(staffMember.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok(objectFactory.createModel(phoneNumber)).build();
+  }
+
+  @Path("/members/{STAFFMEMBERID:[0-9]*}/phoneNumbers/{ID:[0-9]*}")
+  @DELETE
+  @RESTPermit(handling = Handling.INLINE)
+  public Response deleteStaffMemberPhoneNumber(@PathParam("STAFFMEMBERID") Long staffMemberId, @PathParam("ID") Long id) {
+    StaffMember staffMember = userController.findStaffMemberById(staffMemberId);
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (staffMember.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.DELETE_STAFFMEMBERPHONENUMBER }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    PhoneNumber phoneNumber = commonController.findPhoneNumberById(id);
+    if (phoneNumber == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!phoneNumber.getContactInfo().getId().equals(staffMember.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    commonController.deletePhoneNumber(phoneNumber);
+
+    return Response.noContent().build();
+  }
+  
 }
