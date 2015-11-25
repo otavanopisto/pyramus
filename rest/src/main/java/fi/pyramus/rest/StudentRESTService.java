@@ -2709,6 +2709,7 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/students/{STUDENTID:[0-9]*}/contactURLs/{ID:[0-9]*}")
   @GET
+  @RESTPermit(handling = Handling.INLINE)
   public Response findStudentContactURL(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
@@ -2719,7 +2720,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTCONTACTURL }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTCONTACTURL, StudentPermissions.STUDENT }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
