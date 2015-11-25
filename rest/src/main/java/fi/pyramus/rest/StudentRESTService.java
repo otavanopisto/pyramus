@@ -89,6 +89,7 @@ import fi.pyramus.rest.controller.permissions.CourseAssessmentPermissions;
 import fi.pyramus.rest.controller.permissions.LanguagePermissions;
 import fi.pyramus.rest.controller.permissions.MunicipalityPermissions;
 import fi.pyramus.rest.controller.permissions.NationalityPermissions;
+import fi.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.pyramus.rest.controller.permissions.StudentActivityTypePermissions;
 import fi.pyramus.rest.controller.permissions.StudentContactLogEntryPermissions;
 import fi.pyramus.rest.controller.permissions.StudentEducationalLevelPermissions;
@@ -2291,7 +2292,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTEMAILS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTEMAILS }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -2359,7 +2360,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTEMAIL, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTEMAIL }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -2416,7 +2417,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTADDRESSS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTADDRESSS }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -2486,7 +2487,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTADDRESS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTADDRESS }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -2543,7 +2544,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTPHONENUMBERS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTPHONENUMBERS }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -2606,7 +2607,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTPHONENUMBER, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTPHONENUMBER }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -2651,7 +2652,7 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/students/{STUDENTID:[0-9]*}/contactURLs")
   @GET
-  @RESTPermit(StudentPermissions.LIST_STUDENTCONTACTURLS)
+  @RESTPermit(handling = Handling.INLINE)
   public Response listStudentContactURLs(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
@@ -2660,6 +2661,10 @@ public class StudentRESTService extends AbstractRESTService {
 
     if (student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTCONTACTURLS }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     List<ContactURL> contactUrls = student.getContactInfo().getContactURLs();
@@ -2704,7 +2709,6 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/students/{STUDENTID:[0-9]*}/contactURLs/{ID:[0-9]*}")
   @GET
-  @RESTPermit(StudentPermissions.FIND_STUDENTCONTACTURL)
   public Response findStudentContactURL(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
@@ -2713,6 +2717,10 @@ public class StudentRESTService extends AbstractRESTService {
 
     if (student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTCONTACTURL }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     ContactURL contactURL = commonController.findContactURLById(id);
