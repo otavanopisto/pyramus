@@ -9,10 +9,13 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.AddressDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
+import fi.pyramus.domainmodel.base.Address;
+import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Person;
 import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.users.Role;
@@ -36,6 +39,9 @@ public class UserController {
 
   @Inject
   private UserVariableKeyDAO userVariableKeyDAO;
+  
+  @Inject
+  private AddressDAO addressDAO;
   
   /* Users */
   
@@ -158,5 +164,11 @@ public class UserController {
     userVariableKeyDAO.delete(userVariableKey);
   }
 
+  /* Address */
+
+  public Address addStaffMemberAddress(StaffMember staffMember, ContactType contactType, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
+    return addressDAO.create(staffMember.getContactInfo(), contactType, name ,streetAddress, postalCode, city, country, defaultAddress);
+  }
+  
 }
 

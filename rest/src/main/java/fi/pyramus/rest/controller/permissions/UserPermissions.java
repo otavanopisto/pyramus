@@ -81,6 +81,29 @@ public class UserPermissions extends AbstractPyramusPermissionCollection impleme
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String DELETE_USERVARIABLEKEY = "DELETE_USERVARIABLEKEY";
   
+  /**
+   * staff member addresses
+   */
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String CREATE_STAFFMEMBERADDRESS = "CREATE_STAFFMEMBERADDRESS";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String LIST_STAFFMEMBERADDRESES = "LIST_STAFFMEMBERADDRESES";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String FIND_STAFFMEMBERADDRESS = "FIND_STAFFMEMBERADDRESS";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String UPDATE_STAFFMEMBERADDRESS = "UPDATE_STAFFMEMBERADDRESS";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  public static final String DELETE_STAFFMEMBERADDRESS = "DELETE_STAFFMEMBERADDRESS";
   
   @Override
   public List<String> listPermissions() {

@@ -7,7 +7,9 @@ import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -17,12 +19,16 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.pyramus.domainmodel.base.Address;
+import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Email;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.rest.annotation.RESTPermit;
 import fi.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.pyramus.rest.annotation.RESTPermit.Style;
+import fi.pyramus.rest.controller.CommonController;
 import fi.pyramus.rest.controller.UserController;
+import fi.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.pyramus.rest.controller.permissions.UserPermissions;
 import fi.pyramus.rest.security.RESTSecurity;
 
@@ -35,6 +41,9 @@ public class StaffRESTService extends AbstractRESTService {
 
   @Inject
   private UserController userController;
+  
+  @Inject
+  private CommonController commonController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -93,5 +102,131 @@ public class StaffRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(emails)).build();
   }
   
-  
+  @Path("/members/{STAFFMEMBERID:[0-9]*}/addresses")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStaffMemberAddresses(@PathParam("STAFFMEMBERID") Long staffMemberId) {
+    StaffMember staffMember = userController.findStaffMemberById(staffMemberId);
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (staffMember.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STAFFMEMBERADDRESES }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    List<Address> addresses = staffMember.getContactInfo().getAddresses();
+    if (addresses.isEmpty()) {
+      return Response.noContent().build();
+    }
+
+    return Response.ok(objectFactory.createModel(addresses)).build();
+  }
+
+  @Path("/members/{STAFFMEMBERID:[0-9]*}/addresses")
+  @POST
+  @RESTPermit(handling = Handling.INLINE)
+  public Response createStaffMemberAddress(@PathParam("STAFFMEMBERID") Long staffMemberId, fi.pyramus.rest.model.Address address) {
+    if (address == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    StaffMember staffMember = userController.findStaffMemberById(staffMemberId);
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (staffMember.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STAFFMEMBERADDRESES }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    Long contactTypeId = address.getContactTypeId();
+    Boolean defaultAddress = address.getDefaultAddress();
+    String name = address.getName();
+    String streetAddress = address.getStreetAddress();
+    String postalCode = address.getPostalCode();
+    String country = address.getCountry();
+    String city = address.getCity();
+
+    if ((contactTypeId == null) || (defaultAddress == null)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    ContactType contactType = commonController.findContactTypeById(contactTypeId);
+    if (contactType == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    return Response.ok(
+        objectFactory.createModel(userController.addStaffMemberAddress(staffMember, contactType, defaultAddress, name, streetAddress, postalCode, city, country)))
+        .build();
+  }
+
+  @Path("/members/{STAFFMEMBERID:[0-9]*}/addresses/{ID:[0-9]*}")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response findStaffMemberAddress(@PathParam("STAFFMEMBERID") Long staffMemberId, @PathParam("ID") Long id) {
+    StaffMember staffMember = userController.findStaffMemberById(staffMemberId);
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (staffMember.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STAFFMEMBERADDRESES }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    Address address = commonController.findAddressById(id);
+    if (address == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!address.getContactInfo().getId().equals(staffMember.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok(objectFactory.createModel(address)).build();
+  }
+
+  @Path("/members/{STAFFMEMBERID:[0-9]*}/addresses/{ID:[0-9]*}")
+  @DELETE
+  @RESTPermit(handling = Handling.INLINE)
+  public Response deleteStaffMemberAddress(@PathParam("STAFFMEMBERID") Long staffMemberId, @PathParam("ID") Long id) {
+    StaffMember staffMember = userController.findStaffMemberById(staffMemberId);
+    if (staffMember == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (staffMember.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.DELETE_STAFFMEMBERADDRESS }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    Address address = commonController.findAddressById(id);
+    if (address == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!address.getContactInfo().getId().equals(staffMember.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    commonController.deleteAddress(address);
+
+    return Response.noContent().build();
+  }
 }
