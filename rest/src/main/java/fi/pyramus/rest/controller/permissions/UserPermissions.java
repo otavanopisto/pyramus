@@ -91,7 +91,7 @@ public class UserPermissions extends AbstractPyramusPermissionCollection impleme
   
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
-  public static final String LIST_STAFFMEMBERADDRESES = "LIST_STAFFMEMBERADDRESES";
+  public static final String LIST_STAFFMEMBERADDRESSES = "LIST_STAFFMEMBERADDRESSES";
   
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })

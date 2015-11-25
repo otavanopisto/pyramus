@@ -115,7 +115,7 @@ public class StaffRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STAFFMEMBERADDRESES }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STAFFMEMBERADDRESSES }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
     }
     
@@ -144,7 +144,7 @@ public class StaffRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STAFFMEMBERADDRESES }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.CREATE_STAFFMEMBERADDRESS }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -183,7 +183,7 @@ public class StaffRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    if (!restSecurity.hasPermission(new String[] { UserPermissions.LIST_STAFFMEMBERADDRESES }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.FIND_STAFFMEMBERADDRESS }, staffMember ) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, staffMember.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
