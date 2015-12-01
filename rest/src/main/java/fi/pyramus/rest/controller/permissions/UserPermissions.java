@@ -81,6 +81,53 @@ public class UserPermissions extends AbstractPyramusPermissionCollection impleme
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String DELETE_USERVARIABLEKEY = "DELETE_USERVARIABLEKEY";
   
+  /**
+   * staff member addresses
+   */
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String CREATE_STAFFMEMBERADDRESS = "CREATE_STAFFMEMBERADDRESS";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String LIST_STAFFMEMBERADDRESSES = "LIST_STAFFMEMBERADDRESSES";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String FIND_STAFFMEMBERADDRESS = "FIND_STAFFMEMBERADDRESS";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String UPDATE_STAFFMEMBERADDRESS = "UPDATE_STAFFMEMBERADDRESS";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  public static final String DELETE_STAFFMEMBERADDRESS = "DELETE_STAFFMEMBERADDRESS";
+  
+  /*
+   * Phone numbers
+   */
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String CREATE_STAFFMEMBERPHONENUMBER = "CREATE_STAFFMEMBERPHONENUMBER";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String LIST_STAFFMEMBERPHONENUMBERS = "LIST_STAFFMEMBERPHONENUMBERS";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String FIND_STAFFMEMBERPHONENUMBER = "FIND_STAFFMEMBERPHONENUMBER";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String UPDATE_STAFFMEMBERPHONENUMBER = "UPDATE_STAFFMEMBERPHONENUMBER";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  public static final String DELETE_STAFFMEMBERPHONENUMBER = "DELETE_STAFFMEMBERPHONENUMBER";
   
   @Override
   public List<String> listPermissions() {

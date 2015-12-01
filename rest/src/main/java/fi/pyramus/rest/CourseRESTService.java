@@ -539,7 +539,7 @@ public class CourseRESTService extends AbstractRESTService {
     if (entity.getParticipationTypeId() != null) {
       participantionType = courseController.findCourseParticipationTypeById(entity.getParticipationTypeId());
       if (participantionType == null) {
-        return Response.status(Status.BAD_REQUEST).entity("could not find participantionType #" + entity.getParticipationTypeId()).build();
+        return Response.status(Status.BAD_REQUEST).entity("could not find participationType #" + entity.getParticipationTypeId()).build();
       }
     } else {
       participantionType = courseController.getDefaultCourseParticipationType();
@@ -553,13 +553,31 @@ public class CourseRESTService extends AbstractRESTService {
   @Path("/courses/{ID:[0-9]*}/students")
   @GET
   @RESTPermit (CoursePermissions.LIST_COURSESTUDENTS)
-  public Response listCourseStudents(@PathParam("ID") Long courseId) {
+  public Response listCourseStudents(@PathParam("ID") Long courseId,
+      @QueryParam("participationTypes") String participationTypes) {
+
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
+
+    List<CourseParticipationType> courseParticipationTypes = new ArrayList<CourseParticipationType>();
+    if (StringUtils.isNotEmpty(participationTypes)) {
+      String[] typeArray = participationTypes.split(",");
+      for (int i = 0; i < typeArray.length; i++) {
+        CourseParticipationType participationType = courseController.findCourseParticipationTypeById(Long.valueOf(typeArray[i]));
+        if (participationType != null) {
+          courseParticipationTypes.add(participationType);
+        }
+        // TODO error logging if participation type not found
+      }
+    }
     
-    List<fi.pyramus.domainmodel.courses.CourseStudent> students = courseController.listCourseStudentsByCourse(course);
+    List<fi.pyramus.domainmodel.courses.CourseStudent> students =
+        courseParticipationTypes.isEmpty()
+        ? courseController.listCourseStudentsByCourse(course)
+        : courseController.listCourseStudentsByCourseAndParticipationTypes(course, courseParticipationTypes);
+    
     if (students.isEmpty()) {
       return Response.status(Status.NO_CONTENT).build();
     }
@@ -601,10 +619,6 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     if (entity.getStudentId() == null) {
-      return Response.status(Status.BAD_REQUEST).build(); 
-    }
-    
-    if (entity.getEnrolmentTypeId() == null) {
       return Response.status(Status.BAD_REQUEST).build(); 
     }
     
@@ -651,9 +665,12 @@ public class CourseRESTService extends AbstractRESTService {
       }
     }
     
-    fi.pyramus.domainmodel.courses.CourseEnrolmentType courseEnrolmentType = courseController.findCourseEnrolmentTypeById(entity.getEnrolmentTypeId());
-    if (courseEnrolmentType == null) {
-      return Response.status(Status.BAD_REQUEST).build();
+    fi.pyramus.domainmodel.courses.CourseEnrolmentType courseEnrolmentType = null;
+    if (entity.getEnrolmentTypeId() != null) {
+      courseEnrolmentType = courseController.findCourseEnrolmentTypeById(entity.getEnrolmentTypeId());
+      if (courseEnrolmentType == null) {
+        return Response.status(Status.BAD_REQUEST).build();
+      }
     }
     
     fi.pyramus.domainmodel.base.CourseOptionality optionality = entity.getOptionality() != null ? fi.pyramus.domainmodel.base.CourseOptionality.valueOf(entity.getOptionality().name()) : null;

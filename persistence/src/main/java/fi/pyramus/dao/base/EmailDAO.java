@@ -30,6 +30,23 @@ public class EmailDAO extends PyramusEntityDAO<Email> {
 
     return email;
   }
+  
+  public Email findByContactInfoAndDefaultAddress(ContactInfo contactInfo, Boolean defaultAddress) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Email> criteria = criteriaBuilder.createQuery(Email.class);
+    Root<Email> root = criteria.from(Email.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Email_.contactInfo), contactInfo),
+        criteriaBuilder.equal(root.get(Email_.defaultAddress), defaultAddress)
+      )
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
 
   public Email findByAddress(String emailAddress) {
     EntityManager entityManager = getEntityManager(); 

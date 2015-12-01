@@ -17,6 +17,7 @@ import fi.pyramus.rest.model.Email;
 import fi.pyramus.rest.model.Person;
 import fi.pyramus.rest.model.Sex;
 import fi.pyramus.rest.model.Student;
+import fi.pyramus.rest.model.UserRole;
 
 public class PersonTestsIT extends AbstractRESTServiceTest {
 
@@ -64,6 +65,25 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       .body("sex[3]", is("MALE") )
       .body("socialSecurityNumber[3]", is("01234567-8901") )
       .body("secureInfo[3]", is(Boolean.FALSE) );
+  }
+  
+  @Test
+  public void testListPersonsLimit() {
+    given().headers(getAuthHeaders())
+      .get("/persons/persons?firstResult=2&maxResults=3")
+      .then()
+      .statusCode(200)
+      .body("id.size()", is(3))
+      .body("id[0]", is(3) )
+      .body("birthday[0]", is(getDate(1990, 1, 1).toString() ))
+      .body("sex[0]", is( Sex.FEMALE.name() ) )
+      .body("socialSecurityNumber[0]", is("123456-7890") )
+      .body("secureInfo[0]", is(Boolean.FALSE) )
+      .body("id[1]", is(4) )
+      .body("birthday[1]", is(getDate(1990, 1, 1).toString() ))
+      .body("sex[1]", is( Sex.MALE.name() ) )
+      .body("socialSecurityNumber[1]", is("01234567-8901") )
+      .body("secureInfo[1]", is(Boolean.FALSE) );
   }
   
   @Test
@@ -328,4 +348,16 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       .statusCode(204);
   }
   
+  @Test
+  public void testListPersonStaffMembers() {
+    given().headers(getAuthHeaders())
+      .get("/persons/persons/{ID}/staffMembers", 1)
+      .then()
+      .statusCode(200)
+      .body("id.size()", is(1))
+      .body("id[0]", is(1))
+      .body("firstName[0]", is("Test Guest"))
+      .body("lastName[0]", is("User #1"))
+      .body("role[0]", is(UserRole.GUEST.name()));
+  }
 }

@@ -9,11 +9,16 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.pyramus.dao.base.AddressDAO;
+import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.users.StaffMemberDAO;
 import fi.pyramus.dao.users.UserDAO;
 import fi.pyramus.dao.users.UserVariableDAO;
 import fi.pyramus.dao.users.UserVariableKeyDAO;
+import fi.pyramus.domainmodel.base.Address;
+import fi.pyramus.domainmodel.base.ContactType;
 import fi.pyramus.domainmodel.base.Person;
+import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.VariableType;
 import fi.pyramus.domainmodel.users.Role;
 import fi.pyramus.domainmodel.users.StaffMember;
@@ -36,6 +41,12 @@ public class UserController {
 
   @Inject
   private UserVariableKeyDAO userVariableKeyDAO;
+  
+  @Inject
+  private AddressDAO addressDAO;
+
+  @Inject
+  private PhoneNumberDAO phoneNumberDAO;
   
   /* Users */
   
@@ -65,6 +76,10 @@ public class UserController {
 
   public List<StaffMember> listStaffMembers(Integer firstResult, Integer maxResults) {
     return staffMemberDAO.listAll(firstResult, maxResults);
+  }
+
+  public List<StaffMember> listStaffMembersByPerson(Person person) {
+    return staffMemberDAO.listByPerson(person);
   }
   
   /* Variables */
@@ -158,5 +173,17 @@ public class UserController {
     userVariableKeyDAO.delete(userVariableKey);
   }
 
+  /* Address */
+
+  public Address addStaffMemberAddress(StaffMember staffMember, ContactType contactType, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
+    return addressDAO.create(staffMember.getContactInfo(), contactType, name ,streetAddress, postalCode, city, country, defaultAddress);
+  }
+  
+  /* PhoneNumber */
+
+  public PhoneNumber addStaffMemberPhoneNumber(StaffMember staffMember, ContactType contactType, String number, Boolean defaultNumber) {
+    return phoneNumberDAO.create(staffMember.getContactInfo(), contactType, defaultNumber, number);
+  }
+  
 }
 
