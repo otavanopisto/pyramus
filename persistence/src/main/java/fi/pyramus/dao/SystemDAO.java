@@ -100,7 +100,7 @@ public class SystemDAO {
     massIndexer.startAndWait();
   }
   
-  private EntityManager getEntityManager() {
+  public EntityManager getEntityManager() {
     return entityManager;
   }
   
