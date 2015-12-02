@@ -19,7 +19,7 @@ import fi.pyramus.domainmodel.students.StudentGroupContactLogEntry_;
 public class StudentGroupContactLogEntryDAO extends PyramusEntityDAO<StudentGroupContactLogEntry> {
 
   /**
-   * Creates new contact log entry for a student.
+   * Creates new contact log entry for a student group.
    * 
    * @param student
    *          Student
@@ -34,30 +34,25 @@ public class StudentGroupContactLogEntryDAO extends PyramusEntityDAO<StudentGrou
    * @return The new entry
    */
   public StudentGroupContactLogEntry create(StudentGroup studentGroup, StudentContactLogEntryType type, String text, Date entryDate, String creator) {
-    EntityManager entityManager = getEntityManager(); 
-
     StudentGroupContactLogEntry entry = new StudentGroupContactLogEntry();
     entry.setStudentGroup(studentGroup);
     entry.setCreatorName(creator);
     entry.setEntryDate(entryDate);
     entry.setText(text);
     entry.setType(type);
+    entry.setArchived(false);
 
-    entityManager.persist(entry);
-    return entry;
+    return persist(entry);
   }
 
   public StudentGroupContactLogEntry update(StudentGroupContactLogEntry entry, StudentContactLogEntryType type, 
       String text, Date entryDate, String creator) {
-    EntityManager entityManager = getEntityManager(); 
-
     entry.setType(type);
     entry.setText(text);
     entry.setEntryDate(entryDate);
     entry.setCreatorName(creator);
 
-    entityManager.persist(entry);
-    return entry;
+    return persist(entry);
   }
   
   /**

@@ -19,11 +19,8 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
 
 import fi.pyramus.domainmodel.base.ArchivableEntity;
-import fi.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
 /**
  * StudentContactLogEntry class defines a message bind to a student
@@ -36,17 +33,8 @@ import fi.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
  * - type for classifying the ways of contacts (phone, email etc)
  * - entry date to identify the date/time of message
  * - creatorName to tell who the student was in contact with
- * 
- * @author antti.viljakainen
  */
-
 @Entity
-@FullTextFilterDefs (
-  @FullTextFilterDef (
-     name="ArchivedGroupContactLogEntry",
-     impl=ArchivedEntityFilterFactory.class
-  )
-)
 public class StudentGroupContactLogEntry implements ArchivableEntity {
 
   /**
@@ -179,7 +167,7 @@ public class StudentGroupContactLogEntry implements ArchivableEntity {
   @NotNull
   @Column (nullable = false)
   @Field
-  private Boolean archived = Boolean.FALSE;
+  private Boolean archived;
 
   @Version
   @Column(nullable = false)

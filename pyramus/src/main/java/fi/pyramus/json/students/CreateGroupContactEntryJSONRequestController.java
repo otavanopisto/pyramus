@@ -4,9 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.math.NumberUtils;
-
 import fi.internetix.smvc.SmvcRuntimeException;
+import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.students.StudentGroupContactLogEntryDAO;
@@ -18,9 +17,7 @@ import fi.pyramus.framework.JSONRequestController;
 import fi.pyramus.framework.UserRole;
 
 /**
- * JSON request controller for creating new contact entry.
- * 
- * @author antti.viljakainen
+ * JSON request controller for creating new student group contact entry.
  */
 public class CreateGroupContactEntryJSONRequestController extends JSONRequestController {
 
@@ -48,14 +45,16 @@ public class CreateGroupContactEntryJSONRequestController extends JSONRequestCon
     StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
     StudentGroupContactLogEntryDAO contactLogEntryDAO = DAOFactory.getInstance().getStudentGroupContactLogEntryDAO();
 
-    try {
-      Long studentGroupId = NumberUtils.createLong(jsonRequestContext.getRequest().getParameter("studentGroupId"));
+    Long studentGroupId = jsonRequestContext.getLong("studentGroupId");
+    if (studentGroupId == null)
+      throw new SmvcRuntimeException(StatusCode.UNDEFINED, "StudentGroupId was not defined.");
     
+    try {
       StudentGroup studentGroup = studentGroupDAO.findById(studentGroupId);
       
-      String entryText = jsonRequestContext.getRequest().getParameter("entryText");
-      String entryCreator = jsonRequestContext.getRequest().getParameter("entryCreatorName");
-      Date entryDate = new Date(NumberUtils.createLong(jsonRequestContext.getRequest().getParameter("entryDate"))); 
+      String entryText = jsonRequestContext.getString("entryText");
+      String entryCreator = jsonRequestContext.getString("entryCreatorName");
+      Date entryDate = jsonRequestContext.getDate("entryDate"); 
       StudentContactLogEntryType entryType = StudentContactLogEntryType.valueOf(jsonRequestContext.getString("entryType"));
       
       StudentGroupContactLogEntry entry = contactLogEntryDAO.create(studentGroup, entryType, entryText, entryDate, entryCreator);
@@ -63,7 +62,7 @@ public class CreateGroupContactEntryJSONRequestController extends JSONRequestCon
       Map<String, Object> info = new HashMap<String, Object>();
       info.put("id", entry.getId());
       info.put("creatorName", entry.getCreatorName());
-      info.put("timestamp", entry.getEntryDate().getTime());
+      info.put("timestamp", entry.getEntryDate() != null ? entry.getEntryDate().getTime() : "");
       info.put("text", entry.getText());
       info.put("type", entry.getType());
       info.put("studentGroupId", studentGroupId);

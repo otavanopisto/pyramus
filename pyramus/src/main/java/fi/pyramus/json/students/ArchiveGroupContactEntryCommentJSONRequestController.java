@@ -1,5 +1,7 @@
 package fi.pyramus.json.students;
 
+import fi.internetix.smvc.SmvcRuntimeException;
+import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.students.StudentGroupContactLogEntryCommentDAO;
@@ -12,6 +14,9 @@ public class ArchiveGroupContactEntryCommentJSONRequestController extends JSONRe
   public void process(JSONRequestContext requestContext) {
     StudentGroupContactLogEntryCommentDAO entryCommentDAO = DAOFactory.getInstance().getStudentGroupContactLogEntryCommentDAO();
     Long commentId = requestContext.getLong("commentId");
+    
+    if (commentId == null)
+      throw new SmvcRuntimeException(StatusCode.UNDEFINED, "CommentId was not defined.");
     
     StudentGroupContactLogEntryComment comment = entryCommentDAO.findById(commentId);
     

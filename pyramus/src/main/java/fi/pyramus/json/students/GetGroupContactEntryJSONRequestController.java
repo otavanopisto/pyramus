@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fi.internetix.smvc.SmvcRuntimeException;
+import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.students.StudentGroupContactLogEntryDAO;
@@ -13,8 +14,6 @@ import fi.pyramus.framework.UserRole;
 
 /**
  * JSON request controller for reading a contact entry.
- * 
- * @author antti.viljakainen
  */
 public class GetGroupContactEntryJSONRequestController extends JSONRequestController {
 
@@ -37,15 +36,18 @@ public class GetGroupContactEntryJSONRequestController extends JSONRequestContro
   public void process(JSONRequestContext jsonRequestContext) {
     StudentGroupContactLogEntryDAO logEntryDAO = DAOFactory.getInstance().getStudentGroupContactLogEntryDAO();
 
+    Long entryId = jsonRequestContext.getLong("entryId");
+    
+    if (entryId == null)
+      throw new SmvcRuntimeException(StatusCode.UNDEFINED, "EntryId was not defined.");
+    
     try {
-      Long entryId = jsonRequestContext.getLong("entryId");
-      
       StudentGroupContactLogEntry entry = logEntryDAO.findById(entryId);
       
       Map<String, Object> info = new HashMap<String, Object>();
       info.put("id", entry.getId());
       info.put("creatorName", entry.getCreatorName());
-      info.put("timestamp", entry.getEntryDate().getTime());
+      info.put("timestamp", entry.getEntryDate() != null ? entry.getEntryDate().getTime() : "");
       info.put("text", entry.getText());
       info.put("type", entry.getType());
       info.put("studentGroupId", entry.getStudentGroup().getId());

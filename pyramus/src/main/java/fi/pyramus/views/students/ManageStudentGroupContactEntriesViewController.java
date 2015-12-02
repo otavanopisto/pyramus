@@ -22,9 +22,7 @@ import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
 
 /**
- * ViewController for managing student contact log entries.
- * 
- * @author antti.viljakainen
+ * ViewController for managing student group contact log entries.
  */
 public class ManageStudentGroupContactEntriesViewController extends PyramusViewController implements Breadcrumbable {
 

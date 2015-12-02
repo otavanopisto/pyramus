@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fi.internetix.smvc.SmvcRuntimeException;
+import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.students.StudentGroupContactLogEntryCommentDAO;
@@ -13,8 +14,6 @@ import fi.pyramus.framework.UserRole;
 
 /**
  * JSON request controller for reading a contact entry comment.
- * 
- * @author antti.viljakainen
  */
 public class GetGroupContactEntryCommentJSONRequestController extends JSONRequestController {
 
@@ -37,16 +36,19 @@ public class GetGroupContactEntryCommentJSONRequestController extends JSONReques
   public void process(JSONRequestContext jsonRequestContext) {
     StudentGroupContactLogEntryCommentDAO entryCommentDAO = DAOFactory.getInstance().getStudentGroupContactLogEntryCommentDAO();
 
+    Long commentId = jsonRequestContext.getLong("commentId");
+
+    if (commentId == null)
+      throw new SmvcRuntimeException(StatusCode.UNDEFINED, "CommentId was not defined.");
+    
     try {
-      Long commentId = jsonRequestContext.getLong("commentId");
-      
       StudentGroupContactLogEntryComment comment = entryCommentDAO.findById(commentId);
       
       Map<String, Object> info = new HashMap<String, Object>();
       info.put("id", comment.getId());
       info.put("entryId", comment.getEntry().getId());
       info.put("creatorName", comment.getCreatorName());
-      info.put("timestamp", comment.getCommentDate().getTime());
+      info.put("timestamp", comment.getCommentDate() != null ? comment.getCommentDate().getTime() : "");
       info.put("text", comment.getText());
       
       jsonRequestContext.addResponseParameter("results", info);

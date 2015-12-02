@@ -20,26 +20,22 @@ public class StudentGroupContactLogEntryCommentDAO extends PyramusEntityDAO<Stud
   public StudentGroupContactLogEntryComment create(
       StudentGroupContactLogEntry entry, String commentText, Date commentDate,
       String commentCreatorName) {
-    EntityManager entityManager = getEntityManager(); 
-
     StudentGroupContactLogEntryComment comment = new StudentGroupContactLogEntryComment();
     comment.setEntry(entry);
     comment.setCreatorName(commentCreatorName);
     comment.setCommentDate(commentDate);
     comment.setText(commentText);
+    comment.setArchived(false);
 
-    entityManager.persist(comment);
-    return comment;
+    return persist(comment);
   }
   
   public StudentGroupContactLogEntryComment update(StudentGroupContactLogEntryComment comment, 
       String commentText, Date commentDate, String commentCreatorName) {
-    EntityManager entityManager = getEntityManager(); 
     comment.setText(commentText);
     comment.setCommentDate(commentDate);
     comment.setCreatorName(commentCreatorName);
-    entityManager.persist(comment);
-    return comment;
+    return persist(comment);
   }
   
   public List<StudentGroupContactLogEntryComment> listByEntry(StudentGroupContactLogEntry entry) {
