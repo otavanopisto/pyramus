@@ -6,7 +6,7 @@
       <fields>
         <field name="id" type="java.lang.Long" nullable="false" unique="false" />
         <field name="studentGroup" type="java.lang.Long" nullable="false" unique="false" />
-        <field name="text" type="java.lang.String" nullable="true" unique="false" length="2147483647"/>
+        <field name="text" type="java.sql.Clob" nullable="true" unique="false"/>
         <field name="creatorName" type="java.lang.String" nullable="true" unique="false"/>
         <field name="type" type="java.lang.String" nullable="true" unique="false"/>
         <field name="entryDate" type="Types.TIMESTAMP" nullable="true" unique="false" />
@@ -22,7 +22,7 @@
       <fields>
         <field name="id" type="java.lang.Long" nullable="false" unique="false" />
         <field name="entry" type="java.lang.Long" nullable="false" unique="false" />
-        <field name="text" type="java.lang.String" nullable="true" unique="false" length="2147483647"/>
+        <field name="text" type="java.sql.Clob" nullable="true" unique="false"/>
         <field name="creatorName" type="java.lang.String" nullable="true" unique="false"/>
         <field name="commentDate" type="Types.TIMESTAMP" nullable="true" unique="false" />
         <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
