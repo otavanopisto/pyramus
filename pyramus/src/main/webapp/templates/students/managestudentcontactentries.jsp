@@ -446,7 +446,7 @@
       }
 
       function archiveComment(commentId, entryId) {
-        var entryShort = $("entry." + entryId + ".text").textContent;
+        var entryShort = $("comment." + commentId + ".text").textContent;
         entryShort = entryShort.stripScripts().stripTags().strip();
         entryShort = entryShort.truncate(20, "...");
         

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <createTables>
+    <table primaryKeys="id" name="StudentGroupContactLogEntry">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="studentGroup" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="text" type="java.lang.String" nullable="true" unique="false" length="2147483647"/>
+        <field name="creatorName" type="java.lang.String" nullable="true" unique="false"/>
+        <field name="type" type="java.lang.String" nullable="true" unique="false"/>
+        <field name="entryDate" type="Types.TIMESTAMP" nullable="true" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="studentGroup" referencedTable="StudentGroup"/>
+      </foreignKeys>
+    </table>
+    
+    <table primaryKeys="id" name="StudentGroupContactLogEntryComment">
+      <fields>
+        <field name="id" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="entry" type="java.lang.Long" nullable="false" unique="false" />
+        <field name="text" type="java.lang.String" nullable="true" unique="false" length="2147483647"/>
+        <field name="creatorName" type="java.lang.String" nullable="true" unique="false"/>
+        <field name="commentDate" type="Types.TIMESTAMP" nullable="true" unique="false" />
+        <field name="archived" type="java.lang.Boolean" nullable="false" unique="false" />
+        <field name="version" type="java.lang.Long" nullable="false" unique="false" />
+      </fields>
+      <foreignKeys>
+        <key referencedColumns="id" columns="entry" referencedTable="StudentGroupContactLogEntry"/>
+      </foreignKeys>
+    </table>
+  </createTables>
+
+</update>

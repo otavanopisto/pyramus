@@ -151,7 +151,26 @@
           onclick: function (event) {
             redirectTo(GLOBAL_contextPath + '/students/editstudentgroup.page?studentgroup=${studentGroup.id}');
           }
-        }));          
+        }));
+
+        basicRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+          iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+          text: '<fmt:message key="students.viewStudentGroup.basicTabRelatedActionsManageContactEntriesLabel"/>',
+          link: GLOBAL_contextPath + '/students/managestudentgroupcontactentries.page?studentgroup=${studentGroup.id}'  
+        }));
+
+        // Contact Log Related Actions
+        
+        var contactLogRelatedActionsHoverMenu = new IxHoverMenu($('contactLogTabRelatedActionsHoverMenuContainer'), {
+          text: '<fmt:message key="students.viewStudentGroup.contactLogTabRelatedActionsHoverMenuContainer"/>'
+        });
+    
+        contactLogRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+          iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+          text: '<fmt:message key="students.viewStudentGroup.contactLogTabRelatedActionsManageContactEntriesLabel"/>',
+          link: GLOBAL_contextPath + '/students/managestudentgroupcontactentries.page?studentgroup=${studentGroup.id}'  
+        }));
+        
       }
       
       // onLoad
@@ -176,6 +195,7 @@
       <div class="tabLabelsContainer" id="tabs">
         <a class="tabLabel" href="#basic"><fmt:message key="students.viewStudentGroup.basicTabTitle" /></a>
         <a class="tabLabel" href="#students"><fmt:message key="students.viewStudentGroup.studentsTabTitle" /></a>
+        <a class="tabLabel" href="#contactLog"><fmt:message key="students.viewStudentGroup.contactLogTabTitle" /></a>
       </div>
         
       <div id="basic" class="tabContent">
@@ -238,6 +258,65 @@
           </div>
         </c:if>
       </div>
+
+      <div id="contactLog" class="tabContent">
+        <div id="contactLogTabRelatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
+
+        <div id="studentContactEntryList" class="studentContactEntryWrapper">
+          <c:forEach var="contactEntry" items="${contactEntries}">
+            <div id="studentContactEntryItem" class="studentContactEntryItem">
+              <div>
+                <span class="studentContactEntryDate">
+                  <fmt:formatDate value="${contactEntry.entryDate}" />
+                </span>
+                <span class="studentContactEntryType">
+                  <c:choose>
+                    <c:when test="${contactEntry.type eq 'OTHER'}">
+                      <fmt:message key="students.viewStudentGroup.contactEntry.types.other" />
+                    </c:when>
+                    <c:when test="${contactEntry.type eq 'LETTER'}">
+                      <fmt:message key="students.viewStudentGroup.contactEntry.types.letter" />
+                    </c:when>
+                    <c:when test="${contactEntry.type eq 'EMAIL'}">
+                      <fmt:message key="students.viewStudentGroup.contactEntry.types.email" />
+                    </c:when>
+                    <c:when test="${contactEntry.type eq 'PHONE'}">
+                      <fmt:message key="students.viewStudentGroup.contactEntry.types.phone" />
+                    </c:when>
+                    <c:when test="${contactEntry.type eq 'CHATLOG'}">
+                      <fmt:message key="students.viewStudentGroup.contactEntry.types.chatlog" />
+                    </c:when>
+                    <c:when test="${contactEntry.type eq 'SKYPE'}">
+                      <fmt:message key="students.viewStudentGroup.contactEntry.types.skype" />
+                    </c:when>
+                    <c:when test="${contactEntry.type eq 'FACE2FACE'}">
+                      <fmt:message key="students.viewStudentGroup.contactEntry.types.face2face" />
+                    </c:when>
+                  </c:choose>
+                </span> 
+                <span class="studentContactEntryCreator">${contactEntry.creatorName}</span>
+              </div>
+              <div>${contactEntry.text}</div>
+              <div class="contactEntryCommentsWrapper">
+                <c:forEach var="comment"
+                  items="${contactEntryComments[contactEntry.id]}">
+                  <div class="studentContactCommentEntryItem">
+                    <div
+                      class="studentContactCommentEntryCaption">
+                      <span
+                        class="studentContactCommentEntryDate"><fmt:formatDate
+                          value="${comment.commentDate}" /></span> <span
+                        class="studentContactCommentEntryCreator">${comment.creatorName}</span>
+                    </div>
+                    <div>${comment.text}</div>
+                  </div>
+                </c:forEach>
+              </div>
+            </div>
+          </c:forEach>
+        </div>
+      </div>
+      
     </div>
   
     <jsp:include page="/templates/generic/footer.jsp"></jsp:include>

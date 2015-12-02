@@ -112,6 +112,8 @@ import fi.pyramus.dao.students.StudentContactLogEntryDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.pyramus.dao.students.StudentExaminationTypeDAO;
+import fi.pyramus.dao.students.StudentGroupContactLogEntryCommentDAO;
+import fi.pyramus.dao.students.StudentGroupContactLogEntryDAO;
 import fi.pyramus.dao.students.StudentGroupDAO;
 import fi.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.pyramus.dao.students.StudentGroupUserDAO;
@@ -163,6 +165,14 @@ public class DAOFactory {
   
   public StudentContactLogEntryCommentDAO getStudentContactLogEntryCommentDAO() {
     return (StudentContactLogEntryCommentDAO) findByClass(StudentContactLogEntryCommentDAO.class);
+  }
+  
+  public StudentGroupContactLogEntryDAO getStudentGroupContactLogEntryDAO() {
+    return (StudentGroupContactLogEntryDAO) findByClass(StudentGroupContactLogEntryDAO.class);
+  }
+  
+  public StudentGroupContactLogEntryCommentDAO getStudentGroupContactLogEntryCommentDAO() {
+    return (StudentGroupContactLogEntryCommentDAO) findByClass(StudentGroupContactLogEntryCommentDAO.class);
   }
   
   public StudentEducationalLevelDAO getStudentEducationalLevelDAO() {
