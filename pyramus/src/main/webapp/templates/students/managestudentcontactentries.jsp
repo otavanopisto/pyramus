@@ -144,6 +144,9 @@
         else
         if (entryType == 'FACE2FACE')
           entryTypeName = '<fmt:message key="students.manageStudentContactEntries.contactEntry.types.face2face"/>';
+        else
+          if (entryType == 'ABSENCE')
+            entryTypeName = '<fmt:message key="students.manageStudentContactEntries.contactEntry.types.absence"/>';
 
         return entryTypeName;
       }
@@ -584,6 +587,7 @@
                           <option value="CHATLOG"><fmt:message key="students.manageStudentContactEntries.contactEntry.types.chatlog"/></option>
                           <option value="SKYPE"><fmt:message key="students.manageStudentContactEntries.contactEntry.types.skype"/></option>
                           <option value="FACE2FACE"><fmt:message key="students.manageStudentContactEntries.contactEntry.types.face2face"/></option>
+                          <option value="ABSENCE"><fmt:message key="students.manageStudentContactEntries.contactEntry.types.absence"/></option>
                         </select>
                       </div>            
                       <div class="genericFormSection">                            

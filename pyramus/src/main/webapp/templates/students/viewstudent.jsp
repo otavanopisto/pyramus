@@ -2254,6 +2254,11 @@
                               <fmt:message
                                 key="students.viewStudent.contactEntry.types.face2face" />
                             </c:when>
+                            <c:when
+                              test="${contactEntry.type eq 'ABSENCE'}">
+                              <fmt:message
+                                key="students.viewStudent.contactEntry.types.absence" />
+                            </c:when>
                           </c:choose>
                         </span> <span class="studentContactEntryCreator">${contactEntry.creatorName}</span>
                       </div>
