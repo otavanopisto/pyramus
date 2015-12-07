@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fi.pyramus</groupId>
   <artifactId>bom</artifactId>
-  <version>0.7.28-SNAPSHOT</version>
+  <version>0.7.28</version>
   <packaging>pom</packaging>
   <name>Pyramus BOM</name>
   <url>https://github.com/otavanopisto/pyramus/</url>
@@ -24,7 +24,7 @@
     <developerConnection>scm:git:git@github.com:otavanopisto/pyramus.git</developerConnection>
     <url>git@github.com:otavanopisto/pyramus.git</url>
     <connection>scm:git:git@github.com:otavanopisto/pyramus.git</connection>
-    <tag>HEAD</tag>
+    <tag>0.7.28</tag>
   </scm>
 
   <organization>
@@ -98,7 +98,7 @@
     
     <!-- Pyramus -->
     
-    <pyramus.version>0.7.28-SNAPSHOT</pyramus.version>
+    <pyramus.version>0.7.28</pyramus.version>
     
     <!-- Webapp-permission -->
     
