@@ -13,7 +13,8 @@ public enum StudentContactLogEntryType {
   PHONE (3),
   CHATLOG (4),
   SKYPE (5),
-  FACE2FACE (6);
+  FACE2FACE (6),
+  ABSENCE (7);
   
   /**
    * Creates new enumeration instance
