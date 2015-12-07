@@ -19,8 +19,10 @@ env:
   - secure: Ta4ZzSKlSdsg3YEwKP0c6ldeTC/a2tTua4FD26bfUzeIz3W2Lx/9SfxepyqZE7KR7eey52cgvx+9Sj9CJeDTTmgnPlwYi3v+pjn0YNQ0ZfIaiAk/TlaUJ1tXWq3GRGHumvFR38i6E66eIFT9Gg4Z5HSeQm1DCvpAie7Snj1RyDM=
 script: mvn verify -Prest-it
 after_success:
-- python travis-prepare-maven.py
-- mvn deploy --settings ~/.m2/trasettings.xml
+- if [ $TRAVIS_PULL_REQUEST == false ]; then
+    python travis-prepare-maven.py & wait;
+    mvn deploy --settings ~/.m2/trasettings.xml;
+  fi;
 after_failure:
 - cat pyramus/target/cargo/configurations/wildfly8x/log/server.log
 # Notifications
