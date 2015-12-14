@@ -1,6 +1,8 @@
 package fi.pyramus.views.reports;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,6 +63,16 @@ public class ViewReportViewController extends PyramusViewController implements B
       }
     }
 
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    
+    Date startDate = pageRequestContext.getDate("startDate");
+    if (startDate != null)
+      pageRequestContext.getRequest().setAttribute("startDate", df.format(startDate));
+    
+    Date endDate = pageRequestContext.getDate("endDate");
+    if (endDate != null)
+      pageRequestContext.getRequest().setAttribute("endDate", df.format(endDate));
+    
     pageRequestContext.getRequest().setAttribute("reportContexts", contextStrs); 
   }
   
