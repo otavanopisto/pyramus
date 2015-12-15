@@ -1,6 +1,7 @@
 package fi.pyramus.plugin.googleoauth;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
@@ -27,11 +28,38 @@ import fi.pyramus.plugin.googleoauth.scribe.GoogleApi20;
 
 public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationProvider {
   
+  private static final String GOOGLE_LOGOUT_URL = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=%s";
+  private static final String GOOGLE_LOGGED_IN_ATTRIBUTE = "googleLoggedIn";
+  
   public GoogleOauthAuthorizationStrategy() {
   }
 
   public String getName() {
     return "Google-oauth";
+  }
+  
+  @Override
+  public String logout(RequestContext requestContext) {
+    HttpSession session = requestContext.getRequest().getSession(false);
+    String logoutUrl = "http://dev.pyramus.fi/users/logout.page";
+    
+    if (!isLoggedInToGoogle(session)) {
+      return null;
+    } else {
+      try {
+        return String.format(GOOGLE_LOGOUT_URL, logoutUrl);
+      } finally {
+        setGoogleLoggedIn(session, false);
+      }
+    }
+  }
+
+  private boolean isLoggedInToGoogle(HttpSession session) {
+    return Boolean.TRUE.equals(session.getAttribute(GOOGLE_LOGGED_IN_ATTRIBUTE));
+  }
+  
+  private void setGoogleLoggedIn(HttpSession session, Boolean value) {
+    session.setAttribute(GOOGLE_LOGGED_IN_ATTRIBUTE, value);
   }
 
   public void performDiscovery(RequestContext requestContext) {
@@ -49,6 +77,8 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
 
   public User processResponse(RequestContext requestContext) throws AuthenticationException {
     HttpServletRequest req = requestContext.getRequest();
+    HttpSession session = req.getSession();
+    
     String authCode = req.getParameter("code");
     Verifier verifier = new Verifier(authCode);
 
@@ -69,7 +99,11 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
     JSONObject userInfo = JSONObject.fromObject(response.getBody());
 
     if (userInfo != null) {
-      return processLogin(userInfo.getString("id"), userInfo.getString("email"));
+      try {
+        return processLogin(userInfo.getString("id"), userInfo.getString("email"));
+      } finally {
+        setGoogleLoggedIn(session, true);
+      }
     } else {
       throw new AuthenticationException(AuthenticationException.EXTERNAL_LOGIN_SERVER_ERROR);
     }
@@ -86,15 +120,17 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
     if(emailPerson == null){
       throw new AuthenticationException(AuthenticationException.LOCAL_USER_MISSING);
     }
+    
     UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId(getName(), externalId);
     if (userIdentification != null) {
       // User has identified by this auth source before
       if (!emailPerson.getId().equals(userIdentification.getPerson().getId())) {
         throw new AuthenticationException(AuthenticationException.EMAIL_BELONGS_TO_ANOTHER_PERSON);
       }
-    }else{
+    } else {
       userIdentificationDAO.create(emailPerson, getName(), externalId);
     }
+    
     return emailPerson.getDefaultUser();
   }
   

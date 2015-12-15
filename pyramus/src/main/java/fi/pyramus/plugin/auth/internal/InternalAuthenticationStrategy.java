@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.math.NumberUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
+import fi.internetix.smvc.controllers.RequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.PersonDAO;
@@ -226,6 +227,11 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
    */
   public String getName() {
     return "internal";
+  }
+  
+  @Override
+  public String logout(RequestContext requestContext) {
+    return null;
   }
 
 }

@@ -1,5 +1,7 @@
 package fi.pyramus.views.users;
 
+import java.util.logging.Logger;
+
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
@@ -7,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.plugin.auth.AuthenticationProvider;
+import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 
 /**
  * The controller responsible of logging the user out. 
@@ -20,18 +24,34 @@ public class LogoutViewController extends PyramusViewController {
    * @param requestContext Page request context
    */
   public void process(PageRequestContext requestContext) {
-    if (requestContext.getLoggedUserId() != null) {
-      HttpSession session = requestContext.getRequest().getSession(false);
-      session.invalidate();
+    HttpSession session = requestContext.getRequest().getSession(false);
+    String redirectUrl = null;
+    
+    String authenticationProviderName = (String) session.getAttribute("authenticationProvider");
+    if (StringUtils.isNotBlank(authenticationProviderName)) {
+      AuthenticationProvider authenticationProvider = AuthenticationProviderVault.getInstance().getAuthenticationProvider(authenticationProviderName);
+      if (authenticationProvider == null) {
+        Logger.getLogger(getClass().getName()).severe(String.format("Could not find authenticationProvider %s", authenticationProviderName));
+      } else {
+        redirectUrl = authenticationProvider.logout(requestContext);
+      }
     }
-    
-    String redirectUrl = requestContext.getString("redirectUrl");
-    
-    if (StringUtils.isBlank(redirectUrl)) {
-      redirectUrl = requestContext.getRequest().getContextPath() + "/index.page";
+
+    if (StringUtils.isNotBlank(redirectUrl)) {
+      requestContext.setRedirectURL(redirectUrl);
+    } else {
+      if (requestContext.getLoggedUserId() != null) {
+        session.invalidate();
+      }
+      
+      redirectUrl = requestContext.getString("redirectUrl");
+      
+      if (StringUtils.isBlank(redirectUrl)) {
+        redirectUrl = requestContext.getRequest().getContextPath() + "/index.page";
+      }
+      
+      requestContext.setRedirectURL(redirectUrl);
     }
-    
-    requestContext.setRedirectURL(redirectUrl);
   }
   
   /**
