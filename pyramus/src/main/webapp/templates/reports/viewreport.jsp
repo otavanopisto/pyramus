@@ -143,6 +143,13 @@
             </c:when>
           </c:choose>
         </c:forEach>
+
+        <c:if test="${startDate ne null}">
+          viewParametersUrl = viewParametersUrl + "&startDate=${startDate}"; 
+        </c:if>
+        <c:if test="${endDate ne null}">
+          viewParametersUrl = viewParametersUrl + "&endDate=${endDate}"; 
+        </c:if>
         
         var dialog = new IxDialog({
           id : 'parametersDialog',
