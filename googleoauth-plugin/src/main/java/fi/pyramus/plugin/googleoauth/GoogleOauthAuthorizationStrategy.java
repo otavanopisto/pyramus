@@ -41,7 +41,7 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
   @Override
   public String logout(RequestContext requestContext) {
     HttpSession session = requestContext.getRequest().getSession(false);
-    String logoutUrl = "http://dev.pyramus.fi/users/logout.page";
+    String logoutUrl = String.format("%s/users/logout.page", getBaseUrl(requestContext));
     
     if (!isLoggedInToGoogle(session)) {
       return null;
@@ -154,6 +154,13 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
 
   private String getScope() {
     return "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
+  }
+  
+  private String getBaseUrl(RequestContext requestContext) {
+    HttpServletRequest request = requestContext.getRequest();
+    String currentURL = request.getRequestURL().toString();
+    String pathInfo = request.getRequestURI();
+    return currentURL.substring(0, currentURL.length() - pathInfo.length()) + request.getContextPath();
   }
   
 }
