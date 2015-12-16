@@ -31,4 +31,11 @@ public class TestAuthorizationStrategy implements ExternalAuthenticationProvider
     }
     
   }
+
+  @Override
+  public String logout(RequestContext requestContext) {
+    return null;
+  }
+  
+  
 }

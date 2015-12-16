@@ -63,6 +63,7 @@ public class LoginJSONRequestController extends JSONRequestController {
           
           session.setAttribute("loggedUserId", user.getId());
           session.setAttribute("loggedUserName", user.getFullName());
+          session.setAttribute("authenticationProvider", provider.getName());
           if (user instanceof StaffMember) {
             session.setAttribute("loggedUserRole", UserRole.valueOf(((StaffMember) user).getRole().name()));
           }

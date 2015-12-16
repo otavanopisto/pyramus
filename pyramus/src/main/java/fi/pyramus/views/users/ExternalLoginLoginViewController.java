@@ -2,8 +2,6 @@ package fi.pyramus.views.users;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -17,7 +15,6 @@ import fi.pyramus.framework.UserRole;
 import fi.pyramus.plugin.auth.AuthenticationException;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.ExternalAuthenticationProvider;
-import fi.pyramus.security.impl.SessionController;
 
 public class ExternalLoginLoginViewController extends PyramusViewController {
 
@@ -45,6 +42,8 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
         
         session.setAttribute("loggedUserId", user.getId());
         session.setAttribute("loggedUserName", user.getFullName());
+        session.setAttribute("authenticationProvider", authenticationProvider.getName());
+
         if (user instanceof StaffMember) {
           session.setAttribute("loggedUserRole", UserRole.valueOf(((StaffMember) user).getRole().name()));
         }
