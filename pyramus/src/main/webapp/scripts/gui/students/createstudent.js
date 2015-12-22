@@ -259,7 +259,7 @@ function onLoad(event) {
       imgsrc : GLOBAL_contextPath + '/gfx/list-add.png',
       tooltip : getLocale().getText("students.createStudent.phoneTableAddTooltip"),
       onclick : function(event) {
-        addPhoneTableRow(event.tableComponent);
+        addPhoneTableRow();
       }
     }, {
       width : 30,
