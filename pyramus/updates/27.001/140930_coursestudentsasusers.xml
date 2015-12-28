@@ -77,6 +77,35 @@
       </addForeignKeys>
     </table>
   </alterTables>
+
+  <sql>alter table CourseAssessment drop foreign key FK9833115DAFD6905B;</sql>
+  <sql>alter table CourseAssessment drop index FK9833115DAFD6905B;</sql>
+
+  <sql>alter table CourseAssessmentRequest drop foreign key FKADBCA672AFD6905B;</sql>
+  <sql>alter table CourseAssessmentRequest drop index FKADBCA672AFD6905B;</sql>
+
+  <sql>alter table CourseStudentVariable drop foreign key FK99F8DC1CAFD6905B;</sql>
+  <sql>alter table CourseStudentVariable drop index FK99F8DC1CAFD6905B;</sql>
+  
+  <alterTables>
+    <table name="CourseAssessment">
+      <addForeignKeys>
+        <key columns="courseStudent" referencedTable="CourseStudent" referencedColumns="id"/>
+      </addForeignKeys>
+    </table>
+  
+    <table name="CourseAssessmentRequest">
+      <addForeignKeys>
+        <key columns="courseStudent" referencedTable="CourseStudent" referencedColumns="id"/>
+      </addForeignKeys>
+    </table>
+
+    <table name="CourseStudentVariable">
+      <addForeignKeys>
+        <key columns="courseStudent" referencedTable="CourseStudent" referencedColumns="id"/>
+      </addForeignKeys>
+    </table>
+  </alterTables>
   
   <!-- Update hibernate_sequences table -->
   
