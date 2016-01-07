@@ -33,6 +33,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.FullTextFilterDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.hibernate.search.annotations.Indexed;
@@ -44,6 +45,7 @@ import fi.pyramus.domainmodel.students.Sex;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.users.StaffMember;
 import fi.pyramus.domainmodel.users.User;
+import fi.pyramus.persistence.search.CollectionBridge;
 import fi.pyramus.persistence.search.filters.StudentIdFilterFactory;
 
 @Entity
@@ -319,8 +321,9 @@ public class Person implements ContextReference {
   }
 
   @Transient
-  @Field
-  public String getInactiveEmails() {
+  @Field(analyze = Analyze.NO)
+  @FieldBridge(impl = CollectionBridge.class)
+  public Set<String> getInactiveEmails() {
     Set<String> results = new HashSet<String>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
@@ -331,7 +334,8 @@ public class Person implements ContextReference {
         }
       }
     }
-    return setToString(results);
+    
+    return results;
   }
 
   @Transient
@@ -556,8 +560,9 @@ public class Person implements ContextReference {
   }
 
   @Transient
-  @Field
-  public String getActiveEmails() {
+  @Field(analyze = Analyze.NO)
+  @FieldBridge(impl = CollectionBridge.class)
+  public Set<String> getActiveEmails() {
     Set<String> results = new HashSet<String>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
@@ -569,7 +574,7 @@ public class Person implements ContextReference {
       }
     }
     
-    return setToString(results);
+    return results;
   }
 
   @Transient
@@ -813,8 +818,9 @@ public class Person implements ContextReference {
   }
 
   @Transient
-  @Field
-  public String getStaffMemberEmails() {
+  @Field(analyze = Analyze.NO)
+  @FieldBridge(impl = CollectionBridge.class)
+  public Set<String> getStaffMemberEmails() {
     Set<String> results = new HashSet<String>();
     for (StaffMember staffMember : getStaffMembers()) {
       
@@ -827,7 +833,7 @@ public class Person implements ContextReference {
       }
     }
 
-    return setToString(results);
+    return results;
   }
 
   @Transient
