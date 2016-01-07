@@ -274,16 +274,41 @@
           }]        
         });
 
-        <c:forEach var="student" items="${studentGroupStudents}">
-          loadStudentStudyProgrammes(
-              studentsTable,
-              ${student.student.person.id},
-              "${fn:escapeXml(student.student.lastName)}, ${fn:escapeXml(student.student.firstName)}", 
-              ${student.student.id},
-              ${student.id}
-          );
-        </c:forEach>
-  
+        var studentGroupStudents = JSDATA["studentGroupStudents"].evalJSON();
+
+        studentsTable.detachFromDom();
+        for (var i = 0, len = studentGroupStudents.length; i < len; i++) {
+          var studentGroupStudent = studentGroupStudents[i];
+          var rowIndex = studentsTable.addRow(['',
+                     studentGroupStudent.lastName + ', ' + studentGroupStudent.firstName, 
+                     studentGroupStudent.studentId,
+                     studentGroupStudent.personId, 
+                     '',
+                     studentGroupStudent.id]);
+          
+          var cellEditor = studentsTable.getCellEditor(rowIndex, studentsTable.getNamedColumnIndex('studentId'));
+          
+          for (var j = 0, l = studentGroupStudent.studyProgrammes.length; j < l; j++) {
+            var studyProgramme = studentGroupStudent.studyProgrammes[j];
+            IxTableControllers.getController('select').addOption(
+                cellEditor, 
+                studyProgramme.studentId, 
+                studyProgramme.studyProgrammeName, 
+                studyProgramme.studentId == studentGroupStudent.studentId);
+          }
+        }
+        studentsTable.reattachToDom();
+
+        if (studentGroupStudents.length > 0) {
+          $('noStudentsAddedMessageContainer').setStyle({
+            display: 'none'
+          });
+          $('editStudentGroupStudentsTotalContainer').setStyle({
+            display: ''
+          });
+          $('editStudentGroupStudentsTotalValue').innerHTML = studentsTable.getRowCount(); 
+        }
+        
         studentsTable.addListener("rowAdd", function (event) {
           var studentsTable = event.tableComponent;
           studentsTable.showCell(event.row, studentsTable.getNamedColumnIndex("removeButton"));
@@ -296,39 +321,6 @@
         </c:if>
       }
 
-      function loadStudentStudyProgrammes(studentsTable, personId, fullName, studentId, studentGroupStudentId) {
-        JSONRequest.request("students/getstudentstudyprogrammes.json", {
-          asynchronous: false,
-          parameters: {
-            personId: personId
-          },
-          onSuccess: function (jsonResponse) {
-            var rowIndex = studentsTable.addRow([
-              '',
-              fullName, 
-              studentId,
-              personId, 
-              '',
-              studentGroupStudentId]);
-
-            var cellEditor = studentsTable.getCellEditor(rowIndex, studentsTable.getNamedColumnIndex('studentId'));
-            for (var j = 0, l = jsonResponse.studentStudyProgrammes.length; j < l; j++) {
-              IxTableControllers.getController('select').addOption(cellEditor , 
-                  jsonResponse.studentStudyProgrammes[j].studentId, 
-                  jsonResponse.studentStudyProgrammes[j].studyProgrammeName, 
-                  jsonResponse.studentStudyProgrammes[j].studentId == studentId);
-            }
-            $('noStudentsAddedMessageContainer').setStyle({
-              display: 'none'
-            });
-            $('editStudentGroupStudentsTotalContainer').setStyle({
-              display: ''
-            });
-            $('editStudentGroupStudentsTotalValue').innerHTML = studentsTable.getRowCount(); 
-          }
-        });   
-      }
-      
       function initializeDraftListener() {
         Event.observe(document, "ix:draftRestore", function (event) {
           var studentsTable = getIxTableById('studentsTable'); 
@@ -372,9 +364,9 @@
         setupUsersTable();
         setupStudentsTable();
       }
-
     </script>
   </head>
+  
   <body onload="onLoad(event);" ix:enabledrafting="true">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
     
@@ -399,10 +391,11 @@
             <div id="basicRelatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
             
             <div class="genericFormSection">
-                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                  <jsp:param name="titleLocale" value="students.editStudentGroup.nameTitle"/>
-                  <jsp:param name="helpLocale" value="students.editStudentGroup.nameHelp"/>
-                </jsp:include>
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="students.editStudentGroup.nameTitle"/>
+                <jsp:param name="helpLocale" value="students.editStudentGroup.nameHelp"/>
+              </jsp:include>
+              
               <input type="text" class="required" name="name" value="${fn:escapeXml(studentGroup.name)}" size="40">
             </div>
 
@@ -411,6 +404,7 @@
                 <jsp:param name="titleLocale" value="students.editStudentGroup.tagsTitle"/>
                 <jsp:param name="helpLocale" value="students.editStudentGroup.tagsHelp"/>
               </jsp:include>
+              
               <input type="text" id="tags" name="tags" size="40" value="${fn:escapeXml(tags)}"/>
               <div id="tags_choices" class="autocomplete_choices"></div>
             </div>
