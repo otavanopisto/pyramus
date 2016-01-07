@@ -97,7 +97,7 @@ public class CreateStudentViewController extends PyramusViewController implement
     Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
     
     String jsonContactTypes = new JSONArrayExtractor("name", "id").extractString(contactTypes);
-    String jsonVariableKeys = new JSONArrayExtractor("key", "name", "type").extractString(userVariableKeys);
+    String jsonVariableKeys = new JSONArrayExtractor("variableKey", "variableName", "variableType").extractString(userVariableKeys);
     
    	setJsDataVariable(pageRequestContext, "contactTypes", jsonContactTypes);
    	setJsDataVariable(pageRequestContext, "variableKeys", jsonVariableKeys);
@@ -112,6 +112,7 @@ public class CreateStudentViewController extends PyramusViewController implement
     pageRequestContext.getRequest().setAttribute("languages", languages);
     pageRequestContext.getRequest().setAttribute("studyProgrammes", studyProgrammes);
     pageRequestContext.getRequest().setAttribute("studyEndReasons", studyEndReasonDAO.listByParentReason(null));
+    pageRequestContext.getRequest().setAttribute("variableKeys", userVariableKeys);
     
     pageRequestContext.setIncludeJSP("/templates/students/createstudent.jsp");
   }
