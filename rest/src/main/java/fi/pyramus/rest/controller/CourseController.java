@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import fi.pyramus.dao.base.CourseBaseVariableDAO;
 import fi.pyramus.dao.base.CourseBaseVariableKeyDAO;
+import fi.pyramus.dao.base.CourseEducationTypeDAO;
 import fi.pyramus.dao.base.DefaultsDAO;
 import fi.pyramus.dao.base.TagDAO;
 import fi.pyramus.dao.courses.CourseComponentDAO;
@@ -27,6 +28,7 @@ import fi.pyramus.dao.courses.CourseTypeDAO;
 import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
+import fi.pyramus.domainmodel.base.CourseEducationType;
 import fi.pyramus.domainmodel.base.CourseOptionality;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
@@ -89,6 +91,9 @@ public class CourseController {
 
   @Inject
   private CourseBaseVariableKeyDAO courseBaseVariableKeyDAO;
+  
+  @Inject
+  private CourseEducationTypeDAO courseEducationTypeDAO;
   
   @Inject
   private DefaultsDAO defaultsDAO;
@@ -586,4 +591,10 @@ public class CourseController {
   public void deleteCourseVariableKey(CourseBaseVariableKey courseVariableKey) {
     courseBaseVariableKeyDAO.delete(courseVariableKey);
   }
+  
+  /* Course education types */
+  public CourseEducationType findCourseEducationTypeById(Long id) {
+    return courseEducationTypeDAO.findById(id);
+  }
+  
 }

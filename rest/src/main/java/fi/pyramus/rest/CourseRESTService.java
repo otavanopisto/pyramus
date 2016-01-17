@@ -32,6 +32,7 @@ import org.joda.time.DateTime;
 
 import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
+import fi.pyramus.domainmodel.base.CourseEducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.pyramus.domainmodel.base.Subject;
 import fi.pyramus.domainmodel.base.VariableType;
@@ -784,6 +785,36 @@ public class CourseRESTService extends AbstractRESTService {
     }
 
     return Response.status(Status.OK).entity(objectFactory.createModel(staffMember)).build();
+  }
+
+  @Path("/courses/{CID:[0-9]*}/educationTypes")
+  @GET
+  @RESTPermit (CoursePermissions.LIST_COURSEEDUCATIONTYPES)
+  public Response listCourseEducationTypes(@PathParam("CID") Long courseId) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.status(Status.OK).entity(objectFactory.createModel(course.getCourseEducationTypes())).build();
+  }
+
+  @Path("/courses/{CID:[0-9]*}/educationTypes/{EID:[0-9]*}/educationSubtypes")
+  @GET
+  @RESTPermit (CoursePermissions.LIST_COURSEEDUCATIONSUBTYPES)
+  public Response listCourseEducationSubtypes(
+      @PathParam("CID") Long courseId,
+      @PathParam("EID") Long courseEducationTypeId) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    // TODO check if correct course
+    
+    CourseEducationType cedType = courseController.findCourseEducationTypeById(courseEducationTypeId);
+    
+    return Response.status(Status.OK).entity(objectFactory.createModel(cedType.getCourseEducationSubtypes())).build();
   }
   
   @Path("/courses/{COURSEID:[0-9]*}/staffMembers/{ID:[0-9]*}")

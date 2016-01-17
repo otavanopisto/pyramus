@@ -23,6 +23,8 @@ import fi.pyramus.domainmodel.base.ContactURL;
 import fi.pyramus.domainmodel.base.ContactURLType;
 import fi.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
+import fi.pyramus.domainmodel.base.CourseEducationSubtype;
+import fi.pyramus.domainmodel.base.CourseEducationType;
 import fi.pyramus.domainmodel.base.EducationSubtype;
 import fi.pyramus.domainmodel.base.EducationType;
 import fi.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -133,6 +135,20 @@ public class ObjectFactory {
           @Override
           public Object map(CourseType entity) {
             return new fi.pyramus.rest.model.CourseType(entity.getId(), entity.getName(), entity.getArchived());
+          }
+        }, 
+        
+        new Mapper<CourseEducationType>() {
+          @Override
+          public Object map(CourseEducationType entity) {
+            return new fi.pyramus.rest.model.CourseEducationType(entity.getId(), entity.getEducationType().getId(), false);
+          }
+        }, 
+        
+        new Mapper<CourseEducationSubtype>() {
+          @Override
+          public Object map(CourseEducationSubtype entity) {
+            return new fi.pyramus.rest.model.CourseEducationSubtype(entity.getId(), entity.getEducationSubtype().getId(), false);
           }
         }, 
         

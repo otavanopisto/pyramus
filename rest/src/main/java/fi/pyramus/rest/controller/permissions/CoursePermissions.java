@@ -249,6 +249,51 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String DELETE_STAFFMEMBERROLE = "DELETE_STAFFMEMBERROLE";
+  
+  /**
+   * CourseEducationType & CourseEducationSubtype
+   */
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String CREATE_COURSEEDUCATIONTYPE = "CREATE_COURSEEDUCATIONTYPE";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  public static final String LIST_COURSEEDUCATIONTYPES = "LIST_COURSEEDUCATIONTYPES";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  public static final String FIND_COURSEEDUCATIONTYPE = "FIND_COURSEEDUCATIONTYPE";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String UPDATE_COURSEEDUCATIONTYPE = "UPDATE_COURSEEDUCATIONTYPE";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  public static final String DELETE_COURSEEDUCATIONTYPE = "DELETE_COURSEEDUCATIONTYPE";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String CREATE_COURSEEDUCATIONSUBTYPE = "CREATE_COURSEEDUCATIONSUBTYPE";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  public static final String LIST_COURSEEDUCATIONSUBTYPES = "LIST_COURSEEDUCATIONSUBTYPES";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  public static final String FIND_COURSEEDUCATIONSUBTYPE = "FIND_COURSEEDUCATIONSUBTYPE";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String UPDATE_COURSEEDUCATIONSUBTYPE = "UPDATE_COURSEEDUCATIONSUBTYPE";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  public static final String DELETE_COURSEEDUCATIONSUBTYPE = "DELETE_COURSEEDUCATIONSUBTYPE";
+  
 
   
   @Override
