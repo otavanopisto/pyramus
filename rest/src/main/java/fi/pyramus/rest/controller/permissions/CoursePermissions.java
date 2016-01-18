@@ -249,7 +249,18 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String DELETE_STAFFMEMBERROLE = "DELETE_STAFFMEMBERROLE";
+  
+  /**
+   * CourseEducationType & CourseEducationSubtype
+   */
 
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ STUDENT, ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  public static final String LIST_COURSEEDUCATIONTYPES = "LIST_COURSEEDUCATIONTYPES";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ STUDENT, ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  public static final String LIST_COURSEEDUCATIONSUBTYPES = "LIST_COURSEEDUCATIONSUBTYPES";
   
   @Override
   public List<String> listPermissions() {

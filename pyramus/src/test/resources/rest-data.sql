@@ -220,6 +220,16 @@ insert into
 values 
   (1000, PARSEDATETIME('2 2 2010', 'd M yyyy'), PARSEDATETIME('3 3 2010', 'd M yyyy'), 10, 'Ext', 1, 1, 40, 30, 20, 10, PARSEDATETIME('1 1 2010', 'd M yyyy')),
   (1001, PARSEDATETIME('2 2 2011', 'd M yyyy'), PARSEDATETIME('3 3 2011', 'd M yyyy'), 20, 'ABC', 1, 2, 15, 17, 20, 10, PARSEDATETIME('1 1 2011', 'd M yyyy'));
+  
+insert into
+  CourseEducationType (id, courseBase, educationType, version)
+values
+  (1000, 1001, 1, 1);
+
+insert into
+  CourseEducationSubtype (id, courseEducationType, educationSubtype, version)
+values
+  (1000, 1000, 1, 1);
 
 insert into 
   ComponentBase (id, name, description, length, archived, version) 
@@ -477,6 +487,8 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Subject', max(id) + 1 from Subject;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseState', max(id) + 1 from CourseState;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseType', max(id) + 1 from CourseType;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseEducationType', max(id) + 1 from CourseEducationType;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseEducationSubtype', max(id) + 1 from CourseEducationSubtype;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseEnrolmentType', max(id) + 1 from CourseEnrolmentType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseParticipationType', max(id) + 1 from CourseParticipationType;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'EducationalTimeUnit', max(id) + 1 from EducationalTimeUnit;
