@@ -28,7 +28,7 @@ public class CourseEducationSubtype {
     this.archived = archived;
   }
 
-  public Long getEducationTypeId() {
+  public Long getEducationSubtypeId() {
     return educationSubtypeId;
   }
 

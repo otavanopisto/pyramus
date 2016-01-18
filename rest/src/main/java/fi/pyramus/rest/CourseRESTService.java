@@ -810,11 +810,19 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    // TODO check if correct course
+    CourseEducationType cedTypeWithRequestedId = courseController.findCourseEducationTypeById(courseEducationTypeId);
     
-    CourseEducationType cedType = courseController.findCourseEducationTypeById(courseEducationTypeId);
+    if (cedTypeWithRequestedId == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
     
-    return Response.status(Status.OK).entity(objectFactory.createModel(cedType.getCourseEducationSubtypes())).build();
+    CourseEducationType cedTypeAssociatedToCourse = course.getCourseEducationTypeByEducationTypeId(cedTypeWithRequestedId.getEducationType().getId());
+    
+    if (cedTypeAssociatedToCourse == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    return Response.status(Status.OK).entity(objectFactory.createModel(cedTypeWithRequestedId.getCourseEducationSubtypes())).build();
   }
   
   @Path("/courses/{COURSEID:[0-9]*}/staffMembers/{ID:[0-9]*}")
