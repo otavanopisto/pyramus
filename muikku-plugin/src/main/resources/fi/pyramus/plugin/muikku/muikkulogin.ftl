@@ -39,7 +39,37 @@
         visibility: hidden;
         width: 0;
       }
-      
+      .dialogGlassPane {
+        z-index:1998;
+        opacity:0.4;
+        background:#000;
+      }
+      .IxDialog {
+        z-index:1999;
+        font-size:16px;
+        text-transform:uppercase;
+        background:#fff;
+        border-radius:0;
+        border:0px;
+        box-shadow:0 0 100px rgba(0,0,0,0.3);
+      }
+      .IxDialog .IxDialogTitleBar {
+        margin:0 0 10px 0;
+      }
+      .IxDialog .IxDialogTitleBar .IxDialogTitle {
+        background:#7391a7;
+        padding:10px;
+      }
+      .IxDialog .IxDialogButtonsContainer {
+        margin:10px 5px 5px 5px;
+      }
+      .IxDialog .IxDialogButton {
+        font-size:16px;
+        text-transform:uppercase;
+        border-radius:2px;
+        padding:4px 8px;
+        background:#7391a7;
+      }
       .muikku-login-overlay {
         position: absolute;
         top: 0;
@@ -56,7 +86,6 @@
         background: linear-gradient(to bottom, rgba(0, 37, 105, 0.14) 0%, rgba(0, 27, 76, 0.5) 28%, black 100%);
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#002569', endColorstr='#000000', GradientType=0 );
       }
-      
       .muikku-login-wrapper {
         position: absolute;
         top: 50%;
@@ -77,7 +106,7 @@
         background: #fff;
         padding: 20px;
         border-radius: 10px;
-        box-shadow: 0 0 200px rgba(0, 0, 0, 0.7);
+        box-shadow: 0 0 100px rgba(0, 0, 0, 0.7);
       }
       .muikku-login-wrapper .muikku-login-container h1 {
         font-weight: 300;
