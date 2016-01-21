@@ -2,12 +2,16 @@ package fi.pyramus.views.users;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.PageNotFoundException;
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.internetix.smvc.controllers.RequestContext;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
+import fi.pyramus.plugin.PluginManager;
 import fi.pyramus.plugin.auth.AuthenticationProvider;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.ExternalAuthenticationProvider;
@@ -50,9 +54,25 @@ public class LoginViewController extends PyramusViewController {
         // TODO: support for multiple internal providers 
         requestContext.getRequest().setAttribute("internalProviders", internalAuthenticationProviders);
         requestContext.getRequest().setAttribute("externalProviders", externalAuthenticationProviders);
-        requestContext.setIncludeJSP("/templates/users/login.jsp");
+        String customLoginPage = getCustomLoginPage(requestContext);
+        if (StringUtils.isNotBlank(customLoginPage)) {
+          requestContext.setIncludeFtl(customLoginPage);
+        } else {
+          requestContext.setIncludeJSP("/templates/users/login.jsp");
+        }
       }
     }
+  }
+
+  private String getCustomLoginPage(PageRequestContext requestContext) {
+    String loginContextType = getLoginContextType(requestContext);
+    String loginContextId = getLoginContextId(requestContext);
+    
+    if (StringUtils.isNotBlank(loginContextType) && StringUtils.isNotBlank(loginContextId)) {
+      return PluginManager.getInstance().getCustomLoginScreen(loginContextType, loginContextId);
+    }
+    
+    return null;
   }
 
   /**
@@ -64,4 +84,16 @@ public class LoginViewController extends PyramusViewController {
     return new UserRole[] { UserRole.EVERYONE };
   }
 
+  private String getLoginContextType(RequestContext requestContext) {
+    HttpSession session = requestContext.getRequest().getSession();
+    String contextType = (String) session.getAttribute("loginContextType");
+    return StringUtils.isBlank(contextType) ? "INTERNAL" : contextType;
+  }
+
+  private String getLoginContextId(RequestContext requestContext) {
+    HttpSession session = requestContext.getRequest().getSession();
+    String contextId = (String) session.getAttribute("loginContextId");
+    return StringUtils.isBlank(contextId) ? null : contextId;
+  }
+  
 }

@@ -53,6 +53,7 @@
     <module>webservices-plugin</module>
     <module>smvcj</module>
     <module>webhooks</module>
+    <module>muikku-plugin</module>
   </modules>
 
   <dependencyManagement>

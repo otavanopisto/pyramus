@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.DependencyCollectionException;
 import org.sonatype.aether.graph.Exclusion;
@@ -235,6 +236,32 @@ public class PluginManager {
     }
     
     return Collections.unmodifiableList(result);
+  }
+  
+  public List<CustomLoginScreenPlugin> getCustomLoginScreenPlugins() {
+    List<CustomLoginScreenPlugin> result = new ArrayList<CustomLoginScreenPlugin>();
+    
+    for (PluginDescriptor plugin : getPlugins()) {
+      if (plugin instanceof CustomLoginScreenPlugin) {
+        result.add((CustomLoginScreenPlugin) plugin); 
+      }
+    }
+    
+    return Collections.unmodifiableList(result);
+  }
+  
+  public String getCustomLoginScreen(String contextType, String contextId) {
+    List<CustomLoginScreenPlugin> customLoginScreenPlugins = getCustomLoginScreenPlugins();
+    if (customLoginScreenPlugins != null) {
+      for (CustomLoginScreenPlugin customLoginScreenPlugin : customLoginScreenPlugins) {
+        String loginFtl = customLoginScreenPlugin.getContextLoginFtl(contextType, contextId);
+        if (StringUtils.isNotBlank(loginFtl)) {
+          return loginFtl;
+        }
+      }
+    }
+    
+    return null;
   }
 
 //  private List<Exclusion> applicationProvidedArtifacts = new ArrayList<>();

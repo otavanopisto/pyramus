@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
@@ -14,7 +15,9 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
 
+import fi.internetix.smvc.LoginRequiredException;
 import fi.internetix.smvc.SmvcRuntimeException;
+import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.dao.clientapplications.ClientApplicationAuthorizationCodeDAO;
@@ -29,12 +32,33 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
 
   @Override
   public void processForm(PageRequestContext requestContext) {
+    ClientApplicationDAO clientApplicationDAO = DAOFactory.getInstance().getClientApplicationDAO();
+
+    if (!requestContext.isLoggedIn()) {
+      HttpServletRequest request = requestContext.getRequest();
+      StringBuilder currentUrl = new StringBuilder(request.getRequestURL());
+      String queryString = request.getQueryString();
+      if (!StringUtils.isBlank(queryString)) {
+        currentUrl.append('?');
+        currentUrl.append(queryString);
+      }
+      
+      String clientId = requestContext.getString("client_id");
+      if (StringUtils.isNotBlank(clientId)) {
+        ClientApplication clientApplication = clientApplicationDAO.findByClientId(clientId);
+        if (clientApplication == null) {
+          throw new SmvcRuntimeException(HttpServletResponse.SC_FORBIDDEN, "Client application not found");
+        }
+        
+        throw new LoginRequiredException(currentUrl.toString(), "OAUTHCLIENT", clientId);
+      } else {
+        throw new SmvcRuntimeException(HttpServletResponse.SC_FORBIDDEN, "Client application not defined");
+      }
+    }
 
     HttpServletRequest request = requestContext.getRequest();
     OAuthAuthzRequest oauthRequest = null;
     OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
-
-    ClientApplicationDAO clientApplicationDAO = DAOFactory.getInstance().getClientApplicationDAO();
 
     try {
       oauthRequest = new OAuthAuthzRequest(request);
@@ -95,6 +119,17 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
 
   @Override
   public void processSend(PageRequestContext requestContext) {
+    if (!requestContext.isLoggedIn()) {
+      HttpServletRequest request = requestContext.getRequest();
+      StringBuilder currentUrl = new StringBuilder(request.getRequestURL());
+      String queryString = request.getQueryString();
+      if (!StringUtils.isBlank(queryString)) {
+        currentUrl.append('?');
+        currentUrl.append(queryString);
+      }
+      throw new LoginRequiredException(currentUrl.toString());
+    }
+    
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     ClientApplicationDAO clientApplicationDAO = DAOFactory.getInstance().getClientApplicationDAO();
     ClientApplicationAuthorizationCodeDAO clientApplicationAuthorizationCodeDAO = DAOFactory.getInstance().getClientApplicationAuthorizationCodeDAO();
@@ -131,7 +166,7 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
 
   @Override
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.GUEST, UserRole.USER, UserRole.MANAGER, UserRole.ADMINISTRATOR, UserRole.TEACHER, UserRole.STUDY_GUIDER };
+    return new UserRole[] { UserRole.EVERYONE };
   }
 
 }
