@@ -84,7 +84,8 @@
                 try { 
                   // Some browsers encode URL:s as UTF-8; some as Latin-1. Make sure the encoding is consistent.
                   // Also, escape the /, :, & etc characters in error messages.
-                  errorMessage = escape(errorMessage);
+                  // Update: switched from escape into encodeURIComponent because it seems to work much better
+                  errorMessage = encodeURIComponent(errorMessage);
                   var contentURL = GLOBAL_contextPath + '/jsonerror.page?errorCode=' + errorCode + "&isHttpError=" + (isHttpError ? 1 : 0) + "&errorMessage=" + errorMessage;
       
                   if (!isHttpError)
