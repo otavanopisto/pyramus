@@ -1,6 +1,7 @@
 package fi.pyramus.freemarker;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -40,4 +41,14 @@ public class FreemarkerServlet extends freemarker.ext.servlet.FreemarkerServlet 
 
     return super.preTemplateProcess(request, response, template, data);
   }  
+  
+  @Override
+  protected Locale deduceLocale(String templatePath, HttpServletRequest request, HttpServletResponse response) {
+    Locale locale = request.getLocale();
+    if (locale != null) {
+      return locale;  
+    }
+    
+    return super.deduceLocale(templatePath, request, response);
+  }
 }
