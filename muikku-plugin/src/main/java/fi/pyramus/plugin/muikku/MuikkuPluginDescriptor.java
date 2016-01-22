@@ -38,6 +38,7 @@ public class MuikkuPluginDescriptor implements PluginDescriptor, CustomLoginScre
   @Override
   public String getContextLoginFtl(String contextType, String contextId) {
     if ("OAUTHCLIENT".equals(contextType)) {
+      // TODO: We should return this only when the client is actually Muikku
       return "/plugin/muikku/muikkulogin.ftl";
     }
     
