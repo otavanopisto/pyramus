@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
@@ -41,11 +42,16 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
   @Override
   public String logout(RequestContext requestContext) {
     HttpSession session = requestContext.getRequest().getSession(false);
-    String logoutUrl = String.format("%s/users/logout.page", getBaseUrl(requestContext));
-    
     if (!isLoggedInToGoogle(session)) {
       return null;
     } else {
+      String logoutUrl = String.format("%s/users/logout.page", getBaseUrl(requestContext));
+      
+      String redirectUrl = requestContext.getString("redirectUrl");
+      if (StringUtils.isNotBlank(redirectUrl)) {
+        logoutUrl = String.format("%s?redirectUrl=%s", logoutUrl, redirectUrl);
+      }
+      
       try {
         return String.format(GOOGLE_LOGOUT_URL, logoutUrl);
       } finally {
