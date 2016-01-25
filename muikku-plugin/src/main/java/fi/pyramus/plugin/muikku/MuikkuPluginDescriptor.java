@@ -1,5 +1,6 @@
 package fi.pyramus.plugin.muikku;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import fi.pyramus.plugin.CustomLoginScreenPlugin;
@@ -20,7 +21,12 @@ public class MuikkuPluginDescriptor implements PluginDescriptor, CustomLoginScre
   }
   
   public Map<String, Class<?>> getPageHookControllers() {
-    return null;
+    Map<String, Class<?>> result = new HashMap<>();
+    
+    result.put("courses.viewCourse.basic.hoverMenuLinks", ViewCourseBasicPageHookController.class);
+    result.put("courses.editCourse.basic.hoverMenuLinks", EditCourseBasicPageHookController.class);
+    
+    return result;
   }
   
   public Map<String, Class<?>> getPageRequestControllers() {

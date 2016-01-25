@@ -1342,6 +1342,18 @@
             dialog.open();
           }
         }));          
+
+        /* Extension hook links */
+        
+        var extensionHoverMenuLinks = $$('#extensionHoverMenuLinks a');
+        for (var i=0, l=extensionHoverMenuLinks.length; i<l; i++) {
+          var extensionHoverMenuLink = extensionHoverMenuLinks[i];
+          basicRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+            iconURL: GLOBAL_contextPath + '/gfx/eye.png',
+            text: extensionHoverMenuLink.innerHTML,
+            link: GLOBAL_contextPath + extensionHoverMenuLink.href
+          }));
+        }
       }
             
       // onLoad
@@ -1422,10 +1434,13 @@
             <a class="tabLabel" href="#students"><fmt:message key="courses.editCourse.StudentsTabTitle" /></a>
             <ix:extensionHook name="courses.editCourse.tabLabels"/>
           </div>
-  
+
           <div id="basic" class="tabContent">
             <div id="basicRelatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
-
+            <div id="extensionHoverMenuLinks" style="display: none;">
+              <ix:extensionHook name="courses.editCourse.basic.hoverMenuLinks" />
+            </div>
+          
             <!--  TODO italic tags to css -->
           
             <div class="genericFormSection">  

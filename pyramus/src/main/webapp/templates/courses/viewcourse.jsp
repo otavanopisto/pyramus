@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="/ix" prefix="ix"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
@@ -311,6 +312,18 @@
               }));
             }            
           }
+        }        
+
+        /* Extension hook links */
+        
+        var extensionHoverMenuLinks = $$('#extensionHoverMenuLinks a');
+        for (var i=0, l=extensionHoverMenuLinks.length; i<l; i++) {
+          var extensionHoverMenuLink = extensionHoverMenuLinks[i];
+          basicRelatedActionsHoverMenu.addItem(new IxHoverMenuLinkItem({
+            iconURL: GLOBAL_contextPath + '/gfx/eye.png',
+            text: extensionHoverMenuLink.innerHTML,
+            link: GLOBAL_contextPath + extensionHoverMenuLink.href
+          }));
         }
         
       }
@@ -342,7 +355,10 @@
         
         <div id="basic" class="tabContent">
           <div id="basicRelatedActionsHoverMenuContainer" class="tabRelatedActionsContainer"></div>
-          
+          <div id="extensionHoverMenuLinks" style="display: none;">
+            <ix:extensionHook name="courses.viewCourse.basic.hoverMenuLinks" />
+          </div>
+                    
           <!--  Course Basic Info Starts -->
           <div class="genericViewInfoWapper" id="courseViewBasicInfoWrapper">
           
