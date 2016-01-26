@@ -71,14 +71,14 @@ public class Messages {
   }
   
   private void loadBundleNames() {
-    bundleNames.add("fi.pyramus.I18N.pyramuslocale");
-    
     List<PluginDescriptor> plugins = PluginManager.getInstance().getPlugins();
     for (PluginDescriptor plugin : plugins) {
       if (!StringUtils.isBlank(plugin.getMessagesBundlePath())) {
         bundleNames.add(plugin.getMessagesBundlePath());
       }
     }
+
+    bundleNames.add("fi.pyramus.I18N.pyramuslocale");
   }
   
   private List<String> bundleNames = new ArrayList<String>();
