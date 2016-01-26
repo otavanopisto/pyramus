@@ -5,6 +5,9 @@
 <!-- Header starts -->
 
 <div id="GUI_headerContainer">
+
+<ix:extensionHook name="generic.header.javascript"/>
+
   <div id="GUI_headerRepeat">
     <div id="GUI_headerLeft">
       <div id="GUI_headerLogo"></div>
