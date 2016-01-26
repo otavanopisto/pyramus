@@ -1,7 +1,7 @@
 package fi.pyramus.I18N;
 
 import java.util.Enumeration;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -35,10 +35,11 @@ public class ResourceBundleDelegate extends ResourceBundle {
   
   public void addResourceBundle(ResourceBundle resourceBundle) {
     bundles.add(resourceBundle);
+    mergedKeys.removeAll(resourceBundle.keySet());
     mergedKeys.addAll(resourceBundle.keySet());
   } 
 
-  private Set<ResourceBundle> bundles = new HashSet<ResourceBundle>();
+  private Set<ResourceBundle> bundles = new LinkedHashSet<ResourceBundle>();
   private Vector<String> mergedKeys = new Vector<String>();
   private Locale locale;
 }
