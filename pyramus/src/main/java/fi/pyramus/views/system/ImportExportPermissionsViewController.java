@@ -1,6 +1,7 @@
 package fi.pyramus.views.system;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -51,11 +52,15 @@ public class ImportExportPermissionsViewController extends PyramusFormViewContro
     for (Object roleObject : permissionMap.keySet()) {
       String roleValue = (String) roleObject;
       Role role = Role.getRole(Integer.valueOf(roleValue));
+      if(role == null){
+        Logger.getLogger(getClass().getName()).severe(String.format("Role with value %s not found from system", roleValue));
+        continue;
+      }
       for (Object permissionNameObject : permissionMap.getJSONArray(roleValue)) {
         String permissionName = (String) permissionNameObject;
         Permission permission = permissionDAO.findByName(permissionName);
         if (permission == null) {
-          // TODO: inform about error
+          Logger.getLogger(getClass().getName()).severe(String.format("Permission %s not found from system", permissionName));
           continue;
         }
         environmentRolePermissionDAO.create(role, permission);
