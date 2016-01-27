@@ -50,6 +50,7 @@ import fi.pyramus.domainmodel.courses.CourseStudent;
 import fi.pyramus.domainmodel.grading.CourseAssessment;
 import fi.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.pyramus.domainmodel.grading.Grade;
+import fi.pyramus.domainmodel.grading.TransferCredit;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentContactLogEntry;
@@ -2809,5 +2810,27 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     return Response.status(Status.OK).entity(objectFactory.createModel(courses)).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/transferCredits")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentsTransferCredits(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENT_TRANSFER_CREDITS, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    List<TransferCredit> transferCredits = studentController.listStudentTransferCredits(student);
+    
+    return Response.status(Status.OK).entity(objectFactory.createModel(transferCredits)).build();
   }
 }

@@ -56,6 +56,7 @@ import fi.pyramus.domainmodel.grading.CourseAssessment;
 import fi.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.pyramus.domainmodel.grading.Grade;
 import fi.pyramus.domainmodel.grading.GradingScale;
+import fi.pyramus.domainmodel.grading.TransferCredit;
 import fi.pyramus.domainmodel.modules.Module;
 import fi.pyramus.domainmodel.modules.ModuleComponent;
 import fi.pyramus.domainmodel.projects.Project;
@@ -218,6 +219,25 @@ public class ObjectFactory {
           @Override
           public Object map(CourseAssessment entity) {
             return new fi.pyramus.rest.model.CourseAssessment(entity.getId(), entity.getCourseStudent().getId(), entity.getGrade().getId(),entity.getGrade().getGradingScale().getId(), entity.getAssessor().getId(), new DateTime(entity.getDate()), entity.getVerbalAssessment());
+          }
+        },
+        
+        new Mapper<TransferCredit>(){
+          @Override
+          public Object map(TransferCredit entity) {
+            Long studentId = entity.getStudent() != null ? entity.getStudent().getId() : null;
+            DateTime date = toDateTime(entity.getDate());
+            Long gradeId = entity.getGrade() != null ? entity.getGrade().getId() : null;
+            Long gradigScaleId = entity.getGrade() != null ? entity.getGrade().getGradingScale().getId() : null;
+            Long assessorId = entity.getAssessor() != null ? entity.getAssessor().getId() : null;
+            Double length = entity.getCourseLength() != null ? entity.getCourseLength().getUnits() : null;
+            Long lengthUnitId = entity.getCourseLength() != null ? entity.getCourseLength().getUnit().getId() : null;
+            Long schoolId = entity.getSchool() != null ? entity.getSchool().getId() : null;
+            Long subjectId = entity.getSubject() != null ? entity.getSubject().getId() : null;
+            CourseOptionality optionality = entity.getOptionality() != null ? CourseOptionality.valueOf(entity.getOptionality().name()) : null;
+            
+            return new fi.pyramus.rest.model.TransferCredit(entity.getId(), studentId, date, gradeId, gradigScaleId, entity.getVerbalAssessment(), 
+                assessorId, entity.getArchived(), entity.getCourseName(), entity.getCourseNumber(), length, lengthUnitId, schoolId, subjectId, optionality);
           }
         },
         
