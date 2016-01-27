@@ -153,8 +153,14 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String DELETE_STUDENTCONTACTURL = "DELETE_STUDENTCONTACTURL";
   
+  /**
+   * STUDENT transfer credits
+   */
   
-  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String LIST_STUDENT_TRANSFER_CREDITS = "LIST_STUDENT_TRANSFER_CREDITS";
+   
   @Override
   public List<String> listPermissions() {
     return super.listPermissions(StudentPermissions.class);

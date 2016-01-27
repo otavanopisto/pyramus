@@ -16,6 +16,7 @@ import fi.pyramus.dao.base.EmailDAO;
 import fi.pyramus.dao.base.PersonDAO;
 import fi.pyramus.dao.base.PhoneNumberDAO;
 import fi.pyramus.dao.base.TagDAO;
+import fi.pyramus.dao.grading.TransferCreditDAO;
 import fi.pyramus.dao.students.StudentDAO;
 import fi.pyramus.domainmodel.base.Address;
 import fi.pyramus.domainmodel.base.ContactType;
@@ -30,6 +31,7 @@ import fi.pyramus.domainmodel.base.PhoneNumber;
 import fi.pyramus.domainmodel.base.School;
 import fi.pyramus.domainmodel.base.StudyProgramme;
 import fi.pyramus.domainmodel.base.Tag;
+import fi.pyramus.domainmodel.grading.TransferCredit;
 import fi.pyramus.domainmodel.students.Student;
 import fi.pyramus.domainmodel.students.StudentActivityType;
 import fi.pyramus.domainmodel.students.StudentEducationalLevel;
@@ -66,6 +68,9 @@ public class StudentController {
 
   @Inject
   private PersonDAO personDAO;
+  
+  @Inject
+  private TransferCreditDAO transferCreditDAO;
   
   public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
@@ -269,6 +274,12 @@ public class StudentController {
 
   public ContactURL addStudentContactURL(Student student, ContactURLType contactURLType, String url) {
     return contactURLDAO.create(student.getContactInfo(), contactURLType, url);
+  }
+  
+  /* TransferCredits */
+
+  public List<TransferCredit> listStudentTransferCredits(Student student) {
+    return transferCreditDAO.listByStudent(student);
   }
 
 }
