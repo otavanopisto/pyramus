@@ -91,7 +91,7 @@ public class ViewSchoolViewController extends PyramusViewController implements B
     for (int i=0; i<jsonPhoneNumbers.size(); i++) {
       JSONObject jsonPhoneNumber = jsonPhoneNumbers.getJSONObject(i);
       if (phoneNumbers.get(i).getContactType() != null) {
-        jsonPhoneNumber.put("contactTypeName", emails.get(i).getContactType().getName());
+        jsonPhoneNumber.put("contactTypeName", phoneNumbers.get(i).getContactType().getName());
       }
     }
     
