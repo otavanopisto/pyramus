@@ -30,6 +30,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
+import fi.pyramus.dao.DAOFactory;
 import fi.pyramus.domainmodel.base.BillingDetails;
 import fi.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.pyramus.domainmodel.base.CourseEducationType;
@@ -61,6 +62,7 @@ import fi.pyramus.rest.controller.UserController;
 import fi.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.pyramus.rest.controller.permissions.CourseAssessmentPermissions;
 import fi.pyramus.rest.controller.permissions.CoursePermissions;
+import fi.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.pyramus.rest.controller.permissions.UserPermissions;
 import fi.pyramus.rest.model.CourseEnrolmentType;
 import fi.pyramus.rest.security.RESTSecurity;
@@ -553,9 +555,25 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/courses/{ID:[0-9]*}/students")
   @GET
-  @RESTPermit (CoursePermissions.LIST_COURSESTUDENTS)
+  @RESTPermit (handling = Handling.INLINE)
   public Response listCourseStudents(@PathParam("ID") Long courseId,
-      @QueryParam("participationTypes") String participationTypes) {
+      @QueryParam("participationTypes") String participationTypes,
+      @QueryParam("studentId") Long studentId) {
+    
+    if (!restSecurity.hasPermission(new String[] { CoursePermissions.LIST_COURSESTUDENTS } )) {
+      if (studentId == null) {
+        return Response.status(Status.FORBIDDEN).build();
+      } else {
+        Student student = DAOFactory.getInstance().getStudentDAO().findById(studentId);
+        if (student == null) {
+          return Response.status(Status.BAD_REQUEST).entity(String.format("student %d could not be found", studentId)).build();
+        }
+        
+        if (!restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      }
+    }
 
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
@@ -579,6 +597,14 @@ public class CourseRESTService extends AbstractRESTService {
         ? courseController.listCourseStudentsByCourse(course)
         : courseController.listCourseStudentsByCourseAndParticipationTypes(course, courseParticipationTypes);
     
+    if (studentId != null) {
+      for (int i = students.size() - 1; i >= 0; i--) {
+        if (!studentId.equals(students.get(i).getStudent().getId())) {
+          students.remove(i);
+        }
+      }
+    }
+        
     if (students.isEmpty()) {
       return Response.status(Status.NO_CONTENT).build();
     }
@@ -588,32 +614,36 @@ public class CourseRESTService extends AbstractRESTService {
 
   @Path("/courses/{CID:[0-9]*}/students/{ID:[0-9]*}")
   @GET
-  @RESTPermit (CoursePermissions.FIND_COURSESTUDENT)
+  @RESTPermit (handling = Handling.INLINE)
   public Response findCourseStudentById(@PathParam("CID") Long courseId, @PathParam("ID") Long id) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    fi.pyramus.domainmodel.courses.CourseStudent student = courseController.findCourseStudentById(id);
-    if (student == null) {
+    fi.pyramus.domainmodel.courses.CourseStudent courseStudent = courseController.findCourseStudentById(id);
+    if (courseStudent == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    if (!student.getCourse().getId().equals(courseId)) {
+    if (!courseStudent.getCourse().getId().equals(courseId)) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    if ((student.getArchived())||(student.getStudent().getArchived())||(student.getCourse().getArchived())) {
+    if ((courseStudent.getArchived())||(courseStudent.getStudent().getArchived())||(courseStudent.getCourse().getArchived())) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { CoursePermissions.FIND_COURSESTUDENT, PersonPermissions.PERSON_OWNER }, courseStudent.getStudent().getPerson(), Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
-    return Response.status(Status.OK).entity(objectFactory.createModel(student)).build();
+    return Response.status(Status.OK).entity(objectFactory.createModel(courseStudent)).build();
   }
   
   @Path("/courses/{COURSEID:[0-9]*}/students/{ID:[0-9]*}")
   @PUT
-  @RESTPermit (CoursePermissions.UPDATE_COURSESTUDENT)
+  @RESTPermit (handling = Handling.INLINE)
   public Response updateCourseStudent(@PathParam("COURSEID") Long courseId, @PathParam("ID") Long id, fi.pyramus.rest.model.CourseStudent entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build(); 
@@ -648,6 +678,10 @@ public class CourseRESTService extends AbstractRESTService {
     Student student = studentController.findStudentById(entity.getStudentId());
     if (student == null) {
       return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { CoursePermissions.UPDATE_COURSESTUDENT, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     if (!courseStudent.getCourse().getId().equals(course.getId())) {
