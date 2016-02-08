@@ -25,6 +25,7 @@ import fi.pyramus.domainmodel.users.User;
 import fi.pyramus.domainmodel.users.UserIdentification;
 import fi.pyramus.plugin.auth.AuthenticationException;
 import fi.pyramus.plugin.auth.ExternalAuthenticationProvider;
+import fi.pyramus.plugin.auth.LocalUserMissingException;
 import fi.pyramus.plugin.googleoauth.scribe.GoogleApi20;
 
 public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationProvider {
@@ -123,8 +124,8 @@ public class GoogleOauthAuthorizationStrategy implements ExternalAuthenticationP
     email = email != null ? email.trim() : null;
     
     Person emailPerson = personDAO.findByUniqueEmail(email);
-    if(emailPerson == null){
-      throw new AuthenticationException(AuthenticationException.LOCAL_USER_MISSING);
+    if (emailPerson == null) {
+      throw new LocalUserMissingException(email);
     }
     
     UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId(getName(), externalId);

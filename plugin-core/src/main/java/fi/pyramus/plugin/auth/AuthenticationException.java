@@ -8,7 +8,7 @@ public class AuthenticationException extends Exception {
   /** Constant for unauthorized access */
   public static final int UNAUTHORIZED = 1;
   /** Constant for local user missing */
-  public static final int LOCAL_USER_MISSING = 2;
+  protected static final int LOCAL_USER_MISSING = 2;
   /** Constant for email belonging to another person */
   public static final int EMAIL_BELONGS_TO_ANOTHER_PERSON = 3;
   /** Constant for problem caused by external authentication server */

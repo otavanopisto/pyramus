@@ -15,6 +15,7 @@ import fi.pyramus.framework.UserRole;
 import fi.pyramus.plugin.auth.AuthenticationException;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.pyramus.plugin.auth.LocalUserMissingException;
 
 /**
  * The controller responsible of logging in the user with the credentials he has provided. 
@@ -80,11 +81,10 @@ public class LoginJSONRequestController extends JSONRequestController {
           }
           return;
         }
+      } catch (LocalUserMissingException lume) {
+        throw new SmvcRuntimeException(PyramusStatusCode.LOCAL_USER_MISSING, Messages.getInstance().getText(locale, "users.login.localUserMissing", new String[] { lume.getExternalUser()  }));
       } catch (AuthenticationException ae) {
-        if (ae.getErrorCode() == AuthenticationException.LOCAL_USER_MISSING)
-          throw new SmvcRuntimeException(PyramusStatusCode.LOCAL_USER_MISSING, Messages.getInstance().getText(locale, "users.login.localUserMissing"));
-        else 
-          throw new SmvcRuntimeException(ae);
+        throw new SmvcRuntimeException(ae);
       }
     }
     

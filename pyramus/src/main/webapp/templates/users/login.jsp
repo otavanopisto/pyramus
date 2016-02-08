@@ -12,6 +12,7 @@
     <jsp:include page="/templates/generic/scriptaculous_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/table_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/tabs_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/message_adapter_support.jsp"></jsp:include>
     
     <script type="text/javascript">
       function onLoad(event) {
