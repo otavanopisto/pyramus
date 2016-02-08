@@ -5,6 +5,7 @@
 <@include_page path="/templates/generic/jsonrequest_support.jsp"/>
 <@include_page path="/templates/generic/jsonform_support.jsp"/>
 <@include_page path="/templates/generic/scriptaculous_support.jsp"/>
+<@include_page path="/templates/generic/message_adapter_support.jsp"/>
 
 <style type="text/css">
   body {
