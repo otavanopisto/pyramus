@@ -1,5 +1,8 @@
 package fi.pyramus.views.users;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
@@ -15,6 +18,8 @@ import fi.pyramus.framework.UserRole;
 import fi.pyramus.plugin.auth.AuthenticationException;
 import fi.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.pyramus.plugin.auth.ExternalAuthenticationProvider;
+import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.pyramus.plugin.auth.LocalUserMissingException;
 
 public class ExternalLoginLoginViewController extends PyramusViewController {
 
@@ -32,9 +37,10 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
       String msg = Messages.getInstance().getText(locale, "users.login.alreadyLoggedIn");
       throw new SmvcRuntimeException(PyramusStatusCode.ALREADY_LOGGED_IN, msg);
     }
+
+    AuthenticationProviderVault authenticationProviders = AuthenticationProviderVault.getInstance();
     
     try {
-      AuthenticationProviderVault authenticationProviders = AuthenticationProviderVault.getInstance();
       ExternalAuthenticationProvider authenticationProvider = authenticationProviders.getExternalAuthenticationProviders().get(0);
       User user = authenticationProvider.processResponse(requestContext);
       if (user != null) { 
@@ -62,11 +68,21 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
         String msg = Messages.getInstance().getText(requestContext.getRequest().getLocale(), "users.login.loginFailed");
         throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, msg);
       }
+    } catch (LocalUserMissingException lume) {
+      List<InternalAuthenticationProvider> internalAuthenticationProviders = authenticationProviders.getInternalAuthenticationProviders();
+      List<ExternalAuthenticationProvider> externalAuthenticationProviders = authenticationProviders.getExternalAuthenticationProviders();
+      
+      if (!internalAuthenticationProviders.isEmpty() || externalAuthenticationProviders.size() > 1) {
+        try {
+          requestContext.setRedirectURL(String.format("%s/users/login.page?localUserMissing=%s", requestContext.getRequest().getContextPath(), URLEncoder.encode(lume.getExternalUser(), "UTF-8")));
+        } catch (UnsupportedEncodingException e) {
+          throw new SmvcRuntimeException(e);
+        }
+      } else {
+        throw new SmvcRuntimeException(PyramusStatusCode.LOCAL_USER_MISSING, Messages.getInstance().getText(locale, "users.login.localUserMissing", new String[] { lume.getExternalUser()  }));
+      }
     } catch (AuthenticationException ae) {
-      if (ae.getErrorCode() == AuthenticationException.LOCAL_USER_MISSING)
-        throw new SmvcRuntimeException(PyramusStatusCode.LOCAL_USER_MISSING, Messages.getInstance().getText(locale, "users.login.localUserMissing"));
-      else 
-        throw new SmvcRuntimeException(ae);
+      throw new SmvcRuntimeException(ae);
     }
   }
 

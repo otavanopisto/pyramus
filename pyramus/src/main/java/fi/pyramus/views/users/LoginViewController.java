@@ -7,8 +7,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.PageNotFoundException;
+import fi.internetix.smvc.Severity;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
+import fi.pyramus.I18N.Messages;
 import fi.pyramus.framework.PyramusViewController;
 import fi.pyramus.framework.UserRole;
 import fi.pyramus.plugin.PluginManager;
@@ -54,6 +56,12 @@ public class LoginViewController extends PyramusViewController {
         // TODO: support for multiple internal providers 
         requestContext.getRequest().setAttribute("internalProviders", internalAuthenticationProviders);
         requestContext.getRequest().setAttribute("externalProviders", externalAuthenticationProviders);
+        String localUserMissing = requestContext.getString("localUserMissing");
+        if (StringUtils.isNotBlank(localUserMissing)) {
+          requestContext.addMessage(Severity.WARNING, Messages.getInstance().getText(requestContext.getRequest().getLocale(), 
+              "users.login.localUserMissing", new String[] { localUserMissing }));
+        }
+        
         String customLoginPage = getCustomLoginPage(requestContext);
         if (StringUtils.isNotBlank(customLoginPage)) {
           requestContext.setIncludeFtl(customLoginPage);
