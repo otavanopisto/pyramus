@@ -1,5 +1,6 @@
 package fi.pyramus.dao.courses;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -219,6 +220,40 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
             criteriaBuilder.equal(root.get(CourseStudent_.archived), Boolean.FALSE),
             criteriaBuilder.equal(student.get(Student_.archived), Boolean.FALSE)
         ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
+  public List<CourseStudent> listByCourseIncludeArchived(Course course) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseStudent> criteria = criteriaBuilder.createQuery(CourseStudent.class);
+    Root<CourseStudent> root = criteria.from(CourseStudent.class);
+    
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(CourseStudent_.course), course));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<CourseStudent> listByCourseAndParticipationTypesIncludeArchived(Course course, List<CourseParticipationType> participationTypes) {
+    if ((participationTypes == null) || (participationTypes.isEmpty())) {
+      return Collections.emptyList();
+    }
+    
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseStudent> criteria = criteriaBuilder.createQuery(CourseStudent.class);
+    Root<CourseStudent> root = criteria.from(CourseStudent.class);
+    
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+          root.get(CourseStudent_.participationType).in(participationTypes),
+          criteriaBuilder.equal(root.get(CourseStudent_.course), course)
+      ));
     
     return entityManager.createQuery(criteria).getResultList();
   }
