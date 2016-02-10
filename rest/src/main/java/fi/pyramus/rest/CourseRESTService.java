@@ -558,6 +558,7 @@ public class CourseRESTService extends AbstractRESTService {
   @RESTPermit (handling = Handling.INLINE)
   public Response listCourseStudents(@PathParam("ID") Long courseId,
       @QueryParam("participationTypes") String participationTypes,
+      @QueryParam("activeStudents") Boolean activeStudents, 
       @QueryParam("studentId") Long studentId) {
     
     if (!restSecurity.hasPermission(new String[] { CoursePermissions.LIST_COURSESTUDENTS } )) {
@@ -609,7 +610,32 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NO_CONTENT).build();
     }
     
+    if (activeStudents != null) {
+      for (int i = students.size() - 1; i >= 0; i--) {
+        if (!activeStudents.equals(isActiveStudent(students.get(i)))) {
+          students.remove(i);
+        }
+      }
+    }
+    
     return Response.status(Status.OK).entity(objectFactory.createModel(students)).build();
+  }
+  
+  private boolean isActiveStudent(CourseStudent courseStudent) {
+    Student student = courseStudent.getStudent();
+
+    Date studyStartDate = student.getStudyStartDate();
+    Date studyEndDate = student.getStudyEndDate();
+    
+    if ((studyStartDate == null) && (studyEndDate == null)) {
+      // It's a never ending study programme
+      return true;
+    }
+
+    boolean hasStarted = studyStartDate != null && studyStartDate.before(new Date());
+    boolean hasFinished = studyEndDate != null && studyEndDate.before(new Date());
+    
+    return hasStarted && !hasFinished;
   }
 
   @Path("/courses/{CID:[0-9]*}/students/{ID:[0-9]*}")
