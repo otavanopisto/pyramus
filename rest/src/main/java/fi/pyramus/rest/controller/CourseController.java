@@ -470,6 +470,14 @@ public class CourseController {
   public List<CourseStudent> listCourseStudentsByCourseAndParticipationTypes(Course course, List<CourseParticipationType> participationTypes) {
     return courseStudentDAO.listByCourseAndParticipationTypes(course, participationTypes);
   }
+  
+  public List<CourseStudent> listCourseStudentsByCourseIncludeArchived(Course course) {
+    return courseStudentDAO.listByCourseIncludeArchived(course);
+  }
+
+  public List<CourseStudent> listCourseStudentsByCourseAndParticipationTypesIncludeArchived(Course course, List<CourseParticipationType> participationTypes) {
+    return courseStudentDAO.listByCourseAndParticipationTypesIncludeArchived(course, participationTypes);
+  }
 
   public List<CourseStudent> listCourseStudentsByStudent(Student student) {
     return courseStudentDAO.listByStudent(student);

@@ -558,8 +558,9 @@ public class CourseRESTService extends AbstractRESTService {
   @RESTPermit (handling = Handling.INLINE)
   public Response listCourseStudents(@PathParam("ID") Long courseId,
       @QueryParam("participationTypes") String participationTypes,
-      @QueryParam("activeStudents") Boolean activeStudents, 
-      @QueryParam("studentId") Long studentId) {
+      @QueryParam("activeStudents") Boolean activeStudents,      
+      @QueryParam("studentId") Long studentId,
+      @DefaultValue("true") @QueryParam("filterArchived") boolean filterArchived) {
     
     if (!restSecurity.hasPermission(new String[] { CoursePermissions.LIST_COURSESTUDENTS } )) {
       if (studentId == null) {
@@ -593,10 +594,17 @@ public class CourseRESTService extends AbstractRESTService {
       }
     }
     
-    List<fi.pyramus.domainmodel.courses.CourseStudent> students =
-        courseParticipationTypes.isEmpty()
+    List<fi.pyramus.domainmodel.courses.CourseStudent> students = null;
+    
+    if (filterArchived) {
+      students = courseParticipationTypes.isEmpty()
         ? courseController.listCourseStudentsByCourse(course)
         : courseController.listCourseStudentsByCourseAndParticipationTypes(course, courseParticipationTypes);
+    } else {
+      students = courseParticipationTypes.isEmpty()
+          ? courseController.listCourseStudentsByCourseIncludeArchived(course)
+          : courseController.listCourseStudentsByCourseAndParticipationTypesIncludeArchived(course, courseParticipationTypes);
+    }
     
     if (studentId != null) {
       for (int i = students.size() - 1; i >= 0; i--) {
