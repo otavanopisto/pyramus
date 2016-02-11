@@ -92,15 +92,12 @@
     width:500px;
     z-index: 999;
   }
-  
   .muikku-login-wrapper .muikku-logo {
     background-image: url('//cdn.muikkuverkko.fi/assets/muikku/muikku-header-text-small.png');
     background-position:left top;
     background-repeat: no-repeat;
     height: 90px;
-    max-width: 500px;
-    min-width: 320px;
-    width:auto;
+    width: 500px;
     position: relative;
     z-index: 999;
   }
@@ -177,15 +174,26 @@
   
   @media screen and (max-width: 767px) {
     .muikku-login-wrapper {
-      height: 430px;
-      left: 10px;
-      margin: -230px auto 0;
-      max-width: 500px;
-      min-width: 300px;
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      width: auto;
+      height:430px;
+      left:10px;
+      margin:-230px auto 0;
+      max-width:500px;
+      min-width:300px;
+      position:absolute;
+      right:10px;
+      top:50%;
+      width:auto;
+      z-index:999;
+    }
+    .muikku-login-wrapper .muikku-logo {
+      background-image: url('//cdn.muikkuverkko.fi/assets/muikku/muikku-header-text-small.png');
+      background-position:left top;
+      background-repeat: no-repeat;
+      height: 90px;
+      max-width:500px;
+      min-width:300px;
+      width:auto;
+      position: relative;
       z-index: 999;
     }
 
