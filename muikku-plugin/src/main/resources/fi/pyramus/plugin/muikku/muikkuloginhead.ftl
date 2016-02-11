@@ -89,14 +89,18 @@
     top: 50%;
     left: 50%;
     margin: -240px 0 0 -270px;
-    width: 500px;
+    width:500px;
     z-index: 999;
   }
+  
   .muikku-login-wrapper .muikku-logo {
     background-image: url('//cdn.muikkuverkko.fi/assets/muikku/muikku-header-text-small.png');
+    background-position:left top;
     background-repeat: no-repeat;
     height: 90px;
-    width: 500px;
+    max-width: 500px;
+    min-width: 320px;
+    width:auto;
     position: relative;
     z-index: 999;
   }
@@ -169,5 +173,21 @@
   
   .muikku-login-wrapper .muikku-login-container .formElementRow a.Google-oauth-button {
     background: rgba(0, 0, 0, 0) url("../gfx/icons/32x32/google-auth-icon.png") no-repeat scroll 0 0;
+  }
+  
+  @media screen and (max-width: 767px) {
+    .muikku-login-wrapper {
+      height: 430px;
+      left: 10px;
+      margin: -230px auto 0;
+      max-width: 500px;
+      min-width: 300px;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      width: auto;
+      z-index: 999;
+    }
+
   }
 </style>
