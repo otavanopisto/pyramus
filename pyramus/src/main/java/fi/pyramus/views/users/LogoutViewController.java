@@ -24,7 +24,7 @@ public class LogoutViewController extends PyramusViewController {
    * @param requestContext Page request context
    */
   public void process(PageRequestContext requestContext) {
-    HttpSession session = requestContext.getRequest().getSession(false);
+    HttpSession session = requestContext.getRequest().getSession(true);
     String redirectUrl = null;
     
     String authenticationProviderName = (String) session.getAttribute("authenticationProvider");
