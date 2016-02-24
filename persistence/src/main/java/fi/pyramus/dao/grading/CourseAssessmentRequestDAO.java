@@ -104,6 +104,7 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(courseStudent.get(CourseStudent_.course), course),
+            criteriaBuilder.equal(courseStudent.get(CourseStudent_.archived), Boolean.FALSE),            
             criteriaBuilder.equal(root.get(CourseAssessmentRequest_.archived), Boolean.FALSE)
         ));
     
