@@ -345,7 +345,7 @@ public class CourseRESTService extends AbstractRESTService {
   @Path("/courses/{ID:[0-9]*}/assessmentsRequests/")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  public Response listStudentAssessmentRequests(@PathParam("ID") Long courseId) {
+  public Response listStudentAssessmentRequests(@PathParam("ID") Long courseId, @QueryParam("activeStudents") Boolean activeStudents) {
     Course course = courseController.findCourseById(courseId);
 
     if (course == null) {
@@ -361,6 +361,24 @@ public class CourseRESTService extends AbstractRESTService {
     }
 
     List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByCourse(course);
+        
+    if (activeStudents != null) {
+      for (int i = assessmentRequests.size() - 1; i >= 0; i--) {
+        CourseAssessmentRequest assessmentRequest = assessmentRequests.get(i);
+        boolean remove = true;
+        
+        if (assessmentRequest != null) {
+          CourseStudent courseStudent = assessmentRequest.getCourseStudent();
+          if (courseStudent != null) {
+            remove = !activeStudents.equals(isActiveStudent(courseStudent));
+          }
+        }
+        
+        if (remove) {
+          assessmentRequests.remove(i);
+        }
+      }
+    }
     
     return Response.ok(objectFactory.createModel(assessmentRequests)).build();
   }
