@@ -6,15 +6,15 @@ var address_values = JSDATA["createstudent_addresses"] ? JSDATA["createstudent_a
 var phone_values = JSDATA["createstudent_phones"] ? JSDATA["createstudent_phones"].evalJSON() : undefined;
 
 function addEmailTableRow(values) {
-  getIxTableById('emailTable').addRow(values || [ '', '', '', '', '' ]);
+  getIxTableById('emailTable').addRow(values || [ '', contactTypes[0].id, '', '', '' ]);
 };
 
 function addPhoneTableRow(values) {
-  getIxTableById('phoneTable').addRow(values || [ '', '', '', '', '' ]);
+  getIxTableById('phoneTable').addRow(values || [ '', contactTypes[0].id, '', '', '' ]);
 };
 
 function addAddressTableRow(values) {
-  getIxTableById('addressTable').addRow(values || [ '', '', '', '', '', '', '', '', '' ]);
+  getIxTableById('addressTable').addRow(values || [ '', contactTypes[0].id, '', '', '', '', '', '', '' ]);
 };
 
 function setupTags() {
@@ -179,7 +179,7 @@ function onLoad(event) {
       imgsrc : GLOBAL_contextPath + '/gfx/list-add.png',
       tooltip : getLocale().getText("students.createStudent.addressTableAddTooltip"),
       onclick : function(event) {
-        addAddressTableRow(event.tableComponent);
+        addAddressTableRow();
       }
     }, {
       width : 30,

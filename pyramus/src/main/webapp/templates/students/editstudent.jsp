@@ -26,15 +26,15 @@
     
     <script type="text/javascript">
       function addAddressTableRow(addressTable) {
-        addressTable.addRow([-1, '', '', '', '', '', '', '', '', '']);
+        addressTable.addRow([-1, '', <c:out value="${contactTypes[0].id}" />, '', '', '', '', '', '', '']);
       }
 
       function addPhoneTableRow(phoneTable) {
-        phoneTable.addRow([-1, '', '', '', '', '']);
+        phoneTable.addRow([-1, '', <c:out value="${contactTypes[0].id}" />, '', '', '']);
       }
 
       function addEmailTableRow(emailTable) {
-        emailTable.addRow([-1, '', '', '', '', '']);
+        emailTable.addRow([-1, '', <c:out value="${contactTypes[0].id}" />, '', '', '']);
       }
 
       function initPhoneTable(studentId) {
