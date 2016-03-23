@@ -17,15 +17,15 @@
     
     <script type="text/javascript">
       function addEmailTableRow(values) {
-        getIxTableById('emailTable').addRow(values || ['', '', '', '', '']);
+        getIxTableById('emailTable').addRow(values || ['', <c:out value="${contactTypes[0].id}" />, '', '', '']);
       };
   
       function addPhoneTableRow(values) {
-        getIxTableById('phoneTable').addRow(values || ['', '', '', '', '']);
+        getIxTableById('phoneTable').addRow(values || ['', <c:out value="${contactTypes[0].id}" />, '', '', '']);
       };
   
       function addAddressTableRow(values) {
-        getIxTableById('addressTable').addRow(values || ['', '', '', '', '', '', '', '', '']);
+        getIxTableById('addressTable').addRow(values || ['', <c:out value="${contactTypes[0].id}" />, '', '', '', '', '', '', '']);
       };
           
       function setupTags() {
@@ -209,7 +209,7 @@
             imgsrc: GLOBAL_contextPath + '/gfx/list-add.png',
             tooltip: '<fmt:message key="users.createUser.addressTableAddTooltip"/>',
             onclick: function (event) {
-              addAddressTableRow(event.tableComponent);
+              addAddressTableRow();
             }
           }, {
             width: 30,
@@ -285,7 +285,7 @@
             imgsrc: GLOBAL_contextPath + '/gfx/list-add.png',
             tooltip: '<fmt:message key="users.createUser.phoneTableAddTooltip"/>',
             onclick: function (event) {
-              addPhoneTableRow(event.tableComponent);
+              addPhoneTableRow();
             }
           }, {
             width: 30,
