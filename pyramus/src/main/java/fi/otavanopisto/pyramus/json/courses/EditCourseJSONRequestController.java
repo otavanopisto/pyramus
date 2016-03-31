@@ -77,7 +77,7 @@ import fi.otavanopisto.pyramus.persistence.usertypes.MonetaryAmount;
 /**
  * The controller responsible of modifying an existing course. 
  * 
- * @see fi.pyramus.views.modules.EditCourseViewController
+ * @see fi.otavanopisto.pyramus.views.modules.EditCourseViewController
  */
 public class EditCourseJSONRequestController extends JSONRequestController {
 

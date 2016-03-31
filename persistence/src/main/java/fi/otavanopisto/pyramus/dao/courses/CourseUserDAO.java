@@ -11,7 +11,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseUser;
-import fi.pyramus.domainmodel.courses.CourseUser_;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseUser_;
 
 @Stateless
 public class CourseUserDAO extends PyramusEntityDAO<CourseUser> {

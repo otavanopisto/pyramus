@@ -13,7 +13,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.MagicKey;
 import fi.otavanopisto.pyramus.domainmodel.base.MagicKeyScope;
-import fi.pyramus.domainmodel.base.MagicKey_;
+import fi.otavanopisto.pyramus.domainmodel.base.MagicKey_;
 
 @Stateless
 public class MagicKeyDAO extends PyramusEntityDAO<MagicKey> {

@@ -10,7 +10,7 @@ import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.plugins.Plugin;
-import fi.pyramus.domainmodel.plugins.Plugin_;
+import fi.otavanopisto.pyramus.domainmodel.plugins.Plugin_;
 
 @Stateless
 public class PluginDAO extends PyramusEntityDAO<Plugin> {

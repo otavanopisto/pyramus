@@ -45,11 +45,11 @@ import fi.otavanopisto.pyramus.events.PersonCreatedEvent;
 import fi.otavanopisto.pyramus.events.PersonUpdatedEvent;
 import fi.otavanopisto.pyramus.persistence.search.PersonFilter;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
-import fi.pyramus.domainmodel.base.ContactInfo_;
-import fi.pyramus.domainmodel.base.ContactType_;
-import fi.pyramus.domainmodel.base.Email_;
-import fi.pyramus.domainmodel.base.Person_;
-import fi.pyramus.domainmodel.users.User_;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactType_;
+import fi.otavanopisto.pyramus.domainmodel.base.Email_;
+import fi.otavanopisto.pyramus.domainmodel.base.Person_;
+import fi.otavanopisto.pyramus.domainmodel.users.User_;
 
 @Stateless
 public class PersonDAO extends PyramusEntityDAO<Person> {

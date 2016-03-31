@@ -4,7 +4,7 @@ import java.util.List;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;
-import fi.pyramus.domainmodel.security.Permission_;
+import fi.otavanopisto.pyramus.domainmodel.security.Permission_;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;

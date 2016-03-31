@@ -5,7 +5,7 @@ import java.util.List;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
-import fi.pyramus.domainmodel.users.UserIdentification_;
+import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification_;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;

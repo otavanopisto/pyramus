@@ -12,7 +12,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.modules.ModuleComponent;
-import fi.pyramus.domainmodel.modules.ModuleComponent_;
+import fi.otavanopisto.pyramus.domainmodel.modules.ModuleComponent_;
 
 @Stateless
 public class ModuleComponentDAO extends PyramusEntityDAO<ModuleComponent> {

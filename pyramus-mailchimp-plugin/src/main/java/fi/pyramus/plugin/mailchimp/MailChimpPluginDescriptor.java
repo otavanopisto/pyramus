@@ -1,12 +1,12 @@
-package fi.pyramus.plugin.mailchimp;
+package fi.otavanopisto.pyramus.plugin.mailchimp;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import fi.pyramus.plugin.PluginDescriptor;
-import fi.pyramus.plugin.scheduler.ScheduledPluginDescriptor;
-import fi.pyramus.plugin.scheduler.ScheduledPluginTask;
+import fi.otavanopisto.pyramus.plugin.PluginDescriptor;
+import fi.otavanopisto.pyramus.plugin.scheduler.ScheduledPluginDescriptor;
+import fi.otavanopisto.pyramus.plugin.scheduler.ScheduledPluginTask;
 
 public class MailChimpPluginDescriptor implements PluginDescriptor, ScheduledPluginDescriptor {
 

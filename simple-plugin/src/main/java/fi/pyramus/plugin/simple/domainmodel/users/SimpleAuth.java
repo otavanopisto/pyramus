@@ -1,4 +1,4 @@
-package fi.pyramus.plugin.simple.domainmodel.users;
+package fi.otavanopisto.pyramus.plugin.simple.domainmodel.users;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

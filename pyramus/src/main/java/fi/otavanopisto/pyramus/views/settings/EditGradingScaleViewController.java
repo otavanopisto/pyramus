@@ -17,7 +17,7 @@ import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
 /**
  * The controller responsible of the Edit Grading Scale view of the application. 
  * 
- * @see fi.pyramus.json.users.EditGradingScaleJSONRequestController
+ * @see fi.otavanopisto.pyramus.json.users.EditGradingScaleJSONRequestController
  */
 public class EditGradingScaleViewController extends PyramusViewController implements Breadcrumbable {
 

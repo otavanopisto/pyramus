@@ -14,7 +14,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.pyramus.domainmodel.grading.ProjectAssessment_;
+import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment_;
 
 @Stateless
 public class ProjectAssessmentDAO extends PyramusEntityDAO<ProjectAssessment> {

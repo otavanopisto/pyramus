@@ -32,7 +32,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariable;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
-import fi.pyramus.domainmodel.base.SchoolVariable_;
+import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariable_;
 
 @Stateless
 public class SchoolDAO extends PyramusEntityDAO<School> {

@@ -12,7 +12,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseComponent;
-import fi.pyramus.domainmodel.courses.CourseComponent_;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseComponent_;
 
 @Stateless
 public class CourseComponentDAO extends PyramusEntityDAO<CourseComponent> {

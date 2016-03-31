@@ -13,7 +13,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.help.HelpPage;
 import fi.otavanopisto.pyramus.domainmodel.help.HelpPageContent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.pyramus.domainmodel.help.HelpPageContent_;
+import fi.otavanopisto.pyramus.domainmodel.help.HelpPageContent_;
 
 @Stateless
 public class HelpPageContentDAO extends PyramusEntityDAO<HelpPageContent> {

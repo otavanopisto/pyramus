@@ -11,7 +11,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditVariableKey;
-import fi.pyramus.domainmodel.grading.CreditVariableKey_;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditVariableKey_;
 
 @Stateless
 public class CreditVariableKeyDAO extends PyramusEntityDAO<CreditVariableKey> {

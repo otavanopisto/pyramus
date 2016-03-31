@@ -32,7 +32,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 /**
  * The controller responsible of the Edit Course view of the application.
  * 
- * @see fi.pyramus.json.users.CreateGradingScaleJSONRequestController
+ * @see fi.otavanopisto.pyramus.json.users.CreateGradingScaleJSONRequestController
  */
 public class ManageCourseAssessmentsViewController extends PyramusViewController implements Breadcrumbable {
 

@@ -36,8 +36,8 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.events.StudentGroupCreatedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupUpdatedEvent;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
-import fi.pyramus.domainmodel.students.StudentGroupStudent_;
-import fi.pyramus.domainmodel.students.StudentGroup_;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent_;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup_;
 
 @Stateless
 public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {

@@ -10,7 +10,7 @@ import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
-import fi.pyramus.domainmodel.students.StudentStudyEndReason_;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason_;
 
 
 @Stateless

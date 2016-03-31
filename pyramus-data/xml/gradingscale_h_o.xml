@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <initialData>
   
-  <entity package="fi.pyramus.domainmodel.grading" class="GradingScale">
+  <entity package="fi.otavanopisto.pyramus.domainmodel.grading" class="GradingScale">
     <e name="Hyväksytty / Osallistunut">
       <list name="grades" method="addGrade">
         <e name="Osallistunut" passingGrade="true">
-          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+          <j name="gradingScale" class="fi.otavanopisto.pyramus.domainmodel.grading.GradingScale">PARENT</j>
         </e>
         <e name="Hyväksytty" passingGrade="true">
-          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+          <j name="gradingScale" class="fi.otavanopisto.pyramus.domainmodel.grading.GradingScale">PARENT</j>
         </e>
       </list>
     </e>

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <initialData>
-  <entity package="fi.pyramus.domainmodel.base" class="Defaults">
+  <entity package="fi.otavanopisto.pyramus.domainmodel.base" class="Defaults">
     <e id="1"/>
   </entity>
   
-  <entity package="fi.pyramus.domainmodel.system" class="SettingKey">
+  <entity package="fi.otavanopisto.pyramus.domainmodel.system" class="SettingKey">
   	<e name="system.environment" storeVariable="systemEnvironmentKey" />
     <e name="authentication.enabledStrategies" storeVariable="enabledAuth"/>
     <e name="reports.contextPath" storeVariable="reportsPath"/>
   </entity>
 
-  <entity package="fi.pyramus.domainmodel.system" class="Setting">
+  <entity package="fi.otavanopisto.pyramus.domainmodel.system" class="Setting">
     <e value="production">
-      <j name="key" class="fi.pyramus.domainmodel.system.SettingKey">{systemEnvironmentKey}</j>
+      <j name="key" class="fi.otavanopisto.pyramus.domainmodel.system.SettingKey">{systemEnvironmentKey}</j>
     </e>
     <e value="internal">
-      <j name="key" class="fi.pyramus.domainmodel.system.SettingKey">{enabledAuth}</j>
+      <j name="key" class="fi.otavanopisto.pyramus.domainmodel.system.SettingKey">{enabledAuth}</j>
     </e>
     <e value="/PyramusReports">
-      <j name="key" class="fi.pyramus.domainmodel.system.SettingKey">{reportsPath}</j>
+      <j name="key" class="fi.otavanopisto.pyramus.domainmodel.system.SettingKey">{reportsPath}</j>
     </e>
   </entity>
 </initialData>

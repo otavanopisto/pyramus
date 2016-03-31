@@ -44,12 +44,12 @@ import fi.otavanopisto.pyramus.events.StaffMemberCreatedEvent;
 import fi.otavanopisto.pyramus.events.StaffMemberDeletedEvent;
 import fi.otavanopisto.pyramus.events.StaffMemberUpdatedEvent;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
-import fi.pyramus.domainmodel.base.ContactInfo_;
-import fi.pyramus.domainmodel.base.ContactType_;
-import fi.pyramus.domainmodel.base.Email_;
-import fi.pyramus.domainmodel.users.StaffMember_;
-import fi.pyramus.domainmodel.users.UserVariable_;
-import fi.pyramus.domainmodel.users.User_;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactType_;
+import fi.otavanopisto.pyramus.domainmodel.base.Email_;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember_;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariable_;
+import fi.otavanopisto.pyramus.domainmodel.users.User_;
 
 @Stateless
 public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {

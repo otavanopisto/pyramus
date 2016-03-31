@@ -33,7 +33,7 @@ import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
-import fi.pyramus.domainmodel.projects.StudentProject_;
+import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject_;
 
 @Stateless
 public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {

@@ -78,7 +78,7 @@ public class Messages {
       }
     }
 
-    bundleNames.add("fi.pyramus.I18N.pyramuslocale");
+    bundleNames.add("fi.otavanopisto.pyramus.I18N.pyramuslocale");
   }
   
   private List<String> bundleNames = new ArrayList<String>();

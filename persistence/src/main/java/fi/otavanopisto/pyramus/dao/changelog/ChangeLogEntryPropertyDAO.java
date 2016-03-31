@@ -34,7 +34,7 @@ public class ChangeLogEntryPropertyDAO extends PyramusEntityDAO<ChangeLogEntryPr
       "select " +  
       "  p " +
       "from " +   
-      "  fi.pyramus.domainmodel.changelog.ChangeLogEntryProperty p " +   
+      "  fi.otavanopisto.pyramus.domainmodel.changelog.ChangeLogEntryProperty p " +   
       "where " +   
       "  p.property = :property AND " +
       "  p.entry.entityId = :entityId " +

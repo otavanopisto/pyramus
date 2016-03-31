@@ -47,8 +47,8 @@ import fi.otavanopisto.pyramus.events.CourseCreatedEvent;
 import fi.otavanopisto.pyramus.events.CourseUpdatedEvent;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 import fi.otavanopisto.pyramus.persistence.search.SearchTimeFilterMode;
-import fi.pyramus.domainmodel.base.CourseBaseVariable_;
-import fi.pyramus.domainmodel.courses.Course_;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariable_;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
 
 @Stateless
 public class CourseDAO extends PyramusEntityDAO<Course> {

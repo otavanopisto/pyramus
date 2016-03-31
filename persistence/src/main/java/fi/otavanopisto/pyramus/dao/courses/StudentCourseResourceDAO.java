@@ -13,7 +13,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.StudentCourseResource;
 import fi.otavanopisto.pyramus.domainmodel.resources.Resource;
 import fi.otavanopisto.pyramus.persistence.usertypes.MonetaryAmount;
-import fi.pyramus.domainmodel.courses.StudentCourseResource_;
+import fi.otavanopisto.pyramus.domainmodel.courses.StudentCourseResource_;
 
 @Stateless
 public class StudentCourseResourceDAO extends PyramusEntityDAO<StudentCourseResource> {

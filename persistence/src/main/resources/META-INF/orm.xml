@@ -7,7 +7,7 @@
   <persistence-unit-metadata>
     <persistence-unit-defaults>
       <entity-listeners>
-<!--         <entity-listener class="fi.pyramus.persistence.events.EntityListener"/> -->
+<!--         <entity-listener class="fi.otavanopisto.pyramus.persistence.events.EntityListener"/> -->
       </entity-listeners>
     </persistence-unit-defaults>
   </persistence-unit-metadata>

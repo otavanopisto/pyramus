@@ -14,7 +14,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule;
-import fi.pyramus.domainmodel.projects.StudentProjectModule_;
+import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule_;
 
 @Stateless
 public class StudentProjectModuleDAO extends PyramusEntityDAO<StudentProjectModule> {

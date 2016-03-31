@@ -17,7 +17,7 @@
   <description>Pyramus</description>
   <filter>
     <filter-name>TransactionTimeoutFilter</filter-name>
-    <filter-class>fi.pyramus.util.TransactionTimeoutFilter</filter-class>
+    <filter-class>fi.otavanopisto.pyramus.util.TransactionTimeoutFilter</filter-class>
     <init-param>
       <param-name>timeout</param-name>
       <param-value>6000</param-value>
@@ -29,7 +29,7 @@
   </filter-mapping>
   <filter>
     <filter-name>SessionFilter</filter-name>
-    <filter-class>fi.pyramus.util.SessionFilter</filter-class>
+    <filter-class>fi.otavanopisto.pyramus.util.SessionFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>SessionFilter</filter-name>
@@ -37,7 +37,7 @@
   </filter-mapping>
   <filter>
     <filter-name>LocaleFilter</filter-name>
-    <filter-class>fi.pyramus.util.LocaleFilter</filter-class>
+    <filter-class>fi.otavanopisto.pyramus.util.LocaleFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>LocaleFilter</filter-name>
@@ -45,7 +45,7 @@
   </filter-mapping>
   <filter>
     <filter-name>BreadcrumbFilter</filter-name>
-    <filter-class>fi.pyramus.util.BreadcrumbFilter</filter-class>
+    <filter-class>fi.otavanopisto.pyramus.util.BreadcrumbFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>BreadcrumbFilter</filter-name>
@@ -53,7 +53,7 @@
   </filter-mapping>
   <filter>
     <filter-name>EncodingFilter</filter-name>
-    <filter-class>fi.pyramus.util.EncodingFilter</filter-class>
+    <filter-class>fi.otavanopisto.pyramus.util.EncodingFilter</filter-class>
     <init-param>
       <param-name>encoding</param-name>
       <param-value>UTF-8</param-value>
@@ -65,7 +65,7 @@
   </filter-mapping>
   <filter>
     <filter-name>AccessLoggingFilter</filter-name>
-    <filter-class>fi.pyramus.util.AccessLoggingFilter</filter-class>
+    <filter-class>fi.otavanopisto.pyramus.util.AccessLoggingFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>AccessLoggingFilter</filter-name>
@@ -73,7 +73,7 @@
   </filter-mapping>
   <filter>
     <filter-name>IpFilter</filter-name>
-    <filter-class>fi.pyramus.services.utils.IpFilter</filter-class>
+    <filter-class>fi.otavanopisto.pyramus.services.utils.IpFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>IpFilter</filter-name>
@@ -81,7 +81,7 @@
   </filter-mapping>
   <filter>
     <filter-name>IpLoggingFilter</filter-name>
-    <filter-class>fi.pyramus.services.utils.IpLoggingFilter</filter-class>
+    <filter-class>fi.otavanopisto.pyramus.services.utils.IpLoggingFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>IpLoggingFilter</filter-name>
@@ -108,7 +108,7 @@
     </init-param>
     <init-param>
       <param-name>platformErrorListener</param-name>
-      <param-value>fi.pyramus.util.PyramusErrorListener</param-value>
+      <param-value>fi.otavanopisto.pyramus.util.PyramusErrorListener</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
@@ -125,7 +125,7 @@
   </servlet-mapping>
   <servlet>
     <servlet-name>freemarker</servlet-name>
-    <servlet-class>fi.pyramus.freemarker.FreemarkerServlet</servlet-class>
+    <servlet-class>fi.otavanopisto.pyramus.freemarker.FreemarkerServlet</servlet-class>
     <init-param>
       <param-name>TemplatePath</param-name>
       <param-value>class://fi/pyramus</param-value>
@@ -154,7 +154,7 @@
   </servlet>
   <servlet>
     <servlet-name>ResourceDelegate</servlet-name>
-    <servlet-class>fi.pyramus.plugin.ResourceDelegateServlet</servlet-class>
+    <servlet-class>fi.otavanopisto.pyramus.plugin.ResourceDelegateServlet</servlet-class>
     <init-param>
       <param-name>ClassPath</param-name>
       <param-value>fi/pyramus/plugin/static</param-value>
@@ -172,7 +172,7 @@
     <listener-class>freemarker.ext.jsp.EventForwarding</listener-class>
   </listener>
   <listener>
-    <listener-class>fi.pyramus.PyramusServletContextListener</listener-class>
+    <listener-class>fi.otavanopisto.pyramus.PyramusServletContextListener</listener-class>
   </listener>
   <security-constraint>
     <web-resource-collection>

@@ -13,7 +13,7 @@ import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModuleOptionality;
-import fi.pyramus.domainmodel.projects.ProjectModule_;
+import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule_;
 
 @Stateless
 public class ProjectModuleDAO extends PyramusEntityDAO<ProjectModule> {

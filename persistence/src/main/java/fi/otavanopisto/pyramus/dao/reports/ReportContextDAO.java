@@ -12,7 +12,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.reports.Report;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContext;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContextType;
-import fi.pyramus.domainmodel.reports.ReportContext_;
+import fi.otavanopisto.pyramus.domainmodel.reports.ReportContext_;
 
 @Stateless
 public class ReportContextDAO extends PyramusEntityDAO<ReportContext> {

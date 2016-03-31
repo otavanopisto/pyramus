@@ -1,4 +1,4 @@
-package fi.pyramus.plugin.mailchimp;
+package fi.otavanopisto.pyramus.plugin.mailchimp;
 
 import java.util.ArrayList;
 import java.util.List;

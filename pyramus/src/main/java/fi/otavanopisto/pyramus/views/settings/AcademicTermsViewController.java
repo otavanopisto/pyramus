@@ -19,7 +19,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 /**
  * The controller responsible of the Manage Academic Terms view of the application.
  * 
- * @see fi.pyramus.json.settings.CreateSubjectJSONRequestController
+ * @see fi.otavanopisto.pyramus.json.settings.CreateSubjectJSONRequestController
  */
 public class AcademicTermsViewController extends PyramusViewController implements Breadcrumbable {
 

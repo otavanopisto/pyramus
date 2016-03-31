@@ -4,7 +4,7 @@
   <name>Pyramus Framework</name>
 
   <parent>
-    <groupId>fi.pyramus</groupId>
+    <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
     <version>0.7.41-SNAPSHOT</version>
     <relativePath>../</relativePath>
@@ -14,12 +14,12 @@
     <!-- Pyramus -->
   
     <dependency>
-      <groupId>fi.pyramus</groupId>
+      <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>smvcj</artifactId>
     </dependency>
     
     <dependency>
-      <groupId>fi.pyramus</groupId>
+      <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>persistence</artifactId>
     </dependency>
     <dependency>

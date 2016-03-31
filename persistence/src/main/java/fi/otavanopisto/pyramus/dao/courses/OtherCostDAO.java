@@ -12,7 +12,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.OtherCost;
 import fi.otavanopisto.pyramus.persistence.usertypes.MonetaryAmount;
-import fi.pyramus.domainmodel.courses.OtherCost_;
+import fi.otavanopisto.pyramus.domainmodel.courses.OtherCost_;
 
 @Stateless
 public class OtherCostDAO extends PyramusEntityDAO<OtherCost> {

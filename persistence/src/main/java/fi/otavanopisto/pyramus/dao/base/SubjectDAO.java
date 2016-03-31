@@ -25,7 +25,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
-import fi.pyramus.domainmodel.base.Subject_;
+import fi.otavanopisto.pyramus.domainmodel.base.Subject_;
 
 @Stateless
 public class SubjectDAO extends PyramusEntityDAO<Subject> {

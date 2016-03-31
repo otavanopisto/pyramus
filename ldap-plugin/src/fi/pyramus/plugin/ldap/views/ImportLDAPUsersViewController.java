@@ -1,4 +1,4 @@
-package fi.pyramus.plugin.ldap.views;
+package fi.otavanopisto.pyramus.plugin.ldap.views;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,14 +15,14 @@ import com.novell.ldap.LDAPSearchResults;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
-import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.base.EmailDAO;
-import fi.pyramus.dao.users.UserDAO;
-import fi.pyramus.domainmodel.users.Role;
-import fi.pyramus.domainmodel.users.User;
-import fi.pyramus.framework.PyramusFormViewController;
-import fi.pyramus.framework.UserRole;
-import fi.pyramus.plugin.ldap.LDAPUtils;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.EmailDAO;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.framework.PyramusFormViewController;
+import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.plugin.ldap.LDAPUtils;
 
 public class ImportLDAPUsersViewController extends PyramusFormViewController {
 

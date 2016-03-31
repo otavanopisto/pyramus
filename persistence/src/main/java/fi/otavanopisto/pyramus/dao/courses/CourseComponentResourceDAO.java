@@ -12,7 +12,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseComponent;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseComponentResource;
 import fi.otavanopisto.pyramus.domainmodel.resources.Resource;
-import fi.pyramus.domainmodel.courses.CourseComponentResource_;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseComponentResource_;
 
 @Stateless
 public class CourseComponentResourceDAO extends PyramusEntityDAO<CourseComponentResource> {

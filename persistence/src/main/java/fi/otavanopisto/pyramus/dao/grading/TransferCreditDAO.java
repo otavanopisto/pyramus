@@ -19,7 +19,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.pyramus.domainmodel.grading.TransferCredit_;
+import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit_;
 
 @Stateless
 public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {

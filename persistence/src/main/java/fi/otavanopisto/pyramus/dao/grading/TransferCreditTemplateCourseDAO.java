@@ -28,7 +28,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditTemplate;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditTemplateCourse;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
-import fi.pyramus.domainmodel.grading.TransferCreditTemplateCourse_;
+import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditTemplateCourse_;
 
 @Stateless
 public class TransferCreditTemplateCourseDAO extends PyramusEntityDAO<TransferCreditTemplateCourse> {

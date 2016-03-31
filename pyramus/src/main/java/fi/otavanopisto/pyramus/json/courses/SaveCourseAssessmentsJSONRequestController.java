@@ -22,7 +22,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 /**
  * The controller responsible of saving course assessments.
  * 
- * @see fi.pyramus.views.modules.EditCourseViewController
+ * @see fi.otavanopisto.pyramus.views.modules.EditCourseViewController
  */
 public class SaveCourseAssessmentsJSONRequestController extends JSONRequestController {
 

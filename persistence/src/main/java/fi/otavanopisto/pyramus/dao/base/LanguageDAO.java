@@ -8,7 +8,7 @@ import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
-import fi.pyramus.domainmodel.base.Language_;
+import fi.otavanopisto.pyramus.domainmodel.base.Language_;
 
 @Stateless
 public class LanguageDAO extends PyramusEntityDAO<Language> {

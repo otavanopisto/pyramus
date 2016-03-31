@@ -8,7 +8,7 @@ import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
-import fi.pyramus.domainmodel.users.InternalAuth_;
+import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth_;
 
 @Stateless
 public class InternalAuthDAO extends PyramusEntityDAO<InternalAuth> {

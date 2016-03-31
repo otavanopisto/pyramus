@@ -14,7 +14,7 @@ import fi.otavanopisto.pyramus.domainmodel.file.FileType;
 import fi.otavanopisto.pyramus.domainmodel.file.StudentFile;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.pyramus.domainmodel.file.StudentFile_;
+import fi.otavanopisto.pyramus.domainmodel.file.StudentFile_;
 
 @Stateless
 public class StudentFileDAO extends PyramusEntityDAO<StudentFile> {

@@ -1,13 +1,13 @@
-package fi.pyramus.plugin.simple;
+package fi.otavanopisto.pyramus.plugin.simple;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import fi.pyramus.plugin.PluginDescriptor;
-import fi.pyramus.plugin.simple.auth.SimpleAuthenticationProvider;
-import fi.pyramus.plugin.simple.hooks.EditCourseSimpleTabHook;
-import fi.pyramus.plugin.simple.hooks.EditCourseSimpleTabLabelHook;
-import fi.pyramus.plugin.simple.views.LoggedUserInfoViewController;
+import fi.otavanopisto.pyramus.plugin.PluginDescriptor;
+import fi.otavanopisto.pyramus.plugin.simple.auth.SimpleAuthenticationProvider;
+import fi.otavanopisto.pyramus.plugin.simple.hooks.EditCourseSimpleTabHook;
+import fi.otavanopisto.pyramus.plugin.simple.hooks.EditCourseSimpleTabLabelHook;
+import fi.otavanopisto.pyramus.plugin.simple.views.LoggedUserInfoViewController;
 
 /** The descriptor that exposes the plugin's functionality to host program.
  *
@@ -80,6 +80,6 @@ public class SimplePluginDescriptor implements PluginDescriptor {
    * @return The base path for the localization strings for this plugin.
    */
   public String getMessagesBundlePath() {
-    return "fi.pyramus.plugin.simple.messages";
+    return "fi.otavanopisto.pyramus.plugin.simple.messages";
   }
 }

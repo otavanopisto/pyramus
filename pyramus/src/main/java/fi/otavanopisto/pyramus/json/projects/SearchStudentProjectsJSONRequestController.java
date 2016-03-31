@@ -20,7 +20,7 @@ import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 /**
  * The controller responsible of searching projects.
  * 
- * @see fi.pyramus.views.modules.SearchProjectsViewController
+ * @see fi.otavanopisto.pyramus.views.modules.SearchProjectsViewController
  */
 public class SearchStudentProjectsJSONRequestController extends JSONRequestController {
 

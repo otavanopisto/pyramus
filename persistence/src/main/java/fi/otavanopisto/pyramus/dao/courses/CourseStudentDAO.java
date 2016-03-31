@@ -26,9 +26,9 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.events.CourseStudentArchivedEvent;
 import fi.otavanopisto.pyramus.events.CourseStudentCreatedEvent;
 import fi.otavanopisto.pyramus.events.CourseStudentUpdatedEvent;
-import fi.pyramus.domainmodel.courses.CourseStudent_;
-import fi.pyramus.domainmodel.courses.Course_;
-import fi.pyramus.domainmodel.students.Student_;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
+import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 
 @Stateless
 public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {

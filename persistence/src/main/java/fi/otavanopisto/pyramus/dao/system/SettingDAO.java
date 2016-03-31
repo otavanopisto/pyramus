@@ -9,7 +9,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
-import fi.pyramus.domainmodel.system.Setting_;
+import fi.otavanopisto.pyramus.domainmodel.system.Setting_;
 
 @Stateless
 public class SettingDAO extends PyramusEntityDAO<Setting> {

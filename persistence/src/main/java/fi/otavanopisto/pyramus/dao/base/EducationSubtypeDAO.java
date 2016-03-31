@@ -11,7 +11,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
-import fi.pyramus.domainmodel.base.EducationSubtype_;
+import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype_;
 
 @Stateless
 public class EducationSubtypeDAO extends PyramusEntityDAO<EducationSubtype> {

@@ -16,7 +16,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariable;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariableKey;
-import fi.pyramus.domainmodel.base.SchoolVariable_;
+import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariable_;
 
 @Stateless
 public class SchoolVariableDAO extends PyramusEntityDAO<SchoolVariable> {

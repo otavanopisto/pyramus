@@ -16,7 +16,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 /**
  * The controller responsible of the Manage CourseDescrptionCategories view of the application.
  * 
- * @see fi.pyramus.json.settings.SaveCourseDescrptionCategoriesJSONRequestController
+ * @see fi.otavanopisto.pyramus.json.settings.SaveCourseDescrptionCategoriesJSONRequestController
  */
 public class CourseDescriptionCategoriesViewController extends PyramusViewController implements Breadcrumbable {
 

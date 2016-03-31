@@ -14,7 +14,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditVariable;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditVariableKey;
-import fi.pyramus.domainmodel.grading.CreditVariable_;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditVariable_;
 
 @Stateless
 public class CreditVariableDAO extends PyramusEntityDAO<CreditVariable> {

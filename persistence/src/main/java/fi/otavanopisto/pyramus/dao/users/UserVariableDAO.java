@@ -16,7 +16,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
-import fi.pyramus.domainmodel.users.UserVariable_;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariable_;
 
 @Stateless
 public class UserVariableDAO extends PyramusEntityDAO<UserVariable> {

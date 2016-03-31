@@ -8,7 +8,7 @@ import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.accesslog.AccessLogEntryPath;
-import fi.pyramus.domainmodel.accesslog.AccessLogEntryPath_;
+import fi.otavanopisto.pyramus.domainmodel.accesslog.AccessLogEntryPath_;
 
 @Stateless
 public class AccessLogEntryPathDAO extends PyramusEntityDAO<AccessLogEntryPath> {

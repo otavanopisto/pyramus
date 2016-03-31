@@ -1,11 +1,11 @@
-package fi.pyramus.plugin.ldap;
+package fi.otavanopisto.pyramus.plugin.ldap;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import fi.pyramus.plugin.PluginDescriptor;
-import fi.pyramus.plugin.ldap.hooks.ImportLDAPUsersMenuHook;
-import fi.pyramus.plugin.ldap.views.ImportLDAPUsersViewController;
+import fi.otavanopisto.pyramus.plugin.PluginDescriptor;
+import fi.otavanopisto.pyramus.plugin.ldap.hooks.ImportLDAPUsersMenuHook;
+import fi.otavanopisto.pyramus.plugin.ldap.views.ImportLDAPUsersViewController;
 
 public class LDAPPluginDescriptor implements PluginDescriptor {
   
@@ -52,6 +52,6 @@ public class LDAPPluginDescriptor implements PluginDescriptor {
   
   @Override
   public String getMessagesBundlePath() {
-    return "fi.pyramus.plugin.ldap.messages";
+    return "fi.otavanopisto.pyramus.plugin.ldap.messages";
   }
 }

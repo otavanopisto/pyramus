@@ -9,7 +9,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
-import fi.pyramus.domainmodel.base.CourseBaseVariableKey_;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey_;
 
 @Stateless
 public class CourseBaseVariableKeyDAO extends PyramusEntityDAO<CourseBaseVariableKey> {

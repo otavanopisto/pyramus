@@ -10,7 +10,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAuthorizationCode;
-import fi.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken_;
+import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken_;
 
 @Stateless
 public class ClientApplicationAccessTokenDAO extends PyramusEntityDAO<ClientApplicationAccessToken> {

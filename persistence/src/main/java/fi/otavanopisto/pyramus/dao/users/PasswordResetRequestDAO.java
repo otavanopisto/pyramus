@@ -12,7 +12,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.PasswordResetRequest;
-import fi.pyramus.domainmodel.users.PasswordResetRequest_;
+import fi.otavanopisto.pyramus.domainmodel.users.PasswordResetRequest_;
 
 @Stateless
 public class PasswordResetRequestDAO extends PyramusEntityDAO<PasswordResetRequest> {

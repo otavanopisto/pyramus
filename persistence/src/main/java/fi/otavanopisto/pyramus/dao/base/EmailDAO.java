@@ -10,7 +10,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
-import fi.pyramus.domainmodel.base.Email_;
+import fi.otavanopisto.pyramus.domainmodel.base.Email_;
 
 @Stateless
 public class EmailDAO extends PyramusEntityDAO<Email> {

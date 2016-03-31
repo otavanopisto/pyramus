@@ -97,7 +97,7 @@
     <listener-class>org.eclipse.birt.report.listener.ViewerServletContextListener</listener-class>
   </listener>
   <listener>
-    <listener-class>fi.pyramus.reports.PyramusReportsServletContextListener</listener-class>
+    <listener-class>fi.otavanopisto.pyramus.reports.PyramusReportsServletContextListener</listener-class>
   </listener>
   <servlet>
     <servlet-name>EngineServlet</servlet-name>
@@ -115,7 +115,7 @@
   </filter>
   <filter>
     <filter-name>PrepareReportFilter</filter-name>
-    <filter-class>fi.pyramus.reports.viewer.PrepareReportFilter</filter-class>
+    <filter-class>fi.otavanopisto.pyramus.reports.viewer.PrepareReportFilter</filter-class>
   </filter>
   <servlet-mapping>
     <servlet-name>EngineServlet</servlet-name>

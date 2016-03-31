@@ -8,7 +8,7 @@ import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
-import fi.pyramus.domainmodel.base.Nationality_;
+import fi.otavanopisto.pyramus.domainmodel.base.Nationality_;
 
 @Stateless
 public class NationalityDAO extends PyramusEntityDAO<Nationality> {

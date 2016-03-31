@@ -11,7 +11,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
-import fi.pyramus.domainmodel.base.StudyProgrammeCategory_;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory_;
 
 @Stateless
 public class StudyProgrammeCategoryDAO extends PyramusEntityDAO<StudyProgrammeCategory> {

@@ -43,9 +43,9 @@ import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.domainmodel.projects.ProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
-import fi.pyramus.domainmodel.base.CourseBase_;
-import fi.pyramus.domainmodel.base.CourseEducationType_;
-import fi.pyramus.domainmodel.modules.Module_;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBase_;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType_;
+import fi.otavanopisto.pyramus.domainmodel.modules.Module_;
 
 @Stateless
 public class ModuleDAO extends PyramusEntityDAO<Module> {

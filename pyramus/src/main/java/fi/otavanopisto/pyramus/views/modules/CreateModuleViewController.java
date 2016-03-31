@@ -27,7 +27,7 @@ import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 /**
  * The controller responsible of the Create Module view of the application.
  * 
- * @see fi.pyramus.json.users.CreateGradingScaleJSONRequestController
+ * @see fi.otavanopisto.pyramus.json.users.CreateGradingScaleJSONRequestController
  */
 public class CreateModuleViewController extends PyramusViewController implements Breadcrumbable {
 

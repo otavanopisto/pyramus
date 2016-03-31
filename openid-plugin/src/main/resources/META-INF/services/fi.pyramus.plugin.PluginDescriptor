@@ -1,1 +1,1 @@
-fi.pyramus.plugin.openid.OpenIdPluginDescriptor # OpenID authorization plugin descriptor for Pyramus
+fi.otavanopisto.pyramus.plugin.openid.OpenIdPluginDescriptor # OpenID authorization plugin descriptor for Pyramus

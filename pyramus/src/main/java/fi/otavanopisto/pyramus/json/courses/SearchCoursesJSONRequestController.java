@@ -31,7 +31,7 @@ import fi.otavanopisto.pyramus.persistence.search.SearchTimeFilterMode;
 /**
  * The controller responsible of searching courses.
  * 
- * @see fi.pyramus.views.modules.SearchCoursesViewController
+ * @see fi.otavanopisto.pyramus.views.modules.SearchCoursesViewController
  */
 public class SearchCoursesJSONRequestController extends JSONRequestController {
 

@@ -16,8 +16,8 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.pyramus.domainmodel.grading.CreditLink_;
-import fi.pyramus.domainmodel.grading.Credit_;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink_;
+import fi.otavanopisto.pyramus.domainmodel.grading.Credit_;
 
 @Stateless
 public class CreditLinkDAO extends PyramusEntityDAO<CreditLink> {

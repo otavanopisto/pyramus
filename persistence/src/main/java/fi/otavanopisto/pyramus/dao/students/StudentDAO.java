@@ -43,10 +43,10 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.events.StudentArchivedEvent;
 import fi.otavanopisto.pyramus.events.StudentCreatedEvent;
 import fi.otavanopisto.pyramus.events.StudentUpdatedEvent;
-import fi.pyramus.domainmodel.base.ContactInfo_;
-import fi.pyramus.domainmodel.base.Email_;
-import fi.pyramus.domainmodel.students.Student_;
-import fi.pyramus.domainmodel.users.UserVariable_;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
+import fi.otavanopisto.pyramus.domainmodel.base.Email_;
+import fi.otavanopisto.pyramus.domainmodel.students.Student_;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariable_;
 
 @Stateless
 public class StudentDAO extends PyramusEntityDAO<Student> {

@@ -13,8 +13,8 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescription;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescriptionCategory;
-import fi.pyramus.domainmodel.courses.CourseDescriptionCategory_;
-import fi.pyramus.domainmodel.courses.CourseDescription_;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescriptionCategory_;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescription_;
 
 @Stateless
 public class CourseDescriptionDAO extends PyramusEntityDAO<CourseDescription> {

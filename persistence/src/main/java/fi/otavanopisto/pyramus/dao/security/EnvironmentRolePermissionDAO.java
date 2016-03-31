@@ -11,7 +11,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.security.EnvironmentRolePermission;
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
-import fi.pyramus.domainmodel.security.EnvironmentRolePermission_;
+import fi.otavanopisto.pyramus.domainmodel.security.EnvironmentRolePermission_;
 
 @Dependent
 @Stateless

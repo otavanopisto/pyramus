@@ -35,7 +35,7 @@ public class SearchStudentsViewController extends PyramusViewController implemen
   /**
    * Returns roles that are allowed to use this resource.
    *  
-   * @see fi.fi.pyramus.framework.PyramusViewController#getAllowedRoles()
+   * @see fi.fi.otavanopisto.pyramus.framework.PyramusViewController#getAllowedRoles()
    */
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.MANAGER, UserRole.ADMINISTRATOR };

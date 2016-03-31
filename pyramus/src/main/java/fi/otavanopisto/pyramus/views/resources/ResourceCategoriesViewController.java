@@ -19,7 +19,7 @@ import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 /**
  * The controller responsible of the Manage Resource Categories view of the application.
  * 
- * @see fi.pyramus.json.settings.SaveResourceCategoriesJSONRequestController
+ * @see fi.otavanopisto.pyramus.json.settings.SaveResourceCategoriesJSONRequestController
  */
 public class ResourceCategoriesViewController extends PyramusViewController implements Breadcrumbable {
 

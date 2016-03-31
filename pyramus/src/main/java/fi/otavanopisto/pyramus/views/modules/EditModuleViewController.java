@@ -37,7 +37,7 @@ import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 /**
  * The controller responsible of the Edit Module view of the application.
  * 
- * @see fi.pyramus.json.users.EditModuleJSONRequestController
+ * @see fi.otavanopisto.pyramus.json.users.EditModuleJSONRequestController
  */
 public class EditModuleViewController extends PyramusViewController implements Breadcrumbable {
 

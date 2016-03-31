@@ -1,4 +1,4 @@
-package fi.pyramus.plugin.ldap;
+package fi.otavanopisto.pyramus.plugin.ldap;
 
 import java.io.UnsupportedEncodingException;
 
@@ -9,11 +9,11 @@ import com.novell.ldap.LDAPSearchResults;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.StatusCode;
-import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
-import fi.pyramus.domainmodel.users.User;
-import fi.pyramus.plugin.auth.AuthenticationException;
-import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.plugin.auth.AuthenticationException;
+import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 
 /**
  * An authorization provider using a LDAP directory

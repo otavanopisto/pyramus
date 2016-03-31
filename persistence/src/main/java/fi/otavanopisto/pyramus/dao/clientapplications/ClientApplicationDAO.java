@@ -8,7 +8,7 @@ import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
-import fi.pyramus.domainmodel.clientapplications.ClientApplication_;
+import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication_;
 
 @Stateless
 public class ClientApplicationDAO extends PyramusEntityDAO<ClientApplication> {

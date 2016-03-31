@@ -51,7 +51,7 @@ import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 /**
  * The controller responsible of the Edit Course view of the application.
  * 
- * @see fi.pyramus.json.users.CreateGradingScaleJSONRequestController
+ * @see fi.otavanopisto.pyramus.json.users.CreateGradingScaleJSONRequestController
  */
 public class EditCourseViewController extends PyramusViewController implements Breadcrumbable {
 

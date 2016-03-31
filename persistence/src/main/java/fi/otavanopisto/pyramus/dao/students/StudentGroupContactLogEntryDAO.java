@@ -13,7 +13,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupContactLogEntry;
-import fi.pyramus.domainmodel.students.StudentGroupContactLogEntry_;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupContactLogEntry_;
 
 @Stateless
 public class StudentGroupContactLogEntryDAO extends PyramusEntityDAO<StudentGroupContactLogEntry> {

@@ -9,7 +9,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.reports.Report;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportCategory;
-import fi.pyramus.domainmodel.reports.Report_;
+import fi.otavanopisto.pyramus.domainmodel.reports.Report_;
 
 @Stateless
 public class ReportCategoryDAO extends PyramusEntityDAO<ReportCategory> {

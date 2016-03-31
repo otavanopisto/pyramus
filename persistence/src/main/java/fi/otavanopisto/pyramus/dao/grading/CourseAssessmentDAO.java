@@ -18,9 +18,9 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.pyramus.domainmodel.courses.CourseStudent_;
-import fi.pyramus.domainmodel.courses.Course_;
-import fi.pyramus.domainmodel.grading.CourseAssessment_;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment_;
 
 @Stateless
 public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {

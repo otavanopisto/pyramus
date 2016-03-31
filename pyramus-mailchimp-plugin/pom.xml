@@ -4,7 +4,7 @@
   <name>Pyramus MailChimp plugin</name>
 
   <parent>
-    <groupId>fi.pyramus</groupId>
+    <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
     <version>0.6.7-SNAPSHOT</version>
     <relativePath>../</relativePath>
@@ -12,7 +12,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>fi.pyramus</groupId>
+      <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>plugin-core</artifactId>
       <scope>provided</scope>
     </dependency>

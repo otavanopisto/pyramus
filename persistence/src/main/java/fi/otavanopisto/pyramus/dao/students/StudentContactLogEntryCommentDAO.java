@@ -12,7 +12,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
-import fi.pyramus.domainmodel.students.StudentContactLogEntryComment_;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment_;
 
 @Stateless
 public class StudentContactLogEntryCommentDAO extends PyramusEntityDAO<StudentContactLogEntryComment> {

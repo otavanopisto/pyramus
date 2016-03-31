@@ -1,4 +1,4 @@
-package fi.pyramus.plugin.mailchimp;
+package fi.otavanopisto.pyramus.plugin.mailchimp;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,10 +21,10 @@ import com.ecwid.mailchimp.method.v2_0.lists.MemberInfoData;
 import com.ecwid.mailchimp.method.v2_0.lists.MembersMethod;
 import com.ecwid.mailchimp.method.v2_0.lists.MembersResult;
 
-import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.students.StudentDAO;
-import fi.pyramus.domainmodel.base.StudyProgramme;
-import fi.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
 public class MailChimpSyncUtils {
 
@@ -45,7 +45,7 @@ public class MailChimpSyncUtils {
       for (Student student : students) {
         // Students with secure info flag are skipped 
         if (!student.getAbstractStudent().getSecureInfo()) {
-          fi.pyramus.domainmodel.base.Email defaultEmail = student.getDefaultEmail();
+          fi.otavanopisto.pyramus.domainmodel.base.Email defaultEmail = student.getDefaultEmail();
           if (defaultEmail != null) {
             String email = defaultEmail.getAddress();
             if (StringUtils.isNotBlank(email)) {

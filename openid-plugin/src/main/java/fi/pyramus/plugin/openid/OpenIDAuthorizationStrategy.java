@@ -1,4 +1,4 @@
-package fi.pyramus.plugin.openid;
+package fi.otavanopisto.pyramus.plugin.openid;
 
 import java.util.List;
 
@@ -22,12 +22,12 @@ import org.openid4java.message.ax.FetchResponse;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.RequestContext;
-import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
-import fi.pyramus.dao.users.UserVariableDAO;
-import fi.pyramus.domainmodel.users.User;
-import fi.pyramus.plugin.auth.AuthenticationException;
-import fi.pyramus.plugin.auth.ExternalAuthenticationProvider;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.plugin.auth.AuthenticationException;
+import fi.otavanopisto.pyramus.plugin.auth.ExternalAuthenticationProvider;
 
 public class OpenIDAuthorizationStrategy implements ExternalAuthenticationProvider {
 

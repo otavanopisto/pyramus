@@ -8,7 +8,7 @@ import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
-import fi.pyramus.domainmodel.base.Tag_;
+import fi.otavanopisto.pyramus.domainmodel.base.Tag_;
 
 @Stateless
 public class TagDAO extends PyramusEntityDAO<Tag> {

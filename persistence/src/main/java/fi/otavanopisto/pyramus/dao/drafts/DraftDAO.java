@@ -13,7 +13,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.drafts.FormDraft;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.pyramus.domainmodel.drafts.FormDraft_;
+import fi.otavanopisto.pyramus.domainmodel.drafts.FormDraft_;
 
 @Stateless
 public class DraftDAO extends PyramusEntityDAO<FormDraft> {

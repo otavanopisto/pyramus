@@ -9,7 +9,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentImage;
-import fi.pyramus.domainmodel.students.StudentImage_;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentImage_;
 
 @Stateless
 public class StudentImageDAO extends PyramusEntityDAO<StudentImage> {

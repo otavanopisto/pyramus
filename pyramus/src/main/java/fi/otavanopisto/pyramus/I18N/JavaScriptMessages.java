@@ -73,7 +73,7 @@ public class JavaScriptMessages {
   }
   
   private void loadBundleNames() {
-    bundleNames.add("fi.pyramus.I18N.javascriptlocale");
+    bundleNames.add("fi.otavanopisto.pyramus.I18N.javascriptlocale");
     // TODO: how about plugins
   }
   

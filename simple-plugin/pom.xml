@@ -3,7 +3,7 @@
   <name>Pyramus Simple Plugin</name>
   <artifactId>simple-plugin</artifactId>
   <parent>
-    <groupId>fi.pyramus</groupId>
+    <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
     <version>0.6.7-SNAPSHOT</version>
     <relativePath>../</relativePath>
@@ -21,11 +21,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>fi.pyramus</groupId>
+      <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>persistence</artifactId>
     </dependency>
     <dependency>
-      <groupId>fi.pyramus</groupId>
+      <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>plugin-core</artifactId>
     </dependency>
     <dependency>

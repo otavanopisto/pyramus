@@ -11,7 +11,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 /**
  * The controller responsible of the Create Grading Scale view of the application.
  * 
- * @see fi.pyramus.json.users.CreateGradingScaleJSONRequestController
+ * @see fi.otavanopisto.pyramus.json.users.CreateGradingScaleJSONRequestController
  */
 public class CreateGradingScaleViewController extends PyramusViewController implements Breadcrumbable {
 
