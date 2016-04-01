@@ -1,11 +1,11 @@
-package fi.pyramus.plugin.simple.auth;
+package fi.otavanopisto.pyramus.plugin.simple.auth;
 
-import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
-import fi.pyramus.domainmodel.users.User;
-import fi.pyramus.plugin.auth.InternalAuthenticationProvider;
-import fi.pyramus.plugin.simple.dao.SimpleAuthDAO;
-import fi.pyramus.plugin.simple.domainmodel.users.SimpleAuth;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.otavanopisto.pyramus.plugin.simple.dao.SimpleAuthDAO;
+import fi.otavanopisto.pyramus.plugin.simple.domainmodel.users.SimpleAuth;
 
 /** A simple user/password authentication provider. */
 @SuppressWarnings("unused")

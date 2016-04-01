@@ -11,7 +11,7 @@
   
   <tag>
     <name>extensionHook</name>
-    <tag-class>fi.pyramus.taglib.ExtensionHookTag</tag-class>
+    <tag-class>fi.otavanopisto.pyramus.taglib.ExtensionHookTag</tag-class>
     <body-content>empty</body-content>
     <attribute>
       <name>name</name>

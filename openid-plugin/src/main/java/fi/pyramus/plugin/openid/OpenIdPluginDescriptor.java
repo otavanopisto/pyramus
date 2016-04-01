@@ -1,9 +1,9 @@
-package fi.pyramus.plugin.openid;
+package fi.otavanopisto.pyramus.plugin.openid;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import fi.pyramus.plugin.PluginDescriptor;
+import fi.otavanopisto.pyramus.plugin.PluginDescriptor;
 
 public class OpenIdPluginDescriptor implements PluginDescriptor {
   

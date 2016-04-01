@@ -1,7 +1,7 @@
-package fi.pyramus.plugin.ldap.hooks;
+package fi.otavanopisto.pyramus.plugin.ldap.hooks;
 
-import fi.pyramus.plugin.PageHookContext;
-import fi.pyramus.plugin.PageHookController;
+import fi.otavanopisto.pyramus.plugin.PageHookContext;
+import fi.otavanopisto.pyramus.plugin.PageHookController;
 
 public class ImportLDAPUsersMenuHook implements PageHookController {
   

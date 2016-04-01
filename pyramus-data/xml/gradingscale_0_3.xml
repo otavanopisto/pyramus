@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <initialData>
   
-  <entity package="fi.pyramus.domainmodel.grading" class="GradingScale">
+  <entity package="fi.otavanopisto.pyramus.domainmodel.grading" class="GradingScale">
     <e name="0 - 3" description="Ammattikouluissa käytössä oleva järjestelmä">
       <list name="grades" method="addGrade">
         <e name="0" passingGrade="false" qualification="Hylätty">
-          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+          <j name="gradingScale" class="fi.otavanopisto.pyramus.domainmodel.grading.GradingScale">PARENT</j>
         </e>
         <e name="1" passingGrade="true" qualification="Tyydyttävä">
-          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+          <j name="gradingScale" class="fi.otavanopisto.pyramus.domainmodel.grading.GradingScale">PARENT</j>
         </e>
         <e name="2" passingGrade="true" qualification="Hyvä">
-          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+          <j name="gradingScale" class="fi.otavanopisto.pyramus.domainmodel.grading.GradingScale">PARENT</j>
         </e>
         <e name="3" passingGrade="true" qualification="Kiitettävä">
-          <j name="gradingScale" class="fi.pyramus.domainmodel.grading.GradingScale">PARENT</j>
+          <j name="gradingScale" class="fi.otavanopisto.pyramus.domainmodel.grading.GradingScale">PARENT</j>
         </e>
       </list>
     </e>

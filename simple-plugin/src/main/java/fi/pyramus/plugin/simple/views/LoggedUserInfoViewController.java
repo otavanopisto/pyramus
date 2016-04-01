@@ -1,13 +1,13 @@
-package fi.pyramus.plugin.simple.views;
+package fi.otavanopisto.pyramus.plugin.simple.views;
 
 import fi.internetix.smvc.AccessDeniedException;
 import fi.internetix.smvc.LoginRequiredException;
 import fi.internetix.smvc.controllers.PageController;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
-import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.users.UserDAO;
-import fi.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 /**
  * The controller responsible of the Logged User Info view of the application.

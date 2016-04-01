@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>fi.pyramus</groupId>
+  <groupId>fi.otavanopisto.pyramus</groupId>
   <artifactId>bom</artifactId>
   <version>0.7.41-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -274,79 +274,79 @@
       <!-- Pyramus -->
   
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>pyramus-webhooks</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
   
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>persistence</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
       
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>rest-model</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
       
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>rest</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
       
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>common</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
       
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>framework</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>openid-plugin</artifactId>
         <version>${pyramus.version}</version>
       </dependency>    
       
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>googleoauth-plugin</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
       
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>plugin-core</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
       
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>pyramus</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
       
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>reports</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
       
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>webservices-plugin</artifactId>
         <version>${pyramus.version}</version>
       </dependency>
       
       <dependency>
-        <groupId>fi.pyramus</groupId>
+        <groupId>fi.otavanopisto.pyramus</groupId>
         <artifactId>smvcj</artifactId>
         <version>${pyramus.version}</version>
       </dependency>

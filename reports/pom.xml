@@ -5,7 +5,7 @@
   <packaging>war</packaging>
 
   <parent>
-    <groupId>fi.pyramus</groupId>
+    <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
     <version>0.7.41-SNAPSHOT</version>
     <relativePath>../</relativePath>

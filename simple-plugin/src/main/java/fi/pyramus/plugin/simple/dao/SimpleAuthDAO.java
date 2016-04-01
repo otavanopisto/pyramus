@@ -1,13 +1,13 @@
-package fi.pyramus.plugin.simple.dao;
+package fi.otavanopisto.pyramus.plugin.simple.dao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import fi.pyramus.dao.PyramusEntityDAO;
-import fi.pyramus.plugin.simple.domainmodel.users.SimpleAuth;
-import fi.pyramus.plugin.simple.domainmodel.users.SimpleAuth_;
+import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.plugin.simple.domainmodel.users.SimpleAuth;
+import fi.otavanopisto.pyramus.plugin.simple.domainmodel.users.SimpleAuth_;
 
 /** A data access object for the SimplePlugin authorization provider.
  * 

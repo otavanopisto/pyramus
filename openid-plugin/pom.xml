@@ -4,7 +4,7 @@
   <name>Pyramus OpenId Plugin</name>
 
   <parent>
-    <groupId>fi.pyramus</groupId>
+    <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
     <version>0.7.4-SNAPSHOT</version>
     <relativePath>../</relativePath>
@@ -22,19 +22,19 @@
     <!-- Pyramus -->
     
     <dependency>
-      <groupId>fi.pyramus</groupId>
+      <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>smvcj</artifactId>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
-      <groupId>fi.pyramus</groupId>
+      <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>persistence</artifactId>
       <scope>provided</scope>
     </dependency>    
     
     <dependency>
-      <groupId>fi.pyramus</groupId>
+      <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>plugin-core</artifactId>
       <scope>provided</scope>
     </dependency>

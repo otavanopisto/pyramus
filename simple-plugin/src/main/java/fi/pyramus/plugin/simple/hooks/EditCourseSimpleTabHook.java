@@ -1,7 +1,7 @@
-package fi.pyramus.plugin.simple.hooks;
+package fi.otavanopisto.pyramus.plugin.simple.hooks;
 
-import fi.pyramus.plugin.PageHookContext;
-import fi.pyramus.plugin.PageHookController;
+import fi.otavanopisto.pyramus.plugin.PageHookContext;
+import fi.otavanopisto.pyramus.plugin.PageHookController;
 
 /**
  * The controller responsible of the Edit Course tab hook of the application.

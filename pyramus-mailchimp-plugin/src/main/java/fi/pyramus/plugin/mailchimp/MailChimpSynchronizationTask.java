@@ -1,4 +1,4 @@
-package fi.pyramus.plugin.mailchimp;
+package fi.otavanopisto.pyramus.plugin.mailchimp;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,16 +9,16 @@ import org.apache.commons.lang.StringUtils;
 import com.ecwid.mailchimp.MailChimpClient;
 import com.ecwid.mailchimp.MailChimpException;
 
-import fi.pyramus.dao.DAOFactory;
-import fi.pyramus.dao.base.StudyProgrammeDAO;
-import fi.pyramus.dao.system.SettingDAO;
-import fi.pyramus.dao.system.SettingKeyDAO;
-import fi.pyramus.domainmodel.base.StudyProgramme;
-import fi.pyramus.domainmodel.system.Setting;
-import fi.pyramus.domainmodel.system.SettingKey;
-import fi.pyramus.plugin.scheduler.ScheduledPluginTask;
-import fi.pyramus.plugin.scheduler.ScheduledTaskException;
-import fi.pyramus.plugin.scheduler.ScheduledTaskInterval;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.dao.system.SettingDAO;
+import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
+import fi.otavanopisto.pyramus.domainmodel.system.Setting;
+import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
+import fi.otavanopisto.pyramus.plugin.scheduler.ScheduledPluginTask;
+import fi.otavanopisto.pyramus.plugin.scheduler.ScheduledTaskException;
+import fi.otavanopisto.pyramus.plugin.scheduler.ScheduledTaskInterval;
 
 public class MailChimpSynchronizationTask implements ScheduledPluginTask {
   

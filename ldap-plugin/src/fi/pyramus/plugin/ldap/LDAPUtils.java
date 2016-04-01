@@ -1,4 +1,4 @@
-package fi.pyramus.plugin.ldap;
+package fi.otavanopisto.pyramus.plugin.ldap;
 
 import java.io.UnsupportedEncodingException;
 
