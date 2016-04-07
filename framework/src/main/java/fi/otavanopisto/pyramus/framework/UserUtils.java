@@ -16,6 +16,9 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 public class UserUtils {
 
+  private UserUtils() {
+  }
+
   /**
    * Is email address allowed (not in use)
    * 

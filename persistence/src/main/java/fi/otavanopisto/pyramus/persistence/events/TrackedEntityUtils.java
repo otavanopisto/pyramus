@@ -12,6 +12,9 @@ import fi.otavanopisto.pyramus.domainmodel.changelog.TrackedEntityProperty;
 
 public class TrackedEntityUtils {
 
+  private TrackedEntityUtils() {
+  }
+
   public synchronized static boolean isTrackedEntity(String entityName) {
     return getTrackedEntityMap().get(entityName) != null;
   }

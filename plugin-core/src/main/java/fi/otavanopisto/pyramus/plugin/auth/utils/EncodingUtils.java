@@ -11,6 +11,9 @@ import org.apache.commons.lang.StringUtils;
  */
 public class EncodingUtils {
 
+  private EncodingUtils() {
+  }
+
   /** Calculate the MD5 sum of a string.
    * 
    * @param s The string to encode.
