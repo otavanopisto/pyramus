@@ -135,8 +135,8 @@ public class AuthenticationProviderVault {
     for (PluginDescriptor plugin : plugins) {
       if (plugin.getAuthenticationProviders() != null) {
         Map<String, Class<?>> authenticationProviders = plugin.getAuthenticationProviders();
-        for (String authenticationProviderName : authenticationProviders.keySet()) {
-          registerAuthenticationProviderClass(authenticationProviderName, authenticationProviders.get(authenticationProviderName));
+        for (Map.Entry<String, Class<?>> entry : authenticationProviders.entrySet()) {
+          registerAuthenticationProviderClass(entry.getKey(), entry.getValue());
         }
       }
     }

@@ -144,16 +144,16 @@ public class CreateModuleJSONRequestController extends JSONRequestController {
 
     // Add education types and subtypes
 
-    for (Long educationTypeId : chosenEducationTypes.keySet()) {
-      EducationType educationType = educationTypeDAO.findById(educationTypeId);
+    for (Map.Entry<Long, Vector<Long>> entry : chosenEducationTypes.entrySet()) {
+      EducationType educationType = educationTypeDAO.findById(entry.getKey());
       CourseEducationType courseEducationType;
       if (!module.contains(educationType)) {
         courseEducationType = courseEducationTypeDAO.create(module, educationType);
       }
       else {
-        courseEducationType = module.getCourseEducationTypeByEducationTypeId(educationTypeId);
+        courseEducationType = module.getCourseEducationTypeByEducationTypeId(entry.getKey());
       }
-      for (Long educationSubtypeId : chosenEducationTypes.get(educationTypeId)) {
+      for (Long educationSubtypeId : entry.getValue()) {
         EducationSubtype educationSubtype = educationSubtypeDAO.findById(educationSubtypeId);
 
         if (!courseEducationType.contains(educationSubtype)) {

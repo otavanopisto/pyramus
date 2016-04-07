@@ -374,16 +374,16 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
         }
       }
     }
-    for (Long educationTypeId : chosenEducationTypes.keySet()) {
-      EducationType educationType = educationTypeDAO.findById(educationTypeId);
+    for (Map.Entry<Long, Vector<Long>> entry : chosenEducationTypes.entrySet()) {
+      EducationType educationType = educationTypeDAO.findById(entry.getKey());
       CourseEducationType courseEducationType;
       if (!course.contains(educationType)) {
         courseEducationType = courseEducationTypeDAO.create(course, educationType);
       }
       else {
-        courseEducationType = course.getCourseEducationTypeByEducationTypeId(educationTypeId);
+        courseEducationType = course.getCourseEducationTypeByEducationTypeId(entry.getKey());
       }
-      for (Long educationSubtypeId : chosenEducationTypes.get(educationTypeId)) {
+      for (Long educationSubtypeId : entry.getValue()) {
         EducationSubtype educationSubtype = educationSubtypeDAO.findById(educationSubtypeId);
         if (!courseEducationType.contains(educationSubtype)) {
           courseEducationSubtypeDAO.create(courseEducationType, educationSubtype);
