@@ -124,7 +124,7 @@
 		
 		if ( DataUtil.trimString( defaultValue ).length( ) > 0 && !parameterBean.isDefaultValueInList( ) ) // Add default value in Combo Box
 		{
-			boolean flag = false;
+			boolean flag;
 			if( allowMultiValue )
 			{
 				flag = DataUtil.contain( values, defaultValue, true );

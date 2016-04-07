@@ -48,7 +48,7 @@
 		{
 			Printer bean = (Printer)printers.get( i );
 			String name = PrintUtility.handleSlash( bean.getName( ) );
-			String status = null; 
+			String status; 
 				
 			if ( bean.getStatus() == Printer.STATUS_ACCEPTING_JOBS )
 			{

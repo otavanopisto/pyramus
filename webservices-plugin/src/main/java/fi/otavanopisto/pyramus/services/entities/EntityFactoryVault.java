@@ -248,7 +248,7 @@ public class EntityFactoryVault {
   }
   
   public static Object[] buildFromDomainObjects(Collection<?> entities) {
-    Class<?> listClass = null;
+    Class<?> listClass;
     if (!entities.isEmpty()) {
       if (entities instanceof List) {
         listClass = ((List<?>) entities).get(0).getClass();

@@ -66,7 +66,7 @@
 <%
 	if (parameterBean.getSelectionList( ) != null)
 	{
-		boolean CHECKED = false;
+		boolean CHECKED;
 		boolean isSelected = false;
 		for ( int i = 0; i < parameterBean.getSelectionList( ).size( ); i++ )
 		{

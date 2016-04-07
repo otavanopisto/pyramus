@@ -148,7 +148,7 @@ public class BinaryRequestContext extends RequestContext {
     
     InputStream inputStream = connection.getInputStream();
     byte[] buf = new byte[1024];
-    int l = 0;
+    int l;
     while ((l = inputStream.read(buf)) > 0) {
       outputStream.write(buf, 0, l);
     }

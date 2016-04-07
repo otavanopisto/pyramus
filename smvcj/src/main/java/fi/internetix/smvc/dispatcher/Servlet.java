@@ -129,8 +129,8 @@ public class Servlet extends HttpServlet {
     }
 
     RequestContext requestContext = null;
-    RequestController requestController = null;
-    RequestDispatchContext dispatchContext = null; 
+    RequestController requestController;
+    RequestDispatchContext dispatchContext; 
     if (requestDispatcher != null && requestDispatcher.canHandle(request, response)) {
       dispatchContext = requestDispatcher.getContext(request, response);
       requestController = dispatchContext.getRequestController();

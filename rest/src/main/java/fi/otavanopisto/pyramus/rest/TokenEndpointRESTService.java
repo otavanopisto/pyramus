@@ -48,7 +48,7 @@ public class TokenEndpointRESTService extends AbstractRESTService {
   @POST
   public Response authorize(@Context HttpServletResponse res, @Context HttpServletRequest req) throws OAuthSystemException {
 
-    OAuthTokenRequest oauthRequest = null;
+    OAuthTokenRequest oauthRequest;
     boolean refreshing = false;
 
     OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
@@ -80,7 +80,7 @@ public class TokenEndpointRESTService extends AbstractRESTService {
 
       String accessToken = oauthIssuerImpl.accessToken();
       String refreshToken = oauthIssuerImpl.refreshToken();
-      ClientApplicationAccessToken clientApplicationAccessToken = null;
+      ClientApplicationAccessToken clientApplicationAccessToken;
       Long expires = (System.currentTimeMillis() / 1000L) + TOKEN_LIFETIME;
 
       if (refreshing) {

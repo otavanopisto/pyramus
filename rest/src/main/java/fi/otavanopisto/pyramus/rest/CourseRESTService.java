@@ -544,7 +544,7 @@ public class CourseRESTService extends AbstractRESTService {
       }
     }
     
-    fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType enrolmentType = null;
+    fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType enrolmentType;
     if (entity.getEnrolmentTypeId() != null) {
       enrolmentType = courseController.findCourseEnrolmentTypeById(entity.getEnrolmentTypeId());
       if (enrolmentType == null) {
@@ -555,7 +555,7 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality optionality = entity.getOptionality() != null ? fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality.valueOf(entity.getOptionality().name()) : null;
-    fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType participantionType = null;
+    fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType participantionType;
         
     if (entity.getParticipationTypeId() != null) {
       participantionType = courseController.findCourseParticipationTypeById(entity.getParticipationTypeId());
@@ -612,7 +612,7 @@ public class CourseRESTService extends AbstractRESTService {
       }
     }
     
-    List<fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent> students = null;
+    List<fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent> students;
     
     if (filterArchived) {
       students = courseParticipationTypes.isEmpty()

@@ -45,7 +45,7 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
       page = 0;
     }
     
-    SearchResult<Person> searchResult = null;
+    SearchResult<Person> searchResult;
     
     String query = jsonRequestContext.getRequest().getParameter("query");
     PersonFilter personFilter = (PersonFilter) jsonRequestContext.getEnum("studentFilter", PersonFilter.class);
@@ -78,7 +78,7 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
     	}
     }
     
-    String statusMessage = "";
+    String statusMessage;
     Locale locale = jsonRequestContext.getRequest().getLocale();
     if (searchResult.getTotalHitCount() > 0) {
       statusMessage = Messages.getInstance().getText(

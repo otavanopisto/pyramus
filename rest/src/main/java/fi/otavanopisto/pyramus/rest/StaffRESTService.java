@@ -62,7 +62,7 @@ public class StaffRESTService extends AbstractRESTService {
   @GET
   @RESTPermit (UserPermissions.LIST_STAFFMEMBERS)
   public Response listStaffMembers(@QueryParam ("firstResult") Integer firstResult, @QueryParam ("maxResults") Integer maxResults, @QueryParam ("email") String email) {
-    List<StaffMember> staffMembers = null;
+    List<StaffMember> staffMembers;
     
     if (StringUtils.isNotBlank(email)) {
       staffMembers = new ArrayList<StaffMember>();
