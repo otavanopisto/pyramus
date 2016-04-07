@@ -101,7 +101,7 @@ public class ObjectFactory {
   
   @PostConstruct
   public void init() {
-    mappers = new HashMap<Class<?>, ObjectFactory.Mapper<Object>>();
+    mappers = new HashMap<>();
     
     addMappers(
         new Mapper<fi.otavanopisto.pyramus.domainmodel.base.AcademicTerm>() {
@@ -162,7 +162,7 @@ public class ObjectFactory {
               subjectId = courseSubject.getId();
             }
             
-            List<String> tags = new ArrayList<String>();
+            List<String> tags = new ArrayList<>();
             Set<Tag> courseTags = entity.getTags();
             if (courseTags != null) {
               for (Tag courseTag : courseTags) {

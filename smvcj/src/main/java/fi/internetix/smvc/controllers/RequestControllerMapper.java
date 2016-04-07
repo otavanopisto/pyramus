@@ -39,6 +39,6 @@ public class RequestControllerMapper {
   /**
    * Hashmap for page request controller names and their instances.
    */
-  private static Map<String, RequestController> requestControllers = new HashMap<String, RequestController>();
+  private static Map<String, RequestController> requestControllers = new HashMap<>();
 
 }

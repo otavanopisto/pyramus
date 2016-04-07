@@ -35,7 +35,7 @@ public class WebhookDatas {
   }
   
   public List<Long> retrieveUpdatedStaffMemberIds() {
-    List<Long> result = new ArrayList<Long>(updatedStaffMemberIds);
+    List<Long> result = new ArrayList<>(updatedStaffMemberIds);
     updatedStaffMemberIds.clear();
     return result;
   }
@@ -49,7 +49,7 @@ public class WebhookDatas {
   }
   
   public List<Long> retrieveUpdatedStudentIds() {
-    List<Long> result = new ArrayList<Long>(updatedStudentIds);
+    List<Long> result = new ArrayList<>(updatedStudentIds);
     updatedStudentIds.clear();
     return result;
   }
@@ -63,7 +63,7 @@ public class WebhookDatas {
   }
   
   public List<Long> retrieveUpdatedCourseIds() {
-    List<Long> result = new ArrayList<Long>(updatedCourseIds);
+    List<Long> result = new ArrayList<>(updatedCourseIds);
     updatedCourseIds.clear();
     return result;
   }
@@ -80,7 +80,7 @@ public class WebhookDatas {
   }
   
   public List<Long> retrieveUpdatedCourseStudentIds() {
-    List<Long> result = new ArrayList<Long>(updatedCourseStudentIds);
+    List<Long> result = new ArrayList<>(updatedCourseStudentIds);
     updatedCourseStudentIds.clear();
     return result;
   }
@@ -111,7 +111,7 @@ public class WebhookDatas {
   }
   
   public List<Long> retrieveUpdatedCourseStaffMemberIds() {
-    List<Long> result = new ArrayList<Long>(updatedCourseStaffMemberIds);
+    List<Long> result = new ArrayList<>(updatedCourseStaffMemberIds);
     updatedCourseStaffMemberIds.clear();
     return result;
   }

@@ -45,10 +45,10 @@ public class SearchSchoolsJSONRequestController extends JSONRequestController {
 
     SearchResult<School> searchResult = schoolDAO.searchSchoolsBasic(resultsPerPage, page, text);
 
-    List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
     List<School> schools = searchResult.getResults();
     for (School school : schools) {
-      Map<String, Object> schoolInfo = new HashMap<String, Object>();
+      Map<String, Object> schoolInfo = new HashMap<>();
       schoolInfo.put("id", school.getId());
       schoolInfo.put("name", school.getName());
       schoolInfo.put("fieldName", school.getField() != null ? school.getField().getName() : "");

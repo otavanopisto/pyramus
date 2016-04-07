@@ -37,7 +37,7 @@ public class EditMaterialResourceJSONRequestController extends JSONRequestContro
     Long version = NumberUtils.createLong(jsonRequestContext.getRequest().getParameter("version"));
     String tagsText = jsonRequestContext.getString("tags");
     
-    Set<Tag> tagEntities = new HashSet<Tag>();
+    Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
       for (String tag : tags) {

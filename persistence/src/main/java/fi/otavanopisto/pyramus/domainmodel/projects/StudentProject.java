@@ -330,7 +330,7 @@ public class StudentProject implements ArchivableEntity {
   @IndexColumn (name = "indexColumn")
   @JoinColumn (name="studentProject")
   @IndexedEmbedded 
-  private List<StudentProjectModule> studentProjectModules = new Vector<StudentProjectModule>();
+  private List<StudentProjectModule> studentProjectModules = new Vector<>();
 
   @ManyToOne 
   @JoinColumn(name="creator")
@@ -357,7 +357,7 @@ public class StudentProject implements ArchivableEntity {
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__StudentProjectTags", joinColumns=@JoinColumn(name="studentProject"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
-  private Set<Tag> tags = new HashSet<Tag>();
+  private Set<Tag> tags = new HashSet<>();
   
   @ManyToOne
   @JoinColumn(name="project")

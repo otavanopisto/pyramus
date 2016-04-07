@@ -93,6 +93,6 @@ public class ExtensionHookTag extends TagSupport implements DynamicAttributes {
     this.name = name;
   }
 
-  private Map<String, DynamicAttribute> dynamicAttributes = new HashMap<String, DynamicAttribute>();
+  private Map<String, DynamicAttribute> dynamicAttributes = new HashMap<>();
   private String name;
 }

@@ -116,7 +116,7 @@ public abstract class PyramusViewController implements PageController {
     @SuppressWarnings("unchecked")
     Map<String, String> jsData = (Map<String, String>) pageRequestContext.getRequest().getAttribute("jsData");
     if (jsData == null) {
-      jsData = new HashMap<String, String>();
+      jsData = new HashMap<>();
       pageRequestContext.getRequest().setAttribute("jsData", jsData);
     }
     

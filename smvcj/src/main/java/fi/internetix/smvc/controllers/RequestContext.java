@@ -53,7 +53,7 @@ public abstract class RequestContext {
     this.servletContext = servletContext;
     
     if (ServletFileUpload.isMultipartContent(servletRequest)) {
-      multipartFields = new HashMap<String, FileItem>();
+      multipartFields = new HashMap<>();
       
       ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());
       servletFileUpload.setHeaderEncoding("UTF-8");
@@ -320,6 +320,6 @@ public abstract class RequestContext {
   /**
    * The messages of this context.
    */
-  private List<SmvcMessage> messages = new ArrayList<SmvcMessage>();
+  private List<SmvcMessage> messages = new ArrayList<>();
 
 }

@@ -210,7 +210,7 @@ public class PluginManager {
   }
 
   public List<ScheduledPluginTask> getScheduledTasks(ScheduledTaskInterval internal) {
-    List<ScheduledPluginTask> result = new ArrayList<ScheduledPluginTask>();
+    List<ScheduledPluginTask> result = new ArrayList<>();
     
     for (ScheduledPluginDescriptor sceduledPlugin : getScheduledPlugins()) {
       List<ScheduledPluginTask> tasks = sceduledPlugin.getScheduledTasks();
@@ -227,7 +227,7 @@ public class PluginManager {
   }
   
   public List<ScheduledPluginDescriptor> getScheduledPlugins() {
-    List<ScheduledPluginDescriptor> result = new ArrayList<ScheduledPluginDescriptor>();
+    List<ScheduledPluginDescriptor> result = new ArrayList<>();
     
     for (PluginDescriptor plugin : getPlugins()) {
       if (plugin instanceof ScheduledPluginDescriptor) {
@@ -239,7 +239,7 @@ public class PluginManager {
   }
   
   public List<CustomLoginScreenPlugin> getCustomLoginScreenPlugins() {
-    List<CustomLoginScreenPlugin> result = new ArrayList<CustomLoginScreenPlugin>();
+    List<CustomLoginScreenPlugin> result = new ArrayList<>();
     
     for (PluginDescriptor plugin : getPlugins()) {
       if (plugin instanceof CustomLoginScreenPlugin) {
@@ -267,6 +267,6 @@ public class PluginManager {
 //  private List<Exclusion> applicationProvidedArtifacts = new ArrayList<>();
   private LibraryLoader libraryLoader;
   private MavenClient mavenClient;
-  private List<PluginDescriptor> plugins = new ArrayList<PluginDescriptor>();
+  private List<PluginDescriptor> plugins = new ArrayList<>();
 }
  

@@ -87,7 +87,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
         throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
     }
     
-    Set<Tag> tagEntities = new HashSet<Tag>();
+    Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
       for (String tag : tags) {
@@ -109,7 +109,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
     
     // Addresses
     
-    Set<Long> existingAddresses = new HashSet<Long>();
+    Set<Long> existingAddresses = new HashSet<>();
     int addressCount = requestContext.getInteger("addressTable.rowCount");
     for (int i = 0; i < addressCount; i++) {
       String colPrefix = "addressTable." + i;
@@ -145,7 +145,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
 
     // E-mail addresses
     
-    Set<Long> existingEmails = new HashSet<Long>();
+    Set<Long> existingEmails = new HashSet<>();
     int emailCount = requestContext.getInteger("emailTable.rowCount");
     for (int i = 0; i < emailCount; i++) {
       String colPrefix = "emailTable." + i;
@@ -176,7 +176,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
 
     // Phone numbers
     
-    Set<Long> existingPhoneNumbers = new HashSet<Long>();
+    Set<Long> existingPhoneNumbers = new HashSet<>();
     int phoneCount = requestContext.getInteger("phoneTable.rowCount");
     for (int i = 0; i < phoneCount; i++) {
       String colPrefix = "phoneTable." + i;

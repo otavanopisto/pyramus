@@ -24,7 +24,7 @@ public class CSVImporter {
   private String[] headerFields;
 
   public List<Object> importDataFromStream(InputStream stream, EntityImportStrategy entityStrategy, Long loggedUserId, Locale locale) throws UnsupportedEncodingException {
-    List<Object> list = new ArrayList<Object>();
+    List<Object> list = new ArrayList<>();
     CSVReader reader = new CSVReader(new InputStreamReader(stream, "UTF-8"));
     
     try {

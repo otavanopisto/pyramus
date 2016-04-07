@@ -39,5 +39,5 @@ public class IpFilter implements Filter {
   public void destroy() {
   }
   
-  private Set<String> allowedIPs = new HashSet<String>();
+  private Set<String> allowedIPs = new HashSet<>();
 }

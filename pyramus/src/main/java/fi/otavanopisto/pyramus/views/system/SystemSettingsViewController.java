@@ -25,7 +25,7 @@ public class SystemSettingsViewController extends PyramusFormViewController {
     SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
     SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
     
-    Map<String, String> settings = new HashMap<String, String>();
+    Map<String, String> settings = new HashMap<>();
     List<SettingKey> settingKeys = settingKeyDAO.listAll();
     for (SettingKey settingKey : settingKeys) {
       Setting setting = settingDAO.findByKey(settingKey);

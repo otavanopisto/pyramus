@@ -119,7 +119,7 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
       searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, PersonFilter.ALL);
     }
 
-    List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
     List<Person> persons = searchResult.getResults();
     for (Person person : persons) {
   	  List<Student> studentList2 = studentDAO.listByPerson(person);
@@ -162,7 +162,7 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
     	    }
     	  }
     	  
-        Map<String, Object> info = new HashMap<String, Object>();
+        Map<String, Object> info = new HashMap<>();
         info.put("personId", person.getId());
         info.put("id", id);
         info.put("firstName", firstName);

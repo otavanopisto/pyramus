@@ -12,5 +12,5 @@ public class ThreadSessionContainer {
     THREAD_LOCAL.set(httpSession);
   }
   
-  private static final ThreadLocal<HttpSession> THREAD_LOCAL = new ThreadLocal<HttpSession>();
+  private static final ThreadLocal<HttpSession> THREAD_LOCAL = new ThreadLocal<>();
 }

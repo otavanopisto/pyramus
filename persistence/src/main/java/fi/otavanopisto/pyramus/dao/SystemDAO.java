@@ -51,7 +51,7 @@ public class SystemDAO {
   }
   
   public Set<javax.persistence.metamodel.Attribute<?, ?>> getEntityAttributes(Class<?> entityClass) {
-    Set<javax.persistence.metamodel.Attribute<?, ?>> result = new HashSet<javax.persistence.metamodel.Attribute<?,?>>();
+    Set<javax.persistence.metamodel.Attribute<?, ?>> result = new HashSet<>();
     
     EntityType<?> entityType = getEntityManager().getMetamodel().entity(entityClass);
     for (javax.persistence.metamodel.Attribute<?, ?> attribute : entityType.getAttributes()) {
@@ -77,7 +77,7 @@ public class SystemDAO {
   // Hibernate search methods
  
   public List<Class<?>> getIndexedEntities() {
-    List<Class<?>> result = new ArrayList<Class<?>>();
+    List<Class<?>> result = new ArrayList<>();
     
     EntityManager entityManager = getEntityManager();
     Metamodel metamodel = entityManager.getEntityManagerFactory().getMetamodel();

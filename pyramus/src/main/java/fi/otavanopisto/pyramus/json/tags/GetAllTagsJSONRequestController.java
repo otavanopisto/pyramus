@@ -16,7 +16,7 @@ public class GetAllTagsJSONRequestController extends JSONRequestController {
   public void process(JSONRequestContext requestContext) {
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     
-    Set<String> tagTexts = new HashSet<String>();
+    Set<String> tagTexts = new HashSet<>();
     
     List<Tag> tags = tagDAO.listAll();
     for (Tag tag : tags) {

@@ -45,7 +45,7 @@ public class CoursePlannerViewController extends PyramusViewController implement
     EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();    
     EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();    
 
-    List<CourseBean> courseBeans = new ArrayList<CoursePlannerViewController.CourseBean>();
+    List<CourseBean> courseBeans = new ArrayList<>();
     for (Course course : courseDAO.listUnarchived()) {
       courseBeans.add(new CourseBean(course));
     }
@@ -102,7 +102,7 @@ public class CoursePlannerViewController extends PyramusViewController implement
     }
     
     public Set<Long> getEducationTypes() {
-      Set<Long> result = new HashSet<Long>();
+      Set<Long> result = new HashSet<>();
       
       List<CourseEducationType> courseEducationTypes = course.getCourseEducationTypes();
       for (CourseEducationType courseEducationType : courseEducationTypes) {
@@ -113,7 +113,7 @@ public class CoursePlannerViewController extends PyramusViewController implement
     }
     
     public Set<Long> getEducationSubtypes() {
-      Set<Long> result = new HashSet<Long>();
+      Set<Long> result = new HashSet<>();
       
       List<CourseEducationType> courseEducationTypes = course.getCourseEducationTypes();
       for (CourseEducationType courseEducationType : courseEducationTypes) {

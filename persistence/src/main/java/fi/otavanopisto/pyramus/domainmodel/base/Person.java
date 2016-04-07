@@ -135,7 +135,7 @@ public class Person implements ContextReference {
 
   public List<StaffMember> getStaffMembers() {
     List<User> users = getUsers();
-    List<StaffMember> staffMembers = new ArrayList<StaffMember>();
+    List<StaffMember> staffMembers = new ArrayList<>();
     
     for (User user : users) {
       if (user instanceof StaffMember)
@@ -147,7 +147,7 @@ public class Person implements ContextReference {
   
   public List<Student> getStudents() {
     List<User> users = getUsers();
-    List<Student> students = new ArrayList<Student>();
+    List<Student> students = new ArrayList<>();
     
     for (User user : users) {
       if (user instanceof Student)
@@ -178,7 +178,7 @@ public class Person implements ContextReference {
 
   @Transient
   public Student getLatestStudent() {
-    List<Student> students = new ArrayList<Student>();
+    List<Student> students = new ArrayList<>();
     
     if (this.getUsers() != null) {
       for (Student student : this.getStudents()) {
@@ -267,7 +267,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveFirstNames() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         if (student.getFirstName() != null) {
@@ -281,7 +281,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveLastNames() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         if (student.getLastName() != null) {
@@ -295,7 +295,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveNicknames() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         if (student.getNickname() != null) {
@@ -309,7 +309,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveEducations() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         if (student.getEducation() != null) {
@@ -324,7 +324,7 @@ public class Person implements ContextReference {
   @Field(analyze = Analyze.NO)
   @FieldBridge(impl = CollectionBridge.class)
   public Set<String> getInactiveEmails() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         for (Email email : student.getContactInfo().getEmails()) {
@@ -341,7 +341,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveStreetAddresses() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         for (Address address : student.getContactInfo().getAddresses()) {
@@ -357,7 +357,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactivePostalCodes() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         for (Address address : student.getContactInfo().getAddresses()) {
@@ -392,7 +392,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveCities() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         for (Address address : student.getContactInfo().getAddresses()) {
@@ -408,7 +408,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveCountries() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         for (Address address : student.getContactInfo().getAddresses()) {
@@ -424,7 +424,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactivePhones() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         for (PhoneNumber phoneNumber : student.getContactInfo().getPhoneNumbers()) {
@@ -438,7 +438,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveLodgings() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         if (student.getLodging() != null) {
@@ -452,7 +452,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveStudyProgrammeIds() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         if (student.getStudyProgramme() != null)
@@ -465,7 +465,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveLanguageIds() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         if (student.getLanguage() != null)
@@ -478,7 +478,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveMunicipalityIds() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         if (student.getMunicipality() != null)
@@ -491,7 +491,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveNationalityIds() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         if (student.getNationality() != null)
@@ -504,7 +504,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveFirstNames() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         if (student.getFirstName() != null) {
@@ -519,7 +519,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveLastNames() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         if (student.getLastName() != null) {
@@ -534,7 +534,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveNicknames() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         if (student.getNickname() != null) {
@@ -548,7 +548,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveEducations() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         if (student.getEducation() != null) {
@@ -563,7 +563,7 @@ public class Person implements ContextReference {
   @Field(analyze = Analyze.NO)
   @FieldBridge(impl = CollectionBridge.class)
   public Set<String> getActiveEmails() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         for (Email email : student.getContactInfo().getEmails()) {
@@ -580,7 +580,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveStreetAddresses() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         for (Address address : student.getContactInfo().getAddresses()) {
@@ -596,7 +596,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActivePostalCodes() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         for (Address address : student.getContactInfo().getAddresses()) {
@@ -640,7 +640,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveCities() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         for (Address address : student.getContactInfo().getAddresses()) {
@@ -657,7 +657,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveCountries() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         for (Address address : student.getContactInfo().getAddresses()) {
@@ -674,7 +674,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActivePhones() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         for (PhoneNumber phoneNumber : student.getContactInfo().getPhoneNumbers()) {
@@ -688,7 +688,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveLodgings() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         if (student.getLodging() != null) {
@@ -702,7 +702,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveStudyProgrammeIds() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         if (student.getStudyProgramme() != null)
@@ -715,7 +715,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveLanguageIds() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         if (student.getLanguage() != null)
@@ -728,7 +728,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveMunicipalityIds() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         if (student.getMunicipality() != null)
@@ -741,7 +741,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveNationalityIds() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         if (student.getNationality() != null)
@@ -754,7 +754,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getActiveTags() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && student.getActive()) {
         for (Tag tag : student.getTags()) {
@@ -775,7 +775,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getInactiveTags() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
       if (!student.getArchived() && !student.getActive()) {
         for (Tag tag : student.getTags()) {
@@ -790,7 +790,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getStaffMemberFirstNames() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (StaffMember staffMember : getStaffMembers()) {
       String s = staffMember.getFirstName(); 
       
@@ -805,7 +805,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getStaffMemberLastNames() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (StaffMember staffMember : getStaffMembers()) {
       String s = staffMember.getLastName(); 
       
@@ -821,7 +821,7 @@ public class Person implements ContextReference {
   @Field(analyze = Analyze.NO)
   @FieldBridge(impl = CollectionBridge.class)
   public Set<String> getStaffMemberEmails() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (StaffMember staffMember : getStaffMembers()) {
       
       for (Email email : staffMember.getContactInfo().getEmails()) {
@@ -839,7 +839,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getStaffMemberTitles() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (StaffMember staffMember : getStaffMembers()) {
       String s = staffMember.getTitle(); 
       
@@ -854,7 +854,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getStaffMemberRoles() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (StaffMember staffMember : getStaffMembers()) {
       String s = staffMember.getRole().toString(); 
       
@@ -869,7 +869,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getStaffMemberTags() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (StaffMember staffMember : getStaffMembers()) {
       for (Tag tag : staffMember.getTags()) {
         String s = tag.getText();
@@ -886,7 +886,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getStaffMemberPhones() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (StaffMember staffMember : getStaffMembers()) {
       for (PhoneNumber number : staffMember.getContactInfo().getPhoneNumbers()) {
         String s = number.getNumber(); 
@@ -903,7 +903,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getStaffMemberStreetAddresses() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (StaffMember staffMember : getStaffMembers()) {
       for (Address address : staffMember.getContactInfo().getAddresses()) {
         String s = address.getStreetAddress(); 
@@ -920,7 +920,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getStaffMemberPostalCodes() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (StaffMember staffMember : getStaffMembers()) {
       for (Address address : staffMember.getContactInfo().getAddresses()) {
         String s = address.getPostalCode(); 
@@ -937,7 +937,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getStaffMemberCities() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (StaffMember staffMember : getStaffMembers()) {
       for (Address address : staffMember.getContactInfo().getAddresses()) {
         String s = address.getCity(); 
@@ -954,7 +954,7 @@ public class Person implements ContextReference {
   @Transient
   @Field
   public String getStaffMemberCountries() {
-    Set<String> results = new HashSet<String>();
+    Set<String> results = new HashSet<>();
     for (StaffMember staffMember : getStaffMembers()) {
       for (Address address : staffMember.getContactInfo().getAddresses()) {
         String s = address.getCountry(); 
@@ -1041,7 +1041,7 @@ public class Person implements ContextReference {
   @OneToMany
   @JoinColumn(name = "person_id")
   @IndexedEmbedded
-  private List<User> users = new ArrayList<User>();
+  private List<User> users = new ArrayList<>();
   
   @OneToOne
   private User defaultUser;

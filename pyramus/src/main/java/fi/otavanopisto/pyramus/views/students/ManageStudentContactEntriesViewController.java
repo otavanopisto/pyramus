@@ -97,8 +97,8 @@ public class ManageStudentContactEntriesViewController extends PyramusViewContro
       }
     });
 
-    Map<Long, List<StudentContactLogEntry>> contactEntries = new HashMap<Long, List<StudentContactLogEntry>>();
-    final Map<Long, List<StudentContactLogEntryComment>> contactEntryComments = new HashMap<Long, List<StudentContactLogEntryComment>>();
+    Map<Long, List<StudentContactLogEntry>> contactEntries = new HashMap<>();
+    final Map<Long, List<StudentContactLogEntryComment>> contactEntryComments = new HashMap<>();
     
     for (int i = 0; i < students.size(); i++) {
     	Student student = students.get(i);

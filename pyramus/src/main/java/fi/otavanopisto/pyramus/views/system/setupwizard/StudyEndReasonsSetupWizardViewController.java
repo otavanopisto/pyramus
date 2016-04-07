@@ -26,8 +26,8 @@ public class StudyEndReasonsSetupWizardViewController extends SetupWizardControl
     StudentStudyEndReasonDAO studentStudyEndReasonDAO = DAOFactory.getInstance().getStudentStudyEndReasonDAO();    
 
     int rowCount = requestContext.getInteger("studyEndReasonsTable.rowCount");
-    Map<String, StudentStudyEndReason> reasons = new HashMap<String, StudentStudyEndReason>();
-    Map<String, String> parents = new HashMap<String, String>();
+    Map<String, StudentStudyEndReason> reasons = new HashMap<>();
+    Map<String, String> parents = new HashMap<>();
 
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "studyEndReasonsTable." + i;

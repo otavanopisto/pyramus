@@ -128,7 +128,7 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<School>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
 
     } catch (ParseException e) {
       throw new PersistenceException(e);
@@ -198,7 +198,7 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<School>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
 
     } catch (ParseException e) {
       throw new PersistenceException(e);

@@ -25,5 +25,5 @@ public class ManageChangeLogViewEntityBean {
   
   private String displayName;
   private String name;
-  private List<ManageChangeLogViewEntityPropertyBean> properties = new ArrayList<ManageChangeLogViewEntityPropertyBean>();
+  private List<ManageChangeLogViewEntityPropertyBean> properties = new ArrayList<>();
 }

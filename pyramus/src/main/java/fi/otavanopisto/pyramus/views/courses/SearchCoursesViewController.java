@@ -33,11 +33,11 @@ public class SearchCoursesViewController extends PyramusViewController implement
     Collections.sort(educationTypes, new StringAttributeComparator("getName"));
 
     // Subjects
-    Map<Long, List<Subject>> subjectsByEducationType = new HashMap<Long, List<Subject>>();
+    Map<Long, List<Subject>> subjectsByEducationType = new HashMap<>();
     List<Subject> subjectsByNoEducationType = subjectDAO.listByEducationType(null);
     Collections.sort(subjectsByNoEducationType, new StringAttributeComparator("getName"));
     
-    Map<Long, List<EducationSubtype>> educationSubtypesByEduType = new HashMap<Long, List<EducationSubtype>>();
+    Map<Long, List<EducationSubtype>> educationSubtypesByEduType = new HashMap<>();
     
     for (EducationType educationType : educationTypes) {
       List<Subject> subjectsOfType = subjectDAO.listByEducationType(educationType);

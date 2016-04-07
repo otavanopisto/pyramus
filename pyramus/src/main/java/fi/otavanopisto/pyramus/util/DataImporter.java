@@ -370,7 +370,7 @@ public class DataImporter {
     Method
   }
   
-  private Map<String, Long> storedValues = new HashMap<String, Long>();
+  private Map<String, Long> storedValues = new HashMap<>();
 
   private DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
   

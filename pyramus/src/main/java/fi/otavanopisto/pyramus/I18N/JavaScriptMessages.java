@@ -77,8 +77,8 @@ public class JavaScriptMessages {
     // TODO: how about plugins
   }
   
-  private List<String> bundleNames = new ArrayList<String>();
-  private Map<Locale, ResourceBundle> bundles = new HashMap<Locale, ResourceBundle>();
+  private List<String> bundleNames = new ArrayList<>();
+  private Map<Locale, ResourceBundle> bundles = new HashMap<>();
   
   static {
     instance = new JavaScriptMessages();

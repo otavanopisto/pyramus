@@ -54,5 +54,5 @@ public class HelpPage extends HelpItem {
   
   @OneToMany (cascade = CascadeType.ALL, mappedBy="page")
   @IndexedEmbedded
-  private List<HelpPageContent> contents = new ArrayList<HelpPageContent>();
+  private List<HelpPageContent> contents = new ArrayList<>();
 }

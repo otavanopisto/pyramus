@@ -89,7 +89,7 @@ public class StudentStudyEndReason {
 
   @OneToMany
   @JoinColumn (name = "parentReason")
-  private List<StudentStudyEndReason> childEndReasons = new ArrayList<StudentStudyEndReason>();
+  private List<StudentStudyEndReason> childEndReasons = new ArrayList<>();
 
   @Version
   @Column(nullable = false)

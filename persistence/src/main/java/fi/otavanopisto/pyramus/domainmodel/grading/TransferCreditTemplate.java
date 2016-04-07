@@ -88,5 +88,5 @@ public class TransferCreditTemplate {
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @IndexColumn (name = "indexColumn")
   @JoinColumn (name="transferCreditTemplate")
-  private List<TransferCreditTemplateCourse> courses = new ArrayList<TransferCreditTemplateCourse>();
+  private List<TransferCreditTemplateCourse> courses = new ArrayList<>();
 }

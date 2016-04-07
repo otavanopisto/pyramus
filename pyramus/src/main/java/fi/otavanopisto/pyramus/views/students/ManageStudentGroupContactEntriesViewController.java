@@ -58,7 +58,7 @@ public class ManageStudentGroupContactEntriesViewController extends PyramusViewC
     
     pageRequestContext.getRequest().setAttribute("studentGroup", studentGroup);
 
-    final Map<Long, List<StudentGroupContactLogEntryComment>> contactEntryComments = new HashMap<Long, List<StudentGroupContactLogEntryComment>>();
+    final Map<Long, List<StudentGroupContactLogEntryComment>> contactEntryComments = new HashMap<>();
     List<StudentGroupContactLogEntry> contactLogEntries = logEntryDAO.listByStudentGroup(studentGroup);
 
     // Populate comments for each entry to lists

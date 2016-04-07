@@ -64,7 +64,7 @@ public class SearchResourcesJSONRequestController extends JSONRequestController 
     }
     
 
-    List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
 
     List<Resource> resources = searchResult.getResults();
     for (Resource resource : resources) {
@@ -81,7 +81,7 @@ public class SearchResourcesJSONRequestController extends JSONRequestController 
         hourlyCost = ((WorkResource) resource).getHourlyCost().getAmount();
       }
       
-      Map<String, Object> resourceInfo = new HashMap<String, Object>();
+      Map<String, Object> resourceInfo = new HashMap<>();
       resourceInfo.put("id", resource.getId());
       resourceInfo.put("name", resource.getName());
       resourceInfo.put("resourceType", resource.getResourceType());

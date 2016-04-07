@@ -86,11 +86,11 @@ public class SearchStudentGroupsJSONRequestController extends JSONRequestControl
       searchResult = studentGroupDAO.searchStudentGroupsBasic(resultsPerPage, page, text); 
     }
 
-    List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
 
     List<StudentGroup> studentGroups = searchResult.getResults();
     for (StudentGroup studentGroup : studentGroups) {
-      Map<String, Object> info = new HashMap<String, Object>();
+      Map<String, Object> info = new HashMap<>();
       info.put("id", studentGroup.getId());
       info.put("name", studentGroup.getName());
       if (studentGroup.getBeginDate() != null) {

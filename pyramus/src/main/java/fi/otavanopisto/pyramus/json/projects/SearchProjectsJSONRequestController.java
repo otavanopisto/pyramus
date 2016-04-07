@@ -45,10 +45,10 @@ public class SearchProjectsJSONRequestController extends JSONRequestController {
 
     SearchResult<Project> searchResult = projectDAO.searchProjectsBasic(resultsPerPage, page, text);
 
-    List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
     List<Project> projects = searchResult.getResults();
     for (Project project : projects) {
-      Map<String, Object> projectInfo = new HashMap<String, Object>();
+      Map<String, Object> projectInfo = new HashMap<>();
       projectInfo.put("id", project.getId());
       projectInfo.put("name", project.getName());
       results.add(projectInfo);

@@ -53,11 +53,11 @@ public class EditReportViewController extends PyramusViewController implements B
       }
     });
     
-    Map<String, Boolean> selectedContexts = new HashMap<String, Boolean>();
+    Map<String, Boolean> selectedContexts = new HashMap<>();
     for (ReportContext context : reportContexts)
       selectedContexts.put(context.getContext().toString(), Boolean.TRUE);
 
-    List<String> contextTypes = new ArrayList<String>();
+    List<String> contextTypes = new ArrayList<>();
     for (ReportContextType contextType : ReportContextType.values())
       contextTypes.add(contextType.toString());
     

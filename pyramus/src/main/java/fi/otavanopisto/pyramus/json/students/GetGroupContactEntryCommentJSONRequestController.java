@@ -44,7 +44,7 @@ public class GetGroupContactEntryCommentJSONRequestController extends JSONReques
     try {
       StudentGroupContactLogEntryComment comment = entryCommentDAO.findById(commentId);
       
-      Map<String, Object> info = new HashMap<String, Object>();
+      Map<String, Object> info = new HashMap<>();
       info.put("id", comment.getId());
       info.put("entryId", comment.getEntry().getId());
       info.put("creatorName", comment.getCreatorName());

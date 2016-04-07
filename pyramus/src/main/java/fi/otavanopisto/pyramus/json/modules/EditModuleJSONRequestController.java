@@ -73,7 +73,7 @@ public class EditModuleJSONRequestController extends JSONRequestController {
     
     // Education types and subtypes submitted from the web page
 
-    Map<Long, Vector<Long>> chosenEducationTypes = new HashMap<Long, Vector<Long>>();
+    Map<Long, Vector<Long>> chosenEducationTypes = new HashMap<>();
     Enumeration<String> parameterNames = requestContext.getRequest().getParameterNames();
     while (parameterNames.hasMoreElements()) {
       String name = (String) parameterNames.nextElement();
@@ -93,7 +93,7 @@ public class EditModuleJSONRequestController extends JSONRequestController {
     // Course Descriptions
     
     List<CourseDescriptionCategory> descriptionCategories = descriptionCategoryDAO.listUnarchived();
-    Set<CourseDescription> nonExistingDescriptions = new HashSet<CourseDescription>();
+    Set<CourseDescription> nonExistingDescriptions = new HashSet<>();
     
     for (CourseDescriptionCategory cat: descriptionCategories) {
       String varName = "courseDescription." + cat.getId().toString();
@@ -195,7 +195,7 @@ public class EditModuleJSONRequestController extends JSONRequestController {
     Long maxParticipantCount = requestContext.getLong("maxParticipantCount");
     String tagsText = requestContext.getString("tags");
     
-    Set<Tag> tagEntities = new HashSet<Tag>();
+    Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
       for (String tag : tags) {

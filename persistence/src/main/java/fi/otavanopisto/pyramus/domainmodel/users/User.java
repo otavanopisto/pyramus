@@ -198,12 +198,12 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   @ManyToMany (fetch = FetchType.LAZY)
   @JoinTable (name="__UserBillingDetails", joinColumns=@JoinColumn(name="user"), inverseJoinColumns=@JoinColumn(name="billingDetails"))
   @IndexedEmbedded 
-  private List<BillingDetails> billingDetails = new ArrayList<BillingDetails>();
+  private List<BillingDetails> billingDetails = new ArrayList<>();
 
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__UserTags", joinColumns=@JoinColumn(name="user"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
-  private Set<Tag> tags = new HashSet<Tag>();
+  private Set<Tag> tags = new HashSet<>();
   
   @NotNull
   @Column (nullable = false)

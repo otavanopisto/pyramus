@@ -78,7 +78,7 @@ public class UploadReportDialogViewController extends PyramusViewController {
     return new UserRole[] { UserRole.MANAGER, UserRole.ADMINISTRATOR };
   }
 
-  private static Set<String> reservedParameters = new HashSet<String>();
+  private static Set<String> reservedParameters = new HashSet<>();
   
   static {
     reservedParameters.add("reportId");

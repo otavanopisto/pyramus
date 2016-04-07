@@ -35,7 +35,7 @@ public class TimeUnitsViewController extends PyramusViewController implements Br
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
     
     final EducationalTimeUnit baseTimeUnit = defaultsDAO.getDefaults().getBaseTimeUnit();
-    List<EducationalTimeUnit> timeUnits = new ArrayList<EducationalTimeUnit>(educationalTimeUnitDAO.listUnarchived());
+    List<EducationalTimeUnit> timeUnits = new ArrayList<>(educationalTimeUnitDAO.listUnarchived());
     
 
     Collections.sort(timeUnits, new Comparator<EducationalTimeUnit>() {

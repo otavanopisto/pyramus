@@ -263,7 +263,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
       courseStudentsJSON.add(obj);
     }
     
-    Map<Long, String> verbalAssessments = new HashMap<Long, String>();
+    Map<Long, String> verbalAssessments = new HashMap<>();
 
     for (ProjectAssessment pAss : assessments) {
       // Shortened descriptions

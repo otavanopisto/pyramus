@@ -355,7 +355,7 @@ public class MavenClient {
   private DefaultRepositorySystem repositorySystem;
   private DefaultLocalRepositoryProvider localRepositoryProvider;
   private LocalRepositoryManagerFactory localRepositoryManagerFactory = new SimpleLocalRepositoryManagerFactory();
-  private List<RemoteRepository> remoteRepositories = new ArrayList<RemoteRepository>();
+  private List<RemoteRepository> remoteRepositories = new ArrayList<>();
   private String localRepositoryPath;
   private ArtifactResolver artifactResolver;
   private ArtifactDescriptorReader artifactDescriptorReader;

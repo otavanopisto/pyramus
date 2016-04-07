@@ -91,7 +91,7 @@ public class UserUtils {
   }
   
   public static List<Role> getRoleOrder() {
-    List<Role> list = new ArrayList<Role>();
+    List<Role> list = new ArrayList<>();
 
     list.add(Role.ADMINISTRATOR);
     list.add(Role.MANAGER);

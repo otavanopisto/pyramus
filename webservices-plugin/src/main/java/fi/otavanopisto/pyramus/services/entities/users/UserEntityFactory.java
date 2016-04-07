@@ -14,7 +14,7 @@ public class UserEntityFactory implements EntityFactory<UserEntity> {
   public UserEntity buildFromDomainObject(Object domainObject) {
     StaffMember user = (StaffMember) domainObject;
     
-    Set<String> emails = new HashSet<String>();
+    Set<String> emails = new HashSet<>();
     for (Email email : user.getContactInfo().getEmails())
       emails.add(email.getAddress());
     

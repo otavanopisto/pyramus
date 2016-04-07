@@ -57,7 +57,7 @@ public class Messages {
     return bundles.get(locale);
   }
   
-  private Map<Locale, ResourceBundle> bundles = new HashMap<Locale, ResourceBundle>();
+  private Map<Locale, ResourceBundle> bundles = new HashMap<>();
   
   static {
     instance = new Messages();

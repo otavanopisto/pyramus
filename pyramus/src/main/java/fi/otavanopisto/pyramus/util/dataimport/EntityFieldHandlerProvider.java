@@ -13,5 +13,5 @@ public class EntityFieldHandlerProvider {
     return fieldHandlers.get(fieldName);
   }
   
-  private Map<String, FieldHandlingStrategy> fieldHandlers = new HashMap<String, FieldHandlingStrategy>();  
+  private Map<String, FieldHandlingStrategy> fieldHandlers = new HashMap<>();  
 }

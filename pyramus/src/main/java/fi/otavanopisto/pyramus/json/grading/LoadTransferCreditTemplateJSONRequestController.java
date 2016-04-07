@@ -36,10 +36,10 @@ public class LoadTransferCreditTemplateJSONRequestController extends JSONRequest
     Long transferCreditTemplateId = jsonRequestContext.getLong("transferCreditTemplateId");
     TransferCreditTemplate transferCreditTemplate = transferCreditTemplateDAO.findById(transferCreditTemplateId);
     
-    List<Map<String, Object>> results = new ArrayList<Map<String,Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
     
     for (TransferCreditTemplateCourse templateCourse : transferCreditTemplate.getCourses()) {
-      Map<String, Object> result = new HashMap<String, Object>();
+      Map<String, Object> result = new HashMap<>();
       
       String subjectName = templateCourse.getSubject().getName();
       String subjectCode = templateCourse.getSubject().getCode();

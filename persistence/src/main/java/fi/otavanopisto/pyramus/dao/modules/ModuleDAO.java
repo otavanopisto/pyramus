@@ -188,7 +188,7 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<Module>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
     } catch (ParseException e) {
       throw new PersistenceException(e);
     }
@@ -251,7 +251,7 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     // If project text is given, only include modules that are in project(s) having the given name
     // (only the first ten matching projects, though, to prevent the search from becoming too gigantic...)
 
-    Set<Long> moduleIds = new HashSet<Long>();
+    Set<Long> moduleIds = new HashSet<>();
     if (!StringUtils.isBlank(projectName)) {
       ProjectDAO projectDAO = DAOFactory.getInstance().getProjectDAO();
       SearchResult<Project> searchResults = projectDAO.searchProjectsBasic(10, 0, projectName);
@@ -270,7 +270,7 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
         queryBuilder.append(")");
       } else {
         // Search condition by project name didn't yield any projects, so there cannot be any results
-        return new SearchResult<Module>(0, 0, 0, 0, 0, new ArrayList<Module>());
+        return new SearchResult<>(0, 0, 0, 0, 0, new ArrayList<Module>());
       }
     }
 
@@ -307,7 +307,7 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<Module>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
 
     } catch (ParseException e) {
       throw new PersistenceException(e);

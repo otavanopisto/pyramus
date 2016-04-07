@@ -39,7 +39,7 @@ public class GetStudentInfoJSONRequestController extends JSONRequestController {
     Long studentId = NumberUtils.createLong(requestContext.getRequest().getParameter("studentId"));
     Student student = studentDAO.findById(studentId);
     
-    Map<String, Object> studentInfo = new HashMap<String, Object>();
+    Map<String, Object> studentInfo = new HashMap<>();
     
     studentInfo.put("id", student.getId());
     studentInfo.put("firstname", student.getFirstName());

@@ -318,28 +318,28 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   @IndexColumn (name = "indexColumn")
   @JoinColumn (name="course")
   @IndexedEmbedded
-  private List<CourseComponent> courseComponents = new Vector<CourseComponent>();
+  private List<CourseComponent> courseComponents = new Vector<>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="course")
-  private List<BasicCourseResource> basicCourseResources = new Vector<BasicCourseResource>();
+  private List<BasicCourseResource> basicCourseResources = new Vector<>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="course")
-  private List<StudentCourseResource> studentCourseResources = new Vector<StudentCourseResource>();
+  private List<StudentCourseResource> studentCourseResources = new Vector<>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="course")
-  private List<GradeCourseResource> gradeCourseResources = new Vector<GradeCourseResource>();
+  private List<GradeCourseResource> gradeCourseResources = new Vector<>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="course")
-  private List<OtherCost> otherCosts = new Vector<OtherCost>();
+  private List<OtherCost> otherCosts = new Vector<>();
 
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__CourseTags", joinColumns=@JoinColumn(name="course"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
-  private Set<Tag> tags = new HashSet<Tag>();
+  private Set<Tag> tags = new HashSet<>();
   
   @Column
   @Temporal (value=TemporalType.TIMESTAMP)

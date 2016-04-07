@@ -81,14 +81,14 @@ public class GetStudentStudyProgrammesJSONRequestController extends JSONRequestC
       }
     });
     
-    List<Map<String, Object>> result = new ArrayList<Map<String,Object>>();
+    List<Map<String, Object>> result = new ArrayList<>();
     
     for (int i = 0; i < students.size(); i++) {
     	Student student = students.get(i);
     	
       if (student != null) {
     		if (student.getStudyProgramme() != null) {
-          Map<String, Object> studentInfo = new HashMap<String, Object>();
+          Map<String, Object> studentInfo = new HashMap<>();
           studentInfo.put("studyProgrammeId", student.getStudyProgramme().getId());
 
           String studyProgrammeName = student.getStudyProgramme().getName();
@@ -101,7 +101,7 @@ public class GetStudentStudyProgrammesJSONRequestController extends JSONRequestC
 
           result.add(studentInfo);
     		} else {
-          Map<String, Object> studentInfo = new HashMap<String, Object>();
+          Map<String, Object> studentInfo = new HashMap<>();
           studentInfo.put("studyProgrammeId", new Long(-1));
           if (!student.getArchived())
             studentInfo.put("studyProgrammeName", Messages.getInstance().getText(requestContext.getRequest().getLocale(), "students.editStudent.noStudyProgrammeDropDownItemLabel"));

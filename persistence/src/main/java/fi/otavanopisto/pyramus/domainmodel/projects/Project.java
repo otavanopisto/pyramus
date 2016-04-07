@@ -287,7 +287,7 @@ public class Project implements ArchivableEntity {
   @IndexColumn (name = "indexColumn")
   @JoinColumn (name="project")
   @IndexedEmbedded
-  private List<ProjectModule> projectModules = new Vector<ProjectModule>();
+  private List<ProjectModule> projectModules = new Vector<>();
 
   @ManyToOne
   @JoinColumn(name="creator")
@@ -314,7 +314,7 @@ public class Project implements ArchivableEntity {
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__ProjectTags", joinColumns=@JoinColumn(name="project"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
-  private Set<Tag> tags = new HashSet<Tag>();
+  private Set<Tag> tags = new HashSet<>();
   
   @Version
   @Column(nullable = false)

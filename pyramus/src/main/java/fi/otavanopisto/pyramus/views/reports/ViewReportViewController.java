@@ -43,7 +43,7 @@ public class ViewReportViewController extends PyramusViewController implements B
     ReportContextDAO reportContextDAO = DAOFactory.getInstance().getReportContextDAO();
     
     List<ReportContext> contexts = reportContextDAO.listByReport(report);
-    List<String> contextStrs = new ArrayList<String>();
+    List<String> contextStrs = new ArrayList<>();
     
     for (ReportContext ctx : contexts) {
       contextStrs.add(ctx.getContext().toString());

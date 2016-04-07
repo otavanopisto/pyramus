@@ -137,7 +137,7 @@ public class DownloadReportBinaryRequestController extends BinaryRequestControll
   }
   
 
-  private static Set<String> reservedParameters = new HashSet<String>();
+  private static Set<String> reservedParameters = new HashSet<>();
   
   static {
     reservedParameters.add("reportId");

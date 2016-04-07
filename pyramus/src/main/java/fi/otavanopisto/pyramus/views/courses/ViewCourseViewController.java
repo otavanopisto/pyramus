@@ -55,7 +55,7 @@ public class ViewCourseViewController extends PyramusViewController implements B
     Course course = courseDAO.findById(pageRequestContext.getLong("course"));
     pageRequestContext.getRequest().setAttribute("course", course);
 
-    Map<Long, CourseAssessmentRequest> courseAssessmentRequests = new HashMap<Long, CourseAssessmentRequest>();
+    Map<Long, CourseAssessmentRequest> courseAssessmentRequests = new HashMap<>();
     
     List<CourseStudent> courseStudents = courseStudentDAO.listByCourse(course);
     Collections.sort(courseStudents, new Comparator<CourseStudent>() {
