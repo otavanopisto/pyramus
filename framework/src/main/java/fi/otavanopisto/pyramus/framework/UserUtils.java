@@ -73,7 +73,7 @@ public class UserUtils {
       return allowed;
     } else {
       // True, if email is not in use
-      return (staffMember == null) && (students.size() == 0);
+      return (staffMember == null) && (students.isEmpty());
     }
   }
   

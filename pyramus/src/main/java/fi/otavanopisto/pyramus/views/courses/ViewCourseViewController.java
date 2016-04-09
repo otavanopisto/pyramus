@@ -105,7 +105,7 @@ public class ViewCourseViewController extends PyramusViewController implements B
         }
       });
 
-      if (courseAssessmentRequestsByCourseStudent.size() > 0) {
+      if (!courseAssessmentRequestsByCourseStudent.isEmpty()) {
         courseAssessmentRequests.put(courseStudent.getId(), courseAssessmentRequestsByCourseStudent.get(0));
       }
     }

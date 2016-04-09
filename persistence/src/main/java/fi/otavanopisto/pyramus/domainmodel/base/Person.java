@@ -245,7 +245,7 @@ public class Person implements ContextReference {
 
   private StaffMember getStaffMember() {
     List<StaffMember> staffMembers = getStaffMembers();
-    return staffMembers.size() > 0 ? staffMembers.get(0) : null;
+    return !staffMembers.isEmpty() ? staffMembers.get(0) : null;
   }
 
   @Transient

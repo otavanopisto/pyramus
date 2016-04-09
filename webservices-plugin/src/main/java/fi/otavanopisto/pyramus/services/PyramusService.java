@@ -14,7 +14,7 @@ public class PyramusService {
   	SystemDAO systemDAO = DAOFactory.getInstance().getSystemDAO(); 
   	  
   	Set<ConstraintViolation<Object>> constraintViolations = systemDAO.validateEntity(entity);
-  	if (constraintViolations.size() != 0) {
+  	if (!constraintViolations.isEmpty()) {
   	  String message = "";
   	  for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
   	    message += constraintViolation.getMessage() + '\n';

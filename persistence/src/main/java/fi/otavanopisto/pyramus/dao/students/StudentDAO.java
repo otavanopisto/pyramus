@@ -79,7 +79,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
       // Also archive course students of the archived student
       
       List<CourseStudent> courseStudents = courseStudentDAO.listByStudent(student);
-      if (courseStudents.size() > 0) {
+      if (!courseStudents.isEmpty()) {
         for (CourseStudent courseStudent : courseStudents) {
           courseStudentDAO.archive(courseStudent);
         }

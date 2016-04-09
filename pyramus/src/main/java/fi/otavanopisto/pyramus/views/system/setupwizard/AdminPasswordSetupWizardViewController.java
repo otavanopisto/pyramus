@@ -50,14 +50,14 @@ public class AdminPasswordSetupWizardViewController extends SetupWizardControlle
   @Override
   public boolean isInitialized(PageRequestContext requestContext) throws SetupWizardException {
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
-    return userDAO.listAll().size() > 0;
+    return !userDAO.listAll().isEmpty();
   }
 
   @Override
   public UserRole[] getAllowedRoles() {
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     List<StaffMember> users = userDAO.listAll();
-    if (users.size() == 0) {
+    if (users.isEmpty()) {
       return new UserRole[] { UserRole.EVERYONE }; 
     } else {
       return super.getAllowedRoles();

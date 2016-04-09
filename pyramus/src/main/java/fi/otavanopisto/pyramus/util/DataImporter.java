@@ -291,7 +291,7 @@ public class DataImporter {
      
       Set<ConstraintViolation<Object>> constraintViolations = systemDAO.validateEntity(pojo);
       
-	  if (constraintViolations.size() == 0) {
+	  if (constraintViolations.isEmpty()) {
 	    systemDAO.persistEntity(pojo);
 	  } else {
 	    String message = "";
