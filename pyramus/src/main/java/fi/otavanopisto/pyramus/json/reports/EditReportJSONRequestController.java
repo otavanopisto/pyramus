@@ -44,9 +44,9 @@ public class EditReportJSONRequestController extends JSONRequestController {
       
       boolean selected = requestContext.getBoolean("context." + contextType.toString());
       
-      if ((selected) && (context == null))
+      if (selected && context == null)
         reportContextDAO.create(report, contextType);
-      else if ((!selected) && (context != null))
+      else if (!selected && context != null)
         reportContextDAO.delete(context);
     }
 

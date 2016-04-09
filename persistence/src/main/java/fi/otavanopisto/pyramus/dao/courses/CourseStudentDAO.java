@@ -238,7 +238,7 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
   }
 
   public List<CourseStudent> listByCourseAndParticipationTypesIncludeArchived(Course course, List<CourseParticipationType> participationTypes) {
-    if ((participationTypes == null) || (participationTypes.isEmpty())) {
+    if (participationTypes == null || participationTypes.isEmpty()) {
       return Collections.emptyList();
     }
     

@@ -38,7 +38,7 @@ public class SearchModulesViewController extends PyramusViewController implement
 
     for (EducationType educationType : educationTypes) {
       List<Subject> subjectsOfType = subjectDAO.listByEducationType(educationType);
-      if ((subjectsOfType != null) && (!subjectsOfType.isEmpty())) {
+      if (subjectsOfType != null && !subjectsOfType.isEmpty()) {
         Collections.sort(subjectsOfType, new StringAttributeComparator("getName"));
         subjectsByEducationType.put(educationType.getId(), subjectsOfType);
       }

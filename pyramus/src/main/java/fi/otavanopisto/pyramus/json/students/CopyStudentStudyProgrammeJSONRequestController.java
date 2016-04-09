@@ -92,7 +92,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     
     // Default user
     
-    if ((person.getDefaultUser() == null) || (Boolean.TRUE.equals(setAsDefaultUser))) {
+    if (person.getDefaultUser() == null || Boolean.TRUE.equals(setAsDefaultUser)) {
       personDAO.updateDefaultUser(person, newStudent);
     }
     

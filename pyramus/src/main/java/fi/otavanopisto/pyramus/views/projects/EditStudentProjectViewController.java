@@ -89,11 +89,11 @@ public class EditStudentProjectViewController extends PyramusViewController impl
     for (CreditLink creditLink : allStudentCreditLinks) {
       switch (creditLink.getCredit().getCreditType()) {
         case CourseAssessment:
-          allStudentCourseAssessments.add(((CourseAssessment) creditLink.getCredit()));
+          allStudentCourseAssessments.add((CourseAssessment) creditLink.getCredit());
         break;
 
         case TransferCredit:
-          allStudentTransferCredits.add(((TransferCredit) creditLink.getCredit()));
+          allStudentTransferCredits.add((TransferCredit) creditLink.getCredit());
         break;
       }
     }

@@ -90,7 +90,7 @@ public class PersonRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if ((entity.getSex() == null) || (entity.getSecureInfo() == null)) {
+    if (entity.getSex() == null || entity.getSecureInfo() == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -151,7 +151,7 @@ public class PersonRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if ((entity.getSex() == null) || (entity.getSecureInfo() == null)) {
+    if (entity.getSex() == null || entity.getSecureInfo() == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     

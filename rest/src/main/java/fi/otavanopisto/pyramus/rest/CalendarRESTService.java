@@ -62,7 +62,7 @@ public class CalendarRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if ((startDate == null) || (endDate == null)) {
+    if (startDate == null || endDate == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -118,7 +118,7 @@ public class CalendarRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if ((startDate == null) || (endDate == null)) {
+    if (startDate == null || endDate == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     

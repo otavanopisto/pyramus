@@ -59,7 +59,7 @@ public class ManageChangeLogViewController extends PyramusFormViewController {
           case BASIC:
           case ONE_TO_ONE:
           case MANY_TO_ONE:
-            if ((!attribute.equals(idAttribute)) && !this.isVersion(entityClass, attribute)) {
+            if (!attribute.equals(idAttribute) && !this.isVersion(entityClass, attribute)) {
               String propertyName = attribute.getName();
               TrackedEntityProperty trackedEntityProperty = trackedEntityPropertyDAO.findByEntityAndProperty(entityName, propertyName);
               ManageChangeLogViewEntityPropertyBean propertyBean = new ManageChangeLogViewEntityPropertyBean(propertyName,

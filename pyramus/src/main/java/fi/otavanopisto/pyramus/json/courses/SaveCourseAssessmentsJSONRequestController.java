@@ -64,7 +64,7 @@ public class SaveCourseAssessmentsJSONRequestController extends JSONRequestContr
       String colPrefix = "studentsTable." + i;
 
       Long modified = requestContext.getLong(colPrefix + ".modified");
-      if ((modified == null) || (modified.intValue() != 1))
+      if (modified == null || modified.intValue() != 1)
         continue;
       
       Long courseStudentId = requestContext.getLong(colPrefix + ".courseStudentId");
@@ -84,7 +84,7 @@ public class SaveCourseAssessmentsJSONRequestController extends JSONRequestContr
         CourseAssessment assessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
 
         Long verbalModified = requestContext.getLong(colPrefix + ".verbalModified");
-        if ((verbalModified != null) && (verbalModified.intValue() == 1)) {
+        if (verbalModified != null && verbalModified.intValue() == 1) {
           verbalAssessment = requestContext.getString(colPrefix + ".verbalAssessment");
         } else {
           if (assessment != null)

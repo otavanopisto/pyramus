@@ -104,7 +104,7 @@ public class CreateModuleJSONRequestController extends JSONRequestController {
       Long descriptionCatId = requestContext.getLong(varName + ".catId");
       String descriptionText = requestContext.getString(varName + ".text");
 
-      if ((descriptionCatId != null) && (descriptionCatId.intValue() != -1)) {
+      if (descriptionCatId != null && descriptionCatId.intValue() != -1) {
         descriptionDAO.create(module, cat, descriptionText);
       }
     }

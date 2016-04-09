@@ -52,7 +52,7 @@ public class CreateSchoolJSONRequestController extends JSONRequestController {
     
     Long schoolFieldId = requestContext.getLong("schoolFieldId");
     SchoolField schoolField = null;
-    if ((schoolFieldId != null) && (schoolFieldId.intValue() >= 0))
+    if (schoolFieldId != null && schoolFieldId.intValue() >= 0)
       schoolField = schoolFieldDAO.findById(schoolFieldId);
 
     Set<Tag> tagEntities = new HashSet<>();

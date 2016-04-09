@@ -81,7 +81,7 @@ public class AuthenticationProviderVault {
   **/
   public void initializeStrategies() {
     String strategiesConf = System.getProperty("authentication.enabledStrategies");
-    if ((strategiesConf == null)||("".equals(strategiesConf)))
+    if (strategiesConf == null || "".equals(strategiesConf))
       strategiesConf = "internal";
     
     int authSourceCount = 0;

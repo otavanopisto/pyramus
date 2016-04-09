@@ -197,7 +197,7 @@ public class CommonRESTService extends AbstractRESTService {
   @GET
   @RESTPermit (CommonPermissions.FIND_EDUCATIONSUBTYPE)
   public Response findEducationTypeById(@PathParam("EDUCATIONTYPEID") Long educationTypeId, @PathParam ("EDUCATIONSUBTYPEID") Long educationSubtypeId) {
-    if ((educationTypeId == null) || (educationSubtypeId == null)) {
+    if (educationTypeId == null || educationSubtypeId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -230,7 +230,7 @@ public class CommonRESTService extends AbstractRESTService {
   @PUT
   @RESTPermit (CommonPermissions.UPDATE_EDUCATIONSUBTYPE)
   public Response updateEducationSubtype(@PathParam("EDUCATIONTYPEID") Long educationTypeId, @PathParam ("EDUCATIONSUBTYPEID") Long educationSubtypeId, fi.otavanopisto.pyramus.rest.model.EducationSubtype entity) {
-    if ((educationTypeId == null) || (educationSubtypeId == null)) {
+    if (educationTypeId == null || educationSubtypeId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -270,7 +270,7 @@ public class CommonRESTService extends AbstractRESTService {
   @DELETE
   @RESTPermit (CommonPermissions.DELETE_EDUCATIONSUBTYPE)
   public Response deleteEducationSubtype(@PathParam("EDUCATIONTYPEID") Long educationTypeId, @PathParam ("EDUCATIONSUBTYPEID") Long educationSubtypeId, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
-    if ((educationTypeId == null) || (educationSubtypeId == null)) {
+    if (educationTypeId == null || educationSubtypeId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -576,7 +576,7 @@ public class CommonRESTService extends AbstractRESTService {
     Double gpa = entity.getGpa();
     String qualification = entity.getQualification();
     
-    if (StringUtils.isBlank(name) || StringUtils.isBlank(description) || (passingGrade == null)) {
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(description) || passingGrade == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -666,7 +666,7 @@ public class CommonRESTService extends AbstractRESTService {
     Double gpa = entity.getGpa();
     String qualification = entity.getQualification();
     
-    if (StringUtils.isBlank(name) || StringUtils.isBlank(description) || (passingGrade == null)) {
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(description) || passingGrade == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     

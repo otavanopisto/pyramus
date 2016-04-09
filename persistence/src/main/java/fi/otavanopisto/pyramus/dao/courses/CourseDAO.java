@@ -356,7 +356,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     if (educationSubtype != null)
       addTokenizedSearchCriteria(queryBuilder, "courseEducationTypes.courseEducationSubtypes.educationSubtype.id", educationSubtype.getId().toString(), true);
     
-    if ((timeframeS != null) && (timeframeE != null)) {
+    if (timeframeS != null && timeframeE != null) {
       switch (timeFilterMode) {
       case EXCLUSIVE:
         /** beginDate > timeframeStart and endDate < timeframeEnd **/

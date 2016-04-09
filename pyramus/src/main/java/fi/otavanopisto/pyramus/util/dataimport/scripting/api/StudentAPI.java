@@ -105,7 +105,7 @@ public class StudentAPI {
       emailDAO.create(student.getContactInfo(), emailContactType, true, email);
     }
     
-    return (student.getId());
+    return student.getId();
   }
 
   public void updateStudentPerson(Long studentId, Long personId) {

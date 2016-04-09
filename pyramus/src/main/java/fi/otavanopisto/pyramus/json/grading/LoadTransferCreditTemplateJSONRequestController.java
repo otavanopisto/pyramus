@@ -47,7 +47,7 @@ public class LoadTransferCreditTemplateJSONRequestController extends JSONRequest
       
       String localizedSubject = subjectName;
       
-      if ((subjectCode != null) && (subjectEducationType != null)) {
+      if (subjectCode != null && subjectEducationType != null) {
         localizedSubject = Messages.getInstance().getText(jsonRequestContext.getRequest().getLocale(), 
             "generic.subjectFormatterWithEducationType", new Object[] {
           subjectCode,

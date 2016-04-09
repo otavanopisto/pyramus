@@ -58,7 +58,7 @@ public class DataImportContext {
   }
   
   public String getFieldValue(String fieldName) {
-    if ((this.fields != null) && (this.values != null) && (this.fields.length == this.values.length)) {
+    if (this.fields != null && this.values != null && this.fields.length == this.values.length) {
       for (int i = 0; i < this.fields.length; i++) {
         if (fieldName.equals(this.fields[i]))
           return this.values[i];

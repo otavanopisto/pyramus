@@ -9,7 +9,7 @@ public class ActivityTypeAPI {
   }
   
   public Long createType(String name) {
-    return (DAOFactory.getInstance().getStudentActivityTypeDAO().create(name).getId());
+    return DAOFactory.getInstance().getStudentActivityTypeDAO().create(name).getId();
   }
 
   @SuppressWarnings("unused")

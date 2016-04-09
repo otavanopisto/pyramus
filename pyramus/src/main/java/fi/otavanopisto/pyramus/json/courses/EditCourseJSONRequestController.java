@@ -376,7 +376,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
 
       CourseDescription oldDesc = descriptionDAO.findByCourseAndCategory(course, cat);
 
-      if ((descriptionCatId != null) && (descriptionCatId.intValue() != -1)) {
+      if (descriptionCatId != null && descriptionCatId.intValue() != -1) {
         // Description has been submitted from form 
         if (oldDesc != null)
           descriptionDAO.update(oldDesc, course, cat, descriptionText);

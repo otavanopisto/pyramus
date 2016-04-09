@@ -128,7 +128,7 @@ public class DataImporter {
           String entityClassName = element.getAttribute("class");
           String className = entityPackageName + '.' + entityClassName;
           
-          if ((entities == null)||entities.contains(className)) {
+          if (entities == null ||entities.contains(className)) {
             Class<?> entityClass = Class.forName(entityPackageName + "." + entityClassName);
          
             NodeIterator entryIterator = XPathAPI.selectNodeIterator(element, "e");

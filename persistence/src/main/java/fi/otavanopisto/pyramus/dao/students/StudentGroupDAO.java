@@ -153,7 +153,7 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
       addTokenizedSearchCriteria(queryBuilder, "users.user.id", user.getId().toString(), true);
     }
     
-    if ((timeframeS != null) && (timeframeE != null)) {
+    if (timeframeS != null && timeframeE != null) {
       /**
        * (beginDate between timeframeStart - timeframeEnd or endDate between timeframeStart -
        * timeframeEnd) or (startDate less than timeframeStart and endDate more than

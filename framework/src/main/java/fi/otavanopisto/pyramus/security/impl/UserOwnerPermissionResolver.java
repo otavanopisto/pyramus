@@ -29,7 +29,7 @@ public class UserOwnerPermissionResolver extends AbstractPermissionResolver impl
   public boolean hasPermission(String permission, ContextReference contextReference, User user) {
     fi.otavanopisto.pyramus.domainmodel.users.User user1 = getUser(user);
     fi.otavanopisto.pyramus.domainmodel.users.User user2 = resolveUser(contextReference);
-    if ((user1 != null) && (user2 != null)) {
+    if (user1 != null && user2 != null) {
       // The underlying persons of the users must match
       return user1.getPerson().getId().equals(user2.getPerson().getId());
     }

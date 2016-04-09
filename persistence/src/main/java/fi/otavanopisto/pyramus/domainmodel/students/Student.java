@@ -206,7 +206,7 @@ public class Student extends User implements ArchivableEntity {
 	
 	@Transient
 	public boolean getActive() {
-	  return getHasStartedStudies() && (!getHasFinishedStudies());
+	  return getHasStartedStudies() && !getHasFinishedStudies();
 	}
 
   @Transient

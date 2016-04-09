@@ -97,7 +97,7 @@ public class LocalWorkspaceReader implements WorkspaceReader {
             }
           }
 
-          if ((artifactId != null) && (groupId != null) && (version != null)) {
+          if (artifactId != null && groupId != null && version != null) {
             hostedArtifacts.add(new HostedArtifactMeta(projectFolder, artifactId, groupId, version));
           }
 

@@ -229,7 +229,7 @@ public class SchoolRESTService extends AbstractRESTService {
     Boolean defaultAddress = email.getDefaultAddress();
     String address = email.getAddress();
     
-    if ((contactTypeId == null) || (defaultAddress == null) || StringUtils.isBlank(address)) {
+    if (contactTypeId == null || defaultAddress == null || StringUtils.isBlank(address)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -339,7 +339,7 @@ public class SchoolRESTService extends AbstractRESTService {
     String country = address.getCountry();
     String city = address.getCity();
     
-    if ((contactTypeId == null) || (defaultAddress == null)) {
+    if (contactTypeId == null || defaultAddress == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -445,7 +445,7 @@ public class SchoolRESTService extends AbstractRESTService {
     Boolean defaultNumber = phoneNumber.getDefaultNumber();
     String number = phoneNumber.getNumber();
     
-    if ((contactTypeId == null) || (defaultNumber == null) || StringUtils.isBlank(number)) {
+    if (contactTypeId == null || defaultNumber == null || StringUtils.isBlank(number)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -550,7 +550,7 @@ public class SchoolRESTService extends AbstractRESTService {
     Long contactURLTypeId = contactURL.getContactURLTypeId();
     String url = contactURL.getUrl();
     
-    if ((contactURLTypeId == null) || StringUtils.isBlank(url)) {
+    if (contactURLTypeId == null || StringUtils.isBlank(url)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -711,7 +711,7 @@ public class SchoolRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if (StringUtils.isBlank(entity.getKey())||StringUtils.isBlank(entity.getName())||(entity.getType() == null)||(entity.getUserEditable() == null)) {
+    if (StringUtils.isBlank(entity.getKey())||StringUtils.isBlank(entity.getName())|| entity.getType() == null || entity.getUserEditable() == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -767,7 +767,7 @@ public class SchoolRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if (StringUtils.isBlank(entity.getName())||(entity.getType() == null)||(entity.getUserEditable() == null)) {
+    if (StringUtils.isBlank(entity.getName())|| entity.getType() == null || entity.getUserEditable() == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     

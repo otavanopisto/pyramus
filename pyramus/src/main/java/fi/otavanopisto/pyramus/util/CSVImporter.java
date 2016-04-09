@@ -55,7 +55,7 @@ public class CSVImporter {
             fieldName = firstLine[i];
             value = nextLine[i];
 
-            if ((!StringUtils.isBlank(fieldName)) && (!StringUtils.isBlank(value)))
+            if (!StringUtils.isBlank(fieldName) && !StringUtils.isBlank(value))
               entityHandler.handleValue(fieldName, value, context);
           }
           

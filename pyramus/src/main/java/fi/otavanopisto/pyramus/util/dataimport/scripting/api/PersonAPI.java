@@ -27,7 +27,7 @@ public class PersonAPI {
 
     Person person = personDAO.create(birthday, socialSecurityNumber, sexEntity, basicInfo, secureInfo);
 
-    return (person.getId());
+    return person.getId();
   }
   
   public Long findIdBySocialSecurityNumber(String socialSecurityNumber) {

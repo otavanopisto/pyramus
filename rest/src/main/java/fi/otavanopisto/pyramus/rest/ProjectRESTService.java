@@ -171,7 +171,7 @@ public class ProjectRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    if ((moduleEntity.getModuleId() == null) || (moduleEntity.getOptionality() == null)) {
+    if (moduleEntity.getModuleId() == null || moduleEntity.getOptionality() == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
