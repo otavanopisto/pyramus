@@ -57,7 +57,7 @@ public class AuthorizeClientApplicationViewController extends PyramusFormViewCon
     }
 
     HttpServletRequest request = requestContext.getRequest();
-    OAuthAuthzRequest oauthRequest = null;
+    OAuthAuthzRequest oauthRequest;
     OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
 
     try {

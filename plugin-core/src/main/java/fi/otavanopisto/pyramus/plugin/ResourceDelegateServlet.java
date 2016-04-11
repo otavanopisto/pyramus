@@ -46,7 +46,7 @@ public class ResourceDelegateServlet extends HttpServlet {
       connection.setDoOutput(true);
 //      String contentType = connection.getContentType();
       InputStream resourceStream = connection.getInputStream();
-      int bytesRead = 0;
+      int bytesRead;
       byte[] buff = new byte[1024];
       while ((bytesRead = resourceStream.read(buff, 0, 1024)) > 0) {
         outputStream.write(buff, 0, bytesRead);

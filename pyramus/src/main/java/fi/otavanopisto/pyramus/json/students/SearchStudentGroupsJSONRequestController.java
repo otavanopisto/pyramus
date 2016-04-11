@@ -99,7 +99,7 @@ public class SearchStudentGroupsJSONRequestController extends JSONRequestControl
       results.add(info);
     }
 
-    String statusMessage = "";
+    String statusMessage;
     Locale locale = requestContext.getRequest().getLocale();
     if (searchResult.getTotalHitCount() > 0) {
       statusMessage = Messages.getInstance().getText(

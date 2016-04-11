@@ -34,7 +34,7 @@ public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTest 
   @Test
   public void testPermissionsCreateGradingScale() throws NoSuchFieldException {
     GradingScale gradingScale = new GradingScale(null, "create scale", "grading scale for testing creation", Boolean.FALSE);
-    Response response = null;
+    Response response;
 
     response = given().headers(getAuthHeaders())
         .contentType("application/json").body(gradingScale)
@@ -43,7 +43,7 @@ public class GradingScalePermissionsTestsIT extends AbstractRESTPermissionsTest 
     assertOk(response, commonPermissions, CommonPermissions.CREATE_GRADINGSCALE, 200);
 
     Long statusCode = new Long(response.statusCode());
-    Long id = null;
+    Long id;
     if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {

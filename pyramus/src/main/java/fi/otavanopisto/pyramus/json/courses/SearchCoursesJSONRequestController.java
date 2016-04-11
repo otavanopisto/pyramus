@@ -166,7 +166,7 @@ public class SearchCoursesJSONRequestController extends JSONRequestController {
       results.add(courseInfo);
     }
 
-    String statusMessage = "";
+    String statusMessage;
     Locale locale = requestContext.getRequest().getLocale();
     if (searchResult.getTotalHitCount() > 0) {
       statusMessage = Messages.getInstance().getText(

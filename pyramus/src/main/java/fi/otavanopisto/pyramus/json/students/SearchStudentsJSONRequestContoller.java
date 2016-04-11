@@ -58,7 +58,7 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
       page = 0;
     }
     
-    SearchResult<Person> searchResult = null;
+    SearchResult<Person> searchResult;
     
     if ("advanced".equals(jsonRequestContext.getRequest().getParameter("activeTab"))) {
       String firstName = jsonRequestContext.getString("firstname");
@@ -175,7 +175,7 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
   	  }
     }
     
-    String statusMessage = "";
+    String statusMessage;
     Locale locale = jsonRequestContext.getRequest().getLocale();
     if (searchResult.getTotalHitCount() > 0) {
       statusMessage = Messages.getInstance().getText(

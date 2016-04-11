@@ -120,7 +120,7 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
         luceneQuery = parser.parse(queryString);
       }
 
-      FullTextQuery query = null;
+      FullTextQuery query;
 
       if (resourceType == null) {
         query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, WorkResource.class, MaterialResource.class)

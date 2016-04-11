@@ -66,8 +66,8 @@
 							
 							// check Java version
 							String[] versionParts = javaVersion.split("\\.");
-							int majorVersion = 0;
-							int minorVersion = 0;
+							int majorVersion;
+							int minorVersion;
 							try
 							{
 								majorVersion = Integer.parseInt(versionParts[0]);		

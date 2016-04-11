@@ -67,7 +67,7 @@ public class JSONArrayExtractor {
     for (Object sourceObject : sourceObjects) {
       JSONObject destObject = new JSONObject();
       for (String attributeName : attributeNames) {
-        Object attributeValue = null;
+        Object attributeValue;
         // Nulls are deliberately skipped so that they are undefined in JS
         try {
           attributeValue = ReflectionApiUtils.getObjectFieldValue(sourceObject, attributeName, true);

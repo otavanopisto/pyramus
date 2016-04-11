@@ -64,7 +64,7 @@ public class DataImporter {
           Element storeElement = (Element) storeNode;
           String variableName = storeElement.getAttribute("storeVariable");
           String hql = storeElement.getAttribute("hql");
-          Object result = null;
+          Object result;
           
           System.out.println("Processing " + variableName);
           

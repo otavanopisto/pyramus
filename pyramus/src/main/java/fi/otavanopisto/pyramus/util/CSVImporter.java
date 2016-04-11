@@ -48,8 +48,8 @@ public class CSVImporter {
           entityHandler.initializeContext(context);
           
   
-          String value = null;
-          String fieldName = null;
+          String value;
+          String fieldName;
           
           for (int i = 0; i < firstLine.length; i++) {
             fieldName = firstLine[i];

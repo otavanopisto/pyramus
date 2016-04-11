@@ -26,7 +26,7 @@ public class LocalWorkspaceReader implements WorkspaceReader {
   
   @Override
   public File findArtifact(Artifact artifact) {
-    HostedArtifactMeta hostedArtifactMeta = null;
+    HostedArtifactMeta hostedArtifactMeta;
         
     if ("jar".equals(artifact.getExtension())) {
         hostedArtifactMeta = getHostedArtifactMeta(artifact);

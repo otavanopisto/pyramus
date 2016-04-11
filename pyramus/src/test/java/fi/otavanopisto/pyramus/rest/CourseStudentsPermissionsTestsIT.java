@@ -41,7 +41,7 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
     
     assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSESTUDENT, 200);
     Long statusCode = new Long(response.statusCode());
-    Long id = null;
+    Long id;
     if(statusCode.toString().equals("200")){
       id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {

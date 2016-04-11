@@ -20,7 +20,7 @@ public class SaveCourseParticipationTypesJSONRequestController extends JSONReque
     
     int rowCount = jsonRequestContext.getInteger("courseParticipationTypesTable.rowCount");
     for (int i = 0; i < rowCount; i++) {
-      CourseParticipationType courseParticipationType = null;
+      CourseParticipationType courseParticipationType;
       
       String colPrefix = "courseParticipationTypesTable." + i;
       
