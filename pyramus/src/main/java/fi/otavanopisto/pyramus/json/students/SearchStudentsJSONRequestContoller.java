@@ -125,7 +125,7 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
   	  List<Student> studentList2 = studentDAO.listByPerson(person);
   	  StaffMember staffMember = staffMemberDAO.findByPerson(person);
   	  
-  	  if ((!studentList2.isEmpty()) || (staffMember != null)) {
+  	  if (!studentList2.isEmpty() || staffMember != null) {
         String activeStudyProgrammes = "";
         String inactiveStudyProgrammes = "";
   

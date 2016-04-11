@@ -39,7 +39,7 @@ public class BreadcrumbFilter implements Filter {
   //      }
         RequestController requestController = RequestControllerMapper.getRequestController(controllerName);
   
-        if ((requestController instanceof PyramusViewController) && (requestController instanceof Breadcrumbable)) {
+        if (requestController instanceof PyramusViewController && requestController instanceof Breadcrumbable) {
           BreadcrumbHandler breadcrumbHandler = getBreadcrumbHandler(httpRequest);
           if (request.getParameter("resetbreadcrumb") != null) {
             breadcrumbHandler.clear();

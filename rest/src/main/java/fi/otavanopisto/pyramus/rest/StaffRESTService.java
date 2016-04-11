@@ -84,7 +84,7 @@ public class StaffRESTService extends AbstractRESTService {
   public Response findStaffMemberById(@PathParam("ID") Long id, @Context Request request) {
     StaffMember staffMember = userController.findStaffMemberById(id);
     
-    if ((staffMember == null) || (staffMember.getArchived())) {
+    if (staffMember == null || staffMember.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
@@ -179,7 +179,7 @@ public class StaffRESTService extends AbstractRESTService {
     String country = address.getCountry();
     String city = address.getCity();
 
-    if ((contactTypeId == null) || (defaultAddress == null)) {
+    if (contactTypeId == null || defaultAddress == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -303,7 +303,7 @@ public class StaffRESTService extends AbstractRESTService {
     Boolean defaultNumber = phoneNumber.getDefaultNumber();
     String number = phoneNumber.getNumber();
 
-    if ((contactTypeId == null) || (defaultNumber == null) || StringUtils.isBlank(number)) {
+    if (contactTypeId == null || defaultNumber == null || StringUtils.isBlank(number)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 

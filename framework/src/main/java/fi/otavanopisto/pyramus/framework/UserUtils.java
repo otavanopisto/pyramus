@@ -76,7 +76,7 @@ public class UserUtils {
       return allowed;
     } else {
       // True, if email is not in use
-      return (staffMember == null) && (students.isEmpty());
+      return staffMember == null && students.isEmpty();
     }
   }
   

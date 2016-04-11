@@ -102,7 +102,7 @@ public class EditModuleJSONRequestController extends JSONRequestController {
 
       CourseDescription oldDesc = courseDescriptionDAO.findByCourseAndCategory(module, cat);
 
-      if ((descriptionCatId != null) && (descriptionCatId.intValue() != -1)) {
+      if (descriptionCatId != null && descriptionCatId.intValue() != -1) {
         // Description has been submitted from form 
         if (oldDesc != null)
           courseDescriptionDAO.update(oldDesc, module, cat, descriptionText);

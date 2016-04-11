@@ -204,7 +204,7 @@ public class Person implements ContextReference {
           if (o1Value == o2Value) {
             Date o1StudyStart = o1.getStudyStartDate();
             Date o2StudyStart = o2.getStudyStartDate(); 
-            return (o1StudyStart != null) && (o2StudyStart != null) ? o2StudyStart.compareTo(o1StudyStart) : 0;
+            return o1StudyStart != null && o2StudyStart != null ? o2StudyStart.compareTo(o1StudyStart) : 0;
           }
           
           return o1Value < o2Value ? -1 : 1;

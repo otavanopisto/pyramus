@@ -301,7 +301,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       Long descriptionCatId = requestContext.getLong(varName + ".catId");
       String descriptionText = requestContext.getString(varName + ".text");
 
-      if ((descriptionCatId != null) && (descriptionCatId.intValue() != -1)) {
+      if (descriptionCatId != null && descriptionCatId.intValue() != -1) {
         // Description has been submitted from form 
         descriptionDAO.create(course, cat, descriptionText);
       }

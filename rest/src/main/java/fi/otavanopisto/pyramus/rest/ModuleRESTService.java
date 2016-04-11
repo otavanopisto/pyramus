@@ -388,7 +388,7 @@ public class ModuleRESTService extends AbstractRESTService{
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if (StringUtils.isBlank(entity.getKey())||StringUtils.isBlank(entity.getName())||(entity.getType() == null)||(entity.getUserEditable() == null)) {
+    if (StringUtils.isBlank(entity.getKey())||StringUtils.isBlank(entity.getName())|| entity.getType() == null || entity.getUserEditable() == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -444,7 +444,7 @@ public class ModuleRESTService extends AbstractRESTService{
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if (StringUtils.isBlank(entity.getName())||(entity.getType() == null)||(entity.getUserEditable() == null)) {
+    if (StringUtils.isBlank(entity.getName())|| entity.getType() == null || entity.getUserEditable() == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     

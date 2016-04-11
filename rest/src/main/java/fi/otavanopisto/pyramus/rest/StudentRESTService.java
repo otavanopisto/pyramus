@@ -817,7 +817,7 @@ public class StudentRESTService extends AbstractRESTService {
     String code = entity.getCode();
     Long categoryId = entity.getCategoryId();
 
-    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || (categoryId == null)) {
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -889,7 +889,7 @@ public class StudentRESTService extends AbstractRESTService {
     String code = entity.getCode();
     Long categoryId = entity.getCategoryId();
 
-    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || (categoryId == null)) {
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -1353,7 +1353,7 @@ public class StudentRESTService extends AbstractRESTService {
     String lastName = entity.getLastName();
     Boolean lodging = entity.getLodging();
 
-    if ((personId == null) || (studyProgrammeId == null) || (lodging == null)) {
+    if (personId == null || studyProgrammeId == null || lodging == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -1482,7 +1482,7 @@ public class StudentRESTService extends AbstractRESTService {
     String lastName = entity.getLastName();
     Boolean lodging = entity.getLodging();
 
-    if ((personId == null) || (studyProgrammeId == null) || (lodging == null)) {
+    if (personId == null || studyProgrammeId == null || lodging == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -2179,7 +2179,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    if (StringUtils.isBlank(entity.getKey()) || StringUtils.isBlank(entity.getName()) || (entity.getType() == null) || (entity.getUserEditable() == null)) {
+    if (StringUtils.isBlank(entity.getKey()) || StringUtils.isBlank(entity.getName()) || entity.getType() == null || entity.getUserEditable() == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -2235,7 +2235,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    if (StringUtils.isBlank(entity.getName()) || (entity.getType() == null) || (entity.getUserEditable() == null)) {
+    if (StringUtils.isBlank(entity.getName()) || entity.getType() == null || entity.getUserEditable() == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -2331,7 +2331,7 @@ public class StudentRESTService extends AbstractRESTService {
     Boolean defaultAddress = email.getDefaultAddress();
     String address = email.getAddress();
 
-    if ((contactTypeId == null) || (defaultAddress == null) || StringUtils.isBlank(address)) {
+    if (contactTypeId == null || defaultAddress == null || StringUtils.isBlank(address)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -2482,7 +2482,7 @@ public class StudentRESTService extends AbstractRESTService {
     String country = address.getCountry();
     String city = address.getCity();
 
-    if ((contactTypeId == null) || (defaultAddress == null)) {
+    if (contactTypeId == null || defaultAddress == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -2604,7 +2604,7 @@ public class StudentRESTService extends AbstractRESTService {
     Boolean defaultNumber = phoneNumber.getDefaultNumber();
     String number = phoneNumber.getNumber();
 
-    if ((contactTypeId == null) || (defaultNumber == null) || StringUtils.isBlank(number)) {
+    if (contactTypeId == null || defaultNumber == null || StringUtils.isBlank(number)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -2709,7 +2709,7 @@ public class StudentRESTService extends AbstractRESTService {
     Long contactURLTypeId = contactURL.getContactURLTypeId();
     String url = contactURL.getUrl();
 
-    if ((contactURLTypeId == null) || StringUtils.isBlank(url)) {
+    if (contactURLTypeId == null || StringUtils.isBlank(url)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 

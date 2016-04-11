@@ -39,7 +39,7 @@ public class ImportCSVViewController extends PyramusFormViewController {
     for (int i = 0; i < list.size(); i++) {
       Object o = list.get(i);
       
-      if ((o != null) && (o.getClass().equals(entityClass)))
+      if (o != null && o.getClass().equals(entityClass))
         entityList.add(o);
     }
     

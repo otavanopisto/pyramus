@@ -653,7 +653,7 @@ public class CourseRESTService extends AbstractRESTService {
     Date studyStartDate = student.getStudyStartDate();
     Date studyEndDate = student.getStudyEndDate();
     
-    if ((studyStartDate == null) && (studyEndDate == null)) {
+    if (studyStartDate == null && studyEndDate == null) {
       // It's a never ending study programme
       return true;
     }
@@ -682,7 +682,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    if ((courseStudent.getArchived())||(courseStudent.getStudent().getArchived())||(courseStudent.getCourse().getArchived())) {
+    if (courseStudent.getArchived() || courseStudent.getStudent().getArchived() || courseStudent.getCourse().getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
@@ -1461,7 +1461,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if (StringUtils.isBlank(entity.getKey())||StringUtils.isBlank(entity.getName())||(entity.getType() == null)||(entity.getUserEditable() == null)) {
+    if (StringUtils.isBlank(entity.getKey())||StringUtils.isBlank(entity.getName())|| entity.getType() == null || entity.getUserEditable() == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
@@ -1517,7 +1517,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
     
-    if (StringUtils.isBlank(entity.getName())||(entity.getType() == null)||(entity.getUserEditable() == null)) {
+    if (StringUtils.isBlank(entity.getName())|| entity.getType() == null || entity.getUserEditable() == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
     

@@ -107,7 +107,7 @@ public class TransferCreditCourseNameAutoCompleteBinaryRequestController extends
     
     String localizedSubject = subjectName;
     
-    if ((subjectCode != null) && (subjectEducationType != null)) {
+    if (subjectCode != null && subjectEducationType != null) {
       localizedSubject = Messages.getInstance().getText(locale, 
           "generic.subjectFormatterWithEducationType", new Object[] {
         subjectCode,

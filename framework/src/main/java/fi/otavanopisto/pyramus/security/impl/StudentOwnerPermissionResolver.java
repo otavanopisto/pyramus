@@ -40,7 +40,7 @@ public class StudentOwnerPermissionResolver extends AbstractPermissionResolver i
 //        " @ " + 
 //        contextReference);
     
-    if ((user1 != null) && (user2 != null)) {
+    if (user1 != null && user2 != null) {
       // Users must match
       if (user1.getId().equals(user2.getId())) {
         if (Student.class.isInstance(user2)) {
