@@ -220,7 +220,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
           }
         });
 
-        if (courseAssessmentRequestsByCourseStudent.size() > 0) {
+        if (!courseAssessmentRequestsByCourseStudent.isEmpty()) {
           courseAssessmentRequests.put(courseStudent.getId(), courseAssessmentRequestsByCourseStudent.get(0));
         }
     	}
@@ -399,7 +399,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
         arr.add(obj);
       }
       
-      if (arr.size() > 0)
+      if (!arr.isEmpty())
         linkedCourseAssessments.put(student.getId(), arr);
       
       /**
@@ -450,7 +450,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
         arr.add(obj);
       }
       
-      if (arr.size() > 0)
+      if (!arr.isEmpty())
         linkedTransferCredits.put(student.getId(), arr);
       
       /**
@@ -559,7 +559,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
         obj.put("lastModified", file.getLastModified().getTime());
         arr.add(obj);
       }
-      if (arr.size() > 0)
+      if (!arr.isEmpty())
         studentFiles.put(student.getId(), arr);
       
       // Student Image

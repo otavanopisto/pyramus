@@ -58,11 +58,11 @@ public class AuthenticationProviderVault {
   }
   
   public boolean hasExternalStrategies() {
-    return getExternalAuthenticationProviders().size() > 0;
+    return !getExternalAuthenticationProviders().isEmpty();
   }
   
   public boolean hasInternalStrategies() {
-    return getInternalAuthenticationProviders().size() > 0;
+    return !getInternalAuthenticationProviders().isEmpty();
   }
   
   /**

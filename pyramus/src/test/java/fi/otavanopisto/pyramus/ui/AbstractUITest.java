@@ -27,7 +27,7 @@ public class AbstractUITest extends AbstractIntegrationTest {
   }
 
   protected void testPageElementsByName(String elementName) {
-    Boolean elementExists = getWebDriver().findElements(By.name(elementName)).size() > 0;
+    Boolean elementExists = !getWebDriver().findElements(By.name(elementName)).isEmpty();
     assertEquals(true, elementExists);
   }
 

@@ -32,7 +32,7 @@ public class ReindexHibernateObjects extends PyramusViewController {
         session.setAttribute("pendingIndexingTasks", pendingIndexingTasks);
         redirectBack = true;
       } else {
-        if (pendingIndexingTasks.size() != 0) {
+        if (!pendingIndexingTasks.isEmpty()) {
           indexClass = pendingIndexingTasks.get(0);
           pendingIndexingTasks.remove(0);
           session.setAttribute("pendingIndexingTasks", pendingIndexingTasks);

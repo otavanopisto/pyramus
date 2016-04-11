@@ -185,7 +185,7 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         
         arr.add(obj);
       }
-      if (arr.size() > 0)
+      if (!arr.isEmpty())
         courseAssessmentsByStudent.put(student.getId(), arr);
       
       arr = new JSONArray();
@@ -211,7 +211,7 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         
         arr.add(obj);
       }
-      if (arr.size() > 0)
+      if (!arr.isEmpty())
         transferCreditsByStudent.put(student.getId(), arr);
       
       
@@ -269,7 +269,7 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         arr.add(obj);
       }
       
-      if (arr.size() > 0)
+      if (!arr.isEmpty())
         linkedCourseAssessments.put(student.getId(), arr);
       
       /**
@@ -324,7 +324,7 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
         arr.add(obj);
       }
       
-      if (arr.size() > 0)
+      if (!arr.isEmpty())
         linkedTransferCredits.put(student.getId(), arr);
     }
     

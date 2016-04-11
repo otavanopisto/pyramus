@@ -108,7 +108,7 @@ public class SearchStudentProjectModuleCoursesDialogViewController extends Pyram
     
     String message;
     
-    if (courses.size() > 0) {
+    if (!courses.isEmpty()) {
       message = Messages.getInstance().getText(pageRequestContext.getRequest().getLocale(), "projects.searchStudentProjectModuleCoursesDialog.coursesFound", new Object[] {
         courses.size(), coursesInTimeFrame
       });

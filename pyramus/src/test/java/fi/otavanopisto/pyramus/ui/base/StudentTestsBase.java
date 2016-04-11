@@ -70,7 +70,7 @@ public class StudentTestsBase extends AbstractUITest {
 //  TODO: No usable name, class or id for this element.
     getWebDriver().findElement(By.cssSelector(".ixTableRow:first-child .ixTableCell:nth-of-type(10) img")).click();
     waitForUrlNotMatches(".*/viewcourse.*");
-    Boolean elementExists = getWebDriver().findElements(By.cssSelector("#studentViewBasicInfoWrapper")).size() > 0;
+    Boolean elementExists = !getWebDriver().findElements(By.cssSelector("#studentViewBasicInfoWrapper")).isEmpty();
     assertEquals(true, elementExists);
   }
 

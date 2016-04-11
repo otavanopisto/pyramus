@@ -19,9 +19,9 @@ public class AuthTestsBase extends AbstractUITest {
     getWebDriver().get(getAppUrl(true) + "/users/authorize.page?client_id=854885cf-2284-4b17-b63c-a8b189535f8d&response_type=code&redirect_uri=https%3A%2F%2Fdev.muikku.fi%3A8443%2Flogin%3F_stg%3Drsp#at-auth");
     waitForUrlNotMatches(".*/index.*");
       
-    Boolean authorizeElementExists = getWebDriver().findElements(By.name("authorize")).size() > 0;
+    Boolean authorizeElementExists = !getWebDriver().findElements(By.name("authorize")).isEmpty();
     assertEquals(true, authorizeElementExists);
-    Boolean denyElementExists = getWebDriver().findElements(By.name("deny")).size() > 0;
+    Boolean denyElementExists = !getWebDriver().findElements(By.name("deny")).isEmpty();
     assertEquals(true, denyElementExists);
   }
   

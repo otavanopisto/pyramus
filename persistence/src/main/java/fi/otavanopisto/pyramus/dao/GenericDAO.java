@@ -96,7 +96,7 @@ public abstract class GenericDAO<T> {
     @SuppressWarnings("unchecked")
     List<T> list = query.getResultList();
     
-    if (list.size() == 0)
+    if (list.isEmpty())
       return null;
     
     if (list.size() == 1)
