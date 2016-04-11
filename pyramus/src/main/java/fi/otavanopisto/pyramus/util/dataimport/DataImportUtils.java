@@ -24,6 +24,9 @@ import fi.otavanopisto.pyramus.persistence.usertypes.MonetaryAmount;
 
 public class DataImportUtils {
 
+  private DataImportUtils() {
+  }
+
   /**
    * 
    * @param pojo

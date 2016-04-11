@@ -9,6 +9,9 @@ import fi.internetix.smvc.logging.Logging;
 
 public class RequestControllerMapper {
 
+  private RequestControllerMapper() {
+  }
+
   public static RequestController getRequestController(String controllerName) {
     return requestControllers.get(controllerName);
   }

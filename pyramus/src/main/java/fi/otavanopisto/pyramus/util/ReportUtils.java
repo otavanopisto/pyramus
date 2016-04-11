@@ -5,7 +5,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
 public class ReportUtils {
-  
+
+  private ReportUtils() {
+  }
+
   public static String getReportsUrl(HttpServletRequest request) {
     String contextPath = System.getProperty("reports.contextPath");
     String host = System.getProperty("reports.host");

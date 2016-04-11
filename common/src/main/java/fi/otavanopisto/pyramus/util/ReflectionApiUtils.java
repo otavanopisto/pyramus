@@ -8,6 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ReflectionApiUtils {
 
+  private ReflectionApiUtils() {
+  }
+
   /**
    * Returns object field value using Java reflection API
    * 

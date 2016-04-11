@@ -4,6 +4,9 @@ import javax.servlet.http.HttpSession;
 
 public class ThreadSessionContainer {
 
+  private ThreadSessionContainer() {
+  }
+
   public static HttpSession getSession() {
     return THREAD_LOCAL.get();
   }
