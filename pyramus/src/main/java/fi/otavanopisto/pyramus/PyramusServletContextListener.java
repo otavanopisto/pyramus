@@ -221,46 +221,46 @@ public class PyramusServletContextListener implements ServletContextListener {
       for (PluginDescriptor plugin : plugins) {
         Map<String, Class<?>> pageRequestControllers = plugin.getPageRequestControllers();
         if (pageRequestControllers != null) {
-          for (String key : pageRequestControllers.keySet()) {
-            String className = pageRequestControllers.get(key).getName();
+          for (Map.Entry<String, Class<?>> entry : pageRequestControllers.entrySet()) {
+            String className = entry.getValue().getName();
             Class<? extends RequestController> pageController = (Class<? extends RequestController>) Class.forName(className, false, pluginManager.getPluginsClassLoader());
-            RequestController oldController = RequestControllerMapper.getRequestController(key + ".page");
+            RequestController oldController = RequestControllerMapper.getRequestController(entry.getKey() + ".page");
             if (oldController != null) {
               // Save masked controllers for extending existing functionality by calling
               // the masked controller's .process()
-              RequestControllerMapper.mapController(key, ".page.masked", oldController);
+              RequestControllerMapper.mapController(entry.getKey(), ".page.masked", oldController);
             }
-            RequestControllerMapper.mapController(key, ".page", pageController.newInstance());
+            RequestControllerMapper.mapController(entry.getKey(), ".page", pageController.newInstance());
           }
         }
         
         Map<String, Class<?>> jsonRequestControllers = plugin.getJSONRequestControllers();
         if (jsonRequestControllers != null) {
-          for (String key : jsonRequestControllers.keySet()) {
-            String className = jsonRequestControllers.get(key).getName();
+          for (Map.Entry<String, Class<?>> entry : jsonRequestControllers.entrySet()) {
+            String className = entry.getValue().getName();
             Class<? extends RequestController> pageController = (Class<? extends RequestController>) Class.forName(className, false, pluginManager.getPluginsClassLoader());
-            RequestController oldController = RequestControllerMapper.getRequestController(key + ".json");
+            RequestController oldController = RequestControllerMapper.getRequestController(entry.getKey() + ".json");
             if (oldController != null) {
               // Save masked controllers for extending existing functionality by calling
               // the masked controller's .process()
-              RequestControllerMapper.mapController(key, ".json.masked", oldController);
+              RequestControllerMapper.mapController(entry.getKey(), ".json.masked", oldController);
             }
-            RequestControllerMapper.mapController(key, ".json", pageController.newInstance());
+            RequestControllerMapper.mapController(entry.getKey(), ".json", pageController.newInstance());
           }
         }
         
         Map<String, Class<?>> binaryRequestControllers = plugin.getBinaryRequestControllers();
         if (binaryRequestControllers != null) {
-          for (String key : binaryRequestControllers.keySet()) {
-            String className = binaryRequestControllers.get(key).getName();
+          for (Map.Entry<String, Class<?>> entry : binaryRequestControllers.entrySet()) {
+            String className = entry.getValue().getName();
             Class<? extends RequestController> pageController = (Class<? extends RequestController>) Class.forName(className, false, pluginManager.getPluginsClassLoader());
-            RequestController oldController = RequestControllerMapper.getRequestController(key + ".binary");
+            RequestController oldController = RequestControllerMapper.getRequestController(entry.getKey() + ".binary");
             if (oldController != null) {
               // Save masked controllers for extending existing functionality by calling
               // the masked controller's .process()
-              RequestControllerMapper.mapController(key, ".binary.masked", oldController);
+              RequestControllerMapper.mapController(entry.getKey(), ".binary.masked", oldController);
             }
-            RequestControllerMapper.mapController(key, ".binary", pageController.newInstance());
+            RequestControllerMapper.mapController(entry.getKey(), ".binary", pageController.newInstance());
           }
         }
       }

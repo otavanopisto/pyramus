@@ -201,8 +201,8 @@ public class ChangeLogJPAEventsListener implements MessageListener {
     // And finally we can iterate values map values into the database
     if (!values.isEmpty()) {
       ChangeLogEntry entry = logEntryDAO.create(changeLogEntryEntity, ChangeLogEntryType.Update, String.valueOf(id), time, loggedUser);
-      for (ChangeLogEntryEntityProperty property : values.keySet()) {
-        logEntryPropertyDAO.create(entry, property, values.get(property));
+      for (Map.Entry<ChangeLogEntryEntityProperty, String> changeLogEntry : values.entrySet()) {
+        logEntryPropertyDAO.create(entry, changeLogEntry.getKey(), changeLogEntry.getValue());
       }
     }
     

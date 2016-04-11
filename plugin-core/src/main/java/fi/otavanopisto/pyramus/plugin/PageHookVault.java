@@ -51,8 +51,8 @@ public class PageHookVault {
     for (PluginDescriptor plugin : plugins) {
       if (plugin.getPageHookControllers() != null) {
         Map<String, Class<?>> pageHooks = plugin.getPageHookControllers();
-        for (String pageHookName : pageHooks.keySet()) {
-          getInstance().registerPageHook(pageHookName, pageHooks.get(pageHookName));
+        for (Map.Entry<String, Class<?>> entry : pageHooks.entrySet()) {
+          getInstance().registerPageHook(entry.getKey(), entry.getValue());
         }
       }
     }

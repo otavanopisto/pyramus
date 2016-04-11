@@ -44,13 +44,13 @@ public class UploadReportDialogViewController extends PyramusViewController {
     StringBuffer reportParameters = new StringBuffer();
     
     Map<String, String[]> parameterMap = pageRequestContext.getRequest().getParameterMap();
-    for (String parameterName : parameterMap.keySet()) {
-      if (!reservedParameters.contains(parameterName)) {
-        String[] values = parameterMap.get(parameterName);
+    for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+      if (!reservedParameters.contains(entry.getKey())) {
+        String[] values = entry.getValue();
         for (String value : values) {
           // TODO ISO-8859-1 should be UTF-8, once Birt's parameter dialog form has its accept-charset="UTF-8" set 
           try {
-            reportParameters.append('&').append(parameterName).append('=').append(URLEncoder.encode(value, "ISO-8859-1"));
+            reportParameters.append('&').append(entry.getKey()).append('=').append(URLEncoder.encode(value, "ISO-8859-1"));
           }
           catch (UnsupportedEncodingException e) {
             throw new SmvcRuntimeException(e);
