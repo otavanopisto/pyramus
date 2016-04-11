@@ -62,12 +62,12 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
 
     searchResult = personDAO.searchPersonsBasic(resultsPerPage, page, query, personFilter, studyProgramme, studentGroup);
     
-    List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
     List<Person> persons = searchResult.getResults();
     for (Person person : persons) {
     	Student student = person.getLatestStudent();
     	if (student != null) {
-        Map<String, Object> info = new HashMap<String, Object>();
+        Map<String, Object> info = new HashMap<>();
         info.put("personId", person.getId());
         info.put("id", student.getId());
         info.put("firstName", student.getFirstName());

@@ -25,7 +25,7 @@ public class PluginsViewController extends PyramusFormViewController {
 
     List<PluginRepository> pluginRepositories = pluginRepositoryDAO.listAll();
     List<Plugin> plugins = pluginDAO.listAll();
-    List<PluginBean> pluginBeans = new ArrayList<PluginsViewController.PluginBean>(plugins.size());
+    List<PluginBean> pluginBeans = new ArrayList<>(plugins.size());
     for (Plugin plugin : plugins) {
       String status = "";
       boolean loaded = pluginManager.isLoaded(plugin.getGroupId(), plugin.getArtifactId(), plugin.getVersion());

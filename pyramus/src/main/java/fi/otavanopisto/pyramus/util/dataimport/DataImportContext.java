@@ -74,7 +74,7 @@ public class DataImportContext {
     return loggedUser;
   }
 
-  private Map<Class, Object> entities = new HashMap<Class, Object>();
+  private Map<Class, Object> entities = new HashMap<>();
   private String[] fields;
   private String[] values;
   private User loggedUser;

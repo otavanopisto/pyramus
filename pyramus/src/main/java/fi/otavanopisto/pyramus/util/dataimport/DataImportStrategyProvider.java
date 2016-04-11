@@ -68,8 +68,8 @@ public class DataImportStrategyProvider {
     entityFieldHandlers.put(entityStrategy, prov);
   }
 
-  private Map<EntityImportStrategy, EntityFieldHandlerProvider> entityFieldHandlers = new HashMap<EntityImportStrategy, EntityFieldHandlerProvider>();
-  private Map<EntityImportStrategy, EntityHandlingStrategy> entityHandlers = new HashMap<EntityImportStrategy, EntityHandlingStrategy>();
+  private Map<EntityImportStrategy, EntityFieldHandlerProvider> entityFieldHandlers = new HashMap<>();
+  private Map<EntityImportStrategy, EntityHandlingStrategy> entityHandlers = new HashMap<>();
   private static DataImportStrategyProvider _instance;
   
   static {

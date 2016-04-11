@@ -41,5 +41,5 @@ public class HelpFolder extends HelpItem {
   }
   
   @OneToMany (cascade = CascadeType.ALL, mappedBy="parent")
-  private List<HelpItem> children = new ArrayList<HelpItem>();
+  private List<HelpItem> children = new ArrayList<>();
 }

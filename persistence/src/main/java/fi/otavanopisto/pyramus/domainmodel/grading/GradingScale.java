@@ -105,7 +105,7 @@ public class GradingScale implements ArchivableEntity {
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @IndexColumn (name = "indexColumn")
   @JoinColumn (name="gradingScale")
-  private List<Grade> grades = new ArrayList<Grade>(); 
+  private List<Grade> grades = new ArrayList<>(); 
 
   @Version
   @Column(nullable = false)

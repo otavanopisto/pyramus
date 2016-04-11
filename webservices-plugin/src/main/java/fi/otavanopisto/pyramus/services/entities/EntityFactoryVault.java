@@ -285,8 +285,8 @@ public class EntityFactoryVault {
     return pojoEntityClassMap.get(pojoClass);
   }
   
-  private static Map<Class<?>, EntityFactory<?>> factories = new HashMap<Class<?>, EntityFactory<?>>();
-  private static Map<Class<?>, Class<?>> pojoEntityClassMap = new HashMap<Class<?>, Class<?>>();
+  private static Map<Class<?>, EntityFactory<?>> factories = new HashMap<>();
+  private static Map<Class<?>, Class<?>> pojoEntityClassMap = new HashMap<>();
 
   static {
     /* Base */ 

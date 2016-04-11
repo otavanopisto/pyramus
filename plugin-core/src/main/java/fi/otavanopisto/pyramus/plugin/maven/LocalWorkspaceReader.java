@@ -50,7 +50,7 @@ public class LocalWorkspaceReader implements WorkspaceReader {
       return Arrays.asList(hostedArtifactMeta.getVersion());
     }
     
-    return new ArrayList<String>();
+    return new ArrayList<>();
   }
   
   @Override
@@ -137,7 +137,7 @@ public class LocalWorkspaceReader implements WorkspaceReader {
   
   private WorkspaceRepository workspaceRepository = new WorkspaceRepository();
   private File workspaceDirectory;
-  private List<HostedArtifactMeta> hostedArtifacts = new ArrayList<HostedArtifactMeta>();
+  private List<HostedArtifactMeta> hostedArtifacts = new ArrayList<>();
   
   private class HostedArtifactMeta {
     

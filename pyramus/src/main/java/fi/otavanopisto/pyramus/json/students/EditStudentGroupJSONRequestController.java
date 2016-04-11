@@ -57,7 +57,7 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
     Date beginDate = requestContext.getDate("beginDate");
     String tagsText = requestContext.getString("tags");
     
-    Set<Tag> tagEntities = new HashSet<Tag>();
+    Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
       for (String tag : tags) {
@@ -89,7 +89,7 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
     StudentGroupUser[] users = studentGroup.getUsers().toArray(new StudentGroupUser[0]);
     StudentGroupStudent[] students = studentGroup.getStudents().toArray(new StudentGroupStudent[0]);
 
-    List<Long> removables = new ArrayList<Long>();
+    List<Long> removables = new ArrayList<>();
     Iterator<StudentGroupUser> userIterator = studentGroup.getUsers().iterator();
     while (userIterator.hasNext())
       removables.add(userIterator.next().getId());

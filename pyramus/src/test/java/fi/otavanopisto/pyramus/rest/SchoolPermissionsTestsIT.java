@@ -33,7 +33,7 @@ public class SchoolPermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsCreateSchool() throws NoSuchFieldException {
-    Map<String, String> variables = new HashMap<String, String>();
+    Map<String, String> variables = new HashMap<>();
     
     School school = new School(null, "TST", "created", Arrays.asList("tag1", "tag2"), 1l, "additional info", Boolean.FALSE, variables);
     
@@ -69,7 +69,7 @@ public class SchoolPermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsUpdateSchool() throws NoSuchFieldException {
-    Map<String, String> variables = new HashMap<String, String>();
+    Map<String, String> variables = new HashMap<>();
     
     School school = new School(null, "TST", "notupdated", Arrays.asList("tag1", "tag2"), 1l, "not updated info", Boolean.FALSE, variables);
     
@@ -80,7 +80,7 @@ public class SchoolPermissionsTestsIT extends AbstractRESTPermissionsTest {
       
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      Map<String, String> updateVariables = new HashMap<String, String>();
+      Map<String, String> updateVariables = new HashMap<>();
 
       School updateSchool = new School(id, "UPD", "updated", Arrays.asList("tag2", "tag3"), 2l, "updated info", Boolean.FALSE, updateVariables);
 

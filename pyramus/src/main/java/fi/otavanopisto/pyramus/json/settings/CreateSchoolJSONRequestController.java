@@ -55,7 +55,7 @@ public class CreateSchoolJSONRequestController extends JSONRequestController {
     if ((schoolFieldId != null) && (schoolFieldId.intValue() >= 0))
       schoolField = schoolFieldDAO.findById(schoolFieldId);
 
-    Set<Tag> tagEntities = new HashSet<Tag>();
+    Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
       for (String tag : tags) {

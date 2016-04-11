@@ -84,10 +84,10 @@ public class SearchModulesJSONRequestController extends JSONRequestController {
       searchResult = moduleDAO.searchModulesBasic(resultsPerPage, page, text);
     }
     
-    List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
     List<Module> modules = searchResult.getResults();
     for (Module module : modules) {
-      Map<String, Object> moduleInfo = new HashMap<String, Object>();
+      Map<String, Object> moduleInfo = new HashMap<>();
       moduleInfo.put("id", module.getId());
       moduleInfo.put("name", module.getName());
       results.add(moduleInfo);

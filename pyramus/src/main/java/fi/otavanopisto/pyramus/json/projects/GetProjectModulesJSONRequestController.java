@@ -26,9 +26,9 @@ public class GetProjectModulesJSONRequestController extends JSONRequestControlle
     Long projectId = NumberUtils.createLong(jsonRequestContext.getRequest().getParameter("project"));
     Project project = projectDAO.findById(projectId);
 
-    List<Map<String, Object>> projectModules = new ArrayList<Map<String,Object>>();
+    List<Map<String, Object>> projectModules = new ArrayList<>();
     for (ProjectModule projectModule : project.getProjectModules()) {
-      Map<String, Object> moduleInfo = new HashMap<String, Object>();
+      Map<String, Object> moduleInfo = new HashMap<>();
       moduleInfo.put("id", projectModule.getId());
       moduleInfo.put("moduleId", projectModule.getModule().getId());
       moduleInfo.put("name", projectModule.getModule().getName());

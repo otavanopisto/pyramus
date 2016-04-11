@@ -79,7 +79,7 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
         lastResult = hits - 1;
       }
 
-      return new SearchResult<Resource>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
     } catch (ParseException e) {
       throw new PersistenceException(e);
     }
@@ -165,7 +165,7 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
         lastResult = hits - 1;
       }
 
-      return new SearchResult<Resource>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
     } catch (ParseException e) {
       throw new PersistenceException(e);
     }

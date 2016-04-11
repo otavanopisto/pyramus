@@ -31,7 +31,7 @@ public class PageHookVault {
     List<PageHookController> hooks = pageHooks.get(hookName);
     
     if (hooks == null) {
-      hooks = new ArrayList<PageHookController>();
+      hooks = new ArrayList<>();
       pageHooks.put(hookName, hooks);
     }
     
@@ -44,7 +44,7 @@ public class PageHookVault {
     }
   }
   
-  private Map<String, List<PageHookController>> pageHooks = new HashMap<String, List<PageHookController>>();
+  private Map<String, List<PageHookController>> pageHooks = new HashMap<>();
 
   static {
     List<PluginDescriptor> plugins = PluginManager.getInstance().getPlugins();

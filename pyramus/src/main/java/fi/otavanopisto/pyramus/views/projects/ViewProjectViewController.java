@@ -70,7 +70,7 @@ public class ViewProjectViewController extends PyramusViewController implements 
     Collections.sort(educationalTimeUnits, new StringAttributeComparator("getName"));
 
     List<StudentProject> studentProjectsByProject = studentProjectDAO.listByProject(project);
-    List<StudentProjectBean> studentProjectBeans = new ArrayList<StudentProjectBean>();
+    List<StudentProjectBean> studentProjectBeans = new ArrayList<>();
     Collections.sort(studentProjectsByProject, new Comparator<StudentProject>() {
       @Override
       public int compare(StudentProject o1, StudentProject o2) {

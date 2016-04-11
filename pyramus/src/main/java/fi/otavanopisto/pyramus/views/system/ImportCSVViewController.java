@@ -35,7 +35,7 @@ public class ImportCSVViewController extends PyramusFormViewController {
       throw new SmvcRuntimeException(e);
     }
     
-    List<Object> entityList = new ArrayList<Object>();
+    List<Object> entityList = new ArrayList<>();
     for (int i = 0; i < list.size(); i++) {
       Object o = list.get(i);
       

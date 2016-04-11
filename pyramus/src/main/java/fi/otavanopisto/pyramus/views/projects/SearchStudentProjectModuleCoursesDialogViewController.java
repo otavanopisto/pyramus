@@ -83,7 +83,7 @@ public class SearchStudentProjectModuleCoursesDialogViewController extends Pyram
       }
     }));
     
-    List<StudentProjectModuleCourseBean> studentProjectModuleCourses = new ArrayList<StudentProjectModuleCourseBean>();
+    List<StudentProjectModuleCourseBean> studentProjectModuleCourses = new ArrayList<>();
     int coursesInTimeFrame = 0; 
     for (Course course : courses) {
       boolean withinTimeFrame = false;

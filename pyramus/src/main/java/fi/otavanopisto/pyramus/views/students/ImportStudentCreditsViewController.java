@@ -94,8 +94,8 @@ public class ImportStudentCreditsViewController extends PyramusViewController im
     });
     
     
-    List<Long> linkedCourseAssessmentIds = new ArrayList<Long>();
-    List<Long> linkedTransferCreditIds = new ArrayList<Long>();
+    List<Long> linkedCourseAssessmentIds = new ArrayList<>();
+    List<Long> linkedTransferCreditIds = new ArrayList<>();
     
     List<CreditLink> creditLinks = creditLinkDAO.listByStudent(baseStudent);
     for (CreditLink creditLink : creditLinks) {

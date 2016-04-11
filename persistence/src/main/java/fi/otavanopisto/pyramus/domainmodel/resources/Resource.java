@@ -159,7 +159,7 @@ public class Resource implements ArchivableEntity {
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__ResourceTags", joinColumns=@JoinColumn(name="resource"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
-  private Set<Tag> tags = new HashSet<Tag>();
+  private Set<Tag> tags = new HashSet<>();
   
   @Version
   @Column(nullable = false)

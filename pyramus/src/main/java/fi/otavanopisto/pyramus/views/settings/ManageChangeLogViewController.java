@@ -42,12 +42,12 @@ public class ManageChangeLogViewController extends PyramusFormViewController {
     SystemDAO systemDAO = DAOFactory.getInstance().getSystemDAO();
     TrackedEntityPropertyDAO trackedEntityPropertyDAO = DAOFactory.getInstance().getTrackedEntityPropertyDAO();
 
-    List<ManageChangeLogViewEntityBean> entityBeans = new ArrayList<ManageChangeLogViewEntityBean>();
-    List<EntityType<?>> entities = new ArrayList<EntityType<?>>(systemDAO.getEntities());
+    List<ManageChangeLogViewEntityBean> entityBeans = new ArrayList<>();
+    List<EntityType<?>> entities = new ArrayList<>(systemDAO.getEntities());
     for (EntityType<?> entity : entities) {
       if (!isAbstractSuperclass(entity) && !isChangeLogEntity(entity)) {
 
-        List<ManageChangeLogViewEntityPropertyBean> properties = new ArrayList<ManageChangeLogViewEntityPropertyBean>();
+        List<ManageChangeLogViewEntityPropertyBean> properties = new ArrayList<>();
 
         String entityName = entity.getJavaType().getCanonicalName();
         Class<?> entityClass = entity.getJavaType();

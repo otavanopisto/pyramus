@@ -24,7 +24,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
  //FIXME: find out why i break all tests that run after me
   @Test
   public void testCreateSchool() {
-    Map<String, String> variables = new HashMap<String, String>();
+    Map<String, String> variables = new HashMap<>();
     variables.put("TV1", "text");
     variables.put("TV2", "123");
     
@@ -85,7 +85,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateSchool() {
-    Map<String, String> variables = new HashMap<String, String>();
+    Map<String, String> variables = new HashMap<>();
     variables.put("TV1", "text");
     variables.put("TV2", "123");
     
@@ -108,7 +108,7 @@ public class SchoolTestsIT extends AbstractRESTServiceTest {
       
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      Map<String, String> updateVariables = new HashMap<String, String>();
+      Map<String, String> updateVariables = new HashMap<>();
       updateVariables.put("TV2", "234");
       updateVariables.put("TV3", "1");
 

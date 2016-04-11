@@ -99,7 +99,7 @@ public class ViewSchoolViewController extends PyramusViewController implements B
     for (int i=0; i<schoolUserEditableVariableKeys.size(); i++) {
       JSONObject jsonVariableKey = jsonVariableKeys.getJSONObject(i);
 
-      Map<String,String> variables = new HashMap<String, String>();
+      Map<String,String> variables = new HashMap<>();
       for (SchoolVariable schoolVariable : schoolVariableDAO.listBySchool(school)) {
         variables.put(schoolVariable.getKey().getVariableKey(), schoolVariable.getValue());
       }

@@ -187,7 +187,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     // The parameter generator returns a List of
     // arrays. Each array has two elements: { role }.
     
-    List<Object[]> data = new ArrayList<Object[]>();
+    List<Object[]> data = new ArrayList<>();
     
     for (Role role : Role.values()) {
       data.add(new Object[] { 

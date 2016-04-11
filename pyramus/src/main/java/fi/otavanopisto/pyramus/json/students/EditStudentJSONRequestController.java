@@ -178,7 +178,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
 	    Boolean lodging = "1".equals(requestContext.getString("lodging." + student.getId()));
 	    String tagsText = requestContext.getString("tags." + student.getId());
 	    
-	    Set<Tag> tagEntities = new HashSet<Tag>();
+	    Set<Tag> tagEntities = new HashSet<>();
 	    if (!StringUtils.isBlank(tagsText)) {
 	      List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
 	      for (String tag : tags) {
@@ -244,7 +244,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
 	    
 	    // Student addresses
 	    
-	    Set<Long> existingAddresses = new HashSet<Long>();
+	    Set<Long> existingAddresses = new HashSet<>();
 	    int rowCount = requestContext.getInteger("addressTable." + student.getId() + ".rowCount");
 	    for (int i = 0; i < rowCount; i++) {
 	      String colPrefix = "addressTable." + student.getId() + "." + i;
@@ -279,7 +279,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
 
 	    // Email addresses
 
-	    Set<Long> existingEmails = new HashSet<Long>();
+	    Set<Long> existingEmails = new HashSet<>();
 	    rowCount = requestContext.getInteger("emailTable." + student.getId() + ".rowCount");
 	    for (int i = 0; i < rowCount; i++) {
 	      String colPrefix = "emailTable." + student.getId() + "." + i;
@@ -311,7 +311,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
 	    
 	    // Phone numbers
 	    
-      Set<Long> existingPhoneNumbers = new HashSet<Long>();
+      Set<Long> existingPhoneNumbers = new HashSet<>();
       rowCount = requestContext.getInteger("phoneTable." + student.getId() + ".rowCount");
       for (int i = 0; i < rowCount; i++) {
         String colPrefix = "phoneTable." + student.getId() + "." + i;

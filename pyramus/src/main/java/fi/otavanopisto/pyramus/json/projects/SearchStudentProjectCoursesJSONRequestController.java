@@ -39,13 +39,13 @@ public class SearchStudentProjectCoursesJSONRequestController extends JSONReques
     
     SearchResult<Course> searchResult = courseDAO.searchCourses(resultsPerPage, page, name, tags, null, null, null, null, null, null, null, true);
 
-    List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
     List<Course> courses = searchResult.getResults();
     for (Course course : courses) {
       Long studentCount = courseStudentDAO.countByCourse(course);
       Long maxStudentCount = course.getMaxParticipantCount();
       
-      Map<String, Object> courseInfo = new HashMap<String, Object>();
+      Map<String, Object> courseInfo = new HashMap<>();
       courseInfo.put("id", course.getId());
       courseInfo.put("name", course.getName());
       courseInfo.put("nameExtension", course.getNameExtension());

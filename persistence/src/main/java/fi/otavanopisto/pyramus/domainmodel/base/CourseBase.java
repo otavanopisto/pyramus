@@ -376,7 +376,7 @@ public abstract class CourseBase implements ArchivableEntity {
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="courseBase")
   @IndexedEmbedded
-  private List<CourseEducationType> courseEducationTypes = new Vector<CourseEducationType>();
+  private List<CourseEducationType> courseEducationTypes = new Vector<>();
 
   @NotNull
   @Column(nullable = false)
@@ -385,7 +385,7 @@ public abstract class CourseBase implements ArchivableEntity {
   
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="courseBase")
-  private List<CourseBaseVariable> variables = new ArrayList<CourseBaseVariable>();
+  private List<CourseBaseVariable> variables = new ArrayList<>();
 
   @Column
   private Long maxParticipantCount;

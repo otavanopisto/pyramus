@@ -150,18 +150,18 @@ public class ViewStudentViewController extends PyramusViewController implements 
       }
     });
     
-    Map<Long, Boolean> studentHasImage = new HashMap<Long, Boolean>();
-    Map<Long, List<CourseStudent>> courseStudents = new HashMap<Long, List<CourseStudent>>();
-    Map<Long, List<StudentContactLogEntry>> contactEntries = new HashMap<Long, List<StudentContactLogEntry>>();
-    Map<Long, List<TransferCredit>> transferCredits = new HashMap<Long, List<TransferCredit>>();
-    Map<Long, List<CourseAssessment>> courseAssessments = new HashMap<Long, List<CourseAssessment>>();
-    Map<Long, CourseAssessmentRequest> courseAssessmentRequests = new HashMap<Long, CourseAssessmentRequest>();
-    Map<Long, List<StudentGroup>> studentGroups = new HashMap<Long, List<StudentGroup>>();
-    Map<Long, List<StudentProjectBean>> studentProjects = new HashMap<Long, List<StudentProjectBean>>();
-    Map<Long, CourseAssessment> courseAssessmentsByCourseStudent = new HashMap<Long, CourseAssessment>();
+    Map<Long, Boolean> studentHasImage = new HashMap<>();
+    Map<Long, List<CourseStudent>> courseStudents = new HashMap<>();
+    Map<Long, List<StudentContactLogEntry>> contactEntries = new HashMap<>();
+    Map<Long, List<TransferCredit>> transferCredits = new HashMap<>();
+    Map<Long, List<CourseAssessment>> courseAssessments = new HashMap<>();
+    Map<Long, CourseAssessmentRequest> courseAssessmentRequests = new HashMap<>();
+    Map<Long, List<StudentGroup>> studentGroups = new HashMap<>();
+    Map<Long, List<StudentProjectBean>> studentProjects = new HashMap<>();
+    Map<Long, CourseAssessment> courseAssessmentsByCourseStudent = new HashMap<>();
     // StudentProject.id -> List of module beans
-    Map<Long, List<StudentProjectModuleBean>> studentProjectModules = new HashMap<Long, List<StudentProjectModuleBean>>();
-    final Map<Long, List<StudentContactLogEntryComment>> contactEntryComments = new HashMap<Long, List<StudentContactLogEntryComment>>();
+    Map<Long, List<StudentProjectModuleBean>> studentProjectModules = new HashMap<>();
+    final Map<Long, List<StudentContactLogEntryComment>> contactEntryComments = new HashMap<>();
     
     JSONObject linkedCourseAssessments = new JSONObject();
     JSONObject linkedTransferCredits = new JSONObject();
@@ -457,14 +457,14 @@ public class ViewStudentViewController extends PyramusViewController implements 
        * Project beans setup
        */
       List<StudentProject> studentsStudentProjects = studentProjectDAO.listByStudent(student);
-      List<StudentProjectBean> studentProjectBeans = new ArrayList<StudentProjectBean>();
+      List<StudentProjectBean> studentProjectBeans = new ArrayList<>();
       for (StudentProject studentProject : studentsStudentProjects) {
         int mandatoryModuleCount = 0;
         int optionalModuleCount = 0;
         int passedMandatoryModuleCount = 0;
         int passedOptionalModuleCount = 0;
         
-        List<StudentProjectModuleBean> studentProjectModuleBeans = new ArrayList<StudentProjectModuleBean>();
+        List<StudentProjectModuleBean> studentProjectModuleBeans = new ArrayList<>();
         
         /**
          * Go through project modules to
@@ -492,8 +492,8 @@ public class ViewStudentViewController extends PyramusViewController implements 
         for (StudentProjectModule studentProjectModule : studentProject.getStudentProjectModules()) {
           boolean hasPassingGrade = false;
 
-          List<CourseStudent> projectCourseCourseStudentList = new ArrayList<CourseStudent>();
-          List<TransferCredit> projectCourseTransferCreditList = new ArrayList<TransferCredit>();
+          List<CourseStudent> projectCourseCourseStudentList = new ArrayList<>();
+          List<TransferCredit> projectCourseTransferCreditList = new ArrayList<>();
 
           // Find out if there is a course that has passing grade for the module
           

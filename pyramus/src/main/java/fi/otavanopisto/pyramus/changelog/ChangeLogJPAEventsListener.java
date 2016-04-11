@@ -153,7 +153,7 @@ public class ChangeLogJPAEventsListener implements MessageListener {
 
     Class<?> entityClass = Class.forName(entityClassName);
     Object entity = systemDAO.findEntityById(entityClass, id);
-    Map<ChangeLogEntryEntityProperty, String> values = new HashMap<ChangeLogEntryEntityProperty, String>();
+    Map<ChangeLogEntryEntityProperty, String> values = new HashMap<>();
     
     // First we need to check if ChangeLogEntryEntity is already in the database
     ChangeLogEntryEntity changeLogEntryEntity = entryEntityDAO.findByName(entityClassName);

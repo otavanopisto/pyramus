@@ -82,7 +82,7 @@ public class EditModuleViewController extends PyramusViewController implements B
     Collections.sort(educationTypes, new StringAttributeComparator("getName"));
 
     pageRequestContext.getRequest().setAttribute("educationTypes", educationTypes);
-    Map<String, Boolean> enabledEducationTypes = new HashMap<String, Boolean>();
+    Map<String, Boolean> enabledEducationTypes = new HashMap<>();
     for (CourseEducationType courseEducationType : module.getCourseEducationTypes()) {
       for (CourseEducationSubtype moduleEducationSubtype : courseEducationType.getCourseEducationSubtypes()) {
         enabledEducationTypes.put(courseEducationType.getEducationType().getId() + "."
@@ -91,7 +91,7 @@ public class EditModuleViewController extends PyramusViewController implements B
     }
     
     // Subjects
-    Map<Long, List<Subject>> subjectsByEducationType = new HashMap<Long, List<Subject>>();
+    Map<Long, List<Subject>> subjectsByEducationType = new HashMap<>();
     List<Subject> subjectsByNoEducationType = subjectDAO.listByEducationType(null);
     Collections.sort(subjectsByNoEducationType, new StringAttributeComparator("getName"));
     

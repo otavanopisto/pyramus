@@ -81,8 +81,8 @@ public class Messages {
     bundleNames.add("fi.otavanopisto.pyramus.I18N.pyramuslocale");
   }
   
-  private List<String> bundleNames = new ArrayList<String>();
-  private Map<Locale, ResourceBundle> bundles = new HashMap<Locale, ResourceBundle>();
+  private List<String> bundleNames = new ArrayList<>();
+  private Map<Locale, ResourceBundle> bundles = new HashMap<>();
   
   static {
     instance = new Messages();

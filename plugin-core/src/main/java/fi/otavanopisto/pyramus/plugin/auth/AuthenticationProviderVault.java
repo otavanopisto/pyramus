@@ -35,7 +35,7 @@ public class AuthenticationProviderVault {
   }
   
   public List<InternalAuthenticationProvider> getInternalAuthenticationProviders() {
-    List<InternalAuthenticationProvider> internalAuthenticationProviders = new ArrayList<InternalAuthenticationProvider>();
+    List<InternalAuthenticationProvider> internalAuthenticationProviders = new ArrayList<>();
     for (AuthenticationProvider authenticationProvider : getAuthenticationProviders()) {
       if (authenticationProvider instanceof InternalAuthenticationProvider)
         internalAuthenticationProviders.add((InternalAuthenticationProvider) authenticationProvider);
@@ -44,7 +44,7 @@ public class AuthenticationProviderVault {
   }
   
   public List<ExternalAuthenticationProvider> getExternalAuthenticationProviders() {
-    List<ExternalAuthenticationProvider> externalAuthenticationProviders = new ArrayList<ExternalAuthenticationProvider>();
+    List<ExternalAuthenticationProvider> externalAuthenticationProviders = new ArrayList<>();
     for (AuthenticationProvider authenticationProvider : getAuthenticationProviders()) {
       if (authenticationProvider instanceof ExternalAuthenticationProvider)
         externalAuthenticationProviders.add((ExternalAuthenticationProvider) authenticationProvider);
@@ -118,7 +118,7 @@ public class AuthenticationProviderVault {
   }
   
   /** Map containing authentication provider names as keys and the providers themselves as values */ 
-  private Map<String, AuthenticationProvider> authenticationProviders = new HashMap<String, AuthenticationProvider>();
+  private Map<String, AuthenticationProvider> authenticationProviders = new HashMap<>();
   
   @SuppressWarnings("unchecked")
   public static void registerAuthenticationProviderClass(String name, Class<?> class1) {
@@ -128,7 +128,7 @@ public class AuthenticationProviderVault {
   /** The singleton instance of this class */
   private static AuthenticationProviderVault instance = new AuthenticationProviderVault();
   /** All registered authentication provider classes **/
-  private static Map<String, Class<AuthenticationProvider>> authenticationProviderClasses = new HashMap<String, Class<AuthenticationProvider>>();
+  private static Map<String, Class<AuthenticationProvider>> authenticationProviderClasses = new HashMap<>();
   
   static {
     List<PluginDescriptor> plugins = PluginManager.getInstance().getPlugins();

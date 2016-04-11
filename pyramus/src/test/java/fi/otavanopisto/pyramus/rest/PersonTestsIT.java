@@ -227,7 +227,7 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
 
     int person2Id = response.body().jsonPath().getInt("id");
     
-    Map<String, String> variables = new HashMap<String, String>();
+    Map<String, String> variables = new HashMap<>();
     
     Student student = new Student(null, 
       (long) person1Id, // personId

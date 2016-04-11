@@ -119,8 +119,8 @@ public class EditStudentViewController extends PyramusViewController implements 
       }
     });
     
-    Map<Long, String> studentTags = new HashMap<Long, String>();
-    Map<Long, Boolean> studentHasCredits = new HashMap<Long, Boolean>();
+    Map<Long, String> studentTags = new HashMap<>();
+    Map<Long, Boolean> studentHasCredits = new HashMap<>();
 
     List<UserVariableKey> userVariableKeys = userVariableKeyDAO.listByUserEditable(Boolean.TRUE);
     Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));

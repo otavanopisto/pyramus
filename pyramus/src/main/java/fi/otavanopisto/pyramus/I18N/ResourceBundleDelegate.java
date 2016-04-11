@@ -39,7 +39,7 @@ public class ResourceBundleDelegate extends ResourceBundle {
     mergedKeys.addAll(resourceBundle.keySet());
   } 
 
-  private Set<ResourceBundle> bundles = new LinkedHashSet<ResourceBundle>();
-  private Vector<String> mergedKeys = new Vector<String>();
+  private Set<ResourceBundle> bundles = new LinkedHashSet<>();
+  private Vector<String> mergedKeys = new Vector<>();
   private Locale locale;
 }

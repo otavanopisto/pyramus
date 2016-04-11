@@ -50,7 +50,7 @@ public class CreateModuleViewController extends PyramusViewController implements
     Collections.sort(educationTypes, new StringAttributeComparator("getName"));
 
     // Subjects
-    Map<Long, List<Subject>> subjectsByEducationType = new HashMap<Long, List<Subject>>();
+    Map<Long, List<Subject>> subjectsByEducationType = new HashMap<>();
     List<Subject> subjectsByNoEducationType = subjectDAO.listByEducationType(null);
     Collections.sort(subjectsByNoEducationType, new StringAttributeComparator("getName"));
     for (EducationType educationType : educationTypes) {

@@ -250,7 +250,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     List<Long> studentIds = null;
     
     if (studentGroup != null) {
-      studentIds = new ArrayList<Long>();
+      studentIds = new ArrayList<>();
       
       switch (studentFilter) {
         case ALL:
@@ -305,7 +305,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<Person>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
     } catch (ParseException e) {
       throw new PersistenceException(e);
     }
@@ -520,7 +520,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<Person>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
     } catch (ParseException e) {
       throw new PersistenceException(e);
     }

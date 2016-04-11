@@ -41,7 +41,7 @@ public class CreateStudentGroupJSONRequestController extends JSONRequestControll
     Date beginDate = requestContext.getDate("beginDate");
     String tagsText = requestContext.getString("tags");
     
-    Set<Tag> tagEntities = new HashSet<Tag>();
+    Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
       for (String tag : tags) {

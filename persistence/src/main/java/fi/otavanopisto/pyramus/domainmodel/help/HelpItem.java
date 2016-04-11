@@ -217,10 +217,10 @@ public class HelpItem {
   
   @OneToMany (cascade = CascadeType.ALL, mappedBy="item")
   @IndexedEmbedded
-  private List<HelpItemTitle> titles = new ArrayList<HelpItemTitle>();
+  private List<HelpItemTitle> titles = new ArrayList<>();
   
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__HelpItemTags", joinColumns=@JoinColumn(name="helpItem"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
-  private Set<Tag> tags = new HashSet<Tag>();
+  private Set<Tag> tags = new HashSet<>();
 } 

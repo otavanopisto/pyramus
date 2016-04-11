@@ -53,7 +53,7 @@ public class ImportReportViewController extends PyramusFormViewController {
     Collections.sort(reports, new StringAttributeComparator("getName"));
     
     JSONArray contextTypesJSON = new JSONArray();
-    List<String> contextTypes = new ArrayList<String>();
+    List<String> contextTypes = new ArrayList<>();
     for (ReportContextType contextType : ReportContextType.values()) {
       contextTypes.add(contextType.toString());
       contextTypesJSON.add(contextType.toString());

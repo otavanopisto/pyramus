@@ -61,5 +61,5 @@ public class CourseComponent extends ComponentBase {
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="courseComponent")
-  private List<CourseComponentResource> resources = new ArrayList<CourseComponentResource>();
+  private List<CourseComponentResource> resources = new ArrayList<>();
 }

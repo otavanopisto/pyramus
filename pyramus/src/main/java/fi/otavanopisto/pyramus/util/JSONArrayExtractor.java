@@ -36,7 +36,7 @@ public class JSONArrayExtractor {
    * that converts no properties, just emits empty <code>JSONObject</code>s.
    */
   public JSONArrayExtractor() {
-    attributeNames = new ArrayList<String>();
+    attributeNames = new ArrayList<>();
   }
   
   /** Creates a new Java collection to <code>JSONArray</code> converter

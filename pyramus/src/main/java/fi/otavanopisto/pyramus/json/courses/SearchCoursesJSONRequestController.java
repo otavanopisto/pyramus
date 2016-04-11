@@ -149,11 +149,11 @@ public class SearchCoursesJSONRequestController extends JSONRequestController {
       searchResult = courseDAO.searchCoursesBasic(resultsPerPage, page, text, true);
     }
 
-    List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
 
     List<Course> courses = searchResult.getResults();
     for (Course course : courses) {
-      Map<String, Object> courseInfo = new HashMap<String, Object>();
+      Map<String, Object> courseInfo = new HashMap<>();
       courseInfo.put("id", course.getId());
       courseInfo.put("name", course.getName());
       courseInfo.put("nameExtension", course.getNameExtension());

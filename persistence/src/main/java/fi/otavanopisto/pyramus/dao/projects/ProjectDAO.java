@@ -121,7 +121,7 @@ public class ProjectDAO extends PyramusEntityDAO<Project> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<Project>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
 
     }
     catch (ParseException e) {
@@ -192,7 +192,7 @@ public class ProjectDAO extends PyramusEntityDAO<Project> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<Project>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
 
     } catch (ParseException e) {
       throw new PersistenceException(e);

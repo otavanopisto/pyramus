@@ -600,7 +600,7 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    List<CourseParticipationType> courseParticipationTypes = new ArrayList<CourseParticipationType>();
+    List<CourseParticipationType> courseParticipationTypes = new ArrayList<>();
     if (StringUtils.isNotEmpty(participationTypes)) {
       String[] typeArray = participationTypes.split(",");
       for (int i = 0; i < typeArray.length; i++) {

@@ -44,7 +44,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
     
   @Test
   public void testCreateStudent() throws NoSuchFieldException {
-    Map<String, String> variables = new HashMap<String, String>();
+    Map<String, String> variables = new HashMap<>();
     variables.put("TV1", "text");
     variables.put("TV2", "123");
     
@@ -118,7 +118,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testUpdateStudent() throws NoSuchFieldException {
-    Map<String, String> variables = new HashMap<String, String>();
+    Map<String, String> variables = new HashMap<>();
     variables.put("TV1", "text");
     variables.put("TV2", "123");
     
@@ -157,7 +157,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
     
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      Map<String, String> updateVariables = new HashMap<String, String>();
+      Map<String, String> updateVariables = new HashMap<>();
       updateVariables.put("TV2", "abc");
       updateVariables.put("TV3", "edf");
       
@@ -211,7 +211,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
       
       Long personId = new Long(response.body().jsonPath().getInt("personId"));
       
-      Map<String, String> updateVariables = new HashMap<String, String>();
+      Map<String, String> updateVariables = new HashMap<>();
       updateVariables.put("TV2", "abc");
       updateVariables.put("TV3", "edf");
       
@@ -254,7 +254,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testDeleteStudent() throws NoSuchFieldException {
-    Map<String, String> variables = new HashMap<String, String>();
+    Map<String, String> variables = new HashMap<>();
     variables.put("TV1", "text");
     variables.put("TV2", "123");
     

@@ -30,7 +30,7 @@ public class SearchHelpJSONRequestController extends JSONRequestController {
     
     searchResult = helpPageDAO.searchHelpPagesBasic(MAX_HELP_PAGES, 0, text);
 
-    List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
 
     List<HelpPage> helpPages = searchResult.getResults();
     for (HelpPage helpPage : helpPages) {
@@ -46,7 +46,7 @@ public class SearchHelpJSONRequestController extends JSONRequestController {
         }
         
         if (!found) {
-          Map<String, Object> folderInfo = new HashMap<String, Object>();
+          Map<String, Object> folderInfo = new HashMap<>();
           
           folderInfo.put("id", parent.getId());
           folderInfo.put("type", "folder");
@@ -68,7 +68,7 @@ public class SearchHelpJSONRequestController extends JSONRequestController {
             @SuppressWarnings("unchecked")
             List<Map<String, Object>> pages = (List<Map<String, Object>>) folderInfo.get("pages");
             
-            Map<String, Object> helpPageInfo = new HashMap<String, Object>();
+            Map<String, Object> helpPageInfo = new HashMap<>();
             helpPageInfo.put("id", helpPage.getId());
             helpPageInfo.put("type", "page");
             helpPageInfo.put("title", helpPage.getTitleByLocale(requestContext.getRequest().getLocale()).getTitle());
@@ -78,7 +78,7 @@ public class SearchHelpJSONRequestController extends JSONRequestController {
           }
         }
       } else {
-        Map<String, Object> helpPageInfo = new HashMap<String, Object>();
+        Map<String, Object> helpPageInfo = new HashMap<>();
         helpPageInfo.put("id", helpPage.getId());
         helpPageInfo.put("type", "page");
         helpPageInfo.put("title", helpPage.getTitleByLocale(requestContext.getRequest().getLocale()).getTitle());

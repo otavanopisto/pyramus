@@ -265,16 +265,16 @@ public class StudentGroup implements ArchivableEntity {
   @OneToMany
   @JoinColumn (name="studentGroup")
   @IndexedEmbedded
-  private Set<StudentGroupUser> users = new HashSet<StudentGroupUser>();
+  private Set<StudentGroupUser> users = new HashSet<>();
   
   @OneToMany
   @JoinColumn (name="studentGroup")
-  private Set<StudentGroupStudent> students = new HashSet<StudentGroupStudent>();
+  private Set<StudentGroupStudent> students = new HashSet<>();
 
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__StudentGroupTags", joinColumns=@JoinColumn(name="studentGroup"), inverseJoinColumns=@JoinColumn(name="tag"))
   @IndexedEmbedded 
-  private Set<Tag> tags = new HashSet<Tag>();
+  private Set<Tag> tags = new HashSet<>();
   
   @Version
   @Column(nullable = false)

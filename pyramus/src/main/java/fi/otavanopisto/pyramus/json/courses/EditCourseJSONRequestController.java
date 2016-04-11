@@ -284,7 +284,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     if (!course.getVersion().equals(version))
       throw new StaleObjectStateException(Course.class.getName(), course.getId());
     
-    Set<Tag> tagEntities = new HashSet<Tag>();
+    Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
       for (String tag : tags) {
@@ -309,7 +309,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     
     // Education types and subtypes submitted from the web page
 
-    Map<Long, Vector<Long>> chosenEducationTypes = new HashMap<Long, Vector<Long>>();
+    Map<Long, Vector<Long>> chosenEducationTypes = new HashMap<>();
     Enumeration<String> parameterNames = requestContext.getRequest().getParameterNames();
     while (parameterNames.hasMoreElements()) {
       name = (String) parameterNames.nextElement();
@@ -367,7 +367,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     // Course Descriptions
     
     List<CourseDescriptionCategory> descriptionCategories = descriptionCategoryDAO.listUnarchived();
-    Set<CourseDescription> nonExistingDescriptions = new HashSet<CourseDescription>();
+    Set<CourseDescription> nonExistingDescriptions = new HashSet<>();
     
     for (CourseDescriptionCategory cat: descriptionCategories) {
       String varName = "courseDescription." + cat.getId().toString();
@@ -396,7 +396,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     
     // Personnel
 
-    Set<Long> existingIds = new HashSet<Long>();
+    Set<Long> existingIds = new HashSet<>();
     int rowCount = requestContext.getInteger("personnelTable.rowCount").intValue();
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "personnelTable." + i;
@@ -474,7 +474,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     
     // Basic course resources
 
-    existingIds = new HashSet<Long>();
+    existingIds = new HashSet<>();
     rowCount = requestContext.getInteger("basicResourcesTable.rowCount").intValue();
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "basicResourcesTable." + i;
@@ -509,7 +509,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
 
     // Student course resources
 
-    existingIds = new HashSet<Long>();
+    existingIds = new HashSet<>();
     rowCount = requestContext.getInteger("studentResourcesTable.rowCount").intValue();
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "studentResourcesTable." + i;
@@ -543,7 +543,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
 
     // Grade course resources
 
-    existingIds = new HashSet<Long>();
+    existingIds = new HashSet<>();
     rowCount = requestContext.getInteger("gradeResourcesTable.rowCount").intValue();
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "gradeResourcesTable." + i;
@@ -576,7 +576,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
 
     // Other costs
 
-    existingIds = new HashSet<Long>();
+    existingIds = new HashSet<>();
     rowCount = requestContext.getInteger("otherCostsTable.rowCount").intValue();
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "otherCostsTable." + i;
@@ -601,7 +601,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
 
     // Students
 
-    existingIds = new HashSet<Long>();
+    existingIds = new HashSet<>();
     rowCount = requestContext.getInteger("studentsTable.rowCount");
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "studentsTable." + i;

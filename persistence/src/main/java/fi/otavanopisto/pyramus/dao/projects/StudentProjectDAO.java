@@ -152,7 +152,7 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<StudentProject>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
 
     }
     catch (ParseException e) {
@@ -207,7 +207,7 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<StudentProject>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
 
     }
     catch (ParseException e) {

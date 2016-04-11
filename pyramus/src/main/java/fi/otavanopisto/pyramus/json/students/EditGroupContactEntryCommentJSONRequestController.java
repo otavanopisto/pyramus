@@ -53,7 +53,7 @@ public class EditGroupContactEntryCommentJSONRequestController extends JSONReque
       
       entryCommentDAO.update(comment, commentText, commentDate, commentCreatorName);
 
-      Map<String, Object> info = new HashMap<String, Object>();
+      Map<String, Object> info = new HashMap<>();
       info.put("id", comment.getId());
       info.put("creatorName", comment.getCreatorName());
       info.put("timestamp", comment.getCommentDate() != null ? comment.getCommentDate().getTime() : "");

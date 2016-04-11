@@ -119,6 +119,6 @@ public class BreadcrumbHandler {
     return sb.toString();
   }
   
-  private List<Breadcrumb> breadcrumbs = new ArrayList<Breadcrumb>();
+  private List<Breadcrumb> breadcrumbs = new ArrayList<>();
 
 }

@@ -73,7 +73,7 @@ public class LocaleFilter implements Filter {
     }
 
     public Enumeration<Locale> getLocales() {
-      Vector<Locale> v = new Vector<Locale>(1);
+      Vector<Locale> v = new Vector<>(1);
       v.add(getLocale());
       return v.elements();
     }

@@ -84,7 +84,7 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
     Long studentId = jsonRequestContext.getLong("student");
     CourseOptionality projectOptionality = (CourseOptionality) jsonRequestContext.getEnum("projectOptionality", CourseOptionality.class);
     
-    Set<Tag> tagEntities = new HashSet<Tag>();
+    Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
       for (String tag : tags) {
@@ -151,7 +151,7 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
     
     // Student project modules
 
-    Set<Long> existingModuleIds = new HashSet<Long>();
+    Set<Long> existingModuleIds = new HashSet<>();
     rowCount = jsonRequestContext.getInteger("modulesTable.rowCount").intValue();
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "modulesTable." + i;

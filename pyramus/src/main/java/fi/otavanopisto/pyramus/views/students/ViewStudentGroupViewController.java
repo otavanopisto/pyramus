@@ -43,7 +43,7 @@ public class ViewStudentGroupViewController extends PyramusViewController implem
     StudentGroup studentGroup = studentGroupDAO.findById(pageRequestContext.getLong("studentgroup"));
     pageRequestContext.getRequest().setAttribute("studentGroup", studentGroup);
     
-    List<StudentGroupStudent> studentGroupStudents = new ArrayList<StudentGroupStudent>(studentGroup.getStudents());
+    List<StudentGroupStudent> studentGroupStudents = new ArrayList<>(studentGroup.getStudents());
     Collections.sort(studentGroupStudents, new Comparator<StudentGroupStudent>() {
       @Override
       public int compare(StudentGroupStudent o1, StudentGroupStudent o2) {
@@ -54,7 +54,7 @@ public class ViewStudentGroupViewController extends PyramusViewController implem
       }
     });
 
-    final Map<Long, List<StudentGroupContactLogEntryComment>> contactEntryComments = new HashMap<Long, List<StudentGroupContactLogEntryComment>>();
+    final Map<Long, List<StudentGroupContactLogEntryComment>> contactEntryComments = new HashMap<>();
     List<StudentGroupContactLogEntry> contactLogEntries = contactLogEntryDAO.listByStudentGroup(studentGroup);
     
     // Populate comments for each entry to lists

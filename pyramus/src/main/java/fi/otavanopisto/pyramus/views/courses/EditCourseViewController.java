@@ -87,7 +87,7 @@ public class EditCourseViewController extends PyramusViewController implements B
     List<EducationType> educationTypes = educationTypeDAO.listUnarchived();
     Collections.sort(educationTypes, new StringAttributeComparator("getName"));
     pageRequestContext.getRequest().setAttribute("educationTypes", educationTypes);
-    Map<String, Boolean> enabledEducationTypes = new HashMap<String, Boolean>();
+    Map<String, Boolean> enabledEducationTypes = new HashMap<>();
     for (CourseEducationType courseEducationType : course.getCourseEducationTypes()) {
       for (CourseEducationSubtype courseEducationSubtype : courseEducationType.getCourseEducationSubtypes()) {
         enabledEducationTypes.put(courseEducationType.getEducationType().getId() + "."
@@ -133,14 +133,14 @@ public class EditCourseViewController extends PyramusViewController implements B
     
     // course students students
     
-    Map<Long, List<Student>> courseStudentsStudents = new HashMap<Long, List<Student>>();
+    Map<Long, List<Student>> courseStudentsStudents = new HashMap<>();
     
     for (CourseStudent courseStudent : courseStudents) {
       courseStudentsStudents.put(courseStudent.getId(), studentDAO.listByPerson(courseStudent.getStudent().getPerson()));
     }
     
     // Subjects
-    Map<Long, List<Subject>> subjectsByEducationType = new HashMap<Long, List<Subject>>();
+    Map<Long, List<Subject>> subjectsByEducationType = new HashMap<>();
     List<Subject> subjectsByNoEducationType = subjectDAO.listByEducationType(null);
     Collections.sort(subjectsByNoEducationType, new StringAttributeComparator("getName"));
     for (EducationType educationType : educationTypes) {

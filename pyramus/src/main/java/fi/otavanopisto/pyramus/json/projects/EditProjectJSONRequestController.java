@@ -57,7 +57,7 @@ public class EditProjectJSONRequestController extends JSONRequestController {
     Double optionalStudiesLength = jsonRequestContext.getDouble("optionalStudiesLength");
     String tagsText = jsonRequestContext.getString("tags");
     
-    Set<Tag> tagEntities = new HashSet<Tag>();
+    Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
       for (String tag : tags) {
@@ -85,7 +85,7 @@ public class EditProjectJSONRequestController extends JSONRequestController {
 
     // Project modules
 
-    Set<Long> existingIds = new HashSet<Long>();
+    Set<Long> existingIds = new HashSet<>();
     int rowCount = jsonRequestContext.getInteger("modulesTable.rowCount").intValue();
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "modulesTable." + i;

@@ -23,7 +23,7 @@ public class TrackedEntityUtils {
   
   private synchronized static Map<String, Set<String>> getTrackedEntityMap() {
     if (trackedEntities == null) {
-      trackedEntities = new HashMap<String, Set<String>>();
+      trackedEntities = new HashMap<>();
       TrackedEntityPropertyDAO trackedEntityPropertyDAO = DAOFactory.getInstance().getTrackedEntityPropertyDAO();
       List<TrackedEntityProperty> trackedEntityProperties = trackedEntityPropertyDAO.listAll();
       for (TrackedEntityProperty trackedEntityProperty : trackedEntityProperties) {
@@ -32,7 +32,7 @@ public class TrackedEntityUtils {
         
         Set<String> properties = trackedEntities.get(entity);
         if (properties == null) {
-          properties = new HashSet<String>();
+          properties = new HashSet<>();
           trackedEntities.put(entity, properties);
         }
         

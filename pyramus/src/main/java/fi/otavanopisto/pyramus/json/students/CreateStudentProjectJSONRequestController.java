@@ -42,7 +42,7 @@ public class CreateStudentProjectJSONRequestController extends JSONRequestContro
     StudentProject studentProject = studentProjectDAO.create(student, project.getName(), project.getDescription(), 
         project.getOptionalStudiesLength().getUnits(), project.getOptionalStudiesLength().getUnit(), projectOptionality, loggedUser, project);
     
-    Set<Tag> tags = new HashSet<Tag>();
+    Set<Tag> tags = new HashSet<>();
     for (Tag tag : project.getTags()) {
       tags.add(tag);
     }

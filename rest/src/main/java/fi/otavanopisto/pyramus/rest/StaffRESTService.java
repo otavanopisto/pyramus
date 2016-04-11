@@ -65,7 +65,7 @@ public class StaffRESTService extends AbstractRESTService {
     List<StaffMember> staffMembers = null;
     
     if (StringUtils.isNotBlank(email)) {
-      staffMembers = new ArrayList<StaffMember>();
+      staffMembers = new ArrayList<>();
       StaffMember staffMember = userController.findStaffMemberByEmail(email);
       if (staffMember != null) {
         staffMembers.add(staffMember);

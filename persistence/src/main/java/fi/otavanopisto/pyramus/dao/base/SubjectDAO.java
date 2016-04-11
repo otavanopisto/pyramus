@@ -144,7 +144,7 @@ public class SubjectDAO extends PyramusEntityDAO<Subject> {
 
       int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
 
-      return new SearchResult<Subject>(page, pages, hits, firstResult, lastResult, query.getResultList());
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
 
     } catch (ParseException e) {
       throw new PersistenceException(e);

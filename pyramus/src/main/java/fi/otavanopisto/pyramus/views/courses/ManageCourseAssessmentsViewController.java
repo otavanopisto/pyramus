@@ -62,8 +62,8 @@ public class ManageCourseAssessmentsViewController extends PyramusViewController
       }
     });
     
-    Map<Long, CourseAssessment> courseAssessments = new HashMap<Long, CourseAssessment>();
-    Map<Long, String> verbalAssessments = new HashMap<Long, String>();
+    Map<Long, CourseAssessment> courseAssessments = new HashMap<>();
+    Map<Long, String> verbalAssessments = new HashMap<>();
 
     Iterator<CourseStudent> students = courseStudents.iterator();
     while (students.hasNext()) {

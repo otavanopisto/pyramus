@@ -314,7 +314,7 @@ public class Servlet extends HttpServlet {
   private PlatformErrorListener platformErrorListener;
 
   private boolean sessionSynchronization = false;
-  private Map<String, Object> syncObjects =  new HashMap<String, Object>();
+  private Map<String, Object> syncObjects = new HashMap<>();
 
   private static final long serialVersionUID = 1L;
   

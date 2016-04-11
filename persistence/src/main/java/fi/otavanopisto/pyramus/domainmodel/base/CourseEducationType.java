@@ -165,7 +165,7 @@ public class CourseEducationType {
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "courseEducationType")
   @IndexedEmbedded
-  private List<CourseEducationSubtype> courseEducationSubtypes = new Vector<CourseEducationSubtype>();
+  private List<CourseEducationSubtype> courseEducationSubtypes = new Vector<>();
 
   @Version
   @Column(nullable = false)

@@ -145,25 +145,25 @@ public class ContactInfo {
   @OrderColumn (name = "indexColumn")
   @JoinColumn (name="contactInfo")
   @IndexedEmbedded
-  private List<Address> addresses = new Vector<Address>();
+  private List<Address> addresses = new Vector<>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @OrderColumn (name = "indexColumn")
   @JoinColumn (name="contactInfo")
   @IndexedEmbedded
-  private List<Email> emails = new Vector<Email>();
+  private List<Email> emails = new Vector<>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @OrderColumn (name = "indexColumn")
   @JoinColumn (name="contactInfo")
   @IndexedEmbedded
-  private List<PhoneNumber> phoneNumbers = new Vector<PhoneNumber>();
+  private List<PhoneNumber> phoneNumbers = new Vector<>();
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @OrderColumn (name = "indexColumn")
   @JoinColumn (name="contactInfo")
   @IndexedEmbedded
-  private List<ContactURL> contactURLs = new Vector<ContactURL>();
+  private List<ContactURL> contactURLs = new Vector<>();
 
   @Lob  
   @Basic (fetch = FetchType.LAZY)

@@ -44,7 +44,7 @@ public class GetContactEntryJSONRequestController extends JSONRequestController 
       
       StudentContactLogEntry entry = logEntryDAO.findById(entryId);
       
-      Map<String, Object> info = new HashMap<String, Object>();
+      Map<String, Object> info = new HashMap<>();
       info.put("id", entry.getId());
       info.put("creatorName", entry.getCreatorName());
       info.put("timestamp", entry.getEntryDate().getTime());

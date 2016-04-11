@@ -116,7 +116,7 @@ public class DataImportUtils {
   }
 
   
-  private static Map<Class<?>, ValueInterpreter<?>> interpreters = new HashMap<Class<?>, ValueInterpreter<?>>();
+  private static Map<Class<?>, ValueInterpreter<?>> interpreters = new HashMap<>();
 
   static {
     interpreters.put(String.class, new ValueInterpreter<String>() {

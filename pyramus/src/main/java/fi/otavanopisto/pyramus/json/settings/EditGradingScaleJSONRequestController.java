@@ -29,7 +29,7 @@ public class EditGradingScaleJSONRequestController extends JSONRequestController
     GradingScale gradingScale = gradingScaleDAO.findById(gradingScaleId);
     gradingScaleDAO.update(gradingScale, name, description);
     
-    Set<Long> existingGrades = new HashSet<Long>();
+    Set<Long> existingGrades = new HashSet<>();
     
     int rowCount = NumberUtils.createInteger(jsonRequestContext.getRequest().getParameter("gradesTable.rowCount")).intValue();
     for (int i = 0; i < rowCount; i++) {

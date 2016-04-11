@@ -46,10 +46,10 @@ public class SearchStudentProjectsJSONRequestController extends JSONRequestContr
 
     SearchResult<StudentProject> searchResult = studentProjectDAO.searchStudentProjectsBasic(resultsPerPage, page, projectText, studentText);
 
-    List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
     List<StudentProject> studentProjects = searchResult.getResults();
     for (StudentProject studentProject : studentProjects) {
-      Map<String, Object> studentProjectInfo = new HashMap<String, Object>();
+      Map<String, Object> studentProjectInfo = new HashMap<>();
       studentProjectInfo.put("id", studentProject.getId());
       studentProjectInfo.put("studentProjectName", studentProject.getName());
       studentProjectInfo.put("studentFirstName", studentProject.getStudent().getFirstName());

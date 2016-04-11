@@ -47,7 +47,7 @@ public class EditStudentGroupViewController extends PyramusViewController implem
     StudentGroup studentGroup = studentGroupDAO.findById(NumberUtils.createLong(pageRequestContext.getRequest().getParameter("studentgroup")));
     pageRequestContext.getRequest().setAttribute("studentGroup", studentGroup);
 
-    List<StudentGroupStudent> studentGroupStudents = new ArrayList<StudentGroupStudent>(studentGroup.getStudents());
+    List<StudentGroupStudent> studentGroupStudents = new ArrayList<>(studentGroup.getStudents());
     Collections.sort(studentGroupStudents, new Comparator<StudentGroupStudent>() {
       @Override
       public int compare(StudentGroupStudent o1, StudentGroupStudent o2) {

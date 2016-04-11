@@ -112,7 +112,7 @@ public class ViewReportContentsViewController extends PyramusViewController impl
     return Messages.getInstance().getText(locale, "reports.viewReport.pageTitle");
   }
 
-  private static Set<String> reservedParameters = new HashSet<String>();
+  private static Set<String> reservedParameters = new HashSet<>();
   
   static {
     reservedParameters.add("reportId");

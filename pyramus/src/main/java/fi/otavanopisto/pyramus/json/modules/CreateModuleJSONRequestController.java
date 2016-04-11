@@ -76,7 +76,7 @@ public class CreateModuleJSONRequestController extends JSONRequestController {
     Double moduleLength = requestContext.getDouble("moduleLength");
     String tagsText = requestContext.getString("tags");
     
-    Set<Tag> tagEntities = new HashSet<Tag>();
+    Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
       for (String tag : tags) {
@@ -125,7 +125,7 @@ public class CreateModuleJSONRequestController extends JSONRequestController {
 
     // Education types and subtypes submitted from the web page
 
-    Map<Long, Vector<Long>> chosenEducationTypes = new HashMap<Long, Vector<Long>>();
+    Map<Long, Vector<Long>> chosenEducationTypes = new HashMap<>();
     Enumeration<String> parameterNames = requestContext.getRequest().getParameterNames();
     while (parameterNames.hasMoreElements()) {
       name = (String) parameterNames.nextElement();

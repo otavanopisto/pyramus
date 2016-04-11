@@ -28,7 +28,7 @@ public class TestAuthPluginDescriptor implements PluginDescriptor {
   }
 
   public Map<String, Class<?>> getAuthenticationProviders() {
-    Map<String, Class<?>> authenticationProviders = new HashMap<String, Class<?>>();
+    Map<String, Class<?>> authenticationProviders = new HashMap<>();
     authenticationProviders.put("TestAuth", TestAuthorizationStrategy.class);
     return authenticationProviders;
   }

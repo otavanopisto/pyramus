@@ -43,10 +43,10 @@ public class SearchUsersJSONRequestController extends JSONRequestController {
     }
 
     SearchResult<StaffMember> searchResult = userDAO.searchUsers(resultsPerPage, page, text, text, text, text, roles);
-    List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> results = new ArrayList<>();
     List<StaffMember> users = searchResult.getResults();
     for (User user : users) {
-      Map<String, Object> info = new HashMap<String, Object>();
+      Map<String, Object> info = new HashMap<>();
       info.put("id", user.getId());
       info.put("firstName", user.getFirstName());
       info.put("lastName", user.getLastName());
