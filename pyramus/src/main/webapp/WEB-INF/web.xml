@@ -127,7 +127,7 @@
     <servlet-name>freemarker</servlet-name>
     <servlet-class>fi.otavanopisto.pyramus.freemarker.FreemarkerServlet</servlet-class>
     <init-param>
-      <param-name>TemplatePath</param-name>
+      <param-name>Templ	atePath</param-name>
       <param-value>class://fi/pyramus</param-value>
     </init-param>
     <init-param>
