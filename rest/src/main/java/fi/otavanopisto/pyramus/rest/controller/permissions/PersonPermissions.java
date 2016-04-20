@@ -32,6 +32,10 @@ public class PersonPermissions extends AbstractPyramusPermissionCollection imple
   
   @Scope (PermissionScope.PERSON_OWNER)
   public static final String PERSON_OWNER = "PERSON_OWNER";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  public static final String FIND_USERNAME = "FIND_USERNAME";
   
   @Override
   public List<String> listPermissions() {
