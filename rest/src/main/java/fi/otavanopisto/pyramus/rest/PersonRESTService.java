@@ -236,22 +236,25 @@ public class PersonRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    // Check that logged in user is the same we're modifying
-    
-    User user = sessionController.getUser();
-    
-    // User needs to be logged in for password change
-    if (user == null) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    // Persons must match
-    if (!user.getPerson().getId().equals(person.getId())) {
-      return Response.status(Status.BAD_REQUEST).build();
-    }
-    
-    if (!restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, person, Style.OR)) {
-      return Response.status(Status.FORBIDDEN).build();
+    if (!restSecurity.hasPermission(new String[] { PersonPermissions.FIND_USERNAME } )) {
+      // Check that logged in user is the same we're modifying
+      
+      User user = sessionController.getUser();
+      
+      // User needs to be logged in for password change
+      if (user == null) {
+        return Response.status(Status.UNAUTHORIZED).build();
+      }
+      
+      
+      // Persons must match
+      if (!user.getPerson().getId().equals(person.getId())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+
+      if (!restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, person, Style.OR)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
     
     // TODO: Support for multiple internal authentication providers
@@ -260,14 +263,14 @@ public class PersonRESTService extends AbstractRESTService {
       InternalAuthenticationProvider internalAuthenticationProvider = internalAuthenticationProviders.get(0);
       if (internalAuthenticationProvider != null) {
         UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), person);
+        String username = null;
         
-        String username = internalAuthenticationProvider.getUsername(userIdentification.getExternalId());
-        
-        if (username != null) {
-          UserCredentials credentials = new UserCredentials(null, username, null);
-
-          return Response.ok(credentials).build();
+        if (userIdentification != null) {
+          username = internalAuthenticationProvider.getUsername(userIdentification.getExternalId());
         }
+        
+        UserCredentials credentials = new UserCredentials(null, username, null);
+        return Response.ok(credentials).build();
       }
     }
     
