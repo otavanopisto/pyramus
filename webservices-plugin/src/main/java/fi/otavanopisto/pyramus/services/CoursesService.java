@@ -36,6 +36,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseStudentVariableDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
@@ -288,8 +289,10 @@ public class CoursesService extends PyramusService {
     if (!StringUtils.isBlank(optionality))
       cOptionality = CourseOptionality.valueOf(optionality);
 
+    Room room = null;
+    
     CourseStudent courseStudent = courseStudentDAO.create(course, student, courseEnrolmentType,
-            participationType, enrolmentDate, lodging, cOptionality, null, Boolean.FALSE);
+            participationType, enrolmentDate, lodging, cOptionality, null, room, Boolean.FALSE);
 
     validateEntity(courseStudent);
     

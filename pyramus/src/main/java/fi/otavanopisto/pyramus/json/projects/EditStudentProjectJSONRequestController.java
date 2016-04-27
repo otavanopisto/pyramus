@@ -25,6 +25,7 @@ import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectModuleDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.AcademicTerm;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
@@ -197,7 +198,8 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
         CourseParticipationType participationType = defaults.getInitialCourseParticipationType();
         Date enrolmentDate = new Date(System.currentTimeMillis());
         Boolean lodging = Boolean.FALSE;
-        courseStudent = courseStudentDAO.create(course, studentProject.getStudent(), courseEnrolmentType, participationType, enrolmentDate, lodging, optionality, null, Boolean.FALSE);
+        Room room = null;
+        courseStudent = courseStudentDAO.create(course, studentProject.getStudent(), courseEnrolmentType, participationType, enrolmentDate, lodging, optionality, null, room, Boolean.FALSE);
       } else {
         courseStudent = courseStudentDAO.update(courseStudent, studentProject.getStudent(), courseStudent.getCourseEnrolmentType(), courseStudent.getParticipationType(), courseStudent.getEnrolmentTime(), courseStudent.getLodging(), optionality);
       }

@@ -6,6 +6,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -36,8 +37,10 @@ public class CourseStudentAPI {
       throw new InvalidScriptException("Student #" + studentId + " not found.");
     }
     
+    Room room = null;
+    
     return courseStudentDAO.create(course, student, defaults.getInitialCourseEnrolmentType(), defaults.getInitialCourseParticipationType(), 
-        new Date(), false, CourseOptionality.OPTIONAL, null, Boolean.FALSE).getId();
+        new Date(), false, CourseOptionality.OPTIONAL, null, room, Boolean.FALSE).getId();
   }
   
   public Long findIdByCourseAndStudent(Long courseId, Long studentId) throws InvalidScriptException {

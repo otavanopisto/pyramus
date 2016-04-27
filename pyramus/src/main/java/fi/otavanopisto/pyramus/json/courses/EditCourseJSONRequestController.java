@@ -42,6 +42,7 @@ import fi.otavanopisto.pyramus.dao.courses.StudentCourseResourceDAO;
 import fi.otavanopisto.pyramus.dao.resources.ResourceDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
@@ -621,7 +622,8 @@ public class EditCourseJSONRequestController extends JSONRequestController {
       if (courseStudentId == -1) {
         /* New student */
         Student student = studentDAO.findById(studentId);
-        courseStudent = courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, null, Boolean.FALSE);
+        Room room = null;
+        courseStudent = courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, null, room, Boolean.FALSE);
       }
       else {
         boolean modified = new Integer(1).equals(requestContext.getInteger(colPrefix + ".modified"));

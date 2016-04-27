@@ -12,6 +12,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
@@ -93,6 +94,14 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
   public BillingDetails getBillingDetails() {
     return billingDetails;
   }
+  
+  public Room getRoom() {
+    return room;
+  }
+  
+  public void setRoom(Room room) {
+    this.room = room;
+  }
 
   @Column (nullable=false)
   @Temporal (value=TemporalType.TIMESTAMP)
@@ -126,4 +135,6 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
   @JoinColumn(name="billingDetails")
   private BillingDetails billingDetails;
 
+  @ManyToOne
+  private Room room;
 }

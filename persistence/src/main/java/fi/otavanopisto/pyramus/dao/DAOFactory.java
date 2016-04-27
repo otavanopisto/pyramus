@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.accesslog.AccessLogEntryDAO;
 import fi.otavanopisto.pyramus.dao.accesslog.AccessLogEntryPathDAO;
+import fi.otavanopisto.pyramus.dao.accommodation.RoomDAO;
+import fi.otavanopisto.pyramus.dao.accommodation.RoomTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.AcademicTermDAO;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.BillingDetailsDAO;
@@ -670,6 +672,17 @@ public class DAOFactory {
     return (EnvironmentRolePermissionDAO) findByClass(EnvironmentRolePermissionDAO.class);
   }
   
+  /* Accommodation */
+
+  public RoomTypeDAO getRoomTypeDAO() {
+    return (RoomTypeDAO) findByClass(RoomTypeDAO.class);
+  }
+
+  public RoomDAO getRoomDAO() {
+    return (RoomDAO) findByClass(RoomDAO.class);
+  }
+
+  
   private String getAppName() throws NamingException {
     String appName = "";
     try {
@@ -692,5 +705,4 @@ public class DAOFactory {
       throw new PersistenceException(e);
     }
   }
-
 }

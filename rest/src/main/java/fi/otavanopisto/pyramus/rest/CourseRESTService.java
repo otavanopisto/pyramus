@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
@@ -566,8 +567,11 @@ public class CourseRESTService extends AbstractRESTService {
       participantionType = courseController.getDefaultCourseParticipationType();
     }
     
+    // TODO: Add support for specifying room
+    Room room = null;
+    
     return Response.status(Status.OK)
-      .entity(objectFactory.createModel(courseController.createCourseStudent(course, student, enrolmentType, participantionType, toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails)))
+      .entity(objectFactory.createModel(courseController.createCourseStudent(course, student, enrolmentType, participantionType, toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails, room)))
       .build();
   }
 
