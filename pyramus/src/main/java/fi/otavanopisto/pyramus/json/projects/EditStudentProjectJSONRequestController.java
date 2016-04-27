@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.json.projects;
 
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -199,7 +200,11 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
         Date enrolmentDate = new Date(System.currentTimeMillis());
         Boolean lodging = Boolean.FALSE;
         Room room = null;
-        courseStudent = courseStudentDAO.create(course, studentProject.getStudent(), courseEnrolmentType, participationType, enrolmentDate, lodging, optionality, null, room, Boolean.FALSE);
+        Double lodgingFee = null;
+        Currency lodgingFeeCurrency = null;
+        
+        courseStudent = courseStudentDAO.create(course, studentProject.getStudent(), courseEnrolmentType, participationType, 
+            enrolmentDate, lodging, optionality, null, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
       } else {
         courseStudent = courseStudentDAO.update(courseStudent, studentProject.getStudent(), courseStudent.getCourseEnrolmentType(), courseStudent.getParticipationType(), courseStudent.getEnrolmentTime(), courseStudent.getLodging(), optionality);
       }

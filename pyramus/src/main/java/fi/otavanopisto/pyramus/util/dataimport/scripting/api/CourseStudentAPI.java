@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.util.dataimport.scripting.api;
 
+import java.util.Currency;
 import java.util.Date;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -38,9 +39,11 @@ public class CourseStudentAPI {
     }
     
     Room room = null;
+    Double lodgingFee = null;
+    Currency lodgingFeeCurrency = null;
     
     return courseStudentDAO.create(course, student, defaults.getInitialCourseEnrolmentType(), defaults.getInitialCourseParticipationType(), 
-        new Date(), false, CourseOptionality.OPTIONAL, null, room, Boolean.FALSE).getId();
+        new Date(), false, CourseOptionality.OPTIONAL, null, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE).getId();
   }
   
   public Long findIdByCourseAndStudent(Long courseId, Long studentId) throws InvalidScriptException {

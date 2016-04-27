@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -569,9 +570,12 @@ public class CourseRESTService extends AbstractRESTService {
     
     // TODO: Add support for specifying room
     Room room = null;
-    
-    return Response.status(Status.OK)
-      .entity(objectFactory.createModel(courseController.createCourseStudent(course, student, enrolmentType, participantionType, toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails, room)))
+    Double lodgingFee = null;
+    Currency lodgingFeeCurrency = null;
+
+    return Response.status(Status.OK).entity(
+        objectFactory.createModel(courseController.createCourseStudent(course, student, enrolmentType, participantionType,  
+            toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails, lodgingFee, lodgingFeeCurrency, room)))
       .build();
   }
 

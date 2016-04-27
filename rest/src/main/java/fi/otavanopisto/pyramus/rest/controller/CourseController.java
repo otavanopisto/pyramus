@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -456,8 +457,9 @@ public class CourseController {
   
   /* CourseStudent */
   
-  public CourseStudent createCourseStudent(Course course, Student student, CourseEnrolmentType enrolmentType, CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, Room room) {
-    return courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, billingDetails, room, Boolean.FALSE);
+  public CourseStudent createCourseStudent(Course course, Student student, CourseEnrolmentType enrolmentType, CourseParticipationType participationType, 
+      Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, Double lodgingFee, Currency lodgingFeeCurrency, Room room) {
+    return courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, billingDetails, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
   }
   
   public CourseStudent findCourseStudentById(Long id) {

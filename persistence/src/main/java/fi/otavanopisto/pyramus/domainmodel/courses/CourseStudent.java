@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.domainmodel.courses;
 
+import java.util.Currency;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -102,6 +103,22 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
   public void setRoom(Room room) {
     this.room = room;
   }
+  
+  public Double getLodgingFee() {
+    return lodgingFee;
+  }
+  
+  public void setLodgingFee(Double lodgingFee) {
+    this.lodgingFee = lodgingFee;
+  }
+  
+  public Currency getLodgingFeeCurrency() {
+    return lodgingFeeCurrency;
+  }
+  
+  public void setLodgingFeeCurrency(Currency lodgingFeeCurrency) {
+    this.lodgingFeeCurrency = lodgingFeeCurrency;
+  }
 
   @Column (nullable=false)
   @Temporal (value=TemporalType.TIMESTAMP)
@@ -134,6 +151,10 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
   @ManyToOne 
   @JoinColumn(name="billingDetails")
   private BillingDetails billingDetails;
+  
+  private Double lodgingFee;
+  
+  private Currency lodgingFeeCurrency;
 
   @ManyToOne
   private Room room;

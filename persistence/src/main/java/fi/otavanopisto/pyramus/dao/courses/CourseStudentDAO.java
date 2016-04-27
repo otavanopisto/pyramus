@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.dao.courses;
 
 import java.util.Collections;
+import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
@@ -59,7 +60,8 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
    * @return The created course student
    */
   public CourseStudent create(Course course, Student student, CourseEnrolmentType courseEnrolmentType,
-      CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, Room room, Boolean archived) {
+      CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, 
+      BillingDetails billingDetails, Room room, Double lodgingFee, Currency lodgingFeeCurrency, Boolean archived) {
     
     CourseStudent courseStudent = new CourseStudent();
     
@@ -73,6 +75,8 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     courseStudent.setOptionality(optionality);
     courseStudent.setStudent(student);
     courseStudent.setRoom(room);
+    courseStudent.setLodgingFee(lodgingFee);
+    courseStudent.setLodgingFeeCurrency(lodgingFeeCurrency);
     
     persist(courseStudent);
     
@@ -347,6 +351,12 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
 
   public CourseStudent updateRoom(CourseStudent courseStudent, Room room) {
     courseStudent.setRoom(room);
+    return persist(courseStudent);
+  }
+
+  public CourseStudent updateLodgingFee(CourseStudent courseStudent, Double lodgingFee, Currency lodgingFeeCurrency) {
+    courseStudent.setLodgingFee(lodgingFee);
+    courseStudent.setLodgingFeeCurrency(lodgingFeeCurrency);
     return persist(courseStudent);
   }
 

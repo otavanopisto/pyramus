@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.services;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
@@ -290,9 +291,11 @@ public class CoursesService extends PyramusService {
       cOptionality = CourseOptionality.valueOf(optionality);
 
     Room room = null;
+    Double lodgingFee = null;
+    Currency lodgingFeeCurrency = null;
     
-    CourseStudent courseStudent = courseStudentDAO.create(course, student, courseEnrolmentType,
-            participationType, enrolmentDate, lodging, cOptionality, null, room, Boolean.FALSE);
+    CourseStudent courseStudent = courseStudentDAO.create(course, student, courseEnrolmentType, participationType, 
+        enrolmentDate, lodging, cOptionality, null, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
 
     validateEntity(courseStudent);
     
