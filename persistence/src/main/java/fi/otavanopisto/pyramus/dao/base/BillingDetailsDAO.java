@@ -1,9 +1,18 @@
 package fi.otavanopisto.pyramus.dao.base;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
 @Stateless
 public class BillingDetailsDAO extends PyramusEntityDAO<BillingDetails> {
@@ -29,6 +38,20 @@ public class BillingDetailsDAO extends PyramusEntityDAO<BillingDetails> {
     billingDetails.setNotes(notes);
     
     return persist(billingDetails);
+  }
+  
+  public List<BillingDetails> listByStudent(Student student) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<BillingDetails> criteria = criteriaBuilder.createQuery(BillingDetails.class);
+    Root<CourseStudent> root = criteria.from(CourseStudent.class);
+    
+    criteria.select(root.get(CourseStudent_.billingDetails));
+    criteria.where(criteriaBuilder.equal(root.get(CourseStudent_.student), student));
+    criteria.groupBy(root.get(CourseStudent_.billingDetails));
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
   
   public BillingDetails updatePersonName(BillingDetails billingDetails, String personName) {

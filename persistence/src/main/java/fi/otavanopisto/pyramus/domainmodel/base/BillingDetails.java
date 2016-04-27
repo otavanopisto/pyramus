@@ -6,7 +6,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Email;
 
 @Entity
@@ -126,6 +128,49 @@ public class BillingDetails {
   
   public void setNotes(String notes) {
     this.notes = notes;
+  }
+  
+  @Transient
+  public String toLine() {
+    StringBuilder result = new StringBuilder();
+    
+    if (StringUtils.isNotBlank(getPersonName())) {
+      result.append(getPersonName());
+    }
+    
+    if (StringUtils.isNotBlank(getCompanyName())) {
+      if (result.length() > 0) {
+        result.append(" / ");
+      }
+      
+      result.append(getCompanyName());
+    }
+    
+    if (StringUtils.isNotBlank(getStreetAddress1())) {
+      if (result.length() > 0) {
+        result.append(", ");
+      }
+      
+      result.append(getStreetAddress1());
+    }
+    
+    if (StringUtils.isNotBlank(getPostalCode())) {
+      if (result.length() > 0) {
+        result.append(" ");
+      }
+      
+      result.append(getPostalCode());
+    }
+    
+    if (StringUtils.isNotBlank(getCity())) {
+      if (result.length() > 0) {
+        result.append(" ");
+      }
+      
+      result.append(getCity());
+    }
+    
+    return result.toString();
   }
 
   @Id

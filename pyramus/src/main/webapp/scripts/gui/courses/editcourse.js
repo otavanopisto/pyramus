@@ -26,6 +26,7 @@
               roomId: event.results.roomId,
               lodgingFee: event.results.lodgingFee,
               lodgingFeeCurrency: event.results.lodgingFeeCurrency,
+              billingDetailsId: event.results.billingDetailsId,
               billingDetailsPersonName: event.results.billingDetailsPersonName,
               billingDetailsCompanyName: event.results.billingDetailsCompanyName,
               billingDetailsStreetAddress1: event.results.billingDetailsStreetAddress1,

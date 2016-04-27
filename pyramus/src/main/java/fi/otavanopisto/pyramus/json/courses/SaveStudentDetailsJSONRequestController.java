@@ -44,6 +44,27 @@ public class SaveStudentDetailsJSONRequestController extends JSONRequestControll
     String billingDetailsElectronicBillingAddress = requestContext.getString("billingDetailsElectronicBillingAddress"); 
     String billingDetailsNotes = requestContext.getString("billingDetailsNotes");
     
+    Long billingDetailsId = requestContext.getLong("billingDetailsId");
+    if (billingDetailsId != null) {
+      BillingDetails billingDetails = billingDetailsDAO.findById(billingDetailsId);
+      if (billingDetails != null) {
+        billingDetailsPersonName = billingDetails.getPersonName();
+        billingDetailsCompanyName = billingDetails.getCompanyName();
+        billingDetailsStreetAddress1 = billingDetails.getStreetAddress1();
+        billingDetailsStreetAddress2 = billingDetails.getStreetAddress2();
+        billingDetailsPostalCode = billingDetails.getPostalCode();
+        billingDetailsCity = billingDetails.getCity();
+        billingDetailsRegion = billingDetails.getRegion();
+        billingDetailsCountry = billingDetails.getCountry();
+        billingDetailsPhoneNumber = billingDetails.getPhoneNumber();
+        billingDetailsEmailAddress = billingDetails.getEmailAddress();
+        billingDetailsCompanyIdentifier = billingDetails.getCompanyIdentifier();
+        billingDetailsReferenceNumber = billingDetails.getReferenceNumber();
+        billingDetailsElectronicBillingAddress = billingDetails.getElectronicBillingAddress();
+        billingDetailsNotes = billingDetails.getNotes();
+      }
+    }
+    
     boolean billingDetailsSet = !allNull(billingDetailsPersonName, billingDetailsCompanyName,
         billingDetailsStreetAddress1, billingDetailsStreetAddress2, billingDetailsPostalCode, billingDetailsCity,
         billingDetailsRegion, billingDetailsCountry, billingDetailsPhoneNumber, billingDetailsEmailAddress,

@@ -1,20 +1,26 @@
 package fi.otavanopisto.pyramus.views.courses;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.accommodation.RoomDAO;
 import fi.otavanopisto.pyramus.dao.accommodation.RoomTypeDAO;
+import fi.otavanopisto.pyramus.dao.base.BillingDetailsDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.RoomType;
+import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
@@ -54,11 +60,45 @@ public class CourseStudentDetailsDialogViewController extends PyramusViewControl
     // Support other currencies
     List<Currency> currencies = Arrays.asList(Currency.getInstance("EUR"));
     
+    List<BillingDetails> existingBillingDetails = getExistingBillingDetails(courseStudent);
+    
     pageRequestContext.getRequest().setAttribute("courseStudent", courseStudent);
     pageRequestContext.getRequest().setAttribute("rooms", rooms);
     pageRequestContext.getRequest().setAttribute("currencies", currencies);
+    pageRequestContext.getRequest().setAttribute("existingBillingDetails", existingBillingDetails);
     
     pageRequestContext.setIncludeJSP("/templates/courses/studentdetailsdialog.jsp");
+  }
+
+  private List<BillingDetails> getExistingBillingDetails(CourseStudent courseStudent) {
+    BillingDetails currentDetails = courseStudent.getBillingDetails();
+    Map<Integer, BillingDetails> result = new HashMap<>();
+    
+    BillingDetailsDAO billingDetailsDAO = DAOFactory.getInstance().getBillingDetailsDAO();
+    
+    List<BillingDetails> billingDetails = billingDetailsDAO.listByStudent(courseStudent.getStudent());
+    for (BillingDetails studentBillingDetails : billingDetails) {
+      if (currentDetails == null || !studentBillingDetails.getId().equals(currentDetails.getId())) {
+        HashCodeBuilder builder = new HashCodeBuilder(43, 83);
+        builder.append(studentBillingDetails.getCity());
+        builder.append(studentBillingDetails.getCompanyIdentifier());
+        builder.append(studentBillingDetails.getCompanyName());
+        builder.append(studentBillingDetails.getCountry());
+        builder.append(studentBillingDetails.getElectronicBillingAddress());
+        builder.append(studentBillingDetails.getEmailAddress());
+        builder.append(studentBillingDetails.getNotes());
+        builder.append(studentBillingDetails.getPersonName());
+        builder.append(studentBillingDetails.getPhoneNumber());
+        builder.append(studentBillingDetails.getPostalCode());
+        builder.append(studentBillingDetails.getReferenceNumber());
+        builder.append(studentBillingDetails.getRegion());
+        builder.append(studentBillingDetails.getStreetAddress1());
+        builder.append(studentBillingDetails.getStreetAddress2());
+        result.put(builder.toHashCode(), studentBillingDetails);
+      }
+    }
+    
+    return new ArrayList<>(result.values());
   }
 
   public UserRole[] getAllowedRoles() {
