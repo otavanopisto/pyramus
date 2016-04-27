@@ -21,9 +21,10 @@ import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
-import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
+import fi.otavanopisto.pyramus.domainmodel.base.Email_;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
@@ -37,16 +38,14 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariable_;
 import fi.otavanopisto.pyramus.events.StudentArchivedEvent;
 import fi.otavanopisto.pyramus.events.StudentCreatedEvent;
 import fi.otavanopisto.pyramus.events.StudentUpdatedEvent;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
-import fi.otavanopisto.pyramus.domainmodel.base.Email_;
-import fi.otavanopisto.pyramus.domainmodel.students.Student_;
-import fi.otavanopisto.pyramus.domainmodel.users.UserVariable_;
 
 @Stateless
 public class StudentDAO extends PyramusEntityDAO<Student> {
@@ -214,18 +213,6 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     EntityManager entityManager = getEntityManager();
     
     student.setTags(tags);
-    
-    entityManager.persist(student);
-
-    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
-    
-    return student;
-  }
-
-  public Student updateBillingDetails(Student student, List<BillingDetails> billingDetails) {
-    EntityManager entityManager = getEntityManager();
-    
-    student.setBillingDetails(billingDetails);
     
     entityManager.persist(student);
 

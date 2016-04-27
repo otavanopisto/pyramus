@@ -29,27 +29,26 @@ import org.hibernate.search.jpa.Search;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactType_;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
+import fi.otavanopisto.pyramus.domainmodel.base.Email_;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariable_;
+import fi.otavanopisto.pyramus.domainmodel.users.User_;
 import fi.otavanopisto.pyramus.events.StaffMemberCreatedEvent;
 import fi.otavanopisto.pyramus.events.StaffMemberDeletedEvent;
 import fi.otavanopisto.pyramus.events.StaffMemberUpdatedEvent;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType_;
-import fi.otavanopisto.pyramus.domainmodel.base.Email_;
-import fi.otavanopisto.pyramus.domainmodel.users.StaffMember_;
-import fi.otavanopisto.pyramus.domainmodel.users.UserVariable_;
-import fi.otavanopisto.pyramus.domainmodel.users.User_;
 
 @Stateless
 public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
@@ -322,15 +321,6 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     staffMember.setFirstName(firstName);
     staffMember.setLastName(lastName);
     staffMember.setRole(role);
-    persist(staffMember);
-    
-    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));
-    
-    return staffMember;
-  }
-
-  public StaffMember updateBillingDetails(StaffMember staffMember, List<BillingDetails> billingDetails) {
-    staffMember.setBillingDetails(billingDetails);
     persist(staffMember);
     
     staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMember.getId()));

@@ -1,7 +1,6 @@
 package fi.otavanopisto.pyramus.dao.base;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
@@ -10,9 +9,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 public class BillingDetailsDAO extends PyramusEntityDAO<BillingDetails> {
 
   public BillingDetails create(String personName, String companyName, String streetAddress1, String streetAddress2,
-      String postalCode, String city, String region, String country, String phoneNumber, String emailAddress, String bic, String iban,
-      String companyIdentifier, String referenceNumber) {
-    EntityManager entityManager = getEntityManager();
+      String postalCode, String city, String region, String country, String phoneNumber, String emailAddress, String electronicBillingAddress,
+      String companyIdentifier, String referenceNumber, String notes) {
 
     BillingDetails billingDetails = new BillingDetails();
     billingDetails.setPersonName(personName);
@@ -25,39 +23,82 @@ public class BillingDetailsDAO extends PyramusEntityDAO<BillingDetails> {
     billingDetails.setCountry(country);
     billingDetails.setPhoneNumber(phoneNumber);
     billingDetails.setEmailAddress(emailAddress);
-    billingDetails.setBic(bic);
-    billingDetails.setIban(iban);
+    billingDetails.setElectronicBillingAddress(electronicBillingAddress);
     billingDetails.setCompanyIdentifier(companyIdentifier);
     billingDetails.setReferenceNumber(referenceNumber);
-    entityManager.persist(billingDetails);
-
-    return billingDetails;
+    billingDetails.setNotes(notes);
+    
+    return persist(billingDetails);
+  }
+  
+  public BillingDetails updatePersonName(BillingDetails billingDetails, String personName) {
+    billingDetails.setPersonName(personName);
+    return persist(billingDetails);
   }
 
-  public BillingDetails update(BillingDetails billingDetails, String personName, String companyName, String streetAddress1, String streetAddress2,
-      String postalCode, String city, String region, String country, String phoneNumber, String emailAddress, String bic, String iban, String companyIdentifier,
-      String referenceNumber) {
-
-    EntityManager entityManager = getEntityManager();
-
-    billingDetails.setPersonName(personName);
+  public BillingDetails updateCompanyName(BillingDetails billingDetails, String companyName) {
     billingDetails.setCompanyName(companyName);
+    return persist(billingDetails);
+  }
+
+  public BillingDetails updateStreetAddress1(BillingDetails billingDetails, String streetAddress1) {
     billingDetails.setStreetAddress1(streetAddress1);
+    return persist(billingDetails);
+  }
+
+  public BillingDetails updateStreetAddress2(BillingDetails billingDetails, String streetAddress2) {
     billingDetails.setStreetAddress2(streetAddress2);
+    return persist(billingDetails);
+  }
+
+  public BillingDetails updatePostalCode(BillingDetails billingDetails, String postalCode) {
     billingDetails.setPostalCode(postalCode);
+    return persist(billingDetails);
+  }
+
+  public BillingDetails updateCity(BillingDetails billingDetails, String city) {
     billingDetails.setCity(city);
+    return persist(billingDetails);
+  }
+
+  public BillingDetails updateRegion(BillingDetails billingDetails, String region) {
     billingDetails.setRegion(region);
+    return persist(billingDetails);
+  }
+
+  public BillingDetails updateCountry(BillingDetails billingDetails, String country) {
     billingDetails.setCountry(country);
+    return persist(billingDetails);
+  }
+
+  public BillingDetails updatePhoneNumber(BillingDetails billingDetails, String phoneNumber) {
     billingDetails.setPhoneNumber(phoneNumber);
+    return persist(billingDetails);
+  }
+
+  public BillingDetails updateEmailAddress(BillingDetails billingDetails, String emailAddress) {
     billingDetails.setEmailAddress(emailAddress);
-    billingDetails.setBic(bic);
-    billingDetails.setIban(iban);
+    return persist(billingDetails);
+  }
+
+  public BillingDetails updateCompanyIdentifier(BillingDetails billingDetails, String companyIdentifier) {
     billingDetails.setCompanyIdentifier(companyIdentifier);
+    return persist(billingDetails);
+  }
+
+  public BillingDetails updateReferenceNumber(BillingDetails billingDetails, String referenceNumber) {
     billingDetails.setReferenceNumber(referenceNumber);
+    return persist(billingDetails);
+  }
 
-    entityManager.persist(billingDetails);
+  public BillingDetails updateNotes(BillingDetails billingDetails, String notes) {
+    billingDetails.setNotes(notes);
+    return persist(billingDetails);
+  }
 
-    return billingDetails;
+  public BillingDetails updateElectronicBillingAddress(BillingDetails billingDetails, String electronicBillingAddress) {
+    billingDetails.setElectronicBillingAddress(electronicBillingAddress);
+    return persist(billingDetails);
   }
 
   @Override
