@@ -21,9 +21,25 @@
           JSONRequest.request("courses/savestudentdetails.json", {
             parameters: {
               courseStudentId: courseStudentId,
+              organization: event.results.organization,
+              additionalInfo: event.results.additionalInfo,
               roomId: event.results.roomId,
               lodgingFee: event.results.lodgingFee,
-              lodgingFeeCurrency: event.results.lodgingFeeCurrency
+              lodgingFeeCurrency: event.results.lodgingFeeCurrency,
+              billingDetailsPersonName: event.results.billingDetailsPersonName,
+              billingDetailsCompanyName: event.results.billingDetailsCompanyName,
+              billingDetailsStreetAddress1: event.results.billingDetailsStreetAddress1,
+              billingDetailsStreetAddress2: event.results.billingDetailsStreetAddress2,
+              billingDetailsPostalCode: event.results.billingDetailsPostalCode,
+              billingDetailsCity: event.results.billingDetailsCity,
+              billingDetailsRegion: event.results.billingDetailsRegion,
+              billingDetailsCountry: event.results.billingDetailsCountry,
+              billingDetailsPhoneNumber: event.results.billingDetailsPhoneNumber,
+              billingDetailsEmailAddress: event.results.billingDetailsEmailAddress,
+              billingDetailsCompanyIdentifier: event.results.billingDetailsCompanyIdentifier,
+              billingDetailsReferenceNumber: event.results.billingDetailsReferenceNumber,
+              billingDetailsElectronicBillingAddress: event.results.billingDetailsElectronicBillingAddress,
+              billingDetailsNotes: event.results.billingDetailsNotes
             }
           });  
         break;
