@@ -568,14 +568,17 @@ public class CourseRESTService extends AbstractRESTService {
       participantionType = courseController.getDefaultCourseParticipationType();
     }
     
-    // TODO: Add support for specifying room
+    // TODO: Add support for room, organization, additionalInfo and lodging fee 
+    String organization = null;
+    String additionalInfo = null;
     Room room = null;
     Double lodgingFee = null;
     Currency lodgingFeeCurrency = null;
 
     return Response.status(Status.OK).entity(
         objectFactory.createModel(courseController.createCourseStudent(course, student, enrolmentType, participantionType,  
-            toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails, lodgingFee, lodgingFeeCurrency, room)))
+            toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails, lodgingFee, lodgingFeeCurrency, 
+            organization, additionalInfo, room)))
       .build();
   }
 

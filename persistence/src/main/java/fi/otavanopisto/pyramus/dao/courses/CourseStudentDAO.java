@@ -61,7 +61,7 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
    */
   public CourseStudent create(Course course, Student student, CourseEnrolmentType courseEnrolmentType,
       CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, 
-      BillingDetails billingDetails, Room room, Double lodgingFee, Currency lodgingFeeCurrency, Boolean archived) {
+      BillingDetails billingDetails, String organization, String additionalInfo, Room room, Double lodgingFee, Currency lodgingFeeCurrency, Boolean archived) {
     
     CourseStudent courseStudent = new CourseStudent();
     
@@ -77,6 +77,8 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     courseStudent.setRoom(room);
     courseStudent.setLodgingFee(lodgingFee);
     courseStudent.setLodgingFeeCurrency(lodgingFeeCurrency);
+    courseStudent.setOrganization(organization);
+    courseStudent.setAdditionalInfo(additionalInfo);
     
     persist(courseStudent);
     
@@ -351,6 +353,16 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
 
   public CourseStudent updateRoom(CourseStudent courseStudent, Room room) {
     courseStudent.setRoom(room);
+    return persist(courseStudent);
+  }
+
+  public CourseStudent updateOrganization(CourseStudent courseStudent, String organization) {
+    courseStudent.setOrganization(organization);
+    return persist(courseStudent);
+  }
+
+  public CourseStudent updateAdditionalInfo(CourseStudent courseStudent, String additionalInfo) {
+    courseStudent.setAdditionalInfo(additionalInfo);
     return persist(courseStudent);
   }
 

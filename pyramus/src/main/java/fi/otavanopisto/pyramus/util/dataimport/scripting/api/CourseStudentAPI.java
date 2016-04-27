@@ -41,9 +41,11 @@ public class CourseStudentAPI {
     Room room = null;
     Double lodgingFee = null;
     Currency lodgingFeeCurrency = null;
+    String organization = null;
+    String additionalInfo = null;
     
     return courseStudentDAO.create(course, student, defaults.getInitialCourseEnrolmentType(), defaults.getInitialCourseParticipationType(), 
-        new Date(), false, CourseOptionality.OPTIONAL, null, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE).getId();
+        new Date(), false, CourseOptionality.OPTIONAL, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE).getId();
   }
   
   public Long findIdByCourseAndStudent(Long courseId, Long studentId) throws InvalidScriptException {

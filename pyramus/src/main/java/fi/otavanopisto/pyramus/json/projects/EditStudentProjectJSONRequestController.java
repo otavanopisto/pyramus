@@ -199,12 +199,14 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
         CourseParticipationType participationType = defaults.getInitialCourseParticipationType();
         Date enrolmentDate = new Date(System.currentTimeMillis());
         Boolean lodging = Boolean.FALSE;
+        String organization = null;
+        String additionalInfo = null;
         Room room = null;
         Double lodgingFee = null;
         Currency lodgingFeeCurrency = null;
         
         courseStudent = courseStudentDAO.create(course, studentProject.getStudent(), courseEnrolmentType, participationType, 
-            enrolmentDate, lodging, optionality, null, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
+            enrolmentDate, lodging, optionality, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
       } else {
         courseStudent = courseStudentDAO.update(courseStudent, studentProject.getStudent(), courseStudent.getCourseEnrolmentType(), courseStudent.getParticipationType(), courseStudent.getEnrolmentTime(), courseStudent.getLodging(), optionality);
       }

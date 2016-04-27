@@ -458,8 +458,8 @@ public class CourseController {
   /* CourseStudent */
   
   public CourseStudent createCourseStudent(Course course, Student student, CourseEnrolmentType enrolmentType, CourseParticipationType participationType, 
-      Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, Double lodgingFee, Currency lodgingFeeCurrency, Room room) {
-    return courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, billingDetails, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
+      Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, Double lodgingFee, Currency lodgingFeeCurrency, String organization, String additionalInfo, Room room) {
+    return courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, billingDetails, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
   }
   
   public CourseStudent findCourseStudentById(Long id) {

@@ -293,9 +293,11 @@ public class CoursesService extends PyramusService {
     Room room = null;
     Double lodgingFee = null;
     Currency lodgingFeeCurrency = null;
+    String organization = null;
+    String additionalInfo = null;
     
     CourseStudent courseStudent = courseStudentDAO.create(course, student, courseEnrolmentType, participationType, 
-        enrolmentDate, lodging, cOptionality, null, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
+        enrolmentDate, lodging, cOptionality, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
 
     validateEntity(courseStudent);
     

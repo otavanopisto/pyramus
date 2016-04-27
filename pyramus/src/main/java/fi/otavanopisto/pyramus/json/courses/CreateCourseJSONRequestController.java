@@ -473,6 +473,8 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       Long enrolmentTypeId = requestContext.getLong(colPrefix + ".enrolmentType");
       Long participationTypeId = requestContext.getLong(colPrefix + ".participationType");
       Boolean lodging = requestContext.getBoolean(colPrefix + ".lodging");
+      String organization = null;
+      String additionalInfo = null;
       Room room = null;
       Double lodgingFee = null;
       Currency lodgingFeeCurrency = null;
@@ -483,7 +485,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       CourseOptionality optionality = (CourseOptionality) requestContext.getEnum(colPrefix + ".optionality", CourseOptionality.class);
       
       courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, null, 
-          room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
+          organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
     }
     
     String redirectURL = requestContext.getRequest().getContextPath() + "/courses/editcourse.page?course=" + course.getId();

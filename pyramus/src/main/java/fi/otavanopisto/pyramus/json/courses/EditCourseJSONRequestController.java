@@ -623,12 +623,14 @@ public class EditCourseJSONRequestController extends JSONRequestController {
       if (courseStudentId == -1) {
         /* New student */
         Student student = studentDAO.findById(studentId);
+        String organization = null;
+        String additionalInfo = null;
         Room room = null;
         Double lodgingFee = null;
         Currency lodgingFeeCurrency = null;
 
         courseStudent = courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, 
-            optionality, null, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
+            optionality, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
       }
       else {
         boolean modified = new Integer(1).equals(requestContext.getInteger(colPrefix + ".modified"));
