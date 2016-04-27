@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.views.courses;
 
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -49,8 +51,12 @@ public class CourseStudentDetailsDialogViewController extends PyramusViewControl
       rooms.put(roomType, typeRooms);
     }
     
+    // Support other currencies
+    List<Currency> currencies = Arrays.asList(Currency.getInstance("EUR"));
+    
     pageRequestContext.getRequest().setAttribute("courseStudent", courseStudent);
     pageRequestContext.getRequest().setAttribute("rooms", rooms);
+    pageRequestContext.getRequest().setAttribute("currencies", currencies);
     
     pageRequestContext.setIncludeJSP("/templates/courses/studentdetailsdialog.jsp");
   }

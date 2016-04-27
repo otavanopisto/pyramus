@@ -21,7 +21,9 @@
           JSONRequest.request("courses/savestudentdetails.json", {
             parameters: {
               courseStudentId: courseStudentId,
-              roomId: event.results.roomId
+              roomId: event.results.roomId,
+              lodgingFee: event.results.lodgingFee,
+              lodgingFeeCurrency: event.results.lodgingFeeCurrency
             }
           });  
         break;

@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -218,6 +219,15 @@ public abstract class RequestContext {
   public Long getLong(String paramName) {
     String value = getString(paramName);
     return NumberUtils.isNumber(value) ? NumberUtils.toLong(value) : null;  
+  }
+  
+  public Currency getCurrency(String paramName) {
+    String value = getString(paramName);
+    if (StringUtils.isNotBlank(value)) {
+      return Currency.getInstance(value);
+    }
+    
+    return null;
   }
   
   @SuppressWarnings({ "rawtypes", "unchecked" })

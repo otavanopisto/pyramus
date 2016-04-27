@@ -12,13 +12,17 @@
     <jsp:include page="/templates/generic/dialog_support.jsp"></jsp:include>
     <script type="text/javascript">
       function getResults() {
+        var form = $('studentDetailsForm');
+        
         return {
-          roomId: $('studentDetailsForm').roomId.value
+          roomId: form.roomId.value,
+          lodgingFee: form.lodgingFee.value,
+          lodgingFeeCurrency: form.lodgingFeeCurrency.value
         };
       }
     </script>
   </head>
-  <body ix:enabledrafting="true">
+  <body>
     <form id="studentDetailsForm">
       
       <div class="genericFormSection">
@@ -53,12 +57,25 @@
           </c:forEach>
         </select>
       </div>
+      
+      <div class="genericFormSection">
+        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+          <jsp:param name="titleLocale" value="courses.studentDetails.lodgingFeeTitle"/>
+          <jsp:param name="helpLocale" value="courses.studentDetails.lodgingFeeHelp"/>
+        </jsp:include>
+        
+        <input type="text" name="lodgingFee" value="${courseStudent.lodgingFee}"/>
+        <select name="lodgingFeeCurrency">
+          <c:forEach var="currency" items="${currencies}">
+            <option value="${currency.currencyCode}">${currency.currencyCode}</option>
+          </c:forEach>
+        </select>
+      </div>
+      
     </form>
   
   <!-- 
     TODO:
-    Course fee
-    Lodging fee
     e-Billing address
     Organization (free-form field)
      -->

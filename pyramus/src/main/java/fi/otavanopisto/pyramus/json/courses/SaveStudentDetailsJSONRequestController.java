@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.json.courses;
 
+import java.util.Currency;
+
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -19,7 +21,9 @@ public class SaveStudentDetailsJSONRequestController extends JSONRequestControll
     
     Long courseStudentId = requestContext.getLong("courseStudentId");
     Long roomId = requestContext.getLong("roomId");
-    
+    Double lodgingFee = requestContext.getDouble("lodgingFee");
+    Currency lodgingFeeCurrency = requestContext.getCurrency("lodgingFeeCurrency");
+        
     if (courseStudentId == null) {
       throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "Missing courseStudentId parameter");
     }
@@ -38,6 +42,7 @@ public class SaveStudentDetailsJSONRequestController extends JSONRequestControll
     }
     
     courseStudentDAO.updateRoom(courseStudent, room);
+    courseStudentDAO.updateLodgingFee(courseStudent, lodgingFee, lodgingFeeCurrency);
   }
 
   @Override
