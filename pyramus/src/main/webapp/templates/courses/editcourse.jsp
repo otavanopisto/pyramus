@@ -25,6 +25,7 @@
     <jsp:include page="/templates/generic/validation_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/hovermenu_support.jsp"></jsp:include>
 
+    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/courses/editcourse.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/courses/coursecomponenteditor.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/courses/coursecomponentseditor.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/courses/coursecomponenteditordrafttask.js"></script>
@@ -1005,7 +1006,7 @@
           }, {
             header : '<fmt:message key="courses.editCourse.studentsTableLodgingHeader"/>',
             width: 100,
-            right : 8 + 22 + 8 + 8 + 22,
+            right : 8 + 22 + 8 + 8 + 22 + 30,
             dataType: 'select', 
             editable: false,
             paramName: 'lodging',
@@ -1053,6 +1054,18 @@
           }, {
             dataType: 'hidden', 
             paramName: 'modified'
+          }, {
+            width: 22,
+            right: 8 + 22 + 8 + 30,
+            dataType: 'button',
+            paramName: 'detailsButton',
+            imgsrc: GLOBAL_contextPath + '/gfx/info.png',
+            tooltip: '<fmt:message key="courses.editCourse.studentsTableStudentDetailsTooltip"/>',
+            onclick: function (event) {
+              var table = event.tableComponent;
+              var courseStudentId = table.getCellValue(event.row, table.getNamedColumnIndex('courseStudentId'));
+              openStudentDetailsDialog(courseStudentId);
+            } 
           }, {
             width: 22,
             right: 8 + 22 + 8,
@@ -1180,6 +1193,7 @@
             ${courseStudent.student.person.id},
             ${courseStudent.id},
             0,
+            '',
             '',
             '',
             '']);
