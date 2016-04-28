@@ -17,9 +17,11 @@
   margin:5px 0;
 }
 
-.billingDetailsRow input[type="text"],
-.billingDetailsRow input[type="email"],
-.billingDetailsRow textarea {
+.billingDetailsRow input[type="text"] {
+  width:300px;
+}
+
+.billingDetailsRow input[type="email"] {
   width:300px;
   border-radius: 3px;
   font-family: "trebuchet ms";
@@ -27,6 +29,10 @@
   max-width: 100%;
   padding: 1px 0 2px;
   border:1px solid #739de7;
+}
+
+.billingDetailsRow textarea {
+  width:300px;
 }
 
 .billingDetailsRow label {
