@@ -37,6 +37,68 @@
           billingDetailsNotes: form.billingDetailsNotes.value
         };
       }
+
+      function getBillingDetailsText() {
+        var form = $('studentDetailsForm');
+
+        var personName = form.billingDetailsPersonName.value;
+        var companyName = form.billingDetailsCompanyName.value;
+        var streetAddress1 = form.billingDetailsStreetAddress1.value;
+        var postalCode = form.billingDetailsPostalCode.value;
+        var city = form.billingDetailsCity.value;
+        var country = form.billingDetailsCountry.value;
+
+        var result = '';
+        if (personName) {
+          result += personName;
+        }
+        
+        if (companyName) {
+          if (result) {
+            result += ' / ';
+          }
+          
+          result += companyName;
+        }
+        
+        if (streetAddress1) {
+          if (result) {
+            result += ", ";
+          }
+          
+          result += streetAddress1;
+        }
+        
+        if (postalCode) {
+          if (result) {
+            result += ' ';
+          }
+          
+          result += postalCode;
+        }
+        
+        if (city) {
+          if (result) {
+            result += ' ';
+          }
+          
+          result += city;
+        }
+        
+        if (country) {
+          if (result) {
+            result += ', ';
+          }
+          
+          result += country;
+        }
+
+        if (!result) {
+          result = getLocale().getText("courses.studentDetailsDialog.newBillingDetails")
+        }
+        
+        return result;
+      }
       
       document.observe("dom:loaded", function() {
         $('billingDetailsId').observe("change", function (event) {
@@ -46,6 +108,14 @@
             $('new-billing-details-container').show();
           }        
         });
+
+        $$('#new-billing-details-container input').each(function(input) {
+          $(input).observe("change", function (event) {
+            $('billingDetailsId').options[0].text = getBillingDetailsText();
+          });
+        });
+
+        $('billingDetailsId').options[0].text = getBillingDetailsText();
       });
     </script>
   </head>
@@ -106,7 +176,7 @@
         </jsp:include>
         
         <select id="billingDetailsId" name="billingDetailsId">
-          <option value="">New</option>
+          <option value=""></option>
           <c:forEach var="existing" items="${existingBillingDetails}">
             <option value="${existing.id}">${existing.toLine()}</option>
           </c:forEach>
