@@ -71,34 +71,39 @@ public class CourseStudentDetailsDialogViewController extends PyramusViewControl
   }
 
   private List<BillingDetails> getExistingBillingDetails(CourseStudent courseStudent) {
-    BillingDetails currentDetails = courseStudent.getBillingDetails();
     Map<Integer, BillingDetails> result = new HashMap<>();
     
     BillingDetailsDAO billingDetailsDAO = DAOFactory.getInstance().getBillingDetailsDAO();
     
     List<BillingDetails> billingDetails = billingDetailsDAO.listByStudent(courseStudent.getStudent());
     for (BillingDetails studentBillingDetails : billingDetails) {
-      if (currentDetails == null || !studentBillingDetails.getId().equals(currentDetails.getId())) {
-        HashCodeBuilder builder = new HashCodeBuilder(43, 83);
-        builder.append(studentBillingDetails.getCity());
-        builder.append(studentBillingDetails.getCompanyIdentifier());
-        builder.append(studentBillingDetails.getCompanyName());
-        builder.append(studentBillingDetails.getCountry());
-        builder.append(studentBillingDetails.getElectronicBillingAddress());
-        builder.append(studentBillingDetails.getEmailAddress());
-        builder.append(studentBillingDetails.getNotes());
-        builder.append(studentBillingDetails.getPersonName());
-        builder.append(studentBillingDetails.getPhoneNumber());
-        builder.append(studentBillingDetails.getPostalCode());
-        builder.append(studentBillingDetails.getReferenceNumber());
-        builder.append(studentBillingDetails.getRegion());
-        builder.append(studentBillingDetails.getStreetAddress1());
-        builder.append(studentBillingDetails.getStreetAddress2());
-        result.put(builder.toHashCode(), studentBillingDetails);
-      }
+      result.put(getBillingDetailsHash(studentBillingDetails), studentBillingDetails);
+    }
+    
+    if (courseStudent.getBillingDetails() != null) {
+      result.remove(getBillingDetailsHash(courseStudent.getBillingDetails()));
     }
     
     return new ArrayList<>(result.values());
+  }
+  
+  private int getBillingDetailsHash(BillingDetails studentBillingDetails) {
+    HashCodeBuilder builder = new HashCodeBuilder(43, 83);
+    builder.append(studentBillingDetails.getCity());
+    builder.append(studentBillingDetails.getCompanyIdentifier());
+    builder.append(studentBillingDetails.getCompanyName());
+    builder.append(studentBillingDetails.getCountry());
+    builder.append(studentBillingDetails.getElectronicBillingAddress());
+    builder.append(studentBillingDetails.getEmailAddress());
+    builder.append(studentBillingDetails.getNotes());
+    builder.append(studentBillingDetails.getPersonName());
+    builder.append(studentBillingDetails.getPhoneNumber());
+    builder.append(studentBillingDetails.getPostalCode());
+    builder.append(studentBillingDetails.getReferenceNumber());
+    builder.append(studentBillingDetails.getRegion());
+    builder.append(studentBillingDetails.getStreetAddress1());
+    builder.append(studentBillingDetails.getStreetAddress2());
+    return builder.toHashCode();
   }
 
   public UserRole[] getAllowedRoles() {

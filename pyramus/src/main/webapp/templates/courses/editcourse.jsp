@@ -119,6 +119,7 @@
       function addNewCourseStudent(personId, studentId, studentName, lodging) {
         var table = getIxTableById('studentsTable');
         var rowIndex = table.addRow(['', '', studentName, studentId, 10, new Date().getTime(), 0, '', lodging, personId, -1, 1, '', '', '', '']);
+        table.hideCell(rowIndex, table.getNamedColumnIndex('detailsButton'));
         table.hideCell(rowIndex, table.getNamedColumnIndex('evaluateButton'));
         for (var i = 3; i < 9; i++) {
           table.setCellEditable(rowIndex, i, true);
