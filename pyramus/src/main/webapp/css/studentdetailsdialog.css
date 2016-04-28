@@ -33,6 +33,7 @@
 
 .billingDetailsRow textarea {
   width:300px;
+  min-height:4em;
 }
 
 .billingDetailsRow label {
