@@ -1,0 +1,6 @@
+@CHARSET "UTF-8";
+
+.billingDetailsRow label {
+  display: inline-block;
+  min-width: 150px;
+}

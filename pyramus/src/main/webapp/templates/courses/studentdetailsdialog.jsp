@@ -10,6 +10,7 @@
     <jsp:include page="/templates/generic/jsonrequest_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/scriptaculous_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/dialog_support.jsp"></jsp:include>
+    <link href="${pageContext.request.contextPath}/css/studentdetailsdialog.css" rel="stylesheet"></link>
     <script type="text/javascript">
       function getResults() {
         var form = $('studentDetailsForm');
