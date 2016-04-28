@@ -183,72 +183,72 @@
         </select>
         
         <div id="new-billing-details-container">
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-personName"><fmt:message key="courses.studentDetails.billingDetails.personName"/></label>
             <input id="billing-details-personName" type="text" name="billingDetailsPersonName" value="${courseStudent.billingDetails.personName}"/>
           </div>
           
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-companyName"><fmt:message key="courses.studentDetails.billingDetails.companyName"/></label>
             <input id="billing-details-companyName" type="text" name="billingDetailsCompanyName" value="${courseStudent.billingDetails.companyName}"/>
           </div>
             
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-streetAddress1"><fmt:message key="courses.studentDetails.billingDetails.streetAddress1"/></label>
             <input id="billing-details-streetAddress1" type="text" name="billingDetailsStreetAddress1" value="${courseStudent.billingDetails.streetAddress1}"/>
           </div>
           
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-streetAddress2"><fmt:message key="courses.studentDetails.billingDetails.streetAddress2"/></label>
             <input id="billing-details-streetAddress2" type="text" name="billingDetailsStreetAddress2" value="${courseStudent.billingDetails.streetAddress2}"/>
           </div>
           
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-postalCode"><fmt:message key="courses.studentDetails.billingDetails.postalCode"/></label>
             <input id="billing-details-postalCode" type="text" name="billingDetailsPostalCode" value="${courseStudent.billingDetails.postalCode}"/>
           </div>
           
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-city"><fmt:message key="courses.studentDetails.billingDetails.city"/></label>
             <input id="billing-details-city" type="text" name="billingDetailsCity" value="${courseStudent.billingDetails.city}"/>
           </div>
           
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-region"><fmt:message key="courses.studentDetails.billingDetails.region"/></label>
             <input id="billing-details-region" type="text" name="billingDetailsRegion" value="${courseStudent.billingDetails.region}"/>
           </div>
             
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-country"><fmt:message key="courses.studentDetails.billingDetails.country"/></label>
             <input id="billing-details-country" type="text" name="billingDetailsCountry" value="${courseStudent.billingDetails.country}"/>
           </div>
           
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-phoneNumber"><fmt:message key="courses.studentDetails.billingDetails.phoneNumber"/></label>
             <input id="billing-details-phoneNumber" type="text" name="billingDetailsPhoneNumber" value="${courseStudent.billingDetails.phoneNumber}"/>
           </div>
           
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-emailAddress"><fmt:message key="courses.studentDetails.billingDetails.emailAddress"/></label>
             <input id="billing-details-emailAddress" type="email" name="billingDetailsEmailAddress" value="${courseStudent.billingDetails.emailAddress}"/>
           </div>
             
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-companyIdentifier"><fmt:message key="courses.studentDetails.billingDetails.companyIdentifier"/></label>
             <input id="billing-details-companyIdentifier" type="text" name="billingDetailsCompanyIdentifier" value="${courseStudent.billingDetails.companyIdentifier}"/>
           </div>
           
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-referenceNumber"><fmt:message key="courses.studentDetails.billingDetails.referenceNumber"/></label>
             <input id="billing-details-referenceNumber" type="text" name="billingDetailsReferenceNumber" value="${courseStudent.billingDetails.referenceNumber}"/>
           </div>
           
-          <div>
+          <div class="billingDetailsRow">
             <label for="billing-details-electronicBillingAddress"><fmt:message key="courses.studentDetails.billingDetails.electronicBillingAddress"/></label>
             <textarea id="billing-details-electronicBillingAddress" name="billingDetailsElectronicBillingAddress">${courseStudent.billingDetails.electronicBillingAddress}</textarea>
           </div>
           
-          <div>  
+          <div class="billingDetailsRow">
             <label for="billing-details-notes"><fmt:message key="courses.studentDetails.billingDetails.notes"/></label>
             <textarea id="billing-details-notes" name="billingDetailsNotes">${courseStudent.billingDetails.notes}</textarea>
           </div>
