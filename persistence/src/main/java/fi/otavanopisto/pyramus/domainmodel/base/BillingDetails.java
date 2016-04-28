@@ -170,6 +170,14 @@ public class BillingDetails {
       result.append(getCity());
     }
     
+    if (StringUtils.isNotBlank(getCountry())) {
+      if (result.length() > 0) {
+        result.append(", ");
+      }
+      
+      result.append(getCountry());
+    }
+    
     return result.toString();
   }
 
