@@ -168,7 +168,25 @@
             <option value="${currency.currencyCode}">${currency.currencyCode}</option>
           </c:forEach>
         </select>
-      </div>
+      </div> 
+      
+      <div class="genericFormSection">
+        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+          <jsp:param name="titleLocale" value="courses.studentDetails.organizationTitle"/>
+          <jsp:param name="helpLocale" value="courses.studentDetails.organizationHelp"/>
+        </jsp:include>
+        
+        <input type="text" name="organization" value="${courseStudent.organization}"/>
+      </div>    
+      
+      <div class="genericFormSection">
+        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+          <jsp:param name="titleLocale" value="courses.studentDetails.additionalInfoTitle"/>
+          <jsp:param name="helpLocale" value="courses.studentDetails.additionalInfoHelp"/>
+        </jsp:include>
+        
+        <input type="text" name="additionalInfo" value="${courseStudent.additionalInfo}"/>
+      </div>  
       
       <div class="genericFormSection">
         <jsp:include page="/templates/generic/fragments/formtitle.jsp">
@@ -254,25 +272,7 @@
             <textarea id="billing-details-notes" name="billingDetailsNotes">${courseStudent.billingDetails.notes}</textarea>
           </div>
         </div>
-      </div>  
-      
-      <div class="genericFormSection">
-        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-          <jsp:param name="titleLocale" value="courses.studentDetails.organizationTitle"/>
-          <jsp:param name="helpLocale" value="courses.studentDetails.organizationHelp"/>
-        </jsp:include>
-        
-        <input type="text" name="organization" value="${courseStudent.organization}"/>
-      </div>    
-      
-      <div class="genericFormSection">
-        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-          <jsp:param name="titleLocale" value="courses.studentDetails.additionalInfoTitle"/>
-          <jsp:param name="helpLocale" value="courses.studentDetails.additionalInfoHelp"/>
-        </jsp:include>
-        
-        <input type="text" name="additionalInfo" value="${courseStudent.additionalInfo}"/>
-      </div>    
+      </div>   
       
     </form>
 
