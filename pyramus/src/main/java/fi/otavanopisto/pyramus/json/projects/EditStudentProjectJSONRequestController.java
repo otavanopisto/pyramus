@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.json.projects;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.Date;
@@ -202,7 +203,7 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
         String organization = null;
         String additionalInfo = null;
         Room room = null;
-        Double lodgingFee = null;
+        BigDecimal lodgingFee = null;
         Currency lodgingFeeCurrency = null;
         
         courseStudent = courseStudentDAO.create(course, studentProject.getStudent(), courseEnrolmentType, participationType, 

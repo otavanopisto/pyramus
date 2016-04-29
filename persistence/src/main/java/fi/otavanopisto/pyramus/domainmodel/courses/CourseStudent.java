@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.domainmodel.courses;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
 
@@ -104,11 +105,11 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
     this.room = room;
   }
   
-  public Double getLodgingFee() {
+  public BigDecimal getLodgingFee() {
     return lodgingFee;
   }
   
-  public void setLodgingFee(Double lodgingFee) {
+  public void setLodgingFee(BigDecimal lodgingFee) {
     this.lodgingFee = lodgingFee;
   }
   
@@ -168,7 +169,7 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
   @JoinColumn(name="billingDetails")
   private BillingDetails billingDetails;
   
-  private Double lodgingFee;
+  private BigDecimal lodgingFee;
   
   private Currency lodgingFeeCurrency;
 

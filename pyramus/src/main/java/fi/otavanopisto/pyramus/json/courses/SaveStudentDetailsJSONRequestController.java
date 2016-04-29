@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.json.courses;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -26,7 +27,7 @@ public class SaveStudentDetailsJSONRequestController extends JSONRequestControll
     String organization = requestContext.getString("organization");
     String additionalInfo = requestContext.getString("additionalInfo");
     Long roomId = requestContext.getLong("roomId");
-    Double lodgingFee = requestContext.getDouble("lodgingFee");
+    BigDecimal lodgingFee = new BigDecimal(requestContext.getString("lodgingFee"));
     Currency lodgingFeeCurrency = requestContext.getCurrency("lodgingFeeCurrency");
     
     String billingDetailsPersonName = requestContext.getString("billingDetailsPersonName"); 

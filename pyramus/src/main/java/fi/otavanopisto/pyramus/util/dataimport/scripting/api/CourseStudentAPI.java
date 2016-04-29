@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.util.dataimport.scripting.api;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
 
@@ -39,7 +40,7 @@ public class CourseStudentAPI {
     }
     
     Room room = null;
-    Double lodgingFee = null;
+    BigDecimal lodgingFee = null;
     Currency lodgingFeeCurrency = null;
     String organization = null;
     String additionalInfo = null;
