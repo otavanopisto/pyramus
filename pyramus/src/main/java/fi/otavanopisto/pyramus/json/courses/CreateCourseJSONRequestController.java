@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.json.courses;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -43,6 +45,7 @@ import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.resources.ResourceDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
@@ -471,12 +474,19 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       Long enrolmentTypeId = requestContext.getLong(colPrefix + ".enrolmentType");
       Long participationTypeId = requestContext.getLong(colPrefix + ".participationType");
       Boolean lodging = requestContext.getBoolean(colPrefix + ".lodging");
+      String organization = null;
+      String additionalInfo = null;
+      Room room = null;
+      BigDecimal lodgingFee = null;
+      Currency lodgingFeeCurrency = null;
 
       Student student = studentDAO.findById(studentId);
       CourseEnrolmentType enrolmentType = enrolmentTypeId != null ? enrolmentTypeDAO.findById(enrolmentTypeId) : null;
       CourseParticipationType participationType = participationTypeId != null ? participationTypeDAO.findById(participationTypeId) : null;
       CourseOptionality optionality = (CourseOptionality) requestContext.getEnum(colPrefix + ".optionality", CourseOptionality.class);
-      courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, null, Boolean.FALSE);
+      
+      courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, null, 
+          organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
     }
     
     String redirectURL = requestContext.getRequest().getContextPath() + "/courses/editcourse.page?course=" + course.getId();

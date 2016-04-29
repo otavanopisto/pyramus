@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.domainmodel.courses;
 
+import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -12,6 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
@@ -93,6 +96,46 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
   public BillingDetails getBillingDetails() {
     return billingDetails;
   }
+  
+  public Room getRoom() {
+    return room;
+  }
+  
+  public void setRoom(Room room) {
+    this.room = room;
+  }
+  
+  public BigDecimal getLodgingFee() {
+    return lodgingFee;
+  }
+  
+  public void setLodgingFee(BigDecimal lodgingFee) {
+    this.lodgingFee = lodgingFee;
+  }
+  
+  public Currency getLodgingFeeCurrency() {
+    return lodgingFeeCurrency;
+  }
+  
+  public void setLodgingFeeCurrency(Currency lodgingFeeCurrency) {
+    this.lodgingFeeCurrency = lodgingFeeCurrency;
+  }
+  
+  public String getOrganization() {
+    return organization;
+  }
+  
+  public void setOrganization(String organization) {
+    this.organization = organization;
+  }
+  
+  public String getAdditionalInfo() {
+    return additionalInfo;
+  }
+  
+  public void setAdditionalInfo(String additionalInfo) {
+    this.additionalInfo = additionalInfo;
+  }
 
   @Column (nullable=false)
   @Temporal (value=TemporalType.TIMESTAMP)
@@ -125,5 +168,15 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
   @ManyToOne 
   @JoinColumn(name="billingDetails")
   private BillingDetails billingDetails;
+  
+  private BigDecimal lodgingFee;
+  
+  private Currency lodgingFeeCurrency;
 
+  @ManyToOne
+  private Room room;
+  
+  private String organization;
+  
+  private String additionalInfo;
 }

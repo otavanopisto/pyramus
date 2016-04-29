@@ -1,7 +1,9 @@
 package fi.otavanopisto.pyramus.services;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +38,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseStudentVariableDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
@@ -288,8 +291,14 @@ public class CoursesService extends PyramusService {
     if (!StringUtils.isBlank(optionality))
       cOptionality = CourseOptionality.valueOf(optionality);
 
-    CourseStudent courseStudent = courseStudentDAO.create(course, student, courseEnrolmentType,
-            participationType, enrolmentDate, lodging, cOptionality, null, Boolean.FALSE);
+    Room room = null;
+    BigDecimal lodgingFee = null;
+    Currency lodgingFeeCurrency = null;
+    String organization = null;
+    String additionalInfo = null;
+    
+    CourseStudent courseStudent = courseStudentDAO.create(course, student, courseEnrolmentType, participationType, 
+        enrolmentDate, lodging, cOptionality, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
 
     validateEntity(courseStudent);
     

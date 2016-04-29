@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
+import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +27,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStateDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseTypeDAO;
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
@@ -455,8 +458,9 @@ public class CourseController {
   
   /* CourseStudent */
   
-  public CourseStudent createCourseStudent(Course course, Student student, CourseEnrolmentType enrolmentType, CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails) {
-    return courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, billingDetails, Boolean.FALSE);
+  public CourseStudent createCourseStudent(Course course, Student student, CourseEnrolmentType enrolmentType, CourseParticipationType participationType, 
+      Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, BigDecimal lodgingFee, Currency lodgingFeeCurrency, String organization, String additionalInfo, Room room) {
+    return courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, billingDetails, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
   }
   
   public CourseStudent findCourseStudentById(Long id) {

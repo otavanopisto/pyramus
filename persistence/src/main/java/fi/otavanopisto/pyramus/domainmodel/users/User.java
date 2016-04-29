@@ -1,8 +1,6 @@
 package fi.otavanopisto.pyramus.domainmodel.users;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -35,7 +33,6 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
@@ -124,30 +121,6 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
     return version;
   }
 
-  public void setBillingDetails(List<BillingDetails> billingDetails) {
-    this.billingDetails = billingDetails;
-  }
-
-  public List<BillingDetails> getBillingDetails() {
-    return billingDetails;
-  }
-
-  public void addBillingDetails(BillingDetails billingDetails) {
-    if (!this.billingDetails.contains(billingDetails)) {
-      this.billingDetails.add(billingDetails);
-    } else {
-      throw new PersistenceException("Entity already has this BillingDetails");
-    }
-  }
-  
-  public void removeBillingDetails(BillingDetails billingDetails) {
-    if (this.billingDetails.contains(billingDetails)) {
-      this.billingDetails.remove(billingDetails);
-    } else {
-      throw new PersistenceException("Entity does not have this BillingDetails");
-    }
-  }
-
   @Transient
   public Role getRole() {
     return Role.EVERYONE;
@@ -194,11 +167,6 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   @NotEmpty
   @Field
   private String lastName;
-
-  @ManyToMany (fetch = FetchType.LAZY)
-  @JoinTable (name="__UserBillingDetails", joinColumns=@JoinColumn(name="user"), inverseJoinColumns=@JoinColumn(name="billingDetails"))
-  @IndexedEmbedded 
-  private List<BillingDetails> billingDetails = new ArrayList<>();
 
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name="__UserTags", joinColumns=@JoinColumn(name="user"), inverseJoinColumns=@JoinColumn(name="tag"))

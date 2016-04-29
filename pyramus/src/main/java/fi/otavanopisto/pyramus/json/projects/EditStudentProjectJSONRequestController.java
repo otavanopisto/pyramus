@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.json.projects;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +27,7 @@ import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectModuleDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.AcademicTerm;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
@@ -197,7 +200,14 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
         CourseParticipationType participationType = defaults.getInitialCourseParticipationType();
         Date enrolmentDate = new Date(System.currentTimeMillis());
         Boolean lodging = Boolean.FALSE;
-        courseStudent = courseStudentDAO.create(course, studentProject.getStudent(), courseEnrolmentType, participationType, enrolmentDate, lodging, optionality, null, Boolean.FALSE);
+        String organization = null;
+        String additionalInfo = null;
+        Room room = null;
+        BigDecimal lodgingFee = null;
+        Currency lodgingFeeCurrency = null;
+        
+        courseStudent = courseStudentDAO.create(course, studentProject.getStudent(), courseEnrolmentType, participationType, 
+            enrolmentDate, lodging, optionality, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
       } else {
         courseStudent = courseStudentDAO.update(courseStudent, studentProject.getStudent(), courseStudent.getCourseEnrolmentType(), courseStudent.getParticipationType(), courseStudent.getEnrolmentTime(), courseStudent.getLodging(), optionality);
       }

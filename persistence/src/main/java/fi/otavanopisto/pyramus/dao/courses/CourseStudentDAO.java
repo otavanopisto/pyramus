@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.dao.courses;
 
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -53,11 +56,13 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
    * @param optionality 
    * @param billingDetails 
    * @param archived 
+   * @param room 
    * 
    * @return The created course student
    */
   public CourseStudent create(Course course, Student student, CourseEnrolmentType courseEnrolmentType,
-      CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, Boolean archived) {
+      CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, 
+      BillingDetails billingDetails, String organization, String additionalInfo, Room room, BigDecimal lodgingFee, Currency lodgingFeeCurrency, Boolean archived) {
     
     CourseStudent courseStudent = new CourseStudent();
     
@@ -70,6 +75,11 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     courseStudent.setLodging(lodging);
     courseStudent.setOptionality(optionality);
     courseStudent.setStudent(student);
+    courseStudent.setRoom(room);
+    courseStudent.setLodgingFee(lodgingFee);
+    courseStudent.setLodgingFeeCurrency(lodgingFeeCurrency);
+    courseStudent.setOrganization(organization);
+    courseStudent.setAdditionalInfo(additionalInfo);
     
     persist(courseStudent);
     
@@ -340,6 +350,27 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
         ));
     
     return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public CourseStudent updateRoom(CourseStudent courseStudent, Room room) {
+    courseStudent.setRoom(room);
+    return persist(courseStudent);
+  }
+
+  public CourseStudent updateOrganization(CourseStudent courseStudent, String organization) {
+    courseStudent.setOrganization(organization);
+    return persist(courseStudent);
+  }
+
+  public CourseStudent updateAdditionalInfo(CourseStudent courseStudent, String additionalInfo) {
+    courseStudent.setAdditionalInfo(additionalInfo);
+    return persist(courseStudent);
+  }
+
+  public CourseStudent updateLodgingFee(CourseStudent courseStudent, BigDecimal lodgingFee, Currency lodgingFeeCurrency) {
+    courseStudent.setLodgingFee(lodgingFee);
+    courseStudent.setLodgingFeeCurrency(lodgingFeeCurrency);
+    return persist(courseStudent);
   }
 
   public void archive(CourseStudent courseStudent) {

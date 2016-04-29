@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.json.courses;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -42,6 +44,7 @@ import fi.otavanopisto.pyramus.dao.courses.StudentCourseResourceDAO;
 import fi.otavanopisto.pyramus.dao.resources.ResourceDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
@@ -621,7 +624,14 @@ public class EditCourseJSONRequestController extends JSONRequestController {
       if (courseStudentId == -1) {
         /* New student */
         Student student = studentDAO.findById(studentId);
-        courseStudent = courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, null, Boolean.FALSE);
+        String organization = null;
+        String additionalInfo = null;
+        Room room = null;
+        BigDecimal lodgingFee = null;
+        Currency lodgingFeeCurrency = null;
+
+        courseStudent = courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, 
+            optionality, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
       }
       else {
         boolean modified = new Integer(1).equals(requestContext.getInteger(colPrefix + ".modified"));

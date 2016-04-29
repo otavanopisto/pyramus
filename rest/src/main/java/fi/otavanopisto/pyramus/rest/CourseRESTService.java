@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
@@ -566,8 +569,17 @@ public class CourseRESTService extends AbstractRESTService {
       participantionType = courseController.getDefaultCourseParticipationType();
     }
     
-    return Response.status(Status.OK)
-      .entity(objectFactory.createModel(courseController.createCourseStudent(course, student, enrolmentType, participantionType, toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails)))
+    // TODO: Add support for room, organization, additionalInfo and lodging fee 
+    String organization = null;
+    String additionalInfo = null;
+    Room room = null;
+    BigDecimal lodgingFee = null;
+    Currency lodgingFeeCurrency = null;
+
+    return Response.status(Status.OK).entity(
+        objectFactory.createModel(courseController.createCourseStudent(course, student, enrolmentType, participantionType,  
+            toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails, lodgingFee, lodgingFeeCurrency, 
+            organization, additionalInfo, room)))
       .build();
   }
 

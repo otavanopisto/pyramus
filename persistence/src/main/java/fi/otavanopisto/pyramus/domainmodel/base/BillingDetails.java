@@ -4,35 +4,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.constraints.Email;
 
 @Entity
-@Indexed
 public class BillingDetails {
 
   public Long getId() {
     return id;
-  }
-
-  public void setBic(String bic) {
-    this.bic = bic;
-  }
-
-  public String getBic() {
-    return bic;
-  }
-
-  public void setIban(String iban) {
-    this.iban = iban;
-  }
-
-  public String getIban() {
-    return iban;
   }
 
   public void setCompanyIdentifier(String companyIdentifier) {
@@ -131,53 +114,106 @@ public class BillingDetails {
     return emailAddress;
   }
 
+  public void setElectronicBillingAddress(String electronicBillingAddress) {
+    this.electronicBillingAddress = electronicBillingAddress;
+  }
+  
+  public String getElectronicBillingAddress() {
+    return electronicBillingAddress;
+  }
+  
+  public String getNotes() {
+    return notes;
+  }
+  
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
+  
+  @Transient
+  public String toLine() {
+    StringBuilder result = new StringBuilder();
+    
+    if (StringUtils.isNotBlank(getPersonName())) {
+      result.append(getPersonName());
+    }
+    
+    if (StringUtils.isNotBlank(getCompanyName())) {
+      if (result.length() > 0) {
+        result.append(" / ");
+      }
+      
+      result.append(getCompanyName());
+    }
+    
+    if (StringUtils.isNotBlank(getStreetAddress1())) {
+      if (result.length() > 0) {
+        result.append(", ");
+      }
+      
+      result.append(getStreetAddress1());
+    }
+    
+    if (StringUtils.isNotBlank(getPostalCode())) {
+      if (result.length() > 0) {
+        result.append(" ");
+      }
+      
+      result.append(getPostalCode());
+    }
+    
+    if (StringUtils.isNotBlank(getCity())) {
+      if (result.length() > 0) {
+        result.append(" ");
+      }
+      
+      result.append(getCity());
+    }
+    
+    if (StringUtils.isNotBlank(getCountry())) {
+      if (result.length() > 0) {
+        result.append(", ");
+      }
+      
+      result.append(getCountry());
+    }
+    
+    return result.toString();
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="BillingDetails")  
   @TableGenerator(name="BillingDetails", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
-  @DocumentId
   private Long id;
   
-  @Field (store = Store.NO)
   private String personName;
 
-  @Field (store = Store.NO)
   private String companyName;
   
-  @Field (store = Store.NO)
   private String streetAddress1;
 
-  @Field (store = Store.NO)
   private String streetAddress2;
 
-  @Field (store = Store.NO)
   private String postalCode;
 
-  @Field (store = Store.NO)
   private String city;
 
-  @Field (store = Store.NO)
   private String region;
   
-  @Field (store = Store.NO)
   private String country;
 
-  @Field (store = Store.NO)
   private String phoneNumber;
 
-  @Field (store = Store.NO)
-  // TODO Email annotation?
+  @Email
   private String emailAddress;
-
-  @Field (store = Store.NO)
-  private String bic;
-
-  @Field (store = Store.NO)
-  private String iban;
   
-  @Field (store = Store.NO)
   private String companyIdentifier;
 
-  @Field (store = Store.NO)
   private String referenceNumber;
 
+  @Lob
+  private String electronicBillingAddress;
+  
+  @Lob
+  private String notes;
 }
