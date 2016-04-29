@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
@@ -572,7 +573,7 @@ public class CourseRESTService extends AbstractRESTService {
     String organization = null;
     String additionalInfo = null;
     Room room = null;
-    Double lodgingFee = null;
+    BigDecimal lodgingFee = null;
     Currency lodgingFeeCurrency = null;
 
     return Response.status(Status.OK).entity(

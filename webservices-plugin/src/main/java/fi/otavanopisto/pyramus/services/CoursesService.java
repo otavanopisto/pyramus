@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.services;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Currency;
@@ -291,7 +292,7 @@ public class CoursesService extends PyramusService {
       cOptionality = CourseOptionality.valueOf(optionality);
 
     Room room = null;
-    Double lodgingFee = null;
+    BigDecimal lodgingFee = null;
     Currency lodgingFeeCurrency = null;
     String organization = null;
     String additionalInfo = null;
