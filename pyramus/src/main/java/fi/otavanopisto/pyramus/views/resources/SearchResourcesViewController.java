@@ -29,7 +29,7 @@ public class SearchResourcesViewController extends PyramusViewController impleme
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.GUEST, UserRole.USER, UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.GUEST, UserRole.USER, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
   /**

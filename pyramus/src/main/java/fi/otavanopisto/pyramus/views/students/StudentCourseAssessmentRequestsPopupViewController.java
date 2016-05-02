@@ -18,7 +18,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 public class StudentCourseAssessmentRequestsPopupViewController extends PyramusViewController implements Breadcrumbable {
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
   public void process(PageRequestContext pageRequestContext) {

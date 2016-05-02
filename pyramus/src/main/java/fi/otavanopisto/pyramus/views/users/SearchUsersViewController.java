@@ -16,7 +16,7 @@ public class SearchUsersViewController extends PyramusViewController implements 
    * @see fi.fi.otavanopisto.pyramus.framework.PyramusViewController#getAllowedRoles()
    */
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.GUEST, UserRole.USER, UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.GUEST, UserRole.USER, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
   /**
