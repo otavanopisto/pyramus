@@ -133,6 +133,9 @@
                 <option value="USER"><fmt:message key="users.searchUsers.roleUserTitle"/></option>
                 <option value="MANAGER"><fmt:message key="users.searchUsers.roleManagerTitle"/></option>
                 <option value="ADMINISTRATOR"><fmt:message key="users.searchUsers.roleAdministratorTitle"/></option>
+                <option value="TEACHER"><fmt:message key="users.searchUsers.roleTeacherTitle"/></option>
+                <option value="STUDY_GUIDER"><fmt:message key="users.searchUsers.roleStudyGuiderTitle"/></option>
+                <option value="STUDY_PROGRAMME_LEADER"><fmt:message key="users.searchUsers.roleStudyProgrammeLeaderTitle"/></option>
               </select>
             </div>
             

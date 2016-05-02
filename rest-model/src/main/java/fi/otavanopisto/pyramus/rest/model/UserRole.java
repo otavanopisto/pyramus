@@ -16,5 +16,7 @@ public enum UserRole {
   
   TEACHER,
   
-  STUDY_GUIDER
+  STUDY_GUIDER,
+  
+  STUDY_PROGRAMME_LEADER
 }

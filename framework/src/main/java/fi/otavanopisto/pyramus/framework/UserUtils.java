@@ -98,6 +98,7 @@ public class UserUtils {
 
     list.add(Role.ADMINISTRATOR);
     list.add(Role.MANAGER);
+    list.add(Role.STUDY_PROGRAMME_LEADER);
     list.add(Role.STUDY_GUIDER);
     list.add(Role.TEACHER);
     list.add(Role.USER);

@@ -42,7 +42,12 @@ public enum Role {
   /**
    * Study guider account
    */
-  STUDY_GUIDER (8);
+  STUDY_GUIDER (8),
+  
+  /**
+   * Study programme leader (linjanvetäjä)
+   */
+  STUDY_PROGRAMME_LEADER (9);
   
   /**
    * Constructor specifying the role.
