@@ -2450,6 +2450,9 @@
                   <c:when test="${staffMember.role == 'ADMINISTRATOR'}">
                     <fmt:message key="students.viewStudent.roleAdministratorTitle"/>
                   </c:when>
+                  <c:when test="${staffMember.role == 'STUDY_PROGRAMME_LEADER'}">
+                    <fmt:message key="students.viewStudent.roleStudyProgrammeLeaderTitle"/>
+                  </c:when>
                 </c:choose>
               </div>
             </div>
