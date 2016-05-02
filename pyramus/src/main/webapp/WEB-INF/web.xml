@@ -73,7 +73,7 @@
   </filter-mapping>
   <filter>
     <filter-name>IpFilter</filter-name>
-    <filter-class>fi.otavanopisto.pyramus.services.utils.IpFilter</filter-class>
+    <filter-class>fi.pyramus.services.utils.IpFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>IpFilter</filter-name>
@@ -81,7 +81,7 @@
   </filter-mapping>
   <filter>
     <filter-name>IpLoggingFilter</filter-name>
-    <filter-class>fi.otavanopisto.pyramus.services.utils.IpLoggingFilter</filter-class>
+    <filter-class>fi.pyramus.services.utils.IpLoggingFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>IpLoggingFilter</filter-name>
