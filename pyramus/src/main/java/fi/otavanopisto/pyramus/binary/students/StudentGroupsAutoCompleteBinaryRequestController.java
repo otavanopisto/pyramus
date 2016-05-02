@@ -62,7 +62,7 @@ public class StudentGroupsAutoCompleteBinaryRequestController extends BinaryRequ
    * @return The user roles allowed to access this controller.
    */
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.USER, UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.USER, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
   
   private void addResult(StringBuilder resultBuilder, StudentGroup studentGroup) {
