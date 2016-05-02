@@ -38,7 +38,7 @@ public class ArchiveTransferCreditJSONRequestController extends JSONRequestContr
    * @return The user roles allowed to access this controller.
    */
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
 }
