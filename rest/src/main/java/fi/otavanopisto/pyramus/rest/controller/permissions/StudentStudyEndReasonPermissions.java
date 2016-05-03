@@ -11,7 +11,7 @@ import fi.otavanopisto.security.Scope;
 public class StudentStudyEndReasonPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDENTSTUDYENDREASON = "CREATE_STUDENTSTUDYENDREASON";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -23,7 +23,7 @@ public class StudentStudyEndReasonPermissions extends AbstractPyramusPermissionC
   public static final String FIND_STUDENTSTUDYENDREASON = "FIND_STUDENTSTUDYENDREASON";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_STUDENTSTUDYENDREASON = "UPDATE_STUDENTSTUDYENDREASON";
   
   @Scope (PermissionScope.ENVIRONMENT)

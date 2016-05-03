@@ -11,7 +11,7 @@ import fi.otavanopisto.security.Scope;
 public class CalendarPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_ACADEMICTERM = "CREATE_ACADEMICTERM";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -23,7 +23,7 @@ public class CalendarPermissions extends AbstractPyramusPermissionCollection imp
   public static final String FIND_ACADEMICTERM = "FIND_ACADEMICTERM";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_ACADEMICTERM = "UPDATE_ACADEMICTERM";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -31,7 +31,7 @@ public class CalendarPermissions extends AbstractPyramusPermissionCollection imp
   public static final String DELETE_ACADEMICTERM = "DELETE_ACADEMICTERM";
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String FIND_COURSESBYACADEMICTERM = "FIND_COURSESBYACADEMICTERM";
 
   

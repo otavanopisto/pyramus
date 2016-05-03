@@ -10,6 +10,9 @@ public class AbstractPyramusPermissionCollection extends AbstractPermissionColle
   public static final String MANAGER = "MANAGER";
   public static final String USER = "USER";
   public static final String GUEST = "GUEST";
+  public static final String TEACHER = "TEACHER";
+  public static final String STUDY_GUIDER = "STUDY_GUIDER";
+  public static final String STUDY_PROGRAMME_LEADER = "STUDY_PROGRAMME_LEADER";
 
   public static final String STUDENT = "STUDENT";
   

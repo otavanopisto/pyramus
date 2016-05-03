@@ -11,7 +11,7 @@ import fi.otavanopisto.security.Scope;
 public class StudentExaminationTypePermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDENTEXAMINATIONTYPE = "CREATE_STUDENTEXAMINATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -23,7 +23,7 @@ public class StudentExaminationTypePermissions extends AbstractPyramusPermission
   public static final String FIND_STUDENTEXAMINATIONTYPE = "FIND_STUDENTEXAMINATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_STUDENTEXAMINATIONTYPE = "UPDATE_STUDENTEXAMINATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)

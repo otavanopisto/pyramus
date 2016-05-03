@@ -11,23 +11,23 @@ import fi.otavanopisto.security.Scope;
 public class CoursePermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_COURSE = "CREATE_COURSE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
   public static final String LIST_COURSES = "LIST_COURSES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
   public static final String LIST_COURSESBYSUBJECT = "LIST_COURSESBYSUBJECT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
   public static final String FIND_COURSE = "FIND_COURSE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_COURSE = "UPDATE_COURSE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -39,19 +39,19 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_COURSECOMPONENT = "CREATE_COURSECOMPONENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_COURSECOMPONENTS = "LIST_COURSECOMPONENTS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_COURSECOMPONENT = "FIND_COURSECOMPONENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_COURSECOMPONENT = "UPDATE_COURSECOMPONENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -63,19 +63,19 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_COURSESTUDENT = "CREATE_COURSESTUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_COURSESTUDENTS = "LIST_COURSESTUDENTS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_COURSESTUDENT = "FIND_COURSESTUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_COURSESTUDENT = "UPDATE_COURSESTUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -87,19 +87,19 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_COURSESTATE = "CREATE_COURSESTATE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_COURSESTATES = "LIST_COURSESTATES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String FIND_COURSESTATE = "FIND_COURSESTATE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_COURSESTATE = "UPDATE_COURSESTATE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -111,19 +111,19 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_COURSETYPE = "CREATE_COURSETYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_COURSETYPES = "LIST_COURSETYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_COURSETYPE = "FIND_COURSETYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_COURSETYPE = "UPDATE_COURSETYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -135,19 +135,19 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_COURSESTAFFMEMBER = "CREATE_COURSESTAFFMEMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_COURSESTAFFMEMBERS = "LIST_COURSESTAFFMEMBERS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_COURSESTAFFMEMBER = "FIND_COURSESTAFFMEMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_COURSESTAFFMEMBER = "UPDATE_COURSESTAFFMEMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -159,19 +159,19 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_COURSEENROLMENTTYPE = "CREATE_COURSEENROLMENTTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_COURSEENROLMENTTYPES = "LIST_COURSEENROLMENTTYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_COURSEENROLMENTTYPE = "FIND_COURSEENROLMENTTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_COURSEENROLMENTTYPE = "UPDATE_COURSEENROLMENTTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -183,19 +183,19 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_COURSEPARTICIPATIONTYPE = "CREATE_COURSEPARTICIPATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_COURSEPARTICIPATIONTYPES = "LIST_COURSEPARTICIPATIONTYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_COURSEPARTICIPATIONTYPE = "FIND_COURSEPARTICIPATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_COURSEPARTICIPATIONTYPE = "UPDATE_COURSEPARTICIPATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -207,19 +207,19 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_COURSEDESCRIPTIONCATEGORY = "CREATE_COURSEDESCRIPTIONCATEGORY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_COURSEDESCRIPTIONCATEGORIES = "LIST_COURSEDESCRIPTIONCATEGORIES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String FIND_COURSEDESCRIPTIONCATEGORY = "FIND_COURSEDESCRIPTIONCATEGORY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_COURSEDESCRIPTIONCATEGORY = "UPDATE_COURSEDESCRIPTIONCATEGORY";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -231,19 +231,19 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STAFFMEMBERROLE = "CREATE_STAFFMEMBERROLE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_STAFFMEMBERROLES = "LIST_STAFFMEMBERROLES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_STAFFMEMBERROLE = "FIND_STAFFMEMBERROLE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_STAFFMEMBERROLE = "UPDATE_STAFFMEMBERROLE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -255,11 +255,11 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
    */
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ STUDENT, ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ STUDENT, ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_COURSEEDUCATIONTYPES = "LIST_COURSEEDUCATIONTYPES";
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ STUDENT, ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ STUDENT, ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_COURSEEDUCATIONSUBTYPES = "LIST_COURSEEDUCATIONSUBTYPES";
   
   @Override

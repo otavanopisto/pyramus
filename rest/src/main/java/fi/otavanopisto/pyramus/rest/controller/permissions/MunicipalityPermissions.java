@@ -11,7 +11,7 @@ import fi.otavanopisto.security.Scope;
 public class MunicipalityPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_MUNICIPALITY = "CREATE_MUNICIPALITY";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -23,7 +23,7 @@ public class MunicipalityPermissions extends AbstractPyramusPermissionCollection
   public static final String FIND_MUNICIPALITY = "FIND_MUNICIPALITY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_MUNICIPALITY = "UPDATE_MUNICIPALITY";
   
   @Scope (PermissionScope.ENVIRONMENT)

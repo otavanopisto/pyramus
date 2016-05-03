@@ -11,7 +11,7 @@ import fi.otavanopisto.security.Scope;
 public class StudyProgrammeCategoryPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDYPROGRAMMECATEGORY = "CREATE_STUDYPROGRAMMECATEGORY";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -23,7 +23,7 @@ public class StudyProgrammeCategoryPermissions extends AbstractPyramusPermission
   public static final String FIND_STUDYPROGRAMMECATEGORY = "FIND_STUDYPROGRAMMECATEGORY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_STUDYPROGRAMMECATEGORY = "UPDATE_STUDYPROGRAMMECATEGORY";
 
   @Scope (PermissionScope.ENVIRONMENT)

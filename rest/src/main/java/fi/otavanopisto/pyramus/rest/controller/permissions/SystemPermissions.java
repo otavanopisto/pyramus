@@ -11,7 +11,7 @@ import fi.otavanopisto.security.Scope;
 public class SystemPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT, TEACHER, STUDY_GUIDER, STUDY_PROGRAMME_LEADER })
   public static final String WHOAMI = "WHOAMI";
   
   @Override

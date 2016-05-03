@@ -11,7 +11,7 @@ import fi.otavanopisto.security.Scope;
 public class PyramusViewPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String SEARCH_STUDENTS = "SEARCH_STUDENTS";
   
   @Override

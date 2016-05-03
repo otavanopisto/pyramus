@@ -11,7 +11,7 @@ import fi.otavanopisto.security.Scope;
 public class StudentEducationalLevelPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDENTEDUCATIONALLEVEL = "CREATE_STUDENTEDUCATIONALLEVEL";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -23,7 +23,7 @@ public class StudentEducationalLevelPermissions extends AbstractPyramusPermissio
   public static final String FIND_STUDENTEDUCATIONALLEVEL = "FIND_STUDENTEDUCATIONALLEVEL";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_STUDENTEDUCATIONALLEVEL = "UPDATE_STUDENTEDUCATIONALLEVEL";
   
   @Scope (PermissionScope.ENVIRONMENT)

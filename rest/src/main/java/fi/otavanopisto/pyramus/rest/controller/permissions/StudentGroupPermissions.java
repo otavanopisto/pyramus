@@ -11,27 +11,27 @@ import fi.otavanopisto.security.Scope;
 public class StudentGroupPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDENTGROUP = "CREATE_STUDENTGROUP";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_STUDENTGROUPS = "LIST_STUDENTGROUPS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_STUDENTGROUPSTUDENTS = "LIST_STUDENTGROUPSTUDENTS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_STUDENTGROUPSTAFFMEMBERS = "LIST_STUDENTGROUPSTAFFMEMBERS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_STUDENTGROUP = "FIND_STUDENTGROUP";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_STUDENTGROUP = "UPDATE_STUDENTGROUP";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -39,11 +39,11 @@ public class StudentGroupPermissions extends AbstractPyramusPermissionCollection
   public static final String DELETE_STUDENTGROUP = "DELETE_STUDENTGROUP";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDENTGROUPSTUDENT = "CREATE_STUDENTGROUPSTUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_STUDENTGROUPSTUDENT = "FIND_STUDENTGROUPSTUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -51,11 +51,11 @@ public class StudentGroupPermissions extends AbstractPyramusPermissionCollection
   public static final String DELETE_STUDENTGROUPSTUDENT = "DELETE_STUDENTGROUPSTUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDENTGROUPSTAFFMEMBER = "CREATE_STUDENTGROUPSTAFFMEMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_STUDENTGROUPSTAFFMEMBER = "FIND_STUDENTGROUPSTAFFMEMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)

@@ -11,19 +11,19 @@ import fi.otavanopisto.security.Scope;
 public class StudentContactLogEntryPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDENTCONTACTLOGENTRY = "CREATE_STUDENTCONTACTLOGENTRY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_STUDENTCONTACTLOGENTRIES = "LIST_STUDENTCONTACTLOGENTRIES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String FIND_STUDENTCONTACTLOGENTRY = "FIND_STUDENTCONTACTLOGENTRY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_STUDENTCONTACTLOGENTRY = "UPDATE_STUDENTCONTACTLOGENTRY";
   
   @Scope (PermissionScope.ENVIRONMENT)

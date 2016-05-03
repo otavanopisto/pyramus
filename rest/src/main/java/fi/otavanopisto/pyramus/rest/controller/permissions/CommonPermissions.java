@@ -15,7 +15,7 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_EDUCATIONTYPE = "CREATE_EDUCATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -31,11 +31,11 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   public static final String FIND_EDUCATIONTYPE = "FIND_EDUCATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_EDUCATIONTYPE = "UPDATE_EDUCATIONTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, STUDY_PROGRAMME_LEADER })
   public static final String DELETE_EDUCATIONTYPE = "DELETE_EDUCATIONTYPE";
     
   /**
@@ -43,19 +43,19 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_EDUCATIONSUBTYPE = "CREATE_EDUCATIONSUBTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String LIST_EDUCATIONSUBTYPES = "LIST_EDUCATIONSUBTYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String FIND_EDUCATIONSUBTYPE = "FIND_EDUCATIONSUBTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_EDUCATIONSUBTYPE = "UPDATE_EDUCATIONSUBTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -67,19 +67,19 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_GRADINGSCALE = "CREATE_GRADINGSCALE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String LIST_GRADINGSCALES = "LIST_GRADINGSCALES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String FIND_GRADINGSCALE = "FIND_GRADINGSCALE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_GRADINGSCALE = "UPDATE_GRADINGSCALE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -91,19 +91,19 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_GRADE = "CREATE_GRADE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String LIST_GRADES = "LIST_GRADES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String FIND_GRADE = "FIND_GRADE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_GRADE = "UPDATE_GRADE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -115,23 +115,23 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_EDUCATIONALTIMEUNIT = "CREATE_EDUCATIONALTIMEUNIT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String LIST_EDUCATIONALTIMEUNITS = "LIST_EDUCATIONALTIMEUNITS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
   public static final String FIND_EDUCATIONALTIMEUNIT = "FIND_EDUCATIONALTIMEUNIT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_EDUCATIONALTIMEUNIT = "UPDATE_EDUCATIONALTIMEUNIT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String ARCHIVE_EDUCATIONALTIMEUNIT = "ARCHIVE_EDUCATIONALTIMEUNIT";
 
   @Scope (PermissionScope.ENVIRONMENT)
@@ -143,27 +143,27 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_SUBJECT = "CREATE_SUBJECT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String LIST_SUBJECTS = "LIST_SUBJECTS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String SEARCH_SUBJECTS = "SEARCH_SUBJECTS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
   public static final String FIND_SUBJECT = "FIND_SUBJECT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_SUBJECT = "UPDATE_SUBJECT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String ARCHIVE_SUBJECT = "ARCHIVE_SUBJECT";
 
   @Scope (PermissionScope.ENVIRONMENT)
@@ -175,19 +175,19 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_CONTACTTYPE = "CREATE_CONTACTTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String LIST_CONTACTTYPES = "LIST_CONTACTTYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
   public static final String FIND_CONTACTTYPE = "FIND_CONTACTTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_CONTACTTYPE = "UPDATE_CONTACTTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -199,19 +199,19 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_CONTACTURLTYPE = "CREATE_CONTACTURLTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String LIST_CONTACTURLTYPES = "LIST_CONTACTURLTYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String FIND_CONTACTURLTYPE = "FIND_CONTACTURLTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_CONTACTURLTYPE = "UPDATE_CONTACTURLTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -223,19 +223,19 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_COURSEBASEVARIABLEKEY = "CREATE_COURSEBASEVARIABLEKEY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String LIST_COURSEBASEVARIABLEKEYS = "LIST_COURSEBASEVARIABLEKEYS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
   public static final String FIND_COURSEBASEVARIABLEKEY = "FIND_COURSEBASEVARIABLEKEY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_COURSEBASEVARIABLEKEY = "UPDATE_COURSEBASEVARIABLEKEY";
   
   @Scope (PermissionScope.ENVIRONMENT)

@@ -11,7 +11,7 @@ import fi.otavanopisto.security.Scope;
 public class SchoolPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_SCHOOL = "CREATE_SCHOOL";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -27,7 +27,7 @@ public class SchoolPermissions extends AbstractPyramusPermissionCollection imple
   public static final String FIND_SCHOOL = "FIND_SCHOOL";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_SCHOOL = "UPDATE_SCHOOL";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -39,19 +39,19 @@ public class SchoolPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_SCHOOLFIELD = "CREATE_SCHOOLFIELD";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_SCHOOLFIELDS = "LIST_SCHOOLFIELDS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String FIND_SCHOOLFIELD = "FIND_SCHOOLFIELD";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_SCHOOLFIELD = "UPDATE_SCHOOLFIELD";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -63,19 +63,19 @@ public class SchoolPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_SCHOOLVARIABLEKEY = "CREATE_SCHOOLVARIABLEKEY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_SCHOOLVARIABLEKEYS = "LIST_SCHOOLVARIABLEKEYS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String FIND_SCHOOLVARIABLEKEY = "FIND_SCHOOLVARIABLEKEY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_SCHOOLVARIABLEKEY = "UPDATE_SCHOOLVARIABLEKEY";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -87,15 +87,15 @@ public class SchoolPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_SCHOOLEMAIL = "CREATE_SCHOOLEMAIL";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_SCHOOLEMAILS = "LIST_SCHOOLEMAILS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String FIND_SCHOOLEMAIL = "FIND_SCHOOLEMAIL";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -107,15 +107,15 @@ public class SchoolPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_SCHOOLADDRESS = "CREATE_SCHOOLADDRESS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_SCHOOLADDRESSS = "LIST_SCHOOLADDRESSS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String FIND_SCHOOLADDRESS = "FIND_SCHOOLADDRESS";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -127,15 +127,15 @@ public class SchoolPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_SCHOOLPHONENUMBER = "CREATE_SCHOOLPHONENUMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_SCHOOLPHONENUMBERS = "LIST_SCHOOLPHONENUMBERS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String FIND_SCHOOLPHONENUMBER = "FIND_SCHOOLPHONENUMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -147,15 +147,15 @@ public class SchoolPermissions extends AbstractPyramusPermissionCollection imple
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_SCHOOLCONTACTURL = "CREATE_SCHOOLCONTACTURL";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_SCHOOLCONTACTURLS = "LIST_SCHOOLCONTACTURLS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String FIND_SCHOOLCONTACTURL = "FIND_SCHOOLCONTACTURL";
   
   @Scope (PermissionScope.ENVIRONMENT)

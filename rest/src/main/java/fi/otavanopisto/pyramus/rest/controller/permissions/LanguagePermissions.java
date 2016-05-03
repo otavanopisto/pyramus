@@ -11,7 +11,7 @@ import fi.otavanopisto.security.Scope;
 public class LanguagePermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_LANGUAGE = "CREATE_LANGUAGE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -23,7 +23,7 @@ public class LanguagePermissions extends AbstractPyramusPermissionCollection imp
   public static final String FIND_LANGUAGE = "FIND_LANGUAGE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_LANGUAGE = "UPDATE_LANGUAGE";
 
   @Scope (PermissionScope.ENVIRONMENT)
