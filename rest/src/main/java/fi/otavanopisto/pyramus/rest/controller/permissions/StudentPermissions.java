@@ -78,15 +78,15 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDENTEMAIL = "CREATE_STUDENTEMAIL";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_STUDENTEMAILS = "LIST_STUDENTEMAILS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_STUDENTEMAIL = "FIND_STUDENTEMAIL";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -98,15 +98,15 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDENTADDRESS = "CREATE_STUDENTADDRESS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_STUDENTADDRESSS = "LIST_STUDENTADDRESSS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String FIND_STUDENTADDRESS = "FIND_STUDENTADDRESS";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -118,15 +118,15 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDENTPHONENUMBER = "CREATE_STUDENTPHONENUMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_STUDENTPHONENUMBERS = "LIST_STUDENTPHONENUMBERS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String FIND_STUDENTPHONENUMBER = "FIND_STUDENTPHONENUMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -138,19 +138,19 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDENTCONTACTURL = "CREATE_STUDENTCONTACTURL";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_STUDENTCONTACTURLS = "LIST_STUDENTCONTACTURLS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String FIND_STUDENTCONTACTURL = "FIND_STUDENTCONTACTURL";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, STUDY_PROGRAMME_LEADER })
   public static final String DELETE_STUDENTCONTACTURL = "DELETE_STUDENTCONTACTURL";
   
   /**
@@ -158,7 +158,7 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
    */
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String LIST_STUDENT_TRANSFER_CREDITS = "LIST_STUDENT_TRANSFER_CREDITS";
    
   @Override
