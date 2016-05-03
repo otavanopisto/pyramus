@@ -163,7 +163,7 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     EntityManager entityManager = getEntityManager();
     FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
-    QueryParser parser = new QueryParser(Version.LUCENE_29, "", new StandardAnalyzer(Version.LUCENE_29));
+    QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
     String queryString = queryBuilder.toString();
     Query luceneQuery;
 
@@ -282,7 +282,7 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
         queryBuilder.append(" +creator.id: ").append(ownerId);
       }
 
-      QueryParser parser = new QueryParser(Version.LUCENE_29, "", new StandardAnalyzer(Version.LUCENE_29));
+      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
       String queryString = queryBuilder.toString();
       Query luceneQuery;
 

@@ -108,7 +108,7 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
     try {
       String queryString = queryBuilder.toString();
       Query luceneQuery;
-      QueryParser parser = new QueryParser(Version.LUCENE_29, "", new StandardAnalyzer(Version.LUCENE_29));
+      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
       if (StringUtils.isBlank(queryString)) {
         luceneQuery = new MatchAllDocsQuery();
       } else {
@@ -175,7 +175,7 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
     try {
       String queryString = queryBuilder.toString();
       Query luceneQuery;
-      QueryParser parser = new QueryParser(Version.LUCENE_29, "", new StandardAnalyzer(Version.LUCENE_29));
+      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
       if (StringUtils.isBlank(queryString)) {
         luceneQuery = new MatchAllDocsQuery();
       } else {
