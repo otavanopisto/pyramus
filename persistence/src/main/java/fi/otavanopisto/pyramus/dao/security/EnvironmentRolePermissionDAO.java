@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.dao.security;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
@@ -44,6 +46,20 @@ public class EnvironmentRolePermissionDAO extends PyramusEntityDAO<EnvironmentRo
 				criteriaBuilder.equal(root.get(EnvironmentRolePermission_.permission), permission)));
 
 		return getSingleResult(entityManager.createQuery(criteria));
+	}
+	
+	public List<EnvironmentRolePermission> listByUserRole(Role role) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<EnvironmentRolePermission> criteria = criteriaBuilder.createQuery(EnvironmentRolePermission.class);
+    Root<EnvironmentRolePermission> root = criteria.from(EnvironmentRolePermission.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(EnvironmentRolePermission_.role), role)
+    );
+
+    return entityManager.createQuery(criteria).getResultList();
 	}
 
 	@Override
