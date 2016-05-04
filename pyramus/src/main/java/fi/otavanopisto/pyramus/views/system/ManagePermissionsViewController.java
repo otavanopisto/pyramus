@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -22,7 +24,6 @@ import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.framework.PyramusFormViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.security.impl.PermissionCollector;
-import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
 
 public class ManagePermissionsViewController extends PyramusFormViewController {
 
@@ -98,8 +99,7 @@ public class ManagePermissionsViewController extends PyramusFormViewController {
       }
     }
     catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      Logger.getLogger(getClass().getName()).log(Level.SEVERE, String.format("Reset permissions of role %s failed", role.name()), e);
     }
   }
 
