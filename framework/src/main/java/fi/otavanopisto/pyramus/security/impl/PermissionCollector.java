@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.security.EnvironmentRolePermissionDAO;
 import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
+import fi.otavanopisto.pyramus.domainmodel.security.EnvironmentRolePermission;
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 
@@ -27,6 +28,39 @@ public class PermissionCollector {
   
   @Inject
   private EnvironmentRolePermissionDAO environmentRolePermissionDAO;
+  
+  public void resetRoles(Role role) {
+    // Remove current permissions
+    List<EnvironmentRolePermission> currentPermissions = environmentRolePermissionDAO.listByUserRole(role);
+    for (EnvironmentRolePermission currentPermission : currentPermissions) {
+      environmentRolePermissionDAO.delete(currentPermission);
+    }
+    // Insert new permissions
+    try {
+      for (PyramusPermissionCollection collection : permissionCollections) {
+        List<String> permissions = collection.listPermissions();
+        for (String permissionName : permissions) {
+          Permission permission = permissionDAO.findByName(permissionName);
+          String permissionScope = collection.getPermissionScope(permissionName);
+          if (PermissionScope.ENVIRONMENT.equals(permissionScope)) {
+            String[] defaultRoles = collection.getDefaultRoles(permissionName);
+            if (defaultRoles != null) {
+              for (int i = 0; i < defaultRoles.length; i++) {
+                String defaultRoleName = defaultRoles[i];
+                Role defaultRole = Role.valueOf(defaultRoleName);
+                if (defaultRole.equals(role)) {
+                  environmentRolePermissionDAO.create(role, permission);
+                }
+              }
+            }
+          }
+        }
+      }    
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
   
   @PostConstruct
   private void collectPermissions() {

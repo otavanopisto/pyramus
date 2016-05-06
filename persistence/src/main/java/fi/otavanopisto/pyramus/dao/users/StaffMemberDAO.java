@@ -218,7 +218,7 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     try {
       String queryString = queryBuilder.toString();
       org.apache.lucene.search.Query luceneQuery;
-      QueryParser parser = new QueryParser(Version.LUCENE_29, "", new StandardAnalyzer(Version.LUCENE_29));
+      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
       if (StringUtils.isBlank(queryString)) {
         luceneQuery = new MatchAllDocsQuery();
       }
@@ -288,7 +288,7 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     try {
       String queryString = queryBuilder.toString();
       org.apache.lucene.search.Query luceneQuery;
-      QueryParser parser = new QueryParser(Version.LUCENE_29, "", new StandardAnalyzer(Version.LUCENE_29));
+      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
       if (StringUtils.isBlank(queryString)) {
         luceneQuery = new MatchAllDocsQuery();
       }

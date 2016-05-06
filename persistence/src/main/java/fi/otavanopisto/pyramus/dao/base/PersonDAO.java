@@ -283,7 +283,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
       
       Query luceneQuery;
       
-      QueryParser parser = new QueryParser(Version.LUCENE_29, "", new StandardAnalyzer(Version.LUCENE_29));
+      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
       luceneQuery = parser.parse(queryString);
 
       FullTextQuery query = (FullTextQuery) fullTextEntityManager
@@ -497,7 +497,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     try {
       String queryString = queryBuilder.toString();
       Query luceneQuery;
-      QueryParser parser = new QueryParser(Version.LUCENE_29, "", new StandardAnalyzer(Version.LUCENE_29));
+      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
       if (StringUtils.isBlank(queryString)) {
         luceneQuery = new MatchAllDocsQuery();
       } else {

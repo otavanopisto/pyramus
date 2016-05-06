@@ -37,7 +37,7 @@ public class SearchUsersJSONRequestController extends JSONRequestController {
     Role[] roles;
     
     if (role == null) {
-      roles = new Role[] { Role.ADMINISTRATOR, Role.EVERYONE, Role.GUEST, Role.MANAGER, Role.USER, Role.TEACHER, Role.STUDY_GUIDER };
+      roles = new Role[] { Role.ADMINISTRATOR, Role.EVERYONE, Role.GUEST, Role.MANAGER, Role.USER, Role.TEACHER, Role.STUDY_GUIDER, Role.STUDY_PROGRAMME_LEADER };
     } else {
       roles = new Role[] { role };
     }
@@ -72,7 +72,7 @@ public class SearchUsersJSONRequestController extends JSONRequestController {
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.GUEST, UserRole.USER, UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.GUEST, UserRole.USER, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
 }

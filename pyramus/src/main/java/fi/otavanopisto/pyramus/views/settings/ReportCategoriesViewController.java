@@ -56,7 +56,7 @@ public class ReportCategoriesViewController extends PyramusViewController implem
    * @return The roles allowed to access this page
    */
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
   /**

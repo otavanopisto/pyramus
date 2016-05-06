@@ -135,7 +135,7 @@ public class ManageChangeLogViewController extends PyramusFormViewController {
    * @return The roles allowed to access this page
    */
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER };
+    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
   private boolean isChangeLogEntity(EntityType<?> entity) {

@@ -36,6 +36,15 @@
         </div>
         
         <div id="permissions" class="tabContent">
+          <div>
+            Reset
+            <select name="roleReset">
+              <option></option>
+              <c:forEach var="role" items="${roles}">
+                <option value="${role}">${role}</option>
+              </c:forEach>
+            </select>
+          </div>
           <table>
             <tr>
               <td></td>

@@ -48,7 +48,7 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
     FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
     try {
-      QueryParser parser = new QueryParser(Version.LUCENE_29, "", new StandardAnalyzer(Version.LUCENE_29));
+      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
       String queryString = queryBuilder.toString();
       Query luceneQuery;
 
@@ -109,7 +109,7 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
 
     try {
 
-      QueryParser parser = new QueryParser(Version.LUCENE_29, "", new StandardAnalyzer(Version.LUCENE_29));
+      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
       String queryString = queryBuilder.toString();
       Query luceneQuery;
 

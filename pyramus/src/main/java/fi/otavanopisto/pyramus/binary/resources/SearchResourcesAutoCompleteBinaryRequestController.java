@@ -67,7 +67,7 @@ public class SearchResourcesAutoCompleteBinaryRequestController extends BinaryRe
   }
   
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.USER, UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.USER, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
   
   private void addResourceCategory(StringBuilder resultBuilder, ResourceCategory resourceCategory) {

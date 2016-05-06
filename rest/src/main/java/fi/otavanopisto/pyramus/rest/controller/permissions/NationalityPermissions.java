@@ -11,7 +11,7 @@ import fi.otavanopisto.security.Scope;
 public class NationalityPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_NATIONALITY = "CREATE_NATIONALITY";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -23,7 +23,7 @@ public class NationalityPermissions extends AbstractPyramusPermissionCollection 
   public static final String FIND_NATIONALITY = "FIND_NATIONALITY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String UPDATE_NATIONALITY = "UPDATE_NATIONALITY";
   
   @Scope (PermissionScope.ENVIRONMENT)

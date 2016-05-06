@@ -251,7 +251,7 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
 }

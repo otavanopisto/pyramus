@@ -129,7 +129,7 @@ public class SearchStudentProjectModuleCoursesDialogViewController extends Pyram
    * @return The roles allowed to access this page
    */
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
   
   private boolean isWithinTimeFrame(Date frameStart, Date frameEnd, Date timeStart, Date timeEnd) {
