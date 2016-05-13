@@ -22,6 +22,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -118,8 +119,9 @@ public class Credit implements ArchivableEntity {
   @ManyToOne  
   private StaffMember assessor;
   
-  @Basic (optional = false)
-  private Boolean archived = Boolean.FALSE;
+  @NotNull
+  @Column (nullable = false)
+  private Boolean archived;
 
   @Enumerated (EnumType.STRING)
   @Column (insertable = true, updatable = false, nullable = false)

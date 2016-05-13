@@ -23,17 +23,14 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Credit_;
 public class CreditLinkDAO extends PyramusEntityDAO<CreditLink> {
 
   public CreditLink create(Credit credit, Student student, User creator) {
-    EntityManager entityManager = getEntityManager();
-    
     CreditLink creditLink = new CreditLink();
     creditLink.setCredit(credit);
     creditLink.setStudent(student);
     creditLink.setCreator(creator);
     creditLink.setCreated(new Date());
+    creditLink.setArchived(Boolean.FALSE);
     
-    entityManager.persist(creditLink);
-    
-    return creditLink;
+    return persist(creditLink);
   }
 
   public List<CreditLink> listByStudentAndType(Student student, CreditType creditType) {
@@ -98,6 +95,7 @@ public class CreditLinkDAO extends PyramusEntityDAO<CreditLink> {
     CriteriaQuery<CreditLink> criteria = criteriaBuilder.createQuery(CreditLink.class);
     Root<CreditLink> root = criteria.from(CreditLink.class);
     
+    // TODO Credit archived?
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(

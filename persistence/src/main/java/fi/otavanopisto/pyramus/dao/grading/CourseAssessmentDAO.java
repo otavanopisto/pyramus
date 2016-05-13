@@ -26,18 +26,15 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment_;
 public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
 
   public CourseAssessment create(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment) {
-    EntityManager entityManager = getEntityManager();
-
     CourseAssessment courseAssessment = new CourseAssessment();
     courseAssessment.setAssessor(assessingUser);
     courseAssessment.setCourseStudent(courseStudent);
     courseAssessment.setDate(date);
     courseAssessment.setGrade(grade);
     courseAssessment.setVerbalAssessment(verbalAssessment);
+    courseAssessment.setArchived(Boolean.FALSE);
     
-    entityManager.persist(courseAssessment);
-    
-    return courseAssessment;
+    return persist(courseAssessment);
   }
   
   /**
@@ -118,6 +115,7 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
   public CourseAssessment findByCourseStudent(CourseStudent courseStudent) {
     EntityManager entityManager = getEntityManager(); 
     
+    // TODO Does not use archived
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<CourseAssessment> criteria = criteriaBuilder.createQuery(CourseAssessment.class);
     Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
@@ -150,6 +148,7 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
     Join<CourseAssessment, CourseStudent> courseStudentJoin = root.join(CourseAssessment_.courseStudent);
     
+    // TODO Archived course?
     criteria.select(criteriaBuilder.count(root));
     criteria.where(
         criteriaBuilder.and(

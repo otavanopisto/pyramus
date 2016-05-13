@@ -42,6 +42,7 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
     transferCredit.setSubject(subject);
     transferCredit.setOptionality(optionality);
     transferCredit.setVerbalAssessment(verbalAssessment);
+    transferCredit.setArchived(Boolean.FALSE);
     
     EntityManager entityManager = getEntityManager();
     entityManager.persist(length);
