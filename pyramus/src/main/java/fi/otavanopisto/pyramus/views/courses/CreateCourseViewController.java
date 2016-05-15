@@ -1,7 +1,9 @@
 package fi.otavanopisto.pyramus.views.courses;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -135,6 +137,9 @@ public class CreateCourseViewController extends PyramusViewController implements
       educationSubtypes.put(educationType.getId(), subtypes);
     }
 
+    // TODO: Support other currencies
+    List<Currency> currencies = Arrays.asList(Currency.getInstance("EUR"));
+
     pageRequestContext.getRequest().setAttribute("educationSubtypes", educationSubtypes);
     pageRequestContext.getRequest().setAttribute("states", courseStateDAO.listUnarchived());
     pageRequestContext.getRequest().setAttribute("types", courseTypeDAO.listUnarchived());
@@ -147,6 +152,7 @@ public class CreateCourseViewController extends PyramusViewController implements
     pageRequestContext.getRequest().setAttribute("moduleComponents", moduleComponents);
     pageRequestContext.getRequest().setAttribute("courseDescriptions", descriptionDAO.listByCourseBase(module));
     pageRequestContext.getRequest().setAttribute("courseDescriptionCategories", descriptionCategoryDAO.listUnarchived());
+    pageRequestContext.getRequest().setAttribute("currencies", currencies);
     
     pageRequestContext.setIncludeJSP("/templates/courses/createcourse.jsp");
   }

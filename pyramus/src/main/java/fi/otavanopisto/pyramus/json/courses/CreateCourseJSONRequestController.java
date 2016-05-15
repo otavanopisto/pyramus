@@ -273,6 +273,8 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     Double assessingHours = requestContext.getDouble("assessingHours");
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
     String tagsText = requestContext.getString("tags");
+    BigDecimal courseFee = requestContext.getBigDecimal("courseFee");
+    Currency courseFeeCurrency = requestContext.getCurrency("courseFeeCurrency");
     
     Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
@@ -289,7 +291,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     
     Course course = courseDAO.create(module, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
         courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, 
-        assessingHours, description, maxParticipantCount, enrolmentTimeEnd, loggedUser);
+        assessingHours, description, maxParticipantCount, courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser);
 
     // Tags
     

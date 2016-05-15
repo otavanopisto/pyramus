@@ -1,10 +1,6 @@
 package fi.otavanopisto.pyramus.ui.base;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
-import org.openqa.selenium.By;
-
 import fi.otavanopisto.pyramus.SqlAfter;
 import fi.otavanopisto.pyramus.SqlBefore;
 import fi.otavanopisto.pyramus.ui.AbstractUITest;

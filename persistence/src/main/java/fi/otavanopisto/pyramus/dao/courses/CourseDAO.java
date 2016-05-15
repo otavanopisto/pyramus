@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.dao.courses;
 
+import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -80,7 +82,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
   public Course create(Module module, String name, String nameExtension, CourseState state, CourseType type, Subject subject,
       Integer courseNumber, Date beginDate, Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, 
       Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double distanceTeachingHours, Double planningHours, 
-      Double assessingHours, String description, Long maxParticipantCount, Date enrolmentTimeEnd, User creatingUser) {
+      Double assessingHours, String description, Long maxParticipantCount, BigDecimal courseFee, Currency courseFeeCurrency, Date enrolmentTimeEnd, User creatingUser) {
     
     Date now = new Date(System.currentTimeMillis());
     EducationalLength educationalLength = new EducationalLength();
@@ -107,6 +109,8 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setMaxParticipantCount(maxParticipantCount);
     course.setEnrolmentTimeEnd(enrolmentTimeEnd);
     course.setDistanceTeachingHours(distanceTeachingHours);
+    course.setCourseFee(courseFee);
+    course.setCourseFeeCurrency(courseFeeCurrency);
     
     course.setCreator(creatingUser);
     course.setCreated(now);
@@ -174,6 +178,17 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     entityManager.persist(course);
     
     courseUpdatedEvent.fire(new CourseUpdatedEvent(course.getId()));
+  }
+  
+  public Course updateCourseFee(Course course, BigDecimal courseFee, Currency courseFeeCurrency, User user) {
+    course.setCourseFee(courseFee);
+    course.setCourseFeeCurrency(courseFeeCurrency);
+
+    persist(course);
+    
+    courseUpdatedEvent.fire(new CourseUpdatedEvent(course.getId()));
+    
+    return course;
   }
   
   public Course setCourseTags(Course course, Set<Tag> tags) {

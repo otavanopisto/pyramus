@@ -1,6 +1,7 @@
 package fi.internetix.smvc.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -219,6 +220,16 @@ public abstract class RequestContext {
   public Long getLong(String paramName) {
     String value = getString(paramName);
     return NumberUtils.isNumber(value) ? NumberUtils.toLong(value) : null;  
+  }
+
+  public BigDecimal getBigDecimal(String paramName) {
+    String value = getString(paramName);
+    // Since '.' is a universal decimal separator in Java, let's be lenient with ',' as well
+    if (value != null && value.indexOf(',') >= 0) {
+      value = value.replace(',', '.');
+    }
+    
+    return NumberUtils.isNumber(value) ? NumberUtils.createBigDecimal(value) : null;  
   }
   
   public Currency getCurrency(String paramName) {
