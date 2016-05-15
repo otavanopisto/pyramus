@@ -27,7 +27,7 @@ public class SaveStudentDetailsJSONRequestController extends JSONRequestControll
     String organization = requestContext.getString("organization");
     String additionalInfo = requestContext.getString("additionalInfo");
     Long roomId = requestContext.getLong("roomId");
-    BigDecimal lodgingFee = new BigDecimal(requestContext.getString("lodgingFee"));
+    BigDecimal lodgingFee = requestContext.getBigDecimal("lodgingFee");
     Currency lodgingFeeCurrency = requestContext.getCurrency("lodgingFeeCurrency");
     
     String billingDetailsPersonName = requestContext.getString("billingDetailsPersonName"); 
