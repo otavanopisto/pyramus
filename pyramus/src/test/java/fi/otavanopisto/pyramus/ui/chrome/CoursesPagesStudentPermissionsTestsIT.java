@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import fi.otavanopisto.pyramus.ui.base.CoursesPagesStudentPermissionsTestsBase;
-import fi.otavanopisto.pyramus.ui.base.ModulesPagesStudentPermissionsTestsBase;
 
 public class CoursesPagesStudentPermissionsTestsIT extends CoursesPagesStudentPermissionsTestsBase {
   

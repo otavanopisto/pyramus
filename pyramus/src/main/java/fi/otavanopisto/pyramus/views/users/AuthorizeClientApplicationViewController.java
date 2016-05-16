@@ -17,7 +17,6 @@ import org.apache.oltu.oauth2.common.message.types.ResponseType;
 
 import fi.internetix.smvc.LoginRequiredException;
 import fi.internetix.smvc.SmvcRuntimeException;
-import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.clientapplications.ClientApplicationAuthorizationCodeDAO;

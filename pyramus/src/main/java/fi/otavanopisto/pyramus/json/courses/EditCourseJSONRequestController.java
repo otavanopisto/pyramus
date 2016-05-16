@@ -282,6 +282,8 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     Double planningHours = requestContext.getDouble("planningHours");
     Double assessingHours = requestContext.getDouble("assessingHours");
     String tagsText = requestContext.getString("tags");
+    BigDecimal courseFee = requestContext.getBigDecimal("courseFee");
+    Currency courseFeeCurrency = requestContext.getCurrency("courseFeeCurrency");
     
     Long version = requestContext.getLong("version");
     if (!course.getVersion().equals(version))
@@ -305,6 +307,8 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     courseDAO.update(course, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
         courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, 
         planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, staffMember);
+    
+    courseDAO.updateCourseFee(course, courseFee, courseFeeCurrency, staffMember);
     
     // Tags
 

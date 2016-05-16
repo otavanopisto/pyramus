@@ -157,12 +157,15 @@ public class CourseRESTService extends AbstractRESTService {
     String description = courseEntity.getDescription();
     Long maxParticipantCount = courseEntity.getMaxParticipantCount();
     Date enrolmentTimeEnd = toDate(courseEntity.getEnrolmentTimeEnd());
+    BigDecimal courseFee = null;
+    Currency courseFeeCurrency = null;
     
     User loggedUser = sessionController.getUser();
     
     Course course = courseController.createCourse(module, name, nameExtension, state, type, subject, courseNumber, 
-        toDate(beginDate), toDate(endDate), courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, 
-        distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, loggedUser);
+        toDate(beginDate), toDate(endDate), courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, 
+        teachingHours, distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, 
+        courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser);
     
     if (courseEntity.getTags() != null) {
       for (String tag : courseEntity.getTags()) {

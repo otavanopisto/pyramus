@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.domainmodel.courses;
 
+import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -276,6 +278,22 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   public void setDistanceTeachingHours(Double distanceTeachingHours) {
     this.distanceTeachingHours = distanceTeachingHours;
   }
+  
+  public BigDecimal getCourseFee() {
+    return courseFee;
+  }
+  
+  public void setCourseFee(BigDecimal courseFee) {
+    this.courseFee = courseFee;
+  }
+  
+  public Currency getCourseFeeCurrency() {
+    return courseFeeCurrency;
+  }
+  
+  public void setCourseFeeCurrency(Currency courseFeeCurrency) {
+    this.courseFeeCurrency = courseFeeCurrency;
+  }
 
   @ManyToOne
   @JoinColumn(name="module")
@@ -344,4 +362,8 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   @Column
   @Temporal (value=TemporalType.TIMESTAMP)
   private Date enrolmentTimeEnd;
+  
+  private BigDecimal courseFee;
+  
+  private Currency courseFeeCurrency;
 }

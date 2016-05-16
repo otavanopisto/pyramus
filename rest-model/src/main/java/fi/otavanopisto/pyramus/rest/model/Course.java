@@ -43,6 +43,7 @@ public class Course {
     this.distanceTeachingDays = distanceTeachingDays;
     this.assessingHours = assessingHours;
     this.planningHours = planningHours;
+    
     this.enrolmentTimeEnd = enrolmentTimeEnd;
     this.creatorId = creatorId;
     this.lastModifierId = lastModifierId;

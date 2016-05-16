@@ -414,6 +414,19 @@
               </div>
             </c:if>
             
+            <c:if test="${(course.courseFee ne null) && (course.courseFeeCurrency ne null)}">
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="courses.viewCourse.courseFeeTitle"/>
+                  <jsp:param name="helpLocale" value="courses.viewCourse.courseFeeHelp"/>
+                </jsp:include>    
+              
+                <div class="genericViewFormDataText">
+                  <fmt:formatNumber value="${course.courseFee}" type="currency" currencyCode="${course.courseFeeCurrency.currencyCode}"/>
+                </div>
+              </div>
+            </c:if>
+            
             <c:if test="${course.enrolmentTimeEnd ne null}">
               <div class="genericFormSection">  
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">

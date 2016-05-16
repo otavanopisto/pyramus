@@ -1203,6 +1203,27 @@
               <input type="text" name="enrolmentTimeEnd" class="ixDateField">
             </div>
 
+            <div class="genericFormSection">  
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="courses.createCourse.courseFeeTitle"/>
+                <jsp:param name="helpLocale" value="courses.createCourse.courseFeeHelp"/>
+              </jsp:include>    
+            
+              <input type="number" min="1" step="any" name="courseFee" value="">
+              <select name="courseFeeCurrency">
+                <c:forEach var="currency" items="${currencies}" varStatus="vs">
+                  <c:choose>
+                    <c:when test="${vs.first}">
+                      <option value="${currency.currencyCode}" selected="selected">${currency.currencyCode}</option>
+                    </c:when>
+                    <c:otherwise>
+                      <option value="${currency.currencyCode}">${currency.currencyCode}</option>
+                    </c:otherwise>
+                  </c:choose>
+                </c:forEach>
+              </select>
+            </div>
+
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="courses.createCourse.descriptionTitle"/>

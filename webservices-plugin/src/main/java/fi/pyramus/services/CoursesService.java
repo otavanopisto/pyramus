@@ -124,7 +124,7 @@ public class CoursesService extends PyramusService {
     // Course creation
 
     Course course = courseDAO.create(module, name, nameExtension, state, type, subject, courseNumber, beginDate, endDate,
-        courseLength, courseLengthTimeUnit, null, null, null, null, null, null, description, null, null, creatingUser);
+        courseLength, courseLengthTimeUnit, null, null, null, null, null, null, description, null, null, null, null, creatingUser);
     
     validateEntity(course);
 
