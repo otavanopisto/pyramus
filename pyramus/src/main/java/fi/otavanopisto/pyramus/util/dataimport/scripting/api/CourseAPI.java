@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.util.dataimport.scripting.api;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
@@ -62,11 +64,13 @@ public class CourseAPI {
     Double planningHours = null;
     Double assessingHours = null;
     Date enrolmentTimeEnd = null;
+    BigDecimal courseFee = null;
+    Currency courseFeeCurrency = null;
     
     return courseDAO.create(module, name, nameExtension, courseState, type, subject, module.getCourseNumber(), beginDate, endDate, 
         module.getCourseLength().getUnits(), module.getCourseLength().getUnit(), distanceTeachingDays, localTeachingDays, 
-        teachingHours, distanceTeachingHours, planningHours, assessingHours, description, module.getMaxParticipantCount(), enrolmentTimeEnd, 
-        loggedUser).getId();
+        teachingHours, distanceTeachingHours, planningHours, assessingHours, description, module.getMaxParticipantCount(), 
+        courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser).getId();
   }
   
   public Long[] listIdsByModuleId(Long moduleId) throws InvalidScriptException {

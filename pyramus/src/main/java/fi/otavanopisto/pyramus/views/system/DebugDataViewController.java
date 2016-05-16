@@ -59,7 +59,7 @@ public class DebugDataViewController extends PyramusViewController {
       for (int i = start; i < (start + count); i++) {
         EducationalTimeUnit etu = educationalTimeUnitDAO.findById(new Long(1));
         CourseState courseState = courseStateDAO.findById(new Long(1));
-        courseDAO.create(moduleDAO.findById(new Long(1)), "Kurssi " + i, "", courseState, null, null, null, null, null, new Double(10), etu, null, null, null, null, null, null, "Kuvaustekstiä kurssille " + i, null, null, user);
+        courseDAO.create(moduleDAO.findById(new Long(1)), "Kurssi " + i, "", courseState, null, null, null, null, null, new Double(10), etu, null, null, null, null, null, null, "Kuvaustekstiä kurssille " + i, null, null, null, null, user);
       }
     }
     else if ("resource".equals(type)) {
