@@ -218,7 +218,18 @@ public class ObjectFactory {
         new Mapper<CourseAssessment>(){
           @Override
           public Object map(CourseAssessment entity) {
-            return new fi.otavanopisto.pyramus.rest.model.CourseAssessment(entity.getId(), entity.getCourseStudent().getId(), entity.getGrade().getId(),entity.getGrade().getGradingScale().getId(), entity.getAssessor().getId(), new DateTime(entity.getDate()), entity.getVerbalAssessment());
+            Long courseStudentId = entity.getCourseStudent() != null ? entity.getCourseStudent().getId() : null;
+            Long gradeId = entity.getGrade() != null ? entity.getGrade().getId() : null;
+            Long gradingScaleId = entity.getGrade() != null && entity.getGrade().getGradingScale() != null ? entity.getGrade().getGradingScale().getId() : null;
+            Long assessorId = entity.getAssessor() != null ? entity.getAssessor().getId() : null;
+            
+            return new fi.otavanopisto.pyramus.rest.model.CourseAssessment(entity.getId(), 
+                courseStudentId, 
+                gradeId,
+                gradingScaleId, 
+                assessorId, 
+                toDateTime(entity.getDate()),
+                entity.getVerbalAssessment());
           }
         },
         
