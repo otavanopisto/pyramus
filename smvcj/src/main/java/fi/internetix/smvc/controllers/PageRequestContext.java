@@ -89,7 +89,8 @@ public class PageRequestContext extends RequestContext {
     getRequest().setAttribute("messages", getMessages());
     if (statusCode == StatusCode.OK) {
       if (getRedirectURL() != null) {
-        getResponse().sendRedirect(getRedirectURL());
+        getResponse().setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+        getResponse().setHeader("Location", getRedirectURL());
       }
       else if (getIncludeJSP() != null) {
         getRequest().getRequestDispatcher(getIncludeJSP()).include(getRequest(), getResponse());
