@@ -133,6 +133,7 @@ public class UserUtils {
     return
         (editor.getRole() == Role.ADMINISTRATOR) ||
         (editor.getPerson().getId().equals(whose.getId())) ||
+        ((editor.getRole() == Role.STUDY_PROGRAMME_LEADER) && (UserUtils.getHighestPersonRole(whose) != Role.MANAGER && UserUtils.getHighestPersonRole(whose) != Role.ADMINISTRATOR)) ||
         ((editor.getRole() == Role.MANAGER) && (UserUtils.getHighestPersonRole(whose) != Role.ADMINISTRATOR));
   }
   
