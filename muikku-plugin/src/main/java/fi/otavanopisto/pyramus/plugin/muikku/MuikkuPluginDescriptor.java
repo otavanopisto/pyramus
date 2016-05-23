@@ -30,7 +30,11 @@ public class MuikkuPluginDescriptor implements PluginDescriptor, CustomLoginScre
   }
   
   public Map<String, Class<?>> getPageRequestControllers() {
-    return null;
+    Map<String, Class<?>> result = new HashMap<>();
+    
+    result.put("index", IndexViewController.class);
+    
+    return result;
   }
   
   public Map<String, Class<?>> getAuthenticationProviders() {
