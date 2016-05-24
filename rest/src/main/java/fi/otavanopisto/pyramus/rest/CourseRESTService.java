@@ -876,16 +876,20 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember staffMember = courseController.findStaffMemberById(id);
-    if (staffMember == null) {
+    fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember courseStaffMember = courseController.findStaffMemberById(id);
+    if (courseStaffMember == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    if (!staffMember.getCourse().getId().equals(courseId)) {
+    if (!courseStaffMember.getCourse().getId().equals(courseId)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if ((courseStaffMember.getStaffMember() == null) || (courseStaffMember.getStaffMember().getArchived())) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    return Response.status(Status.OK).entity(objectFactory.createModel(staffMember)).build();
+    return Response.status(Status.OK).entity(objectFactory.createModel(courseStaffMember)).build();
   }
 
   @Path("/courses/{CID:[0-9]*}/educationTypes")

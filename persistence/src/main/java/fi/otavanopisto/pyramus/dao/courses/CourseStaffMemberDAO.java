@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -15,6 +16,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember_;
 import fi.otavanopisto.pyramus.events.CourseStaffMemberCreatedEvent;
 import fi.otavanopisto.pyramus.events.CourseStaffMemberDeletedEvent;
 import fi.otavanopisto.pyramus.events.CourseStaffMemberUpdatedEvent;
@@ -51,9 +53,14 @@ public class CourseStaffMemberDAO extends PyramusEntityDAO<CourseStaffMember> {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<CourseStaffMember> criteria = criteriaBuilder.createQuery(CourseStaffMember.class);
     Root<CourseStaffMember> root = criteria.from(CourseStaffMember.class);
+    Join<CourseStaffMember, StaffMember> staffMemberJoin = root.join(CourseStaffMember_.staffMember);
+    
     criteria.select(root);
     criteria.where(
-        criteriaBuilder.equal(root.get(CourseStaffMember_.course), course)
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(CourseStaffMember_.course), course),
+        criteriaBuilder.equal(staffMemberJoin.get(StaffMember_.archived), Boolean.FALSE)
+      )
     );
     
     return entityManager.createQuery(criteria).getResultList();
