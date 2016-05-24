@@ -27,6 +27,18 @@
 			<artifactId>plugin-core</artifactId>
 			<scope>provided</scope>
 		</dependency>
+    
+    <dependency>
+      <groupId>fi.otavanopisto.pyramus</groupId>
+      <artifactId>smvcj</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>fi.otavanopisto.pyramus</groupId>
+      <artifactId>framework</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
 	</dependencies>
 
