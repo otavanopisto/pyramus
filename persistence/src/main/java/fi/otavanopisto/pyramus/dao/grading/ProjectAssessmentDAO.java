@@ -20,18 +20,15 @@ import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment_;
 public class ProjectAssessmentDAO extends PyramusEntityDAO<ProjectAssessment> {
 
   public ProjectAssessment create(StudentProject studentProject, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment) {
-    EntityManager entityManager = getEntityManager();
-
     ProjectAssessment projectAssessment = new ProjectAssessment();
     projectAssessment.setAssessor(assessingUser);
     projectAssessment.setStudentProject(studentProject);
     projectAssessment.setDate(date);
     projectAssessment.setGrade(grade);
     projectAssessment.setVerbalAssessment(verbalAssessment);
+    projectAssessment.setArchived(Boolean.FALSE);
     
-    entityManager.persist(projectAssessment);
-    
-    return projectAssessment;
+    return persist(projectAssessment);
   }
 
   public List<ProjectAssessment> listByProjectAndArchived(StudentProject studentProject, Boolean archived) {
