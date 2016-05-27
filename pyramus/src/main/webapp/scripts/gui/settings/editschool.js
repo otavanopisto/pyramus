@@ -5,15 +5,15 @@ var contactTypes = JSDATA["contactTypes"].evalJSON();
 var variableKeys = JSDATA["variableKeys"].evalJSON();
 
 function addAddressTableRow(addressTable) {
-  addressTable.addRow([ -1, '', '', '', '', '', '', '', '', '' ]);
+  addressTable.addRow([ -1, '', contactTypes[0].id, '', '', '', '', '', '', '' ]);
 }
 
 function addEmailTableRow() {
-  getIxTableById('emailTable').addRow([ -1, '', '', '', '', '' ]);
+  getIxTableById('emailTable').addRow([ -1, '', contactTypes[0].id, '', '', '' ]);
 }
 
 function addPhoneTableRow(phoneTable) {
-  phoneTable.addRow([ -1, '', '', '', '', '' ]);
+  phoneTable.addRow([ -1, '', contactTypes[0].id, '', '', '' ]);
 }
 
 function setupTags() {

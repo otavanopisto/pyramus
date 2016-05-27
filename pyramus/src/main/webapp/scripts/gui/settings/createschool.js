@@ -2,15 +2,15 @@ var contactTypes = JSDATA["contactTypes"].evalJSON();
 var variableKeys = JSDATA["variableKeys"].evalJSON();
 
 function addEmailTableRow() {
-  getIxTableById('emailTable').addRow([ '', '', '', '', '' ]);
+  getIxTableById('emailTable').addRow([ '', contactTypes[0].id, '', '', '' ]);
 };
 
 function addPhoneTableRow() {
-  getIxTableById('phoneTable').addRow([ '', '', '', '', '' ]);
+  getIxTableById('phoneTable').addRow([ '', contactTypes[0].id, '', '', '' ]);
 };
 
 function addAddressTableRow() {
-  getIxTableById('addressTable').addRow([ '', '', '', '', '', '', '', '', '' ]);
+  getIxTableById('addressTable').addRow([ '', contactTypes[0].id, '', '', '', '', '', '', '' ]);
 };
 
 function setupTags() {
