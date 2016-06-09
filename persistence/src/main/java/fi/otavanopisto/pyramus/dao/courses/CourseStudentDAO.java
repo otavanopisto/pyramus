@@ -23,16 +23,16 @@ import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.events.CourseStudentArchivedEvent;
 import fi.otavanopisto.pyramus.events.CourseStudentCreatedEvent;
 import fi.otavanopisto.pyramus.events.CourseStudentUpdatedEvent;
 import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
-import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
-import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
-import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 
 @Stateless
 public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
@@ -147,8 +147,8 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
 
     List<CourseStudent> courseStudents = listByCourseAndStudent(courseStudent.getCourse(), student);
     if (!courseStudents.isEmpty()) {
-      for (CourseStudent cs : courseStudents) {
-        if (cs.getId() != courseStudent.getId())
+      for (CourseStudent courseStudent2 : courseStudents) {
+        if (courseStudent2.getId() != courseStudent.getId())
           throw new DuplicateCourseStudentException();
       }
     }

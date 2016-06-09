@@ -218,13 +218,7 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
               Messages.getInstance().getText(locale, "generic.errors.duplicateCourseStudent", new Object[] { student.getFullName() }));
         }
       } else {
-        try {
-          courseStudent = courseStudentDAO.update(courseStudent, studentProject.getStudent(), courseStudent.getCourseEnrolmentType(), courseStudent.getParticipationType(), courseStudent.getEnrolmentTime(), courseStudent.getLodging(), optionality);
-        } catch (DuplicateCourseStudentException dcse) {
-          Locale locale = jsonRequestContext.getRequest().getLocale();
-          throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 
-              Messages.getInstance().getText(locale, "generic.errors.duplicateCourseStudent", new Object[] { student.getFullName() }));
-        }
+        courseStudentDAO.updateOptionality(courseStudent, optionality);
       }
     }
     
