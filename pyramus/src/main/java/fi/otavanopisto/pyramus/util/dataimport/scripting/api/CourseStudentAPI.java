@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
 
-import fi.otavanopisto.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
@@ -15,6 +14,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.util.dataimport.scripting.InvalidScriptException;
 
 public class CourseStudentAPI {

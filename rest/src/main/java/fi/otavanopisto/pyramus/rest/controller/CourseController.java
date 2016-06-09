@@ -12,7 +12,6 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import fi.otavanopisto.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseEducationTypeDAO;
@@ -52,6 +51,7 @@ import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 
 @Dependent
 @Stateless
@@ -473,6 +473,10 @@ public class CourseController {
     return courseStudentDAO.listByCourse(course);
   }
 
+  public CourseStudent findCourseStudentByCourseAndStudent(Course course, Student student) {
+    return courseStudentDAO.findByCourseAndStudent(course, student);
+  }
+  
   public List<CourseStudent> listCourseStudentsByCourseAndParticipationTypes(Course course, List<CourseParticipationType> participationTypes) {
     return courseStudentDAO.listByCourseAndParticipationTypes(course, participationTypes);
   }

@@ -1,4 +1,4 @@
-package fi.otavanopisto.exception;
+package fi.otavanopisto.pyramus.exception;
 
 public class DuplicateCourseStudentException extends Exception {
 

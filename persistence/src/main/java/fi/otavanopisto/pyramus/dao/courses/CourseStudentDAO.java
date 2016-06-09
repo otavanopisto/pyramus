@@ -15,7 +15,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
-import fi.otavanopisto.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
@@ -30,6 +29,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.events.CourseStudentArchivedEvent;
 import fi.otavanopisto.pyramus.events.CourseStudentCreatedEvent;
 import fi.otavanopisto.pyramus.events.CourseStudentUpdatedEvent;
+import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student_;

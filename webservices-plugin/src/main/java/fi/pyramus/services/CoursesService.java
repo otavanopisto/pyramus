@@ -15,7 +15,6 @@ import javax.xml.ws.BindingType;
 
 import org.apache.commons.lang.StringUtils;
 
-import fi.otavanopisto.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseEducationSubtypeDAO;
@@ -65,6 +64,7 @@ import fi.otavanopisto.pyramus.domainmodel.modules.ModuleComponent;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 import fi.otavanopisto.pyramus.persistence.search.SearchTimeFilterMode;
 import fi.pyramus.services.entities.EntityFactoryVault;
