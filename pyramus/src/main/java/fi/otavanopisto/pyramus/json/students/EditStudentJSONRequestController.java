@@ -162,9 +162,9 @@ public class EditStudentJSONRequestController extends JSONRequestController {
       if (!student.getVersion().equals(studentVersion))
         throw new StaleObjectStateException(Student.class.getName(), student.getId());
 
-      String firstName = requestContext.getString("firstName." + student.getId());
-	    String lastName = requestContext.getString("lastName." + student.getId());
-	    String nickname = requestContext.getString("nickname." + student.getId());
+      String firstName = StringUtils.trim(requestContext.getString("firstName." + student.getId()));
+	    String lastName = StringUtils.trim(requestContext.getString("lastName." + student.getId()));
+	    String nickname = StringUtils.trim(requestContext.getString("nickname." + student.getId()));
 	    String additionalInfo = requestContext.getString("additionalInfo." + student.getId());
 	    String additionalContactInfo = requestContext.getString("otherContactInfo." + student.getId());
 	    String education = requestContext.getString("education." + student.getId());

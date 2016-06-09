@@ -323,6 +323,10 @@ public class StudentsService extends PyramusService {
     StudyProgramme studyProgramme = studyProgrammeId == null ? null : studyProgrammeDAO.findById(studyProgrammeId);
     StudentStudyEndReason studyEndReason = studyEndReasonId == null ? null : studyEndReasonDAO.findById(studyEndReasonId);
 
+    firstName = StringUtils.trim(firstName);
+    lastName = StringUtils.trim(lastName);
+    nickname = StringUtils.trim(nickname);
+    
     studentDAO.update(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType,
         educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies, studyStartDate, studyEndDate,
         studyEndReason, studyEndText, lodging);
