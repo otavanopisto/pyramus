@@ -1349,8 +1349,9 @@ public class StudentRESTService extends AbstractRESTService {
   public Response createStudent(fi.otavanopisto.pyramus.rest.model.Student entity) {
     Long personId = entity.getPersonId();
     Long studyProgrammeId = entity.getStudyProgrammeId();
-    String firstName = entity.getFirstName();
-    String lastName = entity.getLastName();
+    String firstName = StringUtils.trim(entity.getFirstName());
+    String lastName = StringUtils.trim(entity.getLastName());
+    String nickname = StringUtils.trim(entity.getNickname());
     Boolean lodging = entity.getLodging();
 
     if (personId == null || studyProgrammeId == null || lodging == null) {
@@ -1384,7 +1385,7 @@ public class StudentRESTService extends AbstractRESTService {
     StudentStudyEndReason studyEndReason = entity.getStudyEndReasonId() != null ? studentStudyEndReasonController.findStudentStudyEndReasonById(entity
         .getStudyEndReasonId()) : null;
 
-    Student student = studentController.createStudent(person, firstName, lastName, entity.getNickname(), entity.getAdditionalInfo(),
+    Student student = studentController.createStudent(person, firstName, lastName, nickname, entity.getAdditionalInfo(),
         toDate(entity.getStudyTimeEnd()), activityType, examinationType, educationalLevel, entity.getEducation(), nationality, municipality, language, school,
         studyProgramme, entity.getPreviousStudies(), toDate(entity.getStudyStartDate()), toDate(entity.getStudyEndDate()), studyEndReason,
         entity.getStudyEndText(), lodging);

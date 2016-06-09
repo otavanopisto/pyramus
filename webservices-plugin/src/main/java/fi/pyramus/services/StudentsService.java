@@ -10,6 +10,8 @@ import javax.jws.WebService;
 import javax.persistence.EnumType;
 import javax.xml.ws.BindingType;
 
+import org.apache.commons.lang.StringUtils;
+
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactInfoDAO;
@@ -268,6 +270,10 @@ public class StudentsService extends PyramusService {
     StudyProgramme studyProgramme = studyProgrammeId == null ? null : studyProgrammeDAO.findById(studyProgrammeId);
     StudentStudyEndReason studyEndReason = studyEndReasonId == null ? null : studyEndReasonDAO.findById(studyEndReasonId);
 
+    firstName = StringUtils.trim(firstName);
+    lastName = StringUtils.trim(lastName);
+    nickname = StringUtils.trim(nickname);
+    
     Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType,
         examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies, studyStartDate,
         studyEndDate, studyEndReason, studyEndText, lodging, false);

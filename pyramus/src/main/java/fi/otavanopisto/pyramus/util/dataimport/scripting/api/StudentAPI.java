@@ -86,6 +86,10 @@ public class StudentAPI {
       studyEndReason = DAOFactory.getInstance().getStudentStudyEndReasonDAO().findById(studyEndReasonId);
     }
 
+    firstName = StringUtils.trim(firstName);
+    lastName = StringUtils.trim(lastName);
+    nickname = StringUtils.trim(nickname);
+    
     Student student = studentDAO.create(personEntity, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityTypeEntity,
         examinationTypeEntity, educationalLevelEntity, education, nationalityEntity, municipalityEntity, languageEntity, school, studyProgramme,
         previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging, false);
