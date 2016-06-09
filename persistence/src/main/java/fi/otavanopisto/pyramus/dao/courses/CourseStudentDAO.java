@@ -66,8 +66,8 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
       CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, 
       BillingDetails billingDetails, String organization, String additionalInfo, Room room, BigDecimal lodgingFee, Currency lodgingFeeCurrency, Boolean archived) throws DuplicateCourseStudentException {
     
-    CourseStudent courseStudent2 = findByCourseAndStudent(course, student);
-    if (courseStudent2 != null)
+    List<CourseStudent> courseStudents = listByCourseAndStudent(course, student);
+    if (!courseStudents.isEmpty())
       throw new DuplicateCourseStudentException();
     
     CourseStudent courseStudent = new CourseStudent();
@@ -92,6 +92,24 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     courseStudentCreatedEvent.fire(new CourseStudentCreatedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
 
     return courseStudent;
+  }
+  
+  private List<CourseStudent> listByCourseAndStudent(Course course, Student student) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseStudent> criteria = criteriaBuilder.createQuery(CourseStudent.class);
+    Root<CourseStudent> root = criteria.from(CourseStudent.class);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(CourseStudent_.course), course),
+            criteriaBuilder.equal(root.get(CourseStudent_.student), student),
+            criteriaBuilder.equal(root.get(CourseStudent_.archived), Boolean.FALSE)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
   
   public CourseStudent findByCourseAndStudent(Course course, Student student) {
@@ -127,10 +145,12 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
       Date enrolmentDate, Boolean lodging, CourseOptionality optionality) throws DuplicateCourseStudentException {
     EntityManager entityManager = getEntityManager();
 
-    CourseStudent courseStudent2 = findByCourseAndStudent(courseStudent.getCourse(), student);
-    if (courseStudent2 != null) {
-      if (courseStudent2.getId() != courseStudent.getId())
-        throw new DuplicateCourseStudentException();
+    List<CourseStudent> courseStudents = listByCourseAndStudent(courseStudent.getCourse(), student);
+    if (!courseStudents.isEmpty()) {
+      for (CourseStudent cs : courseStudents) {
+        if (cs.getId() != courseStudent.getId())
+          throw new DuplicateCourseStudentException();
+      }
     }
     
     courseStudent.setStudent(student);
