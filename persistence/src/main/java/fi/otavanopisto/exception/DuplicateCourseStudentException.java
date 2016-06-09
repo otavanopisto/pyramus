@@ -7,21 +7,4 @@ public class DuplicateCourseStudentException extends Exception {
   public DuplicateCourseStudentException() {
   }
 
-//  public DuplicateCourseStudentException(String message) {
-//    super(message);
-//  }
-//
-//  public DuplicateCourseStudentException(Throwable cause) {
-//    super(cause);
-//  }
-//
-//  public DuplicateCourseStudentException(String message, Throwable cause) {
-//    super(message, cause);
-//  }
-//
-//  public DuplicateCourseStudentException(String message, Throwable cause, boolean enableSuppression,
-//      boolean writableStackTrace) {
-//    super(message, cause, enableSuppression, writableStackTrace);
-//  }
-
 }
