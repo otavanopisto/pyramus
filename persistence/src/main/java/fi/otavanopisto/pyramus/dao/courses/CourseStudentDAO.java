@@ -15,6 +15,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
+import fi.otavanopisto.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
@@ -59,10 +60,15 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
    * @param room 
    * 
    * @return The created course student
+   * @throws DuplicateCourseStudentException 
    */
   public CourseStudent create(Course course, Student student, CourseEnrolmentType courseEnrolmentType,
       CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, 
-      BillingDetails billingDetails, String organization, String additionalInfo, Room room, BigDecimal lodgingFee, Currency lodgingFeeCurrency, Boolean archived) {
+      BillingDetails billingDetails, String organization, String additionalInfo, Room room, BigDecimal lodgingFee, Currency lodgingFeeCurrency, Boolean archived) throws DuplicateCourseStudentException {
+    
+    CourseStudent courseStudent2 = findByCourseAndStudent(course, student);
+    if (courseStudent2 != null)
+      throw new DuplicateCourseStudentException();
     
     CourseStudent courseStudent = new CourseStudent();
     
@@ -114,12 +120,19 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
    * @param participationType Student participation type
    * @param enrolmentDate Student enrolment date
    * @param optionality 
+   * @throws DuplicateCourseStudentException 
    */
   public CourseStudent update(CourseStudent courseStudent, Student student, 
       CourseEnrolmentType courseEnrolmentType, CourseParticipationType participationType, 
-      Date enrolmentDate, Boolean lodging, CourseOptionality optionality) {
+      Date enrolmentDate, Boolean lodging, CourseOptionality optionality) throws DuplicateCourseStudentException {
     EntityManager entityManager = getEntityManager();
 
+    CourseStudent courseStudent2 = findByCourseAndStudent(courseStudent.getCourse(), student);
+    if (courseStudent2 != null) {
+      if (courseStudent2.getId() != courseStudent.getId())
+        throw new DuplicateCourseStudentException();
+    }
+    
     courseStudent.setStudent(student);
     courseStudent.setCourseEnrolmentType(courseEnrolmentType);
     courseStudent.setEnrolmentTime(enrolmentDate);

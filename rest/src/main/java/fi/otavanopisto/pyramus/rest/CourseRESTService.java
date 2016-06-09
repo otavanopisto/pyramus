@@ -32,6 +32,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
+import fi.otavanopisto.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
@@ -579,11 +580,15 @@ public class CourseRESTService extends AbstractRESTService {
     BigDecimal lodgingFee = null;
     Currency lodgingFeeCurrency = null;
 
-    return Response.status(Status.OK).entity(
-        objectFactory.createModel(courseController.createCourseStudent(course, student, enrolmentType, participantionType,  
-            toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails, lodgingFee, lodgingFeeCurrency, 
-            organization, additionalInfo, room)))
-      .build();
+    try {
+      return Response.status(Status.OK).entity(
+          objectFactory.createModel(courseController.createCourseStudent(course, student, enrolmentType, participantionType,  
+              toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails, lodgingFee, lodgingFeeCurrency, 
+              organization, additionalInfo, room)))
+        .build();
+    } catch (DuplicateCourseStudentException dcse) {
+      return Response.status(Status.BAD_REQUEST).entity("Student is already member of the course.").build();
+    }
   }
 
   @Path("/courses/{ID:[0-9]*}/students")

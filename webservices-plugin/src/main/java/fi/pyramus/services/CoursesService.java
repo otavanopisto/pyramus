@@ -15,6 +15,7 @@ import javax.xml.ws.BindingType;
 
 import org.apache.commons.lang.StringUtils;
 
+import fi.otavanopisto.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseEducationSubtypeDAO;
@@ -273,7 +274,7 @@ public class CoursesService extends PyramusService {
   }
 
   public CourseStudentEntity addCourseStudent(@WebParam (name = "courseId") Long courseId, @WebParam (name = "studentId") Long studentId, @WebParam (name = "courseEnrolmentTypeId") Long courseEnrolmentTypeId,
-      @WebParam (name = "participationTypeId") Long participationTypeId, @WebParam (name = "enrolmentDate") Date enrolmentDate, @WebParam (name = "lodging") Boolean lodging, @WebParam (name = "optionality") String optionality) {
+      @WebParam (name = "participationTypeId") Long participationTypeId, @WebParam (name = "enrolmentDate") Date enrolmentDate, @WebParam (name = "lodging") Boolean lodging, @WebParam (name = "optionality") String optionality) throws DuplicateCourseStudentException {
     
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
@@ -306,7 +307,7 @@ public class CoursesService extends PyramusService {
   }
 
   public void updateCourseStudent(@WebParam (name = "courseStudentId") Long courseStudentId, @WebParam (name = "courseEnrolmentTypeId") Long courseEnrolmentTypeId, @WebParam (name = "participationTypeId") Long participationTypeId,
-      @WebParam (name = "enrolmentDate") Date enrolmentDate, @WebParam (name = "lodging") Boolean lodging, @WebParam (name = "optionality") String optionality) {
+      @WebParam (name = "enrolmentDate") Date enrolmentDate, @WebParam (name = "lodging") Boolean lodging, @WebParam (name = "optionality") String optionality) throws DuplicateCourseStudentException {
 
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     CourseParticipationTypeDAO participationTypeDAO = DAOFactory.getInstance().getCourseParticipationTypeDAO();

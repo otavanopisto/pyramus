@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
 
+import fi.otavanopisto.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
@@ -45,8 +46,12 @@ public class CourseStudentAPI {
     String organization = null;
     String additionalInfo = null;
     
-    return courseStudentDAO.create(course, student, defaults.getInitialCourseEnrolmentType(), defaults.getInitialCourseParticipationType(), 
-        new Date(), false, CourseOptionality.OPTIONAL, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE).getId();
+    try {
+      return courseStudentDAO.create(course, student, defaults.getInitialCourseEnrolmentType(), defaults.getInitialCourseParticipationType(), 
+          new Date(), false, CourseOptionality.OPTIONAL, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE).getId();
+    } catch (DuplicateCourseStudentException dcse) {
+      throw new InvalidScriptException("Student #" + studentId + " has an already existing coursestudent.");
+    }
   }
   
   public Long findIdByCourseAndStudent(Long courseId, Long studentId) throws InvalidScriptException {

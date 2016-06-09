@@ -12,6 +12,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.otavanopisto.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseEducationTypeDAO;
@@ -460,7 +461,7 @@ public class CourseController {
   /* CourseStudent */
   
   public CourseStudent createCourseStudent(Course course, Student student, CourseEnrolmentType enrolmentType, CourseParticipationType participationType, 
-      Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, BigDecimal lodgingFee, Currency lodgingFeeCurrency, String organization, String additionalInfo, Room room) {
+      Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, BigDecimal lodgingFee, Currency lodgingFeeCurrency, String organization, String additionalInfo, Room room) throws DuplicateCourseStudentException {
     return courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, billingDetails, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
   }
   
