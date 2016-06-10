@@ -98,9 +98,7 @@ public class SaveCourseAssessmentsJSONRequestController extends JSONRequestContr
         }
 
         // Update Participation type
-        courseStudentDAO.update(courseStudent, courseStudent.getStudent(), 
-            courseStudent.getCourseEnrolmentType(), participationType, courseStudent.getEnrolmentTime(), 
-            courseStudent.getLodging(), courseStudent.getOptionality());
+        courseStudentDAO.updateParticipationType(courseStudent, participationType);
       } else
         throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "CourseStudent was not defined");
     }

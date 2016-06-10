@@ -6,6 +6,7 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,6 +14,7 @@ import org.hibernate.StaleObjectStateException;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AcademicTermDAO;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
@@ -44,6 +46,7 @@ import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -206,10 +209,16 @@ public class EditStudentProjectJSONRequestController extends JSONRequestControll
         BigDecimal lodgingFee = null;
         Currency lodgingFeeCurrency = null;
         
-        courseStudent = courseStudentDAO.create(course, studentProject.getStudent(), courseEnrolmentType, participationType, 
-            enrolmentDate, lodging, optionality, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
+        try {
+          courseStudent = courseStudentDAO.create(course, studentProject.getStudent(), courseEnrolmentType, participationType, 
+              enrolmentDate, lodging, optionality, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
+        } catch (DuplicateCourseStudentException dcse) {
+          Locale locale = jsonRequestContext.getRequest().getLocale();
+          throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 
+              Messages.getInstance().getText(locale, "generic.errors.duplicateCourseStudent", new Object[] { student.getFullName() }));
+        }
       } else {
-        courseStudent = courseStudentDAO.update(courseStudent, studentProject.getStudent(), courseStudent.getCourseEnrolmentType(), courseStudent.getParticipationType(), courseStudent.getEnrolmentTime(), courseStudent.getLodging(), optionality);
+        courseStudentDAO.updateOptionality(courseStudent, optionality);
       }
     }
     

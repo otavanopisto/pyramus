@@ -6,6 +6,8 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -53,6 +55,7 @@ import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
@@ -77,6 +80,9 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 @Stateful
 @RequestScoped
 public class CourseRESTService extends AbstractRESTService {
+  
+  @Inject
+  private Logger logger;
   
   @Inject
   private RESTSecurity restSecurity;
@@ -542,6 +548,10 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("could not find the student #" + entity.getStudentId()).build();
     }
 
+    if (courseController.findCourseStudentByCourseAndStudent(course, student) != null) {
+      return Response.status(Status.BAD_REQUEST).entity("student #" + entity.getStudentId() + " is already on course #" + courseId).build();
+    }
+
     BillingDetails billingDetails = null;
     if (entity.getBillingDetailsId() != null) {
       billingDetails = commonController.findBillingDetailsById(entity.getBillingDetailsId());
@@ -579,11 +589,18 @@ public class CourseRESTService extends AbstractRESTService {
     BigDecimal lodgingFee = null;
     Currency lodgingFeeCurrency = null;
 
-    return Response.status(Status.OK).entity(
-        objectFactory.createModel(courseController.createCourseStudent(course, student, enrolmentType, participantionType,  
-            toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails, lodgingFee, lodgingFeeCurrency, 
-            organization, additionalInfo, room)))
-      .build();
+    try {
+      return Response.status(Status.OK).entity(
+          objectFactory.createModel(courseController.createCourseStudent(course, student, enrolmentType, participantionType,  
+              toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails, lodgingFee, lodgingFeeCurrency, 
+              organization, additionalInfo, room)))
+        .build();
+    } catch (DuplicateCourseStudentException dcse) {
+      logger.log(Level.SEVERE, "Attempt to add CourseStudent when it already exists (student=" + 
+          entity.getStudentId() + ", course=" + courseId + ".", dcse);
+      
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Student is already member of the course.").build();
+    }
   }
 
   @Path("/courses/{ID:[0-9]*}/students")

@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -15,7 +16,9 @@ import java.util.Vector;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.CourseEducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseEducationTypeDAO;
@@ -67,7 +70,9 @@ import fi.otavanopisto.pyramus.domainmodel.resources.ResourceType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
+import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.persistence.usertypes.MonetaryAmount;
 
@@ -486,9 +491,15 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       CourseEnrolmentType enrolmentType = enrolmentTypeId != null ? enrolmentTypeDAO.findById(enrolmentTypeId) : null;
       CourseParticipationType participationType = participationTypeId != null ? participationTypeDAO.findById(participationTypeId) : null;
       CourseOptionality optionality = (CourseOptionality) requestContext.getEnum(colPrefix + ".optionality", CourseOptionality.class);
-      
-      courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, null, 
-          organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
+
+      try {
+        courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, null, 
+            organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
+      } catch (DuplicateCourseStudentException dcse) {
+        Locale locale = requestContext.getRequest().getLocale();
+        throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 
+            Messages.getInstance().getText(locale, "generic.errors.duplicateCourseStudent", new Object[] { student.getFullName() }));
+      }
     }
     
     String redirectURL = requestContext.getRequest().getContextPath() + "/courses/editcourse.page?course=" + course.getId();

@@ -23,15 +23,16 @@ import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.events.CourseStudentArchivedEvent;
 import fi.otavanopisto.pyramus.events.CourseStudentCreatedEvent;
 import fi.otavanopisto.pyramus.events.CourseStudentUpdatedEvent;
-import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
-import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
-import fi.otavanopisto.pyramus.domainmodel.students.Student_;
+import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 
 @Stateless
 public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
@@ -59,10 +60,15 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
    * @param room 
    * 
    * @return The created course student
+   * @throws DuplicateCourseStudentException 
    */
   public CourseStudent create(Course course, Student student, CourseEnrolmentType courseEnrolmentType,
       CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, 
-      BillingDetails billingDetails, String organization, String additionalInfo, Room room, BigDecimal lodgingFee, Currency lodgingFeeCurrency, Boolean archived) {
+      BillingDetails billingDetails, String organization, String additionalInfo, Room room, BigDecimal lodgingFee, Currency lodgingFeeCurrency, Boolean archived) throws DuplicateCourseStudentException {
+    
+    List<CourseStudent> courseStudents = listByCourseAndStudent(course, student);
+    if (!courseStudents.isEmpty())
+      throw new DuplicateCourseStudentException();
     
     CourseStudent courseStudent = new CourseStudent();
     
@@ -86,6 +92,24 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     courseStudentCreatedEvent.fire(new CourseStudentCreatedEvent(courseStudent.getId(), courseStudent.getCourse().getId(), courseStudent.getStudent().getId()));
 
     return courseStudent;
+  }
+  
+  private List<CourseStudent> listByCourseAndStudent(Course course, Student student) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseStudent> criteria = criteriaBuilder.createQuery(CourseStudent.class);
+    Root<CourseStudent> root = criteria.from(CourseStudent.class);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(CourseStudent_.course), course),
+            criteriaBuilder.equal(root.get(CourseStudent_.student), student),
+            criteriaBuilder.equal(root.get(CourseStudent_.archived), Boolean.FALSE)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
   
   public CourseStudent findByCourseAndStudent(Course course, Student student) {
@@ -114,12 +138,21 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
    * @param participationType Student participation type
    * @param enrolmentDate Student enrolment date
    * @param optionality 
+   * @throws DuplicateCourseStudentException 
    */
   public CourseStudent update(CourseStudent courseStudent, Student student, 
       CourseEnrolmentType courseEnrolmentType, CourseParticipationType participationType, 
-      Date enrolmentDate, Boolean lodging, CourseOptionality optionality) {
+      Date enrolmentDate, Boolean lodging, CourseOptionality optionality) throws DuplicateCourseStudentException {
     EntityManager entityManager = getEntityManager();
 
+    List<CourseStudent> courseStudents = listByCourseAndStudent(courseStudent.getCourse(), student);
+    if (!courseStudents.isEmpty()) {
+      for (CourseStudent courseStudent2 : courseStudents) {
+        if (courseStudent2.getId() != courseStudent.getId())
+          throw new DuplicateCourseStudentException();
+      }
+    }
+    
     courseStudent.setStudent(student);
     courseStudent.setCourseEnrolmentType(courseEnrolmentType);
     courseStudent.setEnrolmentTime(enrolmentDate);
