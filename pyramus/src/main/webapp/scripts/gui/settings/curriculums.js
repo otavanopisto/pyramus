@@ -12,7 +12,7 @@ function addCurriculumsTableRow() {
     display : 'none'
   });
   table.showCell(rowIndex, table.getNamedColumnIndex('removeButton'));
-  table.hideCell(rowIndex, table.getNamedColumnIndex('deleteButton'));
+  table.hideCell(rowIndex, table.getNamedColumnIndex('archiveButton'));
 }
 
 function onLoad(event) {
@@ -54,7 +54,7 @@ function onLoad(event) {
             var table = event.tableComponent;
             var curriculumId = table.getCellValue(event.row, table.getNamedColumnIndex('curriculumId'));
             var name = table.getCellValue(event.row, table.getNamedColumnIndex('name'));
-            var url = GLOBAL_contextPath + "/simpledialog.page?localeId=settings.curriculums.curriculumDeleteConfirmDialogContent&localeParams="
+            var url = GLOBAL_contextPath + "/simpledialog.page?localeId=settings.curriculums.curriculumArchiveConfirmDialogContent&localeParams="
                 + encodeURIComponent(name);
 
             deletedRowIndex = event.row;
@@ -66,9 +66,9 @@ function onLoad(event) {
               showOk : true,
               showCancel : true,
               autoEvaluateSize : true,
-              title : getLocale().getText("settings.curriculums.curriculumDeleteConfirmDialogTitle"),
-              okLabel : getLocale().getText("settings.curriculums.curriculumDeleteConfirmDialogOkLabel"),
-              cancelLabel : getLocale().getText("settings.curriculums.curriculumDeleteConfirmDialogCancelLabel")
+              title : getLocale().getText("settings.curriculums.curriculumArchiveConfirmDialogTitle"),
+              okLabel : getLocale().getText("settings.curriculums.curriculumArchiveConfirmDialogOkLabel"),
+              cancelLabel : getLocale().getText("settings.curriculums.curriculumArchiveConfirmDialogCancelLabel")
             });
 
             dialog.addDialogListener(function(event) {
@@ -88,7 +88,7 @@ function onLoad(event) {
 
             dialog.open();
           },
-          paramName : 'deleteButton'
+          paramName : 'archiveButton'
         }, {
           left : 346,
           width : 30,
