@@ -14,6 +14,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.util.dataimport.scripting.InvalidScriptException;
 
 public class CourseStudentAPI {
@@ -45,8 +46,12 @@ public class CourseStudentAPI {
     String organization = null;
     String additionalInfo = null;
     
-    return courseStudentDAO.create(course, student, defaults.getInitialCourseEnrolmentType(), defaults.getInitialCourseParticipationType(), 
-        new Date(), false, CourseOptionality.OPTIONAL, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE).getId();
+    try {
+      return courseStudentDAO.create(course, student, defaults.getInitialCourseEnrolmentType(), defaults.getInitialCourseParticipationType(), 
+          new Date(), false, CourseOptionality.OPTIONAL, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE).getId();
+    } catch (DuplicateCourseStudentException dcse) {
+      throw new InvalidScriptException("Student #" + studentId + " has an already existing coursestudent.");
+    }
   }
   
   public Long findIdByCourseAndStudent(Long courseId, Long studentId) throws InvalidScriptException {

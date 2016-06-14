@@ -64,6 +64,7 @@ import fi.otavanopisto.pyramus.domainmodel.modules.ModuleComponent;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 import fi.otavanopisto.pyramus.persistence.search.SearchTimeFilterMode;
 import fi.pyramus.services.entities.EntityFactoryVault;
@@ -273,7 +274,7 @@ public class CoursesService extends PyramusService {
   }
 
   public CourseStudentEntity addCourseStudent(@WebParam (name = "courseId") Long courseId, @WebParam (name = "studentId") Long studentId, @WebParam (name = "courseEnrolmentTypeId") Long courseEnrolmentTypeId,
-      @WebParam (name = "participationTypeId") Long participationTypeId, @WebParam (name = "enrolmentDate") Date enrolmentDate, @WebParam (name = "lodging") Boolean lodging, @WebParam (name = "optionality") String optionality) {
+      @WebParam (name = "participationTypeId") Long participationTypeId, @WebParam (name = "enrolmentDate") Date enrolmentDate, @WebParam (name = "lodging") Boolean lodging, @WebParam (name = "optionality") String optionality) throws DuplicateCourseStudentException {
     
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
@@ -306,7 +307,7 @@ public class CoursesService extends PyramusService {
   }
 
   public void updateCourseStudent(@WebParam (name = "courseStudentId") Long courseStudentId, @WebParam (name = "courseEnrolmentTypeId") Long courseEnrolmentTypeId, @WebParam (name = "participationTypeId") Long participationTypeId,
-      @WebParam (name = "enrolmentDate") Date enrolmentDate, @WebParam (name = "lodging") Boolean lodging, @WebParam (name = "optionality") String optionality) {
+      @WebParam (name = "enrolmentDate") Date enrolmentDate, @WebParam (name = "lodging") Boolean lodging, @WebParam (name = "optionality") String optionality) throws DuplicateCourseStudentException {
 
     CourseStudentDAO courseStudentDAO = DAOFactory.getInstance().getCourseStudentDAO();
     CourseParticipationTypeDAO participationTypeDAO = DAOFactory.getInstance().getCourseParticipationTypeDAO();

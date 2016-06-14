@@ -43,6 +43,42 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
   }
 
   @Test
+  public void testCreateCourseStudentDuplicate() {
+    CourseStudent entity = new CourseStudent(null, COURSE_ID, 3l, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
+    
+    Response response = given().headers(getAuthHeaders())
+      .contentType("application/json")
+      .body(entity)
+      .post("/courses/courses/{COURSEID}/students", COURSE_ID);
+    
+    response.then()
+      .statusCode(200)
+      .body("id", not(is((Long) null)))
+      .body("enrolmentTime", is(entity.getEnrolmentTime().toString() ))
+      .body("archived", is(false))
+      .body("participationTypeId", is(entity.getParticipationTypeId().intValue() ))
+      .body("enrolmentTypeId", is(entity.getEnrolmentTypeId().intValue() ))
+      .body("lodging", is(entity.getLodging() ))
+      .body("optionality", is(entity.getOptionality().toString()));
+    
+    int id = response.body().jsonPath().getInt("id");
+
+    // Another one
+    response = given().headers(getAuthHeaders())
+        .contentType("application/json")
+        .body(entity)
+        .post("/courses/courses/{COURSEID}/students", COURSE_ID);
+      
+    response.then()
+      .statusCode(400);
+    
+    given().headers(getAuthHeaders())
+      .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id)
+      .then()
+      .statusCode(204);
+  }
+
+  @Test
   public void testListCourseStudents() {
     given().headers(getAuthHeaders())
       .get("/courses/courses/{COURSEID}/students", COURSE_ID)

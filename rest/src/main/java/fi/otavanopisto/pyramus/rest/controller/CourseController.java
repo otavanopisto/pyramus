@@ -51,6 +51,7 @@ import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 
 @Dependent
 @Stateless
@@ -460,7 +461,7 @@ public class CourseController {
   /* CourseStudent */
   
   public CourseStudent createCourseStudent(Course course, Student student, CourseEnrolmentType enrolmentType, CourseParticipationType participationType, 
-      Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, BigDecimal lodgingFee, Currency lodgingFeeCurrency, String organization, String additionalInfo, Room room) {
+      Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, BigDecimal lodgingFee, Currency lodgingFeeCurrency, String organization, String additionalInfo, Room room) throws DuplicateCourseStudentException {
     return courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, billingDetails, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
   }
   
@@ -472,6 +473,10 @@ public class CourseController {
     return courseStudentDAO.listByCourse(course);
   }
 
+  public CourseStudent findCourseStudentByCourseAndStudent(Course course, Student student) {
+    return courseStudentDAO.findByCourseAndStudent(course, student);
+  }
+  
   public List<CourseStudent> listCourseStudentsByCourseAndParticipationTypes(Course course, List<CourseParticipationType> participationTypes) {
     return courseStudentDAO.listByCourseAndParticipationTypes(course, participationTypes);
   }
