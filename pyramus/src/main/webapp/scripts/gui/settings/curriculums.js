@@ -49,7 +49,7 @@ function onLoad(event) {
           width : 30,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/edit-delete.png',
-          tooltip : getLocale().getText("settings.curriculums.curriculumsTableDeleteTooltip"),
+          tooltip : getLocale().getText("settings.curriculums.curriculumsTableArchiveTooltip"),
           onclick : function(event) {
             var table = event.tableComponent;
             var curriculumId = table.getCellValue(event.row, table.getNamedColumnIndex('curriculumId'));
