@@ -535,6 +535,7 @@ public class ObjectFactory {
             Long educationalLevelId = entity.getEducationalLevel() != null ? entity.getEducationalLevel().getId() : null;
             Long studyProgrammeId = entity.getStudyProgramme() != null ? entity.getStudyProgramme().getId() : null;
             Long studyEndReasonId = entity.getStudyEndReason() != null ? entity.getStudyEndReason().getId() : null;
+            Long curriculumId = entity.getCurriculum() != null ? entity.getCurriculum().getId() : null;
             
             List<String> tags = new ArrayList<>();
             
@@ -558,7 +559,7 @@ public class ObjectFactory {
             return new fi.otavanopisto.pyramus.rest.model.Student(entity.getId(), personId, entity.getFirstName(), entity.getLastName(), 
                 entity.getNickname(), entity.getAdditionalInfo(), additionalContectInfo, nationalityId, 
                 languageId, municipalityId, schoolId, activityTypeId, examinationTypeId, educationalLevelId, 
-                toDateTime(entity.getStudyTimeEnd()), studyProgrammeId, entity.getPreviousStudies(), entity.getEducation(), 
+                toDateTime(entity.getStudyTimeEnd()), studyProgrammeId, curriculumId, entity.getPreviousStudies(), entity.getEducation(), 
                 entity.getLodging(), toDateTime(entity.getStudyStartDate()), toDateTime(entity.getStudyEndDate()), studyEndReasonId, 
                 entity.getStudyEndText(), variables, tags, entity.getArchived());
           }

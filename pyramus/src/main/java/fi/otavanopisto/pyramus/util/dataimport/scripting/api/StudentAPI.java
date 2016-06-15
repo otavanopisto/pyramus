@@ -92,7 +92,7 @@ public class StudentAPI {
     
     Student student = studentDAO.create(personEntity, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityTypeEntity,
         examinationTypeEntity, educationalLevelEntity, education, nationalityEntity, municipalityEntity, languageEntity, school, studyProgramme,
-        previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging, false);
+        null, previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging, false);
     
     // Default user
     

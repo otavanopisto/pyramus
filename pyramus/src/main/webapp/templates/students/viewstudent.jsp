@@ -1809,6 +1809,21 @@
                   </c:choose>
 
                   <c:choose>
+                    <c:when test="${!empty student.curriculum}">
+                      <div class="genericFormSection">
+                        <jsp:include
+                          page="/templates/generic/fragments/formtitle.jsp">
+                          <jsp:param name="titleLocale"
+                            value="students.viewStudent.curriculumTitle" />
+                          <jsp:param name="helpLocale"
+                            value="students.viewStudent.curriculumHelp" />
+                        </jsp:include>
+                        <div class="genericViewFormDataText">${student.curriculum.name}</div>
+                      </div>
+                    </c:when>
+                  </c:choose>
+
+                  <c:choose>
                     <c:when
                       test="${fn:length(studentGroups[student.id]) gt 0}">
                       <div class="genericFormSection">

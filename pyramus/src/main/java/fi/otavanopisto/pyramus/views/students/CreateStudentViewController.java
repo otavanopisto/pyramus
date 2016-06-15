@@ -10,6 +10,7 @@ import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactURLTypeDAO;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
@@ -54,6 +55,7 @@ public class CreateStudentViewController extends PyramusViewController implement
     ContactURLTypeDAO contactURLTypeDAO = DAOFactory.getInstance().getContactURLTypeDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     
     Long personId = pageRequestContext.getLong("personId");
     if (personId != null) {
@@ -111,6 +113,7 @@ public class CreateStudentViewController extends PyramusViewController implement
     pageRequestContext.getRequest().setAttribute("municipalities", municipalities);
     pageRequestContext.getRequest().setAttribute("languages", languages);
     pageRequestContext.getRequest().setAttribute("studyProgrammes", studyProgrammes);
+    pageRequestContext.getRequest().setAttribute("curriculums", curriculumDAO.listUnarchived());
     pageRequestContext.getRequest().setAttribute("studyEndReasons", studyEndReasonDAO.listByParentReason(null));
     pageRequestContext.getRequest().setAttribute("variableKeys", userVariableKeys);
     

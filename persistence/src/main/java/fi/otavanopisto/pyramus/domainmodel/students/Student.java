@@ -24,6 +24,7 @@ import org.hibernate.search.annotations.Resolution;
 import org.hibernate.search.annotations.Store;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -273,6 +274,14 @@ public class Student extends User implements ArchivableEntity {
     return Role.STUDENT;
   }
 
+  public Curriculum getCurriculum() {
+    return curriculum;
+  }
+
+  public void setCurriculum(Curriculum curriculum) {
+    this.curriculum = curriculum;
+  }
+
   private String nickname;
     
   @Lob
@@ -339,4 +348,7 @@ public class Student extends User implements ArchivableEntity {
   
   @Basic (fetch = FetchType.LAZY)
   private String studyEndText;
+
+  @ManyToOne
+  private Curriculum curriculum;
 }

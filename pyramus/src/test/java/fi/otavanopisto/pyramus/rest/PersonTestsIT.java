@@ -245,6 +245,7 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       1l, // educationalLevelId
       getDate(2020, 11, 2), // studyTimeEnd
       1l, // studyProgrammeId
+      null, // curriculumId
       2d, // previousStudies
       "Carpenter", // education
       Boolean.FALSE, // lodging
