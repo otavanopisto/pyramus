@@ -42,6 +42,7 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
         null,
         null,
         1l,
+        null,
         1d, 
         1l, 
         null);
@@ -90,6 +91,7 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
         null,
         null,
         1l,
+        null,
         1d, 
         1l, 
         null);
@@ -113,6 +115,7 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
           null,
           null,
           2l,
+          null,
           2d, 
           2l, 
           null);
@@ -141,6 +144,7 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
         1l,
         1l,
         1l,
+        null,
         1d, 
         1l, 
         null);

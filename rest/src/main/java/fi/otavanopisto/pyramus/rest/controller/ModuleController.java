@@ -13,6 +13,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleComponentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.projects.ProjectModuleDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
@@ -43,9 +44,9 @@ public class ModuleController {
   
   /* Module */
 
-  public Module createModule(String name, Subject subject, Integer courseNumber, Double moduleLength, EducationalTimeUnit moduleLengthTimeUnit,
+  public Module createModule(String name, Subject subject, Curriculum curriculum, Integer courseNumber, Double moduleLength, EducationalTimeUnit moduleLengthTimeUnit,
       String description, Long maxParticipantCount, User creator) {
-    Module module = moduleDAO.create(name, subject, courseNumber, moduleLength, moduleLengthTimeUnit, description, maxParticipantCount, creator);
+    Module module = moduleDAO.create(name, subject, curriculum, courseNumber, moduleLength, moduleLengthTimeUnit, description, maxParticipantCount, creator);
     return module;
   }
 
@@ -64,9 +65,9 @@ public class ModuleController {
     return modules;
   }
 
-  public Module updateModule(Module module, String name, Subject subject, Integer courseNumber, Double length, EducationalTimeUnit lengthTimeUnit,
+  public Module updateModule(Module module, String name, Subject subject, Curriculum curriculum, Integer courseNumber, Double length, EducationalTimeUnit lengthTimeUnit,
       String description, Long maxParticipantCount, User modifier) {
-    Module moduleUpdated = moduleDAO.update(module, name, subject, courseNumber, length, lengthTimeUnit, description, maxParticipantCount, modifier);
+    Module moduleUpdated = moduleDAO.update(module, name, subject, curriculum, courseNumber, length, lengthTimeUnit, description, maxParticipantCount, modifier);
     return moduleUpdated;
   }
 

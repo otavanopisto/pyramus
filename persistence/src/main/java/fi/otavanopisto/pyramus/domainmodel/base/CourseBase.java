@@ -324,6 +324,14 @@ public abstract class CourseBase implements ArchivableEntity {
     return maxParticipantCount;
   }
 
+  public Curriculum getCurriculum() {
+    return curriculum;
+  }
+
+  public void setCurriculum(Curriculum curriculum) {
+    this.curriculum = curriculum;
+  }
+
   @Id
   @DocumentId
   @GeneratedValue(strategy=GenerationType.TABLE, generator="CourseBase")  
@@ -393,4 +401,7 @@ public abstract class CourseBase implements ArchivableEntity {
   @Version
   @Column(nullable = false)
   private Long version;
+  
+  @ManyToOne
+  private Curriculum curriculum;
 }

@@ -182,6 +182,7 @@ public class ObjectFactory {
             Long moduleId = entity.getModule() != null ? entity.getModule().getId() : null;
             Long stateId = entity.getState() != null ? entity.getState().getId() : null;
             Long typeId = entity.getType() != null ? entity.getType().getId() : null;
+            Long curriculumId = entity.getCurriculum() != null ? entity.getCurriculum().getId(): null;
             
             List<CourseBaseVariable> entityVariables = courseController.listCourseVariablesByCourse(entity);
 
@@ -195,7 +196,7 @@ public class ObjectFactory {
                 entity.getMaxParticipantCount(), beginDate, endDate, entity.getNameExtension(), 
                 entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingHours(), 
                 entity.getDistanceTeachingDays(), entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, 
-                creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
+                creatorId, lastModifierId, subjectId, curriculumId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
           }
         }, 
         
@@ -312,7 +313,8 @@ public class ObjectFactory {
             Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
             Long subjectId = entity.getSubject() != null ? entity.getSubject().getId() : null;
             Double length = entity.getCourseLength() != null ? entity.getCourseLength().getUnits() : null; 
-            Long lenghtUnitId = entity.getCourseLength() != null && entity.getCourseLength().getUnit() != null ? entity.getCourseLength().getUnit().getId() : null; 
+            Long lenghtUnitId = entity.getCourseLength() != null && entity.getCourseLength().getUnit() != null ? entity.getCourseLength().getUnit().getId() : null;
+            Long curriculumId = entity.getCurriculum() != null ? entity.getCurriculum().getId(): null;
             List<String> tags = new ArrayList<>();
             
             Set<Tag> moduleTags = entity.getTags();
@@ -324,7 +326,7 @@ public class ObjectFactory {
             
             return new fi.otavanopisto.pyramus.rest.model.Module(entity.getId(), entity.getName(), toDateTime(entity.getCreated()),
                 toDateTime(entity.getLastModified()), entity.getDescription(), entity.getArchived(), entity.getCourseNumber(), 
-                entity.getMaxParticipantCount(), creatorId, lastModifierId, subjectId, length, lenghtUnitId, tags);
+                entity.getMaxParticipantCount(), creatorId, lastModifierId, subjectId, curriculumId, length, lenghtUnitId, tags);
           }
         }, 
         

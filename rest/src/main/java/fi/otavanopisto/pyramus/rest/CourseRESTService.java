@@ -39,6 +39,7 @@ import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
@@ -103,6 +104,9 @@ public class CourseRESTService extends AbstractRESTService {
   private CommonController commonController;
 
   @Inject
+  private CurriculumController curriculumController;
+  
+  @Inject
   private SessionController sessionController;
 
   @Inject
@@ -165,10 +169,11 @@ public class CourseRESTService extends AbstractRESTService {
     Date enrolmentTimeEnd = toDate(courseEntity.getEnrolmentTimeEnd());
     BigDecimal courseFee = null;
     Currency courseFeeCurrency = null;
+    Curriculum curriculum = courseEntity.getCurriculumId() != null ? curriculumController.findCurriculumById(courseEntity.getCurriculumId()) : null;
     
     User loggedUser = sessionController.getUser();
     
-    Course course = courseController.createCourse(module, name, nameExtension, state, type, subject, courseNumber, 
+    Course course = courseController.createCourse(module, name, nameExtension, state, type, subject, curriculum, courseNumber, 
         toDate(beginDate), toDate(endDate), courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, 
         teachingHours, distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, 
         courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser);
@@ -291,8 +296,9 @@ public class CourseRESTService extends AbstractRESTService {
     Long maxParticipantCount = courseEntity.getMaxParticipantCount();
     Date enrolmentTimeEnd = toDate(courseEntity.getEnrolmentTimeEnd());
     User loggedUser = sessionController.getUser();
+    Curriculum curriculum = courseEntity.getCurriculumId() != null ? curriculumController.findCurriculumById(courseEntity.getCurriculumId()) : null;
     
-    Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, type, subject, courseNumber, toDate(beginDate), toDate(endDate), courseLength,
+    Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, type, subject, curriculum, courseNumber, toDate(beginDate), toDate(endDate), courseLength,
         courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, assessingHours, description,
         maxParticipantCount, enrolmentTimeEnd, loggedUser);
     
