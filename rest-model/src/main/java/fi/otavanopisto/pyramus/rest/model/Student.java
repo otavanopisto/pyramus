@@ -15,7 +15,7 @@ public class Student implements ContextReference {
   
   public Student(Long id, Long personId, String firstName, String lastName, String nickname, String additionalInfo, String additionalContactInfo, Long nationalityId,
       Long languageId, Long municipalityId, Long schoolId, Long activityTypeId, Long examinationTypeId, Long educationalLevelId, DateTime studyTimeEnd,
-      Long studyProgrammeId, Double previousStudies, String education, Boolean lodging, DateTime studyStartDate, DateTime studyEndDate, Long studyEndReasonId,
+      Long studyProgrammeId, Long curriculumId, Double previousStudies, String education, Boolean lodging, DateTime studyStartDate, DateTime studyEndDate, Long studyEndReasonId,
       String studyEndText, Map<String, String> variables, List<String> tags, Boolean archived) {
     super();
     this.id = id;
@@ -34,6 +34,7 @@ public class Student implements ContextReference {
     this.educationalLevelId = educationalLevelId;
     this.studyTimeEnd = studyTimeEnd;
     this.studyProgrammeId = studyProgrammeId;
+    this.setCurriculumId(curriculumId);
     this.previousStudies = previousStudies;
     this.education = education;
     this.lodging = lodging;
@@ -254,6 +255,14 @@ public class Student implements ContextReference {
     this.archived = archived;
   }
 
+  public Long getCurriculumId() {
+    return curriculumId;
+  }
+
+  public void setCurriculumId(Long curriculumId) {
+    this.curriculumId = curriculumId;
+  }
+
   private Long id;
   private Long personId;
   private String firstName;
@@ -270,6 +279,7 @@ public class Student implements ContextReference {
   private Long educationalLevelId;
   private DateTime studyTimeEnd;
   private Long studyProgrammeId;
+  private Long curriculumId;
   private Double previousStudies;
   private String education;
   private Boolean lodging;

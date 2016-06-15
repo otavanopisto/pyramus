@@ -108,6 +108,19 @@
               </select>
             </div>
 
+            <div class="genericFormSection">  
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="students.createStudent.curriculumTitle"/>
+                <jsp:param name="helpLocale" value="students.createStudent.curriculumHelp"/>
+              </jsp:include>                                           
+              <select name="curriculum">
+                <option></option>           
+                <c:forEach var="curriculum" items="${curriculums}">
+                  <option value="${curriculum.id}">${curriculum.name}</option> 
+                </c:forEach>
+              </select>
+            </div>
+
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="students.createStudent.firstNameTitle"/>

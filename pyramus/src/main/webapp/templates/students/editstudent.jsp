@@ -741,6 +741,29 @@
   
               <div class="genericFormSection">           
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="students.editStudent.curriculumTitle"/>
+                  <jsp:param name="helpLocale" value="students.editStudent.curriculumHelp"/>
+                </jsp:include>            
+                <select name="curriculum.${student.id}">
+                  <option></option>           
+                  <c:forEach var="curriculum" items="${curriculums}">
+                    <c:choose>
+                      <c:when test="${curriculum.id eq student.curriculum.id}">
+                        <option value="${curriculum.id}" selected="selected">${curriculum.name}</option> 
+                      </c:when>
+                      <c:otherwise>
+                        <option value="${curriculum.id}">${curriculum.name}</option> 
+                      </c:otherwise>
+                    </c:choose>
+                  </c:forEach>
+                  <c:if test="${student.curriculum.archived}">
+                    <option value="${student.curriculum.id}" selected="selected">${student.curriculum.name}*</option>
+                  </c:if>
+                </select>
+              </div>
+  
+              <div class="genericFormSection">           
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="students.editStudent.firstNameTitle"/>
                   <jsp:param name="helpLocale" value="students.editStudent.firstNameHelp"/>
                 </jsp:include>            

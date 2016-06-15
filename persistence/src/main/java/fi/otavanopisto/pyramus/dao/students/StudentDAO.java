@@ -23,6 +23,7 @@ import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Email_;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
@@ -117,9 +118,10 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
   }
 
   public Student create(Person person, String firstName, String lastName, String nickname, String additionalInfo,
-      Date studyTimeEnd, StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
-      Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Double previousStudies,
-      Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, String studyEndText, Boolean lodging, Boolean archived) {
+      Date studyTimeEnd, StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, 
+      String education, Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, 
+      Curriculum curriculum, Double previousStudies, Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, 
+      String studyEndText, Boolean lodging, Boolean archived) {
 
     EntityManager entityManager = getEntityManager();
 
@@ -140,6 +142,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setLanguage(language);
     student.setSchool(school);
     student.setStudyProgramme(studyProgramme);
+    student.setCurriculum(curriculum);
     student.setPreviousStudies(previousStudies);
     student.setStudyStartDate(studyStartDate);
     student.setStudyEndDate(studyEndDate);
@@ -161,9 +164,10 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
   }
   
   public void update(Student student, String firstName, String lastName, String nickname, String additionalInfo,
-      Date studyTimeEnd, StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
-      Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Double previousStudies,
-      Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, String studyEndText, Boolean lodging) {
+      Date studyTimeEnd, StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, 
+      String education, Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, 
+      Curriculum curriculum, Double previousStudies, Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, 
+      String studyEndText, Boolean lodging) {
     EntityManager entityManager = getEntityManager();
 
     student.setFirstName(firstName);
@@ -186,6 +190,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setStudyEndReason(studyEndReason);
     student.setStudyEndText(studyEndText);
     student.setLodging(lodging);
+    student.setCurriculum(curriculum);
 
     entityManager.persist(student);
     
@@ -205,6 +210,13 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
   public void updateSchool(Student student, School school) {
     EntityManager entityManager = getEntityManager();
     student.setSchool(school);
+    entityManager.persist(student);
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
+  }
+
+  public void updateCurriculum(Student student, Curriculum curriculum) {
+    EntityManager entityManager = getEntityManager();
+    student.setCurriculum(curriculum);
     entityManager.persist(student);
     studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
   }

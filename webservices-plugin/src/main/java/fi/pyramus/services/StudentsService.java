@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -101,10 +102,11 @@ public class StudentsService extends PyramusService {
     StudyProgramme studyProgramme = studyProgrammeId == null ? null : studyProgrammeDAO.findById(studyProgrammeId);
     StudentStudyEndReason studyEndReason = null; // student.getStudyEndReason();
     Boolean lodging = false; // oldStudent.getLodging();
+    Curriculum curriculum = oldStudent.getCurriculum();
 
     Student newStudent = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType,
-        educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies, studyStartTime, studyEndTime,
-        studyEndReason, studyEndText, lodging, false);
+        educationalLevel, education, nationality, municipality, language, school, studyProgramme, curriculum, previousStudies, studyStartTime, 
+        studyEndTime, studyEndReason, studyEndText, lodging, false);
 
     // Contact info
 
@@ -275,8 +277,8 @@ public class StudentsService extends PyramusService {
     nickname = StringUtils.trim(nickname);
     
     Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType,
-        examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies, studyStartDate,
-        studyEndDate, studyEndReason, studyEndText, lodging, false);
+        examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme, null, 
+        previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging, false);
     
     // TODO Proper handling for phone and parental info
     
@@ -328,8 +330,8 @@ public class StudentsService extends PyramusService {
     nickname = StringUtils.trim(nickname);
     
     studentDAO.update(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType,
-        educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies, studyStartDate, studyEndDate,
-        studyEndReason, studyEndText, lodging);
+        educationalLevel, education, nationality, municipality, language, school, studyProgramme, null, previousStudies, 
+        studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging);
 
     validateEntity(student);
   }

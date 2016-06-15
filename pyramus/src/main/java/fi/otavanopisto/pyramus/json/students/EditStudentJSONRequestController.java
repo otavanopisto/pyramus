@@ -17,6 +17,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
@@ -36,6 +37,7 @@ import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -83,6 +85,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
 
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
     
@@ -216,6 +219,9 @@ public class EditStudentJSONRequestController extends JSONRequestController {
 	    entityId = requestContext.getLong("studyEndReason." + student.getId());
 	    StudentStudyEndReason studyEndReason = entityId == null ? null : studyEndReasonDAO.findById(entityId);
 	
+      entityId = requestContext.getLong("curriculum." + student.getId());
+      Curriculum curriculum = entityId == null ? null : curriculumDAO.findById(entityId);
+	    
 	    Integer variableCount = requestContext.getInteger("variablesTable." + student.getId() + ".rowCount");
 	    if (variableCount != null) {
 	      for (int i = 0; i < variableCount; i++) {
@@ -229,8 +235,8 @@ public class EditStudentJSONRequestController extends JSONRequestController {
 	    // Student
 
 	    studentDAO.update(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd,
-	        activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme,
-	        previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging);
+	        activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, 
+	        studyProgramme, curriculum, previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging);
 	   
 	    // Tags
 

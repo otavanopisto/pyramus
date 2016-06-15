@@ -65,6 +65,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
       1l, // educationalLevelId
       getDate(2020, 11, 2), // studyTimeEnd
       1l, // studyProgrammeId
+      null, // curriculumId
       2d, // previousStudies
       "Carpenter", // education
       Boolean.FALSE, // lodging
@@ -138,6 +139,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
       1l, // educationalLevelId
       getDate(2020, 11, 2), // studyTimeEnd
       1l, // studyProgrammeId
+      null, // curriculumId
       2d, // previousStudies
       "not updated education", // education
       Boolean.FALSE, // lodging
@@ -177,6 +179,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
         2l, // educationalLevelId
         getDate(2030, 11, 2), // studyTimeEnd
         1l, // studyProgrammeId
+        null, // curriculumId
         2d, // previousStudies
         "updated education", // education
         Boolean.TRUE, // lodging
@@ -231,6 +234,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
         2l, // educationalLevelId
         getDate(2030, 11, 2), // studyTimeEnd
         1l, // studyProgrammeId
+        null, // curriculumId
         2d, // previousStudies
         "updated education", // education
         Boolean.TRUE, // lodging
@@ -274,6 +278,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
       1l, // educationalLevelId
       getDate(2020, 11, 2), // studyTimeEnd
       1l, // studyProgrammeId
+      null, // curriculumId
       2d, // previousStudies
       "to be deleted", // education
       Boolean.FALSE, // lodging
