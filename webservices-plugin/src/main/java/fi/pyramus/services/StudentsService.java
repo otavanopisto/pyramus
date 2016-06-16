@@ -324,13 +324,14 @@ public class StudentsService extends PyramusService {
     School school = schoolId == null ? null : schoolDAO.findById(schoolId);
     StudyProgramme studyProgramme = studyProgrammeId == null ? null : studyProgrammeDAO.findById(studyProgrammeId);
     StudentStudyEndReason studyEndReason = studyEndReasonId == null ? null : studyEndReasonDAO.findById(studyEndReasonId);
+    Curriculum curriculum = student.getCurriculum();
 
     firstName = StringUtils.trim(firstName);
     lastName = StringUtils.trim(lastName);
     nickname = StringUtils.trim(nickname);
     
     studentDAO.update(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType,
-        educationalLevel, education, nationality, municipality, language, school, studyProgramme, null, previousStudies, 
+        educationalLevel, education, nationality, municipality, language, school, studyProgramme, curriculum, previousStudies, 
         studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging);
 
     validateEntity(student);
