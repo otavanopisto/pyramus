@@ -63,6 +63,7 @@ import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
 import fi.otavanopisto.pyramus.rest.controller.AssessmentController;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
+import fi.otavanopisto.pyramus.rest.controller.CurriculumController;
 import fi.otavanopisto.pyramus.rest.controller.ModuleController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;

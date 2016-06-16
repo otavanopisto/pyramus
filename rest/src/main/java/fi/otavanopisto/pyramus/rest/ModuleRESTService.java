@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.domainmodel.modules.ModuleComponent;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
+import fi.otavanopisto.pyramus.rest.controller.CurriculumController;
 import fi.otavanopisto.pyramus.rest.controller.ModuleController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.ModulePermissions;
