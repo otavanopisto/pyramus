@@ -541,6 +541,18 @@
                 </c:choose>
               </div>
             </div>
+
+            <c:choose>
+              <c:when test="${course.curriculum ne null}">
+                <div class="genericFormSection">
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="courses.viewCourse.curriculumTitle" />
+                    <jsp:param name="helpLocale" value="courses.viewCourse.curriculumHelp" />
+                  </jsp:include>
+                  <div class="genericViewFormDataText">${course.curriculum.name}</div>
+                </div>
+              </c:when>
+            </c:choose> 
     
             <c:choose>
               <c:when test="${course.courseNumber ne null}">
