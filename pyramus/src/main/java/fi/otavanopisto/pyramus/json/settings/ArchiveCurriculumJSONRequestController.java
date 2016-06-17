@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.json.settings;
 
+import fi.internetix.smvc.SmvcRuntimeException;
+import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
@@ -13,8 +15,12 @@ public class ArchiveCurriculumJSONRequestController extends JSONRequestControlle
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     Long curriculumId = requestContext.getLong("curriculumId");
 
-    Curriculum curriculum = curriculumDAO.findById(curriculumId);
-    curriculumDAO.archive(curriculum);
+    Curriculum curriculum = curriculumId != null ? curriculumDAO.findById(curriculumId) : null;
+    
+    if (curriculum != null)
+      curriculumDAO.archive(curriculum);
+    else
+      throw new SmvcRuntimeException(StatusCode.UNDEFINED, "Given curriculum was not found.");
   }
 
   public UserRole[] getAllowedRoles() {
