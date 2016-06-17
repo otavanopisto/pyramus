@@ -45,7 +45,7 @@ function onLoad(event) {
           required : true
         },
         {
-          left : 346,
+          right : 8,
           width : 30,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/edit-delete.png',
@@ -90,7 +90,7 @@ function onLoad(event) {
           },
           paramName : 'archiveButton'
         }, {
-          left : 346,
+          right : 8,
           width : 30,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/list-remove.png',
