@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.dao.projects.ProjectDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
@@ -50,8 +51,8 @@ import fi.otavanopisto.pyramus.domainmodel.modules.Module_;
 @Stateless
 public class ModuleDAO extends PyramusEntityDAO<Module> {
 
-  public Module create(String name, Subject subject, Integer courseNumber, Double moduleLength, EducationalTimeUnit moduleLengthTimeUnit,
-      String description, Long maxParticipantCount, User creatingUser) {
+  public Module create(String name, Subject subject, Curriculum curriculum, Integer courseNumber, Double moduleLength, 
+      EducationalTimeUnit moduleLengthTimeUnit, String description, Long maxParticipantCount, User creatingUser) {
     EntityManager entityManager = getEntityManager();
 
     Date now = new Date(System.currentTimeMillis());
@@ -67,6 +68,7 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     module.setCourseNumber(courseNumber);
     module.setCourseLength(educationalLength);
     module.setMaxParticipantCount(maxParticipantCount);
+    module.setCurriculum(curriculum);
 
     module.setCreator(creatingUser);
     module.setCreated(now);
@@ -119,8 +121,8 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     return module;
   }
 
-  public Module update(Module module, String name, Subject subject, Integer courseNumber, Double length, EducationalTimeUnit lengthTimeUnit,
-      String description, Long maxParticipantCount, User user) {
+  public Module update(Module module, String name, Subject subject, Curriculum curriculum, Integer courseNumber, Double length, 
+      EducationalTimeUnit lengthTimeUnit, String description, Long maxParticipantCount, User user) {
     EntityManager entityManager = getEntityManager();
 
     Date now = new Date(System.currentTimeMillis());
@@ -140,6 +142,8 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     module.setLastModifier(user);
     module.setLastModified(now);
     module.setMaxParticipantCount(maxParticipantCount);
+    module.setCurriculum(curriculum);
+    
     entityManager.persist(module);
     
     return module;

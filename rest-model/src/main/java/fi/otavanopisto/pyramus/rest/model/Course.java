@@ -13,17 +13,17 @@ public class Course {
   public Course(String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
+      Long lastModifierId, Long subjectId, Long curriculumId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags) {
     this(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
-        creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
+        creatorId, lastModifierId, subjectId, curriculumId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
   }
 
   public Course(Long id, String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
+      Long lastModifierId, Long subjectId, Long curriculumId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags) {
     super();
     this.id = id;
@@ -48,6 +48,7 @@ public class Course {
     this.creatorId = creatorId;
     this.lastModifierId = lastModifierId;
     this.subjectId = subjectId;
+    this.curriculumId = curriculumId;
     this.length = length;
     this.lengthUnitId = lengthUnitId;
     this.moduleId = moduleId;
@@ -281,6 +282,14 @@ public class Course {
     this.distanceTeachingHours = distanceTeachingHours;
   }
 
+  public Long getCurriculumId() {
+    return curriculumId;
+  }
+
+  public void setCurriculumId(Long curriculumId) {
+    this.curriculumId = curriculumId;
+  }
+
   private Long id;
   private String name;
   private DateTime created;
@@ -309,4 +318,5 @@ public class Course {
   private Long typeId;
   private Map<String, String> variables;
   private List<String> tags;
+  private Long curriculumId;
 }

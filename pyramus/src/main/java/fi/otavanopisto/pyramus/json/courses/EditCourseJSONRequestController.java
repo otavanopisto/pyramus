@@ -22,6 +22,7 @@ import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.CourseEducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseEducationTypeDAO;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
@@ -51,6 +52,7 @@ import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -259,6 +261,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
     CourseTypeDAO courseTypeDAO = DAOFactory.getInstance().getCourseTypeDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     
     // Course basic information
 
@@ -290,6 +293,9 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     BigDecimal courseFee = requestContext.getBigDecimal("courseFee");
     Currency courseFeeCurrency = requestContext.getCurrency("courseFeeCurrency");
     
+    Long entityId = requestContext.getLong("curriculum");
+    Curriculum curriculum = entityId == null ? null : curriculumDAO.findById(entityId);
+    
     Long version = requestContext.getLong("version");
     if (!course.getVersion().equals(version))
       throw new StaleObjectStateException(Course.class.getName(), course.getId());
@@ -309,7 +315,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     
     StaffMember staffMember = userDAO.findById(requestContext.getLoggedUserId());
 
-    courseDAO.update(course, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
+    courseDAO.update(course, name, nameExtension, courseState, courseType, subject, curriculum, courseNumber, beginDate, endDate,
         courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, 
         planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, staffMember);
     

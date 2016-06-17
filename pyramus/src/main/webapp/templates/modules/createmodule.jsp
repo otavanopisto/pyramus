@@ -201,7 +201,7 @@
                 <jsp:param name="helpLocale" value="modules.createModule.subjectHelp"/>
               </jsp:include>
                 
-	            <select name="subject">           
+	            <select name="subject">
                 <c:forEach var="educationType" items="${educationTypes}">
                   <c:if test="${subjectsByEducationType[educationType.id] ne null}">
                     <optgroup label="${educationType.name}">
@@ -246,6 +246,20 @@
 	            </select>
 	          </div>
 
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="modules.createModule.curriculumTitle"/>
+                <jsp:param name="helpLocale" value="modules.createModule.curriculumHelp"/>
+              </jsp:include>
+                
+              <select name="curriculum">
+                <option value=""></option> 
+                <c:forEach var="curriculum" items="${curriculums}">
+                  <option value="${curriculum.id}">${curriculum.name}</option> 
+                </c:forEach>
+              </select>
+            </div>
+            
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="modules.createModule.courseNumberTitle"/>

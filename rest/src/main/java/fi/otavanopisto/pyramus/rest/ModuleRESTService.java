@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
@@ -31,6 +32,7 @@ import fi.otavanopisto.pyramus.domainmodel.modules.ModuleComponent;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
+import fi.otavanopisto.pyramus.rest.controller.CurriculumController;
 import fi.otavanopisto.pyramus.rest.controller.ModuleController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.ModulePermissions;
@@ -49,6 +51,9 @@ public class ModuleRESTService extends AbstractRESTService{
   @Inject
   private CommonController commonController;
 
+  @Inject
+  private CurriculumController curriculumController;
+  
   @Inject
   private SessionController sessionController;
   
@@ -74,7 +79,8 @@ public class ModuleRESTService extends AbstractRESTService{
     Double length = entity.getLength();
     String description = entity.getDescription();
     Long maxParticipantCount = entity.getMaxParticipantCount();
-    Module module = moduleController.createModule(name, subject, courseNumber, length, lengthUnit, description, maxParticipantCount, sessionController.getUser());
+    Curriculum curriculum = entity.getCurriculumId() != null ? curriculumController.findCurriculumById(entity.getCurriculumId()) : null;
+    Module module = moduleController.createModule(name, subject, curriculum, courseNumber, length, lengthUnit, description, maxParticipantCount, sessionController.getUser());
     
     if (entity.getTags() != null) {
       for (String tag : entity.getTags()) {
@@ -153,7 +159,8 @@ public class ModuleRESTService extends AbstractRESTService{
     Long maxParticipantCount = entity.getMaxParticipantCount();
     
     module = moduleController.updateModuleTags(module, entity.getTags() == null ? new ArrayList<String>() : entity.getTags());
-    module = moduleController.updateModule(module, name, subject, courseNumber, length, lengthUnit, description, maxParticipantCount, sessionController.getUser());
+    Curriculum curriculum = entity.getCurriculumId() != null ? curriculumController.findCurriculumById(entity.getCurriculumId()) : null;
+    module = moduleController.updateModule(module, name, subject, curriculum, courseNumber, length, lengthUnit, description, maxParticipantCount, sessionController.getUser());
     
     return Response.ok(objectFactory.createModel(module)).build();
   }

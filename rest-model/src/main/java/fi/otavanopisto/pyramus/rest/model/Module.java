@@ -10,7 +10,7 @@ public class Module {
   }
   
   public Module(Long id, String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber,
-      Long maxParticipantCount, Long creatorId, Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, List<String> tags) {
+      Long maxParticipantCount, Long creatorId, Long lastModifierId, Long subjectId, Long curriculumId, Double length, Long lengthUnitId, List<String> tags) {
     super();
     this.id = id;
     this.name = name;
@@ -23,6 +23,7 @@ public class Module {
     this.creatorId = creatorId;
     this.lastModifierId = lastModifierId;
     this.subjectId = subjectId;
+    this.curriculumId = curriculumId;
     this.length = length;
     this.lengthUnitId = lengthUnitId;
     this.tags = tags;
@@ -140,6 +141,14 @@ public class Module {
     this.tags = tags;
   }
 
+  public Long getCurriculumId() {
+    return curriculumId;
+  }
+
+  public void setCurriculumId(Long curriculumId) {
+    this.curriculumId = curriculumId;
+  }
+
   private Long id;
   private String name;
   private DateTime created;
@@ -154,4 +163,5 @@ public class Module {
   private Double length;
   private Long lengthUnitId;
   private List<String> tags;
+  private Long curriculumId;
 }

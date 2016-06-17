@@ -27,6 +27,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
         null,
         null,
         1l,
+        null,
         1d, 
         1l, 
         null);
@@ -108,6 +109,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
         null,
         null,
         1l,
+        null,
         1d, 
         1l, 
         null);
@@ -141,6 +143,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
           null,
           null,
           2l,
+          null,
           2d, 
           2l, 
           null);
@@ -180,6 +183,7 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
         1l,
         1l,
         1l,
+        null,
         1d, 
         1l, 
         null);

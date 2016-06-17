@@ -13,6 +13,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
@@ -64,6 +65,7 @@ public class EditModuleViewController extends PyramusViewController implements B
     EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();    
     EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();    
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
 
     Long moduleId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("module"));
     Module module = moduleDAO.findById(moduleId);
@@ -124,6 +126,7 @@ public class EditModuleViewController extends PyramusViewController implements B
     pageRequestContext.getRequest().setAttribute("enabledEducationTypes", enabledEducationTypes);
     pageRequestContext.getRequest().setAttribute("courseDescriptions", descriptionDAO.listByCourseBase(module));
     pageRequestContext.getRequest().setAttribute("courseDescriptionCategories", descriptionCategoryDAO.listUnarchived());
+    pageRequestContext.getRequest().setAttribute("curriculums", curriculumDAO.listUnarchived());
     pageRequestContext.setIncludeJSP("/templates/modules/editmodule.jsp");
   }
 

@@ -1082,6 +1082,27 @@
 
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="courses.createCourse.curriculumTitle"/>
+                <jsp:param name="helpLocale" value="courses.createCourse.curriculumHelp"/>
+              </jsp:include>
+                
+              <select name="curriculum">
+                <option value=""></option> 
+                <c:forEach var="curriculum" items="${curriculums}">
+                  <c:choose>
+                    <c:when test="${curriculum.id eq module.curriculum.id}">
+                      <option value="${curriculum.id}" selected="selected">${curriculum.name}</option> 
+                    </c:when>
+                    <c:otherwise>
+                      <option value="${curriculum.id}">${curriculum.name}</option> 
+                    </c:otherwise>
+                  </c:choose>
+                </c:forEach>
+              </select>
+            </div>
+            
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="courses.createCourse.courseNumberTitle"/>
                 <jsp:param name="helpLocale" value="courses.createCourse.courseNumberHelp"/>
               </jsp:include>

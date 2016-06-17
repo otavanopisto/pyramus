@@ -478,7 +478,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       Map<String, String> variables, List<String> tags) {
     return new Course(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
-        creatorId, lastModifierId, subjectId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
+        creatorId, lastModifierId, subjectId, null, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
   }
   
 }

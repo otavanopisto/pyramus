@@ -16,6 +16,7 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.CourseEducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseEducationTypeDAO;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
@@ -29,6 +30,7 @@ import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -62,6 +64,7 @@ public class EditModuleJSONRequestController extends JSONRequestController {
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
 
     Long moduleId = requestContext.getLong("moduleId");
     
@@ -195,6 +198,9 @@ public class EditModuleJSONRequestController extends JSONRequestController {
     Long maxParticipantCount = requestContext.getLong("maxParticipantCount");
     String tagsText = requestContext.getString("tags");
     
+    Long entityId = requestContext.getLong("curriculum");
+    Curriculum curriculum = entityId == null ? null : curriculumDAO.findById(entityId);
+
     Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
@@ -210,8 +216,7 @@ public class EditModuleJSONRequestController extends JSONRequestController {
     
     EducationalTimeUnit moduleLengthTimeUnit = educationalTimeUnitDAO.findById(moduleLengthTimeUnitId);
 
-    
-    moduleDAO.update(module, name, subject, courseNumber, moduleLength, moduleLengthTimeUnit, description, maxParticipantCount, loggedUser);
+    moduleDAO.update(module, name, subject, curriculum, courseNumber, moduleLength, moduleLengthTimeUnit, description, maxParticipantCount, loggedUser);
 
     // Tags
 
