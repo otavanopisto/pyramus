@@ -463,7 +463,7 @@
             <version>2.19</version>
             <configuration>
               <includes>
-                <include>fi/pyramus/rest/**/*IT.java</include>
+                <include>fi/otavanopisto/pyramus/rest/**/*IT.java</include>
               </includes>
               <systemPropertyVariables>
                 <it.project.version>${project.version}</it.project.version>
