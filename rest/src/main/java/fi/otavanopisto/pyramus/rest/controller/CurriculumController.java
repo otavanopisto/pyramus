@@ -27,14 +27,14 @@ public class CurriculumController {
     return curriculum;
   }
   
-  public List<Curriculum> listNationalities() {
-    List<Curriculum> nationalities = curriculumDAO.listAll();
-    return nationalities;
+  public List<Curriculum> listCurriculums() {
+    List<Curriculum> curriculums = curriculumDAO.listAll();
+    return curriculums;
   }
   
-  public List<Curriculum> listUnarchivedNationalities() {
-    List<Curriculum> nationalities = curriculumDAO.listUnarchived();
-    return nationalities;
+  public List<Curriculum> listUnarchivedCurriculums() {
+    List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    return curriculums;
   }
 
   public Curriculum updateCurriculum(Curriculum curriculum, String name) {
