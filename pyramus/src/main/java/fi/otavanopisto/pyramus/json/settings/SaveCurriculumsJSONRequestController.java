@@ -30,7 +30,11 @@ public class SaveCurriculumsJSONRequestController extends JSONRequestController 
       }
       else if (modified) {
         Curriculum curriculum = curriculumDAO.findById(curriculumId);
-        curriculumDAO.updateName(curriculum, name);
+        
+        if (curriculum != null)
+          curriculumDAO.updateName(curriculum, name);
+        else
+          throw new SmvcRuntimeException(StatusCode.UNDEFINED, "Modified curriculum was not found.");
       }
     }
     jsonRequestContext.setRedirectURL(jsonRequestContext.getReferer(true));
