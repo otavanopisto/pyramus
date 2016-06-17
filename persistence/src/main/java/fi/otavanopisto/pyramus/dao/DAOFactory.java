@@ -23,6 +23,7 @@ import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseEducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseEducationTypeDAO;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
@@ -613,6 +614,10 @@ public class DAOFactory {
     return (TagDAO) findByClass(TagDAO.class);
   }
 
+  public CurriculumDAO getCurriculumDAO() {
+    return (CurriculumDAO) findByClass(CurriculumDAO.class);
+  }
+  
   /* File */
   
   public FileDAO getFileDAO() {
