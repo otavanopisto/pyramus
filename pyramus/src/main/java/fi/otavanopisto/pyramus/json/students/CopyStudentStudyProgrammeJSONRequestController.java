@@ -18,6 +18,7 @@ import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -81,10 +82,12 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     StudyProgramme studyProgramme = null; // student.getStudyProgramme();
     StudentStudyEndReason studyEndReason = null; // student.getStudyEndReason();
     Boolean lodging = false; // oldStudent.getLodging();
+    Curriculum curriculum = oldStudent.getCurriculum();
 
     Student newStudent = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd,
-        activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme, previousStudies,
-        studyStartTime, studyEndTime, studyEndReason, studyEndText, lodging, false);
+        activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, 
+        studyProgramme, curriculum, previousStudies,studyStartTime, studyEndTime, studyEndReason, studyEndText, 
+        lodging, false);
     
     // Contact info
     

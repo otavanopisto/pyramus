@@ -34,6 +34,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
@@ -71,6 +72,7 @@ import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
 import fi.otavanopisto.pyramus.rest.controller.AssessmentController;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
+import fi.otavanopisto.pyramus.rest.controller.CurriculumController;
 import fi.otavanopisto.pyramus.rest.controller.LanguageController;
 import fi.otavanopisto.pyramus.rest.controller.MunicipalityController;
 import fi.otavanopisto.pyramus.rest.controller.NationalityController;
@@ -164,6 +166,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private CourseController courseController;
+  
+  @Inject
+  private CurriculumController curriculumController;
 
   @Inject
   private SessionController sessionController;
@@ -1384,10 +1389,11 @@ public class StudentRESTService extends AbstractRESTService {
     School school = entity.getSchoolId() != null ? schoolController.findSchoolById(entity.getSchoolId()) : null;
     StudentStudyEndReason studyEndReason = entity.getStudyEndReasonId() != null ? studentStudyEndReasonController.findStudentStudyEndReasonById(entity
         .getStudyEndReasonId()) : null;
+    Curriculum curriculum = entity.getCurriculumId() != null ? curriculumController.findCurriculumById(entity.getCurriculumId()) : null;
 
     Student student = studentController.createStudent(person, firstName, lastName, nickname, entity.getAdditionalInfo(),
         toDate(entity.getStudyTimeEnd()), activityType, examinationType, educationalLevel, entity.getEducation(), nationality, municipality, language, school,
-        studyProgramme, entity.getPreviousStudies(), toDate(entity.getStudyStartDate()), toDate(entity.getStudyEndDate()), studyEndReason,
+        studyProgramme, curriculum, entity.getPreviousStudies(), toDate(entity.getStudyStartDate()), toDate(entity.getStudyEndDate()), studyEndReason,
         entity.getStudyEndText(), lodging);
     userController.updateUserVariables(student, entity.getVariables());
     studentController.updateStudentTags(student, entity.getTags());
@@ -1514,9 +1520,10 @@ public class StudentRESTService extends AbstractRESTService {
     School school = entity.getSchoolId() != null ? schoolController.findSchoolById(entity.getSchoolId()) : null;
     StudentStudyEndReason studyEndReason = entity.getStudyEndReasonId() != null ? studentStudyEndReasonController.findStudentStudyEndReasonById(entity
         .getStudyEndReasonId()) : null;
+    Curriculum curriculum = entity.getCurriculumId() != null ? curriculumController.findCurriculumById(entity.getCurriculumId()) : null;
 
     studentController.updateStudent(student, firstName, lastName, nickname, entity.getAdditionalInfo(), toDate(entity.getStudyTimeEnd()),
-        activityType, examinationType, educationalLevel, entity.getEducation(), nationality, municipality, language, school, studyProgramme,
+        activityType, examinationType, educationalLevel, entity.getEducation(), nationality, municipality, language, school, studyProgramme, curriculum,
         entity.getPreviousStudies(), toDate(entity.getStudyStartDate()), toDate(entity.getStudyEndDate()), studyEndReason, entity.getStudyEndText(), lodging);
 
     studentController.updateStudentPerson(student, person);

@@ -14,6 +14,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
@@ -30,6 +31,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
@@ -68,6 +70,7 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
 
     Long personId = requestContext.getLong("personId");
     
@@ -142,6 +145,9 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     entityId = requestContext.getLong("studyEndReason");
     StudentStudyEndReason studyEndReason = entityId == null ? null : studyEndReasonDAO.findById(entityId);
 
+    entityId = requestContext.getLong("curriculum");
+    Curriculum curriculum = entityId == null ? null : curriculumDAO.findById(entityId);
+    
     Person person = personId != null ? personDAO.findById(personId) : null;
     Person personBySSN = personDAO.findBySSN(ssecId); 
 
@@ -157,9 +163,10 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
       personDAO.update(person, birthday, ssecId, sex, basicInfo, secureInfo);
     }
     
-    Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo,
-        studyTimeEnd, activityType, examinationType, educationalLevel, education, nationality, municipality,
-        language, school, studyProgramme, previousStudies, studyStartTime, studyEndTime, studyEndReason, studyEndText, lodging, false);
+    Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, 
+        activityType, examinationType, educationalLevel, education, nationality, municipality, language, 
+        school, studyProgramme, curriculum, previousStudies, studyStartTime, studyEndTime, studyEndReason, 
+        studyEndText, lodging, false);
 
     // Tags
 
