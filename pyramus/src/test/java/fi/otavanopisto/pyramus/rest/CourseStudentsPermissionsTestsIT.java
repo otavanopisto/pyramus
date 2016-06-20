@@ -19,6 +19,7 @@ import fi.otavanopisto.pyramus.rest.model.CourseStudent;
 public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   private static final long COURSE_ID = 1000;
+  private static final long STUDENT_ID = 8;
   private CoursePermissions coursePermissions = new CoursePermissions();
   
   @Parameters
@@ -32,21 +33,26 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
   
   @Test
   public void testPermissionsCreateCourseStudent() throws NoSuchFieldException {
-    CourseStudent entity = new CourseStudent(null, COURSE_ID, 3l, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
+    CourseStudent entity = new CourseStudent(null, COURSE_ID, STUDENT_ID, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
       .body(entity)
       .post("/courses/courses/{COURSEID}/students", COURSE_ID);
     
-    assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSESTUDENT, 200);
-    Long statusCode = new Long(response.statusCode());
-    Long id;
-    if(statusCode.toString().equals("200")){
-      id = new Long(response.body().jsonPath().getInt("id"));
+    // TODO: Test that student cannot create coursestudent for another student
+    if ("STUDENT".equals(role))
+      response.then().statusCode(200);
+    else
+      assertOk(response, coursePermissions, CoursePermissions.CREATE_COURSESTUDENT, 200);
+
+    if (response.getStatusCode() == 200) {
+      Long id = new Long(response.body().jsonPath().getInt("id"));
       if (!id.equals(null)) {
         given().headers(getAdminAuthHeaders())
-          .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id);
+          .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id)
+          .then()
+          .statusCode(204);
       }
     }
   }
@@ -67,7 +73,7 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
   
   @Test
   public void testPermissionsUpdateCourseStudent() throws NoSuchFieldException  {
-    CourseStudent entity = new CourseStudent(null, COURSE_ID, 3l, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
+    CourseStudent entity = new CourseStudent(null, COURSE_ID, STUDENT_ID, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -76,21 +82,30 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
 
     Long id = response.body().jsonPath().getLong("id");
 
-    CourseStudent updateEntity = new CourseStudent(id, COURSE_ID, 3l, getDate(2012, 5, 6), false, 2l, 2l, true, CourseOptionality.OPTIONAL, null);
+    CourseStudent updateEntity = new CourseStudent(id, COURSE_ID, STUDENT_ID, getDate(2012, 5, 6), false, 2l, 2l, true, CourseOptionality.OPTIONAL, null);
     
-    Response updateResponse = given().headers(getAuthHeaders())
-      .contentType("application/json")
-      .body(updateEntity)
-      .put("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, updateEntity.getId());
-    assertOk(updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSESTUDENT, 200);
+    try {
+      Response updateResponse = given().headers(getAuthHeaders())
+        .contentType("application/json")
+        .body(updateEntity)
+        .put("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, updateEntity.getId());
 
-    given().headers(getAdminAuthHeaders())
-      .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id);
+      // TODO: Test that student cannot update coursestudent of another student
+      if ("STUDENT".equals(role))
+        updateResponse.then().statusCode(200);
+      else
+        assertOk(updateResponse, coursePermissions, CoursePermissions.UPDATE_COURSESTUDENT, 200);
+    } finally {
+      given().headers(getAdminAuthHeaders())
+        .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id)
+        .then()
+        .statusCode(204);
+    }
   }
   
   @Test
   public void testPermissionsDeleteCourseStudent() throws NoSuchFieldException  {
-    CourseStudent entity = new CourseStudent(null, COURSE_ID, 3l, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
+    CourseStudent entity = new CourseStudent(null, COURSE_ID, STUDENT_ID, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -103,9 +118,10 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
       .delete("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, id);
     assertOk(deleteResponse, coursePermissions, CoursePermissions.DELETE_COURSESTUDENT, 204);
 
-    Long statusCode = new Long(deleteResponse.statusCode());
-    if(!statusCode.toString().equals("204"))
+    if (deleteResponse.statusCode() != 204)
       given().headers(getAdminAuthHeaders())
-      .delete("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, id);
+        .delete("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, id)
+        .then()
+        .statusCode(204);      
   }
 }
