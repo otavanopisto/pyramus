@@ -18,7 +18,7 @@ values
 insert into
   Plugin (id, artifactId, enabled, groupId, version)
 values
-  (1, 'testauth-plugin', true, 'fi.otavanopisto.pyramus', '0.7.26-SNAPSHOT');
+  (1, 'testauth-plugin', true, 'fi.otavanopisto.pyramus', '0.7.50-SNAPSHOT');
   
 insert into 
   GradingScale (id, archived, name, description, version)
