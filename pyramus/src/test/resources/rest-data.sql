@@ -341,6 +341,12 @@ values
   (2, 'TST2', 'Language #2', 1, false);  
 
 insert into 
+  Curriculum (id, name, archived)
+values 
+  (1, 'Curriculum #1', false),
+  (2, 'Curriculum #2', false);  
+
+insert into 
   Municipality (id, code, name, version, archived)
 values 
   (1, 'TST1', 'Municipality #1', 1, false),
@@ -537,3 +543,4 @@ insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select '
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Credit', max(id) + 1 from Credit;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseAssessment', max(id) + 1 from CourseAssessment;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'CourseStudent', max(id) + 1 from CourseStudent;
+insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Curriculum', max(id) + 1 from Curriculum;

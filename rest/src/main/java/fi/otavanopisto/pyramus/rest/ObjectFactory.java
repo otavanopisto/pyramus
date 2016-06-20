@@ -78,6 +78,7 @@ import fi.otavanopisto.pyramus.rest.controller.SchoolController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.model.AcademicTerm;
 import fi.otavanopisto.pyramus.rest.model.CourseOptionality;
+import fi.otavanopisto.pyramus.rest.model.Curriculum;
 import fi.otavanopisto.pyramus.rest.model.ProjectModuleOptionality;
 import fi.otavanopisto.pyramus.rest.model.Sex;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType;
@@ -710,8 +711,14 @@ public class ObjectFactory {
           return new fi.otavanopisto.pyramus.rest.model.StaffMember(entity.getId(), personId, additionalContactInfo, 
               entity.getFirstName(), entity.getLastName(), entity.getTitle(), role, tags, variables);
         }
+      },
+      
+      new Mapper<fi.otavanopisto.pyramus.domainmodel.base.Curriculum>() {
+        @Override
+        public Object map(fi.otavanopisto.pyramus.domainmodel.base.Curriculum entity) {
+          return new Curriculum(entity.getId(), entity.getName(), entity.getArchived());
+        }
       }
-  
     );
   }
 

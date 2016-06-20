@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -33,6 +34,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
+import fi.otavanopisto.pyramus.rest.controller.CurriculumController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
@@ -50,6 +52,9 @@ public class CommonRESTService extends AbstractRESTService {
   @Inject
   private CourseController courseController;
 
+  @Inject
+  private CurriculumController curriculumController;
+  
   @Inject
   private SessionController sessionController;
   
@@ -1026,4 +1031,101 @@ public class CommonRESTService extends AbstractRESTService {
 
     return Response.noContent().build();
   }
+  
+  @Path("/curriculums")
+  @POST
+  @RESTPermit (CommonPermissions.CREATE_CURRICULUM)
+  public Response createSubject(fi.otavanopisto.pyramus.rest.model.Curriculum entity) {
+    if (entity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok().entity(objectFactory.createModel(curriculumController.createCurriculum(name))).build();
+  }
+  
+  @Path("/curriculums")
+  @GET
+  @RESTPermit (CommonPermissions.LIST_CURRICULUMS)
+  public Response listCurriculums(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+    List<Curriculum> subjects;
+    
+    if (filterArchived) {
+      subjects = curriculumController.listUnarchivedCurriculums();
+    } else {
+      subjects = curriculumController.listCurriculums();
+    }
+    
+    if (subjects.isEmpty()) {
+      return Response.noContent().build();
+    }
+    
+    return Response.ok()
+      .entity(objectFactory.createModel(subjects))
+      .build();
+  }
+  
+  @Path("/curriculums/{ID:[0-9]*}")
+  @GET
+  @RESTPermit (CommonPermissions.FIND_CURRICULUM)
+  public Response findCurriculum(@PathParam("ID") Long id) {
+    Curriculum curriculum = curriculumController.findCurriculumById(id);
+    if (curriculum == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (curriculum.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok()
+        .entity(objectFactory.createModel(curriculum))
+        .build();
+  }
+
+  @Path("/curriculums/{ID:[0-9]*}")
+  @PUT
+  @RESTPermit (CommonPermissions.UPDATE_CURRICULUM)
+  public Response updateCurriculum(@PathParam("ID") Long id, fi.otavanopisto.pyramus.rest.model.Curriculum entity) {
+    Curriculum curriculum = curriculumController.findCurriculumById(id);
+    if (curriculum == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (curriculum.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    String name = entity.getName();
+    
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    return Response.ok(objectFactory.createModel(curriculumController.updateCurriculum(curriculum, name))).build();
+  }
+
+  @Path("/curriculums/{ID:[0-9]*}")
+  @DELETE
+  @RESTPermit (CommonPermissions.ARCHIVE_CURRICULUM)
+  public Response archiveCurriculum(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+    Curriculum curriculum = curriculumController.findCurriculumById(id);
+    if (curriculum == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      curriculumController.deleteCurriculum(curriculum);
+    } else {
+      curriculumController.archiveCurriculum(curriculum, sessionController.getUser());
+    }
+
+    return Response.noContent().build();
+  }
+  
 }

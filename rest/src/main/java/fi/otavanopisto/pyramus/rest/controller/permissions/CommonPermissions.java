@@ -241,7 +241,30 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String DELETE_COURSEBASEVARIABLEKEY = "DELETE_COURSEBASEVARIABLEKEY";
+
+  /**
+   * Curriculum
+   */
   
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String CREATE_CURRICULUM = "CREATE_CURRICULUM";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
+  public static final String LIST_CURRICULUMS = "LIST_CURRICULUMS";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
+  public static final String FIND_CURRICULUM = "FIND_CURRICULUM";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String UPDATE_CURRICULUM = "UPDATE_CURRICULUM";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String ARCHIVE_CURRICULUM = "ARCHIVE_CURRICULUM";
   
   @Override
   public List<String> listPermissions() {

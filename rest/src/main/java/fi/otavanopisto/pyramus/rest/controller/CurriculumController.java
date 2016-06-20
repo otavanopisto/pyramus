@@ -45,5 +45,9 @@ public class CurriculumController {
     curriculumDAO.archive(curriculum, user);
     return curriculum;
   }
+
+  public void deleteCurriculum(Curriculum curriculum) {
+    curriculumDAO.delete(curriculum);
+  }
   
 }
