@@ -8,3 +8,4 @@
 /.tern-project
 /target/
 /.DS_Store
+/pyrit.keystore
