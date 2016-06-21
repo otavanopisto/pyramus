@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -77,6 +78,18 @@ public abstract class AbstractIntegrationTest {
     }
   }
 
+  protected int getEntityCount(String entity) throws SQLException, ClassNotFoundException {
+    Connection connection = getConnection();
+    Statement statement = connection.createStatement();
+    statement.execute("select count(*) as c from " + entity);
+    
+    ResultSet rs = statement.getResultSet();
+    if (rs.next())
+      return rs.getInt(1);
+    
+    return 0;
+  }
+  
   private void runSql(Connection connection, String file) throws IOException, SQLException {
     ClassLoader classLoader = getClass().getClassLoader();
     InputStream sqlStream = classLoader.getResourceAsStream(file);
@@ -101,7 +114,7 @@ public abstract class AbstractIntegrationTest {
     }
   }
 
-  private Connection getConnection() throws SQLException, ClassNotFoundException {
+  protected Connection getConnection() throws SQLException, ClassNotFoundException {
     Class.forName(getJdbcDriver());
     return DriverManager.getConnection(getJdbcUrl(), getJdbcUsername(), getJdbcPassword());
   }

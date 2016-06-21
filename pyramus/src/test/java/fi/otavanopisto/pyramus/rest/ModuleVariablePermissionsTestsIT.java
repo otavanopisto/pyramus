@@ -65,7 +65,7 @@ public class ModuleVariablePermissionsTestsIT extends AbstractRESTPermissionsTes
   public void testPermissionsUpdateModuleVariable() throws NoSuchFieldException {
     VariableKey moduleVariable = new VariableKey("upd", "not updated", false, VariableType.TEXT);
     
-    Response response = given().headers(getAdminAuthHeaders())
+    given().headers(getAdminAuthHeaders())
       .contentType("application/json")
       .body(moduleVariable)
       .post("/modules/variables");
@@ -87,7 +87,7 @@ public class ModuleVariablePermissionsTestsIT extends AbstractRESTPermissionsTes
   public void testDeleteModuleVariable() throws NoSuchFieldException {
     VariableKey moduleVariable = new VariableKey("delete", "variable to be deleted", false, VariableType.TEXT);
     
-    Response response = given().headers(getAdminAuthHeaders())
+    given().headers(getAdminAuthHeaders())
       .contentType("application/json")
       .body(moduleVariable)
       .post("/modules/variables");

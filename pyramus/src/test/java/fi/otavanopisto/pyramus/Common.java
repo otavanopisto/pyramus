@@ -31,6 +31,8 @@ public final class Common {
         return "ff81d5b8500c773e7a1776a7963801e9";
       case USER:
         return "ff81d5b8500c773e7a1776a7963801e5";
+      case STUDY_PROGRAMME_LEADER:
+        return "ff81d5b8500c773e7a1776a7963801e2";
       default:
         throw new RuntimeException("Missing or EVERYONE role auth requested.");
     }

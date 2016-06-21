@@ -14,10 +14,11 @@ import fi.otavanopisto.pyramus.rest.model.CourseStudent;
 public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
   
   private static final long COURSE_ID = 1000;
+  private static final long STUDENT_ID = 8;
 
   @Test
   public void testCreateCourseStudent() {
-    CourseStudent entity = new CourseStudent(null, COURSE_ID, 3l, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
+    CourseStudent entity = new CourseStudent(null, COURSE_ID, STUDENT_ID, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -44,7 +45,7 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateCourseStudentDuplicate() {
-    CourseStudent entity = new CourseStudent(null, COURSE_ID, 3l, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
+    CourseStudent entity = new CourseStudent(null, COURSE_ID, STUDENT_ID, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -118,7 +119,7 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateCourseStudent() {
-    CourseStudent entity = new CourseStudent(null, COURSE_ID, 3l, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
+    CourseStudent entity = new CourseStudent(null, COURSE_ID, STUDENT_ID, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -137,7 +138,7 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
 
     Long id = response.body().jsonPath().getLong("id");
 
-    CourseStudent updateEntity = new CourseStudent(id, COURSE_ID, 3l, getDate(2012, 5, 6), false, 2l, 2l, true, CourseOptionality.OPTIONAL, null);
+    CourseStudent updateEntity = new CourseStudent(id, COURSE_ID, STUDENT_ID, getDate(2012, 5, 6), false, 2l, 2l, true, CourseOptionality.OPTIONAL, null);
     
     given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -160,7 +161,7 @@ public class CourseStudentsTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteCourseStudent() {
-    CourseStudent entity = new CourseStudent(null, COURSE_ID, 3l, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
+    CourseStudent entity = new CourseStudent(null, COURSE_ID, STUDENT_ID, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
