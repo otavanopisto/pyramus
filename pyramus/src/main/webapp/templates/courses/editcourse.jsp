@@ -1318,6 +1318,46 @@
         }));          
 
         basicRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
+          iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+          text: '<fmt:message key="courses.editCourse.changeCourseModuleRelatedActionLabel"/>',
+          onclick: function (event) {
+            var courseId = ${course.id};
+
+            var dialog = new IxDialog({
+              id : 'changeModuleDialog',
+              contentURL : GLOBAL_contextPath + '/courses/changemoduledialog.page?course=${course.id}',
+              centered : true,
+              showOk : true,  
+              showCancel : true,
+              title : '<fmt:message key="courses.editCourse.changeCourseModuleDialogTitle"/>',
+              okLabel : '<fmt:message key="courses.editCourse.changeCourseModuleDialogOkLabel"/>',
+              cancelLabel : '<fmt:message key="courses.editCourse.changeCourseModuleDialogCancelLabel"/>'
+            });
+          
+            dialog.setSize("400px", "620px");
+            dialog.addDialogListener(function(event) {
+              var dlg = event.dialog;
+          
+              switch (event.name) {
+                case 'onLoad':
+                  dlg.disableOkButton();
+                break;
+                case 'okClick':
+                  if (event.results.selectedModule) {
+                    var captionElement = $("moduleName");
+                    var inputElement = $("moduleId");
+                    captionElement.update(event.results.selectedModule.name);
+                    inputElement.value = event.results.selectedModule.id;
+                  }
+                break;
+              }
+            });
+          
+            dialog.open();
+          }
+        }));          
+        
+        basicRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/edit-delete.png',
           text: '<fmt:message key="courses.editCourse.archiveCourseRelatedActionLabel"/>',
           onclick: function (event) {
@@ -1479,7 +1519,8 @@
                 <jsp:param name="titleLocale" value="courses.editCourse.moduleTitle"/>
                 <jsp:param name="helpLocale" value="courses.editCourse.moduleHelp"/>
               </jsp:include>    
-              <span><i>${course.module.name}</i></span>
+              <span><i id="moduleName">${course.module.name}</i></span>
+              <input type="hidden" id="moduleId" name="moduleId" value="${course.module.id}" />
             </div>
       
             <div class="genericFormSection">

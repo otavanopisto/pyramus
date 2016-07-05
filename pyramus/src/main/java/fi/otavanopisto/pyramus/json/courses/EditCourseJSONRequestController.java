@@ -45,6 +45,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.GradeCourseResourceDAO;
 import fi.otavanopisto.pyramus.dao.courses.OtherCostDAO;
 import fi.otavanopisto.pyramus.dao.courses.StudentCourseResourceDAO;
+import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.resources.ResourceDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -74,6 +75,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseType;
 import fi.otavanopisto.pyramus.domainmodel.courses.GradeCourseResource;
 import fi.otavanopisto.pyramus.domainmodel.courses.OtherCost;
 import fi.otavanopisto.pyramus.domainmodel.courses.StudentCourseResource;
+import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.resources.Resource;
 import fi.otavanopisto.pyramus.domainmodel.resources.ResourceType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -262,6 +264,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
     CourseTypeDAO courseTypeDAO = DAOFactory.getInstance().getCourseTypeDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
+    ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     
     // Course basic information
 
@@ -318,6 +321,13 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     courseDAO.update(course, name, nameExtension, courseState, courseType, subject, curriculum, courseNumber, beginDate, endDate,
         courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, 
         planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, staffMember);
+    
+    Long moduleId = requestContext.getLong("moduleId");
+    Long currentModuleId = course.getModule() != null ? course.getModule().getId() : null;
+    if ((moduleId != null) && (!moduleId.equals(currentModuleId))) {
+      Module module = moduleDAO.findById(moduleId);
+      courseDAO.updateModule(course, module);
+    }
     
     courseDAO.updateCourseFee(course, courseFee, courseFeeCurrency, staffMember);
     
