@@ -403,5 +403,6 @@ public abstract class CourseBase implements ArchivableEntity {
   private Long version;
   
   @ManyToOne
+  @IndexedEmbedded
   private Curriculum curriculum;
 }
