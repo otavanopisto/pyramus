@@ -48,7 +48,8 @@ values
   (11, 'Trusted System', 1),
   (12, 'Study Guider', 1),
   (13, 'Teacher', 1),
-  (14, 'Study Programme Leader', 1);
+  (14, 'Study Programme Leader', 1),
+  (15, 'Test Student #2', 1);
   
 insert into 
   Email (id, address, defaultAddress, contactInfo, contactType, indexColumn, version)
@@ -82,7 +83,8 @@ values
   (9, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '000000-0000', 'Trusted System', false),
   (10, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '000100-0000', 'Study Guider', false),
   (11, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '000010-0000', 'Teacher', false),
-  (12, 1, PARSEDATETIME('1 1 1981', 'd M yyyy'), 'FEMALE', '000100-0000', 'SPLeader', false);
+  (12, 1, PARSEDATETIME('1 1 1981', 'd M yyyy'), 'FEMALE', '000100-0000', 'SPLeader', false),
+  (13, 1, PARSEDATETIME('1 1 1981', 'd M yyyy'), 'FEMALE', '000100-0000', 'Test Student #2', false);
   
 insert into
   User (id, person_id, firstName, lastName, contactInfo, version, archived)
@@ -98,7 +100,8 @@ values
   (9, 9, 'Trusted System', 'Trusted system user', 11, 1, false),
   (10, 10, 'Study Guider', 'Study Guider user', 12, 1, false),
   (11, 11, 'Teacher', 'Teacher user', 13, 1, false),
-  (12, 12, 'SPLeader', 'SPLeader user', 14, 1, false);
+  (12, 12, 'SPLeader', 'SPLeader user', 14, 1, false),
+  (13, 13, 'Test Student2', 'User #4', 15, 1, false);
 
 update Person p
 set p.defaultUser_id = p.id;
@@ -406,7 +409,9 @@ insert into
 values 
   (3, 1, 'Tanya-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #1', 1, 1, 1, 1, 1, 1, 1, 'Education #1', false),
   (4, 1, 'David-T', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Testing #2', 1, 1, 1, 1, 1, 1, 1, 'Education #2', false),
-  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', false);
+  (8, 1, 'TEST-User', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg', false),
+  (13, 1, 'TEST-Student2', 0, PARSEDATETIME('1 1 2010', 'd M yyyy'), 'Test test', 1, 1, 1, 1, 1, 1, 1, 'Education smthg2', false);
+
 insert into StudentGroupStudent
   (id, studentGroup, student, version)
 values 
