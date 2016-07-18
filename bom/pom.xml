@@ -35,7 +35,7 @@
   <properties>
     <!-- WildFly -->
 
-    <wildfly-spec-api.version>8.1.0.Final</wildfly-spec-api.version>
+    <wildfly-spec-api.version>10.0.0.Final</wildfly-spec-api.version>
     
     <!-- REST-assured -->
     
@@ -79,10 +79,6 @@
     <!-- Freemarker -->
     
     <freemarker.version>2.3.20</freemarker.version>
-    
-    <!-- Lucene -->
-    
-    <lucene-queries.version>3.6.2</lucene-queries.version>
     
     <!-- Jackson -->
     
@@ -255,12 +251,6 @@
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-library</artifactId>
         <version>${hamcrest.version}</version>
-      </dependency>
-    
-      <dependency>
-        <groupId>org.apache.lucene</groupId>
-        <artifactId>lucene-queries</artifactId>
-        <version>${lucene-queries.version}</version>
       </dependency>
       
       <!-- Selenium -->

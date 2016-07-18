@@ -46,13 +46,19 @@
     </dependency>
   
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-search-analyzers</artifactId>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-analyzers-common</artifactId>
+    </dependency>
+    
+    <dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
     </dependency>
   
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-search-infinispan</artifactId>
+      <version>5.5.1.Final</version>
     </dependency>
   
     <dependency>
@@ -79,6 +85,11 @@
       <artifactId>jboss-ejb-api_3.2_spec</artifactId>
     </dependency>
 
+    <!-- Commons -->
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
     
     <!-- Pyramus -->
     

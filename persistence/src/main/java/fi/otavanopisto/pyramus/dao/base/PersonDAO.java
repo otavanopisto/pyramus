@@ -17,39 +17,38 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.util.Version;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactType_;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
+import fi.otavanopisto.pyramus.domainmodel.base.Email_;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.Person_;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.domainmodel.users.User_;
 import fi.otavanopisto.pyramus.events.PersonCreatedEvent;
 import fi.otavanopisto.pyramus.events.PersonUpdatedEvent;
 import fi.otavanopisto.pyramus.persistence.search.PersonFilter;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo_;
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType_;
-import fi.otavanopisto.pyramus.domainmodel.base.Email_;
-import fi.otavanopisto.pyramus.domainmodel.base.Person_;
-import fi.otavanopisto.pyramus.domainmodel.users.User_;
 
 @Stateless
 public class PersonDAO extends PyramusEntityDAO<Person> {
@@ -283,7 +282,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
       
       Query luceneQuery;
       
-      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
+      QueryParser parser = new QueryParser("", new StandardAnalyzer());
       luceneQuery = parser.parse(queryString);
 
       FullTextQuery query = (FullTextQuery) fullTextEntityManager
@@ -291,8 +290,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           .setSort(
               new Sort(new SortField[] { 
                   SortField.FIELD_SCORE, 
-                  new SortField("lastNameSortable", SortField.STRING),
-                  new SortField("firstNameSortable", SortField.STRING) })).setFirstResult(firstResult).setMaxResults(resultsPerPage);
+                  new SortField("lastNameSortable", SortField.Type.STRING),
+                  new SortField("firstNameSortable", SortField.Type.STRING) })).setFirstResult(firstResult).setMaxResults(resultsPerPage);
 
       if (studentGroup != null)
         query.enableFullTextFilter("StudentIdFilter").setParameter("studentIds", studentIds);
@@ -497,7 +496,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     try {
       String queryString = queryBuilder.toString();
       Query luceneQuery;
-      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
+      QueryParser parser = new QueryParser("", new StandardAnalyzer());
       if (StringUtils.isBlank(queryString)) {
         luceneQuery = new MatchAllDocsQuery();
       } else {
@@ -509,8 +508,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           .setFirstResult(firstResult);
       
       query.setSort(new Sort(
-          new SortField[] { SortField.FIELD_SCORE, new SortField("lastNameSortable", SortField.STRING),
-              new SortField("firstNameSortable", SortField.STRING) })).setMaxResults(resultsPerPage);
+          new SortField[] { SortField.FIELD_SCORE, new SortField("lastNameSortable", SortField.Type.STRING),
+              new SortField("firstNameSortable", SortField.Type.STRING) })).setMaxResults(resultsPerPage);
 
       int hits = query.getResultSize();
       int pages = hits / resultsPerPage;
