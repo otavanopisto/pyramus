@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.rest.model;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 public class Person {
 
@@ -8,7 +8,7 @@ public class Person {
     super();
   }
 
-  public Person(Long id, DateTime birthday, String socialSecurityNumber, Sex sex, Boolean secureInfo, String basicInfo, Long defaultUserId) {
+  public Person(Long id, ZonedDateTime birthday, String socialSecurityNumber, Sex sex, Boolean secureInfo, String basicInfo, Long defaultUserId) {
     super();
     this.id = id;
     this.birthday = birthday;
@@ -27,11 +27,11 @@ public class Person {
     this.id = id;
   }
 
-  public DateTime getBirthday() {
+  public ZonedDateTime getBirthday() {
     return birthday;
   }
 
-  public void setBirthday(DateTime birthday) {
+  public void setBirthday(ZonedDateTime birthday) {
     this.birthday = birthday;
   }
 
@@ -76,7 +76,7 @@ public class Person {
   }
 
   private Long id;
-  private DateTime birthday;
+  private ZonedDateTime birthday;
   private String socialSecurityNumber;
   private Sex sex;
   private Boolean secureInfo;

@@ -1,13 +1,13 @@
 package fi.otavanopisto.pyramus.rest.model;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 public class TransferCredit {
   
   public TransferCredit() {
   }
 
-  public TransferCredit(Long id, Long studentId, DateTime date, Long gradeId, Long gradingScaleId, String verbalAssessment,
+  public TransferCredit(Long id, Long studentId, ZonedDateTime date, Long gradeId, Long gradingScaleId, String verbalAssessment,
       Long assessorId, Boolean archived, String courseName, Integer courseNumber, Double length, Long lengthUnitId,
       Long schoolId, Long subjectId, CourseOptionality optionality) {
     super();
@@ -44,11 +44,11 @@ public class TransferCredit {
     this.studentId = studentId;
   }
 
-  public DateTime getDate() {
+  public ZonedDateTime getDate() {
     return date;
   }
 
-  public void setDate(DateTime date) {
+  public void setDate(ZonedDateTime date) {
     this.date = date;
   }
 
@@ -150,7 +150,7 @@ public class TransferCredit {
 
   private Long id;
   private Long studentId;
-  private DateTime date;
+  private ZonedDateTime date;
   private Long gradeId;
   private Long gradingScaleId;
   private String verbalAssessment;

@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.rest.model;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 public class CourseAssessmentRequest {
 
@@ -8,7 +8,7 @@ public class CourseAssessmentRequest {
     super();
   }
 
-  public CourseAssessmentRequest(Long id, Long courseStudentId, DateTime created, String requestText, Boolean archived) {
+  public CourseAssessmentRequest(Long id, Long courseStudentId, ZonedDateTime created, String requestText, Boolean archived) {
     super();
     this.id = id;
     this.courseStudentId = courseStudentId;
@@ -33,11 +33,11 @@ public class CourseAssessmentRequest {
     this.courseStudentId = courseStudentId;
   }
 
-  public DateTime getCreated() {
+  public ZonedDateTime getCreated() {
     return created;
   }
 
-  public void setCreated(DateTime created) {
+  public void setCreated(ZonedDateTime created) {
     this.created = created;
   }
 
@@ -59,7 +59,7 @@ public class CourseAssessmentRequest {
 
   private Long id;
   private Long courseStudentId;
-  private DateTime created;
+  private ZonedDateTime created;
   private String requestText;
   private Boolean archived;
 }

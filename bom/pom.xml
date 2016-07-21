@@ -80,14 +80,6 @@
     
     <freemarker.version>2.3.20</freemarker.version>
     
-    <!-- Jackson -->
-    
-    <jackson-datatype-joda.version>2.3.0</jackson-datatype-joda.version>
-    
-    <!-- JodaTime -->
-    
-    <jodatime.version>2.1</jodatime.version>
-    
     <!-- Apache Oltu -->
     
     <apache-oltu.version>1.0.0</apache-oltu.version>
@@ -179,6 +171,20 @@
         <artifactId>freemarker</artifactId>
         <version>${freemarker.version}</version>
       </dependency>
+      
+      <!-- Jackson -->
+
+      <dependency>
+        <groupId>com.github.joschi.jackson</groupId>
+        <artifactId>jackson-datatype-threetenbp</artifactId>
+        <version>2.6.4</version>
+      </dependency>
+        
+      <dependency>
+        <groupId>org.threeten</groupId>
+        <artifactId>threetenbp</artifactId>
+        <version>1.3.2</version>
+      </dependency>
         
       <!-- JSON -->
   
@@ -188,14 +194,6 @@
         <version>${json-lib.version}</version>
         <classifier>jdk15</classifier>
       </dependency>
-      
-      <!-- Jackson -->
-      
-      <dependency>
-        <groupId>com.fasterxml.jackson.datatype</groupId>
-        <artifactId>jackson-datatype-joda</artifactId>
-        <version>${jackson-datatype-joda.version}</version>
-      </dependency>  
       
       <!-- Apache Oltu -->
       
@@ -222,14 +220,6 @@
       <artifactId>org.apache.oltu.oauth2.client</artifactId>
       <version>${apache-oltu.version}</version>
     </dependency>
-      
-      <!-- JodaTime -->
-      
-      <dependency>
-        <groupId>joda-time</groupId>
-        <artifactId>joda-time</artifactId>
-        <version>${jodatime.version}</version>
-      </dependency>  
             
       <!-- Rest Assured -->
   

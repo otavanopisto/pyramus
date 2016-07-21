@@ -2,7 +2,7 @@ package fi.otavanopisto.pyramus.rest.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 @XmlRootElement
 public class AcademicTerm {
@@ -10,7 +10,7 @@ public class AcademicTerm {
   public AcademicTerm() {
   }
 
-  public AcademicTerm(Long id, String name, DateTime startDate, DateTime endDate, Boolean archived) {
+  public AcademicTerm(Long id, String name, ZonedDateTime startDate, ZonedDateTime endDate, Boolean archived) {
     super();
     this.id = id;
     this.name = name;
@@ -35,19 +35,19 @@ public class AcademicTerm {
     this.name = name;
   }
   
-  public DateTime getStartDate() {
+  public ZonedDateTime getStartDate() {
     return startDate;
   }
   
-  public void setStartDate(DateTime startDate) {
+  public void setStartDate(ZonedDateTime startDate) {
     this.startDate = startDate;
   }
   
-  public DateTime getEndDate() {
+  public ZonedDateTime getEndDate() {
     return endDate;
   }
   
-  public void setEndDate(DateTime endDate) {
+  public void setEndDate(ZonedDateTime endDate) {
     this.endDate = endDate;
   }
 
@@ -61,7 +61,7 @@ public class AcademicTerm {
 
   private Long id;
   private String name;
-  private DateTime startDate;
-  private DateTime endDate;
+  private ZonedDateTime startDate;
+  private ZonedDateTime endDate;
   private Boolean archived;
 }

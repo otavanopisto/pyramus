@@ -3,7 +3,7 @@ package fi.otavanopisto.pyramus.rest.model;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 import fi.otavanopisto.security.ContextReference;
 
@@ -14,8 +14,8 @@ public class Student implements ContextReference {
   }
   
   public Student(Long id, Long personId, String firstName, String lastName, String nickname, String additionalInfo, String additionalContactInfo, Long nationalityId,
-      Long languageId, Long municipalityId, Long schoolId, Long activityTypeId, Long examinationTypeId, Long educationalLevelId, DateTime studyTimeEnd,
-      Long studyProgrammeId, Long curriculumId, Double previousStudies, String education, Boolean lodging, DateTime studyStartDate, DateTime studyEndDate, Long studyEndReasonId,
+      Long languageId, Long municipalityId, Long schoolId, Long activityTypeId, Long examinationTypeId, Long educationalLevelId, ZonedDateTime studyTimeEnd,
+      Long studyProgrammeId, Long curriculumId, Double previousStudies, String education, Boolean lodging, ZonedDateTime studyStartDate, ZonedDateTime studyEndDate, Long studyEndReasonId,
       String studyEndText, Map<String, String> variables, List<String> tags, Boolean archived) {
     super();
     this.id = id;
@@ -159,11 +159,11 @@ public class Student implements ContextReference {
     this.educationalLevelId = educationalLevelId;
   }
 
-  public DateTime getStudyTimeEnd() {
+  public ZonedDateTime getStudyTimeEnd() {
     return studyTimeEnd;
   }
 
-  public void setStudyTimeEnd(DateTime studyTimeEnd) {
+  public void setStudyTimeEnd(ZonedDateTime studyTimeEnd) {
     this.studyTimeEnd = studyTimeEnd;
   }
 
@@ -199,19 +199,19 @@ public class Student implements ContextReference {
     this.lodging = lodging;
   }
 
-  public DateTime getStudyStartDate() {
+  public ZonedDateTime getStudyStartDate() {
     return studyStartDate;
   }
 
-  public void setStudyStartDate(DateTime studyStartDate) {
+  public void setStudyStartDate(ZonedDateTime studyStartDate) {
     this.studyStartDate = studyStartDate;
   }
 
-  public DateTime getStudyEndDate() {
+  public ZonedDateTime getStudyEndDate() {
     return studyEndDate;
   }
 
-  public void setStudyEndDate(DateTime studyEndDate) {
+  public void setStudyEndDate(ZonedDateTime studyEndDate) {
     this.studyEndDate = studyEndDate;
   }
 
@@ -277,14 +277,14 @@ public class Student implements ContextReference {
   private Long activityTypeId;
   private Long examinationTypeId;
   private Long educationalLevelId;
-  private DateTime studyTimeEnd;
+  private ZonedDateTime studyTimeEnd;
   private Long studyProgrammeId;
   private Long curriculumId;
   private Double previousStudies;
   private String education;
   private Boolean lodging;
-  private DateTime studyStartDate;
-  private DateTime studyEndDate;
+  private ZonedDateTime studyStartDate;
+  private ZonedDateTime studyEndDate;
   private Long studyEndReasonId;
   private String studyEndText;
   private Map<String, String> variables;
