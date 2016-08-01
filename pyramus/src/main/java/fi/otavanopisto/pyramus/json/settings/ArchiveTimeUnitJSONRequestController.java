@@ -8,7 +8,7 @@ import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
 /**
- * The controller responsible of archiving a course participation type. 
+ * The controller responsible of archiving a time unit. 
  */
 public class ArchiveTimeUnitJSONRequestController extends JSONRequestController {
 
