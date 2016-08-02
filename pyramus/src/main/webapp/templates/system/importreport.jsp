@@ -16,6 +16,8 @@
         var contextTypes = JSDATA["contextTypes"].evalJSON();
         var selectedValue = $('reportSelect').value;
         
+        document.importForm.category.value = "";
+          
         for (var i = 0, l = contextTypes.length; i < l; i++) {
           document.importForm["context." + contextTypes[i]].checked = false;
         }
@@ -25,6 +27,7 @@
         
         for (var i = 0, l = reports.length; i < l; i++) {
           if (reports[i].id == selectedValue) {
+            document.importForm.category.value = reports[i].category;
             for (var j = 0, l2 = reports[i].contexts.length; j < l2; j++) {
               document.importForm["context." + reports[i].contexts[j]].checked = true;
             }
@@ -74,6 +77,26 @@
                 <jsp:param name="helpLocale" value="system.importReport.nameHelp"/>
               </jsp:include>          
               <input type="text" name="name"/>
+            </div> 
+
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="system.importReport.categoryTitle"/>
+                <jsp:param name="helpLocale" value="system.importReport.categoryHelp"/>
+              </jsp:include>          
+              <select name="category">
+                <option></option>
+                <c:forEach var="category" items="${reportCategories}">
+                  <c:choose>
+                    <c:when test="${category.id eq report.category.id}">
+                      <option value="${category.id}" selected="selected">${category.name}</option>
+                    </c:when>
+                    <c:otherwise>
+                      <option value="${category.id}">${category.name}</option> 
+                    </c:otherwise>
+                  </c:choose>
+                </c:forEach>
+              </select>
             </div> 
 
             <div class="genericFormSection">

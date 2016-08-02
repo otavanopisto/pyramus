@@ -56,6 +56,16 @@ public class ReportDAO extends PyramusEntityDAO<Report> {
     getEntityManager().persist(report);
   }
 
+  public Report updateCategory(Report report, ReportCategory category, User modifyingUser) {
+    Date now = new Date(System.currentTimeMillis());
+    
+    report.setCategory(category);
+    report.setLastModified(now);
+    report.setLastModifier(modifyingUser);
+    
+    return persist(report);
+  }
+  
   public void updateData(Report report, String data, User modifyingUser) {
     Date now = new Date(System.currentTimeMillis());
     
@@ -86,5 +96,5 @@ public class ReportDAO extends PyramusEntityDAO<Report> {
   public void delete(Report report) {
     super.delete(report);
   }
-  
+
 }

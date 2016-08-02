@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -30,10 +31,12 @@ import org.xml.sax.SAXException;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.reports.ReportCategoryDAO;
 import fi.otavanopisto.pyramus.dao.reports.ReportContextDAO;
 import fi.otavanopisto.pyramus.dao.reports.ReportDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.reports.Report;
+import fi.otavanopisto.pyramus.domainmodel.reports.ReportCategory;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContext;
 import fi.otavanopisto.pyramus.domainmodel.reports.ReportContextType;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -47,6 +50,7 @@ public class ImportReportViewController extends PyramusFormViewController {
   @Override
   public void processForm(PageRequestContext requestContext) {
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
+    ReportCategoryDAO categoryDAO = DAOFactory.getInstance().getReportCategoryDAO();
     ReportContextDAO reportContextDAO = DAOFactory.getInstance().getReportContextDAO();
 
     List<Report> reports = reportDAO.listAll();
@@ -72,15 +76,30 @@ public class ImportReportViewController extends PyramusFormViewController {
 
       rObj.put("id", report.getId().toString());
       rObj.put("name", report.getName());
+      rObj.put("category", report.getCategory() != null ? report.getCategory().getId() : "");
       rObj.put("contexts", rCtxs);
       
       reportsJSON.add(rObj);
     }
     
+    List<ReportCategory> categories = categoryDAO.listAll();
+    
+    Collections.sort(categories, new Comparator<ReportCategory>() {
+      public int compare(ReportCategory o1, ReportCategory o2) {
+        if (o1.getIndexColumn() == o2.getIndexColumn() || o1.getIndexColumn().equals(o2.getIndexColumn())) {
+          return o1.getName() == null ? -1 : o2.getName() == null ? 1 : o1.getName().compareTo(o2.getName());
+        }
+        else {
+          return o1.getIndexColumn() == null ? -1 : o2.getIndexColumn() == null ? 1 : o1.getIndexColumn().compareTo(o2.getIndexColumn());
+        }
+      }
+    });
+    
     setJsDataVariable(requestContext, "reports", reportsJSON.toString());
     setJsDataVariable(requestContext, "contextTypes", contextTypesJSON.toString());
     
     requestContext.getRequest().setAttribute("reports", reports);
+    requestContext.getRequest().setAttribute("reportCategories", categories);
     requestContext.getRequest().setAttribute("contextTypes", contextTypes);
     requestContext.setIncludeJSP("/templates/system/importreport.jsp");
   }
@@ -88,11 +107,13 @@ public class ImportReportViewController extends PyramusFormViewController {
   @Override
   public void processSend(PageRequestContext requestContext) {
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
+    ReportCategoryDAO categoryDAO = DAOFactory.getInstance().getReportCategoryDAO();
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
     Long existingReportId = requestContext.getLong("report");
     String name = requestContext.getString("name");
     FileItem file = requestContext.getFile("file");
+    Long categoryId = requestContext.getLong("category");
 
     try {
       ByteArrayOutputStream dataStream = null;
@@ -157,6 +178,7 @@ public class ImportReportViewController extends PyramusFormViewController {
       }
       
       User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
+      ReportCategory category = categoryId != null ? categoryDAO.findById(categoryId) : null;
       
       if (existingReportId != null) {
         Report report = reportDAO.findById(existingReportId);
@@ -165,6 +187,8 @@ public class ImportReportViewController extends PyramusFormViewController {
           requestContext.setRedirectURL(requestContext.getReferer(true));
         }
         else {
+          report = reportDAO.updateCategory(report, category, loggedUser);
+          
           if (!StringUtils.isBlank(name)) {
             reportDAO.updateName(report, name, loggedUser);
           }
@@ -178,6 +202,7 @@ public class ImportReportViewController extends PyramusFormViewController {
       }
       else {
         Report report = reportDAO.create(name, dataStream.toString("UTF-8"), loggedUser);
+        report = reportDAO.updateCategory(report, category, loggedUser);
         handleContexts(requestContext, report);
         requestContext.setRedirectURL(requestContext.getRequest().getContextPath()
             + "/reports/viewreport.page?&reportId=" + report.getId());
