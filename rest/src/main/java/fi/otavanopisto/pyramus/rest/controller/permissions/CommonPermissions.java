@@ -251,7 +251,7 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_CURRICULUM = "CREATE_CURRICULUM";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
   public static final String LIST_CURRICULUMS = "LIST_CURRICULUMS";
   
   @Scope (PermissionScope.ENVIRONMENT)
