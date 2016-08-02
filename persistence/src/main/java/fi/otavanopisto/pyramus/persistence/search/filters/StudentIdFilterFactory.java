@@ -21,7 +21,7 @@ public class StudentIdFilterFactory {
     TermsFilter tf = new TermsFilter();
     
     for (int i = 0; i < studentIds.size(); i++) {
-      tf.addTerm(new Term("students.id", studentIds.get(i).toString()));
+      tf.addTerm(new Term("users.id", studentIds.get(i).toString()));
     }
     
     return tf;
