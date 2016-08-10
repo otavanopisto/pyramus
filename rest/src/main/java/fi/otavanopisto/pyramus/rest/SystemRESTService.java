@@ -51,6 +51,9 @@ public class SystemRESTService extends AbstractRESTService {
     
     List<String> emails = new ArrayList<>();
     for (Email email : loggedUser.getContactInfo().getEmails()) {
+      if (Boolean.TRUE.equals(email.getContactType().getNonUnique())) {
+        continue;
+      }
       emails.add(email.getAddress());
     }
     
