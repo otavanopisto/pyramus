@@ -4,22 +4,29 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.otavanopisto.pyramus.dao.grading.GradingScaleDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditTemplateDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditTemplate;
+import fi.otavanopisto.pyramus.domainmodel.reports.Report;
+import fi.otavanopisto.pyramus.domainmodel.reports.ReportContextType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 
 /**
@@ -38,6 +45,7 @@ public class ManageTransferCreditsViewController extends PyramusViewController i
     GradingScaleDAO gradingScaleDAO = DAOFactory.getInstance().getGradingScaleDAO();
     TransferCreditTemplateDAO transferCreditTemplateDAO = DAOFactory.getInstance().getTransferCreditTemplateDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     
     Long studentId = pageRequestContext.getLong("studentId");
     
@@ -51,7 +59,12 @@ public class ManageTransferCreditsViewController extends PyramusViewController i
     List<TransferCreditTemplate> transferCreditTemplates = transferCreditTemplateDAO.listAll();
 
     Collections.sort(transferCredits, new StringAttributeComparator("getCourseName", true));
-    
+
+    List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    String jsonCurriculums = new JSONArrayExtractor("name", "id").extractString(curriculums);
+
+    setJsDataVariable(pageRequestContext, "curriculums", jsonCurriculums);
+
     pageRequestContext.getRequest().setAttribute("student", student);
     pageRequestContext.getRequest().setAttribute("transferCredits", transferCredits);
     pageRequestContext.getRequest().setAttribute("gradingScales", gradingScales);

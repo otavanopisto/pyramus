@@ -51,6 +51,29 @@
                 <input type="text" name="name" class="required" value="${fn:escapeXml(transferCreditTemplate.name)}" size="40">
 	          </div>
           
+            <div class="genericFormSection">           
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="settings.editTransferCreditTemplate.curriculumTitle"/>
+                <jsp:param name="helpLocale" value="settings.editTransferCreditTemplate.curriculumHelp"/>
+              </jsp:include>            
+              <select name="curriculum" id="templateCurriculum">
+                <option></option>           
+                <c:forEach var="curriculum" items="${curriculums}">
+                  <c:choose>
+                    <c:when test="${curriculum.id eq transferCreditTemplate.curriculum.id}">
+                      <option value="${curriculum.id}" selected="selected">${curriculum.name}</option> 
+                    </c:when>
+                    <c:otherwise>
+                      <option value="${curriculum.id}">${curriculum.name}</option> 
+                    </c:otherwise>
+                  </c:choose>
+                </c:forEach>
+                <c:if test="${transferCreditTemplate.curriculum.archived}">
+                  <option value="${transferCreditTemplate.curriculum.id}" selected="selected">${transferCreditTemplate.curriculum.name}*</option>
+                </c:if>
+              </select>
+            </div>
+          
             <div class="genericTableAddRowContainer">
               <span class="genericTableAddRowLinkContainer" onclick="addCoursesTableRow();"><fmt:message key="settings.editTransferCreditTemplate.addCourseLink"/></span>
             </div>

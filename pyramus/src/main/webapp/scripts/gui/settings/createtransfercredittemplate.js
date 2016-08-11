@@ -4,7 +4,12 @@ var timeUnits = JSDATA["timeUnits"].evalJSON();
 
 function addCoursesTableRow() {
   var table = getIxTableById('coursesTable');
-  rowIndex = table.addRow([ '', -1, 0, -1, 0, -1, '' ]);
+  var defaultCurriculum = '';
+  var templateCurriculumInput = $('templateCurriculum');
+  if (templateCurriculumInput)
+    defaultCurriculum = templateCurriculumInput.value;
+  
+  rowIndex = table.addRow([ '', -1, 0, -1, 0, -1, defaultCurriculum, '' ]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -17,13 +22,22 @@ function addCoursesTableRow() {
 
 function onLoad(event) {
   tabControl = new IxProtoTabs($('tabs'));
+  var curriculums = JSDATA["curriculums"].evalJSON();
+
+  var curriculumOptions = [{text: '', value: ''}];
+  for (var i = 0, len = curriculums.length; i < len; i++) {
+    curriculumOptions.push({
+      text: curriculums[i].name,
+      value: curriculums[i].id
+    });
+  }
 
   var coursesTable = new IxTable($('coursesTable'), {
     id : "coursesTable",
     columns : [ {
       header : getLocale().getText("settings.createTransferCreditTemplate.coursesTableCourseNameHeader"),
       left : 8,
-      right : 8 + 22 + 8 + 100 + 8 + 100 + 8 + 200 + 8 + 100 + 8 + 100 + 8,
+      right : 8 + 22 + 8 + 90 + 8 + 100 + 8 + 100 + 8 + 200 + 8 + 100 + 8 + 100 + 8,
       dataType : 'text',
       editable : true,
       paramName : 'courseName',
@@ -40,7 +54,7 @@ function onLoad(event) {
     }, {
       header : getLocale().getText("settings.createTransferCreditTemplate.coursesTableCourseOptionalityHeader"),
       width : 100,
-      right : 8 + 22 + 8 + 100 + 8 + 100 + 8 + 200 + 8 + 100 + 8,
+      right : 8 + 22 + 8 + 90 + 8 + 100 + 8 + 100 + 8 + 200 + 8 + 100 + 8,
       dataType : 'select',
       editable : true,
       paramName : 'courseOptionality',
@@ -58,22 +72,29 @@ function onLoad(event) {
     }, {
       header : getLocale().getText("settings.createTransferCreditTemplate.coursesTableCourseNumberHeader"),
       width : 100,
-      right : 8 + 22 + 8 + 100 + 8 + 100 + 8 + 200 + 8,
+      right : 8 + 22 + 8 + 90 + 8 + 100 + 8 + 100 + 8 + 200 + 8,
       dataType : 'number',
       editable : true,
       paramName : 'courseNumber'
     }, {
       header : getLocale().getText("settings.createTransferCreditTemplate.coursesTableSubjectHeader"),
       width : 200,
-      right : 8 + 22 + 8 + 100 + 8 + 100 + 8,
+      right : 8 + 22 + 8 + 90 + 8 + 100 + 8 + 100 + 8,
       dataType : 'select',
       editable : true,
       paramName : 'subject',
       options : (function() {
         var result = [];
         for ( var i = 0, l = subjects.length; i < l; i++) {
+          var text = subjects[i].name;
+          if (subjects[i].code != "") {
+            text = subjects[i].code + " - " + text;
+          }
+          if (subjects[i].educationTypeName != "") {
+            text = text + " (" + subjects[i].educationTypeName + ")";
+          }
           result.push({
-            text : subjects[i].name,
+            text : text,
             value : subjects[i].id
           });
         }
@@ -86,8 +107,9 @@ function onLoad(event) {
     }, {
       header : getLocale().getText("settings.createTransferCreditTemplate.coursesTableLengthHeader"),
       width : 100,
-      right : 8 + 22 + 8 + 100 + 8,
+      right : 8 + 22 + 8 + 90 + 8 + 100 + 8,
       dataType : 'number',
+      required: true,
       editable : true,
       paramName : 'courseLength',
       contextMenu : [ {
@@ -97,7 +119,7 @@ function onLoad(event) {
     }, {
       header : getLocale().getText("settings.createTransferCreditTemplate.coursesTableLengthUnitHeader"),
       width : 100,
-      right : 8 + 22 + 8,
+      right : 8 + 22 + 8 + 90 + 8,
       dataType : 'select',
       editable : true,
       paramName : 'courseLengthUnit',
@@ -115,6 +137,20 @@ function onLoad(event) {
         text : getLocale().getText("generic.action.copyValues"),
         onclick : new IxTable_COPYVALUESTOCOLUMNACTION(true)
       } ]
+    }, {
+      header : getLocale().getText("settings.createTransferCreditTemplate.coursesTableCurriculumHeader"),
+      width: 90,
+      right: 8 + 22 + 8,
+      dataType: 'select',
+      editable: true,
+      paramName: 'curriculum',
+      options: curriculumOptions,
+      contextMenu: [
+        {
+          text: '<fmt:message key="generic.action.copyValues"/>',
+          onclick: new IxTable_COPYVALUESTOCOLUMNACTION(true)
+        }
+      ]            
     }, {
       right : 8,
       width : 22,
