@@ -22,6 +22,7 @@ import org.hibernate.search.jpa.Search;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
@@ -79,7 +80,7 @@ public class TransferCreditTemplateCourseDAO extends PyramusEntityDAO<TransferCr
   
   /* TransferCreditTemplateCourse */
   
-  public TransferCreditTemplateCourse create(TransferCreditTemplate transferCreditTemplate, String courseName, Integer courseNumber, CourseOptionality optionality, Double courseLength, EducationalTimeUnit courseLengthUnit, Subject subject) {
+  public TransferCreditTemplateCourse create(TransferCreditTemplate transferCreditTemplate, String courseName, Integer courseNumber, CourseOptionality optionality, Double courseLength, EducationalTimeUnit courseLengthUnit, Subject subject, Curriculum curriculum) {
     EntityManager entityManager = getEntityManager();
     
     EducationalLength courseEductionalLength = new EducationalLength();
@@ -93,6 +94,7 @@ public class TransferCreditTemplateCourseDAO extends PyramusEntityDAO<TransferCr
     transferCreditTemplateCourse.setCourseNumber(courseNumber);
     transferCreditTemplateCourse.setOptionality(optionality);
     transferCreditTemplateCourse.setSubject(subject);
+    transferCreditTemplateCourse.setCurriculum(curriculum);
 
     entityManager.persist(transferCreditTemplateCourse);
     
@@ -103,7 +105,7 @@ public class TransferCreditTemplateCourseDAO extends PyramusEntityDAO<TransferCr
     return transferCreditTemplateCourse;
   }
   
-  public TransferCreditTemplateCourse update(TransferCreditTemplateCourse transferCreditTemplateCourse, String courseName, Integer courseNumber, CourseOptionality optionality, Double courseLength, EducationalTimeUnit courseLengthUnit, Subject subject) {
+  public TransferCreditTemplateCourse update(TransferCreditTemplateCourse transferCreditTemplateCourse, String courseName, Integer courseNumber, CourseOptionality optionality, Double courseLength, EducationalTimeUnit courseLengthUnit, Subject subject, Curriculum curriculum) {
     EntityManager entityManager = getEntityManager();
     
     EducationalLength educationalLength = transferCreditTemplateCourse.getCourseLength();
@@ -115,6 +117,7 @@ public class TransferCreditTemplateCourseDAO extends PyramusEntityDAO<TransferCr
     transferCreditTemplateCourse.setCourseNumber(courseNumber);
     transferCreditTemplateCourse.setOptionality(optionality);
     transferCreditTemplateCourse.setSubject(subject);
+    transferCreditTemplateCourse.setCurriculum(curriculum);
 
     entityManager.persist(transferCreditTemplateCourse);
     
