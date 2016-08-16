@@ -304,11 +304,8 @@
      </dependency>
     
     <!-- Jackson -->
-    
-     <dependency>
-       <groupId>com.github.joschi.jackson</groupId>
-       <artifactId>jackson-datatype-threetenbp</artifactId>
-     </dependency>
+
+    <dependency><groupId>com.fasterxml.jackson.datatype</groupId><artifactId>jackson-datatype-jsr310</artifactId></dependency>
 
     <!-- Pyramus -->
 

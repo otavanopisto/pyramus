@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.rest.model;
 
-import org.threeten.bp.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 import fi.otavanopisto.security.ContextReference;
 
@@ -10,7 +10,7 @@ public class CourseStudent implements ContextReference {
     super();
   }
 
-  public CourseStudent(Long id, Long courseId, Long studentId, ZonedDateTime enrolmentTime, Boolean archived, Long participationTypeId, Long enrolmentTypeId,
+  public CourseStudent(Long id, Long courseId, Long studentId, OffsetDateTime enrolmentTime, Boolean archived, Long participationTypeId, Long enrolmentTypeId,
       Boolean lodging, CourseOptionality optionality, Long billingDetailsId) {
     super();
     this.id = id;
@@ -49,11 +49,11 @@ public class CourseStudent implements ContextReference {
     this.studentId = studentId;
   }
 
-  public ZonedDateTime getEnrolmentTime() {
+  public OffsetDateTime getEnrolmentTime() {
     return enrolmentTime;
   }
 
-  public void setEnrolmentTime(ZonedDateTime enrolmentTime) {
+  public void setEnrolmentTime(OffsetDateTime enrolmentTime) {
     this.enrolmentTime = enrolmentTime;
   }
 
@@ -108,7 +108,7 @@ public class CourseStudent implements ContextReference {
   private Long id;
   private Long courseId;
   private Long studentId;
-  private ZonedDateTime enrolmentTime;
+  private OffsetDateTime enrolmentTime;
   private Boolean archived;
   private Long participationTypeId;
   private Long enrolmentTypeId;

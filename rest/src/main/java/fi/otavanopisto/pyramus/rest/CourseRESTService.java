@@ -32,7 +32,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.threeten.bp.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
@@ -143,8 +143,8 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     Integer courseNumber = courseEntity.getCourseNumber();
-    ZonedDateTime beginDate = courseEntity.getBeginDate();
-    ZonedDateTime endDate = courseEntity.getEndDate();
+    OffsetDateTime beginDate = courseEntity.getBeginDate();
+    OffsetDateTime endDate = courseEntity.getEndDate();
     Double courseLength = courseEntity.getLength();
     EducationalTimeUnit courseLengthTimeUnit = null;
     
@@ -271,8 +271,8 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     Integer courseNumber = courseEntity.getCourseNumber();
-    ZonedDateTime beginDate = courseEntity.getBeginDate();
-    ZonedDateTime endDate = courseEntity.getEndDate();
+    OffsetDateTime beginDate = courseEntity.getBeginDate();
+    OffsetDateTime endDate = courseEntity.getEndDate();
     Double courseLength = courseEntity.getLength();
     EducationalTimeUnit courseLengthTimeUnit = null;
     

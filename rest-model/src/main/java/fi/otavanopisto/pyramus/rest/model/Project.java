@@ -2,15 +2,15 @@ package fi.otavanopisto.pyramus.rest.model;
 
 import java.util.List;
 
-import org.threeten.bp.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 public class Project {
 
   public Project() {
   }
 
-  public Project(Long id, String name, String description, Double optionalStudiesLength, Long optionalStudiesLengthUnitId, ZonedDateTime created, Long creatorId,
-      ZonedDateTime lastModified, Long lastModifierId, List<String> tags, Boolean archived) {
+  public Project(Long id, String name, String description, Double optionalStudiesLength, Long optionalStudiesLengthUnitId, OffsetDateTime created, Long creatorId,
+      OffsetDateTime lastModified, Long lastModifierId, List<String> tags, Boolean archived) {
     super();
     this.id = id;
     this.name = name;
@@ -65,11 +65,11 @@ public class Project {
     this.optionalStudiesLengthUnitId = optionalStudiesLengthUnitId;
   }
 
-  public ZonedDateTime getCreated() {
+  public OffsetDateTime getCreated() {
     return created;
   }
 
-  public void setCreated(ZonedDateTime created) {
+  public void setCreated(OffsetDateTime created) {
     this.created = created;
   }
 
@@ -81,11 +81,11 @@ public class Project {
     this.creatorId = creatorId;
   }
 
-  public ZonedDateTime getLastModified() {
+  public OffsetDateTime getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(ZonedDateTime lastModified) {
+  public void setLastModified(OffsetDateTime lastModified) {
     this.lastModified = lastModified;
   }
 
@@ -118,9 +118,9 @@ public class Project {
   private String description;
   private Double optionalStudiesLength;
   private Long optionalStudiesLengthUnitId;
-  private ZonedDateTime created;
+  private OffsetDateTime created;
   private Long creatorId;
-  private ZonedDateTime lastModified;
+  private OffsetDateTime lastModified;
   private Long lastModifierId;
   private List<String> tags;
   private Boolean archived;

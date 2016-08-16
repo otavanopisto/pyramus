@@ -2,14 +2,14 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.util.Date;
 
-import org.threeten.bp.DateTimeUtils;
-import org.threeten.bp.ZonedDateTime;
+
+import java.time.OffsetDateTime;
 
 public abstract class AbstractRESTService {
   
-  protected Date toDate(ZonedDateTime dateTime) {
+  protected Date toDate(OffsetDateTime dateTime) {
     if (dateTime != null) {
-      return DateTimeUtils.toDate(dateTime.toInstant());
+      return Date.from(dateTime.toInstant());
     }
     
     return null;

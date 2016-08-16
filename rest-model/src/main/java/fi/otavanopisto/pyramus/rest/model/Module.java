@@ -2,14 +2,14 @@ package fi.otavanopisto.pyramus.rest.model;
 
 import java.util.List;
 
-import org.threeten.bp.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 public class Module {
 
   public Module() {
   }
   
-  public Module(Long id, String name, ZonedDateTime created, ZonedDateTime lastModified, String description, Boolean archived, Integer courseNumber,
+  public Module(Long id, String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber,
       Long maxParticipantCount, Long creatorId, Long lastModifierId, Long subjectId, Long curriculumId, Double length, Long lengthUnitId, List<String> tags) {
     super();
     this.id = id;
@@ -45,19 +45,19 @@ public class Module {
     this.name = name;
   }
 
-  public ZonedDateTime getCreated() {
+  public OffsetDateTime getCreated() {
     return created;
   }
 
-  public void setCreated(ZonedDateTime created) {
+  public void setCreated(OffsetDateTime created) {
     this.created = created;
   }
 
-  public ZonedDateTime getLastModified() {
+  public OffsetDateTime getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(ZonedDateTime lastModified) {
+  public void setLastModified(OffsetDateTime lastModified) {
     this.lastModified = lastModified;
   }
 
@@ -151,8 +151,8 @@ public class Module {
 
   private Long id;
   private String name;
-  private ZonedDateTime created;
-  private ZonedDateTime lastModified;
+  private OffsetDateTime created;
+  private OffsetDateTime lastModified;
   private String description;
   private Boolean archived;
   private Integer courseNumber;

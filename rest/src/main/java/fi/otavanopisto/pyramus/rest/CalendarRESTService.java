@@ -23,8 +23,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.threeten.bp.DateTimeUtils;
-import org.threeten.bp.ZonedDateTime;
+
+import java.time.OffsetDateTime;
 
 import fi.otavanopisto.pyramus.domainmodel.base.AcademicTerm;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -56,8 +56,8 @@ public class CalendarRESTService extends AbstractRESTService {
   @RESTPermit (CalendarPermissions.CREATE_ACADEMICTERM)
   public Response createAcademidTerm(fi.otavanopisto.pyramus.rest.model.AcademicTerm entity) {
     String name = entity.getName();
-    ZonedDateTime startDate = entity.getStartDate();
-    ZonedDateTime endDate = entity.getEndDate();
+    OffsetDateTime startDate = entity.getStartDate();
+    OffsetDateTime endDate = entity.getEndDate();
     
     if (StringUtils.isBlank(name)) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -112,8 +112,8 @@ public class CalendarRESTService extends AbstractRESTService {
   public Response updateAcademicTerm(@PathParam("ID") Long id, fi.otavanopisto.pyramus.rest.model.AcademicTerm entity) {
     AcademicTerm academicTerm = calendarController.findAcademicTermById(id);
     String name = entity.getName();
-    ZonedDateTime startDate = entity.getStartDate();
-    ZonedDateTime endDate = entity.getEndDate();
+    OffsetDateTime startDate = entity.getStartDate();
+    OffsetDateTime endDate = entity.getEndDate();
     
     if (StringUtils.isBlank(name)) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -124,7 +124,7 @@ public class CalendarRESTService extends AbstractRESTService {
     }
     
     return Response
-        .ok(objectFactory.createModel(calendarController.updateAcademicTerm(academicTerm, name, DateTimeUtils.toDate(startDate.toInstant()), DateTimeUtils.toDate(endDate.toInstant()))))
+        .ok(objectFactory.createModel(calendarController.updateAcademicTerm(academicTerm, name, Date.from(startDate.toInstant()), Date.from(endDate.toInstant()))))
         .build();
   }
   

@@ -91,6 +91,9 @@
     <!-- Webapp-permission -->
     
     <webapp-permission.version>1.0.0</webapp-permission.version>
+    
+    <!--  JSR310 -->
+    <jackson-datatype-jsr310.version>2.5.4</jackson-datatype-jsr310.version>
   </properties>
   
   <dependencyManagement>
@@ -337,6 +340,22 @@
         <groupId>fi.otavanopisto</groupId>
         <artifactId>webapp-permission</artifactId>
         <version>${webapp-permission.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-jsr310</artifactId>
+        <version>${jackson-datatype-jsr310.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>

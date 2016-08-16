@@ -3,7 +3,7 @@ package fi.otavanopisto.pyramus.rest;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
-import org.threeten.bp.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -18,8 +18,8 @@ public class JacksonConfigurator implements ContextResolver<ObjectMapper> {
   public ObjectMapper getContext(Class<?> type) {
     ObjectMapper objectMapper = new ObjectMapper();
     SimpleModule module = new SimpleModule();
-    module.addDeserializer(ZonedDateTime.class, new PyramusDateDeserializer(ZonedDateTime.class));
-    module.addSerializer(new PyramusDateSerializer(ZonedDateTime.class));
+    module.addDeserializer(OffsetDateTime.class, new PyramusDateDeserializer(OffsetDateTime.class));
+    module.addSerializer(new PyramusDateSerializer(OffsetDateTime.class));
     objectMapper.registerModule(module);
     return objectMapper;
   }

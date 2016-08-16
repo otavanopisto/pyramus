@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import java.time.OffsetDateTime;
 import org.junit.Test;
 
 import com.jayway.restassured.response.Response;
@@ -28,14 +28,14 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   public void testCreateCourse() {
     Course course = createCourse(
         "Create test", 
-        new DateTime(), 
-        new DateTime(), 
+        OffsetDateTime.now(), 
+        OffsetDateTime.now(), 
         "Course for testing course creation", 
         Boolean.FALSE, 
         111, 
         222l,
-        new DateTime(),
-        new DateTime(),
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
         "Extension",
         333d,
         444d,
@@ -43,7 +43,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         555d,
         666d,
         777d,
-        new DateTime(),
+        OffsetDateTime.now(),
         getUserId(), 
         getUserId(),
         1l,
@@ -85,14 +85,14 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   public void testCreateCourseTags() {
     Course course = createCourse(
         "Create test", 
-        new DateTime(), 
-        new DateTime(), 
+        OffsetDateTime.now(), 
+        OffsetDateTime.now(), 
         "Course for testing course creation", 
         Boolean.FALSE, 
         111, 
         222l,
-        new DateTime(),
-        new DateTime(),
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
         "Extension",
         333d,
         444d,
@@ -100,7 +100,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         555d,
         666d,
         777d,
-        new DateTime(),
+        OffsetDateTime.now(),
         getUserId(), 
         getUserId(),
         1l,
@@ -142,11 +142,11 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testGetCourse() {
-    DateTime created = getDate(2011, 1, 1);
-    DateTime modified = getDate(2011, 1, 1);
-    DateTime beginDate = getDateToDateTime(2011, 2, 2);
-    DateTime endDate = getDateToDateTime(2011, 3, 3);
-    DateTime enrolmentTimeEnd = getDate(2011, 1, 1);
+    OffsetDateTime created = getDate(2011, 1, 1);
+    OffsetDateTime modified = getDate(2011, 1, 1);
+    OffsetDateTime beginDate = getDateToOffsetDateTime(2011, 2, 2);
+    OffsetDateTime endDate = getDateToOffsetDateTime(2011, 3, 3);
+    OffsetDateTime enrolmentTimeEnd = getDate(2011, 1, 1);
 
     given().headers(getAuthHeaders())
       .get("/courses/courses/1001")
@@ -194,17 +194,17 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
  
   @Test
   public void testListCourses() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException {
-    DateTime created1 = getDate(2010, 1, 1);
-    DateTime modified1 = getDate(2010, 1, 1);
-    DateTime beginDate1 = getDateToDateTime(2010, 2, 2);
-    DateTime endDate1 = getDateToDateTime(2010, 3, 3);
-    DateTime enrolmentTimeEnd1 = getDate(2010, 1, 1);
+    OffsetDateTime created1 = getDate(2010, 1, 1);
+    OffsetDateTime modified1 = getDate(2010, 1, 1);
+    OffsetDateTime beginDate1 = getDateToOffsetDateTime(2010, 2, 2);
+    OffsetDateTime endDate1 = getDateToOffsetDateTime(2010, 3, 3);
+    OffsetDateTime enrolmentTimeEnd1 = getDate(2010, 1, 1);
     
-    DateTime created2 = getDate(2011, 1, 1);
-    DateTime modified2 = getDate(2011, 1, 1);
-    DateTime beginDate2 = getDateToDateTime(2011, 2, 2);
-    DateTime endDate2 = getDateToDateTime(2011, 3, 3);
-    DateTime enrolmentTimeEnd2 = getDate(2011, 1, 1);
+    OffsetDateTime created2 = getDate(2011, 1, 1);
+    OffsetDateTime modified2 = getDate(2011, 1, 1);
+    OffsetDateTime beginDate2 = getDateToOffsetDateTime(2011, 2, 2);
+    OffsetDateTime endDate2 = getDateToOffsetDateTime(2011, 3, 3);
+    OffsetDateTime enrolmentTimeEnd2 = getDate(2011, 1, 1);
 
     given().headers(getAuthHeaders())
       .get("/courses/courses/")
@@ -248,14 +248,14 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   public void testUpdateCourse() {
     Course course = createCourse(
         "Update test", 
-        new DateTime(), 
-        new DateTime(), 
+        OffsetDateTime.now(), 
+        OffsetDateTime.now(), 
         "Course for testing course updating", 
         Boolean.FALSE, 
         111, 
         222l,
-        new DateTime(),
-        new DateTime(),
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
         "Extension",
         333d,
         444d,
@@ -263,7 +263,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         555d,
         666d,
         777d,
-        new DateTime(),
+        OffsetDateTime.now(),
         getUserId(), 
         getUserId(),
         1l,
@@ -328,14 +328,14 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   public void testUpdateCourseTags() {
     Course course = createCourse(
         "Update test", 
-        new DateTime(), 
-        new DateTime(), 
+        OffsetDateTime.now(), 
+        OffsetDateTime.now(), 
         "Course for testing course updating", 
         Boolean.FALSE, 
         111, 
         222l,
-        new DateTime(),
-        new DateTime(),
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
         "Extension",
         333d,
         444d,
@@ -343,7 +343,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         555d,
         666d,
         777d,
-        new DateTime(),
+        OffsetDateTime.now(),
         getUserId(), 
         getUserId(),
         1l,
@@ -413,14 +413,14 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
   public void testDeleteCourse() {
     Course course = createCourse(
         "Update test", 
-        new DateTime(), 
-        new DateTime(), 
+        OffsetDateTime.now(), 
+        OffsetDateTime.now(), 
         "Course for testing course updating", 
         Boolean.FALSE, 
         111, 
         222l,
-        new DateTime(),
-        new DateTime(),
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
         "Extension",
         333d,
         444d,
@@ -428,7 +428,7 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         555d,
         666d,
         777d,
-        new DateTime(),
+        OffsetDateTime.now(),
         getUserId(), 
         getUserId(),
         1l,
@@ -471,9 +471,9 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       .statusCode(404);
   }
   
-  private Course createCourse(String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
-      Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
-      Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
+  private Course createCourse(String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber, 
+      Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
+      Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags) {
     return new Course(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 

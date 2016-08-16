@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.rest.model;
 
-import org.threeten.bp.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 public class StudentContactLogEntry {
 
@@ -8,7 +8,7 @@ public class StudentContactLogEntry {
     super();
   }
 
-  public StudentContactLogEntry(Long id, String text, String creatorName, ZonedDateTime entryDate, StudentContactLogEntryType type, Boolean archived) {
+  public StudentContactLogEntry(Long id, String text, String creatorName, OffsetDateTime entryDate, StudentContactLogEntryType type, Boolean archived) {
     super();
     this.id = id;
     this.text = text;
@@ -42,11 +42,11 @@ public class StudentContactLogEntry {
     this.creatorName = creatorName;
   }
 
-  public ZonedDateTime getEntryDate() {
+  public OffsetDateTime getEntryDate() {
     return entryDate;
   }
 
-  public void setEntryDate(ZonedDateTime entryDate) {
+  public void setEntryDate(OffsetDateTime entryDate) {
     this.entryDate = entryDate;
   }
 
@@ -69,7 +69,7 @@ public class StudentContactLogEntry {
   private Long id;
   private String text;
   private String creatorName;
-  private ZonedDateTime entryDate;
+  private OffsetDateTime entryDate;
   private StudentContactLogEntryType type;
   private Boolean archived;
 }
