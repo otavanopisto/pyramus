@@ -1053,20 +1053,20 @@ public class CommonRESTService extends AbstractRESTService {
   @GET
   @RESTPermit (CommonPermissions.LIST_CURRICULUMS)
   public Response listCurriculums(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-    List<Curriculum> subjects;
+    List<Curriculum> curriculums;
     
     if (filterArchived) {
-      subjects = curriculumController.listUnarchivedCurriculums();
+      curriculums = curriculumController.listUnarchivedCurriculums();
     } else {
-      subjects = curriculumController.listCurriculums();
+      curriculums = curriculumController.listCurriculums();
     }
     
-    if (subjects.isEmpty()) {
+    if (curriculums.isEmpty()) {
       return Response.noContent().build();
     }
     
     return Response.ok()
-      .entity(objectFactory.createModel(subjects))
+      .entity(objectFactory.createModel(curriculums))
       .build();
   }
   

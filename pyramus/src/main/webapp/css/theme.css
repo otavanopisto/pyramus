@@ -765,7 +765,7 @@ h1.genericPageHeader{
 }
 
 
-#studentSearchResultsTableContainer .ixActiveTableRow, #projectSearchResultsTableContainer .ixActiveTableRow{
+#studentSearchResultsTableContainer .ixActiveTableRow, #projectSearchResultsTableContainer .ixActiveTableRow, #moduleSearchResultsTableContainer .ixActiveTableRow, {
   background:#739de7;
   -moz-border-radius:3px;
   -webkit-border-radius:3px;
@@ -1537,8 +1537,24 @@ a.searchResultPageContainerActive{
   left:5px;
 }
 
-.modalSearchResultsContainer.modalSearchStudentsResultsContainer{
+.modalSearchResultsContainer.modalSearchStudentsResultsContainer {
   top:270px;
+}
+
+.modalSearchResultsContainer.modalChangeCourseModuleResultsContainer {
+  top:255px;
+}
+
+.modalSearchResultsContainer .modalSearchResultsPagesContainer {
+  top:265px;
+}
+
+.modalSearchResultsContainer  .modalSearchResultsMessageContainer {
+  bottom:255px;
+}
+
+#changeModuleDialogSearchContainer select {
+  max-width:95%;
 }
 
 .modalSearchResultsTabLabel{

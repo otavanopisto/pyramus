@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>fi.otavanopisto.pyramus</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.7.51-SNAPSHOT</version>
+		<version>0.7.53-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -33,18 +33,11 @@
 			<artifactId>resteasy-jackson2-provider</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
-      <!-- Jackson -->
-
-    <dependency>
-      <groupId>com.github.joschi.jackson</groupId>
-      <artifactId>jackson-datatype-threetenbp</artifactId>
-    </dependency>
-      
-    <dependency>
-      <groupId>org.threeten</groupId>
-      <artifactId>threetenbp</artifactId>
-    </dependency>
+		
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		</dependency>
 
 		<!-- CDI -->
 
@@ -109,5 +102,9 @@
         <artifactId>plugin-core</artifactId>
       </dependency>
 
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-jsr310</artifactId>
+      </dependency>
 	</dependencies>
 </project>

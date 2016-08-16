@@ -201,13 +201,13 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
       String componentName, String componentDescription, Long ownerId, boolean filterArchived) {
     // Search with null Subject and null EducationSubtype
     return searchModules(resultsPerPage, page, projectName, name, tags, description, componentName, componentDescription, ownerId, null, null, null,
-        filterArchived);
+        null, filterArchived);
   }
 
   @SuppressWarnings("unchecked")
   public SearchResult<Module> searchModules(int resultsPerPage, int page, String projectName, String name, String tags, String description,
       String componentName, String componentDescription, Long ownerId, Subject subject, EducationType educationType, EducationSubtype educationSubtype,
-      boolean filterArchived) {
+      Curriculum curriculum, boolean filterArchived) {
     int firstResult = page * resultsPerPage;
 
     StringBuilder queryBuilder = new StringBuilder();
@@ -220,8 +220,9 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     boolean hasSubject = subject != null;
     boolean hasEduType = educationType != null;
     boolean hasEduSubtype = educationSubtype != null;
+    boolean hasCurriculum = curriculum != null;
 
-    if (hasName || hasTags || hasDescription || hasComponentName || hasComponentDescription || hasSubject || hasEduType || hasEduSubtype) {
+    if (hasName || hasTags || hasDescription || hasComponentName || hasComponentDescription || hasSubject || hasEduType || hasEduSubtype || hasCurriculum) {
       queryBuilder.append("+(");
 
       if (hasName)
@@ -241,6 +242,9 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
 
       if (hasSubject)
         addTokenizedSearchCriteria(queryBuilder, "subject.id", subject.getId().toString(), true);
+
+      if (hasCurriculum)
+        addTokenizedSearchCriteria(queryBuilder, "curriculum.id", curriculum.getId().toString(), true);
 
       if (hasEduType)
         addTokenizedSearchCriteria(queryBuilder, "courseEducationTypes.educationType.id", educationType.getId().toString(), true);

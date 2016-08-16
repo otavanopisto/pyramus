@@ -12,10 +12,12 @@ import org.apache.commons.lang.math.NumberUtils;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
@@ -35,7 +37,8 @@ public class SearchModulesJSONRequestController extends JSONRequestController {
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();    
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
-    EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();    
+    EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
 
     Integer resultsPerPage = NumberUtils.createInteger(requestContext.getRequest().getParameter("maxResults"));
     if (resultsPerPage == null) {
@@ -74,8 +77,14 @@ public class SearchModulesJSONRequestController extends JSONRequestController {
       if (educationSubtypeId != null)
         educationSubtype = educationSubtypeDAO.findById(educationSubtypeId);
 
+      Curriculum curriculum = null;
+      Long curriculumId = requestContext.getLong("curriculum");
+      if (curriculumId != null)
+        curriculum = curriculumDAO.findById(curriculumId);
+
       // Search via the DAO object
-      searchResult = moduleDAO.searchModules(resultsPerPage, page, null, name, tags, description, null, null, null, subject, educationType, educationSubtype, true);
+      searchResult = moduleDAO.searchModules(resultsPerPage, page, null, name, tags, description, 
+          null, null, null, subject, educationType, educationSubtype, curriculum, true);
     }
     else {
       String text = requestContext.getString("text");

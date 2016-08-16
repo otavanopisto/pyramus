@@ -6,16 +6,11 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.51-SNAPSHOT</version>
+    <version>0.7.53-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   
   <dependencies>
-    
-    <dependency>
-      <groupId>org.threeten</groupId>
-      <artifactId>threetenbp</artifactId>
-    </dependency>
     
     <dependency>
       <groupId>fi.otavanopisto</groupId>

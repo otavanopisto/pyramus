@@ -21,7 +21,7 @@ public class StudentIdFilterFactory {
   public Filter getFilter() {
     List<Term> terms = new ArrayList<>();
     for (int i = 0; i < studentIds.size(); i++) {
-      terms.add(new Term("students.id", studentIds.get(i).toString()));
+      terms.add(new Term("users.id", studentIds.get(i).toString()));
     }
     return new TermsFilter(terms);
   }

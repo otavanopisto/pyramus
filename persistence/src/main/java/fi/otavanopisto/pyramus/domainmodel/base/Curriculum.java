@@ -8,9 +8,14 @@ import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
+@Indexed
 public class Curriculum implements ArchivableEntity {
 
   /**
@@ -41,14 +46,17 @@ public class Curriculum implements ArchivableEntity {
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Curriculum")  
   @TableGenerator(name="Curriculum", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
+  @DocumentId
   private Long id;
   
   @NotNull
   @NotEmpty
   @Column (nullable = false)
+  @Field(store=Store.NO)
   private String name;
   
   @NotNull
   @Column(nullable = false)
+  @Field
   private Boolean archived;
 }

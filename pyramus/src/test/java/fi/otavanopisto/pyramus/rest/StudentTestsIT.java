@@ -103,7 +103,7 @@ public class StudentTestsIT extends AbstractRESTServiceTest {
       .get("/students/students")
       .then()
       .statusCode(200)
-      .body("id.size()", is(3))
+      .body("id.size()", is(4))
       .body("id[0]", is(3) )
       .body("personId[0]", is(3))
       .body("firstName[0]", is("Tanya"))
