@@ -756,10 +756,12 @@ public class ObjectFactory {
     if (date == null) {
       return null;
     }
-	Instant instant = date.toInstant();
-	ZoneId systemId = ZoneId.systemDefault();
-	ZoneOffset offset = systemId.getRules().getOffset(instant);
-    return date.toInstant().atOffset(offset);
+    // If (as) date is java.sql.Date then toInstant() would cause UnsupportedOperationException
+    Date tmpDate = new Date(date.getTime()); 
+    Instant instant = tmpDate.toInstant();
+    ZoneId systemId = ZoneId.systemDefault();
+    ZoneOffset offset = systemId.getRules().getOffset(instant);
+    return tmpDate.toInstant().atOffset(offset);
   }
 
   private OffsetDateTime fromDateToOffsetDateTime(Date date) {
