@@ -16,7 +16,7 @@ import fi.internetix.smvc.logging.Logging;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.accesslog.AccessLogEntryDAO;
 import fi.otavanopisto.pyramus.dao.accesslog.AccessLogEntryPathDAO;
-import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.accesslog.AccessLogEntryPath;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
@@ -90,7 +90,7 @@ public class AccessLoggingFilter implements Filter {
     Long userId = session == null ? null : (Long) session.getAttribute("loggedUserId");
     
     if (userId != null) {
-      StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
+      UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
       return userDAO.findById(userId);
     } else
       return null;
