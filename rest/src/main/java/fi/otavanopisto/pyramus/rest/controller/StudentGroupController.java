@@ -52,28 +52,31 @@ public class StudentGroupController {
   }
   
   public List<StudentGroup> listStudentGroups() {
-    List<StudentGroup> studentGroups = studentGroupDAO.listAll();
-    return studentGroups;
+    return studentGroupDAO.listAll();
+  }
+
+  public List<StudentGroup> listStudentGroups(Integer firstResult, Integer maxResults) {
+    return studentGroupDAO.listAll(firstResult, maxResults);
   }
   
   public List<StudentGroup> listUnarchivedStudentGroups() {
-    List<StudentGroup> studentGroups = studentGroupDAO.listUnarchived();
-    return studentGroups;
+    return studentGroupDAO.listUnarchived();
+  }
+
+  public List<StudentGroup> listUnarchivedStudentGroups(Integer firstResult, Integer maxResults) {
+    return studentGroupDAO.listUnarchived(firstResult, maxResults);
   }
   
   public StudentGroup findStudentGroupById(Long id) {
-    StudentGroup studentGroup = studentGroupDAO.findById(id);
-    return studentGroup;
+    return studentGroupDAO.findById(id);
   }
   
   public Set<Tag> findStudentGroupTags(StudentGroup studentGroup) {
-    Set<Tag> tags = studentGroup.getTags();
-    return tags;
+    return studentGroup.getTags();
   }
   
   public StudentGroup updateStudentGroup(StudentGroup studentGroup, String name, String description, Date beginDate, User user) {
-    StudentGroup updated = studentGroupDAO.update(studentGroup, name, description, beginDate, user);
-    return updated;
+    return studentGroupDAO.update(studentGroup, name, description, beginDate, user);
   }
   
   public StudentGroup archiveStudentGroup(StudentGroup studentGroup, User user) {
