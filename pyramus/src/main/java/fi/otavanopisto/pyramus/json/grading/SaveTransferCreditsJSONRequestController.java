@@ -4,6 +4,7 @@ import java.util.Date;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
@@ -12,6 +13,7 @@ import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
@@ -32,6 +34,7 @@ public class SaveTransferCreditsJSONRequestController extends JSONRequestControl
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
 
     Long studentId = jsonRequestContext.getLong("studentId");
     Student student = studentDAO.findById(studentId);
@@ -51,20 +54,22 @@ public class SaveTransferCreditsJSONRequestController extends JSONRequestControl
       Long schooId = jsonRequestContext.getLong(colPrefix + ".school");
       Date date = jsonRequestContext.getDate(colPrefix + ".date");
       Long userId = jsonRequestContext.getLong(colPrefix + ".user");
+      Long curriculumId = jsonRequestContext.getLong(colPrefix + ".curriculum");
       
       Grade grade = gradeDAO.findById(gradeId);
       Subject subject = subjectDAO.findById(subjectId);
       EducationalTimeUnit timeUnit = educationalTimeUnitDAO.findById(courseLengthUnitId);
       School school = schoolDAO.findById(schooId);
       StaffMember staffMember = staffMemberDAO.findById(userId);
+      Curriculum curriculum = curriculumId != null ? curriculumDAO.findById(curriculumId) : null;
 
       TransferCredit transferCredit;
       
       if (id != null && id >= 0) {
         transferCredit = transferCreditDAO.findById(id);
-        transferCreditDAO.update(transferCredit, courseName, courseNumber, courseLength, timeUnit, school, subject, courseOptionality, student, staffMember, grade, date, transferCredit.getVerbalAssessment());
+        transferCreditDAO.update(transferCredit, courseName, courseNumber, courseLength, timeUnit, school, subject, courseOptionality, student, staffMember, grade, date, transferCredit.getVerbalAssessment(), curriculum);
       } else {
-        transferCredit = transferCreditDAO.create(courseName, courseNumber, courseLength, timeUnit, school, subject, courseOptionality, student, staffMember, grade, date, ""); 
+        transferCredit = transferCreditDAO.create(courseName, courseNumber, courseLength, timeUnit, school, subject, courseOptionality, student, staffMember, grade, date, "", curriculum); 
       }
     }
     

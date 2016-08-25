@@ -1,12 +1,15 @@
 package fi.otavanopisto.pyramus.views.settings;
 
+import java.util.List;
 import java.util.Locale;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditTemplateDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
@@ -25,9 +28,15 @@ public class ManageTransferCreditTemplatesViewController extends PyramusViewCont
    */
   public void process(PageRequestContext pageRequestContext) {
     TransferCreditTemplateDAO transferCreditTemplateDAO = DAOFactory.getInstance().getTransferCreditTemplateDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     
     String jsonTransferCreditTemplates = new JSONArrayExtractor("name", "id").extractString(transferCreditTemplateDAO.listAll());
     this.setJsDataVariable(pageRequestContext, "transferCreditTemplates", jsonTransferCreditTemplates);
+
+    List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    String jsonCurriculums = new JSONArrayExtractor("name", "id").extractString(curriculums);
+    setJsDataVariable(pageRequestContext, "curriculums", jsonCurriculums);
+
     pageRequestContext.setIncludeJSP("/templates/settings/managetransfercredittemplates.jsp");
   }
 

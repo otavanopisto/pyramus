@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -47,20 +49,20 @@ public class LoadTransferCreditTemplateJSONRequestController extends JSONRequest
       
       String localizedSubject = subjectName;
       
-      if (subjectCode != null && subjectEducationType != null) {
+      if (StringUtils.isNotBlank(subjectCode) && StringUtils.isNotBlank(subjectEducationType)) {
         localizedSubject = Messages.getInstance().getText(jsonRequestContext.getRequest().getLocale(), 
             "generic.subjectFormatterWithEducationType", new Object[] {
           subjectCode,
           subjectName,
           subjectEducationType
         });
-      } else if (subjectEducationType != null) {
+      } else if (StringUtils.isNotBlank(subjectEducationType)) {
         localizedSubject = Messages.getInstance().getText(jsonRequestContext.getRequest().getLocale(), 
             "generic.subjectFormatterNoSubjectCode", new Object[] {
           subjectName,
           subjectEducationType
         });
-      } else if (subjectCode != null) {
+      } else if (StringUtils.isNotBlank(subjectCode)) {
         localizedSubject = Messages.getInstance().getText(jsonRequestContext.getRequest().getLocale(), 
             "generic.subjectFormatterNoEducationType", new Object[] {
           subjectCode,
@@ -76,6 +78,9 @@ public class LoadTransferCreditTemplateJSONRequestController extends JSONRequest
       result.put("courseOptionality", templateCourse.getOptionality().name());
       result.put("subjectId", templateCourse.getSubject().getId());
       result.put("subjectName", localizedSubject);
+      
+      if (templateCourse.getCurriculum() != null)
+        result.put("curriculumId", templateCourse.getCurriculum().getId());
 
       results.add(result);
     }

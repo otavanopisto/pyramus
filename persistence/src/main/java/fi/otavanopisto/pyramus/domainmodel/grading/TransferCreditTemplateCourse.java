@@ -20,6 +20,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 
@@ -88,6 +89,14 @@ public class TransferCreditTemplateCourse {
     this.optionality = optionality;
   }
 
+  public Curriculum getCurriculum() {
+    return curriculum;
+  }
+
+  public void setCurriculum(Curriculum curriculum) {
+    this.curriculum = curriculum;
+  }
+
   @Id 
   @DocumentId
   @GeneratedValue(strategy=GenerationType.TABLE, generator="TransferCreditTemplateCourse")  
@@ -119,6 +128,9 @@ public class TransferCreditTemplateCourse {
   @JoinColumn(name = "subject")
   private Subject subject;
   
+  @ManyToOne
+  private Curriculum curriculum;
+
   @Version
   @Column(nullable = false)
   private Long version;

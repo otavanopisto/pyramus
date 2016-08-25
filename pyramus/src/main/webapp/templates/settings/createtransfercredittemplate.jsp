@@ -49,6 +49,19 @@
 	            <input type="text" name="name" class="required" size="40">
 	          </div>
           
+            <div class="genericFormSection">           
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="settings.createTransferCreditTemplate.curriculumTitle"/>
+                <jsp:param name="helpLocale" value="settings.createTransferCreditTemplate.curriculumHelp"/>
+              </jsp:include>            
+              <select name="curriculum" id="templateCurriculum">
+                <option></option>           
+                <c:forEach var="curriculum" items="${curriculums}">
+                  <option value="${curriculum.id}">${curriculum.name}</option> 
+                </c:forEach>
+              </select>
+            </div>
+          
             <div class="genericTableAddRowContainer">
               <span class="genericTableAddRowLinkContainer" onclick="addCoursesTableRow();"><fmt:message key="settings.createTransferCreditTemplate.addCourseLink"/></span>
             </div>

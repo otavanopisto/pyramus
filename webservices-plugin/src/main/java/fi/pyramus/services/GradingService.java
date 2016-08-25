@@ -26,6 +26,7 @@ import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
@@ -168,10 +169,12 @@ public class GradingService extends PyramusService {
     StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
     Grade grade = gradeDAO.findById(gradeId);
     CourseOptionality courseOptionality = null;
+    Curriculum curriculum = null;
+    
     if (!StringUtils.isBlank(optionality))
       courseOptionality = CourseOptionality.valueOf(optionality);
       
-    TransferCredit transferCredit = transferCreditDAO.create(courseName, courseNumber, courseLength, courseLengthUnit, school, subject, courseOptionality, student, assessingUser, grade, date, verbalAssessment);
+    TransferCredit transferCredit = transferCreditDAO.create(courseName, courseNumber, courseLength, courseLengthUnit, school, subject, courseOptionality, student, assessingUser, grade, date, verbalAssessment, curriculum);
     
     validateEntity(transferCredit);
     

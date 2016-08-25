@@ -4,7 +4,12 @@ var courses = JSDATA["courses"].evalJSON();
 
 function addCoursesTableRow() {
   var table = getIxTableById('coursesTable');
-  rowIndex = table.addRow([ '', -1, 0, -1, 0, -1, '', -1 ]);
+  var defaultCurriculum = '';
+  var templateCurriculumInput = $('templateCurriculum');
+  if (templateCurriculumInput)
+    defaultCurriculum = templateCurriculumInput.value;
+  
+  rowIndex = table.addRow([ '', -1, 0, -1, 0, -1, defaultCurriculum, '', -1 ]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -33,13 +38,22 @@ function addCoursesTableRow() {
 
 function onLoad(event) {
   tabControl = new IxProtoTabs($('tabs'));
+  var curriculums = JSDATA["curriculums"].evalJSON();
+
+  var curriculumOptions = [{text: '', value: ''}];
+  for (var i = 0, len = curriculums.length; i < len; i++) {
+    curriculumOptions.push({
+      text: curriculums[i].name,
+      value: curriculums[i].id
+    });
+  }
 
   var coursesTable = new IxTable($('coursesTable'), {
     id : "coursesTable",
     columns : [ {
       header : getLocale().getText("settings.editTransferCreditTemplate.coursesTableCourseNameHeader"),
       left : 8,
-      right : 8 + 22 + 8 + 100 + 8 + 100 + 8 + 200 + 8 + 100 + 8 + 100 + 8,
+      right : 8 + 22 + 8 + 90 + 8 + 100 + 8 + 100 + 8 + 200 + 8 + 100 + 8 + 100 + 8,
       dataType : 'text',
       editable : true,
       paramName : 'courseName',
@@ -56,7 +70,7 @@ function onLoad(event) {
     }, {
       header : getLocale().getText("settings.editTransferCreditTemplate.coursesTableCourseOptionalityHeader"),
       width : 100,
-      right : 8 + 22 + 8 + 100 + 8 + 100 + 8 + 200 + 8 + 100 + 8,
+      right : 8 + 22 + 8 + 90 + 8 + 100 + 8 + 100 + 8 + 200 + 8 + 100 + 8,
       dataType : 'select',
       editable : true,
       paramName : 'courseOptionality',
@@ -74,14 +88,14 @@ function onLoad(event) {
     }, {
       header : getLocale().getText("settings.editTransferCreditTemplate.coursesTableCourseNumberHeader"),
       width : 100,
-      right : 8 + 22 + 8 + 100 + 8 + 100 + 8 + 200 + 8,
+      right : 8 + 22 + 8 + 90 + 8 + 100 + 8 + 100 + 8 + 200 + 8,
       dataType : 'number',
       editable : true,
       paramName : 'courseNumber'
     }, {
       header : getLocale().getText("settings.editTransferCreditTemplate.coursesTableSubjectHeader"),
       width : 200,
-      right : 8 + 22 + 8 + 100 + 8 + 100 + 8,
+      right : 8 + 22 + 8 + 90 + 8 + 100 + 8 + 100 + 8,
       dataType : 'select',
       editable : true,
       paramName : 'subject',
@@ -109,8 +123,9 @@ function onLoad(event) {
     }, {
       header : getLocale().getText("settings.editTransferCreditTemplate.coursesTableLengthHeader"),
       width : 100,
-      right : 8 + 22 + 8 + 100 + 8,
+      right : 8 + 22 + 8 + 90 + 8 + 100 + 8,
       dataType : 'number',
+      required: true,
       editable : true,
       paramName : 'courseLength',
       contextMenu : [ {
@@ -120,7 +135,7 @@ function onLoad(event) {
     }, {
       header : getLocale().getText("settings.editTransferCreditTemplate.coursesTableLengthUnitHeader"),
       width : 100,
-      right : 8 + 22 + 8,
+      right : 8 + 22 + 8 + 90 + 8,
       dataType : 'select',
       editable : true,
       paramName : 'courseLengthUnit',
@@ -138,6 +153,20 @@ function onLoad(event) {
         text : getLocale().getText("generic.action.copyValues"),
         onclick : new IxTable_COPYVALUESTOCOLUMNACTION(true)
       } ]
+    }, {
+      header : getLocale().getText("settings.editTransferCreditTemplate.coursesTableCurriculumHeader"),
+      width: 90,
+      right: 8 + 22 + 8,
+      dataType: 'select',
+      editable: true,
+      paramName: 'curriculum',
+      options: curriculumOptions,
+      contextMenu: [
+        {
+          text: '<fmt:message key="generic.action.copyValues"/>',
+          onclick: new IxTable_COPYVALUESTOCOLUMNACTION(true)
+        }
+      ]            
     }, {
       right : 8,
       width : 22,
@@ -163,8 +192,8 @@ function onLoad(event) {
   var rows = new Array();
   for ( var i = 0, l = courses.length; i < l; i++) {
     var course = courses[i];
-    rows.push([ jsonEscapeHTML(course.courseName), course.optionality, course.courseNumber, course.subjectId, course.courseLengthUnits || '', course.courseLengthUnitId,
-        '', course.id ]);
+    rows.push([ jsonEscapeHTML(course.courseName), course.optionality, course.courseNumber, course.subjectId, course.courseLengthUnits, course.courseLengthUnitId,
+        course.curriculumId, '', course.id ]);
   }
   coursesTable.addRows(rows);
 
