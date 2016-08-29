@@ -4,6 +4,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import org.junit.Test;
 
 public class StudentCoursesTestsIT extends AbstractRESTServiceTest {

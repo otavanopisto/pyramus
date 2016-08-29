@@ -31,6 +31,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
