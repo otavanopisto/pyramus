@@ -641,7 +641,7 @@
               <container>
                 <containerId>wildfly10x</containerId>
                 <log>${project.basedir}/target/cargo.log</log>
-                <output>${project.basedir}/target/jboss.log</output>
+                <output>${project.basedir}/target/wildfly.log</output>
                 <zipUrlInstaller>
                   <url>http://download.jboss.org/wildfly/10.0.0.Final/wildfly-10.0.0.Final.zip</url>
                   <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
@@ -652,28 +652,23 @@
                     <groupId>com.h2database</groupId>
                     <artifactId>h2</artifactId>
                   </dependency>
-                </dependencies>
+                </dependencies>                
               </container>
               <configuration>
                 <properties>
                   <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
                   <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
-                  <cargo.jvmargs>-Xms64m -Xmx1152m -XX:MaxPermSize=512m -XX:-UseSplitVerifier</cargo.jvmargs>
-                  <cargo.datasource.datasource.pyrit>
+                  <cargo.jvmargs>-Xms64m -Xmx1152m -XX:MaxPermSize=512m</cargo.jvmargs>
+                  <cargo.datasource.datasource.pyramus>
                     cargo.datasource.driver=${it.jdbc.driver}|
                     cargo.datasource.url=${it.jdbc.url}|
                     cargo.datasource.jndi=${it.jdbc.jndi}|
                     cargo.datasource.username=${it.jdbc.username}|
                     cargo.datasource.password=${it.jdbc.password}|
                     cargo.datasource.transactionsupport=LOCAL_TRANSACTION
-                  </cargo.datasource.datasource.pyrit>
-                </properties>
+                  </cargo.datasource.datasource.pyramus>
+                </properties>    
               </configuration>
-
-              <deployables>
-                <dependency />                 
-              </deployables>
-
             </configuration>
             <executions>
               <execution>
@@ -689,24 +684,28 @@
                 <goals>
                   <goal>stop</goal>
                 </goals>
+                <configuration>
+                  <skip>${it.skipserverstop}</skip>
+                </configuration>
               </execution>
             </executions>
           </plugin>
-          
+
           <plugin>
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
-            <version>1.1.0.Alpha11</version>
+            <version>1.0.2.Final</version>
             <executions>
               <execution>
-                <id>configure-wildfly</id>
+                <id>deploy</id>
                 <phase>pre-integration-test</phase>
                 <goals>
-                  <goal>execute-commands</goal>
+                  <goal>deploy</goal>
                 </goals>
                 <configuration>
-                  <execute-commands>
-                    <batch>${it.wildfly.cli-batch}</batch>
+                  <before-deployment>
+                   
+                    <batch>true</batch>
                     <commands>
                       <command>/system-property=pyramus.workspace:add(value="${basedir}/..")</command>
                       <command>/system-property=PyramusWSAllowedIPs:add(value="127.0.0.1")</command>
@@ -721,53 +720,39 @@
                       <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=&gt;"RealmUsersRoles","flag"=&gt;"required","module-options"=&gt;[("realm"=&gt;"WebServices"),("password-stacking"=&gt;"useFirstPass"),("rolesProperties"=&gt;"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=&gt;"\${jboss.server.config.dir}/application-users.properties")]}])</command>
                       <command>/subsystem=logging/logger=javax.ws.rs.NotFoundException:add(level=SEVERE)</command>
                     </commands>
-                  </execute-commands>
-                </configuration>
-              </execution>
-
-              <execution>
-                <id>reload-wildfly</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>execute-commands</goal>
-                </goals>
-                <configuration>
-                  <execute-commands>
-                    <commands>
-                      <command>:reload</command>
-                    </commands>
-                  </execute-commands>
+                  </before-deployment>
+                  <filename>./target/pyramus-${project.version}.war</filename>
                 </configuration>
               </execution>
             </executions>
           </plugin>
-                              
+                    
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>wait-maven-plugin</artifactId>
             <version>1.0</version>
             <executions>
               <execution>
-                <id>wait-rest</id>
+                <id>wait</id>
                 <phase>pre-integration-test</phase>
                 <goals>
                   <goal>wait</goal>
-                </goals>
+                </goals>      
                 <configuration>
                   <protocol>http</protocol>
                   <host>${it.host}</host>
                   <port>${it.port.http}</port>
-                  <file>/1/system/ping</file>
-                  <maxcount>10</maxcount>
+                  <file>/rest/system/ping</file>
+                  <maxcount>20</maxcount>
                   <timeout>10000</timeout>
                 </configuration>
               </execution>
             </executions>
           </plugin>
-          
         </plugins>
       </build> 
     </profile>
+    
     
     <profile>
       <id>ui-it</id>
