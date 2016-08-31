@@ -38,6 +38,7 @@ import org.hibernate.search.annotations.FullTextFilterDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.SortableField;
 import org.hibernate.search.annotations.Store;
 
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
@@ -249,7 +250,8 @@ public class Person implements ContextReference {
   }
 
   @Transient
-  @Field(analyze = Analyze.NO, store = Store.YES)
+  @Field(analyze = Analyze.NO, store = Store.NO)
+  @SortableField
   public String getLastNameSortable() {
     Student student = getLatestStudent();
     StaffMember staffMember = getStaffMember();
@@ -257,7 +259,8 @@ public class Person implements ContextReference {
   }
 
   @Transient
-  @Field(analyze = Analyze.NO, store = Store.YES)
+  @Field(analyze = Analyze.NO, store = Store.NO)
+  @SortableField
   public String getFirstNameSortable() {
     Student student = getLatestStudent();
     StaffMember staffMember = getStaffMember();

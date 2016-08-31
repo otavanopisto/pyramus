@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.rest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateful;
@@ -28,7 +29,9 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
+
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
@@ -931,7 +934,7 @@ public class StudentRESTService extends AbstractRESTService {
   public Response createStudentGroup(fi.otavanopisto.pyramus.rest.model.StudentGroup entity) {
     String name = entity.getName();
     String description = entity.getDescription();
-    DateTime beginDate = entity.getBeginDate();
+    OffsetDateTime beginDate = entity.getBeginDate();
 
     if (StringUtils.isBlank(name)) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -990,7 +993,7 @@ public class StudentRESTService extends AbstractRESTService {
 
     String name = entity.getName();
     String description = entity.getDescription();
-    DateTime beginDate = entity.getBeginDate();
+    OffsetDateTime beginDate = entity.getBeginDate();
 
     if (StringUtils.isBlank(name)) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -1751,7 +1754,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Could not find grade").build();
     }
     
-    CourseAssessment courseAssessment = assessmentController.createCourseCourseAssessment(courseStudent, assessor, grade, entity.getDate().toDate(), entity.getVerbalAssessment());
+    CourseAssessment courseAssessment = assessmentController.createCourseCourseAssessment(courseStudent, assessor, grade, Date.from(entity.getDate().toInstant()), entity.getVerbalAssessment());
     
     return Response.ok(objectFactory.createModel(courseAssessment)).build();
   }
@@ -1885,7 +1888,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    CourseAssessment newCourseAssessment = assessmentController.updateCourseAssessment(courseAssessment, assessor, grade, entity.getDate().toDate(), entity.getVerbalAssessment());
+    CourseAssessment newCourseAssessment = assessmentController.updateCourseAssessment(courseAssessment, assessor, grade, Date.from(entity.getDate().toInstant()), entity.getVerbalAssessment());
         
     return Response.ok(objectFactory.createModel(newCourseAssessment)).build();
   }
@@ -1977,7 +1980,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Coursestudent doesnt match course").build();
     }
     
-    CourseAssessmentRequest courseAssessmentRequest = assessmentController.createCourseAssessmentRequest(courseStudent, entity.getCreated().toDate(), entity.getRequestText());
+    CourseAssessmentRequest courseAssessmentRequest = assessmentController.createCourseAssessmentRequest(courseStudent, Date.from(entity.getCreated().toInstant()), entity.getRequestText());
     
     return Response.ok(objectFactory.createModel(courseAssessmentRequest)).build();
   }
@@ -2129,7 +2132,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequest(courseAssessmentRequest, entity.getCreated().toDate(), entity.getRequestText());
+    CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequest(courseAssessmentRequest, Date.from(entity.getCreated().toInstant()), entity.getRequestText());
         
     return Response.ok(objectFactory.createModel(updatedCourseAssessmentRequest)).build();
   }

@@ -37,6 +37,7 @@ import org.hibernate.search.annotations.FullTextFilterDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.SortableField;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -223,7 +224,8 @@ public class Project implements ArchivableEntity {
   }
 
   @Transient
-  @Field (analyze = Analyze.NO, store = Store.YES)
+  @Field (analyze = Analyze.NO, store = Store.NO)
+  @SortableField
   public String getNameSortable() {
     return name;
   }

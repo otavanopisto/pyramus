@@ -3,7 +3,8 @@ package fi.otavanopisto.pyramus.rest;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
-import org.joda.time.DateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import org.junit.Test;
 
 public class StudentCoursesTestsIT extends AbstractRESTServiceTest {
@@ -12,11 +13,11 @@ public class StudentCoursesTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testStudentListCourses() {
-    DateTime created1 = getDate(2010, 1, 1);
-    DateTime modified1 = getDate(2010, 1, 1);
-    DateTime beginDate1 = getDateToDateTime(2010, 2, 2);
-    DateTime endDate1 = getDateToDateTime(2010, 3, 3);
-    DateTime enrolmentTimeEnd1 = getDate(2010, 1, 1);
+    OffsetDateTime created1 = getDate(2010, 1, 1);
+    OffsetDateTime modified1 = getDate(2010, 1, 1);
+    OffsetDateTime beginDate1 = getDateToOffsetDateTime(2010, 2, 2);
+    OffsetDateTime endDate1 = getDateToOffsetDateTime(2010, 3, 3);
+    OffsetDateTime enrolmentTimeEnd1 = getDate(2010, 1, 1);
     given().headers(getAuthHeaders())
       .get("/students/students/{ID}/courses", TEST_STUDENT_ID)
       .then()

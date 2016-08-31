@@ -5,7 +5,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 
-import org.joda.time.DateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import org.junit.Test;
 
 import com.jayway.restassured.response.Response;
@@ -174,8 +175,8 @@ public class ModuleTestsIT extends AbstractRESTServiceTest {
   public void testDeleteModule() {
     Module module = new Module(null,
         "not updated", 
-        new DateTime(), 
-        new DateTime(), 
+        OffsetDateTime.now(), 
+        OffsetDateTime.now(), 
         "not updated module", 
         Boolean.FALSE, 
         111, 

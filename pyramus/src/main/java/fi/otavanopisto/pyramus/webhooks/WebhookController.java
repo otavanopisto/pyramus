@@ -14,16 +14,14 @@ import javax.ejb.Stateful;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import fi.otavanopisto.pyramus.webhooks.WebhookPayload;
 
 @Stateful
 @Dependent
@@ -65,9 +63,7 @@ public class WebhookController {
     
     @Override
     public Boolean call() throws Exception {
-      try {
-        HttpClient client = new DefaultHttpClient();
-  
+      try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
         HttpPost httpPost = new HttpPost(url);
         try {
           StringEntity dataEntity = new StringEntity(data);

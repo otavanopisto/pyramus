@@ -15,7 +15,13 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.joda.time.DateTime;
+
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
@@ -108,7 +114,7 @@ public class ObjectFactory {
         new Mapper<fi.otavanopisto.pyramus.domainmodel.base.AcademicTerm>() {
           @Override
           public Object map(fi.otavanopisto.pyramus.domainmodel.base.AcademicTerm entity) {
-            return new AcademicTerm(entity.getId(), entity.getName(), toDateTime( entity.getStartDate() ), toDateTime( entity.getEndDate() ), entity.getArchived());
+            return new AcademicTerm(entity.getId(), entity.getName(), toOffsetDateTime( entity.getStartDate() ), toOffsetDateTime( entity.getEndDate() ), entity.getArchived());
           }
         }, 
         
@@ -173,11 +179,11 @@ public class ObjectFactory {
 
             Double length = entity.getCourseLength() != null ? entity.getCourseLength().getUnits() : null;
             Long lengthUnitId = entity.getCourseLength() != null && entity.getCourseLength().getUnit() != null ? entity.getCourseLength().getUnit().getId() : null;
-            DateTime created = toDateTime(entity.getCreated());
-            DateTime lastModified = toDateTime(entity.getLastModified());
-            DateTime beginDate = fromDateToDateTime(entity.getBeginDate());
-            DateTime endDate = fromDateToDateTime(entity.getEndDate());
-            DateTime enrolmentTimeEnd = toDateTime( entity.getEnrolmentTimeEnd());
+            OffsetDateTime created = toOffsetDateTime(entity.getCreated());
+            OffsetDateTime lastModified = toOffsetDateTime(entity.getLastModified());
+            OffsetDateTime beginDate = fromDateToOffsetDateTime(entity.getBeginDate());
+            OffsetDateTime endDate = fromDateToOffsetDateTime(entity.getEndDate());
+            OffsetDateTime enrolmentTimeEnd = toOffsetDateTime( entity.getEnrolmentTimeEnd());
             Long creatorId = entity.getCreator() != null ? entity.getCreator().getId() : null;
             Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
             Long moduleId = entity.getModule() != null ? entity.getModule().getId() : null;
@@ -230,7 +236,7 @@ public class ObjectFactory {
                 gradeId,
                 gradingScaleId, 
                 assessorId, 
-                toDateTime(entity.getDate()),
+                toOffsetDateTime(entity.getDate()),
                 entity.getVerbalAssessment());
           }
         },
@@ -239,7 +245,7 @@ public class ObjectFactory {
           @Override
           public Object map(TransferCredit entity) {
             Long studentId = entity.getStudent() != null ? entity.getStudent().getId() : null;
-            DateTime date = toDateTime(entity.getDate());
+            OffsetDateTime date = toOffsetDateTime(entity.getDate());
             Long gradeId = entity.getGrade() != null ? entity.getGrade().getId() : null;
             Long gradigScaleId = entity.getGrade() != null ? entity.getGrade().getGradingScale().getId() : null;
             Long assessorId = entity.getAssessor() != null ? entity.getAssessor().getId() : null;
@@ -257,7 +263,7 @@ public class ObjectFactory {
         new Mapper<CourseAssessmentRequest>(){
           @Override
           public Object map(CourseAssessmentRequest entity) {
-            DateTime created = toDateTime(entity.getCreated());
+            OffsetDateTime created = toOffsetDateTime(entity.getCreated());
             return new fi.otavanopisto.pyramus.rest.model.CourseAssessmentRequest(entity.getId(), entity.getCourseStudent().getId(), created, entity.getRequestText(), entity.getArchived());
           }
         },
@@ -325,8 +331,8 @@ public class ObjectFactory {
               }
             }
             
-            return new fi.otavanopisto.pyramus.rest.model.Module(entity.getId(), entity.getName(), toDateTime(entity.getCreated()),
-                toDateTime(entity.getLastModified()), entity.getDescription(), entity.getArchived(), entity.getCourseNumber(), 
+            return new fi.otavanopisto.pyramus.rest.model.Module(entity.getId(), entity.getName(), toOffsetDateTime(entity.getCreated()),
+                toOffsetDateTime(entity.getLastModified()), entity.getDescription(), entity.getArchived(), entity.getCourseNumber(), 
                 entity.getMaxParticipantCount(), creatorId, lastModifierId, subjectId, curriculumId, length, lenghtUnitId, tags);
           }
         }, 
@@ -356,7 +362,7 @@ public class ObjectFactory {
               }
             }
             
-            return new fi.otavanopisto.pyramus.rest.model.Project(entity.getId(), entity.getName(), entity.getDescription(), optionalStudiesLength, optionalStudiesLengthUnitId, toDateTime(entity.getCreated()), creatorId, toDateTime(entity.getLastModified()), lastModifierId, tags, entity.getArchived());
+            return new fi.otavanopisto.pyramus.rest.model.Project(entity.getId(), entity.getName(), entity.getDescription(), optionalStudiesLength, optionalStudiesLengthUnitId, toOffsetDateTime(entity.getCreated()), creatorId, toOffsetDateTime(entity.getLastModified()), lastModifierId, tags, entity.getArchived());
           }
         },
         
@@ -499,8 +505,8 @@ public class ObjectFactory {
             }    
 
             return new fi.otavanopisto.pyramus.rest.model.StudentGroup(entity.getId(), entity.getName(), entity.getDescription(), 
-              toDateTime(entity.getBeginDate()), creatorId, toDateTime(entity.getCreated()), lastModifierId, 
-              toDateTime(entity.getLastModified()), tags, entity.getArchived() 
+              toOffsetDateTime(entity.getBeginDate()), creatorId, toOffsetDateTime(entity.getCreated()), lastModifierId, 
+              toOffsetDateTime(entity.getLastModified()), tags, entity.getArchived() 
             );
           }
         },
@@ -521,7 +527,7 @@ public class ObjectFactory {
             }
             
             Long defaultUserId = entity.getDefaultUser() != null ? entity.getDefaultUser().getId() : null;
-            return new fi.otavanopisto.pyramus.rest.model.Person(entity.getId(), toDateTime(entity.getBirthday()), entity.getSocialSecurityNumber(), sex, entity.getSecureInfo(), entity.getBasicInfo(), defaultUserId);
+            return new fi.otavanopisto.pyramus.rest.model.Person(entity.getId(), toOffsetDateTime(entity.getBirthday()), entity.getSocialSecurityNumber(), sex, entity.getSecureInfo(), entity.getBasicInfo(), defaultUserId);
           }
         },
           
@@ -562,8 +568,8 @@ public class ObjectFactory {
             return new fi.otavanopisto.pyramus.rest.model.Student(entity.getId(), personId, entity.getFirstName(), entity.getLastName(), 
                 entity.getNickname(), entity.getAdditionalInfo(), additionalContectInfo, nationalityId, 
                 languageId, municipalityId, schoolId, activityTypeId, examinationTypeId, educationalLevelId, 
-                toDateTime(entity.getStudyTimeEnd()), studyProgrammeId, curriculumId, entity.getPreviousStudies(), entity.getEducation(), 
-                entity.getLodging(), toDateTime(entity.getStudyStartDate()), toDateTime(entity.getStudyEndDate()), studyEndReasonId, 
+                toOffsetDateTime(entity.getStudyTimeEnd()), studyProgrammeId, curriculumId, entity.getPreviousStudies(), entity.getEducation(), 
+                entity.getLodging(), toOffsetDateTime(entity.getStudyStartDate()), toOffsetDateTime(entity.getStudyEndDate()), studyEndReasonId, 
                 entity.getStudyEndText(), variables, tags, entity.getArchived());
           }
         },
@@ -580,7 +586,7 @@ public class ObjectFactory {
           @Override
           public Object map(StudentContactLogEntry entity) {
             StudentContactLogEntryType type = StudentContactLogEntryType.valueOf(entity.getType().name());
-            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry(entity.getId(), entity.getText(), entity.getCreatorName(), toDateTime(entity.getEntryDate()), type, entity.getArchived());
+            return new fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry(entity.getId(), entity.getText(), entity.getCreatorName(), toOffsetDateTime(entity.getEntryDate()), type, entity.getArchived());
           }
         },
         
@@ -681,7 +687,7 @@ public class ObjectFactory {
             CourseOptionality optionality = entity.getOptionality() != null ? CourseOptionality.valueOf(entity.getOptionality().name()) : null;
             Long billingDetailsId = entity.getBillingDetails() != null ? entity.getBillingDetails().getId() : null;
             
-            return new fi.otavanopisto.pyramus.rest.model.CourseStudent(entity.getId(), courseId, studentId, toDateTime(entity.getEnrolmentTime()), entity.getArchived(), participantTypeId, courseEnrolmentTypeId, entity.getLodging(), optionality, billingDetailsId);
+            return new fi.otavanopisto.pyramus.rest.model.CourseStudent(entity.getId(), courseId, studentId, toOffsetDateTime(entity.getEnrolmentTime()), entity.getArchived(), participantTypeId, courseEnrolmentTypeId, entity.getLodging(), optionality, billingDetailsId);
           }
         },
         
@@ -748,20 +754,27 @@ public class ObjectFactory {
     return mappers.get(object.getClass()).map(object);
   }
 
-  private DateTime toDateTime(Date date) {
+  private OffsetDateTime toOffsetDateTime(Date date) {
     if (date == null) {
       return null;
     }
-    
-    return new DateTime(date.getTime());
+    // If (as) date is java.sql.Date then toInstant() would cause UnsupportedOperationException
+    Date tmpDate = new Date(date.getTime()); 
+    Instant instant = tmpDate.toInstant();
+    ZoneId systemId = ZoneId.systemDefault();
+    ZoneOffset offset = systemId.getRules().getOffset(instant);
+    return tmpDate.toInstant().atOffset(offset);
   }
 
-  private DateTime fromDateToDateTime(Date date) {
+  private OffsetDateTime fromDateToOffsetDateTime(Date date) {
     if (date == null) {
       return null;
     }
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T00:00:00Z'");
-    return new DateTime(sdf.format(date));
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T00:00:00'");
+    LocalDateTime ldt = LocalDateTime.parse(sdf.format(date));
+    ZoneId systemId = ZoneId.systemDefault();
+    ZoneOffset offset = systemId.getRules().getOffset(ldt);
+    return ldt.atOffset(offset);
   }
  
   private VariableType toVariableType(fi.otavanopisto.pyramus.domainmodel.base.VariableType variableType) {

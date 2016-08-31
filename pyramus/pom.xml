@@ -10,7 +10,7 @@
     <version>0.7.53-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
-  
+
   <dependencies>
 
     <!-- Servlet -->
@@ -20,12 +20,12 @@
       <artifactId>jboss-servlet-api_3.1_spec</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- RESTEasy -->
 
     <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>jaxrs-api</artifactId>
+      <groupId>org.jboss.spec.javax.ws.rs</groupId>
+      <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -34,7 +34,7 @@
       <artifactId>resteasy-jackson2-provider</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- CDI -->
 
     <dependency>
@@ -42,15 +42,15 @@
       <artifactId>cdi-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.jboss.spec.javax.interceptor</groupId>
       <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- Hibernate -->
-  
+
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
@@ -62,63 +62,63 @@
       <artifactId>hibernate-infinispan</artifactId>
       <scope>provided</scope>
     </dependency>
-  
+
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-search-orm</artifactId>
       <scope>provided</scope>
     </dependency>
-  
+
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
       <scope>provided</scope>
     </dependency>
-  
+
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-search-analyzers</artifactId>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-analyzers-common</artifactId>
       <scope>provided</scope>
     </dependency>
-  
+
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-search-infinispan</artifactId>
-      <scope>provided</scope>
+      <version>5.5.1.Final</version>
     </dependency>
-  
+
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
       <scope>provided</scope>
-    </dependency>    
-       
+    </dependency>
+
     <!-- Transactions -->
-    
+
     <dependency>
       <groupId>org.jboss.spec.javax.transaction</groupId>
       <artifactId>jboss-transaction-api_1.2_spec</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- JSP -->
-    
+
     <dependency>
       <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
       <artifactId>jboss-jsp-api_2.3_spec</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- JSTL -->
-    
+
     <dependency>
       <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
       <artifactId>jboss-jstl-api_1.2_spec</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- JMS -->
-    
+
     <dependency>
       <groupId>org.jboss.spec.javax.jms</groupId>
       <artifactId>jboss-jms-api_2.0_spec</artifactId>
@@ -146,44 +146,44 @@
       <artifactId>httpclient</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
       <scope>provided</scope>
-    </dependency> 
-    
+    </dependency>
+
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <scope>provided</scope>
-    </dependency> 
-    
+    </dependency>
+
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <scope>provided</scope>
     </dependency>
-        
+
     <!-- OpenCSV -->
 
     <dependency>
       <groupId>net.sf.opencsv</groupId>
       <artifactId>opencsv</artifactId>
     </dependency>
-    
+
     <!-- JSON -->
 
     <dependency>
@@ -191,7 +191,7 @@
       <artifactId>json-lib</artifactId>
       <classifier>jdk15</classifier>
     </dependency>
-    
+
     <!-- SLF4J -->
 
     <dependency>
@@ -205,7 +205,7 @@
       <artifactId>slf4j-simple</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- Maven Aether -->
 
     <dependency>
@@ -228,22 +228,22 @@
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-http-lightweight</artifactId>
     </dependency>
-    
+
     <!-- JavaFaker -->
-  
+
     <dependency>
       <groupId>com.github.javafaker</groupId>
       <artifactId>javafaker</artifactId>
     </dependency>
-    
+
     <!-- SnakeYAML -->
-    
+
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
       <scope>provided</scope>
     </dependency>
-  
+
     <!-- Freemarker -->
 
     <dependency>
@@ -252,27 +252,27 @@
     </dependency>
 
     <!-- Xerces -->
-    
+
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- Xalan -->
-  
+
     <dependency>
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>
       <scope>provided</scope>
     </dependency>
-  
+
     <dependency>
       <groupId>xalan</groupId>
       <artifactId>serializer</artifactId>
       <scope>provided</scope>
     </dependency>
-  
+
     <!-- jsoup -->
 
     <dependency>
@@ -280,16 +280,9 @@
       <artifactId>jsoup</artifactId>
       <scope>provided</scope>
     </dependency>
-    
-    <!-- JodaTime -->
-    
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-    </dependency>
-    
+
      <!-- Oltu -->
-  
+
      <dependency>
          <groupId>org.apache.oltu.oauth2</groupId>
          <artifactId>org.apache.oltu.oauth2.common</artifactId>
@@ -302,13 +295,10 @@
          <groupId>org.apache.oltu.oauth2</groupId>
          <artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
      </dependency>
-    
+
     <!-- Jackson -->
-    
-    <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-joda</artifactId>
-    </dependency>  
+
+    <dependency><groupId>com.fasterxml.jackson.datatype</groupId><artifactId>jackson-datatype-jsr310</artifactId></dependency>
 
     <!-- Pyramus -->
 
@@ -353,12 +343,12 @@
       <artifactId>webservices-plugin</artifactId>
       <scope>compile</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>pyramus-webhooks</artifactId>
     </dependency>
-    
+
     <!-- Test Dependecies -->
 
     <dependency>
@@ -372,25 +362,25 @@
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
-            
+
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-core</artifactId>
       <scope>test</scope>
     </dependency>
-            
+
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-library</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.oltu.oauth2</groupId>
       <artifactId>org.apache.oltu.oauth2.client</artifactId>
       <scope>test</scope>
     </dependency>
-            
+
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
@@ -415,7 +405,7 @@
       </plugin>
     </plugins>
   </build>
-  
+
   <profiles>
     <profile>
       <id>rest-it</id>
@@ -438,19 +428,19 @@
         <it.keystore.file>${project.build.directory}${file.separator}pyrit.keystore</it.keystore.file>
         <it.wildfly.cli-batch>true</it.wildfly.cli-batch>
       </properties>
-      
-      <dependencies>          
+
+      <dependencies>
         <dependency>
           <groupId>com.h2database</groupId>
           <artifactId>h2</artifactId>
           <version>${h2.version}</version>
           <scope>test</scope>
-        </dependency> 
+        </dependency>
       </dependencies>
       <build>
-      
+
         <plugins>
-        
+
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
@@ -495,12 +485,12 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>    
-          
+          </plugin>
+
           <plugin>
             <groupId>de.juplo</groupId>
-            <artifactId>hibernate4-maven-plugin</artifactId>
-            <version>1.0.5</version>
+            <artifactId>hibernate-maven-plugin</artifactId>
+            <version>2.0.0</version>
             <dependencies>
               <dependency>
                 <groupId>com.h2database</groupId>
@@ -509,8 +499,8 @@
               </dependency>
             </dependencies>
             <configuration>
-              <driverClassName>${it.jdbc.driver}</driverClassName>
-              <hibernateDialect>${it.hibernate.dialect}</hibernateDialect>
+              <driver>${it.jdbc.driver}</driver>
+              <dialect>${it.hibernate.dialect}</dialect>
               <url><![CDATA[${it.jdbc.url}]]></url>
               <username>${it.jdbc.username}</username>
               <password>${it.jdbc.password}</password>
@@ -520,26 +510,19 @@
                 <id>create-schema</id>
                 <phase>pre-integration-test</phase>
                 <goals>
-                  <goal>export</goal>
+                  <goal>create</goal>
                 </goals>
-                <configuration>
-                  <type>CREATE</type>
-                </configuration>
               </execution>
               <execution>
                 <id>drop-db-after-test</id>
                 <phase>post-integration-test</phase>
                 <goals>
-                  <goal>export</goal>
+                  <goal>drop</goal>
                 </goals>
-                <configuration>
-                  <type>DROP</type>
-                  <force>true</force>
-                </configuration>
               </execution>
             </executions>
           </plugin>
-          
+
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>sql-maven-plugin</artifactId>
@@ -551,7 +534,7 @@
                 <version>${h2.version}</version>
               </dependency>
             </dependencies>
-    
+
             <configuration>
               <driver>${it.jdbc.driver}</driver>
               <url>${it.jdbc.url}</url>
@@ -635,18 +618,18 @@
               </execution>
             </executions>
           </plugin>
-          
+
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-maven2-plugin</artifactId>
-            <version>1.4.16</version>
-            <configuration>
+            <version>1.5.0</version>
+						<configuration>
               <container>
-                <containerId>wildfly8x</containerId>
+                <containerId>wildfly10x</containerId>
                 <log>${project.basedir}/target/cargo.log</log>
-                <output>${project.basedir}/target/jboss.log</output>
+                <output>${project.basedir}/target/wildfly.log</output>
                 <zipUrlInstaller>
-                  <url>http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip</url>
+                  <url>http://download.jboss.org/wildfly/10.0.0.Final/wildfly-10.0.0.Final.zip</url>
                   <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
                   <extractDir>${project.basedir}/.cargo/extracts</extractDir>
                 </zipUrlInstaller>
@@ -661,22 +644,18 @@
                 <properties>
                   <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
                   <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
-                  <cargo.jvmargs>-Xms64m -Xmx1152m -XX:MaxPermSize=512m -XX:-UseSplitVerifier</cargo.jvmargs>
-                  <cargo.datasource.datasource.pyrit>
+                  <cargo.jvmargs>-Xms64m -Xmx1152m -XX:MaxPermSize=512m</cargo.jvmargs>
+                  <cargo.datasource.datasource.pyramus>
                     cargo.datasource.driver=${it.jdbc.driver}|
                     cargo.datasource.url=${it.jdbc.url}|
                     cargo.datasource.jndi=${it.jdbc.jndi}|
                     cargo.datasource.username=${it.jdbc.username}|
                     cargo.datasource.password=${it.jdbc.password}|
                     cargo.datasource.transactionsupport=LOCAL_TRANSACTION
-                  </cargo.datasource.datasource.pyrit>
+                  </cargo.datasource.datasource.pyramus>
                 </properties>
               </configuration>
-
-              <deployables>
-                <dependency />                 
-              </deployables>
-
+              <deployer/>
             </configuration>
             <executions>
               <execution>
@@ -692,24 +671,27 @@
                 <goals>
                   <goal>stop</goal>
                 </goals>
+                <configuration>
+                  <skip>${it.skipserverstop}</skip>
+                </configuration>
               </execution>
             </executions>
           </plugin>
-          
+
           <plugin>
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
             <version>1.0.2.Final</version>
             <executions>
               <execution>
-                <id>configure-wildfly</id>
+                <id>deploy</id>
                 <phase>pre-integration-test</phase>
                 <goals>
-                  <goal>execute-commands</goal>
+                  <goal>deploy</goal>
                 </goals>
                 <configuration>
-                  <execute-commands>
-                    <batch>${it.wildfly.cli-batch}</batch>
+                  <before-deployment>
+                    <batch>true</batch>
                     <commands>
                       <command>/system-property=pyramus.workspace:add(value="${basedir}/..")</command>
                       <command>/system-property=PyramusWSAllowedIPs:add(value="127.0.0.1")</command>
@@ -724,34 +706,20 @@
                       <command>/subsystem=security/security-domain=WebServices/authentication=classic:add(login-modules=[{"code"=&gt;"RealmUsersRoles","flag"=&gt;"required","module-options"=&gt;[("realm"=&gt;"WebServices"),("password-stacking"=&gt;"useFirstPass"),("rolesProperties"=&gt;"\${jboss.server.config.dir}/application-roles.properties"),("usersProperties"=&gt;"\${jboss.server.config.dir}/application-users.properties")]}])</command>
                       <command>/subsystem=logging/logger=javax.ws.rs.NotFoundException:add(level=SEVERE)</command>
                     </commands>
-                  </execute-commands>
-                </configuration>
-              </execution>
-
-              <execution>
-                <id>reload-wildfly</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>execute-commands</goal>
-                </goals>
-                <configuration>
-                  <execute-commands>
-                    <commands>
-                      <command>:reload</command>
-                    </commands>
-                  </execute-commands>
+                  </before-deployment>
+                  <filename>./pyramus-${project.version}.war</filename>
                 </configuration>
               </execution>
             </executions>
           </plugin>
-                              
+
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>wait-maven-plugin</artifactId>
             <version>1.0</version>
             <executions>
               <execution>
-                <id>wait-rest</id>
+                <id>wait</id>
                 <phase>pre-integration-test</phase>
                 <goals>
                   <goal>wait</goal>
@@ -761,17 +729,17 @@
                   <host>${it.host}</host>
                   <port>${it.port.http}</port>
                   <file>/1/system/ping</file>
-                  <maxcount>10</maxcount>
+                  <maxcount>20</maxcount>
                   <timeout>10000</timeout>
                 </configuration>
               </execution>
             </executions>
           </plugin>
-          
         </plugins>
-      </build> 
+      </build>
     </profile>
-    
+
+
     <profile>
       <id>ui-it</id>
       <activation>
@@ -792,19 +760,19 @@
         <it.keystore.pass>storepass</it.keystore.pass>
         <it.keystore.file>${project.build.directory}${file.separator}pyrit.keystore</it.keystore.file>
       </properties>
-      
-      <dependencies>          
+
+      <dependencies>
         <dependency>
           <groupId>com.h2database</groupId>
           <artifactId>h2</artifactId>
           <version>${h2.version}</version>
           <scope>test</scope>
-        </dependency>       
+        </dependency>
       </dependencies>
       <build>
-      
+
         <plugins>
-        
+
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
@@ -848,12 +816,12 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>    
-          
+          </plugin>
+
           <plugin>
             <groupId>de.juplo</groupId>
-            <artifactId>hibernate4-maven-plugin</artifactId>
-            <version>1.0.5</version>
+            <artifactId>hibernate-maven-plugin</artifactId>
+            <version>2.0.0</version>
             <dependencies>
               <dependency>
                 <groupId>com.h2database</groupId>
@@ -862,8 +830,8 @@
               </dependency>
             </dependencies>
             <configuration>
-              <driverClassName>${it.jdbc.driver}</driverClassName>
-              <hibernateDialect>${it.hibernate.dialect}</hibernateDialect>
+              <driver>${it.jdbc.driver}</driver>
+              <dialect>${it.hibernate.dialect}</dialect>
               <url><![CDATA[${it.jdbc.url}]]></url>
               <username>${it.jdbc.username}</username>
               <password>${it.jdbc.password}</password>
@@ -873,26 +841,19 @@
                 <id>create-schema</id>
                 <phase>pre-integration-test</phase>
                 <goals>
-                  <goal>export</goal>
+                  <goal>create</goal>
                 </goals>
-                <configuration>
-                  <type>CREATE</type>
-                </configuration>
               </execution>
               <execution>
                 <id>drop-db-after-test</id>
                 <phase>post-integration-test</phase>
                 <goals>
-                  <goal>export</goal>
+                  <goal>drop</goal>
                 </goals>
-                <configuration>
-                  <type>DROP</type>
-                  <force>true</force>
-                </configuration>
               </execution>
             </executions>
           </plugin>
-          
+
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>sql-maven-plugin</artifactId>
@@ -904,7 +865,7 @@
                 <version>${h2.version}</version>
               </dependency>
             </dependencies>
-    
+
             <configuration>
               <driver>${it.jdbc.driver}</driver>
               <url>${it.jdbc.url}</url>
@@ -927,7 +888,7 @@
               </execution>
             </executions>
           </plugin>
-          
+
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>keytool-maven-plugin</artifactId>
@@ -988,18 +949,18 @@
               </execution>
             </executions>
           </plugin>
-          
+
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-maven2-plugin</artifactId>
-            <version>1.4.9</version>
+            <version>1.5.0</version>
             <configuration>
               <container>
-                <containerId>wildfly8x</containerId>
+                <containerId>wildfly10x</containerId>
                 <log>${project.basedir}/target/cargo.log</log>
                 <output>${project.basedir}/target/jboss.log</output>
                 <zipUrlInstaller>
-                  <url>http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip</url>
+                  <url>http://download.jboss.org/wildfly/10.0.0.Final/wildfly-10.0.0.Final.zip</url>
                   <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
                   <extractDir>${project.basedir}/.cargo/extracts</extractDir>
                 </zipUrlInstaller>
@@ -1027,7 +988,7 @@
               </configuration>
 
               <deployables>
-                <dependency />                 
+                <dependency />
               </deployables>
 
             </configuration>
@@ -1048,11 +1009,11 @@
               </execution>
             </executions>
           </plugin>
-          
+
           <plugin>
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
-            <version>1.0.1.Final</version>
+            <version>1.1.0.Alpha11</version>
             <executions>
               <execution>
                 <id>configure-wildfly</id>
@@ -1063,6 +1024,7 @@
                 <configuration>
                   <execute-commands>
                     <batch>true</batch>
+                    <timeout>180</timeout>
                     <commands>
                       <command>/system-property=PyramusWSAllowedIPs:add(value="127.0.0.1")</command>
                       <command>/system-property=pyramus-url:add(value="${it.host}:${it.port.https}")</command>
@@ -1095,7 +1057,7 @@
               </execution>
             </executions>
           </plugin>
-                              
+
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>wait-maven-plugin</artifactId>
@@ -1118,9 +1080,9 @@
               </execution>
             </executions>
           </plugin>
-          
+
         </plugins>
-      </build> 
+      </build>
     </profile>
   </profiles>
 </project>

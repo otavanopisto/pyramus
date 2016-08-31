@@ -12,13 +12,6 @@
   
   <dependencies>
     
-    <!-- JodaTime -->
-
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-    </dependency>
-    
     <dependency>
       <groupId>fi.otavanopisto</groupId>
       <artifactId>webapp-permission</artifactId>

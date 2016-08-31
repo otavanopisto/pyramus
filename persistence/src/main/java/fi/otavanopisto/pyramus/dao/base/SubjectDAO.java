@@ -12,11 +12,10 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.util.Version;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
@@ -24,8 +23,8 @@ import org.hibernate.search.jpa.Search;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
-import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject_;
+import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
 @Stateless
 public class SubjectDAO extends PyramusEntityDAO<Subject> {
@@ -126,7 +125,7 @@ public class SubjectDAO extends PyramusEntityDAO<Subject> {
     try {
       String queryString = queryBuilder.toString();
       Query luceneQuery;
-      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
+      QueryParser parser = new QueryParser("", new StandardAnalyzer());
       if (StringUtils.isBlank(queryString)) {
         luceneQuery = new MatchAllDocsQuery();
       } else {

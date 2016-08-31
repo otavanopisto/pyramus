@@ -7,7 +7,8 @@ import static org.hamcrest.Matchers.not;
 import java.util.Arrays;
 import java.util.List;
 
-import org.joda.time.DateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -34,8 +35,8 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsCreateAcademicTerm() throws NoSuchFieldException {
-    DateTime start = getDate(2010, 02, 03);
-    DateTime end = getDate(2010, 06, 12);
+    OffsetDateTime start = getDate(2010, 02, 03);
+    OffsetDateTime end = getDate(2010, 06, 12);
     
     AcademicTerm academicTerm = new AcademicTerm(null, "create test", start, end, Boolean.FALSE);
 

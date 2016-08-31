@@ -37,8 +37,8 @@
     }
     
     while (studentCount > 0) {
-      var birthday = new Date(Math.round(Math.random() * 86400000 * 365 * 40));
-      var year = birthday.getFullYear();
+      var birthday = new java.util.Date(Math.round(Math.random() * 86400000 * 365 * 40));
+      var year = birthday.getYear();
       var month = birthday.getMonth() + 1;
       var day = birthday.getDate();
       var centuryIndicator = year < 1900 ? '+' : year < 2000 ? '-' : 'A';
@@ -80,7 +80,7 @@
         var studyProgramme = studyProgrammes[Math.round(Math.random() * (studyProgrammes.length - 1))];
         var studentGroup = studentGroups[Math.round(Math.random() * (studentGroups.length - 1))];
         
-        var studyStartDate = new Date(new Date(2010, 1, 1).getTime() + Math.round(Math.random() * 86400000 * 365 * 4));
+        var studyStartDate = new java.util.Date(new Date(2010, 1, 1).getTime() + Math.round(Math.random() * 86400000 * 365 * 4));
         var studyEndDate = null;
         var studyEndReason = null;
         var studyEndText = null;
@@ -95,7 +95,7 @@
         
         var courseCount = (Math.random() * 10);
         while (courseCount > 0) {
-          var courseId = courses[Math.round(Math.random() * (courses.length - 1))];
+          var courseId = courses[(Math.random() * (courses.length - 1))|0];
           
           if (!api.courseStudents.findIdByCourseAndStudent(courseId, studentId)) {
             api.courseStudents.create(courseId, studentId);

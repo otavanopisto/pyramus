@@ -4,7 +4,8 @@ import static com.jayway.restassured.RestAssured.given;
 
 import java.util.List;
 
-import org.joda.time.DateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -135,8 +136,8 @@ public class ModulePermissionsTestsIT extends AbstractRESTPermissionsTest {
   public void testPermissionsDeleteModule() throws NoSuchFieldException {
     Module module = new Module(null,
         "not updated", 
-        new DateTime(), 
-        new DateTime(), 
+        OffsetDateTime.now(), 
+        OffsetDateTime.now(), 
         "not updated module", 
         Boolean.FALSE, 
         111, 

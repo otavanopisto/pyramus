@@ -30,6 +30,7 @@ import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.SortableField;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -65,13 +66,15 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   }
   
   @Transient
-  @Field(analyze = Analyze.NO, store = Store.YES)
+  @Field(analyze = Analyze.NO, store = Store.NO)
+  @SortableField
   public String getFirstNameSortable() {
     return getFirstName();
   }
 
   @Transient
-  @Field(analyze = Analyze.NO, store = Store.YES)
+  @Field(analyze = Analyze.NO, store = Store.NO)
+  @SortableField
   public String getLastNameSortable() {
     return getLastName();
   }

@@ -3,16 +3,17 @@ package fi.otavanopisto.pyramus.rest.model;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 public class Course {
 
   public Course() {
   }
   
-  public Course(String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
-      Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
-      Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
+  public Course(String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber, 
+      Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
+      Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Long curriculumId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags) {
     this(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
@@ -20,9 +21,9 @@ public class Course {
         creatorId, lastModifierId, subjectId, curriculumId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
   }
 
-  public Course(Long id, String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
-      Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
-      Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
+  public Course(Long id, String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber, 
+      Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
+      Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Long curriculumId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags) {
     super();
@@ -74,19 +75,19 @@ public class Course {
     this.name = name;
   }
 
-  public DateTime getCreated() {
+  public OffsetDateTime getCreated() {
     return created;
   }
 
-  public void setCreated(DateTime created) {
+  public void setCreated(OffsetDateTime created) {
     this.created = created;
   }
 
-  public DateTime getLastModified() {
+  public OffsetDateTime getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(DateTime lastModified) {
+  public void setLastModified(OffsetDateTime lastModified) {
     this.lastModified = lastModified;
   }
 
@@ -122,19 +123,19 @@ public class Course {
     this.maxParticipantCount = maxParticipantCount;
   }
 
-  public DateTime getBeginDate() {
+  public OffsetDateTime getBeginDate() {
     return beginDate;
   }
 
-  public void setBeginDate(DateTime beginDate) {
+  public void setBeginDate(OffsetDateTime beginDate) {
     this.beginDate = beginDate;
   }
 
-  public DateTime getEndDate() {
+  public OffsetDateTime getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(DateTime endDate) {
+  public void setEndDate(OffsetDateTime endDate) {
     this.endDate = endDate;
   }
 
@@ -186,11 +187,11 @@ public class Course {
     this.planningHours = planningHours;
   }
 
-  public DateTime getEnrolmentTimeEnd() {
+  public OffsetDateTime getEnrolmentTimeEnd() {
     return enrolmentTimeEnd;
   }
 
-  public void setEnrolmentTimeEnd(DateTime enrolmentTimeEnd) {
+  public void setEnrolmentTimeEnd(OffsetDateTime enrolmentTimeEnd) {
     this.enrolmentTimeEnd = enrolmentTimeEnd;
   }
 
@@ -292,14 +293,14 @@ public class Course {
 
   private Long id;
   private String name;
-  private DateTime created;
-  private DateTime lastModified;
+  private OffsetDateTime created;
+  private OffsetDateTime lastModified;
   private String description;
   private Boolean archived;
   private Integer courseNumber;
   private Long maxParticipantCount;
-  private DateTime beginDate;
-  private DateTime endDate;
+  private OffsetDateTime beginDate;
+  private OffsetDateTime endDate;
   private String nameExtension;
   private Double localTeachingDays;
   private Double teachingHours;
@@ -307,7 +308,7 @@ public class Course {
   private Double distanceTeachingDays;
   private Double assessingHours;
   private Double planningHours;
-  private DateTime enrolmentTimeEnd;
+  private OffsetDateTime enrolmentTimeEnd;
   private Long creatorId;
   private Long lastModifierId;
   private Long subjectId;

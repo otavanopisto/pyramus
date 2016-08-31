@@ -5,7 +5,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 
-import org.joda.time.DateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import org.junit.Test;
 
 import com.jayway.restassured.response.Response;
@@ -16,8 +17,8 @@ public class AcademicTermTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateAcadmicTerm() {
-    DateTime start = getDate(2010, 02, 03);
-    DateTime end = getDate(2010, 06, 12);
+    OffsetDateTime start = getDate(2010, 02, 03);
+    OffsetDateTime end = getDate(2010, 06, 12);
     
     AcademicTerm academicTerm = new AcademicTerm(null, "create test", start, end, Boolean.FALSE);
 
@@ -43,10 +44,10 @@ public class AcademicTermTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testListAcademicTerms() {
-    DateTime start1 = getDate(2014, 8, 1);
-    DateTime end1 = getDate(2014, 12, 23);
-    DateTime start2 = getDate(2015, 1, 4);
-    DateTime end2 = getDate(2015, 5, 30);
+    OffsetDateTime start1 = getDate(2014, 8, 1);
+    OffsetDateTime end1 = getDate(2014, 12, 23);
+    OffsetDateTime start2 = getDate(2015, 1, 4);
+    OffsetDateTime end2 = getDate(2015, 5, 30);
 
     given().headers(getAuthHeaders())
       .get("/calendar/academicTerms")
@@ -67,8 +68,8 @@ public class AcademicTermTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testFindAcadmicTerm() {
-    DateTime start = getDate(2014, 8, 1);
-    DateTime end = getDate(2014, 12, 23);
+    OffsetDateTime start = getDate(2014, 8, 1);
+    OffsetDateTime end = getDate(2014, 12, 23);
 
     given().headers(getAuthHeaders()).get("/calendar/academicTerms/1").then().statusCode(200).body("id", is(1))
         .body("name", is("fall")).body("startDate", is(start.toString())).body("endDate", is(end.toString())).body("archived", is(false));

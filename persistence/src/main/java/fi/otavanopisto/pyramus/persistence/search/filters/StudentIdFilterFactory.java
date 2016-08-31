@@ -1,10 +1,11 @@
 package fi.otavanopisto.pyramus.persistence.search.filters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queries.TermsFilter;
 import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.TermsFilter;
 import org.hibernate.search.annotations.Factory;
 import org.hibernate.search.annotations.Key;
 import org.hibernate.search.filter.FilterKey;
@@ -18,13 +19,11 @@ public class StudentIdFilterFactory {
 
   @Factory
   public Filter getFilter() {
-    TermsFilter tf = new TermsFilter();
-    
+    List<Term> terms = new ArrayList<>();
     for (int i = 0; i < studentIds.size(); i++) {
-      tf.addTerm(new Term("users.id", studentIds.get(i).toString()));
+      terms.add(new Term("users.id", studentIds.get(i).toString()));
     }
-    
-    return tf;
+    return new TermsFilter(terms);
   }
 
   @Key

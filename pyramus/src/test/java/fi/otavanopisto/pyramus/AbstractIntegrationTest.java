@@ -15,7 +15,14 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -171,12 +178,14 @@ public abstract class AbstractIntegrationTest {
     return System.getProperty("it.keystore.storepass");
   }
 
-  protected DateTime getDateToDateTime(int year, int monthOfYear, int dayOfMonth) {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T00:00:00Z'");
-    return new DateTime(sdf.format(new Date(year - 1900, monthOfYear - 1, dayOfMonth)));
+  protected OffsetDateTime getDateToOffsetDateTime(int year, int monthOfYear, int dayOfMonth) {
+    LocalDateTime localDateTime = LocalDateTime.of(year, monthOfYear, dayOfMonth, 0, 0);
+    ZoneId systemId = ZoneId.systemDefault();
+    ZoneOffset offset = systemId.getRules().getOffset(localDateTime);
+    return localDateTime.atOffset(offset);
   }
   
-  protected DateTime getDate(int year, int monthOfYear, int dayOfMonth) {
-    return new DateTime(year, monthOfYear, dayOfMonth, 0, 0, 0, 0);
+  protected OffsetDateTime getDate(int year, int monthOfYear, int dayOfMonth) {
+    return getDateToOffsetDateTime(year, monthOfYear, dayOfMonth);
   }
 }

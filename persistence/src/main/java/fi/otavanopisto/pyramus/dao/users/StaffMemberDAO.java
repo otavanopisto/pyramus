@@ -17,12 +17,11 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.util.Version;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
@@ -218,7 +217,7 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     try {
       String queryString = queryBuilder.toString();
       org.apache.lucene.search.Query luceneQuery;
-      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
+      QueryParser parser = new QueryParser("", new StandardAnalyzer());
       if (StringUtils.isBlank(queryString)) {
         luceneQuery = new MatchAllDocsQuery();
       }
@@ -227,8 +226,8 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
       }
 
       FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, StaffMember.class)
-          .setSort(new Sort(new SortField[] { SortField.FIELD_SCORE, new SortField("lastNameSortable", SortField.STRING),
-                   new SortField("firstNameSortable", SortField.STRING) }))
+          .setSort(new Sort(new SortField[] { SortField.FIELD_SCORE, new SortField("lastNameSortable", SortField.Type.STRING),
+                   new SortField("firstNameSortable", SortField.Type.STRING) }))
           .setFirstResult(firstResult)
           . setMaxResults(resultsPerPage);
 
@@ -288,7 +287,7 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     try {
       String queryString = queryBuilder.toString();
       org.apache.lucene.search.Query luceneQuery;
-      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
+      QueryParser parser = new QueryParser("", new StandardAnalyzer());
       if (StringUtils.isBlank(queryString)) {
         luceneQuery = new MatchAllDocsQuery();
       }
@@ -297,8 +296,8 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
       }
 
       FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, StaffMember.class)
-          .setSort(new Sort(new SortField[] { SortField.FIELD_SCORE, new SortField("lastNameSortable", SortField.STRING),
-                   new SortField("firstNameSortable", SortField.STRING) }))
+          .setSort(new Sort(new SortField[] { SortField.FIELD_SCORE, new SortField("lastNameSortable", SortField.Type.STRING),
+                   new SortField("firstNameSortable", SortField.Type.STRING) }))
           .setFirstResult(firstResult)
           .setMaxResults(resultsPerPage);
 

@@ -32,6 +32,7 @@ import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.SortableField;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -302,7 +303,8 @@ public abstract class CourseBase implements ArchivableEntity {
   }
   
   @Transient
-  @Field (analyze = Analyze.NO, store = Store.YES)
+  @Field (analyze = Analyze.NO, store = Store.NO)
+  @SortableField
   public String getNameSortable() {
     return name;
   }

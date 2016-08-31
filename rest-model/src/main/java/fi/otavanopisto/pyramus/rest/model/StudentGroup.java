@@ -2,7 +2,8 @@ package fi.otavanopisto.pyramus.rest.model;
 
 import java.util.List;
 
-import org.joda.time.DateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 public class StudentGroup {
 
@@ -10,8 +11,8 @@ public class StudentGroup {
     super();
   }
 
-  public StudentGroup(Long id, String name, String description, DateTime beginDate, Long creatorId, DateTime created, Long lastModifierId,
-      DateTime lastModified, List<String> tags, Boolean archived) {
+  public StudentGroup(Long id, String name, String description, OffsetDateTime beginDate, Long creatorId, OffsetDateTime created, Long lastModifierId,
+      OffsetDateTime lastModified, List<String> tags, Boolean archived) {
     super();
     this.id = id;
     this.name = name;
@@ -49,11 +50,11 @@ public class StudentGroup {
     this.description = description;
   }
 
-  public DateTime getBeginDate() {
+  public OffsetDateTime getBeginDate() {
     return beginDate;
   }
 
-  public void setBeginDate(DateTime beginDate) {
+  public void setBeginDate(OffsetDateTime beginDate) {
     this.beginDate = beginDate;
   }
 
@@ -73,11 +74,11 @@ public class StudentGroup {
     this.creatorId = creatorId;
   }
 
-  public DateTime getCreated() {
+  public OffsetDateTime getCreated() {
     return created;
   }
 
-  public void setCreated(DateTime created) {
+  public void setCreated(OffsetDateTime created) {
     this.created = created;
   }
 
@@ -89,11 +90,11 @@ public class StudentGroup {
     this.lastModifierId = lastModifierId;
   }
 
-  public DateTime getLastModified() {
+  public OffsetDateTime getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(DateTime lastModified) {
+  public void setLastModified(OffsetDateTime lastModified) {
     this.lastModified = lastModified;
   }
 
@@ -108,11 +109,11 @@ public class StudentGroup {
   private Long id;
   private String name;
   private String description;
-  private DateTime beginDate;
+  private OffsetDateTime beginDate;
   private Boolean archived;
   private Long creatorId;
-  private DateTime created;
+  private OffsetDateTime created;
   private Long lastModifierId;
-  private DateTime lastModified;
+  private OffsetDateTime lastModified;
   private List<String> tags;
 }

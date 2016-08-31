@@ -84,19 +84,19 @@ public class EducationalTimeUnitTestsIT extends AbstractRESTServiceTest {
       
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      EducationalTimeUnit updateTimeUnit = new EducationalTimeUnit(id, "updated unit", "sym", 2d, Boolean.FALSE);
+      EducationalTimeUnit upOffsetDateTimeUnit = new EducationalTimeUnit(id, "updated unit", "sym", 2d, Boolean.FALSE);
 
       given().headers(getAuthHeaders())
         .contentType("application/json")
-        .body(updateTimeUnit)
+        .body(upOffsetDateTimeUnit)
         .put("/common/educationalTimeUnits/{ID}", id)
         .then()
         .statusCode(200)
-        .body("id", is( updateTimeUnit.getId().intValue() ))
-        .body("name", is(updateTimeUnit.getName()))
+        .body("id", is( upOffsetDateTimeUnit.getId().intValue() ))
+        .body("name", is(upOffsetDateTimeUnit.getName()))
         .body("symbol", is(educationalTimeUnit.getSymbol()))
-        .body("baseUnits", is(updateTimeUnit.getBaseUnits().floatValue() ))
-        .body("archived", is( updateTimeUnit.getArchived() ));
+        .body("baseUnits", is(upOffsetDateTimeUnit.getBaseUnits().floatValue() ))
+        .body("archived", is( upOffsetDateTimeUnit.getArchived() ));
 
     } finally {
       given().headers(getAuthHeaders())

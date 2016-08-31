@@ -10,7 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -36,10 +37,10 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
   }
   @Test
   public void testPermissionsCreateCourse() throws NoSuchFieldException {
-    Course course = createCourse("Create test", new DateTime(), new DateTime(),
+    Course course = createCourse("Create test", OffsetDateTime.now(), OffsetDateTime.now(),
         "Course for testing course creation", Boolean.FALSE, 111, 222l,
-        new DateTime(), new DateTime(), "Extension", 333d, 444d, 468d, 555d, 666d,
-        777d, new DateTime(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, null);
+        OffsetDateTime.now(), OffsetDateTime.now(), "Extension", 333d, 444d, 468d, 555d, 666d,
+        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, null);
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -60,10 +61,10 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsCreateCourseTags() throws NoSuchFieldException {
-    Course course = createCourse("Create test", new DateTime(), new DateTime(),
+    Course course = createCourse("Create test", OffsetDateTime.now(), OffsetDateTime.now(),
         "Course for testing course creation", Boolean.FALSE, 111, 222l,
-        new DateTime(), new DateTime(), "Extension", 333d, 444d, 468d, 555d, 666d,
-        777d, new DateTime(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, Arrays.asList("tag1", "tag2", "tag3"));
+        OffsetDateTime.now(), OffsetDateTime.now(), "Extension", 333d, 444d, 468d, 555d, 666d,
+        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, Arrays.asList("tag1", "tag2", "tag3"));
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -98,10 +99,10 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsUpdateCourse() throws NoSuchFieldException {
-    Course course = createCourse("Update test", new DateTime(), new DateTime(),
+    Course course = createCourse("Update test", OffsetDateTime.now(), OffsetDateTime.now(),
         "Course for testing course updating", Boolean.FALSE, 111, 222l,
-        new DateTime(), new DateTime(), "Extension", 333d, 444d, 468d, 555d, 666d,
-        777d, new DateTime(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, null);
+        OffsetDateTime.now(), OffsetDateTime.now(), "Extension", 333d, 444d, 468d, 555d, 666d,
+        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, null);
 
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -126,10 +127,10 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsUpdateCourseTags() throws NoSuchFieldException {
-    Course course = createCourse("Update test", new DateTime(), new DateTime(),
+    Course course = createCourse("Update test", OffsetDateTime.now(), OffsetDateTime.now(),
         "Course for testing course updating", Boolean.FALSE, 111, 222l,
-        new DateTime(), new DateTime(), "Extension", 333d, 444d, 468d, 555d, 666d,
-        777d, new DateTime(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, Arrays.asList(
+        OffsetDateTime.now(), OffsetDateTime.now(), "Extension", 333d, 444d, 468d, 555d, 666d,
+        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, Arrays.asList(
             "tag1", "tag2", "tag3"));
 
     Response response = given().headers(getAdminAuthHeaders())
@@ -156,10 +157,10 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   @Test
   public void testPermissionsDeleteCourse() throws NoSuchFieldException {
-    Course course = createCourse("Update test", new DateTime(), new DateTime(),
+    Course course = createCourse("Update test", OffsetDateTime.now(), OffsetDateTime.now(),
         "Course for testing course updating", Boolean.FALSE, 111, 222l,
-        new DateTime(), new DateTime(), "Extension", 333d, 444d, 468d, 555d, 666d,
-        777d, new DateTime(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, null);
+        OffsetDateTime.now(), OffsetDateTime.now(), "Extension", 333d, 444d, 468d, 555d, 666d,
+        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, null);
 
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -182,9 +183,9 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
       .statusCode(204);
   }
   
-  private Course createCourse(String name, DateTime created, DateTime lastModified, String description, Boolean archived, Integer courseNumber, 
-      Long maxParticipantCount, DateTime beginDate, DateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
-      Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, DateTime enrolmentTimeEnd, Long creatorId,
+  private Course createCourse(String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber, 
+      Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
+      Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Long curriculumId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags) {
     return new Course(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 

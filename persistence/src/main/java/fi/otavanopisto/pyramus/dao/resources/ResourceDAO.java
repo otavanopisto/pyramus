@@ -8,13 +8,12 @@ import javax.persistence.PersistenceException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.util.Version;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
@@ -48,7 +47,7 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
     FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
     try {
-      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
+      QueryParser parser = new QueryParser("", new StandardAnalyzer());
       String queryString = queryBuilder.toString();
       Query luceneQuery;
 
@@ -60,7 +59,7 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
       }
 
       FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, WorkResource.class, MaterialResource.class)
-        .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.STRING)}))
+        .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
         .setFirstResult(firstResult)
         .setMaxResults(resultsPerPage);
     
@@ -109,7 +108,7 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
 
     try {
 
-      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
+      QueryParser parser = new QueryParser("", new StandardAnalyzer());
       String queryString = queryBuilder.toString();
       Query luceneQuery;
 
@@ -124,7 +123,7 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
 
       if (resourceType == null) {
         query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, WorkResource.class, MaterialResource.class)
-            .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.STRING)}))
+            .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
             .setFirstResult(firstResult)
             .setMaxResults(resultsPerPage);
       }
@@ -132,13 +131,13 @@ public class ResourceDAO extends PyramusEntityDAO<Resource> {
         switch (resourceType) {
         case MATERIAL_RESOURCE:
           query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, MaterialResource.class)
-              .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.STRING)}))
+              .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
               .setFirstResult(firstResult)
               .setMaxResults(resultsPerPage);
           break;
         case WORK_RESOURCE:
           query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, WorkResource.class)
-              .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.STRING)}))
+              .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
               .setFirstResult(firstResult)
               .setMaxResults(resultsPerPage);
           break;

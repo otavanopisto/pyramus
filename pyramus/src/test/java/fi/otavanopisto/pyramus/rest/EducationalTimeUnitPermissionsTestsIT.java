@@ -77,11 +77,11 @@ private CommonPermissions commonPermissions = new CommonPermissions();
 
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      EducationalTimeUnit updateTimeUnit = new EducationalTimeUnit(id, "updated unit", "sym", 2d, Boolean.FALSE);
+      EducationalTimeUnit upOffsetDateTimeUnit = new EducationalTimeUnit(id, "updated unit", "sym", 2d, Boolean.FALSE);
 
       Response updateResponse = given().headers(getAuthHeaders())
         .contentType("application/json")
-        .body(updateTimeUnit)
+        .body(upOffsetDateTimeUnit)
         .put("/common/educationalTimeUnits/{ID}", id);
       assertOk(updateResponse, commonPermissions, CommonPermissions.UPDATE_EDUCATIONALTIMEUNIT, 200);
     } finally {

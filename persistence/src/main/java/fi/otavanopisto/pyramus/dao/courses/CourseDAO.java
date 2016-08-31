@@ -17,13 +17,12 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.util.Version;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
@@ -33,6 +32,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariable_;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
@@ -43,6 +43,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseType;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.events.CourseArchivedEvent;
@@ -50,8 +51,6 @@ import fi.otavanopisto.pyramus.events.CourseCreatedEvent;
 import fi.otavanopisto.pyramus.events.CourseUpdatedEvent;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 import fi.otavanopisto.pyramus.persistence.search.SearchTimeFilterMode;
-import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariable_;
-import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
 
 @Stateless
 public class CourseDAO extends PyramusEntityDAO<Course> {
@@ -296,7 +295,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
     try {
-      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
+      QueryParser parser = new QueryParser("", new StandardAnalyzer());
       String queryString = queryBuilder.toString();
       Query luceneQuery;
 
@@ -308,7 +307,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
       }
       
       FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, Course.class)
-          .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.STRING)}))
+          .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
           .setFirstResult(firstResult)
           .setMaxResults(resultsPerPage);
 
@@ -441,7 +440,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
     try {
-      QueryParser parser = new QueryParser(Version.LUCENE_36, "", new StandardAnalyzer(Version.LUCENE_36));
+      QueryParser parser = new QueryParser("", new StandardAnalyzer());
       String queryString = queryBuilder.toString();
       Query luceneQuery;
 
@@ -453,7 +452,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
       }
 
       FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, Course.class)
-          .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.STRING)}))
+          .setSort(new Sort(new SortField[]{SortField.FIELD_SCORE, new SortField("nameSortable", SortField.Type.STRING)}))
           .setFirstResult(firstResult)
           .setMaxResults(resultsPerPage);
 
