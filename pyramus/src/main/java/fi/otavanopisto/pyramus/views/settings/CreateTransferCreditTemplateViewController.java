@@ -4,13 +4,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
@@ -33,6 +37,7 @@ public class CreateTransferCreditTemplateViewController extends PyramusViewContr
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
 
     List<Subject> subjects = subjectDAO.listUnarchived();
     Collections.sort(subjects, new StringAttributeComparator("getName"));
@@ -43,12 +48,23 @@ public class CreateTransferCreditTemplateViewController extends PyramusViewContr
     List<School> schools = schoolDAO.listUnarchived();
     Collections.sort(schools, new StringAttributeComparator("getName"));
     
-    String jsonSubjects = new JSONArrayExtractor("name", "id").extractString(subjects);
     String jsonTimeUnits = new JSONArrayExtractor("name", "id").extractString(timeUnits);
+    JSONArray jsonSubjects = new JSONArrayExtractor("name", "code", "id").extract(subjects);
+    for (int i = 0; i < jsonSubjects.size(); i++) {
+      JSONObject jsonSubject = jsonSubjects.getJSONObject(i);
+      if (subjects.get(i).getEducationType() != null) {
+        jsonSubject.put("educationTypeName", subjects.get(i).getEducationType().getName());
+      }
+    }
 
-    this.setJsDataVariable(pageRequestContext, "subjects", jsonSubjects);
+    List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    String jsonCurriculums = new JSONArrayExtractor("name", "id").extractString(curriculums);
+    setJsDataVariable(pageRequestContext, "curriculums", jsonCurriculums);
+    
+    this.setJsDataVariable(pageRequestContext, "subjects", jsonSubjects.toString());
     this.setJsDataVariable(pageRequestContext, "timeUnits", jsonTimeUnits);
     
+    pageRequestContext.getRequest().setAttribute("curriculums", curriculums);
     pageRequestContext.setIncludeJSP("/templates/settings/createtransfercredittemplate.jsp");
   }
 

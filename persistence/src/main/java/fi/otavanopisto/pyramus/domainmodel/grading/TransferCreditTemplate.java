@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
@@ -17,6 +18,8 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 
 @Entity
 public class TransferCreditTemplate {
@@ -72,6 +75,14 @@ public class TransferCreditTemplate {
     }
   } 
 
+  public Curriculum getCurriculum() {
+    return curriculum;
+  }
+
+  public void setCurriculum(Curriculum curriculum) {
+    this.curriculum = curriculum;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="TransferCreditTemplate")  
   @TableGenerator(name="TransferCreditTemplate", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -89,4 +100,7 @@ public class TransferCreditTemplate {
   @IndexColumn (name = "indexColumn")
   @JoinColumn (name="transferCreditTemplate")
   private List<TransferCreditTemplateCourse> courses = new ArrayList<>();
+
+  @ManyToOne
+  private Curriculum curriculum;
 }

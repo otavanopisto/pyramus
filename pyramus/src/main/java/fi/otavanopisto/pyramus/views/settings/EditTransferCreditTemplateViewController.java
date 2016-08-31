@@ -12,10 +12,12 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditTemplateDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
@@ -41,6 +43,7 @@ public class EditTransferCreditTemplateViewController extends PyramusViewControl
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
 
     Long transferCreditTemplateId = pageRequestContext.getLong("transferCreditTemplate");
 
@@ -79,13 +82,21 @@ public class EditTransferCreditTemplateViewController extends PyramusViewControl
       if (courses.get(i).getSubject() != null) {
         course.put("subjectId", courses.get(i).getSubject().getId());
       }
+      
+      if (courses.get(i).getCurriculum() != null)
+        course.put("curriculumId", courses.get(i).getCurriculum().getId());
     }
+    
+    List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    String jsonCurriculums = new JSONArrayExtractor("name", "id").extractString(curriculums);
+    setJsDataVariable(pageRequestContext, "curriculums", jsonCurriculums);
     
     this.setJsDataVariable(pageRequestContext, "timeUnits", jsonTimeUnits);
     this.setJsDataVariable(pageRequestContext, "subjects", jsonSubjects.toString());
     this.setJsDataVariable(pageRequestContext, "courses", jsonCourses.toString());
 
     pageRequestContext.getRequest().setAttribute("transferCreditTemplate", transferCreditTemplate);
+    pageRequestContext.getRequest().setAttribute("curriculums", curriculums);
     
     pageRequestContext.setIncludeJSP("/templates/settings/edittransfercredittemplate.jsp");
   }

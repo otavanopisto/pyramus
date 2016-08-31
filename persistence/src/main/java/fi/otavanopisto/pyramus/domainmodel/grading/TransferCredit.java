@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
@@ -83,6 +84,14 @@ public class TransferCredit extends Credit {
     this.student = student;
   }
 
+  public Curriculum getCurriculum() {
+    return curriculum;
+  }
+
+  public void setCurriculum(Curriculum curriculum) {
+    this.curriculum = curriculum;
+  }
+
   @ManyToOne  
   @JoinColumn(name="student")
   private Student student;
@@ -109,4 +118,7 @@ public class TransferCredit extends Credit {
   @ManyToOne
   @JoinColumn(name = "subject")
   private Subject subject;
+
+  @ManyToOne
+  private Curriculum curriculum;
 }

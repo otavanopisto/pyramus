@@ -25,6 +25,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DateBridge;
+import org.hibernate.search.annotations.EncodingType;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FullTextFilterDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
@@ -312,12 +313,12 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   
   @Temporal (value=TemporalType.DATE)
   @Field (analyze = Analyze.NO)
-  @DateBridge (resolution = Resolution.DAY)
+  @DateBridge (resolution = Resolution.DAY, encoding = EncodingType.STRING)
   private Date beginDate;
   
   @Temporal (value=TemporalType.DATE)
   @Field (analyze = Analyze.NO)
-  @DateBridge (resolution = Resolution.DAY)
+  @DateBridge (resolution = Resolution.DAY, encoding = EncodingType.STRING)
   private Date endDate;
   
   private Double distanceTeachingDays;

@@ -19,7 +19,9 @@ import javax.inject.Inject;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
@@ -768,8 +770,11 @@ public class ObjectFactory {
     if (date == null) {
       return null;
     }
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T00:00:00Z'");
-    return OffsetDateTime.parse(sdf.format(date));
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T00:00:00'");
+    LocalDateTime ldt = LocalDateTime.parse(sdf.format(date));
+    ZoneId systemId = ZoneId.systemDefault();
+    ZoneOffset offset = systemId.getRules().getOffset(ldt);
+    return ldt.atOffset(offset);
   }
  
   private VariableType toVariableType(fi.otavanopisto.pyramus.domainmodel.base.VariableType variableType) {
