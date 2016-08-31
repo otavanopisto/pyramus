@@ -15,7 +15,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -176,10 +179,13 @@ public abstract class AbstractIntegrationTest {
   }
 
   protected OffsetDateTime getDateToOffsetDateTime(int year, int monthOfYear, int dayOfMonth) {
-    return OffsetDateTime.of(year, monthOfYear, dayOfMonth, 0, 0, 0, 0, ZoneOffset.UTC); 
+    LocalDateTime localDateTime = LocalDateTime.of(year, monthOfYear, dayOfMonth, 0, 0);
+    ZoneId systemId = ZoneId.systemDefault();
+    ZoneOffset offset = systemId.getRules().getOffset(localDateTime);
+    return localDateTime.atOffset(offset);
   }
   
   protected OffsetDateTime getDate(int year, int monthOfYear, int dayOfMonth) {
-    return OffsetDateTime.of(year, monthOfYear, dayOfMonth, 0, 0, 0, 0, ZoneOffset.UTC);
+    return getDateToOffsetDateTime(year, monthOfYear, dayOfMonth);
   }
 }
