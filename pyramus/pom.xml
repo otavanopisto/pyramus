@@ -662,16 +662,7 @@
                   </cargo.datasource.datasource.pyramus>
                 </properties>
               </configuration>
-
-  <deployables>
-    <deployable>
-      <groupId>fi.otavanopisto.pyramus</groupId>
-      <artifactId>pyramus</artifactId>
-      <type>war</type>
-      <pingURL>https://localhost:8443/1/system/ping</pingURL>
-    </deployable>
-  </deployables>
-
+              <deployer/>
             </configuration>
             <executions>
               <execution>
@@ -707,7 +698,6 @@
                 </goals>
                 <configuration>
                   <before-deployment>
-
                     <batch>true</batch>
                     <commands>
                       <command>/system-property=pyramus.workspace:add(value="${basedir}/..")</command>
@@ -724,7 +714,7 @@
                       <command>/subsystem=logging/logger=javax.ws.rs.NotFoundException:add(level=SEVERE)</command>
                     </commands>
                   </before-deployment>
-                  <filename>./target/pyramus-${project.version}.war</filename>
+                  <filename>./pyramus-${project.version}.war</filename>
                 </configuration>
               </execution>
             </executions>
