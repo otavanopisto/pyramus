@@ -952,12 +952,13 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/studentGroups")
   @GET
   @RESTPermit(StudentGroupPermissions.LIST_STUDENTGROUPS)
-  public Response findStudentGroups(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+  public Response findStudentGroups(@QueryParam("firstResult") Integer firstResult, @QueryParam("maxResults") Integer maxResults,
+      @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<StudentGroup> studentGroups;
     if (filterArchived) {
-      studentGroups = studentGroupController.listUnarchivedStudentGroups();
+      studentGroups = studentGroupController.listUnarchivedStudentGroups(firstResult, maxResults);
     } else {
-      studentGroups = studentGroupController.listStudentGroups();
+      studentGroups = studentGroupController.listStudentGroups(firstResult, maxResults);
     }
 
     if (studentGroups.isEmpty()) {
