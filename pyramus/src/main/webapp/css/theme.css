@@ -1545,11 +1545,11 @@ a.searchResultPageContainerActive{
   top:255px;
 }
 
-.modalSearchResultsContainer .modalSearchResultsPagesContainer {
+.modalChangeCourseModuleResultsContainer .modalSearchResultsPagesContainer {
   top:265px;
 }
 
-.modalSearchResultsContainer  .modalSearchResultsMessageContainer {
+.modalChangeCourseModuleResultsContainer .modalSearchResultsMessageContainer {
   bottom:255px;
 }
 
