@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.security.impl;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
@@ -40,13 +39,13 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
   public boolean hasPermission(String permission, ContextReference contextReference, User user) {
     Permission perm = permissionDAO.findByName(permission);
     fi.otavanopisto.pyramus.domainmodel.users.User userEntity = getUser(user);
-    
     boolean allowed = environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(userEntity.getRole(), perm);
-    logger.log(Level.FINEST, "Checking permission " + permission + " for: userId=" + userEntity.getId() + " role=" + userEntity.getRole() + " p=" + allowed);
-
-    if (!allowed)
+    if (!allowed) {
       allowed = hasEveryonePermission(permission, contextReference);
-    
+    }
+    if (!allowed) {
+      logger.warning(String.format("Permission %s not allowed for user %d (%s)", permission, userEntity.getId(), userEntity.getRole()));
+    }
     return allowed;
   }
 
@@ -54,11 +53,7 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
   public boolean hasEveryonePermission(String permission, ContextReference contextReference) {
     Role everyoneRole = getEveryoneRole();
     Permission perm = permissionDAO.findByName(permission);
-    
-    boolean allowed = environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(everyoneRole, perm);
-    logger.log(Level.FINEST, "Checking permission " + permission + " for: everyone p=" + allowed);
-    
-    return allowed;
+    return environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(everyoneRole, perm);
   }
 
 }
