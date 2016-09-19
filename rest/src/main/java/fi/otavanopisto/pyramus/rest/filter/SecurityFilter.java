@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.rest.filter;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +39,9 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
   private OauthController oauthController;
   
   @Inject
+  private Logger logger;
+  
+  @Inject
   private SessionControllerDelegate sessionControllerDelegate;
   
   @Inject
@@ -63,10 +67,12 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
   
           ClientApplicationAccessToken clientApplicationAccessToken = oauthController.findByAccessToken(accessToken);
           if (clientApplicationAccessToken == null) {
+            logger.warning(String.format("REST call failed. No ClientApplicationAccessToken for %s", accessToken));
             requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
           } else {
             Long currentTime = System.currentTimeMillis() / 1000L;
             if (currentTime > clientApplicationAccessToken.getExpires()) {
+              logger.warning(String.format("REST call failed. Time %d but token expired %d", currentTime, (clientApplicationAccessToken.getExpires() * 1000L)));
               requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
             } else {
               if (!restSecurity.hasPermission(method)) {
