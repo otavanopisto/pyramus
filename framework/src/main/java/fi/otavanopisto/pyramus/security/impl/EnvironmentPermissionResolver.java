@@ -43,9 +43,6 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     if (!allowed) {
       allowed = hasEveryonePermission(permission, contextReference);
     }
-    if (!allowed) {
-      logger.warning(String.format("Permission %s not allowed for user %d (%s)", permission, userEntity.getId(), userEntity.getRole()));
-    }
     return allowed;
   }
 
