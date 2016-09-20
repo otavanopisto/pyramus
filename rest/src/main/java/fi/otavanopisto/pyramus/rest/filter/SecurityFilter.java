@@ -72,7 +72,7 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
           } else {
             Long currentTime = System.currentTimeMillis() / 1000L;
             if (currentTime > clientApplicationAccessToken.getExpires()) {
-              logger.warning(String.format("REST call failed. Time %d but token expired %d", currentTime, (clientApplicationAccessToken.getExpires() * 1000L)));
+              logger.warning(String.format("REST call failed. Time %d but token %s expired %d", currentTime, accessToken, (clientApplicationAccessToken.getExpires() * 1000L)));
               requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
             } else {
               if (!restSecurity.hasPermission(method)) {
