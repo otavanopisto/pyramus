@@ -9,12 +9,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
@@ -32,6 +31,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentImageDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
@@ -54,6 +54,8 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * ViewController for editing student information.
@@ -105,6 +107,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     ReportDAO reportDAO = DAOFactory.getInstance().getReportDAO();
     CourseAssessmentRequestDAO courseAssessmentRequestDAO = DAOFactory.getInstance().getCourseAssessmentRequestDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
 
     Long personId = pageRequestContext.getLong("person");
     
@@ -167,6 +170,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     JSONObject linkedTransferCredits = new JSONObject();
     JSONObject studentFiles = new JSONObject();
     JSONArray studentReportsJSON = new JSONArray();
+    JSONArray curriculumsJSON = new JSONArray();
     
     List<Report> studentReports = reportDAO.listByContextType(ReportContextType.Student);
     Collections.sort(studentReports, new StringAttributeComparator("getName"));
@@ -176,6 +180,15 @@ public class ViewStudentViewController extends PyramusViewController implements 
       obj.put("id", report.getId().toString());
       obj.put("name", report.getName());
       studentReportsJSON.add(obj);
+    }
+    
+    List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    
+    for (Curriculum curriculum : curriculums) {
+      JSONObject obj = new JSONObject();
+      obj.put("id", curriculum.getId().toString());
+      obj.put("name", curriculum.getName());
+      curriculumsJSON.add(obj);
     }
     
     for (int i = 0; i < students.size(); i++) {
@@ -396,6 +409,12 @@ public class ViewStudentViewController extends PyramusViewController implements 
         obj.put("gradingScaleName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getGradingScale().getName() : null);
         obj.put("assessingUserName", courseAssessment.getAssessor().getFullName());
         
+        if (courseAssessment.getCourseStudent().getCourse().getCurriculum() != null) {
+          Curriculum curriculum = courseAssessment.getCourseStudent().getCourse().getCurriculum();
+          obj.put("curriculumId", curriculum.getId());
+          obj.put("curriculumName", curriculum.getName());
+        }
+        
         arr.add(obj);
       }
       
@@ -446,6 +465,12 @@ public class ViewStudentViewController extends PyramusViewController implements 
         obj.put("gradeName", transferCredit.getGrade() != null ? transferCredit.getGrade().getName() : null);
         obj.put("gradingScaleName", transferCredit.getGrade() != null ? transferCredit.getGrade().getGradingScale().getName() : null);
         obj.put("assessingUserName", transferCredit.getAssessor().getFullName());
+        
+        if (transferCredit.getCurriculum() != null) {
+          Curriculum curriculum = transferCredit.getCurriculum();
+          obj.put("curriculumId", curriculum.getId());
+          obj.put("curriculumName", curriculum.getName());
+        }
         
         arr.add(obj);
       }
@@ -577,6 +602,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     setJsDataVariable(pageRequestContext, "linkedTransferCredits", linkedTransferCredits.toString());
     setJsDataVariable(pageRequestContext, "studentFiles", studentFiles.toString());
     setJsDataVariable(pageRequestContext, "studentReports", studentReportsJSON.toString());
+    setJsDataVariable(pageRequestContext, "curriculums", curriculumsJSON.toString());
     
     pageRequestContext.getRequest().setAttribute("students", students);
     pageRequestContext.getRequest().setAttribute("courses", courseStudents);

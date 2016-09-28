@@ -8,7 +8,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title><fmt:message key="students.viewStudent.pageTitle">
+  <title><fmt:message key="students.viewStudent.pageTitle">
     <fmt:param value="${person.latestStudent.fullName}" />
   </fmt:message></title>
 <jsp:include page="/templates/generic/head_generic.jsp"></jsp:include>
@@ -550,7 +550,7 @@
           columns : [{
             header : '<fmt:message key="students.viewStudent.transferCreditsTableNameHeader"/>',
             left: 8,
-            right: 8 + 180 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 200 + 8, 
+            right: 8 + 180 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8 + 200 + 8, 
             dataType: 'text',
             editable: false,
             sortAttributes: {
@@ -565,10 +565,40 @@
             }
           }, {
             header : '<fmt:message key="students.viewStudent.transferCreditsTableSubjectHeader"/>',
-            right: 8 + 180 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8, 
+            right: 8 + 180 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8, 
             width: 200,
             dataType: 'text',
             editable: false,
+            sortAttributes: {
+              sortAscending: {
+                toolTip: '<fmt:message key="generic.sort.ascending"/>',
+                sortAction: IxTable_ROWSTRINGSORT 
+              },
+              sortDescending: {
+                toolTip: '<fmt:message key="generic.sort.descending"/>',
+                sortAction: IxTable_ROWSTRINGSORT
+              }
+            }
+          }, {
+            header : '<fmt:message key="students.viewStudent.transferCreditsTableCurriculumHeader"/>',
+            right: 8 + 180 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8, 
+            width: 100,
+            dataType: 'text',
+            editable: false,
+            contextMenu: [
+              {
+                text: '<fmt:message key="generic.filter.byValue"/>',
+                onclick: new IxTable_ROWSTRINGFILTER()
+              },
+              {
+                text: '<fmt:message key="generic.filter.byNotValue"/>',
+                onclick: new IxTable_ROWSTRINGFILTER(undefined, false)
+              },
+              {
+                text: '<fmt:message key="generic.filter.clear"/>',
+                onclick: new IxTable_ROWCLEARFILTER()
+              }
+            ],
             sortAttributes: {
               sortAscending: {
                 toolTip: '<fmt:message key="generic.sort.ascending"/>',
@@ -662,7 +692,7 @@
           columns : [{
             header : '<fmt:message key="students.viewStudent.courseAssessmentsTableNameHeader"/>',
             left: 8,
-            right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 200 + 8, 
+            right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8 + 200 + 8, 
             dataType: 'text',
             editable: false,
             sortAttributes: {
@@ -677,10 +707,40 @@
             }
           }, {
             header : '<fmt:message key="students.viewStudent.courseAssessmentsTableSubjectHeader"/>',
-            right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8, 
+            right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8 + 100 + 8, 
             width: 200,
             dataType: 'text',
             editable: false,
+            sortAttributes: {
+              sortAscending: {
+                toolTip: '<fmt:message key="generic.sort.ascending"/>',
+                sortAction: IxTable_ROWSTRINGSORT 
+              },
+              sortDescending: {
+                toolTip: '<fmt:message key="generic.sort.descending"/>',
+                sortAction: IxTable_ROWSTRINGSORT
+              }
+            }
+          }, {
+            header : '<fmt:message key="students.viewStudent.courseAssessmentsTableCurriculumHeader"/>',
+            right: 8 + 22 + 8 + 150 + 8 + 120 + 8 + 100 + 8 + 100 + 8 + 100 + 8 + 120 + 8, 
+            width: 100,
+            dataType: 'text',
+            editable: false,
+            contextMenu: [
+              {
+                text: '<fmt:message key="generic.filter.byValue"/>',
+                onclick: new IxTable_ROWSTRINGFILTER()
+              },
+              {
+                text: '<fmt:message key="generic.filter.byNotValue"/>',
+                onclick: new IxTable_ROWSTRINGFILTER(undefined, false)
+              },
+              {
+                text: '<fmt:message key="generic.filter.clear"/>',
+                onclick: new IxTable_ROWCLEARFILTER()
+              }
+            ],
             sortAttributes: {
               sortAscending: {
                 toolTip: '<fmt:message key="generic.sort.ascending"/>',
@@ -840,6 +900,7 @@
         var studentFilesContainer = JSDATA["studentFiles"].evalJSON();
         var linkedCourseAssessmentsContainer = JSDATA["linkedCourseAssessments"].evalJSON();
         var linkedTransferCreditsContainer = JSDATA["linkedTransferCredits"].evalJSON();
+        var curriculumContainer = JSDATA["curriculums"].evalJSON();
 
         <c:forEach var="student" items="${students}">
           // Setup basics
@@ -928,6 +989,7 @@
             rows.push([
               '${fn:escapeXml(studentTransferCredit.courseName)}',
               '${fn:escapeXml(subjectName)}',
+              '${fn:escapeXml(studentTransferCredit.curriculum.name)}',
               '${studentTransferCredit.date.time}',
               '${studentTransferCredit.courseLength.units}',
               '${fn:escapeXml(studentTransferCredit.courseLength.unit.name)}',
@@ -992,6 +1054,7 @@
             rows.push([
               '${fn:escapeXml(studentCourseAssessment.courseStudent.course.name)}',
               '${fn:escapeXml(subjectName)}',
+              '${fn:escapeXml(studentCourseAssessment.courseStudent.course.curriculum.name)}',
               '${studentCourseAssessment.date.time}',
               '${studentCourseAssessment.courseStudent.course.courseLength.units}',
               '${fn:escapeXml(studentCourseAssessment.courseStudent.course.courseLength.unit.name)}',
@@ -1037,6 +1100,7 @@
               rows.push([
                   cAs.courseName,
                   cAs.subjectName,
+                  cAs.curriculumName,
                   cAs.creditDate,
                   cAs.courseLength,
                   cAs.courseLengthUnitName,
@@ -1083,6 +1147,7 @@
               rows.push([
                   tc.courseName,
                   tc.subjectName,
+                  tc.curriculumName,
                   tc.creditDate,
                   tc.courseLength,
                   tc.courseLengthUnitName,
