@@ -29,15 +29,22 @@ import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
+import fi.otavanopisto.pyramus.rest.controller.AssessmentController;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
+import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
+import fi.otavanopisto.pyramus.rest.model.AssessmentRequest;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/staff")
 @Produces("application/json")
@@ -48,9 +55,18 @@ public class StaffRESTService extends AbstractRESTService {
 
   @Inject
   private UserController userController;
+
+  @Inject
+  private SessionController sessionController;
+
+  @Inject
+  private CourseController courseController;
   
   @Inject
   private CommonController commonController;
+  
+  @Inject
+  private AssessmentController assessmentController;
   
   @Inject
   private ObjectFactory objectFactory;
@@ -375,4 +391,56 @@ public class StaffRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
+  /* New evaluation methods */
+  
+  /**
+   * Returns a list of assessment requests directed at the given staff member.
+   * 
+   * @param staffMemberId Staff member id
+   * 
+   * @return A list of assessment requests directed at the given staff member
+   */
+  @Path("/members/{STAFFMEMBERID:[0-9]*}/assessmentRequests")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listAssessmentRequestsByStaffMember(@PathParam("STAFFMEMBERID") Long staffMemberId) {
+    
+    // Staff member must exist
+    
+    StaffMember staffMember = userController.findStaffMemberById(staffMemberId);
+    if (staffMember == null || staffMember.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    // Staff member should be logged in
+    
+    User loggedUser = sessionController.getUser();
+    if (loggedUser == null || !loggedUser.getId().equals(staffMember.getId())) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    // List course assessment requests of courses of the staff member
+    
+    List<AssessmentRequest> assessmentRequests = new ArrayList<AssessmentRequest>();
+    List<Course> courses = courseController.listCoursesByStaffMember(staffMember);
+    for (Course course : courses) {
+      List<CourseAssessmentRequest> courseAssessmentRequests = assessmentController.listCourseAssessmentRequestsByCourse(course);
+      for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+        AssessmentRequest assessmentRequest = new AssessmentRequest();
+        assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest.getCreated());
+        assessmentRequest.setCourseEnrollmentDate(courseAssessmentRequest.getCourseStudent().getEnrolmentTime());
+        assessmentRequest.setCourseId(course.getId());
+        assessmentRequest.setCourseName(course.getName());
+        assessmentRequest.setCourseNameExtension(course.getNameExtension());
+        assessmentRequest.setFirstName(courseAssessmentRequest.getCourseStudent().getStudent().getFirstName());
+        assessmentRequest.setLastName(courseAssessmentRequest.getCourseStudent().getStudent().getLastName());
+        assessmentRequest.setStudyProgramme(courseAssessmentRequest.getCourseStudent().getStudent().getStudyProgramme().getName());
+        assessmentRequest.setUserId(courseAssessmentRequest.getCourseStudent().getStudent().getId());
+        assessmentRequests.add(assessmentRequest);
+      }
+    }
+    
+    return Response.ok(assessmentRequests).build();
+  }
+
 }
