@@ -28,7 +28,13 @@ public class AssessmentController {
   private CourseAssessmentRequestDAO courseAssessmentRequestDAO;
   
   public CourseAssessment createCourseCourseAssessment(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment){
+    // Create course assessment...
     CourseAssessment courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, date, verbalAssessment);
+    // ...and archive respective course assessment requests
+    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseStudent);
+    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+      courseAssessmentRequestDAO.archive(courseAssessmentRequest);
+    }
     return courseAssessment;
   }
   
@@ -49,8 +55,12 @@ public class AssessmentController {
   }
   
   public CourseAssessmentRequest createCourseAssessmentRequest(CourseStudent courseStudent, Date created, String requestText) {
-    CourseAssessmentRequest courseAssessment = courseAssessmentRequestDAO.create(courseStudent, created, requestText);
-    return courseAssessment;
+    // We should only have one active assessment request per course student, so archive earlier ones first
+    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseStudent);
+    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+      courseAssessmentRequestDAO.archive(courseAssessmentRequest);
+    }
+    return courseAssessmentRequestDAO.create(courseStudent, created, requestText);
   }
   
   public CourseAssessmentRequest updateCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText) {
