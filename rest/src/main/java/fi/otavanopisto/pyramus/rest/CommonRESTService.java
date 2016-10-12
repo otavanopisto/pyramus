@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateful;
@@ -38,7 +37,6 @@ import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.CurriculumController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
-import fi.otavanopisto.pyramus.rest.model.GradeItem;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/common")
@@ -464,21 +462,6 @@ public class CommonRESTService extends AbstractRESTService {
     return Response.ok()
         .entity(objectFactory.createModel(courses))
         .build();
-  }
-
-  @Path("/grades")
-  @GET
-  @RESTPermit (CommonPermissions.LIST_GRADES)
-  public Response listGrades() {
-    List<GradeItem> gradeItems = new ArrayList<GradeItem>();
-    List<GradingScale> gradingScales = commonController.listUnarchivedGradingScales();
-    for (GradingScale gradingScale : gradingScales) {
-      List<Grade> grades = gradingScale.getGrades();
-      for (Grade grade : grades) {
-        gradeItems.add(new GradeItem(gradingScale.getId(), gradingScale.getName(), grade.getId(), grade.getName()));
-      }
-    }
-    return Response.ok(gradeItems).build();
   }
 
   @Path("/gradingScales")

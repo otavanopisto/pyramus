@@ -1,11 +1,11 @@
-package fi.otavanopisto.pyramus.rest.model;
+package fi.otavanopisto.pyramus.rest.model.composite;
 
-public class GradeItem {
+public class CompositeGrade {
   
-  public GradeItem() {
+  public CompositeGrade() {
   }
   
-  public GradeItem(Long scaleId, String scaleName, Long gradeId, String gradeName) {
+  public CompositeGrade(Long scaleId, String scaleName, Long gradeId, String gradeName) {
     this.scaleId = scaleId;
     this.scaleName = scaleName;
     this.gradeId = gradeId;

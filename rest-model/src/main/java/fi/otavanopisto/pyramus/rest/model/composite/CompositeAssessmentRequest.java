@@ -1,8 +1,8 @@
-package fi.otavanopisto.pyramus.rest.model;
+package fi.otavanopisto.pyramus.rest.model.composite;
 
 import java.util.Date;
 
-public class AssessmentRequest {
+public class CompositeAssessmentRequest {
 
   public String getFirstName() {
     return firstName;
