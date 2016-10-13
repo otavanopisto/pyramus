@@ -114,6 +114,7 @@ public class CompositeRESTService {
         assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest.getCreated());
         assessmentRequest.setCourseEnrollmentDate(courseAssessmentRequest.getCourseStudent().getEnrolmentTime());
         assessmentRequest.setEvaluationDate(courseAssessment == null ? null : courseAssessment.getDate());
+        assessmentRequest.setPassing(courseAssessment != null && courseAssessment.getGrade() != null && courseAssessment.getGrade().getPassingGrade());
         assessmentRequest.setCourseId(course.getId());
         assessmentRequest.setCourseName(course.getName());
         assessmentRequest.setCourseNameExtension(course.getNameExtension());

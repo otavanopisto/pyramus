@@ -84,6 +84,14 @@ public class CompositeAssessmentRequest {
     this.evaluationDate = evaluationDate;
   }
 
+  public Boolean getPassing() {
+    return passing;
+  }
+
+  public void setPassing(Boolean passing) {
+    this.passing = passing;
+  }
+
   private Long userId;
   private String firstName;
   private String lastName;
@@ -94,5 +102,6 @@ public class CompositeAssessmentRequest {
   private Date courseEnrollmentDate;
   private Date assessmentRequestDate;
   private Date evaluationDate;
+  private Boolean passing;
 
 }
