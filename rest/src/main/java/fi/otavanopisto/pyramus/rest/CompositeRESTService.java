@@ -30,6 +30,7 @@ import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.model.composite.CompositeAssessmentRequest;
 import fi.otavanopisto.pyramus.rest.model.composite.CompositeGrade;
+import fi.otavanopisto.pyramus.rest.model.composite.CompositeGradingScale;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/composite")
@@ -54,19 +55,24 @@ public class CompositeRESTService {
   @Inject
   private UserController userController;
 
-  @Path("/grades")
+  @Path("/gradingScales")
   @GET
-  @RESTPermit (CommonPermissions.LIST_GRADES)
+  @RESTPermit (CommonPermissions.LIST_GRADINGSCALES)
   public Response listGrades() {
-    List<CompositeGrade> gradeItems = new ArrayList<CompositeGrade>();
+    List<CompositeGradingScale> compositeGradingScales = new ArrayList<CompositeGradingScale>();
     List<GradingScale> gradingScales = commonController.listUnarchivedGradingScales();
     for (GradingScale gradingScale : gradingScales) {
+      List<CompositeGrade> compositeGrades = new ArrayList<CompositeGrade>();
       List<Grade> grades = gradingScale.getGrades();
       for (Grade grade : grades) {
-        gradeItems.add(new CompositeGrade(gradingScale.getId(), gradingScale.getName(), grade.getId(), grade.getName()));
+        compositeGrades.add(new CompositeGrade(grade.getId(), grade.getName()));
       }
+      compositeGradingScales.add(new CompositeGradingScale(
+        gradingScale.getId(),
+        gradingScale.getName(),
+        compositeGrades));
     }
-    return Response.ok(gradeItems).build();
+    return Response.ok(compositeGradingScales).build();
   }
 
   /**

@@ -5,27 +5,9 @@ public class CompositeGrade {
   public CompositeGrade() {
   }
   
-  public CompositeGrade(Long scaleId, String scaleName, Long gradeId, String gradeName) {
-    this.scaleId = scaleId;
-    this.scaleName = scaleName;
+  public CompositeGrade(Long gradeId, String gradeName) {
     this.gradeId = gradeId;
     this.gradeName = gradeName;
-  }
-
-  public Long getScaleId() {
-    return scaleId;
-  }
-
-  public void setScaleId(Long scaleId) {
-    this.scaleId = scaleId;
-  }
-
-  public String getScaleName() {
-    return scaleName;
-  }
-
-  public void setScaleName(String scaleName) {
-    this.scaleName = scaleName;
   }
 
   public Long getGradeId() {
@@ -44,8 +26,6 @@ public class CompositeGrade {
     this.gradeName = gradeName;
   }
 
-  private Long scaleId;
-  private String scaleName;
   private Long gradeId;
   private String gradeName;
 
