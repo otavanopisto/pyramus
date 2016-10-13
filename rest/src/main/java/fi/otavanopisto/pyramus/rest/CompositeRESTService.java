@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
@@ -108,9 +109,11 @@ public class CompositeRESTService {
     for (Course course : courses) {
       List<CourseAssessmentRequest> courseAssessmentRequests = assessmentController.listCourseAssessmentRequestsByCourse(course);
       for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+        CourseAssessment courseAssessment = assessmentController.findCourseAssessmentByCourseStudent(courseAssessmentRequest.getCourseStudent());
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
         assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest.getCreated());
         assessmentRequest.setCourseEnrollmentDate(courseAssessmentRequest.getCourseStudent().getEnrolmentTime());
+        assessmentRequest.setEvaluationDate(courseAssessment == null ? null : courseAssessment.getDate());
         assessmentRequest.setCourseId(course.getId());
         assessmentRequest.setCourseName(course.getName());
         assessmentRequest.setCourseNameExtension(course.getNameExtension());

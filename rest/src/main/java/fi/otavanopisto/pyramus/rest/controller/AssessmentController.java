@@ -45,6 +45,10 @@ public class AssessmentController {
   public CourseAssessment findCourseAssessmentById(Long id){
     return courseAssessmentDAO.findById(id);
   }
+
+  public CourseAssessment findCourseAssessmentByCourseStudent(CourseStudent courseStudent) {
+    return courseAssessmentDAO.findByCourseStudent(courseStudent);
+  }
   
   public List<CourseAssessment> listByCourseAndStudent(Course course, Student student){
     return courseAssessmentDAO.listByStudentAndCourse(student, course);

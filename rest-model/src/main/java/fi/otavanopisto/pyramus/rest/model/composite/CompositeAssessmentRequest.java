@@ -76,6 +76,14 @@ public class CompositeAssessmentRequest {
     this.courseNameExtension = courseNameExtension;
   }
 
+  public Date getEvaluationDate() {
+    return evaluationDate;
+  }
+
+  public void setEvaluationDate(Date evaluationDate) {
+    this.evaluationDate = evaluationDate;
+  }
+
   private Long userId;
   private String firstName;
   private String lastName;
@@ -85,6 +93,6 @@ public class CompositeAssessmentRequest {
   private String courseNameExtension;
   private Date courseEnrollmentDate;
   private Date assessmentRequestDate;
-
+  private Date evaluationDate;
 
 }
