@@ -92,6 +92,15 @@ public class CompositeAssessmentRequest {
     this.passing = passing;
   }
 
+  public Long getCourseStudentId() {
+    return courseStudentId;
+  }
+
+  public void setCourseStudentId(Long courseStudentId) {
+    this.courseStudentId = courseStudentId;
+  }
+
+  private Long courseStudentId;
   private Long userId;
   private String firstName;
   private String lastName;
