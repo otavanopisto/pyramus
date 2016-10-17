@@ -1,10 +1,9 @@
 package fi.otavanopisto.pyramus.rest.model;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
-
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.util.Set;
 
 public class Course {
 
@@ -14,17 +13,17 @@ public class Course {
   public Course(String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Long subjectId, Long curriculumId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
+      Long lastModifierId, Long subjectId, Set<Long> curriculumIds, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags) {
     this(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
-        creatorId, lastModifierId, subjectId, curriculumId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
+        creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
   }
 
   public Course(Long id, String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
-      Long lastModifierId, Long subjectId, Long curriculumId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
+      Long lastModifierId, Long subjectId, Set<Long> curriculumIds, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
       Map<String, String> variables, List<String> tags) {
     super();
     this.id = id;
@@ -49,7 +48,7 @@ public class Course {
     this.creatorId = creatorId;
     this.lastModifierId = lastModifierId;
     this.subjectId = subjectId;
-    this.curriculumId = curriculumId;
+    this.curriculumIds = curriculumIds;
     this.length = length;
     this.lengthUnitId = lengthUnitId;
     this.moduleId = moduleId;
@@ -283,12 +282,12 @@ public class Course {
     this.distanceTeachingHours = distanceTeachingHours;
   }
 
-  public Long getCurriculumId() {
-    return curriculumId;
+  public Set<Long> getCurriculumIds() {
+    return curriculumIds;
   }
 
-  public void setCurriculumId(Long curriculumId) {
-    this.curriculumId = curriculumId;
+  public void setCurriculumIds(Set<Long> curriculumIds) {
+    this.curriculumIds = curriculumIds;
   }
 
   private Long id;
@@ -319,5 +318,5 @@ public class Course {
   private Long typeId;
   private Map<String, String> variables;
   private List<String> tags;
-  private Long curriculumId;
+  private Set<Long> curriculumIds;
 }

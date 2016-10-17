@@ -2,7 +2,9 @@ package fi.otavanopisto.pyramus.domainmodel.base;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.persistence.Basic;
@@ -16,10 +18,13 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -326,14 +331,30 @@ public abstract class CourseBase implements ArchivableEntity {
     return maxParticipantCount;
   }
 
-  public Curriculum getCurriculum() {
-    return curriculum;
+  public Set<Curriculum> getCurriculums() {
+    return curriculums;
   }
-
-  public void setCurriculum(Curriculum curriculum) {
-    this.curriculum = curriculum;
+  
+  public void setCurriculums(Set<Curriculum> curriculums) {
+    this.curriculums = curriculums;
   }
-
+  
+  public void addCurriculum(Curriculum curriculum) {
+    if (!curriculums.contains(curriculum)) {
+      curriculums.add(curriculum);
+    } else {
+      throw new PersistenceException("Entity already has this curriculum");
+    }
+  }
+  
+  public void removeCurriculum(Curriculum curriculum) {
+    if (curriculums.contains(curriculum)) {
+      curriculums.remove(curriculum);
+    } else {
+      throw new PersistenceException("Entity does not have this curriculum");
+    }
+  }
+  
   @Id
   @DocumentId
   @GeneratedValue(strategy=GenerationType.TABLE, generator="CourseBase")  
@@ -404,7 +425,8 @@ public abstract class CourseBase implements ArchivableEntity {
   @Column(nullable = false)
   private Long version;
   
-  @ManyToOne
-  @IndexedEmbedded
-  private Curriculum curriculum;
+  @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinTable (name = "__CourseCurriculums", joinColumns = @JoinColumn(name = "courseBase"), inverseJoinColumns = @JoinColumn(name = "curriculum"))
+  @IndexedEmbedded 
+  private Set<Curriculum> curriculums = new HashSet<>();
 }

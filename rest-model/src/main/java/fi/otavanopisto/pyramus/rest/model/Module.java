@@ -1,9 +1,8 @@
 package fi.otavanopisto.pyramus.rest.model;
 
-import java.util.List;
-
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Set;
 
 public class Module {
 
@@ -11,7 +10,7 @@ public class Module {
   }
   
   public Module(Long id, String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber,
-      Long maxParticipantCount, Long creatorId, Long lastModifierId, Long subjectId, Long curriculumId, Double length, Long lengthUnitId, List<String> tags) {
+      Long maxParticipantCount, Long creatorId, Long lastModifierId, Long subjectId, Set<Long> curriculumIds, Double length, Long lengthUnitId, List<String> tags) {
     super();
     this.id = id;
     this.name = name;
@@ -24,7 +23,7 @@ public class Module {
     this.creatorId = creatorId;
     this.lastModifierId = lastModifierId;
     this.subjectId = subjectId;
-    this.curriculumId = curriculumId;
+    this.curriculumIds = curriculumIds;
     this.length = length;
     this.lengthUnitId = lengthUnitId;
     this.tags = tags;
@@ -142,12 +141,12 @@ public class Module {
     this.tags = tags;
   }
 
-  public Long getCurriculumId() {
-    return curriculumId;
+  public Set<Long> getCurriculumIds() {
+    return curriculumIds;
   }
 
-  public void setCurriculumId(Long curriculumId) {
-    this.curriculumId = curriculumId;
+  public void setCurriculumIds(Set<Long> curriculumIds) {
+    this.curriculumIds = curriculumIds;
   }
 
   private Long id;
@@ -164,5 +163,5 @@ public class Module {
   private Double length;
   private Long lengthUnitId;
   private List<String> tags;
-  private Long curriculumId;
+  private Set<Long> curriculumIds;
 }
