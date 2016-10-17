@@ -79,7 +79,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
    * 
    * @return The created course
    */
-  public Course create(Module module, String name, String nameExtension, CourseState state, CourseType type, Subject subject, Curriculum curriculum, 
+  public Course create(Module module, String name, String nameExtension, CourseState state, CourseType type, Subject subject, 
       Integer courseNumber, Date beginDate, Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, 
       Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double distanceTeachingHours, Double planningHours, 
       Double assessingHours, String description, Long maxParticipantCount, BigDecimal courseFee, Currency courseFeeCurrency, Date enrolmentTimeEnd, User creatingUser) {
@@ -111,7 +111,6 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setDistanceTeachingHours(distanceTeachingHours);
     course.setCourseFee(courseFee);
     course.setCourseFeeCurrency(courseFeeCurrency);
-    course.setCurriculum(curriculum);
     
     course.setCreator(creatingUser);
     course.setCreated(now);
@@ -140,7 +139,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
    * @param user The user making the update, stored as the last modifier of the course
    */
   public void update(Course course, String name, String nameExtension, CourseState courseState, CourseType type, Subject subject,
-      Curriculum curriculum, Integer courseNumber, Date beginDate, Date endDate, Double courseLength,
+      Integer courseNumber, Date beginDate, Date endDate, Double courseLength,
       EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, 
       Double distanceTeachingHours, Double planningHours, Double assessingHours, String description, Long maxParticipantCount, 
       Date enrolmentTimeEnd, User user) {
@@ -175,7 +174,6 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     course.setLastModifier(user);
     course.setLastModified(now);
     course.setDistanceTeachingHours(distanceTeachingHours);
-    course.setCurriculum(curriculum);
 
     entityManager.persist(course);
     
@@ -202,6 +200,18 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     
     return course;
   }
+
+  public Course updateCurriculums(Course course, Set<Curriculum> curriculums) {
+    EntityManager entityManager = getEntityManager();
+
+    course.setCurriculums(curriculums);
+
+    entityManager.persist(course);
+
+    courseUpdatedEvent.fire(new CourseUpdatedEvent(course.getId()));
+
+    return course;
+  }
   
   public Course setCourseTags(Course course, Set<Tag> tags) {
     EntityManager entityManager = getEntityManager();
@@ -219,9 +229,6 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     CourseBaseVariableKeyDAO variableKeyDAO = DAOFactory.getInstance().getCourseBaseVariableKeyDAO();
 
     CourseBaseVariableKey courseBaseVariableKey = variableKeyDAO.findByVariableKey(key);
-    
-//    return (List<Course>) s.createCriteria(CourseBaseVariable.class).add(Restrictions.eq("key", courseBaseVariableKey))
-//        .add(Restrictions.eq("value", value)).setProjection(Projections.property("courseBase")).list();
     
     EntityManager entityManager = getEntityManager(); 
     

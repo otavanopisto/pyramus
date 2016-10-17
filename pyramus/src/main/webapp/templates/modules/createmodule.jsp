@@ -251,13 +251,12 @@
                 <jsp:param name="titleLocale" value="modules.createModule.curriculumTitle"/>
                 <jsp:param name="helpLocale" value="modules.createModule.curriculumHelp"/>
               </jsp:include>
-                
-              <select name="curriculum">
-                <option value=""></option> 
-                <c:forEach var="curriculum" items="${curriculums}">
-                  <option value="${curriculum.id}">${curriculum.name}</option> 
-                </c:forEach>
-              </select>
+
+              <c:forEach var="curriculum" items="${curriculums}">
+                <div>
+                  <input type="checkbox" name="curriculum.${curriculum.id}" value="1"/>${curriculum.name} 
+                </div>
+              </c:forEach>
             </div>
             
             <div class="genericFormSection">

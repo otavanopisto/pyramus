@@ -284,8 +284,14 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     BigDecimal courseFee = requestContext.getBigDecimal("courseFee");
     Currency courseFeeCurrency = requestContext.getCurrency("courseFeeCurrency");
     
-    Long entityId = requestContext.getLong("curriculum");
-    Curriculum curriculum = entityId == null ? null : curriculumDAO.findById(entityId);
+    List<Curriculum> allCurriculums = curriculumDAO.listUnarchived();
+    
+    Set<Curriculum> curriculums = new HashSet<>();
+    for (Curriculum curriculum : allCurriculums) {
+      if ("1".equals(requestContext.getString("curriculum." + curriculum.getId()))) {
+        curriculums.add(curriculum);
+      }
+    }
    
     Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
@@ -300,10 +306,14 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       }
     }
     
-    Course course = courseDAO.create(module, name, nameExtension, courseState, courseType, subject, curriculum, courseNumber, beginDate, endDate,
+    Course course = courseDAO.create(module, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
         courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, 
         assessingHours, description, maxParticipantCount, courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser);
 
+    // Curriculums
+    
+    courseDAO.updateCurriculums(course, curriculums);
+    
     // Tags
     
     courseDAO.setCourseTags(course, tagEntities);
