@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Currency;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
@@ -106,7 +107,6 @@ public class CoursesService extends PyramusService {
     Subject subject = subjectId == null ? null : subjectDAO.findById(subjectId);
     EducationalTimeUnit courseLengthTimeUnit = courseLengthTimeUnitId == null ? null : educationalTimeUnitDAO.findById(courseLengthTimeUnitId);
     User creatingUser = userDAO.findById(creatingUserId);
-    Curriculum curriculum = null;
 
     // If the course is based on a module, replace all null values with those from the module
 
@@ -114,7 +114,6 @@ public class CoursesService extends PyramusService {
       name = name == null ? module.getName() : name;
       subject = subject == null ? module.getSubject() : subject;
       courseNumber = courseNumber == null ? module.getCourseNumber() : courseNumber;
-      curriculum = module.getCurriculum();
       if (courseLength == null && module.getCourseLength() != null) {
         courseLength = module.getCourseLength().getUnits();
         courseLengthTimeUnit = module.getCourseLength().getUnit();
@@ -127,7 +126,7 @@ public class CoursesService extends PyramusService {
     
     // Course creation
 
-    Course course = courseDAO.create(module, name, nameExtension, state, type, subject, curriculum, courseNumber, beginDate, endDate,
+    Course course = courseDAO.create(module, name, nameExtension, state, type, subject, courseNumber, beginDate, endDate,
         courseLength, courseLengthTimeUnit, null, null, null, null, null, null, description, null, null, null, null, creatingUser);
     
     validateEntity(course);
@@ -138,6 +137,9 @@ public class CoursesService extends PyramusService {
 
       // Course Description copying from module to course
       descriptionDAO.copy(module, course);
+
+      // Curriculums
+      courseDAO.updateCurriculums(course, new HashSet<Curriculum>(module.getCurriculums()));
       
       // Components
 
@@ -193,7 +195,7 @@ public class CoursesService extends PyramusService {
     EducationalTimeUnit courseLengthTimeUnit = courseLengthTimeUnitId == null ? null : educationalTimeUnitDAO.findById(courseLengthTimeUnitId);
     User modifyingUser = userDAO.findById(modifyingUserId);
 
-    courseDAO.update(course, name, nameExtension, course.getState(), course.getType(), subject, course.getCurriculum(), courseNumber, beginDate, endDate, courseLength,
+    courseDAO.update(course, name, nameExtension, course.getState(), course.getType(), subject, courseNumber, beginDate, endDate, courseLength,
         courseLengthTimeUnit, course.getDistanceTeachingDays(), course.getLocalTeachingDays(), course.getTeachingHours(), course.getDistanceTeachingHours(),
         course.getPlanningHours(), course.getAssessingHours(), description, course.getMaxParticipantCount(), course.getEnrolmentTimeEnd(), modifyingUser);
     validateEntity(course);
