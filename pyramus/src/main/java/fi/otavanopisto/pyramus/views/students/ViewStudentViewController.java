@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
@@ -409,11 +411,16 @@ public class ViewStudentViewController extends PyramusViewController implements 
         obj.put("gradingScaleName", courseAssessment.getGrade() != null ? courseAssessment.getGrade().getGradingScale().getName() : null);
         obj.put("assessingUserName", courseAssessment.getAssessor().getFullName());
         
-        if (courseAssessment.getCourseStudent().getCourse().getCurriculum() != null) {
-          Curriculum curriculum = courseAssessment.getCourseStudent().getCourse().getCurriculum();
-          obj.put("curriculumId", curriculum.getId());
-          obj.put("curriculumName", curriculum.getName());
+        JSONArray courseCurriculums = new JSONArray();
+        if (CollectionUtils.isNotEmpty(courseAssessment.getCourseStudent().getCourse().getCurriculums())) {
+          for (Curriculum curriculum : courseAssessment.getCourseStudent().getCourse().getCurriculums()) {
+            JSONObject courseCurriculum = new JSONObject();
+            courseCurriculum.put("curriculumId", curriculum.getId());
+            courseCurriculum.put("curriculumName", curriculum.getName());
+            courseCurriculums.add(courseCurriculum);
+          }
         }
+        obj.put("curriculums", courseCurriculums);
         
         arr.add(obj);
       }

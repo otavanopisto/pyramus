@@ -1050,11 +1050,23 @@
                 </c:otherwise>
               </c:choose>
             </c:set>
+
+            var curriculums = [];
+            <c:forEach var="curriculum" items="${studentCourseAssessment.courseStudent.course.curriculums}">
+              curriculums.push("${fn:escapeXml(curriculum.name)}");
+            </c:forEach>
+
+            var curriculumsStr = "";
+            if (curriculums.length > 0) {
+              curriculumsStr = curriculums[0];
+              for (var i = 1, l = curriculums.length; i < l; i++)
+                curriculumsStr = curriculumsStr + ", " + curriculums[i];
+            }
             
             rows.push([
               '${fn:escapeXml(studentCourseAssessment.courseStudent.course.name)}',
               '${fn:escapeXml(subjectName)}',
-              '${fn:escapeXml(studentCourseAssessment.courseStudent.course.curriculum.name)}',
+              curriculumsStr,
               '${studentCourseAssessment.date.time}',
               '${studentCourseAssessment.courseStudent.course.courseLength.units}',
               '${fn:escapeXml(studentCourseAssessment.courseStudent.course.courseLength.unit.name)}',
@@ -1097,10 +1109,19 @@
             rows.clear();
             for (var i = 0, l = linkedCourseAssessments.length; i < l; i++) {
               var cAs = linkedCourseAssessments[i];
+
+              var curriculums = "";
+              if (cAs.curriculums && (cAs.curriculums.length > 0)) {
+                curriculums = cAs.curriculums[0].curriculumName;
+                for (var i = 0, l = cAs.curriculums.length; i < l; i++) {
+                  curriculums = curriculums + ", " + cAs.curriculums[i].curriculumName;
+                }
+              }
+              
               rows.push([
                   cAs.courseName,
                   cAs.subjectName,
-                  cAs.curriculumName,
+                  curriculums,
                   cAs.creditDate,
                   cAs.courseLength,
                   cAs.courseLengthUnitName,
