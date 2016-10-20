@@ -24,7 +24,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -339,22 +338,6 @@ public abstract class CourseBase implements ArchivableEntity {
     this.curriculums = curriculums;
   }
   
-  public void addCurriculum(Curriculum curriculum) {
-    if (!curriculums.contains(curriculum)) {
-      curriculums.add(curriculum);
-    } else {
-      throw new PersistenceException("Entity already has this curriculum");
-    }
-  }
-  
-  public void removeCurriculum(Curriculum curriculum) {
-    if (curriculums.contains(curriculum)) {
-      curriculums.remove(curriculum);
-    } else {
-      throw new PersistenceException("Entity does not have this curriculum");
-    }
-  }
-  
   @Id
   @DocumentId
   @GeneratedValue(strategy=GenerationType.TABLE, generator="CourseBase")  
@@ -426,7 +409,7 @@ public abstract class CourseBase implements ArchivableEntity {
   private Long version;
   
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinTable (name = "__CourseCurriculums", joinColumns = @JoinColumn(name = "courseBase"), inverseJoinColumns = @JoinColumn(name = "curriculum"))
+  @JoinTable (name = "__CourseBaseCurriculums", joinColumns = @JoinColumn(name = "courseBase"), inverseJoinColumns = @JoinColumn(name = "curriculum"))
   @IndexedEmbedded 
   private Set<Curriculum> curriculums = new HashSet<>();
 }
