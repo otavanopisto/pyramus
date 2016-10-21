@@ -2000,7 +2000,7 @@
                   </c:choose>
 
                   <c:choose>
-                    <c:when test="${student.hasFinishedStudies}">
+                    <c:when test="${!empty student.studyEndDate}">
                       <div class="genericFormSection">
                         <jsp:include
                           page="/templates/generic/fragments/formtitle.jsp">
