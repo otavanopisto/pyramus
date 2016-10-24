@@ -7,4 +7,7 @@
     insert into __CourseBaseCurriculums (courseBase, curriculum)
     select id, curriculum_id from CourseBase where curriculum_id is not null;
   </sql>
+  <sql>
+    alter table CourseBase drop column curriculum_id;
+  </sql>
 </update>
