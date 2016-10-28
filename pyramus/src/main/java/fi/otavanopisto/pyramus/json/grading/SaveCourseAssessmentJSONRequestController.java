@@ -40,7 +40,7 @@ public class SaveCourseAssessmentJSONRequestController extends JSONRequestContro
           assessingUser, grade, assessmentDate, verbalAssessment);
     } else {
       assessment = courseAssessmentDAO.update(assessment, 
-          assessingUser, grade, assessmentDate, verbalAssessment);
+          assessingUser, grade, assessmentDate, verbalAssessment, assessment.getArchived());
     }
     
     jsonRequestContext.setRedirectURL(jsonRequestContext.getReferer(true));
