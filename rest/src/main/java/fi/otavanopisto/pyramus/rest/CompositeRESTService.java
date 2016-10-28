@@ -109,7 +109,7 @@ public class CompositeRESTService {
     for (Course course : courses) {
       List<CourseAssessmentRequest> courseAssessmentRequests = assessmentController.listCourseAssessmentRequestsByCourse(course);
       for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
-        CourseAssessment courseAssessment = assessmentController.findCourseAssessmentByCourseStudent(courseAssessmentRequest.getCourseStudent());
+        CourseAssessment courseAssessment = assessmentController.findCourseAssessmentByCourseStudentAndArchived(courseAssessmentRequest.getCourseStudent(), Boolean.FALSE);
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
         assessmentRequest.setCourseStudentId(courseAssessmentRequest.getCourseStudent().getId());
         assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest.getCreated());

@@ -230,7 +230,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
     });
 
     for (CourseStudent courseStudent : courseStudents) {
-      CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
+      CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
       Grade grade = courseAssessment != null ? courseAssessment.getGrade() : null;
       
       JSONObject obj = new JSONObject();

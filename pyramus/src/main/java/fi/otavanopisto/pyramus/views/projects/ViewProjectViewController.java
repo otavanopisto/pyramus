@@ -140,7 +140,7 @@ public class ViewProjectViewController extends PyramusViewController implements 
       // Find out if there is a course that has passing grade for the module
       if (courseStudentList != null) {
         for (CourseStudent cs : courseStudentList) {
-          CourseAssessment ca = courseAssessmentDAO.findByCourseStudent(cs); 
+          CourseAssessment ca = courseAssessmentDAO.findByCourseStudentAndArchived(cs, Boolean.FALSE); 
           if (ca != null && ca.getGrade() != null && ca.getGrade().getPassingGrade()) {
             hasPassingGrade = true; 
             break;

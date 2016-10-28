@@ -46,8 +46,8 @@ public class AssessmentController {
     return courseAssessmentDAO.findById(id);
   }
 
-  public CourseAssessment findCourseAssessmentByCourseStudent(CourseStudent courseStudent) {
-    return courseAssessmentDAO.findByCourseStudent(courseStudent);
+  public CourseAssessment findCourseAssessmentByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
+    return courseAssessmentDAO.findByCourseStudentAndArchived(courseStudent, archived);
   }
   
   public List<CourseAssessment> listByCourseAndStudent(Course course, Student student){
@@ -55,7 +55,7 @@ public class AssessmentController {
   }
   
   public void deleteCourseAssessment(CourseAssessment courseAssessment) {
-    courseAssessmentDAO.delete(courseAssessment);
+    courseAssessmentDAO.archive(courseAssessment);
   }
   
   public CourseAssessmentRequest createCourseAssessmentRequest(CourseStudent courseStudent, Date created, String requestText) {
