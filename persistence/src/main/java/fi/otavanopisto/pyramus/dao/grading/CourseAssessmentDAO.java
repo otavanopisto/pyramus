@@ -120,9 +120,7 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
     criteria.select(root);
     criteria.where(
-      criteriaBuilder.and(
-        criteriaBuilder.equal(root.get(CourseAssessment_.courseStudent), courseStudent)
-      )
+      criteriaBuilder.equal(root.get(CourseAssessment_.courseStudent), courseStudent)
     );
     
     return getSingleResult(entityManager.createQuery(criteria));
