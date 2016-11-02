@@ -74,6 +74,18 @@ public class AssessmentController {
   public CourseAssessmentRequest findCourseAssessmentRequestById(Long id){
     return courseAssessmentRequestDAO.findById(id);
   }
+
+  public CourseAssessmentRequest findCourseAssessmentRequestByCourseStudent(CourseStudent courseStudent) {
+    // TODO Return latest request (as implemented) or enforce one assesssment request per course student?  
+    CourseAssessmentRequest assessmentRequest = null;
+    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseStudent);
+    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+      if (assessmentRequest == null || courseAssessmentRequest.getCreated().after(assessmentRequest.getCreated())) {
+        assessmentRequest = courseAssessmentRequest;
+      }
+    }
+    return assessmentRequest;
+  }
   
   public List<CourseAssessmentRequest> listCourseAssessmentRequestsByCourse(Course course) {
     return courseAssessmentRequestDAO.listByCourse(course);

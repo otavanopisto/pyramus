@@ -11,11 +11,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
@@ -29,6 +31,7 @@ import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
+import fi.otavanopisto.pyramus.rest.controller.permissions.CourseAssessmentPermissions;
 import fi.otavanopisto.pyramus.rest.model.composite.CompositeAssessmentRequest;
 import fi.otavanopisto.pyramus.rest.model.composite.CompositeGrade;
 import fi.otavanopisto.pyramus.rest.model.composite.CompositeGradingScale;
@@ -76,6 +79,50 @@ public class CompositeRESTService {
     return Response.ok(compositeGradingScales).build();
   }
 
+  @Path("/course/{COURSEID:[0-9]*}/assessmentRequests")
+  @GET
+  @RESTPermit(CourseAssessmentPermissions.LIST_COURSEASSESSMENT)
+  public Response listAssessmentRequestsByCourse(@PathParam("COURSEID") Long courseId, @QueryParam("courseStudentIds") String courseStudentIds) {
+    // TODO Security
+    Course course = courseController.findCourseById(courseId);
+    List<CourseStudent> courseStudents;
+    if (courseStudentIds != null) {
+      courseStudents = new ArrayList<CourseStudent>();
+      String[] courseStudentIdArray = courseStudentIds.split(",");
+      for (int i = 0; i < courseStudentIdArray.length; i++) {
+        CourseStudent courseStudent = courseController.findCourseStudentById(new Long(courseStudentIdArray[i]));
+        if (courseStudent != null) {
+          courseStudents.add(courseStudent);
+        }
+      }
+    }
+    else {
+      courseStudents = courseController.listCourseStudentsByCourse(course);
+    }
+    
+    List<CompositeAssessmentRequest> assessmentRequests = new ArrayList<CompositeAssessmentRequest>();
+    for (CourseStudent courseStudent : courseStudents) {
+      CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestByCourseStudent(courseStudent);
+      CourseAssessment courseAssessment = assessmentController.findCourseAssessmentByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
+      CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
+      assessmentRequest.setCourseStudentId(courseStudent.getId());
+      assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest == null ? null : courseAssessmentRequest.getCreated());
+      assessmentRequest.setCourseEnrollmentDate(courseStudent.getEnrolmentTime());
+      assessmentRequest.setEvaluationDate(courseAssessment == null ? null : courseAssessment.getDate());
+      assessmentRequest.setPassing(courseAssessment != null && courseAssessment.getGrade() != null && courseAssessment.getGrade().getPassingGrade());
+      assessmentRequest.setCourseId(course.getId());
+      assessmentRequest.setCourseName(course.getName());
+      assessmentRequest.setCourseNameExtension(course.getNameExtension());
+      assessmentRequest.setFirstName(courseStudent.getStudent().getFirstName());
+      assessmentRequest.setLastName(courseStudent.getStudent().getLastName());
+      assessmentRequest.setStudyProgramme(courseStudent.getStudent().getStudyProgramme().getName());
+      assessmentRequest.setUserId(courseStudent.getStudent().getId());
+      assessmentRequests.add(assessmentRequest);
+    }
+    
+    return Response.ok(assessmentRequests).build();
+  }
+  
   /**
    * Returns a list of assessment requests directed at the given staff member.
    * 
