@@ -432,6 +432,15 @@
             </div>
             <div id="usersTable"> </div>
 
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="students.editStudentGroup.guidanceGroupTitle"/>
+                <jsp:param name="helpLocale" value="students.editStudentGroup.guidanceGroupHelp"/>
+              </jsp:include>
+
+              <input type="checkbox" id="guidanceGroup" name="guidanceGroup" />
+            </div>
+
             <ix:extensionHook name="students.editStudentGroup.tabs.basic"/>
           </div>
       
