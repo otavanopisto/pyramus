@@ -198,8 +198,13 @@ public class EditModuleJSONRequestController extends JSONRequestController {
     Long maxParticipantCount = requestContext.getLong("maxParticipantCount");
     String tagsText = requestContext.getString("tags");
     
-    Long entityId = requestContext.getLong("curriculum");
-    Curriculum curriculum = entityId == null ? null : curriculumDAO.findById(entityId);
+    List<Curriculum> allCurriculums = curriculumDAO.listUnarchived();
+    Set<Curriculum> curriculums = new HashSet<>();
+    for (Curriculum curriculum : allCurriculums) {
+      if ("1".equals(requestContext.getString("curriculum." + curriculum.getId()))) {
+        curriculums.add(curriculum);
+      }
+    }
 
     Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
@@ -216,8 +221,10 @@ public class EditModuleJSONRequestController extends JSONRequestController {
     
     EducationalTimeUnit moduleLengthTimeUnit = educationalTimeUnitDAO.findById(moduleLengthTimeUnitId);
 
-    moduleDAO.update(module, name, subject, curriculum, courseNumber, moduleLength, moduleLengthTimeUnit, description, maxParticipantCount, loggedUser);
+    moduleDAO.update(module, name, subject, courseNumber, moduleLength, moduleLengthTimeUnit, description, maxParticipantCount, loggedUser);
 
+    moduleDAO.updateCurriculums(module, curriculums);
+    
     // Tags
 
     moduleDAO.updateTags(module, tagEntities);

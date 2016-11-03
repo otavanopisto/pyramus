@@ -411,20 +411,19 @@
                 <jsp:param name="titleLocale" value="modules.editModule.curriculumTitle"/>
                 <jsp:param name="helpLocale" value="modules.editModule.curriculumHelp"/>
               </jsp:include>
-                
-              <select name="curriculum">
-                <option value=""></option> 
-                <c:forEach var="curriculum" items="${curriculums}">
+
+              <c:forEach var="curriculum" items="${curriculums}">
+                <div>
                   <c:choose>
-                    <c:when test="${curriculum.id eq module.curriculum.id}">
-                      <option value="${curriculum.id}" selected="selected">${curriculum.name}</option> 
+                    <c:when test="${fn:contains(module.curriculums, curriculum)}">
+                      <input type="checkbox" name="curriculum.${curriculum.id}" value="1" checked="checked" />${curriculum.name}
                     </c:when>
                     <c:otherwise>
-                      <option value="${curriculum.id}">${curriculum.name}</option> 
+                      <input type="checkbox" name="curriculum.${curriculum.id}" value="1" />${curriculum.name}
                     </c:otherwise>
                   </c:choose>
-                </c:forEach>
-              </select>
+                </div>
+              </c:forEach>
             </div>
             
             <div class="genericFormSection">

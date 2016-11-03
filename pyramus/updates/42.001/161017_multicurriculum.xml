@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  <sql>
+    create table __CourseBaseCurriculums (courseBase bigint(20), curriculum bigint(20), primary key (courseBase, curriculum));
+  </sql>
+  <sql>
+    insert into __CourseBaseCurriculums (courseBase, curriculum)
+    select id, curriculum_id from CourseBase where curriculum_id is not null;
+  </sql>
+  <sql>
+    alter table CourseBase drop column curriculum_id;
+  </sql>
+</update>

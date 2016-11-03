@@ -50,7 +50,7 @@ import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 @Stateless
 public class ModuleDAO extends PyramusEntityDAO<Module> {
 
-  public Module create(String name, Subject subject, Curriculum curriculum, Integer courseNumber, Double moduleLength, 
+  public Module create(String name, Subject subject, Integer courseNumber, Double moduleLength, 
       EducationalTimeUnit moduleLengthTimeUnit, String description, Long maxParticipantCount, User creatingUser) {
     EntityManager entityManager = getEntityManager();
 
@@ -67,7 +67,6 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     module.setCourseNumber(courseNumber);
     module.setCourseLength(educationalLength);
     module.setMaxParticipantCount(maxParticipantCount);
-    module.setCurriculum(curriculum);
 
     module.setCreator(creatingUser);
     module.setCreated(now);
@@ -120,7 +119,17 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     return module;
   }
 
-  public Module update(Module module, String name, Subject subject, Curriculum curriculum, Integer courseNumber, Double length, 
+  public Module updateCurriculums(Module module, Set<Curriculum> curriculums) {
+    EntityManager entityManager = getEntityManager();
+
+    module.setCurriculums(curriculums);
+
+    entityManager.persist(module);
+
+    return module;
+  }
+
+  public Module update(Module module, String name, Subject subject, Integer courseNumber, Double length, 
       EducationalTimeUnit lengthTimeUnit, String description, Long maxParticipantCount, User user) {
     EntityManager entityManager = getEntityManager();
 
@@ -141,7 +150,6 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
     module.setLastModifier(user);
     module.setLastModified(now);
     module.setMaxParticipantCount(maxParticipantCount);
-    module.setCurriculum(curriculum);
     
     entityManager.persist(module);
     
