@@ -2,6 +2,11 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.lang.reflect.ParameterizedType;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,14 +19,6 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-
-
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
@@ -254,9 +251,10 @@ public class ObjectFactory {
             Long schoolId = entity.getSchool() != null ? entity.getSchool().getId() : null;
             Long subjectId = entity.getSubject() != null ? entity.getSubject().getId() : null;
             CourseOptionality optionality = entity.getOptionality() != null ? CourseOptionality.valueOf(entity.getOptionality().name()) : null;
+            Long curriculumId = entity.getCurriculum() != null ? entity.getCurriculum().getId() : null;
             
             return new fi.otavanopisto.pyramus.rest.model.TransferCredit(entity.getId(), studentId, date, gradeId, gradigScaleId, entity.getVerbalAssessment(), 
-                assessorId, entity.getArchived(), entity.getCourseName(), entity.getCourseNumber(), length, lengthUnitId, schoolId, subjectId, optionality);
+                assessorId, entity.getArchived(), entity.getCourseName(), entity.getCourseNumber(), length, lengthUnitId, schoolId, subjectId, optionality, curriculumId);
           }
         },
         

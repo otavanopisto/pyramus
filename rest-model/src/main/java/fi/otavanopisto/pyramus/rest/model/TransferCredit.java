@@ -1,7 +1,6 @@
 package fi.otavanopisto.pyramus.rest.model;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 public class TransferCredit {
   
@@ -10,7 +9,7 @@ public class TransferCredit {
 
   public TransferCredit(Long id, Long studentId, OffsetDateTime date, Long gradeId, Long gradingScaleId, String verbalAssessment,
       Long assessorId, Boolean archived, String courseName, Integer courseNumber, Double length, Long lengthUnitId,
-      Long schoolId, Long subjectId, CourseOptionality optionality) {
+      Long schoolId, Long subjectId, CourseOptionality optionality, Long curriculumId) {
     super();
     this.id = id;
     this.studentId = studentId;
@@ -27,6 +26,7 @@ public class TransferCredit {
     this.schoolId = schoolId;
     this.subjectId = subjectId;
     this.optionality = optionality;
+    this.curriculumId = curriculumId;
   }
 
   public Long getId() {
@@ -149,6 +149,14 @@ public class TransferCredit {
     this.optionality = optionality;
   }
 
+  public Long getCurriculumId() {
+    return curriculumId;
+  }
+
+  public void setCurriculumId(Long curriculumId) {
+    this.curriculumId = curriculumId;
+  }
+
   private Long id;
   private Long studentId;
   private OffsetDateTime date;
@@ -164,4 +172,5 @@ public class TransferCredit {
   private Long schoolId;
   private Long subjectId;
   private CourseOptionality optionality;
+  private Long curriculumId;
 }
