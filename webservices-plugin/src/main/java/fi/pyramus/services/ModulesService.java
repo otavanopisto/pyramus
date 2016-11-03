@@ -17,7 +17,6 @@ import fi.otavanopisto.pyramus.dao.modules.ModuleComponentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
-import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
@@ -48,9 +47,8 @@ public class ModulesService extends PyramusService {
     Subject subject = subjectDAO.findById(subjectId);
     User creatingUser = userDAO.findById(creatingUserId);
     EducationalTimeUnit moduleLengthTimeUnit = moduleLengthTimeUnitId == null ? null : educationalTimeUnitDAO.findById(moduleLengthTimeUnitId);
-    Curriculum curriculum = null;
 
-    Module module = moduleDAO.create(name, subject, curriculum, courseNumber, moduleLength, moduleLengthTimeUnit, description, null, creatingUser);
+    Module module = moduleDAO.create(name, subject, courseNumber, moduleLength, moduleLengthTimeUnit, description, null, creatingUser);
 
     validateEntity(module);
 
@@ -71,7 +69,7 @@ public class ModulesService extends PyramusService {
     User modifyingUser = userDAO.findById(modifyingUserId);
     EducationalTimeUnit moduleLengthTimeUnit = lengthTimeUnitId == null ? null : educationalTimeUnitDAO.findById(lengthTimeUnitId);
 
-    moduleDAO.update(module, name, subject, module.getCurriculum(), courseNumber, length, moduleLengthTimeUnit, description, module.getMaxParticipantCount(), modifyingUser);
+    moduleDAO.update(module, name, subject, courseNumber, length, moduleLengthTimeUnit, description, module.getMaxParticipantCount(), modifyingUser);
 
     validateEntity(module);
   }

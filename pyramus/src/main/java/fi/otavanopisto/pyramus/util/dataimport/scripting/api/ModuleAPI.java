@@ -8,7 +8,6 @@ import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
@@ -40,9 +39,8 @@ public class ModuleAPI {
     EducationalTimeUnit timeUnit = defaultsDAO.getDefaults().getBaseTimeUnit();
     
     // TODO: moduleLength, timeUnit, curriculum
-    Curriculum curriculum = null;
-    
-    return moduleDAO.create(name, subject, curriculum, courseNumber, 0d, timeUnit, description, maxParticipantCount, loggedUser).getId();
+   
+    return moduleDAO.create(name, subject, courseNumber, 0d, timeUnit, description, maxParticipantCount, loggedUser).getId();
   }
   
   public Long[] listIdsBySubjectCodeAndCourseNumber(String subjectCode, Integer courseNumber) {

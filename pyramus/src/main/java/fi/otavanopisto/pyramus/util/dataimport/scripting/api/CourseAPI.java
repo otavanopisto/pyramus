@@ -14,7 +14,6 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseTypeDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
@@ -67,9 +66,8 @@ public class CourseAPI {
     Date enrolmentTimeEnd = null;
     BigDecimal courseFee = null;
     Currency courseFeeCurrency = null;
-    Curriculum curriculum = null;
     
-    return courseDAO.create(module, name, nameExtension, courseState, type, subject, curriculum, module.getCourseNumber(), beginDate, endDate, 
+    return courseDAO.create(module, name, nameExtension, courseState, type, subject, module.getCourseNumber(), beginDate, endDate, 
         module.getCourseLength().getUnits(), module.getCourseLength().getUnit(), distanceTeachingDays, localTeachingDays, 
         teachingHours, distanceTeachingHours, planningHours, assessingHours, description, module.getMaxParticipantCount(), 
         courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser).getId();

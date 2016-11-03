@@ -1,11 +1,14 @@
 package fi.otavanopisto.pyramus.rest;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,9 +34,8 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
@@ -171,11 +173,10 @@ public class CourseRESTService extends AbstractRESTService {
     Date enrolmentTimeEnd = toDate(courseEntity.getEnrolmentTimeEnd());
     BigDecimal courseFee = null;
     Currency courseFeeCurrency = null;
-    Curriculum curriculum = courseEntity.getCurriculumId() != null ? curriculumController.findCurriculumById(courseEntity.getCurriculumId()) : null;
     
     User loggedUser = sessionController.getUser();
     
-    Course course = courseController.createCourse(module, name, nameExtension, state, type, subject, curriculum, courseNumber, 
+    Course course = courseController.createCourse(module, name, nameExtension, state, type, subject, courseNumber, 
         toDate(beginDate), toDate(endDate), courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, 
         teachingHours, distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, 
         courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser);
@@ -186,8 +187,18 @@ public class CourseRESTService extends AbstractRESTService {
       }
     }
     
+    if (CollectionUtils.isNotEmpty(courseEntity.getCurriculumIds())) {
+      Set<Curriculum> curriculums = new HashSet<Curriculum>();
+      for (Long curriculumId : courseEntity.getCurriculumIds()) {
+        Curriculum curriculum = curriculumId != null ? curriculumController.findCurriculumById(curriculumId) : null;
+        if (curriculum != null)
+          curriculums.add(curriculum);
+      }
+      course = courseController.updateCourseCurriculums(course, curriculums);
+    }
+    
     if (courseEntity.getVariables() != null) {
-      courseController.updateCourseVariables(course, courseEntity.getVariables());
+      course = courseController.updateCourseVariables(course, courseEntity.getVariables());
     }
     
     return Response.ok().entity(objectFactory.createModel(course)).build();
@@ -298,14 +309,23 @@ public class CourseRESTService extends AbstractRESTService {
     Long maxParticipantCount = courseEntity.getMaxParticipantCount();
     Date enrolmentTimeEnd = toDate(courseEntity.getEnrolmentTimeEnd());
     User loggedUser = sessionController.getUser();
-    Curriculum curriculum = courseEntity.getCurriculumId() != null ? curriculumController.findCurriculumById(courseEntity.getCurriculumId()) : null;
     
-    Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, type, subject, curriculum, courseNumber, toDate(beginDate), toDate(endDate), courseLength,
+    Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, type, subject, courseNumber, toDate(beginDate), toDate(endDate), courseLength,
         courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, assessingHours, description,
         maxParticipantCount, enrolmentTimeEnd, loggedUser);
     
-    courseController.updateCourseTags(updatedCourse, courseEntity.getTags() == null ? new ArrayList<String>() : courseEntity.getTags());
-    courseController.updateCourseVariables(updatedCourse, courseEntity.getVariables() == null ? new HashMap<String, String>() : courseEntity.getVariables());
+    Set<Curriculum> curriculums = new HashSet<Curriculum>();
+    if (CollectionUtils.isNotEmpty(courseEntity.getCurriculumIds())) {
+      for (Long curriculumId : courseEntity.getCurriculumIds()) {
+        Curriculum curriculum = curriculumId != null ? curriculumController.findCurriculumById(curriculumId) : null;
+        if (curriculum != null)
+          curriculums.add(curriculum);
+      }
+    }
+    updatedCourse = courseController.updateCourseCurriculums(updatedCourse, curriculums);
+    
+    updatedCourse = courseController.updateCourseTags(updatedCourse, courseEntity.getTags() == null ? new ArrayList<String>() : courseEntity.getTags());
+    updatedCourse = courseController.updateCourseVariables(updatedCourse, courseEntity.getVariables() == null ? new HashMap<String, String>() : courseEntity.getVariables());
     
     return Response.ok().entity(objectFactory.createModel(updatedCourse)).build();
   }

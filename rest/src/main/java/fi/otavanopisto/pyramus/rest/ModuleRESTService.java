@@ -1,7 +1,9 @@
 package fi.otavanopisto.pyramus.rest;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -19,6 +21,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
@@ -79,14 +82,15 @@ public class ModuleRESTService extends AbstractRESTService{
     Double length = entity.getLength();
     String description = entity.getDescription();
     Long maxParticipantCount = entity.getMaxParticipantCount();
-    Curriculum curriculum = entity.getCurriculumId() != null ? curriculumController.findCurriculumById(entity.getCurriculumId()) : null;
-    Module module = moduleController.createModule(name, subject, curriculum, courseNumber, length, lengthUnit, description, maxParticipantCount, sessionController.getUser());
+    Module module = moduleController.createModule(name, subject, courseNumber, length, lengthUnit, description, maxParticipantCount, sessionController.getUser());
     
     if (entity.getTags() != null) {
       for (String tag : entity.getTags()) {
         moduleController.createModuleTag(module, tag); 
       }
     }
+    
+    module = moduleController.updateModuleCurriculums(module, getCurriculumsFromIds(entity.getCurriculumIds()));
     
     return Response
         .ok(objectFactory.createModel(module))
@@ -159,8 +163,8 @@ public class ModuleRESTService extends AbstractRESTService{
     Long maxParticipantCount = entity.getMaxParticipantCount();
     
     module = moduleController.updateModuleTags(module, entity.getTags() == null ? new ArrayList<String>() : entity.getTags());
-    Curriculum curriculum = entity.getCurriculumId() != null ? curriculumController.findCurriculumById(entity.getCurriculumId()) : null;
-    module = moduleController.updateModule(module, name, subject, curriculum, courseNumber, length, lengthUnit, description, maxParticipantCount, sessionController.getUser());
+    module = moduleController.updateModule(module, name, subject, courseNumber, length, lengthUnit, description, maxParticipantCount, sessionController.getUser());
+    module = moduleController.updateModuleCurriculums(module, getCurriculumsFromIds(entity.getCurriculumIds()));
     
     return Response.ok(objectFactory.createModel(module)).build();
   }
@@ -495,4 +499,16 @@ public class ModuleRESTService extends AbstractRESTService{
     return Response.noContent().build();
   }
 
+  private Set<Curriculum> getCurriculumsFromIds(Set<Long> curriculumIds) {
+    Set<Curriculum> curriculums = new HashSet<>();
+    if (CollectionUtils.isNotEmpty(curriculumIds)) {
+      for (Long curriculumId : curriculumIds) {
+        Curriculum curriculum = curriculumId != null ? curriculumController.findCurriculumById(curriculumId) : null;
+        if (curriculum != null)
+          curriculums.add(curriculum);
+      }
+    }
+    return curriculums;
+  }
+  
 }

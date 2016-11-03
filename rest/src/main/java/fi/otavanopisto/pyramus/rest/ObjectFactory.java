@@ -10,6 +10,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -186,7 +187,10 @@ public class ObjectFactory {
             Long moduleId = entity.getModule() != null ? entity.getModule().getId() : null;
             Long stateId = entity.getState() != null ? entity.getState().getId() : null;
             Long typeId = entity.getType() != null ? entity.getType().getId() : null;
-            Long curriculumId = entity.getCurriculum() != null ? entity.getCurriculum().getId(): null;
+            
+            Set<Long> curriculumIds = new HashSet<Long>();
+            for (fi.otavanopisto.pyramus.domainmodel.base.Curriculum curriculum : entity.getCurriculums())
+              curriculumIds.add(curriculum.getId());
             
             List<CourseBaseVariable> entityVariables = courseController.listCourseVariablesByCourse(entity);
 
@@ -200,7 +204,7 @@ public class ObjectFactory {
                 entity.getMaxParticipantCount(), beginDate, endDate, entity.getNameExtension(), 
                 entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingHours(), 
                 entity.getDistanceTeachingDays(), entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, 
-                creatorId, lastModifierId, subjectId, curriculumId, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
+                creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
           }
         }, 
         
@@ -319,7 +323,6 @@ public class ObjectFactory {
             Long subjectId = entity.getSubject() != null ? entity.getSubject().getId() : null;
             Double length = entity.getCourseLength() != null ? entity.getCourseLength().getUnits() : null; 
             Long lenghtUnitId = entity.getCourseLength() != null && entity.getCourseLength().getUnit() != null ? entity.getCourseLength().getUnit().getId() : null;
-            Long curriculumId = entity.getCurriculum() != null ? entity.getCurriculum().getId(): null;
             List<String> tags = new ArrayList<>();
             
             Set<Tag> moduleTags = entity.getTags();
@@ -329,9 +332,13 @@ public class ObjectFactory {
               }
             }
             
+            Set<Long> curriculumIds = new HashSet<Long>();
+            for (fi.otavanopisto.pyramus.domainmodel.base.Curriculum curriculum : entity.getCurriculums())
+              curriculumIds.add(curriculum.getId());
+            
             return new fi.otavanopisto.pyramus.rest.model.Module(entity.getId(), entity.getName(), toOffsetDateTime(entity.getCreated()),
                 toOffsetDateTime(entity.getLastModified()), entity.getDescription(), entity.getArchived(), entity.getCourseNumber(), 
-                entity.getMaxParticipantCount(), creatorId, lastModifierId, subjectId, curriculumId, length, lenghtUnitId, tags);
+                entity.getMaxParticipantCount(), creatorId, lastModifierId, subjectId, curriculumIds, length, lenghtUnitId, tags);
           }
         }, 
         

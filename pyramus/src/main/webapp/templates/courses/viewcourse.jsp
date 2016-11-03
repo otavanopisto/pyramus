@@ -543,13 +543,18 @@
             </div>
 
             <c:choose>
-              <c:when test="${course.curriculum ne null}">
+              <c:when test="${not empty course.curriculums}">
                 <div class="genericFormSection">
                   <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                     <jsp:param name="titleLocale" value="courses.viewCourse.curriculumTitle" />
                     <jsp:param name="helpLocale" value="courses.viewCourse.curriculumHelp" />
                   </jsp:include>
-                  <div class="genericViewFormDataText">${course.curriculum.name}</div>
+                  
+                  <div class="genericViewFormDataText">
+                    <c:forEach var="curriculum" items="${course.curriculums}">
+                      <div><c:out value="${curriculum.name}"/></div>
+                    </c:forEach>
+                  </div>
                 </div>
               </c:when>
             </c:choose> 
