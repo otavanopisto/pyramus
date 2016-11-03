@@ -28,6 +28,7 @@ public class AssessmentController {
   private CourseAssessmentRequestDAO courseAssessmentRequestDAO;
   
   public CourseAssessment createCourseCourseAssessment(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment){
+    // Create course assessment (reusing archived, if any)...
     CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
     if (courseAssessment != null) {
       courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, date, verbalAssessment, Boolean.FALSE);
@@ -35,11 +36,23 @@ public class AssessmentController {
     else {
       courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, date, verbalAssessment);
     }
+    // ...and archive respective course assessment requests
+    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseStudent);
+    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+      courseAssessmentRequestDAO.archive(courseAssessmentRequest);
+    }
     return courseAssessment;
   }
   
   public CourseAssessment updateCourseAssessment(CourseAssessment courseAssessment, StaffMember assessingUser, Grade grade, Date assessmentDate, String verbalAssessment){
-    return courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment, courseAssessment.getArchived());
+    // Update course assessment...
+    courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment, courseAssessment.getArchived());
+    // ...and archive respective course assessment requests (TODO re-evaluate when implementing complement)
+    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseAssessment.getCourseStudent());
+    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+      courseAssessmentRequestDAO.archive(courseAssessmentRequest);
+    }
+    return courseAssessment;
   }
   
   public CourseAssessment findCourseAssessmentById(Long id){
