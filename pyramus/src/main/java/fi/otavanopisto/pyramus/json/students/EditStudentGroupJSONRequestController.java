@@ -56,6 +56,7 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
     String description = requestContext.getString("description");
     Date beginDate = requestContext.getDate("beginDate");
     String tagsText = requestContext.getString("tags");
+    Boolean guidanceGroup = requestContext.getBoolean("guidanceGroup");
     
     Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
@@ -83,6 +84,10 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
     // Tags
 
     studentGroupDAO.setStudentGroupTags(studentGroup, tagEntities);
+    
+    // Guidance group
+    
+    studentGroupDAO.updateGuidanceGroup(studentGroup, guidanceGroup);
 
     // Personnel
 

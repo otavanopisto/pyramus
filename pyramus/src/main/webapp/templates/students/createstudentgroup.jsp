@@ -328,6 +328,7 @@
               </jsp:include>
 
               <input type="checkbox" id="guidanceGroup" name="guidanceGroup" />
+              <fmt:message key="students.createStudentGroup.guidanceGroupLabel" />
             </div>
 
             <ix:extensionHook name="students.createStudentGroup.tabs.basic"/>

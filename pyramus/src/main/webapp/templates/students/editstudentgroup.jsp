@@ -438,7 +438,13 @@
                 <jsp:param name="helpLocale" value="students.editStudentGroup.guidanceGroupHelp"/>
               </jsp:include>
 
-              <input type="checkbox" id="guidanceGroup" name="guidanceGroup" />
+              <c:if test="${studentGroup.guidanceGroup}">
+                <input type="checkbox" id="guidanceGroup" name="guidanceGroup" value="true" checked="checked" />
+              </c:if>
+              <c:if test="${not studentGroup.guidanceGroup}">
+                <input type="checkbox" id="guidanceGroup" name="guidanceGroup" value="true" />
+              </c:if>
+              <fmt:message key="students.editStudentGroup.guidanceGroupLabel" />
             </div>
 
             <ix:extensionHook name="students.editStudentGroup.tabs.basic"/>

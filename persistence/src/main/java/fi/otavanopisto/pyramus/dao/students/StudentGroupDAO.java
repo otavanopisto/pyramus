@@ -50,7 +50,7 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
 //  @Inject
 //  private Event<StudentGroupArchivedEvent> studentGroupRemovedEvent;
   
-  public StudentGroup create(String name, String description, Date beginDate, User creatingUser) {
+  public StudentGroup create(String name, String description, Date beginDate, User creatingUser, Boolean guidanceGroup) {
     EntityManager entityManager = getEntityManager();
 
     Date now = new Date(System.currentTimeMillis());
@@ -64,6 +64,8 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     studentGroup.setCreated(now);
     studentGroup.setLastModifier(creatingUser);
     studentGroup.setLastModified(now);
+    
+    studentGroup.setGuidanceGroup(guidanceGroup);
 
     entityManager.persist(studentGroup);
 
@@ -258,6 +260,11 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     catch (ParseException e) {
       throw new PersistenceException(e);
     }
+  }
+  
+  public StudentGroup updateGuidanceGroup(StudentGroup studentGroup, Boolean guidanceGroup) {
+    studentGroup.setGuidanceGroup(guidanceGroup);
+    return persist(studentGroup);
   }
   
 }
