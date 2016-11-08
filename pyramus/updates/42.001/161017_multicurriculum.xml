@@ -8,6 +8,9 @@
     select id, curriculum_id from CourseBase where curriculum_id is not null;
   </sql>
   <sql>
+    alter table CourseBase drop foreign key FKB40B1ACFBD8AD15;
+  </sql>
+  <sql>
     alter table CourseBase drop column curriculum_id;
   </sql>
 </update>
