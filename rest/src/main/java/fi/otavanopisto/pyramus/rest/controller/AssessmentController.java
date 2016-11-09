@@ -27,7 +27,7 @@ public class AssessmentController {
   @Inject
   private CourseAssessmentRequestDAO courseAssessmentRequestDAO;
   
-  public CourseAssessment createCourseCourseAssessment(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment){
+  public CourseAssessment createCourseAssessment(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment){
     // Create course assessment (reusing archived, if any)...
     CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
     if (courseAssessment != null) {

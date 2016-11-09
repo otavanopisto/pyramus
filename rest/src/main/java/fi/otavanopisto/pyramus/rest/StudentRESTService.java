@@ -1755,7 +1755,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Could not find grade").build();
     }
     
-    CourseAssessment courseAssessment = assessmentController.createCourseCourseAssessment(courseStudent, assessor, grade, Date.from(entity.getDate().toInstant()), entity.getVerbalAssessment());
+    CourseAssessment courseAssessment = assessmentController.createCourseAssessment(courseStudent, assessor, grade, Date.from(entity.getDate().toInstant()), entity.getVerbalAssessment());
     
     return Response.ok(objectFactory.createModel(courseAssessment)).build();
   }
