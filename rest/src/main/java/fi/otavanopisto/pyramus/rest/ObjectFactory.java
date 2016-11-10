@@ -268,7 +268,7 @@ public class ObjectFactory {
           @Override
           public Object map(CourseAssessmentRequest entity) {
             OffsetDateTime created = toOffsetDateTime(entity.getCreated());
-            return new fi.otavanopisto.pyramus.rest.model.CourseAssessmentRequest(entity.getId(), entity.getCourseStudent().getId(), created, entity.getRequestText(), entity.getArchived());
+            return new fi.otavanopisto.pyramus.rest.model.CourseAssessmentRequest(entity.getId(), entity.getCourseStudent().getId(), created, entity.getRequestText(), entity.getArchived(), entity.getHandled());
           }
         },
         

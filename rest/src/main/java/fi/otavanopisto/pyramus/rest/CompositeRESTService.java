@@ -154,7 +154,7 @@ public class CompositeRESTService {
     List<CompositeAssessmentRequest> assessmentRequests = new ArrayList<CompositeAssessmentRequest>();
     List<Course> courses = courseController.listCoursesByStaffMember(staffMember);
     for (Course course : courses) {
-      List<CourseAssessmentRequest> courseAssessmentRequests = assessmentController.listCourseAssessmentRequestsByCourse(course);
+      List<CourseAssessmentRequest> courseAssessmentRequests = assessmentController.listCourseAssessmentRequestsByCourseAndHandled(course, Boolean.FALSE);
       for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
         CourseAssessment courseAssessment = assessmentController.findCourseAssessmentByCourseStudentAndArchived(courseAssessmentRequest.getCourseStudent(), Boolean.FALSE);
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();

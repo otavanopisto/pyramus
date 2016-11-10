@@ -2131,7 +2131,11 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequest(courseAssessmentRequest, Date.from(entity.getCreated().toInstant()), entity.getRequestText());
+    CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequest(
+      courseAssessmentRequest,
+      Date.from(entity.getCreated().toInstant()),
+      entity.getRequestText(),
+      entity.getHandled());
         
     return Response.ok(objectFactory.createModel(updatedCourseAssessmentRequest)).build();
   }

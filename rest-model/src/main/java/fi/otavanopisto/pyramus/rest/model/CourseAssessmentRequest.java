@@ -9,13 +9,14 @@ public class CourseAssessmentRequest {
     super();
   }
 
-  public CourseAssessmentRequest(Long id, Long courseStudentId, OffsetDateTime created, String requestText, Boolean archived) {
+  public CourseAssessmentRequest(Long id, Long courseStudentId, OffsetDateTime created, String requestText, Boolean archived, Boolean handled) {
     super();
     this.id = id;
     this.courseStudentId = courseStudentId;
     this.created = created;
     this.requestText = requestText;
     this.archived = archived;
+    this.setHandled(handled);
   }
 
   public Long getId() {
@@ -58,9 +59,18 @@ public class CourseAssessmentRequest {
     this.archived = archived;
   }
 
+  public Boolean getHandled() {
+    return handled;
+  }
+
+  public void setHandled(Boolean handled) {
+    this.handled = handled;
+  }
+
   private Long id;
   private Long courseStudentId;
   private OffsetDateTime created;
   private String requestText;
   private Boolean archived;
+  private Boolean handled;
 }

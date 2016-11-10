@@ -36,10 +36,10 @@ public class AssessmentController {
     else {
       courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, date, verbalAssessment);
     }
-    // ...and archive respective course assessment requests
+    // ...and mark respective course assessment requests as handled
     List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseStudent);
     for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
-      courseAssessmentRequestDAO.archive(courseAssessmentRequest);
+      courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
     }
     return courseAssessment;
   }
@@ -47,10 +47,10 @@ public class AssessmentController {
   public CourseAssessment updateCourseAssessment(CourseAssessment courseAssessment, StaffMember assessingUser, Grade grade, Date assessmentDate, String verbalAssessment){
     // Update course assessment...
     courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment, courseAssessment.getArchived());
-    // ...and archive respective course assessment requests (TODO re-evaluate when implementing complement)
+    // ...and mark respective course assessment requests as handled
     List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseAssessment.getCourseStudent());
     for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
-      courseAssessmentRequestDAO.archive(courseAssessmentRequest);
+      courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
     }
     return courseAssessment;
   }
@@ -80,8 +80,8 @@ public class AssessmentController {
     return courseAssessmentRequestDAO.create(courseStudent, created, requestText);
   }
   
-  public CourseAssessmentRequest updateCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText) {
-    return courseAssessmentRequestDAO.update(courseAssessmentRequest, created, requestText);
+  public CourseAssessmentRequest updateCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText, Boolean handled) {
+    return courseAssessmentRequestDAO.update(courseAssessmentRequest, created, requestText, handled);
   }
   
   public CourseAssessmentRequest findCourseAssessmentRequestById(Long id){
@@ -102,6 +102,10 @@ public class AssessmentController {
   
   public List<CourseAssessmentRequest> listCourseAssessmentRequestsByCourse(Course course) {
     return courseAssessmentRequestDAO.listByCourse(course);
+  }
+
+  public List<CourseAssessmentRequest> listCourseAssessmentRequestsByCourseAndHandled(Course course, Boolean handled) {
+    return courseAssessmentRequestDAO.listByCourseAndHandled(course, handled);
   }
   
   public List<CourseAssessmentRequest> listCourseAssessmentRequestsByStudent(Student student) {
