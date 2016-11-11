@@ -72,11 +72,6 @@ public class AssessmentController {
   }
   
   public CourseAssessmentRequest createCourseAssessmentRequest(CourseStudent courseStudent, Date created, String requestText) {
-    // We should only have one active assessment request per course student, so archive earlier ones first
-    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseStudent);
-    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
-      courseAssessmentRequestDAO.archive(courseAssessmentRequest);
-    }
     return courseAssessmentRequestDAO.create(courseStudent, created, requestText);
   }
   
