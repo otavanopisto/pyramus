@@ -62,6 +62,14 @@ public class CourseAssessmentRequest implements ArchivableEntity {
     this.archived = archived;
   }
   
+  public Boolean getHandled() {
+    return handled;
+  }
+  
+  public void setHandled(Boolean handled) {
+    this.handled = handled;
+  }
+  
   public Date getCreated() {
     return created;
   }
@@ -87,6 +95,11 @@ public class CourseAssessmentRequest implements ArchivableEntity {
   @Basic (fetch = FetchType.LAZY)
   @Column
   private String requestText;
+
+  @NotNull
+  @Column (nullable = false)
+  @Field
+  private Boolean handled = Boolean.FALSE;
 
   @NotNull
   @Column (nullable = false)

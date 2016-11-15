@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
@@ -41,10 +42,16 @@ import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember_;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseType;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseUser;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseUser_;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.events.CourseArchivedEvent;
 import fi.otavanopisto.pyramus.events.CourseCreatedEvent;
@@ -245,6 +252,21 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
             criteriaBuilder.equal(variable.get(CourseBaseVariable_.key), courseBaseVariableKey),
             criteriaBuilder.equal(variable.get(CourseBaseVariable_.value), value)
         ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
+  public List<Course> listByStaffMember(StaffMember staffMember) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Course> criteria = criteriaBuilder.createQuery(Course.class);
+    Root<CourseStaffMember> root = criteria.from(CourseStaffMember.class);
+    
+    criteria.select(root.get(CourseStaffMember_.course));
+    criteria.where(
+      criteriaBuilder.equal(root.get(CourseStaffMember_.staffMember), staffMember)
+    );
     
     return entityManager.createQuery(criteria).getResultList();
   }

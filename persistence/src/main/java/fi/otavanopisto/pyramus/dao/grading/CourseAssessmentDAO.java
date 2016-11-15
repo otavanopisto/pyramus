@@ -115,25 +115,42 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
   public CourseAssessment findByCourseStudent(CourseStudent courseStudent) {
     EntityManager entityManager = getEntityManager(); 
     
-    // TODO Does not use archived
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<CourseAssessment> criteria = criteriaBuilder.createQuery(CourseAssessment.class);
     Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
     criteria.select(root);
     criteria.where(
-        criteriaBuilder.equal(root.get(CourseAssessment_.courseStudent), courseStudent)
+      criteriaBuilder.equal(root.get(CourseAssessment_.courseStudent), courseStudent)
     );
     
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
-  public CourseAssessment update(CourseAssessment assessment, StaffMember assessingUser, Grade grade, Date assessmentDate, String verbalAssessment) {
+  public CourseAssessment findByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseAssessment> criteria = criteriaBuilder.createQuery(CourseAssessment.class);
+    Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(CourseAssessment_.courseStudent), courseStudent),
+        criteriaBuilder.equal(root.get(CourseAssessment_.archived), archived)
+      )
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+
+  public CourseAssessment update(CourseAssessment assessment, StaffMember assessingUser, Grade grade, Date assessmentDate, String verbalAssessment, Boolean archived) {
     EntityManager entityManager = getEntityManager();
 
     assessment.setAssessor(assessingUser);
     assessment.setGrade(grade);
     assessment.setDate(assessmentDate);
     assessment.setVerbalAssessment(verbalAssessment);
+    assessment.setArchived(archived);
     
     entityManager.persist(assessment);
     

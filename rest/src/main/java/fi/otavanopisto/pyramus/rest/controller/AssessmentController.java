@@ -27,17 +27,40 @@ public class AssessmentController {
   @Inject
   private CourseAssessmentRequestDAO courseAssessmentRequestDAO;
   
-  public CourseAssessment createCourseCourseAssessment(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment){
-    CourseAssessment courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, date, verbalAssessment);
+  public CourseAssessment createCourseAssessment(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment){
+    // Create course assessment (reusing archived, if any)...
+    CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
+    if (courseAssessment != null) {
+      courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, date, verbalAssessment, Boolean.FALSE);
+    }
+    else {
+      courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, date, verbalAssessment);
+    }
+    // ...and mark respective course assessment requests as handled
+    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseStudent);
+    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+      courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
+    }
     return courseAssessment;
   }
   
   public CourseAssessment updateCourseAssessment(CourseAssessment courseAssessment, StaffMember assessingUser, Grade grade, Date assessmentDate, String verbalAssessment){
-    return courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment);
+    // Update course assessment...
+    courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment, courseAssessment.getArchived());
+    // ...and mark respective course assessment requests as handled
+    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseAssessment.getCourseStudent());
+    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+      courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
+    }
+    return courseAssessment;
   }
   
   public CourseAssessment findCourseAssessmentById(Long id){
     return courseAssessmentDAO.findById(id);
+  }
+
+  public CourseAssessment findCourseAssessmentByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
+    return courseAssessmentDAO.findByCourseStudentAndArchived(courseStudent, archived);
   }
   
   public List<CourseAssessment> listByCourseAndStudent(Course course, Student student){
@@ -45,24 +68,39 @@ public class AssessmentController {
   }
   
   public void deleteCourseAssessment(CourseAssessment courseAssessment) {
-    courseAssessmentDAO.delete(courseAssessment);
+    courseAssessmentDAO.archive(courseAssessment);
   }
   
   public CourseAssessmentRequest createCourseAssessmentRequest(CourseStudent courseStudent, Date created, String requestText) {
-    CourseAssessmentRequest courseAssessment = courseAssessmentRequestDAO.create(courseStudent, created, requestText);
-    return courseAssessment;
+    return courseAssessmentRequestDAO.create(courseStudent, created, requestText);
   }
   
-  public CourseAssessmentRequest updateCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText) {
-    return courseAssessmentRequestDAO.update(courseAssessmentRequest, created, requestText);
+  public CourseAssessmentRequest updateCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText, Boolean handled) {
+    return courseAssessmentRequestDAO.update(courseAssessmentRequest, created, requestText, handled);
   }
   
   public CourseAssessmentRequest findCourseAssessmentRequestById(Long id){
     return courseAssessmentRequestDAO.findById(id);
   }
+
+  public CourseAssessmentRequest findCourseAssessmentRequestByCourseStudent(CourseStudent courseStudent) {
+    // TODO Return latest request (as implemented) or enforce one assesssment request per course student?  
+    CourseAssessmentRequest assessmentRequest = null;
+    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseStudent);
+    for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
+      if (assessmentRequest == null || courseAssessmentRequest.getCreated().after(assessmentRequest.getCreated())) {
+        assessmentRequest = courseAssessmentRequest;
+      }
+    }
+    return assessmentRequest;
+  }
   
   public List<CourseAssessmentRequest> listCourseAssessmentRequestsByCourse(Course course) {
     return courseAssessmentRequestDAO.listByCourse(course);
+  }
+
+  public List<CourseAssessmentRequest> listCourseAssessmentRequestsByCourseAndHandled(Course course, Boolean handled) {
+    return courseAssessmentRequestDAO.listByCourseAndHandled(course, handled);
   }
   
   public List<CourseAssessmentRequest> listCourseAssessmentRequestsByStudent(Student student) {

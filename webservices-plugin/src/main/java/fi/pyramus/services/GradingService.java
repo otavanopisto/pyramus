@@ -136,7 +136,7 @@ public class GradingService extends PyramusService {
     Grade grade = gradeDAO.findById(gradeId);
     CourseAssessment courseAssessment = courseAssessmentDAO.findById(courseAssessmentId);
     
-    courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, date, verbalAssessment);
+    courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, date, verbalAssessment, courseAssessment.getArchived());
     
     validateEntity(courseAssessment);
     
@@ -149,7 +149,7 @@ public class GradingService extends PyramusService {
 
     CourseStudent courseStudent = courseStudentDAO.findById(courseStudentId);
     
-    CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
+    CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
     return EntityFactoryVault.buildFromDomainObject(courseAssessment);
   }
   

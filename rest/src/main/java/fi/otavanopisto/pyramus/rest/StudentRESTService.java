@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,9 +30,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
@@ -1755,7 +1753,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Could not find grade").build();
     }
     
-    CourseAssessment courseAssessment = assessmentController.createCourseCourseAssessment(courseStudent, assessor, grade, Date.from(entity.getDate().toInstant()), entity.getVerbalAssessment());
+    CourseAssessment courseAssessment = assessmentController.createCourseAssessment(courseStudent, assessor, grade, Date.from(entity.getDate().toInstant()), entity.getVerbalAssessment());
     
     return Response.ok(objectFactory.createModel(courseAssessment)).build();
   }
@@ -2133,7 +2131,11 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequest(courseAssessmentRequest, Date.from(entity.getCreated().toInstant()), entity.getRequestText());
+    CourseAssessmentRequest updatedCourseAssessmentRequest = assessmentController.updateCourseAssessmentRequest(
+      courseAssessmentRequest,
+      Date.from(entity.getCreated().toInstant()),
+      entity.getRequestText(),
+      entity.getHandled());
         
     return Response.ok(objectFactory.createModel(updatedCourseAssessmentRequest)).build();
   }

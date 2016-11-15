@@ -33,14 +33,14 @@ public class SaveCourseAssessmentJSONRequestController extends JSONRequestContro
     StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
     Grade grade = gradeId == null ? null : gradeDAO.findById(gradeId);
 
-    CourseAssessment assessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
+    CourseAssessment assessment = courseAssessmentDAO.findByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
     
     if (assessment == null) {
       assessment = courseAssessmentDAO.create(courseStudent, 
           assessingUser, grade, assessmentDate, verbalAssessment);
     } else {
       assessment = courseAssessmentDAO.update(assessment, 
-          assessingUser, grade, assessmentDate, verbalAssessment);
+          assessingUser, grade, assessmentDate, verbalAssessment, assessment.getArchived());
     }
     
     jsonRequestContext.setRedirectURL(jsonRequestContext.getReferer(true));

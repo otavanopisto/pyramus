@@ -231,6 +231,7 @@ public class ObjectFactory {
             Long gradeId = entity.getGrade() != null ? entity.getGrade().getId() : null;
             Long gradingScaleId = entity.getGrade() != null && entity.getGrade().getGradingScale() != null ? entity.getGrade().getGradingScale().getId() : null;
             Long assessorId = entity.getAssessor() != null ? entity.getAssessor().getId() : null;
+            Boolean passing = entity.getGrade().getPassingGrade();
             
             return new fi.otavanopisto.pyramus.rest.model.CourseAssessment(entity.getId(), 
                 courseStudentId, 
@@ -238,7 +239,8 @@ public class ObjectFactory {
                 gradingScaleId, 
                 assessorId, 
                 toOffsetDateTime(entity.getDate()),
-                entity.getVerbalAssessment());
+                entity.getVerbalAssessment(),
+                passing);
           }
         },
         
@@ -266,7 +268,7 @@ public class ObjectFactory {
           @Override
           public Object map(CourseAssessmentRequest entity) {
             OffsetDateTime created = toOffsetDateTime(entity.getCreated());
-            return new fi.otavanopisto.pyramus.rest.model.CourseAssessmentRequest(entity.getId(), entity.getCourseStudent().getId(), created, entity.getRequestText(), entity.getArchived());
+            return new fi.otavanopisto.pyramus.rest.model.CourseAssessmentRequest(entity.getId(), entity.getCourseStudent().getId(), created, entity.getRequestText(), entity.getArchived(), entity.getHandled());
           }
         },
         

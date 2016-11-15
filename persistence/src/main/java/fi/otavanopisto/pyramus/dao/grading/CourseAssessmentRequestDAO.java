@@ -29,6 +29,7 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
     courseAssessmentRequest.setCourseStudent(courseStudent);
     courseAssessmentRequest.setCreated(created);
     courseAssessmentRequest.setRequestText(requestText);
+    courseAssessmentRequest.setHandled(Boolean.FALSE);
     
     entityManager.persist(courseAssessmentRequest);
     
@@ -81,11 +82,22 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
     return entityManager.createQuery(criteria).getResultList();
   }  
   
-  public CourseAssessmentRequest update(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText) {
+  public CourseAssessmentRequest update(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText, Boolean handled) {
     EntityManager entityManager = getEntityManager();
 
     courseAssessmentRequest.setCreated(created);
     courseAssessmentRequest.setRequestText(requestText);
+    courseAssessmentRequest.setHandled(handled);
+    
+    entityManager.persist(courseAssessmentRequest);
+    
+    return courseAssessmentRequest;
+  }
+
+  public CourseAssessmentRequest updateHandled(CourseAssessmentRequest courseAssessmentRequest, Boolean handled) {
+    EntityManager entityManager = getEntityManager();
+
+    courseAssessmentRequest.setHandled(handled);
     
     entityManager.persist(courseAssessmentRequest);
     
@@ -106,6 +118,26 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
             criteriaBuilder.equal(courseStudent.get(CourseStudent_.course), course),
             criteriaBuilder.equal(courseStudent.get(CourseStudent_.archived), Boolean.FALSE),            
             criteriaBuilder.equal(root.get(CourseAssessmentRequest_.archived), Boolean.FALSE)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<CourseAssessmentRequest> listByCourseAndHandled(Course course, Boolean handled) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseAssessmentRequest> criteria = criteriaBuilder.createQuery(CourseAssessmentRequest.class);
+    Root<CourseAssessmentRequest> root = criteria.from(CourseAssessmentRequest.class);
+    Join<CourseAssessmentRequest, CourseStudent> courseStudent = root.join(CourseAssessmentRequest_.courseStudent);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(courseStudent.get(CourseStudent_.course), course),
+            criteriaBuilder.equal(courseStudent.get(CourseStudent_.archived), Boolean.FALSE),            
+            criteriaBuilder.equal(root.get(CourseAssessmentRequest_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(root.get(CourseAssessmentRequest_.handled), handled)
         ));
     
     return entityManager.createQuery(criteria).getResultList();

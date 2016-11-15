@@ -418,6 +418,10 @@ public class CourseController {
   public List<Course> listCoursesBySubject(Subject subject) {
     return courseDAO.listBySubject(subject);
   }
+
+  public List<Course> listCoursesByStaffMember(StaffMember staffMember) {
+    return courseDAO.listByStaffMember(staffMember);
+  }
   
   /* CourseStaffMemberRole */
 

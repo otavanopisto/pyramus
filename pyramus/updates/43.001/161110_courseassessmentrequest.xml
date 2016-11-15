@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <alterTables>
+    <table name="CourseAssessmentRequest">
+      <addFields>
+        <field name="handled" type="java.lang.Boolean" nullable="false" unique="false"/>
+      </addFields>
+    </table>
+  </alterTables>
+ 
+  <sql>
+    update courseassessmentrequest
+    set handled=true
+    where coursestudent in (
+      select coursestudent from courseassessment
+    );
+  </sql>
+
+  <sql>
+    update courseassessmentrequest
+    set handled=true
+    where id in (select carId from (
+      select car.id as carId
+      from courseassessmentrequest car, coursestudent cs, student s
+      where car.coursestudent=cs.id and cs.student=s.id and s.studyEndDate is not null
+    ) carQuery);  
+  </sql>
+
+  <sql>
+    update courseassessmentrequest
+    set handled=false
+    where id in (select carId from (
+      select max(car.id) as carId
+      from courseassessmentrequest car, courseassessment ca, credit c
+      where car.coursestudent=ca.coursestudent and ca.id=c.id and date(car.created) > date(c.date)
+      group by car.coursestudent
+    ) carQuery);
+  </sql>
+
+</update>

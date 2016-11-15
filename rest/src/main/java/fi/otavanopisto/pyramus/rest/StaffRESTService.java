@@ -48,7 +48,7 @@ public class StaffRESTService extends AbstractRESTService {
 
   @Inject
   private UserController userController;
-  
+
   @Inject
   private CommonController commonController;
   
@@ -374,5 +374,5 @@ public class StaffRESTService extends AbstractRESTService {
 
     return Response.noContent().build();
   }
-  
+
 }

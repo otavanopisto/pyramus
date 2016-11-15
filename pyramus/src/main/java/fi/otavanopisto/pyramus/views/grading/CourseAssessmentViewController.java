@@ -35,7 +35,7 @@ public class CourseAssessmentViewController extends PyramusViewController implem
     
     CourseStudent courseStudent = courseStudentDAO.findById(courseStudentId);
     
-    CourseAssessment assessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
+    CourseAssessment assessment = courseAssessmentDAO.findByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
     
     List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
 
