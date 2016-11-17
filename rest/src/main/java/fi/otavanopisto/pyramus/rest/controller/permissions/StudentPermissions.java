@@ -110,6 +110,10 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   public static final String FIND_STUDENTADDRESS = "FIND_STUDENTADDRESS";
   
   @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String UPDATE_STUDENTADDRESS = "UPDATE_STUDENTADDRESS";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String DELETE_STUDENTADDRESS = "DELETE_STUDENTADDRESS";
   
