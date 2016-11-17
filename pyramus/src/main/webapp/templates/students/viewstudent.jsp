@@ -1113,7 +1113,7 @@
               var curriculums = "";
               if (cAs.curriculums && (cAs.curriculums.length > 0)) {
                 curriculums = cAs.curriculums[0].curriculumName;
-                for (var i = 0, l = cAs.curriculums.length; i < l; i++) {
+                for (var i = 0, l2 = cAs.curriculums.length; i < l2; i++) {
                   curriculums = curriculums + ", " + cAs.curriculums[i].curriculumName;
                 }
               }
