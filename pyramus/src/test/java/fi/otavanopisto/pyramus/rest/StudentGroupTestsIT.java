@@ -19,7 +19,8 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateStudentGroup() {
-    StudentGroup entity = new StudentGroup(null, 
+    StudentGroup entity = new StudentGroup(
+        null, 
         "to be created", 
         "student group to be created", 
         getDate(2014, 6, 6), 
@@ -28,6 +29,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         null, 
         null, 
         Arrays.asList("tag1", "tag2"), 
+        Boolean.FALSE,
         Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
@@ -116,6 +118,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         null, 
         null, 
         Arrays.asList("tag1", "tag2"), 
+        Boolean.FALSE,
         Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
@@ -147,6 +150,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
           null, 
           null, 
           Arrays.asList("tag2", "tag3"), 
+          Boolean.FALSE,
           Boolean.FALSE);
       
       given().headers(getAuthHeaders())
@@ -185,6 +189,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         null, 
         null, 
         Arrays.asList("tag1", "tag2"), 
+        Boolean.FALSE,
         Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())

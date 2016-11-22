@@ -18,7 +18,7 @@ public class StudentGroupAPI {
       throw new InvalidScriptException("Logged user could not be found");  
     }
     
-    return (DAOFactory.getInstance().getStudentGroupDAO().create(name, description, beginDate, loggedUser).getId());
+    return (DAOFactory.getInstance().getStudentGroupDAO().create(name, description, beginDate, loggedUser, false).getId());
   }
 
   private Long loggedUserId;

@@ -320,6 +320,16 @@
               <span class="genericTableAddRowLinkContainer" onclick="openSearchUsersDialog();"><fmt:message key="students.createStudentGroup.addPersonLink"/></span>
             </div>
             <div id="usersTable"> </div>
+           
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="students.createStudentGroup.guidanceGroupTitle"/>
+                <jsp:param name="helpLocale" value="students.createStudentGroup.guidanceGroupHelp"/>
+              </jsp:include>
+
+              <input type="checkbox" id="guidanceGroup" name="guidanceGroup" />
+              <fmt:message key="students.createStudentGroup.guidanceGroupLabel" />
+            </div>
 
             <ix:extensionHook name="students.createStudentGroup.tabs.basic"/>
           </div>

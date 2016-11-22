@@ -26,6 +26,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
@@ -210,6 +211,14 @@ public class StudentGroup implements ArchivableEntity {
   public Date getLastModified() {
     return lastModified;
   }
+  
+  public Boolean getGuidanceGroup() {
+    return guidanceGroup;
+  }
+  
+  public void setGuidanceGroup(Boolean guidanceGroup) {
+    this.guidanceGroup = guidanceGroup;
+  }
 
   @SuppressWarnings("unused")
   private void setVersion(Long version) {
@@ -263,6 +272,11 @@ public class StudentGroup implements ArchivableEntity {
   @Column (nullable=false)
   @Temporal (value=TemporalType.TIMESTAMP)
   private Date lastModified;
+  
+  @NotNull
+  @Column (nullable=false)
+  @Field
+  private Boolean guidanceGroup = Boolean.FALSE;
 
   @OneToMany
   @JoinColumn (name="studentGroup")

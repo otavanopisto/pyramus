@@ -41,6 +41,8 @@ public class CreateStudentGroupJSONRequestController extends JSONRequestControll
     Date beginDate = requestContext.getDate("beginDate");
     String tagsText = requestContext.getString("tags");
     
+    Boolean guidanceGroup = requestContext.getBoolean("guidanceGroup");
+    
     Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
@@ -56,7 +58,7 @@ public class CreateStudentGroupJSONRequestController extends JSONRequestControll
 
     User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
 
-    StudentGroup studentGroup = studentGroupDAO.create(name, description, beginDate, loggedUser);
+    StudentGroup studentGroup = studentGroupDAO.create(name, description, beginDate, loggedUser, guidanceGroup);
 
     // Tags
     

@@ -513,7 +513,7 @@ public class ObjectFactory {
 
             return new fi.otavanopisto.pyramus.rest.model.StudentGroup(entity.getId(), entity.getName(), entity.getDescription(), 
               toOffsetDateTime(entity.getBeginDate()), creatorId, toOffsetDateTime(entity.getCreated()), lastModifierId, 
-              toOffsetDateTime(entity.getLastModified()), tags, entity.getArchived() 
+              toOffsetDateTime(entity.getLastModified()), tags, entity.getGuidanceGroup(), entity.getArchived() 
             );
           }
         },
