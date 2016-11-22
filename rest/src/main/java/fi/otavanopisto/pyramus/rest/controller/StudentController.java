@@ -265,6 +265,10 @@ public class StudentController {
     return addressDAO.create(student.getContactInfo(), contactType, name ,streetAddress, postalCode, city, country, defaultAddress);
   }
 
+  public Address updateStudentAddress(Address address, ContactType contactType, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
+    return addressDAO.update(address, defaultAddress, contactType, name, streetAddress, postalCode, city, country);
+  }
+
   /* PhoneNumber */
 
   public PhoneNumber addStudentPhoneNumber(Student student, ContactType contactType, String number, Boolean defaultNumber) {

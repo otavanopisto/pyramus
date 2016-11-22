@@ -2542,6 +2542,57 @@ public class StudentRESTService extends AbstractRESTService {
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/addresses/{ID:[0-9]*}")
+  @PUT
+  @RESTPermit(handling = Handling.INLINE)
+  // @RESTPermit (StudentPermissions.UPDATE_STUDENTADDRESS)
+  public Response updateStudentAddress(
+      @PathParam("STUDENTID") Long studentId,
+      @PathParam("ID") Long id,
+      fi.otavanopisto.pyramus.rest.model.Address body
+      ) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!restSecurity.hasPermission(
+          new String[] { StudentPermissions.UPDATE_STUDENTADDRESS },
+          student)
+        && !restSecurity.hasPermission(
+            new String[] { StudentPermissions.STUDENT_OWNER },
+            student.getPerson() )) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    Address address = commonController.findAddressById(id);
+    if (address == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!address.getContactInfo().getId().equals(student.getContactInfo().getId())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    ContactType contactType = commonController.findContactTypeById(body.getContactTypeId());
+    
+    address = studentController.updateStudentAddress(
+        address,
+        contactType,
+        body.getDefaultAddress(),
+        body.getName(),
+        body.getStreetAddress(),
+        body.getPostalCode(),
+        body.getCity(),
+        body.getCountry());
+
+    return Response.ok(objectFactory.createModel(address)).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/addresses/{ID:[0-9]*}")
   @DELETE
   @RESTPermit(StudentPermissions.DELETE_STUDENTADDRESS)
   public Response deleteStudentAddress(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
