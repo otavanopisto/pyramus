@@ -2561,7 +2561,7 @@ public class StudentRESTService extends AbstractRESTService {
           new String[] { StudentPermissions.UPDATE_STUDENTADDRESS },
           student)
         && !restSecurity.hasPermission(
-            new String[] { PersonPermissions.PERSON_OWNER },
+            new String[] { StudentPermissions.STUDENT_OWNER },
             student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
     }
