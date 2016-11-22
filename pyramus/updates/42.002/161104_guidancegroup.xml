@@ -3,7 +3,7 @@
   <alterTables>
     <table name="StudentGroup">
       <addFields>
-        <field name="guidanceGroup" type="java.lang.Boolean" />
+        <field name="guidanceGroup" type="java.lang.Boolean" nullable="false" unique="false"/>
       </addFields>
     </table>
   </alterTables>
