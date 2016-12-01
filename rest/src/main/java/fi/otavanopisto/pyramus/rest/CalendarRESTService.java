@@ -25,8 +25,6 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-
 import fi.otavanopisto.pyramus.domainmodel.base.AcademicTerm;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;

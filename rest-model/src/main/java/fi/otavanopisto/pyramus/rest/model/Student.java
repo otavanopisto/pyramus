@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-
 import fi.otavanopisto.security.ContextReference;
 
 public class Student implements ContextReference {

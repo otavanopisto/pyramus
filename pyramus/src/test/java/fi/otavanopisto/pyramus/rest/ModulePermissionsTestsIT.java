@@ -5,7 +5,6 @@ import static com.jayway.restassured.RestAssured.given;
 import java.util.List;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

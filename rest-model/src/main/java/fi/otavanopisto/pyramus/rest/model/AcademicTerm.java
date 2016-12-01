@@ -3,7 +3,6 @@ package fi.otavanopisto.pyramus.rest.model;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 @XmlRootElement
 public class AcademicTerm {
