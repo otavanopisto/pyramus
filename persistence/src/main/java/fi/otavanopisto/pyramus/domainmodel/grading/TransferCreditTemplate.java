@@ -12,11 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -97,7 +97,7 @@ public class TransferCreditTemplate {
   private Long version;
   
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
-  @IndexColumn (name = "indexColumn")
+  @OrderColumn (name = "indexColumn")
   @JoinColumn (name="transferCreditTemplate")
   private List<TransferCreditTemplateCourse> courses = new ArrayList<>();
 

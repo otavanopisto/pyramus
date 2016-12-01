@@ -17,12 +17,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.PersistenceException;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.IndexColumn;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.EncodingType;
@@ -334,7 +334,7 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   private Double assessingHours;
   
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
-  @IndexColumn (name = "indexColumn")
+  @OrderColumn (name = "indexColumn")
   @JoinColumn (name="course")
   @IndexedEmbedded
   private List<CourseComponent> courseComponents = new Vector<>();
