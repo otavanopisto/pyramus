@@ -172,7 +172,6 @@ public class PluginManager {
    * 
    */
   public void registerPlugins() {
-    @SuppressWarnings("unchecked")
     Iterator<PluginDescriptor> pluginDescriptors = Service.providers(PluginDescriptor.class, libraryLoader.getPluginsClassLoader());
     while (pluginDescriptors.hasNext()) {
       PluginDescriptor pluginDescriptor = pluginDescriptors.next();

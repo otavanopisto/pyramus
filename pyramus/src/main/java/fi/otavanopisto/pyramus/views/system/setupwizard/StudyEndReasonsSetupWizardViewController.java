@@ -48,7 +48,7 @@ public class StudyEndReasonsSetupWizardViewController extends SetupWizardControl
       String colPrefix = "studyEndReasonsTable." + i;
       String name = requestContext.getString(colPrefix + ".name");
       String guid = requestContext.getString(colPrefix + ".guid");
-      String parentGuid = requestContext.getString(colPrefix + ".parentGuid");
+//      String parentGuid = requestContext.getString(colPrefix + ".parentGuid");
       StudentStudyEndReason reason = studentStudyEndReasonDAO.create(null, name); 
       reasons.put(guid, reason);
     }
