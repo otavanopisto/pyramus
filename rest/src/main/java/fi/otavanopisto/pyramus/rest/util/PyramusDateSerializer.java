@@ -3,8 +3,6 @@ package fi.otavanopisto.pyramus.rest.util;
 import java.io.IOException;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;

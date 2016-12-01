@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import org.junit.Test;
 
 import com.jayway.restassured.response.Response;

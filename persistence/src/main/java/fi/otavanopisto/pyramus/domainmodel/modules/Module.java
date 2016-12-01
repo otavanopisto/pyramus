@@ -12,10 +12,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.PersistenceException;
 import javax.persistence.PrimaryKeyJoinColumn;
 
-import org.hibernate.annotations.IndexColumn;
 import org.hibernate.search.annotations.FullTextFilterDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.hibernate.search.annotations.Indexed;
@@ -83,7 +83,7 @@ public class Module extends CourseBase implements ArchivableEntity {
   }
 
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
-  @IndexColumn (name = "indexColumn")
+  @OrderColumn (name = "indexColumn")
   @JoinColumn (name="module")
   @IndexedEmbedded
   private List<ModuleComponent> moduleComponents = new Vector<>();

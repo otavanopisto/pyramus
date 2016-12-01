@@ -40,10 +40,9 @@ public class CourseVariablePermissionsTestsIT extends AbstractRESTPermissionsTes
     
     assertOk(response, commonPermissions, CommonPermissions.CREATE_COURSEBASEVARIABLEKEY, 200);
     Long statusCode = new Long(response.statusCode());
-    Long id = null;
     if(statusCode.toString().equals("200")){
       given().headers(getAdminAuthHeaders())
-      .delete("/courses/variables/{KEY}", courseVariable.getKey());
+        .delete("/courses/variables/{KEY}", courseVariable.getKey());
     }
   }
 

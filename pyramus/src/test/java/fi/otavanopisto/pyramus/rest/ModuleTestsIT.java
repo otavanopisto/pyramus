@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import org.junit.Test;
 
 import com.jayway.restassured.response.Response;

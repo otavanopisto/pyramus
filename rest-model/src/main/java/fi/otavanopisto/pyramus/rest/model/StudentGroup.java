@@ -3,7 +3,6 @@ package fi.otavanopisto.pyramus.rest.model;
 import java.util.List;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 public class StudentGroup {
 

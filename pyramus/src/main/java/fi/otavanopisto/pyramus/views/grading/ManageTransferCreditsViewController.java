@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
@@ -21,8 +19,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditTemplate;
-import fi.otavanopisto.pyramus.domainmodel.reports.Report;
-import fi.otavanopisto.pyramus.domainmodel.reports.ReportContextType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;

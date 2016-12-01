@@ -13,7 +13,6 @@ import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
@@ -54,7 +53,7 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
 
     try {
       String passwordEncoded = EncodingUtils.md5EncodeString(password);
-      InternalAuth internalAuth = internalAuthDAO.create(username, passwordEncoded);
+      internalAuthDAO.create(username, passwordEncoded);
       
       // TODO: Should not create always
       Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
@@ -104,7 +103,6 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
    */
   public User getUser(String username, String password) {
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
 
     String passwordEncoded;
