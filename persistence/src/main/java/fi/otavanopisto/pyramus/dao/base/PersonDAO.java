@@ -147,6 +147,23 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     return searchPersonsBasic(resultsPerPage, page, queryText, studentFilter, null, null);
   }
   
+  /**
+   * Changes @ -signs to ? wildcard for string. 
+   * 
+   * Without the wildcard users cannot be found with exact match of email. This is because
+   * we construct the query by hand and lucene tokenizes the email and creates a BooleanQuery
+   * for the email fields (which apparently doesn't work).
+   * 
+   * Wildcard changes the search so that instead of BooleanQuery you get WildcardQuery which
+   * seems to work with the untokenized email fields
+   * 
+   * @param queryText
+   * @return
+   */
+  private String lucenizeEmailSearchTerm(String queryText) {
+    return queryText.replace('@', '?');
+  }
+  
   @SuppressWarnings("unchecked")
   public SearchResult<Person> searchPersonsBasic(int resultsPerPage, int page, String queryText, PersonFilter studentFilter, StudyProgramme studyProgramme, StudentGroup studentGroup) {
     int firstResult = page * resultsPerPage;
@@ -165,7 +182,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, false, queryText, "activeNicknames", "inactiveNicknames");
           addTokenizedSearchCriteria(queryBuilder, false, queryText, "staffMemberTitles");
           addTokenizedSearchCriteria(queryBuilder, false, queryText, "activeLastNames", "inactiveLastNames", "staffMemberLastNames");
-          addTokenizedSearchCriteria(queryBuilder, false, queryText, "activeEmails", "inactiveEmails", "staffMemberEmails");
+          addTokenizedSearchCriteria(queryBuilder, false, lucenizeEmailSearchTerm(queryText), "activeEmails", "inactiveEmails", "staffMemberEmails");
           addTokenizedSearchCriteria(queryBuilder, false, queryText, "activeTags", "inactiveTags", "staffMemberTags");
           
           queryBuilder.append(")");
@@ -195,7 +212,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "inactiveFirstNames", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "inactiveNicknames", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "inactiveLastNames", queryText, false);
-          addTokenizedSearchCriteria(queryBuilder, "inactiveEmails", queryText, false);
+          addTokenizedSearchCriteria(queryBuilder, "inactiveEmails", lucenizeEmailSearchTerm(queryText), false);
           addTokenizedSearchCriteria(queryBuilder, "inactiveTags", queryText, false);
           
           queryBuilder.append(")");
@@ -218,7 +235,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "activeFirstNames", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "activeNicknames", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "activeLastNames", queryText, false);
-          addTokenizedSearchCriteria(queryBuilder, "activeEmails", queryText, false);
+          addTokenizedSearchCriteria(queryBuilder, "activeEmails", lucenizeEmailSearchTerm(queryText), false);
           addTokenizedSearchCriteria(queryBuilder, "activeTags", queryText, false);
           
           queryBuilder.append(")");
@@ -236,7 +253,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "staffMemberFirstNames", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "staffMemberLastNames", queryText, false);
           addTokenizedSearchCriteria(queryBuilder, "staffMemberTitles", queryText, false);
-          addTokenizedSearchCriteria(queryBuilder, "staffMemberEmails", queryText, false);
+          addTokenizedSearchCriteria(queryBuilder, "staffMemberEmails", lucenizeEmailSearchTerm(queryText), false);
           addTokenizedSearchCriteria(queryBuilder, "staffMemberTags", queryText, false);
           
           queryBuilder.append(")");
@@ -352,7 +369,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
         if (!StringUtils.isBlank(education))
           addTokenizedSearchCriteria(queryBuilder, true, education, "inactiveEducations", "activeEducations");
         if (!StringUtils.isBlank(email))
-          addTokenizedSearchCriteria(queryBuilder, true, email, "inactiveEmails", "activeEmails", "staffMemberEmails");
+          addTokenizedSearchCriteria(queryBuilder, true, lucenizeEmailSearchTerm(email), "inactiveEmails", "activeEmails", "staffMemberEmails");
         if (!StringUtils.isBlank(addressCity))
           addTokenizedSearchCriteria(queryBuilder, true, addressCity, "inactiveCities", "activeCities", "staffMemberCities");
         if (!StringUtils.isBlank(addressCountry))
@@ -398,7 +415,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
         if (!StringUtils.isBlank(education))
           addTokenizedSearchCriteria(queryBuilder, "inactiveEducations", education, true);
         if (!StringUtils.isBlank(email))
-          addTokenizedSearchCriteria(queryBuilder, "inactiveEmails", email, true);
+          addTokenizedSearchCriteria(queryBuilder, "inactiveEmails", lucenizeEmailSearchTerm(email), true);
         if (!StringUtils.isBlank(addressCity))
           addTokenizedSearchCriteria(queryBuilder, "inactiveCities", addressCity, true);
         if (!StringUtils.isBlank(addressCountry))
@@ -442,7 +459,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
         if (!StringUtils.isBlank(tags))
           addTokenizedSearchCriteria(queryBuilder, "activeTags", tags, true);
         if (!StringUtils.isBlank(email))
-          addTokenizedSearchCriteria(queryBuilder, "activeEmails", email, true);
+          addTokenizedSearchCriteria(queryBuilder, "activeEmails", lucenizeEmailSearchTerm(email), true);
         if (!StringUtils.isBlank(addressCity))
           addTokenizedSearchCriteria(queryBuilder, "activeCities", addressCity, true);
         if (!StringUtils.isBlank(addressCountry))
@@ -476,7 +493,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
         if (!StringUtils.isBlank(tags))
           addTokenizedSearchCriteria(queryBuilder, true, tags, "staffMemberTags");
         if (!StringUtils.isBlank(email))
-          addTokenizedSearchCriteria(queryBuilder, true, email, "staffMemberEmails");
+          addTokenizedSearchCriteria(queryBuilder, true, lucenizeEmailSearchTerm(email), "staffMemberEmails");
         if (!StringUtils.isBlank(addressCity))
           addTokenizedSearchCriteria(queryBuilder, true, addressCity, "staffMemberCities");
         if (!StringUtils.isBlank(addressCountry))
