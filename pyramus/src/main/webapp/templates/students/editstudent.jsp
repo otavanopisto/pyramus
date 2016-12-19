@@ -292,14 +292,14 @@
             editable: false,
             paramName: 'key'
           },{
-            left : 38,
-            width: 150,
+            left : 30 + 8,
+            width: 250,
             dataType : 'text',
             editable: false,
             paramName: 'name'
           }, {
-            left : 188,
-            width : 750,
+            left : 30 + 8 + 250 + 8,
+            width : 350,
             dataType: 'text',
             editable: false,
             paramName: 'value'
