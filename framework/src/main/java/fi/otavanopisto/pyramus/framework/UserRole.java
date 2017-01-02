@@ -48,7 +48,12 @@ public enum UserRole {
   /**
    * Study programme leader (linjanvetäjä)
    */
-  STUDY_PROGRAMME_LEADER (9);
+  STUDY_PROGRAMME_LEADER (9),
+  
+  /**
+   * Closed account role.
+   */
+  CLOSED (10);
   
   /**
    * Constructor specifying the role.

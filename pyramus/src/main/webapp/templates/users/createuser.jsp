@@ -430,6 +430,7 @@
                     <jsp:param name="helpLocale" value="users.createUser.roleHelp"/>
                   </jsp:include>                  
                   <select name="role">
+                    <option value="10"><fmt:message key="users.createUser.roleClosedTitle"/></option>
                     <option value="1"><fmt:message key="users.createUser.roleGuestTitle"/></option>
                     <option value="2"><fmt:message key="users.createUser.roleUserTitle"/></option>
                     <option value="7"><fmt:message key="users.createUser.roleTeacherTitle"/></option>

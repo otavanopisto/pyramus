@@ -533,6 +533,7 @@
                     <jsp:param name="helpLocale" value="users.editUser.roleHelp"/>
                   </jsp:include>                                  
                   <select name="role">
+                    <option value="10" <c:if test="${user.role == 'CLOSED'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleClosedTitle"/></option>
                     <option value="1" <c:if test="${user.role == 'GUEST'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleGuestTitle"/></option>
                     <option value="2" <c:if test="${user.role == 'USER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleUserTitle"/></option>
                     <option value="7" <c:if test="${user.role == 'TEACHER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleTeacherTitle"/></option>
