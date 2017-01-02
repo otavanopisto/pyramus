@@ -12,6 +12,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.PersistenceException;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
@@ -49,7 +50,7 @@ public class ManagePermissionsViewController extends PyramusFormViewController {
       rpMap.put(key, Boolean.TRUE);
     }
     
-    requestContext.getRequest().setAttribute("roles", Role.values());
+    requestContext.getRequest().setAttribute("roles", manageableRoles());
     requestContext.getRequest().setAttribute("permissions", permissions);
     requestContext.getRequest().setAttribute("rolePermissions", rpMap);
     requestContext.setIncludeJSP("/templates/system/managepermissions.jsp");
@@ -65,7 +66,7 @@ public class ManagePermissionsViewController extends PyramusFormViewController {
       List<Permission> permissions = permissionDAO.listAll();
   
       for (Permission permission : permissions) {
-        for (Role role : Role.values()) {
+        for (Role role : manageableRoles()) {
           
           String paramName = permission.getId().toString() + '.' + role.name();
           
@@ -91,6 +92,10 @@ public class ManagePermissionsViewController extends PyramusFormViewController {
     processForm(requestContext);
   }
 
+  private Role[] manageableRoles() {
+    return ArrayUtils.removeElement(Role.values(), Role.CLOSED);
+  }
+  
   private void resetRoles(Role role) {
     try {
       PermissionCollector permissionCollector = (PermissionCollector) findByClass(PermissionCollector.class);

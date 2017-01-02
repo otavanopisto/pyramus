@@ -60,10 +60,10 @@
                     <c:set var="key" value="${permission.id}.${role}" />
                     <c:choose>
                       <c:when test="${rolePermissions[key]}">
-                        <input name="${key}" type="checkbox" value="1" checked="checked"/>
+                        <input name="${key}" type="checkbox" value="1" checked="checked" title="${role}"/>
                       </c:when>
                       <c:otherwise>
-                        <input name="${key}" type="checkbox" value="1"/>
+                        <input name="${key}" type="checkbox" value="1" title="${role}"/>
                       </c:otherwise>
                     </c:choose>
                   </td>
