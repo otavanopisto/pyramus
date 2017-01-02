@@ -49,7 +49,8 @@ values
   (12, 'Study Guider', 1),
   (13, 'Teacher', 1),
   (14, 'Study Programme Leader', 1),
-  (15, 'Test Student #2', 1);
+  (15, 'Test Student #2', 1),
+  (16, 'Closed', 1);
   
 insert into 
   Email (id, address, defaultAddress, contactInfo, contactType, indexColumn, version)
@@ -84,7 +85,8 @@ values
   (10, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '000100-0000', 'Study Guider', false),
   (11, 1, PARSEDATETIME('1 1 1980', 'd M yyyy'), 'FEMALE', '000010-0000', 'Teacher', false),
   (12, 1, PARSEDATETIME('1 1 1981', 'd M yyyy'), 'FEMALE', '000100-0000', 'SPLeader', false),
-  (13, 1, PARSEDATETIME('1 1 1981', 'd M yyyy'), 'FEMALE', '000100-0000', 'Test Student #2', false);
+  (13, 1, PARSEDATETIME('1 1 1981', 'd M yyyy'), 'FEMALE', '000100-0000', 'Test Student #2', false),
+  (14, 1, PARSEDATETIME('1 1 1956', 'd M yyyy'), 'MALE', '010100-2000', 'Closed', false);
   
 insert into
   User (id, person_id, firstName, lastName, contactInfo, version, archived)
@@ -101,7 +103,8 @@ values
   (10, 10, 'Study Guider', 'Study Guider user', 12, 1, false),
   (11, 11, 'Teacher', 'Teacher user', 13, 1, false),
   (12, 12, 'SPLeader', 'SPLeader user', 14, 1, false),
-  (13, 13, 'Test Student2', 'User #4', 15, 1, false);
+  (13, 13, 'Test Student2', 'User #4', 15, 1, false),
+  (14, 14, 'Test Closed', 'User #14', 16, 1, false);
 
 update Person p
 set p.defaultUser_id = p.id;
@@ -117,7 +120,8 @@ values
   (9, 'TRUSTED_SYSTEM', null),
   (10, 'STUDY_GUIDER', null),
   (11, 'TEACHER', null),
-  (12, 'STUDY_PROGRAMME_LEADER', null);
+  (12, 'STUDY_PROGRAMME_LEADER', null),
+  (14, 'CLOSED', null);
   
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
@@ -460,8 +464,10 @@ Old. Needed anymore?
 /** TEACHER ROLE**/
     (9, 'ff81d5b8500c773e7a1776a7963801e1', 'https://localhost:8443/oauth2ClientTest/success', 11, 1),
 /** STUDY_PROGRAMME_LEADER ROLE**/
-    (10, 'ff81d5b8500c773e7a1776a7963801e2', 'https://localhost:8443/oauth2ClientTest/success', 12, 1);
-  
+    (10, 'ff81d5b8500c773e7a1776a7963801e2', 'https://localhost:8443/oauth2ClientTest/success', 12, 1),
+/** CLOSED ROLE**/
+    (11, 'ff81d5b8500c773e7a1776a796380166', 'https://localhost:8443/oauth2ClientTest/success', 14, 1);    
+    
 insert into CourseStaffMemberRole (id, name, version) values (1, 'Teacher', 1), (2, 'Tutor', 1);
     
 insert into 

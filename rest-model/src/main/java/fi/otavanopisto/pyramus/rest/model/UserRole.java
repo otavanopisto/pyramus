@@ -18,5 +18,7 @@ public enum UserRole {
   
   STUDY_GUIDER,
   
-  STUDY_PROGRAMME_LEADER
+  STUDY_PROGRAMME_LEADER,
+  
+  CLOSED
 }
