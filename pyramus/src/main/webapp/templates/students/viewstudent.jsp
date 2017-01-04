@@ -2539,6 +2539,9 @@
               </jsp:include>
               <div class="genericViewFormDataText">
                 <c:choose>
+                  <c:when test="${staffMember.role == 'CLOSED'}">
+                    <fmt:message key="students.viewStudent.roleClosedTitle"/>
+                  </c:when>
                   <c:when test="${staffMember.role == 'GUEST'}">
                     <fmt:message key="students.viewStudent.roleGuestTitle"/>
                   </c:when>

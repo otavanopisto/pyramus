@@ -13,7 +13,7 @@ public class StaffMemberTestsIT extends AbstractRESTServiceTest {
       .get("/staff/members")
       .then()
       .statusCode(200)
-      .body("id.size()", is(9))
+      .body("id.size()", is(10))
       .body("id[0]", is(1))
       .body("firstName[0]", is("Test Guest"))
       .body("lastName[0]", is("User #1"))

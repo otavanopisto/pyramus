@@ -24,6 +24,7 @@ public enum Role {
    * Administrator privileges. Full control over all application features.
    */
   ADMINISTRATOR  (4),
+  
   /**
    * Student privileges.
    */
@@ -47,7 +48,12 @@ public enum Role {
   /**
    * Study programme leader (linjanvetäjä)
    */
-  STUDY_PROGRAMME_LEADER (9);
+  STUDY_PROGRAMME_LEADER (9),
+
+  /**
+   * Closed account role.
+   */
+  CLOSED (10);
   
   /**
    * Constructor specifying the role.
