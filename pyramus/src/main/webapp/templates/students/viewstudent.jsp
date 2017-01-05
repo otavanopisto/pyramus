@@ -177,6 +177,27 @@
         }));
       }
 
+      function initStudentVariableTable(studentId) {
+        var variablesTable = new IxTable($('variablesTableContainer.' + studentId), {
+          id : "variablesTable." + studentId,
+          columns : [{
+            left : 8,
+            width: 160,
+            dataType : 'text',
+            editable: false,
+            paramName: 'name'
+          }, {
+            left : 180,
+            width : 500,
+            dataType: 'text',
+            editable: false,
+            paramName: 'value'
+          }]
+        });
+
+        return variablesTable;
+      }
+          
       function openStudentCourseAssessmentRequestsPopupOnElement(element, courseStudentId) {
         var hoverPanel = new IxHoverPanel({
           contentURL: GLOBAL_contextPath + '/students/studentcourseassessmentrequestspopup.page?courseStudent=' + courseStudentId
@@ -901,7 +922,8 @@
         var linkedCourseAssessmentsContainer = JSDATA["linkedCourseAssessments"].evalJSON();
         var linkedTransferCreditsContainer = JSDATA["linkedTransferCredits"].evalJSON();
         var curriculumContainer = JSDATA["curriculums"].evalJSON();
-
+        var studentVariablesContainer = JSDATA["studentVariables"].evalJSON();
+        
         <c:forEach var="student" items="${students}">
           // Setup basics
           setupBasicTab(${person.id}, ${student.id}, '${fn:escapeXml(student.fullName)}');
@@ -1263,6 +1285,36 @@
             }
             filesTable.addRows(rows);
           }
+
+          var variables = studentVariablesContainer['${student.id}'];
+          
+          if (variables && variables.length > 0) {
+            // Student variables
+            variablesTable = initStudentVariableTable(${student.id});
+
+            for (var i = 0, l = variables.length; i < l; i++) {
+              var rowNumber = variablesTable.addRow([
+                variables[i].name,
+                variables[i].value
+              ]);
+
+              switch (variables[i].type) {
+                case 'NUMBER':
+                  variablesTable.setCellDataType(rowNumber, 1, 'text');
+                break;
+                case 'DATE':
+                  variablesTable.setCellDataType(rowNumber, 1, 'date');
+                break;
+                case 'BOOLEAN':
+                  variablesTable.setCellDataType(rowNumber, 1, 'checkbox');
+                break;
+                default:
+                  variablesTable.setCellDataType(rowNumber, 1, 'text');
+                break;
+              }
+            }
+          }
+          
         </c:forEach>
         
         
@@ -2122,6 +2174,14 @@
                       </div>
                     </c:when>
                   </c:choose>
+
+                  <div class="genericFormSection">
+                    <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                      <jsp:param name="titleLocale" value="students.viewStudent.studentVariablesTitle" />
+                      <jsp:param name="helpLocale" value="students.viewStudent.studentVariablesHelp" />
+                    </jsp:include>
+                    <div id="variablesTableContainer.${student.id}"></div>
+                  </div>
 
                   <c:choose>
                     <c:when test="${!empty student.additionalInfo}">

@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentImageDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
@@ -53,6 +54,8 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
@@ -110,6 +113,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     CourseAssessmentRequestDAO courseAssessmentRequestDAO = DAOFactory.getInstance().getCourseAssessmentRequestDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
 
     Long personId = pageRequestContext.getLong("person");
     
@@ -171,6 +175,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     JSONObject linkedCourseAssessments = new JSONObject();
     JSONObject linkedTransferCredits = new JSONObject();
     JSONObject studentFiles = new JSONObject();
+    JSONObject studentVariablesJSON = new JSONObject();
     JSONArray studentReportsJSON = new JSONArray();
     JSONArray curriculumsJSON = new JSONArray();
     
@@ -593,6 +598,19 @@ public class ViewStudentViewController extends PyramusViewController implements 
       }
       if (!arr.isEmpty())
         studentFiles.put(student.getId(), arr);
+
+      JSONArray variables = new JSONArray();
+      for (UserVariable userVariable : userVariableDAO.listByUserAndUserEditable(student, true)) {
+        JSONObject variable = new JSONObject();
+        variable.put("type", userVariable.getKey().getVariableType());
+        variable.put("name", userVariable.getKey().getVariableName());
+        variable.put("key", userVariable.getKey().getVariableKey());
+        variable.put("value", userVariable != null ? userVariable.getValue() : "");
+        variables.add(variable);
+      }
+
+      if (!variables.isEmpty())
+        studentVariablesJSON.put(student.getId(), variables);
       
       // Student Image
       studentHasImage.put(student.getId(), imageDAO.findStudentHasImage(student));
@@ -610,6 +628,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     setJsDataVariable(pageRequestContext, "studentFiles", studentFiles.toString());
     setJsDataVariable(pageRequestContext, "studentReports", studentReportsJSON.toString());
     setJsDataVariable(pageRequestContext, "curriculums", curriculumsJSON.toString());
+    setJsDataVariable(pageRequestContext, "studentVariables", studentVariablesJSON.toString());
     
     pageRequestContext.getRequest().setAttribute("students", students);
     pageRequestContext.getRequest().setAttribute("courses", courseStudents);

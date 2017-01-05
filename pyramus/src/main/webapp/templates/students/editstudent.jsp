@@ -423,7 +423,7 @@
 
               switch (variables[i].type) {
                 case 'NUMBER':
-                  variablesTable.setCellDataType(rowNumber, 3, 'number');
+                  variablesTable.setCellDataType(rowNumber, 3, 'text');
                 break;
                 case 'DATE':
                   variablesTable.setCellDataType(rowNumber, 3, 'date');
