@@ -605,7 +605,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
         variable.put("type", userVariable.getKey().getVariableType());
         variable.put("name", userVariable.getKey().getVariableName());
         variable.put("key", userVariable.getKey().getVariableKey());
-        variable.put("value", userVariable != null ? userVariable.getValue() : "");
+        variable.put("value", userVariable.getValue() != null ? userVariable.getValue() : "");
         variables.add(variable);
       }
 
