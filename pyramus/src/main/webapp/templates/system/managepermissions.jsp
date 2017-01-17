@@ -46,6 +46,19 @@
             </select>
           </div>
           <table>
+            <colgroup>
+              <col />
+              <c:forEach var="role" items="${roles}" varStatus="vs">
+                <c:choose>
+                  <c:when test="${vs.index % 2 == 0}">
+                    <col style="background-color: #eaf0fe;" />
+                  </c:when>
+                  <c:otherwise>
+                    <col />
+                  </c:otherwise>
+                </c:choose>
+              </c:forEach>
+            </colgroup>
             <tr>
               <td></td>
               <c:forEach var="role" items="${roles}">
