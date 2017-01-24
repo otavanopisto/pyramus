@@ -63,6 +63,10 @@ public class AssessmentController {
     return courseAssessmentDAO.findByCourseStudentAndArchived(courseStudent, archived);
   }
   
+  public List<CourseAssessment> listByStudent(Student student){
+    return courseAssessmentDAO.listByStudent(student);
+  }
+
   public List<CourseAssessment> listByCourseAndStudent(Course course, Student student){
     return courseAssessmentDAO.listByStudentAndCourse(student, course);
   }
