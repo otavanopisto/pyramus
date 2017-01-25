@@ -8,9 +8,9 @@ import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
 public class DeleteCourseUserRoleJSONRequestController extends JSONRequestController {
-  
+
   public void process(JSONRequestContext requestContext) {
-	CourseStaffMemberRoleDAO roleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
+    CourseStaffMemberRoleDAO roleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
     Long courseUserRoleId = requestContext.getLong("courseUserRole");
     CourseStaffMemberRole role = roleDAO.findById(courseUserRoleId);
     roleDAO.delete(role);

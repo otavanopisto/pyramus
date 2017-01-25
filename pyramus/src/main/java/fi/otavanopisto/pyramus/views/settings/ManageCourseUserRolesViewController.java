@@ -21,17 +21,19 @@ import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
 public class ManageCourseUserRolesViewController extends PyramusViewController implements Breadcrumbable {
 
   /**
-   * Processes the page request by including the corresponding JSP page to the response.
+   * Processes the page request by including the corresponding JSP page to the
+   * response.
    * 
-   * @param pageRequestContext Page request context
+   * @param pageRequestContext
+   *          Page request context
    */
   public void process(PageRequestContext pageRequestContext) {
-	CourseStaffMemberRoleDAO roleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
+    CourseStaffMemberRoleDAO roleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
 
     List<CourseStaffMemberRole> roles = roleDAO.listAll();
-    
+
     String jsonRoles = new JSONArrayExtractor("name", "id").extractString(roles);
-    
+
     this.setJsDataVariable(pageRequestContext, "courseUserRoles", jsonRoles);
     pageRequestContext.setIncludeJSP("/templates/settings/courseuserroles.jsp");
   }
@@ -46,9 +48,11 @@ public class ManageCourseUserRolesViewController extends PyramusViewController i
   }
 
   /**
-   * Returns the localized name of this page. Used e.g. for breadcrumb navigation.
+   * Returns the localized name of this page. Used e.g. for breadcrumb
+   * navigation.
    * 
-   * @param locale The locale to be used for the name
+   * @param locale
+   *          The locale to be used for the name
    * 
    * @return The localized name of this page
    */

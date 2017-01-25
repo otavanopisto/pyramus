@@ -12,20 +12,21 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 public class SaveCourseUserRoleJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext jsonRequestContext) {
-	CourseStaffMemberRoleDAO roleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
+    CourseStaffMemberRoleDAO roleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
 
-    int rowCount = NumberUtils.createInteger(jsonRequestContext.getRequest().getParameter("courseUserRolesTable.rowCount")).intValue();
+    int rowCount = NumberUtils
+        .createInteger(jsonRequestContext.getRequest().getParameter("courseUserRolesTable.rowCount")).intValue();
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "courseUserRolesTable." + i;
       Long courseUserRoleId = jsonRequestContext.getLong(colPrefix + ".courseUserRoleId");
       String name = jsonRequestContext.getString(colPrefix + ".name");
-      
+
       boolean modified = new Integer(1).equals(jsonRequestContext.getInteger(colPrefix + ".modified"));
       if (courseUserRoleId == -1) {
-    	roleDAO.create(name);
+        roleDAO.create(name);
       } else if (modified) {
-    	CourseStaffMemberRole role = roleDAO.findById(courseUserRoleId);
-    	roleDAO.updateName(role, name);
+        CourseStaffMemberRole role = roleDAO.findById(courseUserRoleId);
+        roleDAO.updateName(role, name);
       }
     }
     jsonRequestContext.setRedirectURL(jsonRequestContext.getReferer(true));
