@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 import org.junit.Test;
@@ -69,6 +70,50 @@ public class CourseAssessmentTestsIT extends AbstractRESTServiceTest {
       .body("gradeId", is( 2 ))
       .body("assessorId", is( 6 ))
       .body("verbalAssessment", is( "TEST ASSESSMENT" ));
+  }
+
+  @Test
+  public void testCountCourseAssessments() {
+    given().headers(getAuthHeaders())
+      .get("/students/students/{STUDENTID}/courseAssessmentCount", TEST_STUDENTID)
+      .then()
+      .statusCode(200)
+      .body(equalTo("1"));
+  }
+
+  @Test
+  public void testCountCourseAssessmentsPassingGrade() {
+    given().headers(getAuthHeaders())
+      .get("/students/students/{STUDENTID}/courseAssessmentCount?onlyPassingGrade=true", TEST_STUDENTID)
+      .then()
+      .statusCode(200)
+      .body(equalTo("1"));
+  }
+
+  @Test
+  public void testCountCourseAssessmentsByDates() {
+    String fromDate = getDate(2010, 1, 1).toInstant().toString();
+    String toDate = getDate(2010, 12, 31).toInstant().toString();
+    
+    given().headers(getAuthHeaders())
+      .queryParam("from", fromDate)
+      .queryParam("to", toDate)
+      .get("/students/students/{STUDENTID}/courseAssessmentCount", TEST_STUDENTID)
+      .then()
+      .statusCode(200)
+      .body(equalTo("0"));
+  }
+  
+  @Test
+  public void testCountCourseAssessmentsByDates2() {
+    String fromDate = getDate(2011, 1, 1).toInstant().toString();
+    
+    given().headers(getAuthHeaders())
+      .queryParam("from", fromDate)
+      .get("/students/students/{STUDENTID}/courseAssessmentCount", TEST_STUDENTID)
+      .then()
+      .statusCode(200)
+      .body(equalTo("1"));
   }
   
   @Test

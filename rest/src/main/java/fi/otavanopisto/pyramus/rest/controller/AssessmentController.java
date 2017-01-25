@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -113,6 +114,10 @@ public class AssessmentController {
   
   public List<CourseAssessmentRequest> listCourseAssessmentRequestsByCourseAndStudent(Course course, Student student) {
     return courseAssessmentRequestDAO.listByCourseAndStudent(course, student);
+  }
+  
+  public Long countCourseAssessments(Student student, Date timeIntervalStartDate, Date timeIntervalEndDate, Boolean passingGrade) {
+    return courseAssessmentDAO.countCourseAssessments(student, timeIntervalStartDate, timeIntervalEndDate, passingGrade);
   }
   
   public void deleteCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest) {

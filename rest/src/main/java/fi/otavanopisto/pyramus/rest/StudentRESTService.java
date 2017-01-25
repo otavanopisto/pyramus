@@ -106,6 +106,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategor
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
+import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/students")
@@ -2091,6 +2092,36 @@ public class StudentRESTService extends AbstractRESTService {
       }
     });
     return Response.ok(objectFactory.createModel(courseAssessments.get(0))).build();
+  }
+  
+  @Path("/students/{STUDENTID:[0-9]*}/courseAssessmentCount/")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response findStudentCourseAssessmentCount(
+      @PathParam("STUDENTID") Long studentId,
+      @QueryParam("from") ISO8601Timestamp from,
+      @QueryParam("to") ISO8601Timestamp to,
+      @QueryParam("onlyPassingGrades") @DefaultValue("false") boolean onlyPassingGrades) {
+    
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENT, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    Boolean passingGrade = onlyPassingGrades ? Boolean.TRUE : null;
+    
+    Date fromDate = from != null ? from.getDate() : null;
+    Date toDate = to != null ? to.getDate() : null;
+    
+    Long courseAssessmentCount = assessmentController.countCourseAssessments(student, fromDate, toDate, passingGrade);
+
+    return Response.ok(courseAssessmentCount).build();
   }
   
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/{ID:[0-9]*}")
