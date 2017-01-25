@@ -29,6 +29,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
@@ -2038,6 +2039,58 @@ public class StudentRESTService extends AbstractRESTService {
     List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByStudent(student);
     
     return Response.ok(objectFactory.createModel(assessmentRequests)).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/latestAssessmentRequest/")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response findLatestStudentAssessmentRequest(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENTREQUESTS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    List<CourseAssessmentRequest> assessmentRequests = assessmentController.listCourseAssessmentRequestsByStudent(student);
+    if (CollectionUtils.isEmpty(assessmentRequests)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    Collections.sort(assessmentRequests, new Comparator<CourseAssessmentRequest>() {
+      public int compare(CourseAssessmentRequest o1, CourseAssessmentRequest o2) {
+        return o2.getCreated().compareTo(o1.getCreated());
+      }
+    });
+    return Response.ok(objectFactory.createModel(assessmentRequests.get(0))).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/latestCourseAssessment/")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response findLatestStudentWorkspaceAssessment(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    if (student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENT, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    List<CourseAssessment> courseAssessments = assessmentController.listByStudent(student);
+    if (CollectionUtils.isEmpty(courseAssessments)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    Collections.sort(courseAssessments, new Comparator<CourseAssessment>() {
+      public int compare(CourseAssessment o1, CourseAssessment o2) {
+        return o2.getDate().compareTo(o1.getDate());
+      }
+    });
+    return Response.ok(objectFactory.createModel(courseAssessments.get(0))).build();
   }
   
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessmentRequests/{ID:[0-9]*}")

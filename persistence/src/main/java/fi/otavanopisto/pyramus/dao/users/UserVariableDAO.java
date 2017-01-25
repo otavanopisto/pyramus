@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,6 +17,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey_;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable_;
 
 @Stateless
@@ -68,6 +70,25 @@ public class UserVariableDAO extends PyramusEntityDAO<UserVariable> {
     criteria.select(root);
     criteria.where(
       criteriaBuilder.equal(root.get(UserVariable_.user), user)
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<UserVariable> listByUserAndUserEditable(User user, Boolean userEditable) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<UserVariable> criteria = criteriaBuilder.createQuery(UserVariable.class);
+    Root<UserVariable> root = criteria.from(UserVariable.class);
+    Join<UserVariable, UserVariableKey> key = root.join(UserVariable_.key);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(UserVariable_.user), user),
+            criteriaBuilder.equal(key.get(UserVariableKey_.userEditable), userEditable)
+        )
     );
     
     return entityManager.createQuery(criteria).getResultList();
