@@ -115,6 +115,10 @@ public class AssessmentController {
     return courseAssessmentRequestDAO.listByCourseAndStudent(course, student);
   }
   
+  public Long countCourseAssessments(Student student, Date timeIntervalStartDate, Date timeIntervalEndDate, Boolean passingGrade) {
+    return courseAssessmentDAO.countCourseAssessments(student, timeIntervalStartDate, timeIntervalEndDate, passingGrade);
+  }
+  
   public void deleteCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest) {
     courseAssessmentRequestDAO.delete(courseAssessmentRequest);
   }
