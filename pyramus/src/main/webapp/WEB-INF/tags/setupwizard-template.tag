@@ -16,6 +16,7 @@
 <jsp:include page="/templates/generic/table_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/jsonrequest_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/jsonform_support.jsp"></jsp:include>
+<jsp:include page="/templates/generic/pageform_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/draftapi_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/validation_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/locale_support.jsp"></jsp:include>
