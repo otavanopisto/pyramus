@@ -9,7 +9,7 @@
   </jsp:attribute>
   <jsp:body>
   
-    <form method="post" action="">
+    <form method="post" action="" ix:pageform="true">
       <div id="educationTypes" class="tabContent">
         <div class="genericTableAddRowContainer">
           <span class="genericTableAddRowLinkContainer" onclick="addCourseTypesTableRow();"><fmt:message key="system.setupwizard.courseTypes.addNew" /></span>

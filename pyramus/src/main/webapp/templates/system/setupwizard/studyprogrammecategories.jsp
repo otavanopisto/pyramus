@@ -8,7 +8,7 @@ pageEncoding="UTF-8"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/system/setupwizard/studyprogrammecategories.js"></script>
 </jsp:attribute>
 <jsp:body>
-<form method="post" action="">
+<form method="post" action="" ix:pageform="true">
             
           <div id="manageStudyProgrammeCategories" class="tabContentixTableFormattedData">
             <div class="genericTableAddRowContainer">

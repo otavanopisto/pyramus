@@ -7,7 +7,7 @@
 	<jsp:attribute name="script">
 </jsp:attribute>
 	<jsp:body>
-<form method="post" action="">
+<form method="post" action="" ix:pageform="true">
 		<div class="tabContent">
             <div class="genericFormSection">  
               <jsp:include
