@@ -413,7 +413,9 @@ public class ObjectFactory {
               variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
             }
             
-            return new fi.otavanopisto.pyramus.rest.model.School(entity.getId(), entity.getCode(), entity.getName(), tags, fieldId, entity.getContactInfo().getAdditionalInfo(), entity.getArchived(), variables);
+            String additionalInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
+            
+            return new fi.otavanopisto.pyramus.rest.model.School(entity.getId(), entity.getCode(), entity.getName(), tags, fieldId, additionalInfo, entity.getArchived(), variables);
           }
         }, 
         
