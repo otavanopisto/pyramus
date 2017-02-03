@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.students;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +14,11 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ListJoin;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
+
+import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -38,6 +43,11 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent_;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser_;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -372,23 +382,43 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public List<Student> listByEmail(String email) {
-    return listByEmail(email, null, null);
-  }
-  
-  public List<Student> listByEmail(String email, Integer firstResult, Integer maxResults) {
+  public List<Student> listBy(String email, List<StudentGroup> groups, Boolean archived, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
     Root<Student> root = criteria.from(Student.class);
     Join<Student, ContactInfo> contactInfoJoin = root.join(Student_.contactInfo);
-    ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
+
+    List<Predicate> predicates = new ArrayList<>();
+    
+    if (StringUtils.isNotBlank(email)) {
+      ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
+      predicates.add(criteriaBuilder.equal(emailJoin.get(Email_.address), email));
+    }
+    
+    if (archived != null) {
+      predicates.add(criteriaBuilder.equal(root.get(Student_.archived), archived));
+    }
+    
+    if (groups != null) {
+      Subquery<Student> subquery = criteria.subquery(Student.class);
+      Root<StudentGroupStudent> studentGroup = subquery.from(StudentGroupStudent.class);
+      subquery.select(studentGroup.get(StudentGroupStudent_.student));
+      subquery.where(studentGroup.get(StudentGroupStudent_.studentGroup).in(groups));
+      
+      predicates.add(root.in(subquery));
+    }
     
     criteria.select(root);
-    criteria.where(
-      criteriaBuilder.equal(emailJoin.get(Email_.address), email)
-    );
+    
+    if (!predicates.isEmpty()) {
+      criteria.where(
+          criteriaBuilder.and(
+              predicates.toArray(new Predicate[0])
+          )
+      );
+    }
     
     TypedQuery<Student> query = entityManager.createQuery(criteria);
     
@@ -403,38 +433,46 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return query.getResultList();
   }
 
-  public List<Student> listByEmailAndArchived(String email, Boolean archived) {
-    return listByEmailAndArchived(email, archived, null, null);
-  }
-  
-  public List<Student> listByEmailAndArchived(String email, Boolean archived, Integer firstResult, Integer maxResults) {
+  public boolean hasCommonGroups(User user1, User user2) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
-    Root<Student> root = criteria.from(Student.class);
-    Join<Student, ContactInfo> contactInfoJoin = root.join(Student_.contactInfo);
-    ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
+    CriteriaQuery<Long> criteria = criteriaBuilder.createQuery(Long.class);
+    Root<StudentGroup> root = criteria.from(StudentGroup.class);
+
+    Subquery<StudentGroup> groupQuery1 = criteria.subquery(StudentGroup.class);
+    Subquery<StudentGroup> groupQuery2 = criteria.subquery(StudentGroup.class);
     
-    criteria.select(root);
+    if (user1 instanceof Student) {
+      Root<StudentGroupStudent> groupStudent1 = groupQuery1.from(StudentGroupStudent.class);
+      groupQuery1.select(groupStudent1.get(StudentGroupStudent_.studentGroup));
+      groupQuery1.where(criteriaBuilder.equal(groupStudent1.get(StudentGroupStudent_.student), user1));
+    } else {
+      Root<StudentGroupUser> groupUser1 = groupQuery1.from(StudentGroupUser.class);
+      groupQuery1.select(groupUser1.get(StudentGroupUser_.studentGroup));
+      groupQuery1.where(criteriaBuilder.equal(groupUser1.get(StudentGroupUser_.staffMember), user1));
+    }
+    
+    if (user2 instanceof Student) {
+      Root<StudentGroupStudent> groupStudent2 = groupQuery2.from(StudentGroupStudent.class);
+      groupQuery2.select(groupStudent2.get(StudentGroupStudent_.studentGroup));
+      groupQuery2.where(criteriaBuilder.equal(groupStudent2.get(StudentGroupStudent_.student), user2));
+    } else {
+      Root<StudentGroupUser> groupUser2 = groupQuery2.from(StudentGroupUser.class);
+      groupQuery2.select(groupUser2.get(StudentGroupUser_.studentGroup));
+      groupQuery2.where(criteriaBuilder.equal(groupUser2.get(StudentGroupUser_.staffMember), user2));
+    }
+    
+    criteria.select(criteriaBuilder.count(root));
+    
     criteria.where(
-      criteriaBuilder.and(
-        criteriaBuilder.equal(root.get(Student_.archived), archived),
-        criteriaBuilder.equal(emailJoin.get(Email_.address), email)
-      )
+        criteriaBuilder.and(
+            root.in(groupQuery1),
+            root.in(groupQuery2)
+        )
     );
-  
-    TypedQuery<Student> query = entityManager.createQuery(criteria);
     
-    if (firstResult != null) {
-      query.setFirstResult(firstResult);
-    }
-   
-    if (maxResults != null) {
-      query.setMaxResults(maxResults);
-    }
-  
-    return query.getResultList();
+    return entityManager.createQuery(criteria).getSingleResult() > 0;
   }
   
   public Student updatePerson(Student student, Person person) {

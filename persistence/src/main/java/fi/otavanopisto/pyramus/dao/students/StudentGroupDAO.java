@@ -32,7 +32,10 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent_;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser_;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup_;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.events.StudentGroupCreatedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupUpdatedEvent;
@@ -265,6 +268,25 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
   public StudentGroup updateGuidanceGroup(StudentGroup studentGroup, Boolean guidanceGroup) {
     studentGroup.setGuidanceGroup(guidanceGroup);
     return persist(studentGroup);
+  }
+
+  public List<StudentGroup> listByStaffMember(StaffMember staffMember) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StudentGroup> criteria = criteriaBuilder.createQuery(StudentGroup.class);
+    Root<StudentGroupUser> root = criteria.from(StudentGroupUser.class);
+    Join<StudentGroupUser, StudentGroup> studentGroup = root.join(StudentGroupUser_.studentGroup);
+    
+    criteria.select(root.get(StudentGroupUser_.studentGroup));
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(StudentGroupUser_.staffMember), staffMember),
+            criteriaBuilder.equal(studentGroup.get(StudentGroup_.archived), Boolean.FALSE)
+        )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
   
 }

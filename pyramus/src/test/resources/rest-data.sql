@@ -398,7 +398,8 @@ insert into
   StudentGroup (id, name, description, creator, lastModifier, beginDate, created, lastModified, version, archived, guidanceGroup)
 values 
   (1, 'StudentGroup #1', 'Group of students #1', 1, 1, PARSEDATETIME('1 1 2010', 'd M yyyy'), PARSEDATETIME('2 2 2010', 'd M yyyy'), PARSEDATETIME('3 3 2010', 'd M yyyy'), 1, false, false),
-  (2, 'StudentGroup #2', 'Group of students #2', 1, 1, PARSEDATETIME('4 4 2010', 'd M yyyy'), PARSEDATETIME('5 5 2010', 'd M yyyy'), PARSEDATETIME('6 6 2010', 'd M yyyy'), 1, false, false);  
+  (2, 'StudentGroup #2', 'Group of students #2', 1, 1, PARSEDATETIME('4 4 2010', 'd M yyyy'), PARSEDATETIME('5 5 2010', 'd M yyyy'), PARSEDATETIME('6 6 2010', 'd M yyyy'), 1, false, false),
+  (3, 'StudentGroup #3', 'Group of students #3', 1, 1, PARSEDATETIME('4 4 2010', 'd M yyyy'), PARSEDATETIME('5 5 2012', 'd M yyyy'), PARSEDATETIME('6 6 2012', 'd M yyyy'), 1, false, false);  
   
 insert into
   StudentActivityType (id, name, version, archived)
@@ -420,7 +421,13 @@ insert into StudentGroupStudent
   (id, studentGroup, student, version)
 values 
   (1, 1, 3, 1),
-  (2, 1, 4, 1);
+  (2, 1, 4, 1),
+  (3, 3, 13, 1);
+
+insert into StudentGroupUser
+  (id, studentGroup, staffMember_id, version)
+values 
+  (1, 3, 10, 1);
   
 insert into StudentStudyEndReason 
   (id, name, parentReason, version)

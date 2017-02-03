@@ -37,6 +37,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
@@ -101,17 +102,8 @@ public class StudentController {
     return students;
   }
 
-  public List<Student> listStudents(Integer firstResult, Integer maxResults) {
-    return studentDAO.listAll(firstResult, maxResults);
-  }
-
-  public List<Student> listUnarchivedStudents() {
-    List<Student> students = studentDAO.listUnarchived();
-    return students;
-  }
-
-  public List<Student> listUnarchivedStudents(Integer firstResult, Integer maxResults) {
-    return studentDAO.listUnarchived(firstResult, maxResults);
+  public boolean hasCommonGroups(User user, Student student) {
+    return studentDAO.hasCommonGroups(user, student);
   }
   
   public List<Student> listStudentByPerson(Person person) {
@@ -233,22 +225,10 @@ public class StudentController {
 
   /* Email */
 
-  public List<Student> listStudentsByEmail(String email) {
-    return studentDAO.listByEmail(email);
+  public List<Student> listStudents(String email, List<StudentGroup> groups, Boolean archived, Integer firstResult, Integer maxResults) {
+    return studentDAO.listBy(email, groups, archived, firstResult, maxResults);
   }
 
-  public List<Student> listStudentsByEmail(String email, Integer firstResult, Integer maxResults) {
-    return studentDAO.listByEmail(email, firstResult, maxResults);
-  }
-  
-  public List<Student> listStudentsByEmailAndArchived(String email, Boolean archived) {
-    return studentDAO.listByEmailAndArchived(email, archived);
-  }
-  
-  public List<Student> listStudentsByEmailAndArchived(String email, Boolean archived, Integer firstResult, Integer maxResults) {
-    return studentDAO.listByEmailAndArchived(email, archived, firstResult, maxResults);
-  }
-  
   public Email addStudentEmail(Student student, ContactType contactType, String address, Boolean defaultAddress) throws UserEmailInUseException {
     // Trim the email address
     address = address != null ? address.trim() : null;
