@@ -1,7 +1,5 @@
 package fi.otavanopisto.pyramus.security.impl;
 
-import java.util.logging.Logger;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -16,9 +14,6 @@ import fi.otavanopisto.security.User;
 @Stateless
 public class EnvironmentPermissionResolver extends AbstractPermissionResolver implements PermissionResolver {
 
-  @Inject
-  private Logger logger;
-  
   @Inject
   private PermissionDAO permissionDAO;
   
