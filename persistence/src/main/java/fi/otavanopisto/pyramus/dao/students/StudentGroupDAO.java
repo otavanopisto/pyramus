@@ -151,7 +151,7 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     }
     
     if (user != null) {
-      addTokenizedSearchCriteria(queryBuilder, "users.user.id", user.getId().toString(), true);
+      addTokenizedSearchCriteria(queryBuilder, "users.staffMember.id", user.getId().toString(), true);
     }
     
     if (timeframeS != null && timeframeE != null) {

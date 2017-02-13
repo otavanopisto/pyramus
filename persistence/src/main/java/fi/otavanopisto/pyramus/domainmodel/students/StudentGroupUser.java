@@ -64,7 +64,7 @@ public class StudentGroupUser {
   private StudentGroup studentGroup;
 
   @ManyToOne
-  @IndexedEmbedded
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
   private StaffMember staffMember;  
 
   @Version
