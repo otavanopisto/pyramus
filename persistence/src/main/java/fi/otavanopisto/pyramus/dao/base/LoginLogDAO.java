@@ -24,7 +24,7 @@ public class LoginLogDAO extends PyramusEntityDAO<LoginLog> {
     return persist(loginLog);
   }
   
-  public List<LoginLog> ListByUser(User user) {
+  public List<LoginLog> listByUser(User user) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
