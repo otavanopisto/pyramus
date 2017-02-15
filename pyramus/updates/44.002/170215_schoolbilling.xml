@@ -5,4 +5,8 @@
     alter table School add billingDetails bigint(20);
   </sql>
 
+  <sql>
+    alter table School add constraint fkSchoolBillingDetails foreign key (billingDetails) references BillingDetails (id);
+  </sql>
+
 </update>
