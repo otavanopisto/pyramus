@@ -21,6 +21,30 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/settings/editschool.js">
     </script>
     
+    <style type="text/css">
+      .billingDetailsRow label {
+        display: inline-block;
+        min-width: 150px;
+        vertical-align: top;
+        margin: 3px 0 0 0;
+      }
+      .billingDetailsRow input[type="text"] {
+        width: 300px;
+      }
+      .billingDetailsRow textarea {
+        width: 300px;
+        min-height: 4em;
+      }
+      input[type="email"] {
+        width: 300px;
+        border-radius: 3px;
+        font-family: "trebuchet ms";
+        height: 17px;
+        max-width: 100%;
+        padding: 1px 0 2px;
+        border: 1px solid #739de7;
+      }      
+    </style>
   </head>
   <body onload="onLoad(event);" ix:enabledrafting="true">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
@@ -111,6 +135,85 @@
               <jsp:param name="helpLocale" value="settings.editSchool.phoneNumbersHelp"/>
             </jsp:include>
             <div id="phoneTable"></div>
+          </div>
+
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="settings.createSchool.billingDetailsTitle"/>
+              <jsp:param name="helpLocale" value="settings.createSchool.billingDetailsHelp"/>
+            </jsp:include>
+            
+            <div>
+              <div class="billingDetailsRow">
+                <label for="billing-details-personName"><fmt:message key="billingDetails.personName"/></label>
+                <input type="text" name="billingDetailsPersonName" value="${school.billingDetails.personName}"/>
+              </div>
+              
+              <div class="billingDetailsRow">
+                <label for="billing-details-companyName"><fmt:message key="billingDetails.companyName"/></label>
+                <input type="text" name="billingDetailsCompanyName" value="${school.billingDetails.companyName}"/>
+              </div>
+                
+              <div class="billingDetailsRow">
+                <label for="billing-details-streetAddress1"><fmt:message key="billingDetails.streetAddress1"/></label>
+                <input type="text" name="billingDetailsStreetAddress1" value="${school.billingDetails.streetAddress1}"/>
+              </div>
+              
+              <div class="billingDetailsRow">
+                <label for="billing-details-streetAddress2"><fmt:message key="billingDetails.streetAddress2"/></label>
+                <input type="text" name="billingDetailsStreetAddress2" value="${school.billingDetails.streetAddress2}"/>
+              </div>
+              
+              <div class="billingDetailsRow">
+                <label for="billing-details-postalCode"><fmt:message key="billingDetails.postalCode"/></label>
+                <input type="text" name="billingDetailsPostalCode" value="${school.billingDetails.postalCode}"/>
+              </div>
+              
+              <div class="billingDetailsRow">
+                <label for="billing-details-city"><fmt:message key="billingDetails.city"/></label>
+                <input type="text" name="billingDetailsCity" value="${school.billingDetails.city}"/>
+              </div>
+              
+              <div class="billingDetailsRow">
+                <label for="billing-details-region"><fmt:message key="billingDetails.region"/></label>
+                <input type="text" name="billingDetailsRegion" value="${school.billingDetails.region}"/>
+              </div>
+                
+              <div class="billingDetailsRow">
+                <label for="billing-details-country"><fmt:message key="billingDetails.country"/></label>
+                <input type="text" name="billingDetailsCountry" value="${school.billingDetails.country}"/>
+              </div>
+              
+              <div class="billingDetailsRow">
+                <label for="billing-details-phoneNumber"><fmt:message key="billingDetails.phoneNumber"/></label>
+                <input type="text" name="billingDetailsPhoneNumber" value="${school.billingDetails.phoneNumber}"/>
+              </div>
+              
+              <div class="billingDetailsRow">
+                <label for="billing-details-emailAddress"><fmt:message key="billingDetails.emailAddress"/></label>
+                <input type="email" name="billingDetailsEmailAddress" value="${school.billingDetails.emailAddress}"/>
+              </div>
+                
+              <div class="billingDetailsRow">
+                <label for="billing-details-companyIdentifier"><fmt:message key="billingDetails.companyIdentifier"/></label>
+                <input type="text" name="billingDetailsCompanyIdentifier" value="${school.billingDetails.companyIdentifier}"/>
+              </div>
+              
+              <div class="billingDetailsRow">
+                <label for="billing-details-referenceNumber"><fmt:message key="billingDetails.referenceNumber"/></label>
+                <input type="text" name="billingDetailsReferenceNumber" value="${school.billingDetails.referenceNumber}"/>
+              </div>
+              
+              <div class="billingDetailsRow">
+                <label for="billing-details-electronicBillingAddress"><fmt:message key="billingDetails.electronicBillingAddress"/></label>
+                <textarea name="billingDetailsElectronicBillingAddress">${school.billingDetails.electronicBillingAddress}</textarea>
+              </div>
+              
+              <div class="billingDetailsRow">
+                <label for="billing-details-notes"><fmt:message key="billingDetails.notes"/></label>
+                <textarea name="billingDetailsNotes">${school.billingDetails.notes}</textarea>
+              </div>
+            </div>
           </div>
 
           <div class="genericFormSection">  
