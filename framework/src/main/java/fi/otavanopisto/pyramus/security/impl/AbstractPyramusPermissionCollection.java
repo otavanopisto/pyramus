@@ -27,4 +27,7 @@ public class AbstractPyramusPermissionCollection extends AbstractPermissionColle
       return null;
   }
   
+  public PermissionFeatures listPermissionFeatures(Class<?> collectionClass, String permission) throws NoSuchFieldException, SecurityException {
+    return collectionClass.getField(permission).getAnnotation(PermissionFeatures.class);
+  }
 }

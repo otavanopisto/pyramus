@@ -50,6 +50,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser_;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.students.Student_;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
@@ -475,6 +476,36 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getSingleResult() > 0;
   }
   
+  public boolean isStudyGuider(StaffMember staffMember, Student student) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> criteria = criteriaBuilder.createQuery(Long.class);
+    Root<StudentGroup> root = criteria.from(StudentGroup.class);
+
+    Subquery<StudentGroup> groupQuery1 = criteria.subquery(StudentGroup.class);
+    Subquery<StudentGroup> groupQuery2 = criteria.subquery(StudentGroup.class);
+    
+    Root<StudentGroupUser> groupUser1 = groupQuery1.from(StudentGroupUser.class);
+    groupQuery1.select(groupUser1.get(StudentGroupUser_.studentGroup));
+    groupQuery1.where(criteriaBuilder.equal(groupUser1.get(StudentGroupUser_.staffMember), staffMember));
+    
+    Root<StudentGroupStudent> groupStudent2 = groupQuery2.from(StudentGroupStudent.class);
+    groupQuery2.select(groupStudent2.get(StudentGroupStudent_.studentGroup));
+    groupQuery2.where(criteriaBuilder.equal(groupStudent2.get(StudentGroupStudent_.student), student));
+    
+    criteria.select(criteriaBuilder.count(root));
+    
+    criteria.where(
+        criteriaBuilder.and(
+            root.in(groupQuery1),
+            root.in(groupQuery2)
+        )
+    );
+    
+    return entityManager.createQuery(criteria).getSingleResult() > 0;
+  }
+  
   public Student updatePerson(Student student, Person person) {
     Person oldPerson = student.getPerson();
     if (oldPerson != null) {
@@ -521,4 +552,5 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     
     super.delete(e);
   }
+  
 }

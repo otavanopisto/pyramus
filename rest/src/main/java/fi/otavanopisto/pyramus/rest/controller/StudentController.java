@@ -39,6 +39,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
@@ -104,6 +105,10 @@ public class StudentController {
 
   public boolean hasCommonGroups(User user, Student student) {
     return studentDAO.hasCommonGroups(user, student);
+  }
+  
+  public boolean isStudentGuider(StaffMember staffMember, Student student) {
+    return studentDAO.isStudyGuider(staffMember, student);
   }
   
   public List<Student> listStudentByPerson(Person person) {

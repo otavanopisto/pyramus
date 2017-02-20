@@ -148,4 +148,19 @@ public class StudentGroupController {
   public void deleteStudentGroupUser(StudentGroupUser studentGroupUser) {
     studentGroupUserDAO.delete(studentGroupUser);
   }
+
+  public List<StudentGroup> listStudentGroupsByStudent(Student student) {
+    return studentGroupDAO.listByStudent(student);
+  }
+  
+  public List<StudentGroup> listStudentGroupsByStaffMember(StaffMember staffMember) {
+    return studentGroupDAO.listByStaffMember(staffMember);
+  }
+
+  public List<StudentGroup> listStudentGroupsByMember(User user) {
+    if (user instanceof StaffMember)
+      return listStudentGroupsByStaffMember((StaffMember) user);
+    else
+      return listStudentGroupsByStudent((Student) user);
+  }
 }
