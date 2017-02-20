@@ -4,6 +4,7 @@ import java.util.List;
 
 import fi.otavanopisto.pyramus.security.impl.AbstractPyramusPermissionCollection;
 import fi.otavanopisto.pyramus.security.impl.DefaultPermissionRoles;
+import fi.otavanopisto.pyramus.security.impl.PermissionFeatures;
 import fi.otavanopisto.pyramus.security.impl.PermissionScope;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
 import fi.otavanopisto.security.Scope;
@@ -149,4 +150,8 @@ public class UserPermissions extends AbstractPyramusPermissionCollection impleme
     return super.getDefaultRoles(UserPermissions.class, permission);
   }
 
+  @Override
+  public PermissionFeatures listPermissionFeatures(String permission) throws NoSuchFieldException, SecurityException {
+    return super.listPermissionFeatures(UserPermissions.class, permission);
+  }
 }
