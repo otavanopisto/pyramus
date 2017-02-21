@@ -8,7 +8,7 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/system/setupwizard/index.js"></script>
   </jsp:attribute>
   <jsp:body>
-    <form method="post" action="">
+    <form method="post" action="" ix:pageform="true">
       <div class="genericFormSubmitSectionOffTab">
         <input type="submit" class="formvalid" name="next" value="<fmt:message key="system.setupwizard.next"/>">
       </div>

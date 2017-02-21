@@ -10,7 +10,7 @@
   <jsp:body>
     
 
-        <form action="" method="post" >
+        <form action="" method="post" ix:pageform="true">
           <div id="manageAcademicTermsListTerms" class="tabContentixTableFormattedData">
             <div class="genericTableAddRowContainer">
               <span class="genericTableAddRowLinkContainer" onclick="addTermsTableRow();"><fmt:message key="system.setupwizard.academicterms.addTermLink"/></span>

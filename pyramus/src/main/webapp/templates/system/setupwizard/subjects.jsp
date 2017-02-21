@@ -8,7 +8,7 @@ pageEncoding="UTF-8"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/system/setupwizard/subjects.js"></script>
 </jsp:attribute>
 <jsp:body>
-<form method="post" action="">
+<form method="post" action="" ix:pageform="true">
     <div id="subjects" class="tabContent">
         <div class="genericTableAddRowContainer">
             <span class="genericTableAddRowLinkContainer" onclick="addSubjectsTableRow();"><fmt:message key="system.setupwizard.subjects.addNew" /></span>
