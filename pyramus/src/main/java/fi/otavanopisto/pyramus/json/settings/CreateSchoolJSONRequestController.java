@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
+import fi.otavanopisto.pyramus.dao.base.BillingDetailsDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
@@ -17,6 +18,7 @@ import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolFieldDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolField;
@@ -45,6 +47,7 @@ public class CreateSchoolJSONRequestController extends JSONRequestController {
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
+    BillingDetailsDAO billingDetailsDAO = DAOFactory.getInstance().getBillingDetailsDAO();
 
     String schoolCode = requestContext.getString("code");
     String schoolName = requestContext.getString("name");
@@ -68,7 +71,28 @@ public class CreateSchoolJSONRequestController extends JSONRequestController {
       }
     }
     
-    School school = schoolDAO.create(schoolCode, schoolName, schoolField);
+    String billingPersonName = requestContext.getString("billingDetailsPersonName");
+    String billingCompanyName = requestContext.getString("billingDetailsCompanyName");
+    String billingStreetAddress1 = requestContext.getString("billingDetailsStreetAddress1");
+    String billingStreetAddress2 = requestContext.getString("billingDetailsStreetAddress2");
+    String billingPostalCode = requestContext.getString("billingDetailsPostalCode");
+    String billingCity = requestContext.getString("billingDetailsCity");
+    String billingRegion = requestContext.getString("billingDetailsRegion");
+    String billingCountry = requestContext.getString("billingDetailsCountry");
+    String billingPhoneNumber = requestContext.getString("billingDetailsPhoneNumber");
+    String billingEmailAddress = requestContext.getString("billingDetailsEmailAddress");
+    String billingElectronicBillingAddress = requestContext.getString("billingDetailsElectronicBillingAddress");
+    String billingCompanyIdentifier = requestContext.getString("billingDetailsCompanyIdentifier");
+    String billingReferenceNumber = requestContext.getString("billingDetailsReferenceNumber");
+    String billingNotes = requestContext.getString("billingDetailsNotes");
+    
+    BillingDetails billingDetails = billingDetailsDAO.create(
+        billingPersonName, billingCompanyName, billingStreetAddress1, billingStreetAddress2, 
+        billingPostalCode, billingCity, billingRegion, billingCountry, billingPhoneNumber, 
+        billingEmailAddress, billingElectronicBillingAddress, billingCompanyIdentifier, 
+        billingReferenceNumber, billingNotes);
+    
+    School school = schoolDAO.create(schoolCode, schoolName, schoolField, billingDetails);
     
     // Tags
     

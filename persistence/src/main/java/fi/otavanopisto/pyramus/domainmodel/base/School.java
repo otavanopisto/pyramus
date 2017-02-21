@@ -156,6 +156,14 @@ public class School implements ArchivableEntity {
     return field;
   }
 
+  public BillingDetails getBillingDetails() {
+    return billingDetails;
+  }
+
+  public void setBillingDetails(BillingDetails billingDetails) {
+    this.billingDetails = billingDetails;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="School")  
   @TableGenerator(name="School", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -192,6 +200,10 @@ public class School implements ArchivableEntity {
   @ManyToOne
   @JoinColumn (name = "field")
   private SchoolField field;
+  
+  @ManyToOne
+  @JoinColumn (name = "billingDetails")
+  private BillingDetails billingDetails;
   
   @Version
   @Column(nullable = false)

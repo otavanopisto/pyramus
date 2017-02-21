@@ -77,11 +77,11 @@ public abstract class GenericDAO<T> {
     return object;
   }
 
-  public Integer count() {
+  public long count() {
     EntityManager entityManager = getEntityManager();
     Class<?> genericTypeClass = getGenericTypeClass();
     Query query = entityManager.createQuery("select count(o) from " + genericTypeClass.getName() + " o");
-    return (Integer) query.getSingleResult();
+    return (long) query.getSingleResult();
   }
 
   public void delete(T e) {

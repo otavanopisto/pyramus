@@ -284,7 +284,7 @@ public class BaseService extends PyramusService {
   public SchoolEntity createSchool(@WebParam (name = "code") String code, @WebParam (name = "name") String name) {
     SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
     // TODO: schoolField parameter
-    School school = schoolDAO.create(code, name, null);
+    School school = schoolDAO.create(code, name, null, null);
     validateEntity(school);
     return EntityFactoryVault.buildFromDomainObject(school);
   }

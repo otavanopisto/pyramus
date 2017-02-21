@@ -19,6 +19,18 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/settings/viewschool.js">
     </script>
     
+    <style type="text/css">
+      .billingDetailsRow label {
+        display: inline-block;
+        min-width: 150px;
+        vertical-align: top;
+        margin: 3px 0 0 0;
+      }
+      .billingDetailsRow span {
+        width: 300px;
+      }
+    </style>
+    
   </head>
   <body onload="onLoad(event);">
     <jsp:include page="/templates/generic/header.jsp"></jsp:include>
@@ -90,6 +102,84 @@
             <jsp:param name="helpLocale" value="settings.viewSchool.phoneNumbersHelp"/>
           </jsp:include>
           <div id="phoneNumbersTable"></div>
+        </div>
+        <div class="genericFormSection">
+          <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+            <jsp:param name="titleLocale" value="settings.viewSchool.billingDetailsTitle"/>
+            <jsp:param name="helpLocale" value="settings.viewSchool.billingDetailsHelp"/>
+          </jsp:include>
+          
+          <div>
+            <div class="billingDetailsRow">
+              <label for="billing-details-personName"><fmt:message key="billingDetails.personName"/></label>
+              <span>${school.billingDetails.personName}</span>
+            </div>
+            
+            <div class="billingDetailsRow">
+              <label for="billing-details-companyName"><fmt:message key="billingDetails.companyName"/></label>
+              <span>${school.billingDetails.companyName}</span>
+            </div>
+              
+            <div class="billingDetailsRow">
+              <label for="billing-details-streetAddress1"><fmt:message key="billingDetails.streetAddress1"/></label>
+              <span>${school.billingDetails.streetAddress1}</span>
+            </div>
+            
+            <div class="billingDetailsRow">
+              <label for="billing-details-streetAddress2"><fmt:message key="billingDetails.streetAddress2"/></label>
+              <span>${school.billingDetails.streetAddress2}</span>
+            </div>
+            
+            <div class="billingDetailsRow">
+              <label for="billing-details-postalCode"><fmt:message key="billingDetails.postalCode"/></label>
+              <span>${school.billingDetails.postalCode}</span>
+            </div>
+            
+            <div class="billingDetailsRow">
+              <label for="billing-details-city"><fmt:message key="billingDetails.city"/></label>
+              <span>${school.billingDetails.city}</span>
+            </div>
+            
+            <div class="billingDetailsRow">
+              <label for="billing-details-region"><fmt:message key="billingDetails.region"/></label>
+              <span>${school.billingDetails.region}</span>
+            </div>
+              
+            <div class="billingDetailsRow">
+              <label for="billing-details-country"><fmt:message key="billingDetails.country"/></label>
+              <span>${school.billingDetails.country}</span>
+            </div>
+            
+            <div class="billingDetailsRow">
+              <label for="billing-details-phoneNumber"><fmt:message key="billingDetails.phoneNumber"/></label>
+              <span>${school.billingDetails.phoneNumber}</span>
+            </div>
+            
+            <div class="billingDetailsRow">
+              <label for="billing-details-emailAddress"><fmt:message key="billingDetails.emailAddress"/></label>
+              <span>${school.billingDetails.emailAddress}</span>
+            </div>
+              
+            <div class="billingDetailsRow">
+              <label for="billing-details-companyIdentifier"><fmt:message key="billingDetails.companyIdentifier"/></label>
+              <span>${school.billingDetails.companyIdentifier}</span>
+            </div>
+            
+            <div class="billingDetailsRow">
+              <label for="billing-details-referenceNumber"><fmt:message key="billingDetails.referenceNumber"/></label>
+              <span>${school.billingDetails.referenceNumber}</span>
+            </div>
+            
+            <div class="billingDetailsRow">
+              <label for="billing-details-electronicBillingAddress"><fmt:message key="billingDetails.electronicBillingAddress"/></label>
+              <span>${school.billingDetails.electronicBillingAddress}</span>
+            </div>
+            
+            <div class="billingDetailsRow">
+              <label for="billing-details-notes"><fmt:message key="billingDetails.notes"/></label>
+              <span>${school.billingDetails.notes}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

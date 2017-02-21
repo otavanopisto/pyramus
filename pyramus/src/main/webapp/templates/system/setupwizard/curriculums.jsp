@@ -5,18 +5,21 @@
 
 <t:setupwizard-template>
   <jsp:attribute name="script">
-    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/system/setupwizard/languages.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/system/setupwizard/curriculums.js"></script>
   </jsp:attribute>
   <jsp:body>
   
-    <form method="post" action="" ix:pageform="true">
-      <div id="languages" class="tabContent">
+    <form method="post" action="">
+      <div id="currirculums" class="tabContent">
         <div class="genericTableAddRowContainer">
-          <span class="genericTableAddRowLinkContainer" onclick="addLanguagesTableRow();"><fmt:message key="system.setupwizard.languages.addNew" /></span>
+          <span class="genericTableAddRowLinkContainer"
+           onclick="addCurriculumTableRow();">
+          	<fmt:message key="system.setupwizard.curriculums.addNew" />
+          </span>
         </div>
-        <div id="languagesTable">
-          <div id="noLanguagesAddedMessageContainer">
-            <fmt:message key="system.setupwizard.languages.addNew" />
+        <div id="curriculumsTable">
+          <div id="noCurriculumsAddedMessageContainer">
+            <fmt:message key="system.setupwizard.curriculums.addNew" />
           </div>
         </div>
       </div>

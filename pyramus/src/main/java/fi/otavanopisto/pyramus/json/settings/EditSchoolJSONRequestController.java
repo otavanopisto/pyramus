@@ -11,6 +11,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
+import fi.otavanopisto.pyramus.dao.base.BillingDetailsDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
@@ -19,6 +20,7 @@ import fi.otavanopisto.pyramus.dao.base.SchoolFieldDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
+import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
@@ -49,6 +51,7 @@ public class EditSchoolJSONRequestController extends JSONRequestController {
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
+    BillingDetailsDAO billingDetailsDAO = DAOFactory.getInstance().getBillingDetailsDAO();
 
     Long schoolId = NumberUtils.createLong(requestContext.getRequest().getParameter("schoolId"));
     School school = schoolDAO.findById(schoolId);
@@ -77,6 +80,49 @@ public class EditSchoolJSONRequestController extends JSONRequestController {
     
     schoolDAO.update(school, schoolCode, schoolName, schoolField);
 
+    // BillingDetails
+    
+    String billingPersonName = requestContext.getString("billingDetailsPersonName");
+    String billingCompanyName = requestContext.getString("billingDetailsCompanyName");
+    String billingStreetAddress1 = requestContext.getString("billingDetailsStreetAddress1");
+    String billingStreetAddress2 = requestContext.getString("billingDetailsStreetAddress2");
+    String billingPostalCode = requestContext.getString("billingDetailsPostalCode");
+    String billingCity = requestContext.getString("billingDetailsCity");
+    String billingRegion = requestContext.getString("billingDetailsRegion");
+    String billingCountry = requestContext.getString("billingDetailsCountry");
+    String billingPhoneNumber = requestContext.getString("billingDetailsPhoneNumber");
+    String billingEmailAddress = requestContext.getString("billingDetailsEmailAddress");
+    String billingElectronicBillingAddress = requestContext.getString("billingDetailsElectronicBillingAddress");
+    String billingCompanyIdentifier = requestContext.getString("billingDetailsCompanyIdentifier");
+    String billingReferenceNumber = requestContext.getString("billingDetailsReferenceNumber");
+    String billingNotes = requestContext.getString("billingDetailsNotes");
+
+    if (school.getBillingDetails() == null) {
+      BillingDetails billingDetails = billingDetailsDAO.create(
+          billingPersonName, billingCompanyName, billingStreetAddress1, billingStreetAddress2, 
+          billingPostalCode, billingCity, billingRegion, billingCountry, billingPhoneNumber, 
+          billingEmailAddress, billingElectronicBillingAddress, billingCompanyIdentifier, 
+          billingReferenceNumber, billingNotes);
+      
+      schoolDAO.updateBillingDetails(school, billingDetails);
+    } else {
+      BillingDetails billingDetails = school.getBillingDetails();
+      billingDetailsDAO.updatePersonName(billingDetails, billingPersonName);
+      billingDetailsDAO.updateCompanyName(billingDetails, billingCompanyName);
+      billingDetailsDAO.updateStreetAddress1(billingDetails, billingStreetAddress1);
+      billingDetailsDAO.updateStreetAddress2(billingDetails, billingStreetAddress2);
+      billingDetailsDAO.updatePostalCode(billingDetails, billingPostalCode);
+      billingDetailsDAO.updateCity(billingDetails, billingCity);
+      billingDetailsDAO.updateRegion(billingDetails, billingRegion);
+      billingDetailsDAO.updateCountry(billingDetails, billingCountry);
+      billingDetailsDAO.updatePhoneNumber(billingDetails, billingPhoneNumber);
+      billingDetailsDAO.updateEmailAddress(billingDetails, billingEmailAddress);
+      billingDetailsDAO.updateElectronicBillingAddress(billingDetails, billingElectronicBillingAddress);
+      billingDetailsDAO.updateCompanyIdentifier(billingDetails, billingCompanyIdentifier);
+      billingDetailsDAO.updateReferenceNumber(billingDetails, billingReferenceNumber);
+      billingDetailsDAO.updateNotes(billingDetails, billingNotes);
+    }
+    
     // Tags
 
     schoolDAO.updateTags(school, tagEntities);

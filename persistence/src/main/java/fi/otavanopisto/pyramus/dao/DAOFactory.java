@@ -31,6 +31,7 @@ import fi.otavanopisto.pyramus.dao.base.EducationalLengthDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
+import fi.otavanopisto.pyramus.dao.base.LoginLogDAO;
 import fi.otavanopisto.pyramus.dao.base.MagicKeyDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
@@ -667,6 +668,10 @@ public class DAOFactory {
     return (AccessLogEntryPathDAO) findByClass(AccessLogEntryPathDAO.class);
   }
 
+  public LoginLogDAO getLoginLogDAO() {
+    return (LoginLogDAO) findByClass(LoginLogDAO.class);
+  }
+  
   /* Security */
   
   public PermissionDAO getPermissionDAO() {
