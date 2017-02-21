@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.views.users;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -53,6 +55,12 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
 
         if (user instanceof StaffMember) {
           session.setAttribute("loggedUserRole", UserRole.valueOf(((StaffMember) user).getRole().name()));
+        }
+        
+        try {
+          DAOFactory.getInstance().getLoginLogDAO().create(user, new Date());
+        } catch (Exception ex) {
+          ex.printStackTrace();
         }
         
         // If the session contains a followup URL, redirect there and if not, redirect to the index page 
