@@ -57,7 +57,7 @@
                 <jsp:param name="titleLocale" value="students.createStudent.ssecIdTitle"/>
                 <jsp:param name="helpLocale" value="students.createStudent.ssecIdHelp"/>
               </jsp:include>   
-              <input type="text" name="ssecId" size="15" class="mask" ix:validatemask="^([0-9]{6})[-A]([0-9A-Z]{4})$" value="${person.socialSecurityNumber}">
+              <input type="text" name="ssecId" size="15" class="mask" data-validatemask="^([0-9]{6})[-A]([0-9A-Z]{4})$" value="${person.socialSecurityNumber}">
             </div>
       
             <div class="genericFormSection">  

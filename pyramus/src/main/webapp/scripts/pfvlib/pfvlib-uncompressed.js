@@ -703,7 +703,7 @@ fi.internetix.validation.validator.MaskFieldValidator = Class.create(fi.internet
   },
   validate: function ($super, field) {
     var value = this._getFieldValue(field);
-    var mask = field.getAttribute("validatemask");
+    var mask = field.getAttribute("data-validatemask");
     
     if (mask && value) {
       return new RegExp(mask).test(value) ? fi.internetix.validation.FieldValidator.STATUS_VALID : fi.internetix.validation.FieldValidator.STATUS_INVALID;
