@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
+import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
@@ -80,7 +81,8 @@ public class SchoolRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }      
     
-    School school = schoolController.createSchool(code, name, schoolField);
+    BillingDetails billingDetails = null;
+    School school = schoolController.createSchool(code, name, schoolField, billingDetails);
     if (entity.getTags() != null) {
       schoolController.updateSchoolTags(school, entity.getTags());
     }

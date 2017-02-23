@@ -423,7 +423,7 @@
 
               switch (variables[i].type) {
                 case 'NUMBER':
-                  variablesTable.setCellDataType(rowNumber, 3, 'number');
+                  variablesTable.setCellDataType(rowNumber, 3, 'text');
                 break;
                 case 'DATE':
                   variablesTable.setCellDataType(rowNumber, 3, 'date');
@@ -640,7 +640,7 @@
                 <jsp:param name="titleLocale" value="students.editStudent.ssecIdTitle"/>
                 <jsp:param name="helpLocale" value="students.editStudent.ssecIdHelp"/>
               </jsp:include>            
-              <input type="text" name="ssecId" value="${person.socialSecurityNumber}" size="15" class="mask" ix:validatemask="^([0-9]{6})[-A]([0-9A-Z]{4})$">
+              <input type="text" name="ssecId" value="${person.socialSecurityNumber}" size="15" class="mask" data-validatemask="^([0-9]{6})[-A]([0-9A-Z]{4})$">
             </div>
 
             <div class="genericFormSection">       

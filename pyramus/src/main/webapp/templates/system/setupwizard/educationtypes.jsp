@@ -8,7 +8,7 @@ pageEncoding="UTF-8"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/system/setupwizard/educationtypes.js"></script>
 </jsp:attribute>
 <jsp:body>
-<form method="post" action="">
+<form method="post" action="" ix:pageform="true">
     <div id="educationTypes" class="tabContent">
         <div class="genericTableAddRowContainer">
             <span class="genericTableAddRowLinkContainer" onclick="addEducationTypesTableRow();"><fmt:message key="system.setupwizard.educationtypes.addNew" /></span>

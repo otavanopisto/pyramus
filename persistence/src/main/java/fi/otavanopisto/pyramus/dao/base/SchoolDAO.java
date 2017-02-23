@@ -24,6 +24,7 @@ import org.hibernate.search.jpa.Search;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolField;
@@ -44,16 +45,18 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
    * @param name
    *          The school name
    * @param schoolField
+   * @param billingDetails 
    * 
    * @return The created school
    */
-  public School create(String code, String name, SchoolField schoolField) {
+  public School create(String code, String name, SchoolField schoolField, BillingDetails billingDetails) {
     ContactInfo contactInfo = new ContactInfo();
     School school = new School();
     school.setCode(code);
     school.setName(name);
     school.setField(schoolField);
     school.setContactInfo(contactInfo);
+    school.setBillingDetails(billingDetails);
     return persist(school);
   }
 
@@ -237,6 +240,11 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
     return school;
   }
 
+  public School updateBillingDetails(School school, BillingDetails billingDetails) {
+    school.setBillingDetails(billingDetails);
+    return persist(school);
+  }
+  
   public School addTag(School school, Tag tag) {
     school.addTag(tag);
     return persist(school);

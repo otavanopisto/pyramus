@@ -130,13 +130,13 @@ public class ViewProjectViewController extends PyramusViewController implements 
      *  b) count mandatory/optional modules that have passing grade on them
      *  c) create beans to be passed to jsp
      */
+
+    List<TransferCredit> transferCreditsByStudent = transferCreditDAO.listByStudent(studentProject.getStudent());
     
     for (StudentProjectModule studentProjectModule : studentProject.getStudentProjectModules()) {
       boolean hasPassingGrade = false;
       List<CourseStudent> courseStudentList = courseStudentDAO.listByModuleAndStudent(studentProjectModule.getModule(), studentProject.getStudent());
 
-      List<TransferCredit> transferCreditsByStudent = transferCreditDAO.listByStudent(studentProject.getStudent());
-      
       // Find out if there is a course that has passing grade for the module
       if (courseStudentList != null) {
         for (CourseStudent cs : courseStudentList) {

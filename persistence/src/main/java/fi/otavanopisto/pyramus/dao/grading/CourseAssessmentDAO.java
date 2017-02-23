@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.grading;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -16,6 +18,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
+import fi.otavanopisto.pyramus.domainmodel.grading.Grade_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
@@ -173,6 +176,38 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
             criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE),
             criteriaBuilder.equal(root.get(CourseAssessment_.archived), Boolean.FALSE)
         ));
+    
+    return entityManager.createQuery(criteria).getSingleResult();
+  }
+
+  public Long countCourseAssessments(Student student, Date timeIntervalStartDate, Date timeIntervalEndDate,
+      Boolean passingGrade) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> criteria = criteriaBuilder.createQuery(Long.class);
+    Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
+    Join<CourseAssessment, CourseStudent> courseStudentJoin = root.join(CourseAssessment_.courseStudent);
+    Join<CourseStudent, Course> courseJoin = courseStudentJoin.join(CourseStudent_.course);
+    
+    List<Predicate> predicates = new ArrayList<>();
+    predicates.add(criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.student), student));
+    predicates.add(criteriaBuilder.equal(courseStudentJoin.get(CourseStudent_.archived), Boolean.FALSE));
+    predicates.add(criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE));
+    predicates.add(criteriaBuilder.equal(root.get(CourseAssessment_.archived), Boolean.FALSE));
+
+    if (timeIntervalStartDate != null)
+      predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(CourseAssessment_.date), timeIntervalStartDate));
+    if (timeIntervalEndDate != null)
+      predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(CourseAssessment_.date), timeIntervalEndDate));
+    
+    if (passingGrade != null) {
+      Join<CourseAssessment, Grade> gradeJoin = root.join(CourseAssessment_.grade);
+      predicates.add(criteriaBuilder.equal(gradeJoin.get(Grade_.passingGrade), passingGrade));
+    }
+    
+    criteria.select(criteriaBuilder.count(root));
+    criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
     
     return entityManager.createQuery(criteria).getSingleResult();
   }

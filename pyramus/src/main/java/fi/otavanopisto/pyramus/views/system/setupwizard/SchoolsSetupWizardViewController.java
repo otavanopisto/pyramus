@@ -6,6 +6,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolFieldDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolField;
 import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
 
@@ -43,7 +44,8 @@ public class SchoolsSetupWizardViewController extends SetupWizardController {
         throw new SetupWizardException("School field is missing");
       }
       
-      schoolDAO.create(code, name, schoolField);
+      BillingDetails billingDetails = null;
+      schoolDAO.create(code, name, schoolField, billingDetails);
     }    
   }
 

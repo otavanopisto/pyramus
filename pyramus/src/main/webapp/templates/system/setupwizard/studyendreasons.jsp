@@ -8,7 +8,7 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/system/setupwizard/studyendreasons.js"></script>
   </jsp:attribute>
   <jsp:body>
-        <form action="" method="post" >
+        <form action="" method="post" ix:pageform="true">
           
           <div id="manageStudyEndReasons" class="tabContentixTableFormattedData">
             <div class="genericTableAddRowContainer">

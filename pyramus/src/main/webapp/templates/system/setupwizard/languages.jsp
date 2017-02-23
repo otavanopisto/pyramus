@@ -9,7 +9,7 @@
   </jsp:attribute>
   <jsp:body>
   
-    <form method="post" action="">
+    <form method="post" action="" ix:pageform="true">
       <div id="languages" class="tabContent">
         <div class="genericTableAddRowContainer">
           <span class="genericTableAddRowLinkContainer" onclick="addLanguagesTableRow();"><fmt:message key="system.setupwizard.languages.addNew" /></span>

@@ -21,6 +21,7 @@ import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
+import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
@@ -71,8 +72,8 @@ public class SchoolController {
   
   /* School */
 
-  public School createSchool(String code, String name, SchoolField schoolField) {
-    School school = schoolDAO.create(code, name, schoolField);
+  public School createSchool(String code, String name, SchoolField schoolField, BillingDetails billingDetails) {
+    School school = schoolDAO.create(code, name, schoolField, billingDetails);
     return school;
   }
   
