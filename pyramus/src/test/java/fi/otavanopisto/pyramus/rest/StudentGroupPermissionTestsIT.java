@@ -13,6 +13,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.jayway.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentGroupPermissions;
+import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.StudentGroup;
 
 @RunWith(Parameterized.class)
@@ -33,6 +34,7 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
   }
   
   private StudentGroupPermissions studentGroupPermissions = new StudentGroupPermissions();
+  private StudentPermissions studentPermissions = new StudentPermissions();
   
   @Test
   public void testCreateStudentGroup() throws NoSuchFieldException {
@@ -76,7 +78,10 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
     Response response = given().headers(getAuthHeaders())
       .get("/students/studentGroups/{ID}", 1);
 
-    assertOk(response, studentGroupPermissions, StudentGroupPermissions.FIND_STUDENTGROUP);
+    if (!roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST))
+      assertOk(response, studentGroupPermissions, StudentGroupPermissions.FIND_STUDENTGROUP);
+    else
+      assertOk(response, studentGroupPermissions, StudentGroupPermissions.FIND_STUDENTGROUP, 403);
   }
   
   @Test
