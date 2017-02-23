@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.security.impl;
 
 import fi.otavanopisto.security.PermissionCollection;
+import fi.otavanopisto.security.PermissionFeature;
 
 public interface PyramusPermissionCollection extends PermissionCollection {
 
@@ -13,6 +14,6 @@ public interface PyramusPermissionCollection extends PermissionCollection {
    */
   String[] getDefaultRoles(String permission) throws NoSuchFieldException;
 
-  PermissionFeatures listPermissionFeatures(String permission) throws NoSuchFieldException, SecurityException;
+  PermissionFeature[] listPermissionFeatures(String permission) throws NoSuchFieldException, SecurityException;
   
 }

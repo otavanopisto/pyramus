@@ -13,6 +13,9 @@ import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.security.ContextReference;
+import fi.otavanopisto.security.PermissionFeature;
+import fi.otavanopisto.security.PermissionFeatureHandler;
+import fi.otavanopisto.security.PermissionFeatureLiteral;
 import fi.otavanopisto.security.PermissionResolver;
 import fi.otavanopisto.security.User;
 
@@ -53,13 +56,13 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     
     PyramusPermissionCollection collection = findCollection(permission);
     try {
-      PermissionFeatures features = collection.listPermissionFeatures(permission);
+      PermissionFeature[] features = collection.listPermissionFeatures(permission);
       if (features != null) {
-        for (PermissionFeature feature : features.value()) {
+        for (PermissionFeature feature : features) {
           Instance<PermissionFeatureHandler> instance = featureHandlers.select(new PermissionFeatureLiteral(feature.value()));
           if (!instance.isUnsatisfied()) {
             PermissionFeatureHandler permissionFeatureHandler = instance.get();
-            allowed = permissionFeatureHandler.hasPermission(perm, userEntity, contextReference, allowed);
+            allowed = permissionFeatureHandler.hasPermission(permission, userEntity, contextReference, allowed);
           } else
             logger.log(Level.SEVERE, String.format("Unsatisfied permission feature %s", feature.value()));
         }

@@ -8,15 +8,14 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
-import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.security.impl.PermissionFeature;
-import fi.otavanopisto.pyramus.security.impl.PermissionFeatureHandler;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.UserContextResolver;
 import fi.otavanopisto.security.ContextReference;
+import fi.otavanopisto.security.PermissionFeature;
+import fi.otavanopisto.security.PermissionFeatureHandler;
 
 /**
  * Restricts featured permissions to guidance group students (implied by contextRefenrce) 
@@ -40,7 +39,7 @@ public class OnlyGroupStudentsPermissionFeature implements PermissionFeatureHand
   private SessionController sessionController;
   
   @Override
-  public boolean hasPermission(Permission perm, User user, ContextReference contextReference, boolean allowed) {
+  public boolean hasPermission(String permission, fi.otavanopisto.security.User user, ContextReference contextReference, boolean allowed) {
     // By default the permission needs to be allowed. This feature only disallows permission.
     if (!allowed)
       return allowed;

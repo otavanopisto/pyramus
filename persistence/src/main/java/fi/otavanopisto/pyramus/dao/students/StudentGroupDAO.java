@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.students;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -9,9 +10,11 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
@@ -108,21 +111,36 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
   }
   
   public List<StudentGroup> listByStudent(Student student) {
+    return listByStudent(student, null, null, null);
+  }
+  
+  public List<StudentGroup> listByStudent(Student student, Integer firstResult, Integer maxResults, Boolean archived) {
     EntityManager entityManager = getEntityManager(); 
-    
+
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<StudentGroup> criteria = criteriaBuilder.createQuery(StudentGroup.class);
     Root<StudentGroupStudent> root = criteria.from(StudentGroupStudent.class);
     Join<StudentGroupStudent, StudentGroup> studentGroup = root.join(StudentGroupStudent_.studentGroup);
     
-    criteria.select(root.get(StudentGroupStudent_.studentGroup));
-    criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(StudentGroupStudent_.student), student),
-            criteriaBuilder.equal(studentGroup.get(StudentGroup_.archived), Boolean.FALSE)
-        ));
+    List<Predicate> predicates = new ArrayList<Predicate>();
+    predicates.add(criteriaBuilder.equal(root.get(StudentGroupStudent_.student), student));
+    if (archived != null)
+      predicates.add(criteriaBuilder.equal(studentGroup.get(StudentGroup_.archived), archived));
     
-    return entityManager.createQuery(criteria).getResultList();
+    criteria.select(root.get(StudentGroupStudent_.studentGroup));
+    criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+    
+    TypedQuery<StudentGroup> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+   
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+  
+    return query.getResultList();
   }
 
   @SuppressWarnings("unchecked")
@@ -270,23 +288,33 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     return persist(studentGroup);
   }
 
-  public List<StudentGroup> listByStaffMember(StaffMember staffMember) {
+  public List<StudentGroup> listByStaffMember(StaffMember staffMember, Integer firstResult, Integer maxResults, Boolean archived) {
     EntityManager entityManager = getEntityManager(); 
-    
+
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<StudentGroup> criteria = criteriaBuilder.createQuery(StudentGroup.class);
     Root<StudentGroupUser> root = criteria.from(StudentGroupUser.class);
     Join<StudentGroupUser, StudentGroup> studentGroup = root.join(StudentGroupUser_.studentGroup);
+
+    List<Predicate> predicates = new ArrayList<Predicate>();
+    predicates.add(criteriaBuilder.equal(root.get(StudentGroupUser_.staffMember), staffMember));
+    if (archived != null)
+      predicates.add(criteriaBuilder.equal(studentGroup.get(StudentGroup_.archived), archived));
     
     criteria.select(root.get(StudentGroupUser_.studentGroup));
-    criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(StudentGroupUser_.staffMember), staffMember),
-            criteriaBuilder.equal(studentGroup.get(StudentGroup_.archived), Boolean.FALSE)
-        )
-    );
+    criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
     
-    return entityManager.createQuery(criteria).getResultList();
+    TypedQuery<StudentGroup> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+   
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+  
+    return query.getResultList();
   }
   
 }
