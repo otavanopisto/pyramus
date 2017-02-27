@@ -35,6 +35,7 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
   private StudentPermissions studentPermissions = new StudentPermissions();
   
   private final static long TEST_STUDENT_ID = 3l;
+  private static final long SECONDARY_TEST_STUDENT_ID = 13L;
   
   @Test
   public void testCreateStudentAddress() throws NoSuchFieldException {
@@ -82,7 +83,21 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{ID}/addresses", TEST_STUDENT_ID);
     
-    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTADDRESSS);
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST)) {
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTADDRESSS, 403);
+    } else {
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTADDRESSS);
+    }
+  }
+  
+  @Test
+  public void testListStudentAddressesStudent2() throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders())
+      .get("/students/students/{ID}/addresses", SECONDARY_TEST_STUDENT_ID);
+    
+    // This should be ok for all roles as the group restricted study guider can
+    // also access this user via studentgroup 2.
+    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTADDRESSS, 204);
   }
   
   @Test
@@ -102,7 +117,11 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/addresses/{ID}", TEST_STUDENT_ID, 3l);
 
-    assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTADDRESS);
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST)) {
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTADDRESS, 403);
+    } else {
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTADDRESS);
+    }
   }  
 
   @Test

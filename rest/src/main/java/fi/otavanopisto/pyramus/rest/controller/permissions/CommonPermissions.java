@@ -184,7 +184,7 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   public static final String LIST_CONTACTTYPES = "LIST_CONTACTTYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, TRUSTED_SYSTEM, STUDY_GUIDER })
   public static final String FIND_CONTACTTYPE = "FIND_CONTACTTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
