@@ -35,6 +35,7 @@ public class StudentEmailPermissionTestsIT extends AbstractRESTPermissionsTest {
   private StudentPermissions studentPermissions = new StudentPermissions();
   
   private final static long TEST_STUDENT_ID = 3l;
+  private static final long SECONDARY_TEST_STUDENT_ID = 13L;
 
   @Test
   public void testCreateStudentEmail() throws NoSuchFieldException {
@@ -83,9 +84,23 @@ public class StudentEmailPermissionTestsIT extends AbstractRESTPermissionsTest {
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{ID}/emails", TEST_STUDENT_ID);
 
-    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTEMAILS);
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTEMAILS, 403);
+    } else {
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTEMAILS);
+    }
   }
   
+  @Test
+  public void testListStudentEmailsStudent2() throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders())
+      .get("/students/students/{ID}/emails", SECONDARY_TEST_STUDENT_ID);
+
+    // This should be ok for all roles as the group restricted study guider can
+    // also access this user via studentgroup 2.
+    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTEMAILS, 204);
+  }
+
   @Test
   public void testListStudentEmailsOwner() throws NoSuchFieldException {
     if (Role.STUDENT.name().equals(this.role)) {
@@ -103,7 +118,11 @@ public class StudentEmailPermissionTestsIT extends AbstractRESTPermissionsTest {
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/emails/{ID}", TEST_STUDENT_ID, 3l);
 
-    assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTEMAIL);
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTEMAIL, 403);
+    } else {
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTEMAIL);
+    }
   }  
 
   @Test

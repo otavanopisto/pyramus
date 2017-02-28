@@ -65,6 +65,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
@@ -952,15 +953,26 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/studentGroups")
   @GET
   @RESTPermit(StudentGroupPermissions.LIST_STUDENTGROUPS)
-  public Response findStudentGroups(@QueryParam("firstResult") Integer firstResult, @QueryParam("maxResults") Integer maxResults,
+  public Response listStudentGroups(@QueryParam("firstResult") Integer firstResult, @QueryParam("maxResults") Integer maxResults,
       @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<StudentGroup> studentGroups;
-    if (filterArchived) {
-      studentGroups = studentGroupController.listUnarchivedStudentGroups(firstResult, maxResults);
-    } else {
-      studentGroups = studentGroupController.listStudentGroups(firstResult, maxResults);
-    }
 
+    if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      User user = sessionController.getUser();
+      // List only personal groups if user can't access others
+      if (filterArchived) {
+        studentGroups = studentGroupController.listUnarchivedStudentGroupsByMember(user, firstResult, maxResults);
+      } else {
+        studentGroups = studentGroupController.listStudentGroupsByMember(user, firstResult, maxResults);
+      }
+    } else {
+      if (filterArchived) {
+        studentGroups = studentGroupController.listUnarchivedStudentGroups(firstResult, maxResults);
+      } else {
+        studentGroups = studentGroupController.listStudentGroups(firstResult, maxResults);
+      }
+    }
+    
     if (studentGroups.isEmpty()) {
       return Response.noContent().build();
     }
@@ -970,7 +982,7 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/studentGroups/{ID:[0-9]*}")
   @GET
-  @RESTPermit(StudentGroupPermissions.FIND_STUDENTGROUP)
+  @RESTPermit(handling = Handling.INLINE)
   public Response findStudentGroup(@PathParam("ID") Long id) {
     StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
     if (studentGroup == null) {
@@ -981,7 +993,11 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    return Response.ok(objectFactory.createModel(studentGroup)).build();
+    if (sessionController.hasPermission(StudentGroupPermissions.FIND_STUDENTGROUP, studentGroup)) {
+      return Response.ok(objectFactory.createModel(studentGroup)).build();
+    } else {
+      return Response.status(Status.FORBIDDEN).build();
+    }
   }
 
   @Path("/studentGroups/{ID:[0-9]*}")
@@ -1409,25 +1425,24 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students")
   @GET
   @RESTPermit(StudentPermissions.LIST_STUDENTS)
-  public Response listStudents(@QueryParam("firstResult") Integer firstResult, @QueryParam("maxResults") Integer maxResults, @QueryParam("email") String email,
-      @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+  public Response listStudents(
+      @QueryParam("firstResult") Integer firstResult, 
+      @QueryParam("maxResults") Integer maxResults, 
+      @QueryParam("email") String email,
+      @QueryParam("filterArchived") @DefaultValue("false") boolean filterArchived) {
     List<Student> students;
 
-    if (StringUtils.isNotBlank(email)) {
-      if (!filterArchived) {
-        students = studentController.listStudentsByEmail(email, firstResult, maxResults);
-      } else {
-        students = studentController.listStudentsByEmailAndArchived(email, Boolean.FALSE, firstResult, maxResults);
-      }
+    Boolean archived = filterArchived ? Boolean.FALSE : null;
+    email = StringUtils.isNotBlank(email) ? email : null;
+    
+    if (sessionController.hasPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION, null)) {
+      List<StudentGroup> groups = studentGroupController.listStudentGroupsByMember(sessionController.getUser());
+      students = studentController.listStudents(email, groups, archived, firstResult, maxResults);
     } else {
-      if (filterArchived) {
-        students = studentController.listUnarchivedStudents(firstResult, maxResults);
-      } else {
-        students = studentController.listStudents(firstResult, maxResults);
-      }
+      students = studentController.listStudents(email, null, archived, firstResult, maxResults);
     }
 
-    if (students.isEmpty()) {
+    if (CollectionUtils.isEmpty(students)) {
       return Response.noContent().build();
     }
 
@@ -1437,16 +1452,11 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{ID:[0-9]*}")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  // @RESTPermit (StudentPermissions.FIND_STUDENT)
   public Response findStudentById(@PathParam("ID") Long id, @Context Request request) {
     Student student = studentController.findStudentById(id);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
@@ -1468,20 +1478,15 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{ID:[0-9]*}")
   @PUT
   @RESTPermit(handling = Handling.INLINE)
-  // @RESTPermit ({ StudentPermissions.UPDATE_STUDENT, StudentPermissions.OWNER })
   public Response updateStudent(@PathParam("ID") Long id, fi.otavanopisto.pyramus.rest.model.Student entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
     Student student = studentController.findStudentById(id);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.UPDATE_STUDENT, StudentPermissions.STUDENT_OWNER }, entity, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
@@ -1547,6 +1552,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     if (permanent) {
       List<UserVariable> userVariables = userController.listUserVariablesByUser(student);
       for (UserVariable userVariable : userVariables) {
@@ -1570,14 +1579,14 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     Student student = studentController.findStudentById(id);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
-
+    
     StudentContactLogEntryType type = entity.getType() != null ? StudentContactLogEntryType.valueOf(entity.getType().name()) : null;
     StudentContactLogEntry contactLogEntry = studentContactLogEntryController.createContactLogEntry(student, type, entity.getText(),
         toDate(entity.getEntryDate()), entity.getCreatorName());
@@ -1588,15 +1597,11 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/contactLogEntries")
   @GET
   @RESTPermit(StudentContactLogEntryPermissions.LIST_STUDENTCONTACTLOGENTRIES)
-  public Response findStudentContactLogEntriesByStudent(@PathParam("STUDENTID") Long studentId) {
+  public Response listStudentContactLogEntriesByStudent(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     return Response.ok(objectFactory.createModel(studentContactLogEntryController.listContactLogEntriesByStudent(student))).build();
   }
@@ -1606,13 +1611,9 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(StudentContactLogEntryPermissions.FIND_STUDENTCONTACTLOGENTRY)
   public Response findStudentContactLogEntryById(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     StudentContactLogEntry contactLogEntry = studentContactLogEntryController.findContactLogEntryById(id);
     if (contactLogEntry == null) {
@@ -1640,13 +1641,9 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     StudentContactLogEntry contactLogEntry = studentContactLogEntryController.findContactLogEntryById(id);
     if (contactLogEntry == null) {
@@ -1673,13 +1670,9 @@ public class StudentRESTService extends AbstractRESTService {
   public Response deleteStudentContactLogEntry(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id,
       @DefaultValue("false") @QueryParam("permanent") Boolean permanent) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     StudentContactLogEntry contactLogEntry = studentContactLogEntryController.findContactLogEntryById(id);
     if (contactLogEntry == null) {
@@ -1711,13 +1704,9 @@ public class StudentRESTService extends AbstractRESTService {
 
     Student student = studentController.findStudentById(studentId);
     
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).entity("Could not find student").build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).entity("Student is archived").build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     Course course = courseController.findCourseById(courseId);
     
@@ -1763,18 +1752,13 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-//  @RESTPermit(CourseAssessmentPermissions.LIST_COURSEASSESSMENT)
   public Response listCourseAssessments(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
     
     Student student = studentController.findStudentById(studentId);
 
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENT, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
@@ -1798,18 +1782,13 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/{ID:[0-9]*}")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  // @RESTPermit(CourseAssessmentPermissions.FIND_COURSEASSESSMENT)
   public Response findCourseAssessmentById(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
     
     Student student = studentController.findStudentById(studentId);
 
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.FIND_COURSEASSESSMENT, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
@@ -1855,13 +1834,9 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -1902,13 +1877,9 @@ public class StudentRESTService extends AbstractRESTService {
     Student student = studentController.findStudentById(studentId);
     Course course = courseController.findCourseById(courseId);
 
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -1941,13 +1912,9 @@ public class StudentRESTService extends AbstractRESTService {
 
     Student student = studentController.findStudentById(studentId);
     
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).entity("Could not find student").build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).entity("Student is archived").build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     Course course = courseController.findCourseById(courseId);
     
@@ -1992,13 +1959,9 @@ public class StudentRESTService extends AbstractRESTService {
   public Response listCourseAssessmentRequests(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
     Student student = studentController.findStudentById(studentId);
 
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENTREQUESTS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2025,13 +1988,9 @@ public class StudentRESTService extends AbstractRESTService {
   public Response listStudentAssessmentRequests(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
 
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENTREQUESTS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2131,13 +2090,9 @@ public class StudentRESTService extends AbstractRESTService {
     
     Student student = studentController.findStudentById(studentId);
 
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     Course course = courseController.findCourseById(courseId);
     
@@ -2183,13 +2138,9 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -2231,13 +2182,9 @@ public class StudentRESTService extends AbstractRESTService {
     Student student = studentController.findStudentById(studentId);
     Course course = courseController.findCourseById(courseId);
 
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -2381,16 +2328,11 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/emails")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  // @RESTPermit (StudentPermissions.LIST_STUDENTEMAILS)
   public Response listStudentEmails(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTEMAILS }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2407,20 +2349,15 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/emails")
   @POST
   @RESTPermit(handling = Handling.INLINE)
-  // @RESTPermit (StudentPermissions.CREATE_STUDENTEMAIL)
   public Response createStudentEmail(@PathParam("STUDENTID") Long studentId, fi.otavanopisto.pyramus.rest.model.Email email) {
     if (email == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.CREATE_STUDENTEMAIL, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2449,12 +2386,11 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/defaultemail")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  // @RESTPermit (StudentPermissions.FIND_STUDENTEMAIL)
   public Response findStudentDefaultEmail(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null || student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTEMAIL, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2471,16 +2407,11 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/emails/{ID:[0-9]*}")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  // @RESTPermit (StudentPermissions.FIND_STUDENTEMAIL)
   public Response findStudentEmail(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTEMAIL }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2503,13 +2434,9 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(StudentPermissions.DELETE_STUDENTEMAIL)
   public Response deleteStudentEmail(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     Email email = commonController.findEmailById(id);
     if (email == null) {
@@ -2528,16 +2455,11 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/addresses")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  // @RESTPermit (StudentPermissions.LIST_STUDENTADDRESSS)
   public Response listStudentAddresses(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTADDRESSS }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2554,20 +2476,15 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/addresses")
   @POST
   @RESTPermit(handling = Handling.INLINE)
-  // @RESTPermit (StudentPermissions.CREATE_STUDENTADDRESS)
   public Response createStudentAddress(@PathParam("STUDENTID") Long studentId, fi.otavanopisto.pyramus.rest.model.Address address) {
     if (address == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.UPDATE_STUDENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2598,16 +2515,11 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/addresses/{ID:[0-9]*}")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  // @RESTPermit (StudentPermissions.FIND_STUDENTADDRESS)
   public Response findStudentAddress(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTADDRESS }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2635,13 +2547,9 @@ public class StudentRESTService extends AbstractRESTService {
       fi.otavanopisto.pyramus.rest.model.Address body
       ) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(
           new String[] { StudentPermissions.UPDATE_STUDENTADDRESS },
@@ -2681,13 +2589,9 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(StudentPermissions.DELETE_STUDENTADDRESS)
   public Response deleteStudentAddress(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     Address address = commonController.findAddressById(id);
     if (address == null) {
@@ -2706,16 +2610,11 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/phoneNumbers")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  // @RESTPermit (StudentPermissions.LIST_STUDENTPHONENUMBERS)
   public Response listStudentPhoneNumbers(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTPHONENUMBERS }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2739,13 +2638,9 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.UPDATE_STUDENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2769,16 +2664,11 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/phoneNumbers/{ID:[0-9]*}")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  // @RESTPermit (StudentPermissions.FIND_STUDENTPHONENUMBER)
   public Response findStudentPhoneNumber(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTPHONENUMBER }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2801,13 +2691,9 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(StudentPermissions.DELETE_STUDENTPHONENUMBER)
   public Response deleteStudentPhoneNumber(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     PhoneNumber phoneNumber = commonController.findPhoneNumberById(id);
     if (phoneNumber == null) {
@@ -2828,13 +2714,9 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(handling = Handling.INLINE)
   public Response listStudentContactURLs(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENTCONTACTURLS }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2864,13 +2746,9 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     ContactURLType contactURLType = commonController.findContactURLTypeById(contactURLTypeId);
     if (contactURLType == null) {
@@ -2885,13 +2763,9 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(handling = Handling.INLINE)
   public Response findStudentContactURL(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENTCONTACTURL, StudentPermissions.STUDENT }, student) && !restSecurity.hasPermission(new String[] { PersonPermissions.PERSON_OWNER }, student.getPerson() )) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2914,13 +2788,9 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(StudentPermissions.DELETE_STUDENTCONTACTURL)
   public Response deleteStudentContactURL(@PathParam("STUDENTID") Long studentId, @PathParam("ID") Long id) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     ContactURL contactURL = commonController.findContactURLById(id);
     if (contactURL == null) {
@@ -2941,13 +2811,9 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(StudentPermissions.LIST_COURSESTUDENTSBYSTUDENT)
   public Response listCourseStudents(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     List<fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent> courseStudents = courseController.listCourseStudentsByStudent(student);
     if (courseStudents.isEmpty()) {
@@ -2967,13 +2833,9 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(handling = Handling.INLINE)
   public Response listStudentsTransferCredits(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
 
     if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENT_TRANSFER_CREDITS, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
@@ -2982,5 +2844,23 @@ public class StudentRESTService extends AbstractRESTService {
     List<TransferCredit> transferCredits = studentController.listStudentTransferCredits(student);
     
     return Response.status(Status.OK).entity(objectFactory.createModel(transferCredits)).build();
+  }
+
+  /**
+   * Checks for student to be non-null, not archived and find_student permission.
+   * 
+   * @param student
+   * @return
+   */
+  private Status checkStudent(Student student) {
+    if (student == null || student.getArchived()) {
+      return Status.NOT_FOUND;
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Status.FORBIDDEN;
+    }
+
+    return Status.OK;
   }
 }

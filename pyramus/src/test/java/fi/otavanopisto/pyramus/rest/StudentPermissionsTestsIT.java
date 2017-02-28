@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
   
   private StudentPermissions studentPermissions = new StudentPermissions();
   private final static long TEST_STUDENT_ID = 3l;
+  private static final long SECONDARY_TEST_STUDENT_ID = 13L;
 //  private int studentCount = -1;
 //  
 //  @Before
@@ -111,6 +113,15 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
         .get("/students/students");
 
     assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTS);
+    
+    if (response.statusCode() == 200) {
+      if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+        // For group restricted roles there should be only one result student
+        response.then().body("id.size()", is(1));
+      } else {
+        response.then().body("id.size()", is(4));
+      }
+    }
   }
 
   @Test
@@ -118,7 +129,11 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
     Response response = given().headers(getAuthHeaders())
         .get("/students/students?email=student1@bogusmail.com");
 
-    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTSBYEMAIL);
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTS, 204);
+    } else {
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTS);
+    }
   }
   
   @Test
@@ -126,6 +141,21 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
     Response response = given().headers(getAuthHeaders())
         .get("/students/students/{ID}", TEST_STUDENT_ID);
 
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      // Accessible students restricted to groups of the logged user
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENT, 403);
+    } else {
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENT);
+    }
+  }
+  
+  @Test
+  public void testFindStudentGuider() throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders())
+        .get("/students/students/{ID}", SECONDARY_TEST_STUDENT_ID);
+
+    // This should be ok for all roles as the group restricted study guider can
+    // also access this user via studentgroup 2.
     assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENT);
   }
   

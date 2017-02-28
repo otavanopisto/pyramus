@@ -16,6 +16,10 @@ public abstract class AbstractPermissionResolver {
   @Any
   private Instance<UserContextResolver> userContextResolvers;
   
+  @Inject
+  @Any
+  private Instance<PyramusPermissionCollection> permissionCollections;
+
   protected Role getEveryoneRole() {
     return Role.EVERYONE;
   }
@@ -34,6 +38,15 @@ public abstract class AbstractPermissionResolver {
     for (UserContextResolver resolver : userContextResolvers) {
       if (resolver.handlesContextReference(contextReference))
         return resolver.resolveUser(contextReference);
+    }
+    
+    return null;
+  }
+  
+  protected PyramusPermissionCollection findCollection(String permission) {
+    for (PyramusPermissionCollection collection : permissionCollections) {
+      if (collection.containsPermission(permission))
+        return collection;
     }
     
     return null;

@@ -6,6 +6,7 @@ import fi.otavanopisto.pyramus.security.impl.AbstractPyramusPermissionCollection
 import fi.otavanopisto.pyramus.security.impl.DefaultPermissionRoles;
 import fi.otavanopisto.pyramus.security.impl.PermissionScope;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
+import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.Scope;
 
 public class CourseAssessmentPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
@@ -20,7 +21,7 @@ public class CourseAssessmentPermissions extends AbstractPyramusPermissionCollec
   public static final String UPDATE_COURSEASSESSMENT = "UPDATE_COURSEASSESSMENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String LIST_COURSEASSESSMENT = "LIST_COURSEASSESSMENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -40,7 +41,7 @@ public class CourseAssessmentPermissions extends AbstractPyramusPermissionCollec
   public static final String UPDATE_COURSEASSESSMENTREQUEST = "UPDATE_COURSEASSESSMENTREQUEST";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String LIST_COURSEASSESSMENTREQUESTS = "LIST_COURSEASSESSMENTREQUESTS";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -71,4 +72,8 @@ public class CourseAssessmentPermissions extends AbstractPyramusPermissionCollec
     return super.getDefaultRoles(CourseAssessmentPermissions.class, permission);
   }
 
+  @Override
+  public PermissionFeature[] listPermissionFeatures(String permission) throws NoSuchFieldException, SecurityException {
+    return super.listPermissionFeatures(CourseAssessmentPermissions.class, permission);
+  }
 }

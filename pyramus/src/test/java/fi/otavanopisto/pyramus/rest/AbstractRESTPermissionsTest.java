@@ -144,6 +144,12 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 		return Common.getUserId(Common.strToRole(role));
 	}
 
+  public boolean roleIsAllowed(String role, PyramusPermissionCollection permissionCollection, String permission) throws NoSuchFieldException {
+    List<String> allowedRoles = Arrays.asList(permissionCollection.getDefaultRoles(permission));
+
+    return roleIsAllowed(getRole(), allowedRoles);
+  }
+	
 	public boolean roleIsAllowed(String role, List<String> allowedRoles) {
 		// Everyone -> every role has access
 		if (allowedRoles.contains(Role.EVERYONE.name()))
@@ -176,9 +182,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 	public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission,
 			int successStatusCode) throws NoSuchFieldException {
 		if (!Role.EVERYONE.name().equals(getRole())) {
-			List<String> allowedRoles = Arrays.asList(permissionCollection.getDefaultRoles(permission));
-
-			int expectedStatusCode = roleIsAllowed(getRole(), allowedRoles) ? successStatusCode : 403;
+			int expectedStatusCode = roleIsAllowed(getRole(), permissionCollection, permission) ? successStatusCode : 403;
 
 			assertThat(
 					String.format("Status code <%d> didn't match expected code <%d> when Role = %s, Permission = %s",

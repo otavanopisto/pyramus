@@ -148,4 +148,31 @@ public class StudentGroupController {
   public void deleteStudentGroupUser(StudentGroupUser studentGroupUser) {
     studentGroupUserDAO.delete(studentGroupUser);
   }
+
+  public List<StudentGroup> listStudentGroupsByStudent(Student student, Integer firstResult, Integer maxResults, Boolean archived) {
+    return studentGroupDAO.listByStudent(student, firstResult, maxResults, archived);
+  }
+  
+  public List<StudentGroup> listStudentGroupsByStaffMember(StaffMember staffMember, Integer firstResult, Integer maxResults, Boolean archived) {
+    return studentGroupDAO.listByStaffMember(staffMember, firstResult, maxResults, archived);
+  }
+
+  public List<StudentGroup> listStudentGroupsByMember(User user) {
+    return listStudentGroupsByMember(user, null, null);
+  }
+  
+  public List<StudentGroup> listStudentGroupsByMember(User user, Integer firstResult, Integer maxResults) {
+    if (user instanceof StaffMember)
+      return listStudentGroupsByStaffMember((StaffMember) user, firstResult, maxResults, null);
+    else
+      return listStudentGroupsByStudent((Student) user, firstResult, maxResults, null);
+  }
+
+  public List<StudentGroup> listUnarchivedStudentGroupsByMember(User user, Integer firstResult, Integer maxResults) {
+    if (user instanceof StaffMember)
+      return listStudentGroupsByStaffMember((StaffMember) user, firstResult, maxResults, false);
+    else
+      return listStudentGroupsByStudent((Student) user, firstResult, maxResults, false);
+  }
+  
 }

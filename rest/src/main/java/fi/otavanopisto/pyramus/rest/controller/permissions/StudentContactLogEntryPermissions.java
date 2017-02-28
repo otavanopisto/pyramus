@@ -6,6 +6,7 @@ import fi.otavanopisto.pyramus.security.impl.AbstractPyramusPermissionCollection
 import fi.otavanopisto.pyramus.security.impl.DefaultPermissionRoles;
 import fi.otavanopisto.pyramus.security.impl.PermissionScope;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
+import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.Scope;
 
 public class StudentContactLogEntryPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
@@ -52,4 +53,8 @@ public class StudentContactLogEntryPermissions extends AbstractPyramusPermission
     return super.getDefaultRoles(StudentContactLogEntryPermissions.class, permission);
   }
 
+  @Override
+  public PermissionFeature[] listPermissionFeatures(String permission) throws NoSuchFieldException, SecurityException {
+    return super.listPermissionFeatures(StudentContactLogEntryPermissions.class, permission);
+  }
 }

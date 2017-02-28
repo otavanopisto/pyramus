@@ -6,6 +6,7 @@ import fi.otavanopisto.pyramus.security.impl.AbstractPyramusPermissionCollection
 import fi.otavanopisto.pyramus.security.impl.DefaultPermissionRoles;
 import fi.otavanopisto.pyramus.security.impl.PermissionScope;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
+import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.Scope;
 
 public class StudentGroupPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
@@ -15,7 +16,7 @@ public class StudentGroupPermissions extends AbstractPyramusPermissionCollection
   public static final String CREATE_STUDENTGROUP = "CREATE_STUDENTGROUP";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM, STUDY_GUIDER })
   public static final String LIST_STUDENTGROUPS = "LIST_STUDENTGROUPS";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -27,7 +28,8 @@ public class StudentGroupPermissions extends AbstractPyramusPermissionCollection
   public static final String LIST_STUDENTGROUPSTAFFMEMBERS = "LIST_STUDENTGROUPSTAFFMEMBERS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM, STUDY_GUIDER })
+  @PermissionFeature(PyramusPermissionFeatures.ONLY_OWN_GROUPS)
   public static final String FIND_STUDENTGROUP = "FIND_STUDENTGROUP";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -83,4 +85,8 @@ public class StudentGroupPermissions extends AbstractPyramusPermissionCollection
     return super.getDefaultRoles(StudentGroupPermissions.class, permission);
   }
 
+  @Override
+  public PermissionFeature[] listPermissionFeatures(String permission) throws NoSuchFieldException, SecurityException {
+    return super.listPermissionFeatures(StudentGroupPermissions.class, permission);
+  }
 }
