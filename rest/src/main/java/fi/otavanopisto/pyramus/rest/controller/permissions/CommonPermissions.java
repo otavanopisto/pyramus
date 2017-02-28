@@ -72,11 +72,11 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_GRADINGSCALE = "CREATE_GRADINGSCALE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, STUDY_GUIDER })
   public static final String LIST_GRADINGSCALES = "LIST_GRADINGSCALES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, STUDY_GUIDER })
   public static final String FIND_GRADINGSCALE = "FIND_GRADINGSCALE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -96,11 +96,11 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_GRADE = "CREATE_GRADE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, STUDY_GUIDER })
   public static final String LIST_GRADES = "LIST_GRADES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, STUDY_GUIDER })
   public static final String FIND_GRADE = "FIND_GRADE";
   
   @Scope (PermissionScope.ENVIRONMENT)
