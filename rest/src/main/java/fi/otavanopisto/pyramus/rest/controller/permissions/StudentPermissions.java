@@ -16,7 +16,7 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   // TODO: RoleFeatures could be separate entity as this is bit awkward to ask with environmentpermission...
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ STUDY_GUIDER })
-  public static final String FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST = "FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST";
+  public static final String FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION = "FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION";
 
   /* Student */
   

@@ -957,7 +957,7 @@ public class StudentRESTService extends AbstractRESTService {
       @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<StudentGroup> studentGroups;
 
-    if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST)) {
+    if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
       User user = sessionController.getUser();
       // List only personal groups if user can't access others
       if (filterArchived) {
@@ -1435,7 +1435,7 @@ public class StudentRESTService extends AbstractRESTService {
     Boolean archived = filterArchived ? Boolean.FALSE : null;
     email = StringUtils.isNotBlank(email) ? email : null;
     
-    if (sessionController.hasPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST, null)) {
+    if (sessionController.hasPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION, null)) {
       List<StudentGroup> groups = studentGroupController.listStudentGroupsByMember(sessionController.getUser());
       students = studentController.listStudents(email, groups, archived, firstResult, maxResults);
     } else {

@@ -83,7 +83,7 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{ID}/addresses", TEST_STUDENT_ID);
     
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST)) {
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
       assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTADDRESSS, 403);
     } else {
       assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTADDRESSS);
@@ -117,7 +117,7 @@ public class StudentAddressPermissionTestsIT extends AbstractRESTPermissionsTest
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/addresses/{ID}", TEST_STUDENT_ID, 3l);
 
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST)) {
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
       assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTADDRESS, 403);
     } else {
       assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTADDRESS);

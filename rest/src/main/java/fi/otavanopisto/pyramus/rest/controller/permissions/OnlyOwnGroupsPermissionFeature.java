@@ -33,7 +33,7 @@ public class OnlyOwnGroupsPermissionFeature implements PermissionFeatureHandler 
   @Override
   public boolean hasPermission(String perm, fi.otavanopisto.security.User user, ContextReference contextReference, boolean allowed) {
     // By default the permission needs to be allowed. This feature only disallows permission.
-    if (!allowed || !sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST))
+    if (!allowed || !sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION))
       return allowed;
    
     if (contextReference instanceof StudentGroup) {

@@ -68,7 +68,7 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
         }
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.log(Level.SEVERE, String.format("Could not list permission features for permission %s", permission), e);
     }
     
     return allowed;

@@ -115,7 +115,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
     assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTS);
     
     if (response.statusCode() == 200) {
-      if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST)) {
+      if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
         // For group restricted roles there should be only one result student
         response.then().body("id.size()", is(1));
       } else {
@@ -129,7 +129,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
     Response response = given().headers(getAuthHeaders())
         .get("/students/students?email=student1@bogusmail.com");
 
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST)) {
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
       assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTS, 204);
     } else {
       assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTS);
@@ -141,7 +141,7 @@ public class StudentPermissionsTestsIT extends AbstractRESTPermissionsTest {
     Response response = given().headers(getAuthHeaders())
         .get("/students/students/{ID}", TEST_STUDENT_ID);
 
-    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST)) {
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
       // Accessible students restricted to groups of the logged user
       assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENT, 403);
     } else {

@@ -78,7 +78,7 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
     Response response = given().headers(getAuthHeaders())
       .get("/students/studentGroups/{ID}", 1);
 
-    if (!roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST))
+    if (!roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION))
       assertOk(response, studentGroupPermissions, StudentGroupPermissions.FIND_STUDENTGROUP);
     else
       assertOk(response, studentGroupPermissions, StudentGroupPermissions.FIND_STUDENTGROUP, 403);

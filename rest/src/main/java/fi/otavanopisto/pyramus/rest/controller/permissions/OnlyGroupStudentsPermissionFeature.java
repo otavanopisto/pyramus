@@ -46,7 +46,7 @@ public class OnlyGroupStudentsPermissionFeature implements PermissionFeatureHand
     
     User maybeStudent = resolveUser(contextReference);
     
-    boolean hf = sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION_TEST);
+    boolean hf = sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION);
     
     if (maybeStudent instanceof Student) {
       if (hf && user instanceof StaffMember)
