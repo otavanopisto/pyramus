@@ -20,6 +20,7 @@ import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseComponentDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberDAO;
@@ -29,6 +30,7 @@ import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseTypeDAO;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariable;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
@@ -40,6 +42,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseComponent;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescription;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
@@ -99,6 +102,9 @@ public class CourseController {
   
   @Inject
   private CourseEducationTypeDAO courseEducationTypeDAO;
+  
+  @Inject
+  private CourseDescriptionDAO courseDescriptionDAO;
   
   @Inject
   private DefaultsDAO defaultsDAO;
@@ -624,4 +630,19 @@ public class CourseController {
     return courseEducationTypeDAO.findById(id);
   }
   
+  /* Course descriptions */
+  public CourseDescription createCourseDescription(
+      CourseBase courseBase,
+      CourseDescriptionCategory category,
+      String description
+  ) {
+    return courseDescriptionDAO.create(courseBase, category, description);
+  }
+  
+  public List<CourseDescription> listCourseDescriptionsByCourseBase(
+      CourseBase courseBase
+  ) {
+    courseDescriptionDAO
+    return null;
+  }
 }

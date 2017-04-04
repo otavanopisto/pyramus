@@ -40,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
+import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -48,6 +49,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseComponent;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescription;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRole;
@@ -379,6 +381,49 @@ public class CourseRESTService extends AbstractRESTService {
     return Response
       .status(Status.OK)
       .entity(objectFactory.createModel(courseController.createCourseComponent(course, courseComponent.getLength(), componentLengthTimeUnit, courseComponent.getName(), courseComponent.getDescription())))
+      .build();
+  }
+
+  @Path("/courses/{COURSEID:[0-9]*}/descriptions")
+  @POST
+  @RESTPermit (CoursePermissions.CREATE_COURSEDESCRIPTION)
+  public Response createCourseDescription(
+      @PathParam("COURSEID") Long courseId,
+      fi.otavanopisto.pyramus.rest.model.CourseDescription dto
+  ) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(
+        dto.getCourseDescriptionCategoryId()
+    );
+    CourseDescription cd = courseController.createCourseDescription(course, category, dto.getDescription());
+    
+    return Response
+      .status(Status.OK)
+      .entity(
+          new fi.otavanopisto.pyramus.rest.model.CourseDescription(
+              cd.getId(),
+              courseId,
+              category.getId(),
+              cd.getDescription()))
+      .build();
+  }
+
+  @Path("/courses/{COURSEID:[0-9]*}/descriptions")
+  @GET
+  @RESTPermit (CoursePermissions.LIST_COURSEDESCRIPTIONS)
+  public Response listCourseDescriptions(@PathParam("COURSEID") Long courseId) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    
+    
+    return Response
+      .status(Status.OK)
       .build();
   }
 

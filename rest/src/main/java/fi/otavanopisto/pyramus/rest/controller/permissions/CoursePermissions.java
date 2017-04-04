@@ -59,6 +59,18 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   public static final String DELETE_COURSECOMPONENT = "DELETE_COURSECOMPONENT";
   
   /**
+   * COURSEDescription
+   */
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String CREATE_COURSEDESCRIPTION = "CREATE_COURSEDESCRIPTION";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
+  public static final String LIST_COURSEDESCRIPTIONS = "LIST_COURSEDESCRIPTIONS";
+  
+  /**
    * COURSEStaffMember
    */
   
