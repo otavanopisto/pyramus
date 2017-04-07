@@ -48,6 +48,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseComponent;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescription;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
@@ -217,6 +218,13 @@ public class ObjectFactory {
           }
         }, 
         
+        new Mapper<CourseDescription>() {
+          @Override
+          public Object map(CourseDescription entity) {
+            return new fi.otavanopisto.pyramus.rest.model.CourseDescription(entity.getId(), entity.getCourseBase().getId(), entity.getCategory().getId(), entity.getDescription());
+          }
+        }, 
+
         new Mapper<CourseDescriptionCategory>() {
           @Override
           public Object map(CourseDescriptionCategory entity) {

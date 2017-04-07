@@ -40,7 +40,6 @@ import org.apache.commons.lang3.StringUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
-import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -387,27 +386,16 @@ public class CourseRESTService extends AbstractRESTService {
   @Path("/courses/{COURSEID:[0-9]*}/descriptions")
   @POST
   @RESTPermit (CoursePermissions.CREATE_COURSEDESCRIPTION)
-  public Response createCourseDescription(
-      @PathParam("COURSEID") Long courseId,
-      fi.otavanopisto.pyramus.rest.model.CourseDescription dto
-  ) {
+  public Response createCourseDescription(@PathParam("COURSEID") Long courseId, fi.otavanopisto.pyramus.rest.model.CourseDescription restCourseDescription) {
     Course course = courseController.findCourseById(courseId);
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    CourseDescriptionCategory category = courseController.findCourseDescriptionCategoryById(
-        dto.getCourseDescriptionCategoryId()
-    );
-    CourseDescription cd = courseController.createCourseDescription(course, category, dto.getDescription());
-    
+    CourseDescriptionCategory courseDescriptionCategory = courseController.findCourseDescriptionCategoryById(restCourseDescription.getCourseDescriptionCategoryId());
+    CourseDescription courseDescription = courseController.createCourseDescription(course, courseDescriptionCategory, restCourseDescription.getDescription());
     return Response
       .status(Status.OK)
-      .entity(
-          new fi.otavanopisto.pyramus.rest.model.CourseDescription(
-              cd.getId(),
-              courseId,
-              category.getId(),
-              cd.getDescription()))
+      .entity(objectFactory.createModel(courseDescription))
       .build();
   }
 
@@ -419,11 +407,13 @@ public class CourseRESTService extends AbstractRESTService {
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    
-    
-    
+    List<CourseDescription> courseDescriptions = courseController.listCourseDescriptionsByCourseBase(course);
+    if (courseDescriptions.isEmpty()) {
+      return Response.status(Status.NO_CONTENT).build();
+    }
     return Response
       .status(Status.OK)
+      .entity(objectFactory.createModel(courseDescriptions))
       .build();
   }
 

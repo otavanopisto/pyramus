@@ -631,18 +631,11 @@ public class CourseController {
   }
   
   /* Course descriptions */
-  public CourseDescription createCourseDescription(
-      CourseBase courseBase,
-      CourseDescriptionCategory category,
-      String description
-  ) {
+  public CourseDescription createCourseDescription(CourseBase courseBase, CourseDescriptionCategory category, String description) {
     return courseDescriptionDAO.create(courseBase, category, description);
   }
   
-  public List<CourseDescription> listCourseDescriptionsByCourseBase(
-      CourseBase courseBase
-  ) {
-    courseDescriptionDAO
-    return null;
+  public List<CourseDescription> listCourseDescriptionsByCourseBase(CourseBase courseBase) {
+    return courseDescriptionDAO.listByCourseBase(courseBase);
   }
 }
