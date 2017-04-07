@@ -41,6 +41,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
+import fi.otavanopisto.security.ContextReference;
 
 @Entity
 @Indexed
@@ -50,7 +51,7 @@ import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFa
      impl=ArchivedEntityFilterFactory.class
   )
 )
-public class StudentGroup implements ArchivableEntity {
+public class StudentGroup implements ContextReference, ArchivableEntity {
 
   /**
    * Returns unique identifier for this StudentGroup

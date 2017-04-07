@@ -6,21 +6,27 @@ import fi.otavanopisto.pyramus.security.impl.AbstractPyramusPermissionCollection
 import fi.otavanopisto.pyramus.security.impl.DefaultPermissionRoles;
 import fi.otavanopisto.pyramus.security.impl.PermissionScope;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
+import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.Scope;
 
 public class StudentPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
+  /* Features */
+
+  // TODO: RoleFeatures could be separate entity as this is bit awkward to ask with environmentpermission...
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ STUDY_GUIDER })
+  public static final String FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION = "FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION";
+
+  /* Student */
+  
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String CREATE_STUDENT = "CREATE_STUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM, STUDY_GUIDER })
   public static final String LIST_STUDENTS = "LIST_STUDENTS";
-  
-  @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
-  public static final String LIST_STUDENTSBYEMAIL = "LIST_STUDENTSBYEMAIL";
   
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
@@ -35,11 +41,13 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   public static final String LIST_COURSESTUDENTSBYSTUDENT = "LIST_COURSESTUDENTSBYSTUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM, STUDY_GUIDER })
+  @PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
   public static final String FIND_STUDENT = "FIND_STUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
   public static final String UPDATE_STUDENT = "UPDATE_STUDENT";
   
   @Scope (PermissionScope.STUDENT_OWNER)
@@ -82,11 +90,11 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   public static final String CREATE_STUDENTEMAIL = "CREATE_STUDENTEMAIL";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM, STUDY_GUIDER })
   public static final String LIST_STUDENTEMAILS = "LIST_STUDENTEMAILS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM, STUDY_GUIDER })
   public static final String FIND_STUDENTEMAIL = "FIND_STUDENTEMAIL";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -102,11 +110,11 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   public static final String CREATE_STUDENTADDRESS = "CREATE_STUDENTADDRESS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String LIST_STUDENTADDRESSS = "LIST_STUDENTADDRESSS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String FIND_STUDENTADDRESS = "FIND_STUDENTADDRESS";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -126,11 +134,11 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   public static final String CREATE_STUDENTPHONENUMBER = "CREATE_STUDENTPHONENUMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String LIST_STUDENTPHONENUMBERS = "LIST_STUDENTPHONENUMBERS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String FIND_STUDENTPHONENUMBER = "FIND_STUDENTPHONENUMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -156,7 +164,7 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, STUDY_PROGRAMME_LEADER })
   public static final String DELETE_STUDENTCONTACTURL = "DELETE_STUDENTCONTACTURL";
-  
+
   /**
    * STUDENT transfer credits
    */
@@ -185,4 +193,8 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
     return super.getDefaultRoles(StudentPermissions.class, permission);
   }
 
+  @Override
+  public PermissionFeature[] listPermissionFeatures(String permission) throws NoSuchFieldException, SecurityException {
+    return super.listPermissionFeatures(StudentPermissions.class, permission);
+  }
 }

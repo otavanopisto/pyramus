@@ -49,7 +49,7 @@ public class UserUtils {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
 
     StaffMember staffMember = staffMemberDAO.findByUniqueEmail(emailAddress);
-    List<Student> students = studentDAO.listByEmail(emailAddress);
+    List<Student> students = studentDAO.listBy(emailAddress, null, null, null, null);
 
     if (personId != null) {
       // True, if found matches the person, or if not found at all 

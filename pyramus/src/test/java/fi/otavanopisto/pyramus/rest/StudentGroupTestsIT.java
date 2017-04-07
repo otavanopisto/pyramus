@@ -67,7 +67,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
       .get("/students/studentGroups")
       .then()
       .statusCode(200)
-      .body("id.size()", is(2))
+      .body("id.size()", is(3))
       .body("id[0]", is(1) )
       .body("name[0]", is("StudentGroup #1"))
       .body("description[0]", is("Group of students #1"))

@@ -65,7 +65,7 @@
           cancelLabel : '<fmt:message key="students.searchStudentsDialog.cancelLabel"/>' 
         });
         
-        dialog.setSize("800px", "600px");
+        dialog.setSize("800px", "700px");
         dialog.addDialogListener(function(event) {
           var dlg = event.dialog;
           switch (event.name) {

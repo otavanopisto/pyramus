@@ -6,6 +6,7 @@ import fi.otavanopisto.pyramus.security.impl.AbstractPyramusPermissionCollection
 import fi.otavanopisto.pyramus.security.impl.DefaultPermissionRoles;
 import fi.otavanopisto.pyramus.security.impl.PermissionScope;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
+import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.Scope;
 
 public class CommonPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
@@ -71,11 +72,11 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_GRADINGSCALE = "CREATE_GRADINGSCALE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, STUDY_GUIDER })
   public static final String LIST_GRADINGSCALES = "LIST_GRADINGSCALES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, STUDY_GUIDER })
   public static final String FIND_GRADINGSCALE = "FIND_GRADINGSCALE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -95,11 +96,11 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_GRADE = "CREATE_GRADE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, STUDY_GUIDER })
   public static final String LIST_GRADES = "LIST_GRADES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, STUDY_GUIDER })
   public static final String FIND_GRADE = "FIND_GRADE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -183,7 +184,7 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   public static final String LIST_CONTACTTYPES = "LIST_CONTACTTYPES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, TRUSTED_SYSTEM })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, USER, GUEST, STUDENT, TRUSTED_SYSTEM, STUDY_GUIDER })
   public static final String FIND_CONTACTTYPE = "FIND_CONTACTTYPE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -284,6 +285,11 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   @Override
   public String[] getDefaultRoles(String permission) throws NoSuchFieldException {
     return super.getDefaultRoles(CommonPermissions.class, permission);
+  }
+
+  @Override
+  public PermissionFeature[] listPermissionFeatures(String permission) throws NoSuchFieldException, SecurityException {
+    return super.listPermissionFeatures(CommonPermissions.class, permission);
   }
 
 }

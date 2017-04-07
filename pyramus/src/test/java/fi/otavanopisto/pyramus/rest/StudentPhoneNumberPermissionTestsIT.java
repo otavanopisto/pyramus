@@ -35,6 +35,7 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
   private StudentPermissions studentPermissions = new StudentPermissions();
   
   private final static long TEST_STUDENT_ID = 3l;
+  private static final long SECONDARY_TEST_STUDENT_ID = 13L;
 
   @Test
   public void testCreateStudentPhoneNumber() throws NoSuchFieldException {
@@ -83,7 +84,21 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{ID}/phoneNumbers", TEST_STUDENT_ID);
 
-    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTPHONENUMBERS);
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTPHONENUMBERS, 403);
+    } else {
+      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTPHONENUMBERS);
+    }
+  }
+  
+  @Test
+  public void testListStudentPhoneNumbersStudent2() throws NoSuchFieldException {
+    Response response = given().headers(getAuthHeaders())
+      .get("/students/students/{ID}/phoneNumbers", SECONDARY_TEST_STUDENT_ID);
+
+    // This should be ok for all roles as the group restricted study guider can
+    // also access this user via studentgroup 2.
+    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTPHONENUMBERS, 204);
   }
   
   @Test
@@ -102,7 +117,11 @@ public class StudentPhoneNumberPermissionTestsIT extends AbstractRESTPermissions
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/phoneNumbers/{ID}", TEST_STUDENT_ID, 3l);
     
-    assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTPHONENUMBER);
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTPHONENUMBER, 403);
+    } else {
+      assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENTPHONENUMBER);
+    }
   }  
 
   @Test
