@@ -113,7 +113,11 @@ public class CompositeRESTService {
       assessmentRequest.setCourseId(course.getId());
       assessmentRequest.setCourseName(course.getName());
       assessmentRequest.setCourseNameExtension(course.getNameExtension());
-      assessmentRequest.setFirstName(courseStudent.getStudent().getFirstName());
+      String firstName = courseStudent.getStudent().getFirstName();
+      if (courseStudent.getStudent().getNickname() != null) {
+        firstName = String.format("%s \"%s\"", firstName, courseStudent.getStudent().getNickname());
+      }
+      assessmentRequest.setFirstName(firstName);
       assessmentRequest.setLastName(courseStudent.getStudent().getLastName());
       assessmentRequest.setStudyProgramme(courseStudent.getStudent().getStudyProgramme().getName());
       assessmentRequest.setUserId(courseStudent.getStudent().getId());
@@ -166,7 +170,11 @@ public class CompositeRESTService {
         assessmentRequest.setCourseId(course.getId());
         assessmentRequest.setCourseName(course.getName());
         assessmentRequest.setCourseNameExtension(course.getNameExtension());
-        assessmentRequest.setFirstName(courseAssessmentRequest.getCourseStudent().getStudent().getFirstName());
+        String firstName = courseAssessmentRequest.getCourseStudent().getStudent().getFirstName();
+        if (courseAssessmentRequest.getCourseStudent().getStudent().getNickname() != null) {
+          firstName = String.format("%s \"%s\"", firstName, courseAssessmentRequest.getCourseStudent().getStudent().getNickname());
+        }
+        assessmentRequest.setFirstName(firstName);
         assessmentRequest.setLastName(courseAssessmentRequest.getCourseStudent().getStudent().getLastName());
         assessmentRequest.setStudyProgramme(courseAssessmentRequest.getCourseStudent().getStudent().getStudyProgramme().getName());
         assessmentRequest.setUserId(courseAssessmentRequest.getCourseStudent().getStudent().getId());
