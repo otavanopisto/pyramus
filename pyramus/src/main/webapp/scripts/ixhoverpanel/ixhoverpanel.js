@@ -19,13 +19,13 @@ IxHoverPanel = Class.create(
       this._updateContent(options.content);
     } 
     
-    if ((options.width != undefined) && (options.width != NaN)) {
+    if ((options.width != undefined) && !isNaN(options.width)) {
       this.domNode.setStyle({
         width: options.width + 'px'
       });
     }
     
-    if ((options.height != undefined) && (options.height != NaN)) {
+    if ((options.height != undefined) && !isNaN(options.height)) {
       this.domNode.setStyle({
         height: options.height + 'px'
       });

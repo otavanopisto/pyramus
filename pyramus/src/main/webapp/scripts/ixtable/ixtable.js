@@ -106,19 +106,19 @@ IxTable = Class.create({
         }
       }
       
-      if ((column.left != undefined) && (column.left != NaN)) {
+      if ((column.left != undefined) && !isNaN(column.left)) {
         headerCell.setStyle( {
           left : column.left + 'px'
         });
       };
 
-      if ((column.right != undefined) && (column.right != NaN)) {
+      if ((column.right != undefined) && !isNaN(column.right)) {
         headerCell.setStyle( {
           right : column.right + 'px'
         });
       };
       
-      if ((column.width != undefined) && (column.width != NaN)) {
+      if ((column.width != undefined) && !isNaN(column.width)) {
         headerCell.setStyle( {
           width : column.width + 'px'
         });
@@ -193,17 +193,17 @@ IxTable = Class.create({
         var cellStyles = {};
         var hasStyles = false;
 
-        if ((column.left != undefined) && (column.left != NaN)) {
+        if ((column.left != undefined) && !isNaN(column.left)) {
           cellStyles.left = column.left + 'px';
           hasStyles = true;
         }
         
-        if ((column.right != undefined) && (column.right != NaN)) {
+        if ((column.right != undefined) && !isNaN(column.right)) {
           cellStyles.right = column.right + 'px';
           hasStyles = true;
         }
         
-        if ((column.width != undefined) && (column.width != NaN)) {
+        if ((column.width != undefined) && !isNaN(column.width)) {
           cellStyles.width = column.width + 'px';
           hasStyles = true;
         }
