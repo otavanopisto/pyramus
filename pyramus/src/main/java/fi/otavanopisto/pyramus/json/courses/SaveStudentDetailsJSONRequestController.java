@@ -29,6 +29,8 @@ public class SaveStudentDetailsJSONRequestController extends JSONRequestControll
     Long roomId = requestContext.getLong("roomId");
     BigDecimal lodgingFee = requestContext.getBigDecimal("lodgingFee");
     Currency lodgingFeeCurrency = requestContext.getCurrency("lodgingFeeCurrency");
+    BigDecimal reservationFee = requestContext.getBigDecimal("reservationFee");
+    Currency reservationFeeCurrency = requestContext.getCurrency("reservationFeeCurrency");
     
     String billingDetailsPersonName = requestContext.getString("billingDetailsPersonName"); 
     String billingDetailsCompanyName = requestContext.getString("billingDetailsCompanyName"); 
@@ -125,6 +127,7 @@ public class SaveStudentDetailsJSONRequestController extends JSONRequestControll
     courseStudentDAO.updateAdditionalInfo(courseStudent, additionalInfo);
     courseStudentDAO.updateRoom(courseStudent, room);
     courseStudentDAO.updateLodgingFee(courseStudent, lodgingFee, lodgingFeeCurrency);
+    courseStudentDAO.updateReservationFee(courseStudent, reservationFee, reservationFeeCurrency);
   }
 
   private boolean allNull(Object... objs) {

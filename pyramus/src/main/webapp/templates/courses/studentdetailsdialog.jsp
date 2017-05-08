@@ -21,6 +21,8 @@
           roomId: form.roomId.value,
           lodgingFee: form.lodgingFee.value,
           lodgingFeeCurrency: form.lodgingFeeCurrency.value,
+          reservationFee: form.reservationFee.value,
+          reservationFeeCurrency: form.reservationFeeCurrency.value,
           billingDetailsId: form.billingDetailsId.value,
           billingDetailsPersonName: form.billingDetailsPersonName.value,
           billingDetailsCompanyName: form.billingDetailsCompanyName.value,
@@ -164,6 +166,20 @@
         
         <input type="text" name="lodgingFee" value="${courseStudent.lodgingFee}"/>
         <select name="lodgingFeeCurrency">
+          <c:forEach var="currency" items="${currencies}">
+            <option value="${currency.currencyCode}">${currency.currencyCode}</option>
+          </c:forEach>
+        </select>
+      </div> 
+      
+      <div class="genericFormSection">
+        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+          <jsp:param name="titleLocale" value="courses.studentDetails.reservationFeeTitle"/>
+          <jsp:param name="helpLocale" value="courses.studentDetails.reservationFeeHelp"/>
+        </jsp:include>
+        
+        <input type="text" name="reservationFee" value="${courseStudent.reservationFee}"/>
+        <select name="reservationFeeCurrency">
           <c:forEach var="currency" items="${currencies}">
             <option value="${currency.currencyCode}">${currency.currencyCode}</option>
           </c:forEach>

@@ -8,6 +8,10 @@
   width:auto;
 }
 
+#studentDetailsForm > .genericFormSection > input[name="reservationFee"] {
+  width:auto;
+}
+
 #new-billing-details-container {
   margin:5px 0 0 0;
   padding:0.01em;

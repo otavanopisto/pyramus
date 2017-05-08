@@ -476,8 +476,8 @@ public class CourseController {
   /* CourseStudent */
   
   public CourseStudent createCourseStudent(Course course, Student student, CourseEnrolmentType enrolmentType, CourseParticipationType participationType, 
-      Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, BigDecimal lodgingFee, Currency lodgingFeeCurrency, String organization, String additionalInfo, Room room) throws DuplicateCourseStudentException {
-    return courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, billingDetails, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
+      Date enrolmentDate, Boolean lodging, CourseOptionality optionality, BillingDetails billingDetails, BigDecimal lodgingFee, Currency lodgingFeeCurrency, BigDecimal reservationFee, Currency reservationFeeCurrency, String organization, String additionalInfo, Room room) throws DuplicateCourseStudentException {
+    return courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, billingDetails, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, reservationFee, reservationFeeCurrency, Boolean.FALSE);
   }
   
   public CourseStudent findCourseStudentById(Long id) {

@@ -651,12 +651,14 @@ public class CourseRESTService extends AbstractRESTService {
     Room room = null;
     BigDecimal lodgingFee = null;
     Currency lodgingFeeCurrency = null;
+    BigDecimal reservationFee = null;
+    Currency reservationFeeCurrency = null;
 
     try {
       return Response.status(Status.OK).entity(
           objectFactory.createModel(courseController.createCourseStudent(course, student, enrolmentType, participantionType,  
               toDate(entity.getEnrolmentTime()), entity.getLodging(), optionality, billingDetails, lodgingFee, lodgingFeeCurrency, 
-              organization, additionalInfo, room)))
+              reservationFee, reservationFeeCurrency, organization, additionalInfo, room)))
         .build();
     } catch (DuplicateCourseStudentException dcse) {
       logger.log(Level.SEVERE, "Attempt to add CourseStudent when it already exists (student=" + 
