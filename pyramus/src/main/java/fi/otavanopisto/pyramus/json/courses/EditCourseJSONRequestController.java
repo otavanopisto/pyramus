@@ -661,10 +661,12 @@ public class EditCourseJSONRequestController extends JSONRequestController {
         Room room = null;
         BigDecimal lodgingFee = null;
         Currency lodgingFeeCurrency = null;
+        BigDecimal reservationFee = null;
+        Currency reservationFeeCurrency = null;
 
         try {
           courseStudent = courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, 
-              optionality, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, Boolean.FALSE);
+              optionality, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, reservationFee, reservationFeeCurrency, Boolean.FALSE);
         } catch (DuplicateCourseStudentException dcse) {
           Locale locale = requestContext.getRequest().getLocale();
           throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 

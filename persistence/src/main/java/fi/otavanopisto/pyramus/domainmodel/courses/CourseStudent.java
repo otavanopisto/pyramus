@@ -137,6 +137,22 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
     this.additionalInfo = additionalInfo;
   }
 
+  public BigDecimal getReservationFee() {
+    return reservationFee;
+  }
+
+  public void setReservationFee(BigDecimal reservationFee) {
+    this.reservationFee = reservationFee;
+  }
+
+  public Currency getReservationFeeCurrency() {
+    return reservationFeeCurrency;
+  }
+
+  public void setReservationFeeCurrency(Currency reservationFeeCurrency) {
+    this.reservationFeeCurrency = reservationFeeCurrency;
+  }
+
   @Column (nullable=false)
   @Temporal (value=TemporalType.TIMESTAMP)
   private Date enrolmentTime;
@@ -168,6 +184,10 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
   @ManyToOne 
   @JoinColumn(name="billingDetails")
   private BillingDetails billingDetails;
+
+  private BigDecimal reservationFee;
+  
+  private Currency reservationFeeCurrency;
   
   private BigDecimal lodgingFee;
   

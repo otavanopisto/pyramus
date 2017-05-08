@@ -64,7 +64,8 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
    */
   public CourseStudent create(Course course, Student student, CourseEnrolmentType courseEnrolmentType,
       CourseParticipationType participationType, Date enrolmentDate, Boolean lodging, CourseOptionality optionality, 
-      BillingDetails billingDetails, String organization, String additionalInfo, Room room, BigDecimal lodgingFee, Currency lodgingFeeCurrency, Boolean archived) throws DuplicateCourseStudentException {
+      BillingDetails billingDetails, String organization, String additionalInfo, Room room, BigDecimal lodgingFee, 
+      Currency lodgingFeeCurrency, BigDecimal reservationFee, Currency reservationFeeCurrency, Boolean archived) throws DuplicateCourseStudentException {
     
     List<CourseStudent> courseStudents = listByCourseAndStudent(course, student);
     if (!courseStudents.isEmpty())
@@ -84,6 +85,8 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     courseStudent.setRoom(room);
     courseStudent.setLodgingFee(lodgingFee);
     courseStudent.setLodgingFeeCurrency(lodgingFeeCurrency);
+    courseStudent.setReservationFee(reservationFee);
+    courseStudent.setReservationFeeCurrency(reservationFeeCurrency);
     courseStudent.setOrganization(organization);
     courseStudent.setAdditionalInfo(additionalInfo);
     
@@ -403,6 +406,12 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
   public CourseStudent updateLodgingFee(CourseStudent courseStudent, BigDecimal lodgingFee, Currency lodgingFeeCurrency) {
     courseStudent.setLodgingFee(lodgingFee);
     courseStudent.setLodgingFeeCurrency(lodgingFeeCurrency);
+    return persist(courseStudent);
+  }
+
+  public CourseStudent updateReservationFee(CourseStudent courseStudent, BigDecimal reservationFee, Currency reservationFeeCurrency) {
+    courseStudent.setReservationFee(reservationFee);
+    courseStudent.setReservationFeeCurrency(reservationFeeCurrency);
     return persist(courseStudent);
   }
 
