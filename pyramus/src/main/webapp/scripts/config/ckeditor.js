@@ -1,4 +1,3 @@
-//CKEDITOR.config.skin = "pyramus,../../ckskins/pyramus/";
 CKEDITOR.config.scayt_autoStartup  = false;
 CKEDITOR.config.entities = false;
 
