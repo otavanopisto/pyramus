@@ -400,16 +400,34 @@
       function showCommentForm(parentNode, studentId) {
         var container = $("commentFormContainer." + studentId);
         container.remove();
-        
-        parentNode.appendChild(container);
 
-        container.show();
+        // ckeditor needs to be redone because chrome initializes 
+        // everything in readonly mode when the element is not visible.
+        var editorId = "commentText." + studentId;
+        var editorInstance = CKEDITOR.instances[editorId];
+        if (editorInstance) {
+          var textareaElement = editorInstance.element.$;
+          if (textareaElement) {
+            parentNode.appendChild(container);
+  
+            container.show();
+  
+            editorInstance.destroy(true);
 
-        var elementBottom = container.cumulativeOffset().top + container.getDimensions().height;
-        var viewportBottom = document.viewport.getScrollOffsets().top + document.viewport.getDimensions().height;
-        
-        if (viewportBottom < elementBottom) {
-          Effect.ScrollTo(container, { duration:'0.2', offset: -20 });
+            var options = {
+              language: document.getCookie('pyramusLocale'),
+              toolbar: textareaElement.getAttribute('ix:cktoolbar')
+            };
+            
+            CKEDITOR.replace(editorId, options);
+  
+            var elementBottom = container.cumulativeOffset().top + container.getDimensions().height;
+            var viewportBottom = document.viewport.getScrollOffsets().top + document.viewport.getDimensions().height;
+            
+            if (viewportBottom < elementBottom) {
+              Effect.ScrollTo(container, { duration:'0.2', offset: -20 });
+            }
+          }
         }
       }
 
@@ -551,7 +569,7 @@
                 </div>
 
                 <div id="commentFormContainer.${student.id}" style="display: none" class="studentCommentContainer">
-                  <form method="post" id="newContactEntryCommentForm.${student.id}" onsubmit="saveEntryComment(event, ${student.id});">
+                  <form method="post" id="newContactEntryCommentForm.${student.id}" name="newContactEntryCommentForm_${student.id}" onsubmit="saveEntryComment(event, ${student.id});">
                     <input type="hidden" name="entryId" value="-1"/>
                     <input type="hidden" name="commentId" value="-1"/>
                     <input type="hidden" name="commentCreatorName" value=""/>
@@ -570,7 +588,7 @@
                   <div class="studentContactLogViewTitle" id="studentContactLogNewEntryTitle"><fmt:message key="students.viewStudent.contactLogNewEntryTitle"/></div>
                   <div class="studentContactLogViewTitle" id="studentContactLogEditEntryTitle" style="display:none;"><fmt:message key="students.viewStudent.contactLogEditEntryTitle"/></div>
                   <div class="studentContactNewEntryFormContainer">
-                    <form method="post" id="newContactEntryForm.${student.id}" onsubmit="saveEvent(event, ${student.id});">
+                    <form method="post" id="newContactEntryForm.${student.id}" name="newContactEntryForm_${student.id}" onsubmit="saveEvent(event, ${student.id});">
                       <input type="hidden" name="studentId" value="${student.id}"/>
                       <input type="hidden" name="entryId" value="-1"/>
   
