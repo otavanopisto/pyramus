@@ -24,6 +24,7 @@ import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.dao.Test;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
@@ -244,6 +245,22 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
         ));
     
     return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public Test<StudentProject> listByProject2(Project project) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StudentProject> criteria = criteriaBuilder.createQuery(StudentProject.class);
+    Root<StudentProject> root = criteria.from(StudentProject.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(StudentProject_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(root.get(StudentProject_.project), project)
+        ));
+    
+    return new Test<StudentProject>(entityManager.createQuery(criteria));
   }
   
 }

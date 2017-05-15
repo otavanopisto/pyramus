@@ -38,7 +38,7 @@
     </c:forEach>
 
     <script type="text/javascript">
-      function setupRelatedCommandsBasic() {
+      function setupRelatedCommandsBasic(projectId) {
         var relatedActionsHoverMenu = new IxHoverMenu($('basicRelatedActionsHoverMenuContainer'), {
           text: '<fmt:message key="projects.viewProject.basicTabRelatedActionsLabel"/>'
         });
@@ -47,15 +47,16 @@
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="projects.viewProject.basicTabRelatedActionEditProjectLabel"/>',
           onclick: function (event) {
-            redirectTo(GLOBAL_contextPath + '/projects/editproject.page?project=${project.id}');
+            redirectTo(GLOBAL_contextPath + '/projects/editproject.page?project=' + projectId);
           }
         }));
       }
 
       function onLoad(event) {
         var tabControl = new IxProtoTabs($('tabs'));
-        setupRelatedCommandsBasic();
-
+        var projectId = ${project.id};
+        setupRelatedCommandsBasic(projectId);
+        
         var modulesTable = new IxTable($('modulesTableContainer'), {
           id : "modulesTable",
           columns : [ {
@@ -127,7 +128,7 @@
 
         JSONRequest.request("projects/getprojectmodules.json", {
           parameters: {
-            project: ${project.id}
+            project: projectId
           },
           onSuccess: function(jsonResponse) {
             var projectModules = jsonResponse.projectModules;
@@ -145,7 +146,7 @@
             $('viewProjectModulesTotalValue').innerHTML = modulesTable.getRowCount(); 
           } 
         });
-        
+
         var studentProjectsTable = new IxTable($('studentProjectsTableContainer'), {
           id : "studentProjectsTable",
           columns : [ {
@@ -355,44 +356,48 @@
             paramName: 'studentProjectId'
           }]
         });
-        
-        var studentProjectsArr = new Array();
-        <c:forEach var="stuP" items="${studentProjects}">
-          <c:set var="stuPGradeText"></c:set>
-          <c:set var="stuPDateText"></c:set>
-          <c:forEach var="stuPAss" items="${stuP.assessments}" varStatus="spaStat">
-            <c:if test="${not spaStat.first}">
-              <c:set var="stuPGradeText">${stuPGradeText},&nbsp;</c:set>
-              <c:set var="stuPDateText">${stuPDateText},&nbsp;</c:set>
-            </c:if>
-            <c:choose>
-              <c:when test="${stuPAss.grade ne null}">
-                <c:set var="stuPGradeText">${stuPGradeText}${stuPAss.grade.name}</c:set>
-              </c:when>
-              <c:otherwise>
-                <c:set var="stuPGradeText">${stuPGradeText}-</c:set>
-              </c:otherwise>
-            </c:choose>
-            <c:set var="stuPDateText">${stuPDateText}<fmt:formatDate value="${stuPAss.date}"/></c:set>
-          </c:forEach>
-          
-          studentProjectsArr.push([
-            '${stuP.studentProject.student.lastName}, ${stuP.studentProject.student.firstName}',
-            '${stuP.studentProject.student.studyProgramme.name}',
-            '${stuP.studentProject.optionality}',
-            '${stuPDateText}',
-            '${stuPGradeText}',
-            '${stuP.passedMandatoryModuleCount}' + '/' + '${stuP.mandatoryModuleCount}',
-            '${stuP.passedOptionalModuleCount}' + '/' + '${stuP.optionalModuleCount}',
-            '',
-            '',
-            '${stuP.studentProject.student.person.id}',
-            '${stuP.studentProject.id}'
-          ]);
-        </c:forEach>
-        studentProjectsTable.addRows(studentProjectsArr);
-        
-        $('viewProjectStudentProjectsTotalValue').innerHTML = studentProjectsTable.getRowCount(); 
+
+        JSONRequest.request("projects/liststudentprojects.json", {
+          parameters: {
+            project: projectId
+          },
+          onSuccess: function(jsonResponse) {
+            var studentProjects = jsonResponse.studentProjects;
+
+            var studentProjectsArr = new Array();
+
+            for (var i = 0; i < studentProjects.length; i++) {
+              var studentProject = studentProjects[i];
+              var datesText = "";
+              for (var j = 0; j < studentProject.dates.length; j++) {
+                if (datesText.length > 0)
+                  datesText += ", ";
+
+                var date = new Date();
+                date.setTime(studentProject.dates[j]);
+                // TODO: dateformatting is bad but the same as in ixtable
+                datesText += date.getDate().toPaddedString(2) + '.' + (date.getMonth() + 1).toPaddedString(2) + '.' + date.getFullYear();
+              }
+              
+              studentProjectsArr.push([
+                studentProject.studentName,
+                studentProject.studyProgrammeName,
+                studentProject.optionality,
+                datesText,
+                studentProject.grades,
+                studentProject.passedMandatory,
+                studentProject.passedOptional,
+                '',
+                '',
+                studentProject.personId,
+                studentProject.studentProjectId
+             ]);
+            }
+              
+            studentProjectsTable.addRows(studentProjectsArr);
+            $('viewProjectStudentProjectsTotalValue').innerHTML = studentProjectsTable.getRowCount(); 
+          } 
+        });
       }
 
     </script>
