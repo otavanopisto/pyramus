@@ -93,12 +93,12 @@ public class ListStudentProjectsJSONRequestController extends JSONRequestControl
     if (studentProjectsByProjectPage.size() > 0) {
       statusMessage = Messages.getInstance().getText(
           locale,
-          "students.searchStudents.searchStatus",
+          "projects.viewProject.studentProjects.searchStatus",
           new Object[] { firstResult + 1, firstResult + resultsCount,
               numStudentProjectsTotal });
     }
     else {
-      statusMessage = Messages.getInstance().getText(locale, "students.searchStudents.searchStatusNoMatches");
+      statusMessage = Messages.getInstance().getText(locale, "projects.viewProject.studentProjects.searchStatusNoMatches");
     }
     
     requestContext.addResponseParameter("studentProjects", studentProjectsJSON);
