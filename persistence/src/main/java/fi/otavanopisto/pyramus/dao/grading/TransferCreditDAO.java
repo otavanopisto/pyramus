@@ -136,5 +136,5 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
     
     return entityManager.createQuery(criteria).getSingleResult();
   }
-  
+
 }

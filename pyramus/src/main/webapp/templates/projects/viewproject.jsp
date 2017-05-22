@@ -22,6 +22,7 @@
     <jsp:include page="/templates/generic/draftapi_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/validation_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/hovermenu_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/searchnavigation_support.jsp"></jsp:include>
     
     <c:set var="projectOptionalModuleCount">0</c:set>
     <c:set var="projectMandatoryModuleCount">0</c:set>
@@ -38,7 +39,7 @@
     </c:forEach>
 
     <script type="text/javascript">
-      function setupRelatedCommandsBasic() {
+      function setupRelatedCommandsBasic(projectId) {
         var relatedActionsHoverMenu = new IxHoverMenu($('basicRelatedActionsHoverMenuContainer'), {
           text: '<fmt:message key="projects.viewProject.basicTabRelatedActionsLabel"/>'
         });
@@ -47,15 +48,16 @@
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="projects.viewProject.basicTabRelatedActionEditProjectLabel"/>',
           onclick: function (event) {
-            redirectTo(GLOBAL_contextPath + '/projects/editproject.page?project=${project.id}');
+            redirectTo(GLOBAL_contextPath + '/projects/editproject.page?project=' + projectId);
           }
         }));
       }
 
       function onLoad(event) {
         var tabControl = new IxProtoTabs($('tabs'));
-        setupRelatedCommandsBasic();
-
+        var projectId = ${project.id};
+        setupRelatedCommandsBasic(projectId);
+        
         var modulesTable = new IxTable($('modulesTableContainer'), {
           id : "modulesTable",
           columns : [ {
@@ -127,7 +129,7 @@
 
         JSONRequest.request("projects/getprojectmodules.json", {
           parameters: {
-            project: ${project.id}
+            project: projectId
           },
           onSuccess: function(jsonResponse) {
             var projectModules = jsonResponse.projectModules;
@@ -141,11 +143,9 @@
                   projectModules[i].id]);
             }
             modulesTable.addRows(rows);
-
-            $('viewProjectModulesTotalValue').innerHTML = modulesTable.getRowCount(); 
           } 
         });
-        
+
         var studentProjectsTable = new IxTable($('studentProjectsTableContainer'), {
           id : "studentProjectsTable",
           columns : [ {
@@ -355,46 +355,74 @@
             paramName: 'studentProjectId'
           }]
         });
+
+        // Student Projects paging
         
-        var studentProjectsArr = new Array();
-        <c:forEach var="stuP" items="${studentProjects}">
-          <c:set var="stuPGradeText"></c:set>
-          <c:set var="stuPDateText"></c:set>
-          <c:forEach var="stuPAss" items="${stuP.assessments}" varStatus="spaStat">
-            <c:if test="${not spaStat.first}">
-              <c:set var="stuPGradeText">${stuPGradeText},&nbsp;</c:set>
-              <c:set var="stuPDateText">${stuPDateText},&nbsp;</c:set>
-            </c:if>
-            <c:choose>
-              <c:when test="${stuPAss.grade ne null}">
-                <c:set var="stuPGradeText">${stuPGradeText}${stuPAss.grade.name}</c:set>
-              </c:when>
-              <c:otherwise>
-                <c:set var="stuPGradeText">${stuPGradeText}-</c:set>
-              </c:otherwise>
-            </c:choose>
-            <c:set var="stuPDateText">${stuPDateText}<fmt:formatDate value="${stuPAss.date}"/></c:set>
-          </c:forEach>
-          
-          studentProjectsArr.push([
-            '${stuP.studentProject.student.lastName}, ${stuP.studentProject.student.firstName}',
-            '${stuP.studentProject.student.studyProgramme.name}',
-            '${stuP.studentProject.optionality}',
-            '${stuPDateText}',
-            '${stuPGradeText}',
-            '${stuP.passedMandatoryModuleCount}' + '/' + '${stuP.mandatoryModuleCount}',
-            '${stuP.passedOptionalModuleCount}' + '/' + '${stuP.optionalModuleCount}',
-            '',
-            '',
-            '${stuP.studentProject.student.person.id}',
-            '${stuP.studentProject.id}'
-          ]);
-        </c:forEach>
-        studentProjectsTable.addRows(studentProjectsArr);
-        
-        $('viewProjectStudentProjectsTotalValue').innerHTML = studentProjectsTable.getRowCount(); 
+        new IxSearchNavigation($('searchResultsPagesContainer'), {
+          id: 'studentProjectsNavigation',
+          maxNavigationPages: 19,
+          onclick: function(event) {
+            doSearch(projectId, event.page);
+          }
+        }); 
+
+        doSearch(projectId, 0);
       }
 
+      function doSearch(projectId, page) {
+        JSONRequest.request("projects/liststudentprojects.json", {
+          parameters: {
+            project: projectId,
+            page: page,
+            maxResults: 20
+          },
+          onSuccess: function(jsonResponse) {
+            var studentProjects = jsonResponse.studentProjects;
+            
+            var studentProjectsArr = new Array();
+
+            for (var i = 0; i < studentProjects.length; i++) {
+              var studentProject = studentProjects[i];
+              var datesText = "";
+              for (var j = 0; j < studentProject.dates.length; j++) {
+                if (datesText.length > 0)
+                  datesText += ", ";
+
+                var date = new Date();
+                date.setTime(studentProject.dates[j]);
+                // TODO: dateformatting is bad but the same as in ixtable
+                datesText += date.getDate().toPaddedString(2) + '.' + (date.getMonth() + 1).toPaddedString(2) + '.' + date.getFullYear();
+              }
+              
+              studentProjectsArr.push([
+                studentProject.studentName,
+                studentProject.studyProgrammeName,
+                studentProject.optionality,
+                datesText,
+                studentProject.grades,
+                studentProject.passedMandatory,
+                studentProject.passedOptional,
+                '',
+                '',
+                studentProject.personId,
+                studentProject.studentProjectId
+             ]);
+            }
+
+            var studentProjectsTable = getIxTableById('studentProjectsTable');
+
+            studentProjectsTable.detachFromDom();
+            studentProjectsTable.deleteAllRows();
+            studentProjectsTable.addRows(studentProjectsArr);
+            studentProjectsTable.reattachToDom();
+
+            getSearchNavigationById('studentProjectsNavigation').setTotalPages(jsonResponse.pages);
+            getSearchNavigationById('studentProjectsNavigation').setCurrentPage(jsonResponse.page);
+            $('searchResultsStatusMessageContainer').innerHTML = jsonResponse.statusMessage;
+          } 
+        });
+      }
+      
     </script>
   </head>
   
@@ -492,12 +520,12 @@
         <!-- StudentProjects tab -->
         
         <div id="studentProjects" class="tabContentixTableFormattedData">
-          <div id="studentProjectsContainer">
-            <div id="studentProjectsTableContainer"></div>
-          </div>
-
-          <div id="viewProjectStudentProjectsTotalContainer">
-            <fmt:message key="projects.viewProject.studentProjectsTotal"/> <span id="viewProjectStudentProjectsTotalValue"></span>
+          <div id="searchResultsWrapper">
+            <div id="searchResultsContainer" class="tabbedSearchResultsContainer">
+              <div id="searchResultsStatusMessageContainer" class="searchResultsMessageContainer"></div>
+              <div id="studentProjectsTableContainer"></div>
+              <div id="searchResultsPagesContainer" class="tabbedSearchResultsPagesContainer"></div>
+            </div>
           </div>
         </div>
 
