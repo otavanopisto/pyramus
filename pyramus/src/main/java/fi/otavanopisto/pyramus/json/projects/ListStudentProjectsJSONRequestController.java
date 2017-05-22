@@ -3,10 +3,11 @@ package fi.otavanopisto.pyramus.json.projects;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.Test;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
@@ -19,7 +20,6 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
-import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProjectModule;
@@ -40,24 +40,22 @@ public class ListStudentProjectsJSONRequestController extends JSONRequestControl
     ProjectAssessmentDAO projectAssessmentDAO = DAOFactory.getInstance().getProjectAssessmentDAO();
     
     Long projectId = requestContext.getLong("project");
-    Project project = projectDAO.findById(projectId );
+    Project project = projectDAO.findById(projectId);
+
+    Integer page = requestContext.getInteger("page");
+    page = page != null ? page : 0;
+    Integer maxResults = requestContext.getInteger("maxResults");
+    maxResults = maxResults != null ? maxResults : 25;
+
+    int firstResult = page * maxResults;
+    long numStudentProjectsTotal = studentProjectDAO.countByProject(project);
+    int numPages = (int) Math.ceil((double) numStudentProjectsTotal / maxResults);
     
-//    List<StudentProject> studentProjectsByProject = studentProjectDAO.listByProject(project);
-    Test<StudentProject> studentProjectsByProject = studentProjectDAO.listByProject2(project);
-//    Collections.sort(studentProjectsByProject, new Comparator<StudentProject>() {
-//      @Override
-//      public int compare(StudentProject o1, StudentProject o2) {
-//        int v = o1.getStudent().getLastName().compareToIgnoreCase(o2.getStudent().getLastName());
-//        
-//        return v != 0 ? v : o1.getStudent().getFirstName().compareToIgnoreCase(o2.getStudent().getFirstName());
-//      }
-//    });
+    List<StudentProject> studentProjectsByProjectPage = studentProjectDAO.listByProject(project, firstResult, maxResults);
+    int resultsCount = studentProjectsByProjectPage.size();
     
     JSONArray studentProjectsJSON = new JSONArray();
-    int count = 0;
-    for (StudentProject sp : studentProjectsByProject) {
-      count++;
-      System.out.println("Student #" + count);
+    for (StudentProject sp : studentProjectsByProjectPage) {
       StudentProjectBean bean = beanify(sp, courseDAO, courseStudentDAO, transferCreditDAO, courseAssessmentDAO, projectAssessmentDAO);
       
       JSONObject spJSON = new JSONObject();
@@ -90,7 +88,23 @@ public class ListStudentProjectsJSONRequestController extends JSONRequestControl
       studentProjectsJSON.add(spJSON);
     }
 
+    String statusMessage;
+    Locale locale = requestContext.getRequest().getLocale();
+    if (studentProjectsByProjectPage.size() > 0) {
+      statusMessage = Messages.getInstance().getText(
+          locale,
+          "students.searchStudents.searchStatus",
+          new Object[] { firstResult + 1, firstResult + resultsCount,
+              numStudentProjectsTotal });
+    }
+    else {
+      statusMessage = Messages.getInstance().getText(locale, "students.searchStudents.searchStatusNoMatches");
+    }
+    
     requestContext.addResponseParameter("studentProjects", studentProjectsJSON);
+    requestContext.addResponseParameter("page", page);
+    requestContext.addResponseParameter("pages", numPages);
+    requestContext.addResponseParameter("statusMessage", statusMessage);
   }
 
   private StudentProjectBean beanify(StudentProject studentProject, CourseDAO courseDAO,
@@ -103,18 +117,6 @@ public class ListStudentProjectsJSONRequestController extends JSONRequestControl
     int passedMandatoryModuleCount = 0;
     int passedOptionalModuleCount = 0;
     
-    courseDAO.flush();
-    courseDAO.clear();
-
-    transferCreditDAO.flush();
-    transferCreditDAO.clear();
-
-    courseAssessmentDAO.flush();
-    courseAssessmentDAO.clear();
-    
-    projectAssessmentDAO.flush();
-    projectAssessmentDAO.clear();
-    
     /**
      * Go through project modules to
      *  a) count mandatory/optional modules
@@ -122,11 +124,7 @@ public class ListStudentProjectsJSONRequestController extends JSONRequestControl
      *  c) create beans to be passed to jsp
      */
 
-//    List<TransferCredit> transferCreditsByStudent = transferCreditDAO.listByStudent(studentProject.getStudent());
-//    List<CourseAssessment> courseAssessmentsByStudent = courseAssessmentDAO.listByStudent(studentProject.getStudent());
-    
-//    System.out.println("Student: " + studentProject.getStudent().getId());
-    printHeap();
+    List<TransferCredit> transferCreditsByStudent = transferCreditDAO.listByStudent(studentProject.getStudent());
     
     for (StudentProjectModule studentProjectModule : studentProject.getStudentProjectModules()) {
       boolean hasPassingGrade = false;
@@ -143,29 +141,9 @@ public class ListStudentProjectsJSONRequestController extends JSONRequestControl
         }
       }
 
-//      for (CourseAssessment courseAssessment : courseAssessmentsByStudent) {
-//        if (courseAssessment.getCourseStudent() != null) {
-//          if (courseAssessment.getCourseStudent().getCourse() != null) {
-//            if (courseAssessment.getCourseStudent().getCourse().getModule() != null) {
-//              Module module = courseAssessment.getCourseStudent().getCourse().getModule();
-//              
-//              if (module.getId().equals(studentProjectModule.getModule().getId())) {
-//                if (courseAssessment.getGrade() != null && courseAssessment.getGrade().getPassingGrade()) {
-////                  System.out.println("found module - passing grade");
-//                  hasPassingGrade = true; 
-//                  break;
-//                }
-////                System.out.println("found module - no passing grade");
-//              }
-//            }
-//          }
-//        }
-//      }      
-      
       if (!hasPassingGrade) {
         if ((studentProjectModule.getModule().getCourseNumber() != null) && (studentProjectModule.getModule().getCourseNumber() != -1) && (studentProjectModule.getModule().getSubject() != null)) {
-          List<TransferCredit> tcs = transferCreditDAO.findBy(studentProject.getStudent(), studentProjectModule.getModule().getSubject(), studentProjectModule.getModule().getCourseNumber());
-          for (TransferCredit tc : tcs) { // transferCreditsByStudent) {
+          for (TransferCredit tc : transferCreditsByStudent) {
             if ((tc.getCourseNumber() != null) && (tc.getCourseNumber() != -1) && (tc.getSubject() != null)) {
               if (tc.getCourseNumber().equals(studentProjectModule.getModule().getCourseNumber()) && tc.getSubject().equals(studentProjectModule.getModule().getSubject())) {
                 if (tc.getGrade() != null && tc.getGrade().getPassingGrade()) {
@@ -199,37 +177,6 @@ public class ListStudentProjectsJSONRequestController extends JSONRequestControl
     });
     
     return new StudentProjectBean(studentProject, mandatoryModuleCount, optionalModuleCount, passedMandatoryModuleCount, passedOptionalModuleCount, projectAssessments);
-  }
-  
-  public void printHeap() {
-//    int mb = 1024*1024;
-    int mb = 1024;
-    
-    //Getting the runtime reference from system
-    Runtime runtime = Runtime.getRuntime();
-    
-//    System.out.println("##### Heap utilization statistics [MB] #####");
-    
-    long used = (runtime.totalMemory() - runtime.freeMemory()) / mb;
-    long free = runtime.freeMemory() / mb;
-    long total = runtime.totalMemory() / mb;
-    long max = runtime.maxMemory() / mb;
-    
-    System.out.println(String.format("Used: %d\tFree: %d", used, free));
-    
-//    //Print used memory
-//    System.out.println("Used Memory:" 
-//      + (runtime.totalMemory() - runtime.freeMemory()) / mb);
-//
-//    //Print free memory
-//    System.out.println("Free Memory:" 
-//      + runtime.freeMemory() / mb);
-//    
-//    //Print total available memory
-//    System.out.println("Total Memory:" + runtime.totalMemory() / mb);
-//
-//    //Print Maximum available memory
-//    System.out.println("Max Memory:" + runtime.maxMemory() / mb);
   }
   
   public class StudentProjectBean {

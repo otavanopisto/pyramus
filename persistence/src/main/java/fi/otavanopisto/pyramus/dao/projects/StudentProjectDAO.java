@@ -7,8 +7,10 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,7 +26,6 @@ import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
-import fi.otavanopisto.pyramus.dao.Test;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
@@ -32,6 +33,7 @@ import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject;
 import fi.otavanopisto.pyramus.domainmodel.projects.StudentProject_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
@@ -231,36 +233,46 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public List<StudentProject> listByProject(Project project) {
+  public List<StudentProject> listByProject(Project project, int firstResult, int maxResults) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<StudentProject> criteria = criteriaBuilder.createQuery(StudentProject.class);
     Root<StudentProject> root = criteria.from(StudentProject.class);
+    Join<StudentProject, Student> studentJoin = root.join(StudentProject_.student);
+    
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(StudentProject_.archived), Boolean.FALSE),
             criteriaBuilder.equal(root.get(StudentProject_.project), project)
         ));
+
+    criteria.orderBy(
+        criteriaBuilder.asc(studentJoin.get(Student_.lastName)),
+        criteriaBuilder.asc(studentJoin.get(Student_.firstName))
+    );
     
-    return entityManager.createQuery(criteria).getResultList();
+    TypedQuery<StudentProject> query = entityManager.createQuery(criteria);
+    query.setFirstResult(firstResult);
+    query.setMaxResults(maxResults);
+    return query.getResultList();
   }
 
-  public Test<StudentProject> listByProject2(Project project) {
+  public Long countByProject(Project project) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<StudentProject> criteria = criteriaBuilder.createQuery(StudentProject.class);
+    CriteriaQuery<Long> criteria = criteriaBuilder.createQuery(Long.class);
     Root<StudentProject> root = criteria.from(StudentProject.class);
-    criteria.select(root);
+    criteria.select(criteriaBuilder.count(root));
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(StudentProject_.archived), Boolean.FALSE),
             criteriaBuilder.equal(root.get(StudentProject_.project), project)
         ));
     
-    return new Test<StudentProject>(entityManager.createQuery(criteria));
+    return entityManager.createQuery(criteria).getSingleResult();
   }
   
 }

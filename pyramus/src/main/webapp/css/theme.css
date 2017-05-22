@@ -1482,6 +1482,20 @@ a.searchResultPageContainerActive{
   border-radius:3px;
 }
 
+/* SearchResultsContainer inside tabContent */
+
+.tabbedSearchResultsContainer {
+  z-index:8;
+  margin:-1px 0px 0px 0px;
+  padding: 3px 2px 0px 2px;
+  position:relative;
+}
+
+.tabbedSearchResultsPagesContainer {
+  padding: 0px 10px 0px 10px;
+}
+
+
 /* Generic Modal search definitions */
 
 .modalSearchContainer{

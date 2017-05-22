@@ -22,6 +22,7 @@
     <jsp:include page="/templates/generic/draftapi_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/validation_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/hovermenu_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/searchnavigation_support.jsp"></jsp:include>
     
     <c:set var="projectOptionalModuleCount">0</c:set>
     <c:set var="projectMandatoryModuleCount">0</c:set>
@@ -142,8 +143,6 @@
                   projectModules[i].id]);
             }
             modulesTable.addRows(rows);
-
-            $('viewProjectModulesTotalValue').innerHTML = modulesTable.getRowCount(); 
           } 
         });
 
@@ -357,13 +356,29 @@
           }]
         });
 
+        // Student Projects paging
+        
+        new IxSearchNavigation($('searchResultsPagesContainer'), {
+          id: 'studentProjectsNavigation',
+          maxNavigationPages: 19,
+          onclick: function(event) {
+            doSearch(projectId, event.page);
+          }
+        }); 
+
+        doSearch(projectId, 0);
+      }
+
+      function doSearch(projectId, page) {
         JSONRequest.request("projects/liststudentprojects.json", {
           parameters: {
-            project: projectId
+            project: projectId,
+            page: page,
+            maxResults: 20
           },
           onSuccess: function(jsonResponse) {
             var studentProjects = jsonResponse.studentProjects;
-
+            
             var studentProjectsArr = new Array();
 
             for (var i = 0; i < studentProjects.length; i++) {
@@ -393,13 +408,21 @@
                 studentProject.studentProjectId
              ]);
             }
-              
+
+            var studentProjectsTable = getIxTableById('studentProjectsTable');
+
+            studentProjectsTable.detachFromDom();
+            studentProjectsTable.deleteAllRows();
             studentProjectsTable.addRows(studentProjectsArr);
-            $('viewProjectStudentProjectsTotalValue').innerHTML = studentProjectsTable.getRowCount(); 
+            studentProjectsTable.reattachToDom();
+
+            getSearchNavigationById('studentProjectsNavigation').setTotalPages(jsonResponse.pages);
+            getSearchNavigationById('studentProjectsNavigation').setCurrentPage(jsonResponse.page);
+            $('searchResultsStatusMessageContainer').innerHTML = jsonResponse.statusMessage;
           } 
         });
       }
-
+      
     </script>
   </head>
   
@@ -497,12 +520,12 @@
         <!-- StudentProjects tab -->
         
         <div id="studentProjects" class="tabContentixTableFormattedData">
-          <div id="studentProjectsContainer">
-            <div id="studentProjectsTableContainer"></div>
-          </div>
-
-          <div id="viewProjectStudentProjectsTotalContainer">
-            <fmt:message key="projects.viewProject.studentProjectsTotal"/> <span id="viewProjectStudentProjectsTotalValue"></span>
+          <div id="searchResultsWrapper">
+            <div id="searchResultsContainer" class="tabbedSearchResultsContainer">
+              <div id="searchResultsStatusMessageContainer" class="searchResultsMessageContainer"></div>
+              <div id="studentProjectsTableContainer"></div>
+              <div id="searchResultsPagesContainer" class="tabbedSearchResultsPagesContainer"></div>
+            </div>
           </div>
         </div>
 
