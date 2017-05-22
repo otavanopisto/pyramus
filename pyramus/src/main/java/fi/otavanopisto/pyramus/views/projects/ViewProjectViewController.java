@@ -13,7 +13,6 @@ import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.otavanopisto.pyramus.dao.projects.ProjectDAO;
-import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
@@ -36,7 +35,6 @@ public class ViewProjectViewController extends PyramusViewController implements 
   public void process(PageRequestContext pageRequestContext) {
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     ProjectDAO projectDAO = DAOFactory.getInstance().getProjectDAO();
-    StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
 
     Long projectId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("project"));
@@ -54,11 +52,8 @@ public class ViewProjectViewController extends PyramusViewController implements 
     List<EducationalTimeUnit> educationalTimeUnits = educationalTimeUnitDAO.listUnarchived();
     Collections.sort(educationalTimeUnits, new StringAttributeComparator("getName"));
     
-    Long studentProjectCount = studentProjectDAO.countByProject(project);
-    
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());
     pageRequestContext.getRequest().setAttribute("project", project);
-    pageRequestContext.getRequest().setAttribute("studentProjectCount", studentProjectCount);
     pageRequestContext.getRequest().setAttribute("optionalStudiesLengthTimeUnits", educationalTimeUnits);
     pageRequestContext.getRequest().setAttribute("users", userDAO.listAll());
 

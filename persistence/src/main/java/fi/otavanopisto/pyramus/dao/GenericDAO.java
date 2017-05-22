@@ -92,10 +92,6 @@ public abstract class GenericDAO<T> {
     getEntityManager().flush();
   }
   
-  public void clear() {
-    getEntityManager().flush();
-  }
-  
   protected T getSingleResult(Query query) {
     @SuppressWarnings("unchecked")
     List<T> list = query.getResultList();
