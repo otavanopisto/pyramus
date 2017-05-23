@@ -116,7 +116,7 @@ IxDateField = Class.create({
     var mm = new Number(dateStr.substring(5, 7));
     var dd = new Number(dateStr.substring(8, 10));
     
-    if ((yyyy != NaN) && (mm != NaN) && (dd != NaN)) {
+    if (!isNaN(yyyy) && !isNaN(mm) && !isNaN(dd)) {
       try {
         var date = new Date();
         
@@ -182,7 +182,7 @@ IxDateField = Class.create({
       var year = this.getYear();
       var month = this.getMonth();
       var day = this.getDay();
-      if (year == NaN || month == NaN || day == NaN) {
+      if (isNaN(year) || isNaN(month) || isNaN(day)) {
         this._timestampInput.value = '';
       }
       else {
