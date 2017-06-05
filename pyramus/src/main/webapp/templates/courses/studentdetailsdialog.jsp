@@ -19,6 +19,7 @@
           organization: form.organization.value,
           additionalInfo: form.additionalInfo.value,
           roomId: form.roomId.value,
+          roomAdditionalInfo: form.roomAdditionalInfo.value,
           lodgingFee: form.lodgingFee.value,
           lodgingFeeCurrency: form.lodgingFeeCurrency.value,
           reservationFee: form.reservationFee.value,
@@ -157,6 +158,15 @@
           </c:forEach>
         </select>
       </div>
+      
+      <div class="genericFormSection">
+        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+          <jsp:param name="titleLocale" value="courses.studentDetails.roomAdditionalInfoTitle"/>
+          <jsp:param name="helpLocale" value="courses.studentDetails.roomAdditionalInfoHelp"/>
+        </jsp:include>
+        
+        <input type="text" name="roomAdditionalInfo" value="${courseStudent.roomAdditionalInfo}"/>
+      </div>  
       
       <div class="genericFormSection">
         <jsp:include page="/templates/generic/fragments/formtitle.jsp">

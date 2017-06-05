@@ -24,6 +24,7 @@
               organization: event.results.organization,
               additionalInfo: event.results.additionalInfo,
               roomId: event.results.roomId,
+              roomAdditionalInfo: event.results.roomAdditionalInfo,
               lodgingFee: event.results.lodgingFee,
               lodgingFeeCurrency: event.results.lodgingFeeCurrency,
               reservationFee: event.results.reservationFee,

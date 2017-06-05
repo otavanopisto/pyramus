@@ -393,6 +393,11 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     return persist(courseStudent);
   }
 
+  public CourseStudent updateRoomAdditionalInfo(CourseStudent courseStudent, String roomAdditionalInfo) {
+    courseStudent.setRoomAdditionalInfo(roomAdditionalInfo);
+    return persist(courseStudent);
+  }
+
   public CourseStudent updateOrganization(CourseStudent courseStudent, String organization) {
     courseStudent.setOrganization(organization);
     return persist(courseStudent);

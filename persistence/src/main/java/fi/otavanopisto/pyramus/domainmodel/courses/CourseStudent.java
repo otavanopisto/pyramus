@@ -153,6 +153,14 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
     this.reservationFeeCurrency = reservationFeeCurrency;
   }
 
+  public String getRoomAdditionalInfo() {
+    return roomAdditionalInfo;
+  }
+
+  public void setRoomAdditionalInfo(String roomAdditionalInfo) {
+    this.roomAdditionalInfo = roomAdditionalInfo;
+  }
+
   @Column (nullable=false)
   @Temporal (value=TemporalType.TIMESTAMP)
   private Date enrolmentTime;
@@ -195,6 +203,8 @@ public class CourseStudent extends CourseUser implements ArchivableEntity {
 
   @ManyToOne
   private Room room;
+
+  private String roomAdditionalInfo;
   
   private String organization;
   
