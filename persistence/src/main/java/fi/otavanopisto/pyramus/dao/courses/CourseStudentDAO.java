@@ -151,7 +151,7 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     List<CourseStudent> courseStudents = listByCourseAndStudent(courseStudent.getCourse(), student);
     if (!courseStudents.isEmpty()) {
       for (CourseStudent courseStudent2 : courseStudents) {
-        if (courseStudent2.getId() != courseStudent.getId())
+        if (!courseStudent2.getId().equals(courseStudent.getId()))
           throw new DuplicateCourseStudentException();
       }
     }

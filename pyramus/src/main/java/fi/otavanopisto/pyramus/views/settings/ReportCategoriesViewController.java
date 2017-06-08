@@ -34,7 +34,7 @@ public class ReportCategoriesViewController extends PyramusViewController implem
 
     Collections.sort(categories, new Comparator<ReportCategory>() {
       public int compare(ReportCategory o1, ReportCategory o2) {
-        if (o1.getIndexColumn() == o2.getIndexColumn() || o1.getIndexColumn().equals(o2.getIndexColumn())) {
+        if (o1.getIndexColumn().equals(o2.getIndexColumn())) {
           return o1.getName() == null ? -1 : o2.getName() == null ? 1 : o1.getName().compareTo(o2.getName());
         }
         else {
