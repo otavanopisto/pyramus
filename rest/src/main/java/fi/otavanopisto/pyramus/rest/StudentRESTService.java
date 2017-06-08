@@ -2027,6 +2027,25 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(assessmentRequests.get(0))).build();
   }
 
+  @Path("/students/{STUDENTID:[0-9]*}/assessments/")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentAssessments(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    List<CourseAssessment> assessments = assessmentController.listByStudent(student);
+    
+    return Response.ok(objectFactory.createModel(assessments)).build();
+  }
+
   @Path("/students/{STUDENTID:[0-9]*}/latestCourseAssessment/")
   @GET
   @RESTPermit(handling = Handling.INLINE)
