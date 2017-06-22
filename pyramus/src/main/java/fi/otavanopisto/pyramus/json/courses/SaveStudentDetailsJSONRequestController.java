@@ -46,6 +46,7 @@ public class SaveStudentDetailsJSONRequestController extends JSONRequestControll
     String billingDetailsCompanyIdentifier = requestContext.getString("billingDetailsCompanyIdentifier"); 
     String billingDetailsReferenceNumber = requestContext.getString("billingDetailsReferenceNumber"); 
     String billingDetailsElectronicBillingAddress = requestContext.getString("billingDetailsElectronicBillingAddress"); 
+    String billingDetailsElectronicBillingOperator = requestContext.getString("billingDetailsElectronicBillingOperator"); 
     String billingDetailsNotes = requestContext.getString("billingDetailsNotes");
     
     Long billingDetailsId = requestContext.getLong("billingDetailsId");
@@ -65,6 +66,7 @@ public class SaveStudentDetailsJSONRequestController extends JSONRequestControll
         billingDetailsCompanyIdentifier = billingDetails.getCompanyIdentifier();
         billingDetailsReferenceNumber = billingDetails.getReferenceNumber();
         billingDetailsElectronicBillingAddress = billingDetails.getElectronicBillingAddress();
+        billingDetailsElectronicBillingOperator = billingDetails.getElectronicBillingOperator();
         billingDetailsNotes = billingDetails.getNotes();
       }
     }
@@ -73,7 +75,7 @@ public class SaveStudentDetailsJSONRequestController extends JSONRequestControll
         billingDetailsStreetAddress1, billingDetailsStreetAddress2, billingDetailsPostalCode, billingDetailsCity,
         billingDetailsRegion, billingDetailsCountry, billingDetailsPhoneNumber, billingDetailsEmailAddress,
         billingDetailsCompanyIdentifier, billingDetailsReferenceNumber, billingDetailsElectronicBillingAddress,
-        billingDetailsNotes);
+        billingDetailsElectronicBillingOperator, billingDetailsNotes);
     
     if (courseStudentId == null) {
       throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "Missing courseStudentId parameter");
@@ -110,11 +112,12 @@ public class SaveStudentDetailsJSONRequestController extends JSONRequestControll
         billingDetailsDAO.updateReferenceNumber(billingDetails, billingDetailsReferenceNumber);
         billingDetailsDAO.updateNotes(billingDetails, billingDetailsNotes);
         billingDetailsDAO.updateElectronicBillingAddress(billingDetails, billingDetailsElectronicBillingAddress);
+        billingDetailsDAO.updateElectronicBillingOperator(billingDetails, billingDetailsElectronicBillingOperator);
       } else {
         courseStudentDAO.updateBillingDetails(courseStudent, billingDetailsDAO.create(billingDetailsPersonName, billingDetailsCompanyName, billingDetailsStreetAddress1,
             billingDetailsStreetAddress2, billingDetailsPostalCode, billingDetailsCity, billingDetailsRegion,
             billingDetailsCountry, billingDetailsPhoneNumber, billingDetailsEmailAddress,
-            billingDetailsElectronicBillingAddress, billingDetailsCompanyIdentifier, billingDetailsReferenceNumber,
+            billingDetailsElectronicBillingAddress, billingDetailsElectronicBillingOperator, billingDetailsCompanyIdentifier, billingDetailsReferenceNumber,
             billingDetailsNotes));
       }
     } else {

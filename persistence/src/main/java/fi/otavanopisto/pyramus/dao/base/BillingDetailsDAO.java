@@ -19,7 +19,7 @@ public class BillingDetailsDAO extends PyramusEntityDAO<BillingDetails> {
 
   public BillingDetails create(String personName, String companyName, String streetAddress1, String streetAddress2,
       String postalCode, String city, String region, String country, String phoneNumber, String emailAddress, String electronicBillingAddress,
-      String companyIdentifier, String referenceNumber, String notes) {
+      String electronicBillingOperator, String companyIdentifier, String referenceNumber, String notes) {
 
     BillingDetails billingDetails = new BillingDetails();
     billingDetails.setPersonName(personName);
@@ -33,6 +33,7 @@ public class BillingDetailsDAO extends PyramusEntityDAO<BillingDetails> {
     billingDetails.setPhoneNumber(phoneNumber);
     billingDetails.setEmailAddress(emailAddress);
     billingDetails.setElectronicBillingAddress(electronicBillingAddress);
+    billingDetails.setElectronicBillingOperator(electronicBillingOperator);
     billingDetails.setCompanyIdentifier(companyIdentifier);
     billingDetails.setReferenceNumber(referenceNumber);
     billingDetails.setNotes(notes);
@@ -121,6 +122,11 @@ public class BillingDetailsDAO extends PyramusEntityDAO<BillingDetails> {
 
   public BillingDetails updateElectronicBillingAddress(BillingDetails billingDetails, String electronicBillingAddress) {
     billingDetails.setElectronicBillingAddress(electronicBillingAddress);
+    return persist(billingDetails);
+  }
+
+  public BillingDetails updateElectronicBillingOperator(BillingDetails billingDetails, String electronicBillingOperator) {
+    billingDetails.setElectronicBillingOperator(electronicBillingOperator);
     return persist(billingDetails);
   }
 

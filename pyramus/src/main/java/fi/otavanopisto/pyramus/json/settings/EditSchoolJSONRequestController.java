@@ -93,6 +93,7 @@ public class EditSchoolJSONRequestController extends JSONRequestController {
     String billingPhoneNumber = requestContext.getString("billingDetailsPhoneNumber");
     String billingEmailAddress = requestContext.getString("billingDetailsEmailAddress");
     String billingElectronicBillingAddress = requestContext.getString("billingDetailsElectronicBillingAddress");
+    String billingElectronicBillingOperator = requestContext.getString("billingDetailsElectronicBillingOperator");
     String billingCompanyIdentifier = requestContext.getString("billingDetailsCompanyIdentifier");
     String billingReferenceNumber = requestContext.getString("billingDetailsReferenceNumber");
     String billingNotes = requestContext.getString("billingDetailsNotes");
@@ -101,8 +102,8 @@ public class EditSchoolJSONRequestController extends JSONRequestController {
       BillingDetails billingDetails = billingDetailsDAO.create(
           billingPersonName, billingCompanyName, billingStreetAddress1, billingStreetAddress2, 
           billingPostalCode, billingCity, billingRegion, billingCountry, billingPhoneNumber, 
-          billingEmailAddress, billingElectronicBillingAddress, billingCompanyIdentifier, 
-          billingReferenceNumber, billingNotes);
+          billingEmailAddress, billingElectronicBillingAddress, billingElectronicBillingOperator, 
+          billingCompanyIdentifier, billingReferenceNumber, billingNotes);
       
       schoolDAO.updateBillingDetails(school, billingDetails);
     } else {
@@ -118,6 +119,7 @@ public class EditSchoolJSONRequestController extends JSONRequestController {
       billingDetailsDAO.updatePhoneNumber(billingDetails, billingPhoneNumber);
       billingDetailsDAO.updateEmailAddress(billingDetails, billingEmailAddress);
       billingDetailsDAO.updateElectronicBillingAddress(billingDetails, billingElectronicBillingAddress);
+      billingDetailsDAO.updateElectronicBillingOperator(billingDetails, billingElectronicBillingOperator);
       billingDetailsDAO.updateCompanyIdentifier(billingDetails, billingCompanyIdentifier);
       billingDetailsDAO.updateReferenceNumber(billingDetails, billingReferenceNumber);
       billingDetailsDAO.updateNotes(billingDetails, billingNotes);

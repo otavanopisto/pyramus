@@ -82,6 +82,7 @@ public class CreateSchoolJSONRequestController extends JSONRequestController {
     String billingPhoneNumber = requestContext.getString("billingDetailsPhoneNumber");
     String billingEmailAddress = requestContext.getString("billingDetailsEmailAddress");
     String billingElectronicBillingAddress = requestContext.getString("billingDetailsElectronicBillingAddress");
+    String billingElectronicBillingOperator = requestContext.getString("billingDetailsElectronicBillingOperator");
     String billingCompanyIdentifier = requestContext.getString("billingDetailsCompanyIdentifier");
     String billingReferenceNumber = requestContext.getString("billingDetailsReferenceNumber");
     String billingNotes = requestContext.getString("billingDetailsNotes");
@@ -89,8 +90,8 @@ public class CreateSchoolJSONRequestController extends JSONRequestController {
     BillingDetails billingDetails = billingDetailsDAO.create(
         billingPersonName, billingCompanyName, billingStreetAddress1, billingStreetAddress2, 
         billingPostalCode, billingCity, billingRegion, billingCountry, billingPhoneNumber, 
-        billingEmailAddress, billingElectronicBillingAddress, billingCompanyIdentifier, 
-        billingReferenceNumber, billingNotes);
+        billingEmailAddress, billingElectronicBillingAddress, billingElectronicBillingOperator,
+        billingCompanyIdentifier, billingReferenceNumber, billingNotes);
     
     School school = schoolDAO.create(schoolCode, schoolName, schoolField, billingDetails);
     
