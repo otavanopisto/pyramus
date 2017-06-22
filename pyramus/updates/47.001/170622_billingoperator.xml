@@ -2,7 +2,7 @@
 <update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
 
   <sql>
-    alter table BillingDetails add electronicBillingOperator varchar(255)
+    alter table BillingDetails add electronicBillingOperator varchar(255);
   </sql>
 
 </update>
