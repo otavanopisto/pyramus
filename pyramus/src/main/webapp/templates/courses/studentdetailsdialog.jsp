@@ -38,6 +38,7 @@
           billingDetailsCompanyIdentifier: form.billingDetailsCompanyIdentifier.value,
           billingDetailsReferenceNumber: form.billingDetailsReferenceNumber.value,
           billingDetailsElectronicBillingAddress: form.billingDetailsElectronicBillingAddress.value,
+          billingDetailsElectronicBillingOperator: form.billingDetailsElectronicBillingOperator.value,
           billingDetailsNotes: form.billingDetailsNotes.value
         };
       }
@@ -290,7 +291,12 @@
           
           <div class="billingDetailsRow">
             <label for="billing-details-electronicBillingAddress"><fmt:message key="courses.studentDetails.billingDetails.electronicBillingAddress"/></label>
-            <textarea id="billing-details-electronicBillingAddress" name="billingDetailsElectronicBillingAddress">${courseStudent.billingDetails.electronicBillingAddress}</textarea>
+            <input id="billing-details-electronicBillingAddress" type="text" name="billingDetailsElectronicBillingAddress" value="${courseStudent.billingDetails.electronicBillingAddress}" />
+          </div>
+          
+          <div class="billingDetailsRow">
+            <label for="billing-details-electronicBillingOperator"><fmt:message key="courses.studentDetails.billingDetails.electronicBillingOperator"/></label>
+            <input id="billing-details-electronicBillingOperator" type="text" name="billingDetailsElectronicBillingOperator" value="${courseStudent.billingDetails.electronicBillingOperator}"/>
           </div>
           
           <div class="billingDetailsRow">

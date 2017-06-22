@@ -43,6 +43,7 @@
               billingDetailsCompanyIdentifier: event.results.billingDetailsCompanyIdentifier,
               billingDetailsReferenceNumber: event.results.billingDetailsReferenceNumber,
               billingDetailsElectronicBillingAddress: event.results.billingDetailsElectronicBillingAddress,
+              billingDetailsElectronicBillingOperator: event.results.billingDetailsElectronicBillingOperator,
               billingDetailsNotes: event.results.billingDetailsNotes
             }
           });  

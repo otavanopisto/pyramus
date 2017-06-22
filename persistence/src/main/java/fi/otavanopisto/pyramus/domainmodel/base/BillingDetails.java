@@ -181,6 +181,14 @@ public class BillingDetails {
     return result.toString();
   }
 
+  public String getElectronicBillingOperator() {
+    return electronicBillingOperator;
+  }
+
+  public void setElectronicBillingOperator(String electronicBillingOperator) {
+    this.electronicBillingOperator = electronicBillingOperator;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="BillingDetails")  
   @TableGenerator(name="BillingDetails", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -213,6 +221,8 @@ public class BillingDetails {
 
   @Lob
   private String electronicBillingAddress;
+
+  private String electronicBillingOperator;
   
   @Lob
   private String notes;
