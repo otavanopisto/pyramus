@@ -1,8 +1,8 @@
 {
-  "title":"Hae opiskelijaksi Otavan Opistoon",
   "type":"object",
   "properties": {
     "line": {
+      "title": "Hakukohde",
       "type": "string",
       "required": true,
       "enum": ["nettilukio", "nettipk", "lahilukio", "bandilinja", "monikulttuuripk", "apa", "luva"]

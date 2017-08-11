@@ -1,5 +1,4 @@
 {
-  "helper": "Tähdellä merkityt kentät ovat pakollisia",
   "fields": {
     "line": {
       "id": "line-selector",
