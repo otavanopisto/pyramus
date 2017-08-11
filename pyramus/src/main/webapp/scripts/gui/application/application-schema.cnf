@@ -1,0 +1,237 @@
+{
+  "title":"Hae opiskelijaksi Otavan Opistoon",
+  "type":"object",
+  "properties": {
+    "line": {
+      "type": "string",
+      "required": true,
+      "enum": ["nettilukio", "nettipk", "lahilukio", "bandilinja", "monikulttuuripk", "apa", "luva"]
+    },
+    "last-name": {
+      "title": "Sukunimi",
+      "type": "string",
+      "required": true
+    },
+    "first-names": {
+      "title": "Etunimet",
+      "type": "string",
+      "required": true
+    },
+    "birthday": {
+      "title": "Syntymäaika",
+      "type": "string",
+      "required": true
+    },
+    "ssn-end": {
+      "title": "Henkilötunnuksen loppuosa",
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 4,
+      "required": true
+    },
+    "sex": {
+      "title": "Sukupuoli",
+      "type": "string",
+      "required": true,
+      "enum": ["mies", "nainen", "muu"]
+    },
+    "sex-other": {
+      "title": "Muu sukupuolesi",
+      "type": "string",
+      "required": true
+    },
+    "address": {
+      "title": "Lähiosoite",
+      "type": "string",
+      "required": true
+    },
+    "zip-code": {
+      "title": "Postinumero",
+      "type": "string",
+      "required": true
+    },
+    "city": {
+      "title": "Postitoimipaikka",
+      "type": "string",
+      "required": true
+    },
+    "country": {
+      "title": "Maa",
+      "type": "string",
+      "required": true,
+      "default": "Suomi"
+    },
+    "municipality": {
+      "title": "Kotikunta",
+      "type": "string",
+      "required": true
+    },
+    "nationality": {
+      "title": "Kansalaisuus",
+      "type": "string",
+      "required": true,
+      "default": "204"
+    },
+    "language": {
+      "title": "Äidinkieli",
+      "type": "string",
+      "required": true,
+      "default": "151"
+    },
+    "phone": {
+      "title": "Puhelinnumero",
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "title": "Sähköpostiosoite",
+      "type": "string",
+      "required": true
+    },
+    "underage": {
+      "type": "boolean"
+    },
+    "underage-last-name": {
+      "title": "Sukunimi",
+      "type": "string",
+      "required": true
+    },
+    "underage-first-name": {
+      "title": "Etunimi",
+      "type": "string",
+      "required": true
+    },
+    "underage-phone": {
+      "title": "Puhelinnumero",
+      "type": "string",
+      "required": true
+    },
+    "underage-email": {
+      "title": "Sähköpostiosoite",
+      "type": "string"
+    },
+    "underage-address": {
+      "title": "Lähiosoite",
+      "type": "string",
+      "required": true
+    },
+    "underage-zip-code": {
+      "title": "Postinumero",
+      "type": "string",
+      "required": true
+    },
+    "underage-city": {
+      "title": "Postitoimipaikka",
+      "type": "string",
+      "required": true
+    },
+    "underage-country": {
+      "title": "Maa",
+      "type": "string",
+      "required": true
+    },
+    "underage-basis": {
+      "title": "Alaikäisen hakemusperusteet",
+      "type": "string",
+      "required": true
+    },
+    "other-school": {
+      "title": "Opiskelen tällä hetkellä toisessa oppilaitoksessa",
+      "type": "string",
+      "required": true,
+      "enum": ["1", "0"]
+    },
+    "other-school-name": {
+      "title": "Missä oppilaitoksessa olet",
+      "type": "string",
+      "required": true
+    },
+    "study-goals": {
+      "title": "Opiskelutavoitteet",
+      "type": "string",
+      "required": true,
+      "enum": ["lukio", "yo", "molemmat"]
+    },
+    "job": {
+      "title": "Olen tällä hetkellä",
+      "type": "string",
+      "required": true,
+      "enum": ["tyollinen", "tyoton", "opiskelija", "elakelainen", "muu"]
+    },
+    "job-other": {
+      "title": "Kerro tarkemmin",
+      "type": "string",
+      "required": true
+    },
+    "additional-info": {
+      "title": "Lisätietoja",
+      "type": "string"
+    },
+    "previous-studies-lukio": {
+      "title": "Aiemmat opinnot",
+      "type": "string",
+      "required": true,
+      "enum": ["peruskoulu", "kansakoulu", "lukio", "ammatillinen", "korkeakoulu", "muu"]
+    },
+    "previous-studies-lukio-other": {
+      "title": "Kerro tarkemmin",
+      "type": "string",
+      "required": true
+    },
+    "previous-studies-pk": {
+      "title": "Aiemmat opinnot",
+      "type": "string",
+      "required": true,
+      "enum": ["kansakoulu", "peruskoulu", "aikuisten-perusopetus", "muu"]
+    },
+    "previous-studies-pk-other": {
+      "title": "Kerro tarkemmin",
+      "type": "string",
+      "required": true
+    },
+    "additional-info-music": {
+      "title": "Oma musiikkitaustani mm. instrumentit, aikaisemmat opinnot ja bändikokemus",
+      "type": "string"
+    },
+    "music-link": {
+      "title": "Liitä halutessasi näyte osaamisestasi (linkki internetiin)",
+      "type": "string"
+    },
+    "lodging": {
+      "type": "boolean"
+    },
+    "source": {
+      "type": "array",
+      "enum": ["tuttu", "google", "facebook", "instagram", "sanomalehti", "tienvarsimainos", "valotaulumainos", "tv", "radio", "kuultu", "te-toimisto", "messut", "nuorisotyo", "opot", "muu"],
+      "required": true
+    },
+    "source-other": {
+      "title": "Kerro tarkemmin mistä",
+      "type": "string",
+      "required": true
+    }
+  },
+  "dependencies": {
+    "sex-other": "sex",
+    "lodging": "line",
+    "other-school": "line",
+    "other-school-name": "other-school",
+    "study-goals": "line",
+    "job-other": "job",
+    "underage-last-name": "underage",
+    "underage-first-name": "underage",
+    "underage-phone": "underage",
+    "underage-email": "underage",
+    "underage-address": "underage",
+    "underage-zip-code": "underage",
+    "underage-city": "underage",
+    "underage-country": "underage",
+    "underage-basis": "underage",
+    "previous-studies-lukio": "line",
+    "previous-studies-lukio-other": "previous-studies-lukio",
+    "previous-studies-pk": "line",
+    "previous-studies-pk-other": "previous-studies-pk",
+    "additional-info-music": "line",
+    "music-link": "line"
+  }
+}
