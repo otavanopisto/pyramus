@@ -1,143 +1,219 @@
 (function() {
 
-  function checkAge() {
-    var showUnderage = false;
-    var applicationForm = $("#application-form").alpaca();
-    var line = applicationForm.childrenByPropertyId["line"].getValue();
-    if (line == 'nettilukio' || line == 'nettipk' || line == 'lahilukio' || line == 'bandilinja') {
-      var birthday = applicationForm.childrenByPropertyId["birthday"].getValue();
+  var applicationSections = $('.form-section');
+
+  $(document).ready(function() {
+    
+    $.fn.serializeObject = function() {
+      var o = {};
+      var a = this.serializeArray();
+      $.each(a, function() {
+        if (o[this.name] !== undefined) {
+          if (!o[this.name].push) {
+            o[this.name] = [o[this.name]];
+          }
+          o[this.name].push(this.value || '');
+        }
+        else {
+          o[this.name] = this.value || '';
+        }
+      });
+      return o;
+    };    
+
+    // File uploaders
+    
+    $('.field-attachments-uploader').each(function() {
+      var fileInput = $(this).find('input');
+      var fileSelector = $(this).find('.field-attachments-selector');
+      fileSelector.on('click', function() {
+        fileInput.click();
+      });
+      fileInput.on('change', function() {
+        var files = fileInput[0].files;
+        for (var i = 0; i < files.length; i++) {
+          uploadAttachment(files[i]);
+        }
+      });
+    });
+    
+    // Dynamic data
+    
+    $('select[data-source]').each(function() {
+      var field = this;
+      $.ajax({
+        url: $(field).attr('data-source'),
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        success: function(result) {
+          for (var i = 0; i < result.length; i++) {
+            var option = $('<option>').attr('value', result[i].value).text(result[i].text);
+            $(field).append(option);
+            if ($(field).attr('data-preselect') && result[i].text == $(field).attr('data-preselect')) {
+              $(option).prop('selected', true);
+            }
+          }
+        }
+      });
+    });
+    
+    // Section checks
+    
+    $('select[name="field-line"]').change(function() {
+      var line = $(this).val();
+      $('.section-attachments').attr('data-skip', line != 'nettilukio' && line != 'nettipk' && line != 'lahilukio' && line != 'bandilinja');
+    });
+    $('input[name="field-birthday"]').change(function() {
+      var birthday = $(this).val();
       var years = moment().diff(moment(birthday, "D.M.YYYY"), 'years');
-      showUnderage = years < 18;
-    }
-    applicationForm.childrenByPropertyId["underage"].setValue(showUnderage);
-    if (showUnderage) {
-      $("#section-underage").show();
-    }
-    else {
-      $("#section-underage").hide();
-    }
+      $('.section-underage').attr('data-skip', years >= 18);
+    });
+    
+    // Custom validators
+    
+    Parsley.addValidator('birthdayFormat', {
+      requirementType: 'string',
+      validateString: function(value) {
+        return value && moment(value, 'D.M.YYYY').isValid() && value.lastIndexOf('.') == value.length - 5;
+      },
+      messages: {
+        fi: 'Päivämäärän muoto on virheellinen'
+      }
+    });
+    
+    Parsley.addValidator('requiredIfShown', {
+      requirementType: 'string',
+      validateString: function(value, requirement, event) {
+        var element = event.element;
+        if ($(element).is(':visible')) { 
+          if (!value || value.trim().length == 0) {
+            return false;
+          }
+        }
+        return true;
+      },
+      messages: {
+        fi: 'Tämä kenttä on pakollinen'
+      }
+    });
+    
+    // Dependencies
+    
+    $('[data-dependencies]').change(function() {
+      var name = $(this).attr('name');
+      var value = $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val();
+      $('.field-container[data-dependent-field="' + name + '"]').each(function() {
+        var show = false;
+        var values = $(this).attr('data-dependent-values').split(',');
+        for (var i = 0; i < values.length; i++) {
+          show = values[i] == value;
+          if (show) {
+            break;
+          }
+        }
+        $(this).toggle(show);
+      });
+    });
+    
+    // Form navigation
+
+    $('.form-navigation .previous').click(function() {
+      var newIndex = curIndex() - 1;
+      // TODO better handling for irrelevant sections 
+      if ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
+        newIndex--;
+      }
+      navigateTo(newIndex);
+    });
+
+    $('.form-navigation .next').click(function() {
+      // TODO enable section validation
+      //if ($('.application-form').parsley().validate({group: 'block-' + curIndex()})) {
+        var newIndex = curIndex() + 1;  
+        // TODO better handling for irrelevant sections 
+        if ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
+          newIndex++;
+        }
+        navigateTo(newIndex);
+      //}
+    });
+
+    $('.button-validate').click(function() {
+      $('.application-form').parsley().validate({group: 'block-' + curIndex()});
+    });
+
+    $('.button-submit').click(function() {
+      data = JSON.stringify($('.application-form').serializeObject());
+      console.log(data);
+    });
+
+    $(applicationSections).each(function(index, section) {
+      $(section).find(':input').attr('data-parsley-group', 'block-' + index);
+    });
+    navigateTo(0);
+  });
+
+  function navigateTo(index) {
+    // Mark the current section with the class 'current'
+    $(applicationSections).removeClass('current').eq(index).addClass('current');
+    /*
+    $('.form-navigation .previous').toggle(index > 0);
+    var atTheEnd = index >= $(applicationSections).length - 1;
+    $('.form-navigation .next').toggle(!atTheEnd);
+    */
+  }
+
+  function curIndex() {
+    return $(applicationSections).index($(applicationSections).filter('.current'));
   }
   
-  $(document).ready(function() {
-    Alpaca.setDefaultLocale("fi_FI");
-    $("#application-form").alpaca({
-      "optionsSource": "/scripts/gui/application/application-options.cnf",
-      "schemaSource": "/scripts/gui/application/application-schema.cnf",
-      "options": {
-        "form": {
-          "buttons":{
-            "submit":{
-              "click": function() {
-                var value = this.getValue();
-                $.ajax({
-                  url: "/1/application/createapplication",
-                  type: "POST",
-                  data: JSON.stringify(value, null, " "), 
-                  dataType: "json",
-                  contentType: "application/json; charset=utf-8",
-                  success: function(result) {
-                    console.log('success');
-                  },
-                  error: function() {
-                    console.log('error');
-                  },
-                  complete: function() {
-                    console.log('complete');
-                  }
-                });
-              }
-            }
-          }
-        },
-        "fields": {
-          "line": {
-            "onFieldChange": function(e) {
-              checkAge();
-              $("#line-intro").remove();
-              var line = this.getValue();
-              $.ajax({
-                url: "/scripts/gui/application/intro-" + line + ".html",
-                type: "GET",
-                contentType: "application/html; charset=utf-8",
-                success: function(result) {
-                  $("#line-selector").after(result);
-                }
-              });
-            }
-          },
-          "birthday": {
-            "onFieldChange": function(e) {
-              checkAge();
-            },
-            "validator": function(callback) {
-              var value = this.getValue();
-              if (value && moment(value, 'D.M.YYYY').isValid() && value.lastIndexOf('.') == value.length - 5) {
-                callback({"status": true});
-              }
-              else {
-                callback({
-                  "status": false,
-                  "message": "Päivämäärän muoto on virheellinen"
-                });
-              }
-            }
-          }
-        }
-      },
-      "postRender": function(control) {
-        $("#buttons-section").append($("div.alpaca-form-buttons-container"));
-        $("div[alpaca-layout-binding-field-name='underage']").hide();
-        checkAge();
-      },
-      "view": {
-        "parent": "bootstrap-edit",
-        "layout": {
-          "template": '/scripts/gui/application/application-template.html',
-          "bindings": {
-            "line": "#section-line",
-            "last-name": "#section-basic",
-            "first-names": "#section-basic",
-            "birthday": "#section-basic",
-            "ssn-end": "#section-basic",
-            "sex": "#section-basic",
-            "sex-other": "#section-basic",
-            "address": "#section-basic",
-            "zip-code": "#section-basic",
-            "city": "#section-basic",
-            "country": "#section-basic",
-            "municipality": "#section-basic",
-            "nationality": "#section-basic",
-            "language": "#section-basic",
-            "email": "#section-basic",
-            "underage": "#section-underage",
-            "underage-last-name": "#section-underage",
-            "underage-first-name": "#section-underage",
-            "underage-phone": "#section-underage",
-            "underage-email": "#section-underage",
-            "underage-address": "#section-underage",
-            "underage-zip-code": "#section-underage",
-            "underage-city": "#section-underage",
-            "underage-country": "#section-underage",
-            "underage-basis": "#section-underage",
-            "other-school": "#section-additional",
-            "other-school-name": "#section-additional",
-            "study-goals": "#section-additional",
-            "job": "#section-additional",
-            "job-other": "#section-additional",
-            "additional-info": "#section-additional",
-            "previous-studies-lukio": "#section-additional",
-            "previous-studies-lukio-other": "#section-additional",
-            "previous-studies-pk": "#section-additional",
-            "previous-studies-pk-other": "#section-additional",
-            "additional-info-music": "#section-additional",
-            "music-link": "#section-additional",
-            "lodging": "#section-additional",
-            "source": "#section-source",
-            "source-other": "#section-source"
-          }
-        }
-      }      
+  function uploadAttachment(file) {
+    var applicationId = $('input[name="application-id"]').val();
+    var fileContainer = $('.field-attachments-files'); 
+    var formData = new FormData();
+    formData.append('file', file);
+    formData.append('name', file.name);
+    formData.append('applicationId', applicationId);
+
+    var fileElement = $('.application-file.template').clone();
+    fileElement.removeClass('template');
+    fileContainer.append(fileElement);
+    fileElement.show();
+    fileElement.find('.applicaton-file-name a').text(file.name);
+    fileElement.find('.application-file-size').text((file.size / 1024).toFixed(3) + " KB");
+    var fileProgressElement = fileElement.find('.application-file-progress').progressbar({
+      value: 0
     });
-  });
+
+    $.ajax({
+      url: '/1/application/createattachment',
+      type: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      xhr: function() {
+        myXhr = $.ajaxSettings.xhr();
+        if (myXhr.upload) {
+          myXhr.upload.addEventListener('progress', function(evt) {
+            if (evt.lengthComputable) {
+              var percentComplete = (evt.loaded / evt.total) * 100;
+              fileProgressElement.progressbar('value', percentComplete);
+            }
+          }, false);
+        }
+        return myXhr;
+      },
+      success: function(data) {
+        fileElement.find('.application-file-link').attr('href', '/1/application/getattachment/' + applicationId + '?attachment=' + file.name);
+        fileElement.find('.application-file-progress').remove();
+        $('.field-attachments-uploader').append($('<input>').attr({type: 'hidden', name: 'attached-file', 'value': file.name}));
+      },
+      error: function(err) {
+        var kerkko = err;
+        console.log('pashat');
+        fileElement.find('.application-file-progress').remove();
+      }
+    });
+  }
   
 }).call(this);

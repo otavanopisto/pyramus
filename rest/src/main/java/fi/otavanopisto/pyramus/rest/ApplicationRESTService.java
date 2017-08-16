@@ -1,9 +1,14 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -13,14 +18,20 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
@@ -29,7 +40,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
-import net.sf.json.JSONObject;
 
 @Path("/application")
 @Produces(MediaType.APPLICATION_JSON)
@@ -37,7 +47,7 @@ import net.sf.json.JSONObject;
 @Stateful
 @RequestScoped
 public class ApplicationRESTService extends AbstractRESTService {
-  
+
   @Context
   private UriInfo uri;
 
@@ -49,7 +59,66 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Inject
   private LanguageDAO languageDAO;
-  
+
+  @Path("/createattachment")
+  @POST
+  @Unsecure
+  @Consumes(MediaType.MULTIPART_FORM_DATA + ";charset=UTF-8")
+  public Response createAttachment(MultipartFormDataInput multipart, @HeaderParam("Referer") String referer) {
+    if (!isApplicationCall(referer, "application/create.page")) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    String attachmentsFolder = getAttachmentsFolder();
+    try {
+      byte[] fileData = getFile(multipart, "file");
+      String name = getString(multipart, "name");
+      String attachmentFolder = getString(multipart, "applicationId");
+      if (fileData == null || fileData.length == 0 || name == null || attachmentFolder == null) {
+        return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+      }
+      File folder = Paths.get(attachmentsFolder, attachmentFolder).toFile();
+      if (!folder.exists()) {
+        folder.mkdir();
+      }
+      File file = Paths.get(attachmentsFolder, attachmentFolder, name).toFile();
+      if (file.exists()) {
+        return Response.status(Status.CONFLICT).build();
+      }
+      FileUtils.writeByteArrayToFile(file, fileData);
+    }
+    catch (Exception e) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
+    return Response.noContent().build();
+  }
+
+  @Path("/getattachment/{ID}")
+  @GET
+  @Unsecure
+  @Produces("*/*")
+  public Response getAttachment(@PathParam("ID") String applicationId, @QueryParam("attachment") String attachment, @HeaderParam("Referer") String referer) {
+    try {
+      if (!isApplicationCall(referer, "application/create.page")) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+      java.nio.file.Path path = Paths.get(getAttachmentsFolder(), applicationId, attachment);
+      File file = path.toFile();
+      if (file.exists()) {
+        String contentType = Files.probeContentType(path);
+        byte[] data = FileUtils.readFileToByteArray(file);
+        return Response.ok(data)
+            .type(contentType)
+            .header("Content-Length", data.length)
+            .header("Content-Disposition", String.format("inline; filename=\"%s\"", StringUtils.replace(attachment, "\"", "\\\"")))
+            .build();
+      }
+    }
+    catch (Exception e) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
+    return Response.status(Status.NOT_FOUND).build();
+  }
+
   @Path("/createapplication")
   @POST
   @Unsecure
@@ -57,12 +126,9 @@ public class ApplicationRESTService extends AbstractRESTService {
     if (!isApplicationCall(referer, "application/create.page")) {
       return Response.status(Status.FORBIDDEN).build();
     }
-    JSONObject applicationData = JSONObject.fromObject(object);
-    //JSONObject basicInfo = JSONObject.fromObject(applicationData.get("basic-info"));
-    System.out.println("-----------> " + applicationData.toString());
     return Response.noContent().build();
   }
-  
+
   @Path("/municipalities")
   @GET
   @Unsecure
@@ -73,21 +139,21 @@ public class ApplicationRESTService extends AbstractRESTService {
         return o1.getName().compareTo(o2.getName());
       }
     });
-    
+
     List<HashMap<String, String>> municipalityList = new ArrayList<HashMap<String, String>>();
 
     HashMap<String, String> municipalityData = new HashMap<String, String>();
     municipalityData.put("text", "Ei kotikuntaa Suomessa");
     municipalityData.put("value", "none");
     municipalityList.add(municipalityData);
-    
+
     for (Municipality municipality : municipalities) {
       municipalityData = new HashMap<String, String>();
       municipalityData.put("text", municipality.getName());
       municipalityData.put("value", municipality.getId().toString());
       municipalityList.add(municipalityData);
     }
-    
+
     return Response.ok(municipalityList).build();
   }
 
@@ -101,7 +167,7 @@ public class ApplicationRESTService extends AbstractRESTService {
         return o1.getName().compareTo(o2.getName());
       }
     });
-    
+
     List<HashMap<String, String>> nationalityList = new ArrayList<HashMap<String, String>>();
 
     for (Nationality nationality : nationalities) {
@@ -110,7 +176,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       nationalityData.put("value", nationality.getId().toString());
       nationalityList.add(nationalityData);
     }
-    
+
     return Response.ok(nationalityList).build();
   }
 
@@ -124,7 +190,7 @@ public class ApplicationRESTService extends AbstractRESTService {
         return o1.getName().compareTo(o2.getName());
       }
     });
-    
+
     List<HashMap<String, String>> languageList = new ArrayList<HashMap<String, String>>();
 
     for (Language language : languages) {
@@ -133,15 +199,49 @@ public class ApplicationRESTService extends AbstractRESTService {
       languageData.put("value", language.getId().toString());
       languageList.add(languageData);
     }
-    
+
     return Response.ok(languageList).build();
   }
-  
+
   private boolean isApplicationCall(String referer, String expectedPath) {
     String s = uri.getBaseUri().toString();
     s = s.substring(0, s.length() - 2); // JaxRsActivator path
     s += expectedPath;
     return StringUtils.equals(referer, s);
+  }
+
+  private byte[] getFile(MultipartFormDataInput multipart, String field) {
+    try {
+      Map<String, List<InputPart>> form = multipart.getFormDataMap();
+      List<InputPart> inputParts = form.get(field);
+      if (inputParts.size() == 0) {
+        return null;
+      }
+      else {
+        return IOUtils.toByteArray(inputParts.get(0).getBody(InputStream.class, null));
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  private String getString(MultipartFormDataInput multipart, String field) {
+    try {
+      Map<String, List<InputPart>> form = multipart.getFormDataMap();
+      List<InputPart> inputParts = form.get(field);
+      return inputParts.size() == 0 ? null : inputParts.get(0).getBodyAsString();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  // TODO Configurable
+  private String getAttachmentsFolder() {
+    return "/apps/hakemustiedostot";
   }
 
 }

@@ -1,0 +1,38 @@
+@charset "UTF-8";
+
+.form-section {
+  padding-left: 15px;
+  border-left: 2px solid #FF851B;
+  display: none;
+}
+
+.field-container.dependent {
+  display: none;
+} 
+
+.form-section.current {
+  display: inherit;
+}
+
+.btn-info, .btn-default {
+  margin-top: 10px;
+}
+
+.ui-progressbar {
+  background-color: rgb(240,240,240);
+  width: 300px;
+  height: 10px;  
+}
+
+.ui-progressbar-value {
+  background-color: green;
+  height: 10px;  
+}
+
+.field-attachments-selector {
+  width: 600px;
+  height: 200px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 200px;
+}
