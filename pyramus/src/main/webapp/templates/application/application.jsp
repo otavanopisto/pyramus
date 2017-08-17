@@ -17,7 +17,7 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/parsley/parsley.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/parsley/fi.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
-    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/createapplication.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
     
     <style>
     </style>
@@ -39,7 +39,7 @@
           <option value="nettipk">Nettiperuskoulu</option>
           <option value="lahilukio">Lähilukio</option>
           <option value="bandilinja">Bändilinja</option>
-          <option value="monikulttuuripk">Monikulttuurillinen peruskoululinja</option>
+          <option value="mklinja">Monikulttuurillinen peruskoululinja</option>
           <option value="apa">Aikuisten perusopetuksen alkuvaiheen opetus</option>
           <option value="luva">LUVA eli lukioon valmentava koulutus maahanmuuttajille</option>
         </select>
@@ -196,7 +196,7 @@
 
       <section class="form-section section-additional">
 
-        <h3>Muut tiedot</h3>
+        <h3>Hakemiseen tarvittavat lisätiedot</h3>
 
         <div class="field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio">
           <label for="field-other-school">Opiskelen tällä hetkellä toisessa oppilaitoksessa</label>
@@ -222,9 +222,14 @@
           </select>
         </div>
 
-        <div class="field-container field-job dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio">
+        <div class="field-container field-previous-foreign-studies dependent" data-dependent-field="field-line" data-dependent-values="mklinja">
+          <label for="field-previous-foreign-studies">Aikaisemmat opinnot kotimaassasi ja Suomessa</label>
+          <textarea name="field-previous-foreign-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
+        </div>
+
+        <div class="field-container field-job">
           <label for="field-job">Olen tällä hetkellä</label>
-          <select name="field-job" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
+          <select name="field-job" data-parsley-required="true" data-dependencies="true">
             <option value="">-- Valitse --</option>
             <option value="tyollinen">Työllinen</option>
             <option value="tyoton">Työtön</option>
@@ -239,12 +244,21 @@
           <input type="text" name="field-job-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         </div>
 
+        <div class="field-container field-residence-permit dependent" data-dependent-field="field-line" data-dependent-values="mklinja,apa,luva">
+          <label for="field-residence-permit">Onko sinulla oleskelulupa Suomeen?</label>
+          <select name="field-residence-permit" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+            <option value="">-- Valitse --</option>
+            <option value="kylla">Kyllä</option>
+            <option value="ei">Ei</option>
+          </select>
+        </div>
+
         <div class="field-container field-info">
           <label for="field-info">Haluan kertoa itsestäni</label>
           <textarea name="field-info" rows="5" cols="40"></textarea>
         </div>
         
-        <div class="field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="lahilukio">
+        <div class="field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="lahilukio,mklinja,apa,luva">
           <label for="field-lodging">Tarvitsen asunnon opiston kampukselta</label>
           <input type="checkbox" name="field-lodging" value="kylla">
         </div>
@@ -255,22 +269,23 @@
       
         <h3>Aiemmat opinnot</h3>
 
-        <div class="field-container field-previous-studies-nettilukio">
-          <label for="field-previous-studies-nettilukio">Aiemmat opinnot</label>
-          <select name="field-previous-studies-nettilukio" data-dependencies="true">
+        <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio,bandilinja">
+          <label for="field-previous-studies">Aiemmat opinnot</label>
+          <select name="field-previous-studies" data-dependencies="true">
             <option value="">-- Valitse --</option>
             <option value="peruskoulu">Peruskoulu</option>
             <option value="kansakoulu">Kansakoulu</option>
-            <option value="lukio">Lukio (keskeytynyt)</option>
+            <option value="lukio">Lukio</option>
+            <option value="perusopetus">Aikuisten perusopetus</option>
             <option value="ammatillinen">Ammatillinen 2. aste</option>
             <option value="korkeakoulu">Korkeakoulu</option>
             <option value="muu">Muu</option>
           </select>
         </div>
 
-        <div class="field-container field-previous-studies-nettilukio-other dependent" data-dependent-field="field-previous-studies-nettilukio" data-dependent-values="muu">
-          <label for="field-previous-studies-nettilukio-other">Kerro tarkemmin</label>
-          <input type="text" name="field-previous-studies-nettilukio-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        <div class="field-container field-previous-studies-other dependent" data-dependent-field="field-previous-studies" data-dependent-values="muu">
+          <label for="field-previous-studies-other">Kerro tarkemmin</label>
+          <input type="text" name="field-previous-studies-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         </div>
         
       </section>

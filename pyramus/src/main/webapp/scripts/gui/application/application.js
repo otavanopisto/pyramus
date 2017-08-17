@@ -59,14 +59,18 @@
     
     // Section checks
     
-    $('select[name="field-line"]').change(function() {
+    $('select[name="field-line"]').on('change', function() {
       var line = $(this).val();
-      $('.section-attachments').attr('data-skip', line != 'nettilukio' && line != 'nettipk' && line != 'lahilukio' && line != 'bandilinja');
+      var isLocalLine = line == 'nettilukio' || line == 'nettipk' || line == 'lahilukio' && line == 'bandilinja';
+      $('.section-other-studies').attr('data-skip', !isLocalLine);
+      $('.section-attachments').attr('data-skip', !isLocalLine);
     });
-    $('input[name="field-birthday"]').change(function() {
+    $('input[name="field-birthday"]').on('change', function() {
       var birthday = $(this).val();
       var years = moment().diff(moment(birthday, "D.M.YYYY"), 'years');
-      $('.section-underage').attr('data-skip', years >= 18);
+      var line = $('select[name="field-line"]').val();
+      var isLocalLine = line == 'nettilukio' || line == 'nettipk' || line == 'lahilukio' && line == 'bandilinja';
+      $('.section-underage').attr('data-skip', !isLocalLine || years >= 18);
     });
     
     // Custom validators

@@ -3,7 +3,7 @@
 .form-section {
   padding-left: 15px;
   border-left: 2px solid #FF851B;
-  display: none;
+  /*display: none;*/
 }
 
 .field-container.dependent {

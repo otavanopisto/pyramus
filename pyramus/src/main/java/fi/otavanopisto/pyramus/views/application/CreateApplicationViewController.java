@@ -10,7 +10,7 @@ public class CreateApplicationViewController extends PyramusViewController {
 
   public void process(PageRequestContext pageRequestContext) {
     pageRequestContext.getRequest().setAttribute("applicationId", UUID.randomUUID().toString()); 
-    pageRequestContext.setIncludeJSP("/templates/application/createapplication.jsp");
+    pageRequestContext.setIncludeJSP("/templates/application/application.jsp");
   }
 
   public UserRole[] getAllowedRoles() {
