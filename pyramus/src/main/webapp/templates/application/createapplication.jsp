@@ -311,6 +311,16 @@
           <input type="checkbox" name="field-source" value="google">Google<br/>
           <input type="checkbox" name="field-source" value="facebook">Facebook<br/>
           <input type="checkbox" name="field-source" value="instagram">Instagram<br/>
+          <input type="checkbox" name="field-source" value="sanomalehti">Sanomalehti<br/>
+          <input type="checkbox" name="field-source" value="tienvarsimainos">Tienvarsimainos<br/>
+          <input type="checkbox" name="field-source" value="valotaulumainos">Valotaulumainos<br/>
+          <input type="checkbox" name="field-source" value="elokuva">Elokuva- tai TV-mainos<br/>
+          <input type="checkbox" name="field-source" value="radio">Radio<br/>
+          <input type="checkbox" name="field-source" value="tuttava">Kuulin kaverilta, tuttavalta, tms.<br/>
+          <input type="checkbox" name="field-source" value="te-toimisto">TE-toimisto<br/>
+          <input type="checkbox" name="field-source" value="messut">Messut<br/>
+          <input type="checkbox" name="field-source" value="nuorisotyo">Nuorisotyö<br/>
+          <input type="checkbox" name="field-source" value="opot">Opot<br/>
           <input type="checkbox" name="field-source" value="muu" data-dependencies="true">Muu<br/>
         </div>
 
