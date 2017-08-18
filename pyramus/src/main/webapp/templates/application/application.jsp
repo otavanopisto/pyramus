@@ -68,7 +68,7 @@
 
         <div class="field-container field-ssn-end">
           <label for="field-ssn-end">Henkilötunnuksen loppuosa</label>
-          <input type="text" name="field-ssn-end" data-parsley-required="true">
+          <input type="text" name="field-ssn-end" maxlength="4" style="text-transform:uppercase;" data-parsley-required="true" data-parsley-ssn-end-format="">
           <span class="field-help">Esitysmuoto XXXX (ilman välimerkkiä A tai -)</span>
         </div>
 
@@ -198,6 +198,25 @@
 
         <h3>Hakemiseen tarvittavat lisätiedot</h3>
 
+        <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio,bandilinja">
+          <label for="field-previous-studies">Aiemmat opinnot</label>
+          <select name="field-previous-studies" data-parsley-required="true" data-dependencies="true">
+            <option value="">-- Valitse --</option>
+            <option value="peruskoulu">Peruskoulu</option>
+            <option value="kansakoulu">Kansakoulu</option>
+            <option value="lukio">Lukio</option>
+            <option value="perusopetus">Aikuisten perusopetus</option>
+            <option value="ammatillinen">Ammatillinen 2. aste</option>
+            <option value="korkeakoulu">Korkeakoulu</option>
+            <option value="muu">Muu</option>
+          </select>
+        </div>
+
+        <div class="field-container field-previous-studies-other dependent" data-dependent-field="field-previous-studies" data-dependent-values="muu">
+          <label for="field-previous-studies-other">Kerro tarkemmin</label>
+          <input type="text" name="field-previous-studies-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        </div>
+
         <div class="field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio">
           <label for="field-other-school">Opiskelen tällä hetkellä toisessa oppilaitoksessa</label>
           <select name="field-other-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
@@ -254,10 +273,10 @@
         </div>
 
         <div class="field-container field-info">
-          <label for="field-info">Haluan kertoa itsestäni</label>
+          <label for="field-info">Haluan kertoa itsestäni ja opiskelutavoitteistani seuraavaa</label>
           <textarea name="field-info" rows="5" cols="40"></textarea>
         </div>
-        
+
         <div class="field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="lahilukio,mklinja,apa,luva">
           <label for="field-lodging">Tarvitsen asunnon opiston kampukselta</label>
           <input type="checkbox" name="field-lodging" value="kylla">
@@ -265,31 +284,6 @@
 
       </section>
 
-      <section class="form-section section-other-studies">
-      
-        <h3>Aiemmat opinnot</h3>
-
-        <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio,bandilinja">
-          <label for="field-previous-studies">Aiemmat opinnot</label>
-          <select name="field-previous-studies" data-dependencies="true">
-            <option value="">-- Valitse --</option>
-            <option value="peruskoulu">Peruskoulu</option>
-            <option value="kansakoulu">Kansakoulu</option>
-            <option value="lukio">Lukio</option>
-            <option value="perusopetus">Aikuisten perusopetus</option>
-            <option value="ammatillinen">Ammatillinen 2. aste</option>
-            <option value="korkeakoulu">Korkeakoulu</option>
-            <option value="muu">Muu</option>
-          </select>
-        </div>
-
-        <div class="field-container field-previous-studies-other dependent" data-dependent-field="field-previous-studies" data-dependent-values="muu">
-          <label for="field-previous-studies-other">Kerro tarkemmin</label>
-          <input type="text" name="field-previous-studies-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
-        </div>
-        
-      </section>
-      
       <section class="form-section section-attachments">
         
         <h3>Hakemuksen liitteet</h3>
@@ -300,6 +294,10 @@
 
         <div class="field-container field-nettipk-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
           <div>Voit liittää tähän todistusjäljennökset sähköisesti. Voit toimittaa todistusjäljennökset myös sähköpostin liitetiedostona elise.hokkanen@otavanopisto.fi tai postitse (Otavan Opisto / nettiperuskoulu, Otavantie 2 B, 50670, Otava)</div>
+        </div>
+
+        <div class="field-container field-nettipk-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="lahilukio">
+          <div>Voit liittää tähän todistusjäljennökset sähköisesti. Voit toimittaa todistusjäljennökset myös sähköpostin liitetiedostona petri.louhivuori@otavanopisto.fi tai postitse (Otavan Opisto / nettilukio, Otavantie 2 B, 50670, Otava)</div>
         </div>
 
         <div class="field-container field-bandilinja-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="bandilinja">
@@ -355,7 +353,7 @@
       </section>
 
       <nav class="form-navigation">
-        <div>TODO Progressbar sektioiden mukaan?</div>
+        <div>TODO Progressbar osioiden mukaan?</div>
         <button type="button" class="previous btn btn-info pull-left">Edellinen</button>
         <button type="button" class="next btn btn-info pull-right">Seuraava</button>
         <span class="clearfix"></span>

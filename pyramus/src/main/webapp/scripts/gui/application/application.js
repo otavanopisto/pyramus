@@ -84,6 +84,16 @@
         fi: 'Päivämäärän muoto on virheellinen'
       }
     });
+
+    Parsley.addValidator('ssnEndFormat', {
+      requirementType: 'string',
+      validateString: function(value) {
+        return value && value.length == 4 && /^[a-zA-Z0-9]{4}/.test(value);
+      },
+      messages: {
+        fi: 'Henkilötunnuksen loppuosan muoto on virheellinen'
+      }
+    });
     
     Parsley.addValidator('requiredIfShown', {
       requirementType: 'string',
@@ -160,11 +170,9 @@
   function navigateTo(index) {
     // Mark the current section with the class 'current'
     $(applicationSections).removeClass('current').eq(index).addClass('current');
-    /*
     $('.form-navigation .previous').toggle(index > 0);
     var atTheEnd = index >= $(applicationSections).length - 1;
     $('.form-navigation .next').toggle(!atTheEnd);
-    */
   }
 
   function curIndex() {
@@ -213,8 +221,6 @@
         $('.field-attachments-uploader').append($('<input>').attr({type: 'hidden', name: 'attached-file', 'value': file.name}));
       },
       error: function(err) {
-        var kerkko = err;
-        console.log('pashat');
         fileElement.find('.application-file-progress').remove();
       }
     });
