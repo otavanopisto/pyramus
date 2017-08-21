@@ -9,10 +9,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -33,12 +35,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
+import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
+import fi.otavanopisto.pyramus.dao.system.SettingDAO;
+import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.system.Setting;
+import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
 
 @Path("/application")
@@ -239,9 +246,17 @@ public class ApplicationRESTService extends AbstractRESTService {
     return null;
   }
 
-  // TODO Configurable
   private String getAttachmentsFolder() {
-    return "/apps/hakemustiedostot";
+    SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
+    SettingKey settingKey = settingKeyDAO.findByName("application.storagePath");
+    if (settingKey != null) {
+      SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
+      Setting setting = settingDAO.findByKey(settingKey);
+      if (setting != null && setting.getValue() != null) {
+        return setting.getValue();
+      }
+    }
+    return null;
   }
 
 }
