@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.views.application;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -47,9 +48,12 @@ public class CreateApplicationViewController extends PyramusViewController {
         return;
       }
     }
-    catch (Exception e) {
+    catch (IOException e) {
+      logger.log(Level.SEVERE, "Unable to serve 404 for application.storagePath", e);
+      return;
     }
     
+    // Create a unique application identifier and include the application form
     
     pageRequestContext.getRequest().setAttribute("applicationId", UUID.randomUUID().toString()); 
     pageRequestContext.setIncludeJSP("/templates/application/application.jsp");
