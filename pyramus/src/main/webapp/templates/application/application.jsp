@@ -26,7 +26,8 @@
   <body>
     <form class="application-form">
     
-      <input type="hidden" name="application-id" value="${applicationId}" data-parsley-excluded="true"/>
+      <input type="hidden" name="field-application-id" value="${applicationId}" data-parsley-excluded="true"/>
+      <input type="hidden" id="field-studyprogramme-id" name="field-studyprogramme-id" data-parsley-excluded="true"/>
       
       <section class="form-section section-line">
 
@@ -35,13 +36,13 @@
         <label for="field-line">Valitse linja</label>
         <select name="field-line" data-parsley-required="true" data-dependencies="true">
           <option value="">-- Valitse --</option>
-          <option value="nettilukio">Nettilukio</option>
-          <option value="nettipk">Nettiperuskoulu</option>
-          <option value="lahilukio">Lähilukio</option>
-          <option value="bandilinja">Bändilinja</option>
-          <option value="mklinja">Monikulttuurillinen peruskoululinja</option>
-          <option value="apa">Aikuisten perusopetuksen alkuvaiheen opetus</option>
-          <option value="luva">LUVA eli lukioon valmentava koulutus maahanmuuttajille</option>
+          <option value="nettilukio" data-studyprogramme="6" data-local-line="true">Nettilukio</option>
+          <option value="nettipk" data-studyprogramme="7" data-local-line="true">Nettiperuskoulu</option>
+          <option value="lahilukio" data-studyprogramme="1" data-local-line="true">Lähilukio</option>
+          <option value="bandilinja" data-studyprogramme="8" data-local-line="true">Bändilinja</option>
+          <option value="mklinja" data-studyprogramme="15" data-local-line="false">Monikulttuurinen peruskoululinja</option>
+          <option value="apa" data-studyprogramme="29" data-local-line="false">Aikuisten perusopetuksen alkuvaiheen opetus</option>
+          <option value="luva" data-studyprogramme="27" data-local-line="false">LUVA eli lukioon valmentava koulutus maahanmuuttajille</option>
         </select>
 
       </section>

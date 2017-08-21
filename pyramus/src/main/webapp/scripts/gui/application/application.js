@@ -61,7 +61,9 @@
     
     $('select[name="field-line"]').on('change', function() {
       var line = $(this).val();
-      var isLocalLine = line == 'nettilukio' || line == 'nettipk' || line == 'lahilukio' && line == 'bandilinja';
+      var option =  $(this).find('option:selected');
+      var isLocalLine = $(option).attr('data-local-line');
+      $('#field-studyprogramme-id').val($(option).attr('data-studyprogramme'));
       $('.section-other-studies').attr('data-skip', !isLocalLine);
       $('.section-attachments').attr('data-skip', !isLocalLine);
     });

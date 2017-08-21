@@ -75,7 +75,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     if (!isApplicationCall(referer, "application/create.page")) {
       return Response.status(Status.FORBIDDEN).build();
     }
-    String attachmentsFolder = getAttachmentsFolder();
+    String attachmentsFolder = getSettingValue("application.storagePath");
     try {
       byte[] fileData = getFile(multipart, "file");
       String name = getString(multipart, "name");
@@ -108,7 +108,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       if (!isApplicationCall(referer, "application/create.page")) {
         return Response.status(Status.FORBIDDEN).build();
       }
-      java.nio.file.Path path = Paths.get(getAttachmentsFolder(), applicationId, attachment);
+      java.nio.file.Path path = Paths.get(getSettingValue("application.storagePath"), applicationId, attachment);
       File file = path.toFile();
       if (file.exists()) {
         String contentType = Files.probeContentType(path);
@@ -133,6 +133,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     if (!isApplicationCall(referer, "application/create.page")) {
       return Response.status(Status.FORBIDDEN).build();
     }
+    
     return Response.noContent().build();
   }
 
@@ -246,9 +247,9 @@ public class ApplicationRESTService extends AbstractRESTService {
     return null;
   }
 
-  private String getAttachmentsFolder() {
+  private String getSettingValue(String key) {
     SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
-    SettingKey settingKey = settingKeyDAO.findByName("application.storagePath");
+    SettingKey settingKey = settingKeyDAO.findByName(key);
     if (settingKey != null) {
       SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
       Setting setting = settingDAO.findByKey(settingKey);
