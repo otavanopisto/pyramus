@@ -1,11 +1,15 @@
 @charset "UTF-8";
-@import url('https://fonts.googleapis.com/css?family=Exo+2:200|Open+Sans:300');
+@import url('https://fonts.googleapis.com/css?family=Exo+2:200|Open+Sans:300,400');
 
 /* 
   FONTS: 
   - Open Sans = Body font used i every paragraph etc.
   - Exo 2 = Title font used in section titles and headers 
 */
+
+* {
+  box-sizing: border-box;
+}
 
 /* BASIC STYLING - MOBILE FIRST */
 body {
@@ -14,7 +18,7 @@ body {
   background: #fff;
   font-family: "Open Sans";
   font-weight: 300;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 main {
@@ -27,7 +31,7 @@ h3 {
   padding: 0;
   font-family: "Exo 2";
   font-weight: 200;
-  font-size: 30px;
+  font-size: 26px;
   color: #009fe3;
 }
 
@@ -50,6 +54,16 @@ h3 {
 } 
 
 /* FORM ELEMENTS */
+label {
+  font-weight: 400;
+  display: block;
+}
+
+.field-help {
+  font-size: 13px;
+  font-style: italic;
+}
+
 input[type="text"],
 input[type="email"],
 input[type="date"] {
@@ -58,17 +72,18 @@ input[type="date"] {
   background: #fff;
   font-family: "Open Sans";
   font-weight: 300;
-  font-size: 16px;
+  font-size: 14px;
   border-radius: 3px;
   border: 1px solid #5db5c5;
   max-width: 100%;
+  width: 100%;
 }
 
 select {
   background: #fff;
   font-family: "Open Sans";
   font-weight: 300;
-  font-size: 16px;
+  font-size: 14px;
   border-radius: 3px;
   border: 1px solid #5db5c5;
   max-width: 100%;
@@ -78,7 +93,7 @@ option {
   background: #fff;
   font-family: "Open Sans";
   font-weight: 300;
-  font-size: 16px;
+  font-size: 14px;
   padding: 4px 8px;
   word-wrap: break-word;
 }
@@ -87,7 +102,7 @@ option {
 
 .form-navigation {
   text-align: center;
-  margin: 10px 0;
+  margin: 20px 0;
 }
 
 button {
@@ -116,7 +131,6 @@ button.button-submit {
 .application-progress-indicator {
   display: inline-block;
 }
-
 
 /* UPLOAD PROGRESS */
 .ui-progressbar {
