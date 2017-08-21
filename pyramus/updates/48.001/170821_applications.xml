@@ -23,6 +23,7 @@
       primary key (id));
   </sql>
   
+  <sql>alter table Application add constraint UK_tageinnby3smv061oabxl7qgt unique (applicationId);</sql>
   <sql>alter table Application add constraint FKc3glhha6int04qu1e1f0wy8l1 foreign key (lastModifier) references User (id);</sql>
   <sql>alter table Application add constraint FK6qepua13m2a55e272amul7gy6 foreign key (studyProgramme) references StudyProgramme (id);</sql>  
 

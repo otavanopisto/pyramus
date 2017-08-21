@@ -111,15 +111,43 @@ public class Application {
     this.studyProgramme = studyProgramme;
   }
 
+  public ApplicationState getState() {
+    return state;
+  }
+
+  public void setState(ApplicationState state) {
+    this.state = state;
+  }
+
+  public String getFormData() {
+    return formData;
+  }
+
+  public void setFormData(String formData) {
+    this.formData = formData;
+  }
+
+  public Boolean getArchived() {
+    return archived;
+  }
+
+  public void setArchived(Boolean archived) {
+    this.archived = archived;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Application")
   @TableGenerator(name="Application", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   private Long id;
   
   @NotNull
-  @Column (nullable = false)
+  @Column (nullable = false, unique = true)
   @NotEmpty
   private String applicationId;
+
+  @ManyToOne  
+  @JoinColumn(name="studyProgramme")
+  private StudyProgramme studyProgramme;
 
   @NotNull
   @Column (nullable = false)
@@ -135,10 +163,6 @@ public class Application {
   @Column (nullable = false)
   @NotEmpty
   private String email;
-
-  @ManyToOne  
-  @JoinColumn(name="studyProgramme")
-  private StudyProgramme studyProgramme;
 
   @NotNull
   @Column (nullable = false)
@@ -177,6 +201,6 @@ public class Application {
   @NotNull
   @Column (nullable = false)
   @Field
-  private Boolean archived = Boolean.FALSE;
+  private Boolean archived;
 
 }

@@ -159,8 +159,24 @@
     });
 
     $('.button-submit').click(function() {
-      data = JSON.stringify($('.application-form').serializeObject());
-      console.log(data);
+      var data = JSON.stringify($('.application-form').serializeObject());
+      console.log('storing ' + data);
+      $.ajax({
+        url: "/1/application/createapplication",
+        type: "POST",
+        data: data, 
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(result) {
+          console.log('success');
+        },
+        error: function() {
+          console.log('error');
+        },
+        complete: function() {
+          console.log('complete');
+        }
+      });
     });
 
     $(applicationSections).each(function(index, section) {
