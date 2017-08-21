@@ -1,26 +1,127 @@
 @charset "UTF-8";
+@import url('https://fonts.googleapis.com/css?family=Exo+2:200|Open+Sans:300');
 
-.form-section {
-  padding-left: 15px;
-  border-left: 2px solid #FF851B;
-  display: none;
+/* 
+  FONTS: 
+  - Open Sans = Body font used i every paragraph etc.
+  - Exo 2 = Title font used in section titles and headers 
+*/
+
+/* BASIC STYLING - MOBILE FIRST */
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  font-family: "Open Sans";
+  font-weight: 300;
+  font-size: 16px;
 }
 
-.field-container.dependent {
+main {
+  max-width: 100%;
+  margin: 20px;
+}
+
+h3 {
+  margin:0 0 20px;
+  padding: 0;
+  font-family: "Exo 2";
+  font-weight: 200;
+  font-size: 30px;
+  color: #009fe3;
+}
+
+/* APPLICATION SECTIONS */
+.form-section {
   display: none;
-} 
+}
 
 .form-section.current {
   display: inherit;
 }
 
-.btn-info, .btn-default {
-  margin-top: 10px;
+/* FORM SUB SECTION */
+.field-container {
+  margin: 10px 0;
+} 
+
+.field-container.dependent {
+  display: none;
+} 
+
+/* FORM ELEMENTS */
+input[type="text"],
+input[type="email"],
+input[type="date"] {
+  margin: 0;
+  padding: 4px 8px;
+  background: #fff;
+  font-family: "Open Sans";
+  font-weight: 300;
+  font-size: 16px;
+  border-radius: 3px;
+  border: 1px solid #5db5c5;
+  max-width: 100%;
 }
 
+select {
+  background: #fff;
+  font-family: "Open Sans";
+  font-weight: 300;
+  font-size: 16px;
+  border-radius: 3px;
+  border: 1px solid #5db5c5;
+  max-width: 100%;
+}
+
+option {
+  background: #fff;
+  font-family: "Open Sans";
+  font-weight: 300;
+  font-size: 16px;
+  padding: 4px 8px;
+  word-wrap: break-word;
+}
+
+/* FORM NAVIGATION */
+
+.form-navigation {
+  text-align: center;
+  margin: 10px 0;
+}
+
+button {
+  font-family: "Open Sans";
+  font-weight: 300;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: 1px solid #fff;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+button.previous {
+  background: #5db5c5;
+}
+
+button.next {
+  background: #009fe3;
+}
+
+button.button-submit {
+  background: #27b91c;
+}
+
+.application-progress-indicator {
+  display: inline-block;
+}
+
+
+/* UPLOAD PROGRESS */
 .ui-progressbar {
   background-color: rgb(240,240,240);
-  width: 300px;
+  width: 100%;
   height: 10px;  
 }
 
@@ -29,8 +130,9 @@
   height: 10px;  
 }
 
+/* FILE UPLOAD */
 .field-attachments-selector {
-  width: 600px;
+  width: 100%;
   height: 200px;
   text-align: center;
   vertical-align: middle;
