@@ -341,6 +341,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     // Contact information of a student won't be reflected to Person
     // used when searching students, so a manual re-index is needed
 
+    person = personDAO.findById(person.getId());
     personDAO.forceReindex(person);
         
     requestContext.setRedirectURL(requestContext.getReferer(true));

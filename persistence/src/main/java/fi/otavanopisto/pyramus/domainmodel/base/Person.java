@@ -1043,7 +1043,7 @@ public class Person implements ContextReference {
 
   @OneToMany
   @JoinColumn(name = "person_id")
-  @IndexedEmbedded
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
   private List<User> users = new ArrayList<>();
   
   @OneToOne
