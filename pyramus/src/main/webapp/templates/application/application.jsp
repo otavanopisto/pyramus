@@ -8,6 +8,8 @@
 <html>
   <head>
     <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/scripts/parsley/parsley.css"/>
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/application.css"/>
@@ -27,6 +29,8 @@
 	    
         <input type="hidden" id="field-application-id" name="field-application-id" value="${applicationId}" data-preload="${preload}" data-parsley-excluded="true"/>
         <input type="hidden" id="field-studyprogramme-id" name="field-studyprogramme-id" data-parsley-excluded="true"/>
+	      
+	      <header class="application-logo-header"></header>
 	      
 	      <section class="form-section section-line">
 	

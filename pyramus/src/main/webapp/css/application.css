@@ -19,15 +19,27 @@ body {
   font-family: "Open Sans";
   font-weight: 300;
   font-size: 14px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
 }
 
 main {
   max-width: 100%;
   margin: 20px;
+  flex: 1 1 auto;
+}
+
+.application-logo-header {
+  background: url('/../gfx/gui/logo_otavanopisto.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 30px;
 }
 
 h3 {
-  margin:0 0 20px;
+  margin:10px 0;
   padding: 0;
   font-family: "Exo 2";
   font-weight: 200;
@@ -64,11 +76,10 @@ label {
   font-style: italic;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="date"] {
+input,
+textarea {
   margin: 0;
-  padding: 4px 8px;
+  padding: 8px;
   background: #fff;
   font-family: "Open Sans";
   font-weight: 300;
@@ -87,6 +98,7 @@ select {
   border-radius: 3px;
   border: 1px solid #5db5c5;
   max-width: 100%;
+  padding: 0 4px;
 }
 
 option {
@@ -94,12 +106,11 @@ option {
   font-family: "Open Sans";
   font-weight: 300;
   font-size: 14px;
-  padding: 4px 8px;
+  padding: 8px 0;
   word-wrap: break-word;
 }
 
 /* FORM NAVIGATION */
-
 .form-navigation {
   text-align: center;
   margin: 20px 0;
@@ -130,6 +141,7 @@ button.button-submit {
 
 .application-progress-indicator {
   display: inline-block;
+  padding: 0 10px;
 }
 
 /* UPLOAD PROGRESS */
@@ -147,8 +159,65 @@ button.button-submit {
 /* FILE UPLOAD */
 .field-attachments-selector {
   width: 100%;
-  height: 200px;
+  padding: 20px 5px;
+  color: #2c2c2c;
   text-align: center;
   vertical-align: middle;
-  line-height: 200px;
+  border: 1px solid #5db5c5;
+  cursor: pointer;
+  border-radius:3px;
+}
+
+/* PAD */
+@media screen and (min-width: 600px) {
+  
+  body {
+    font-size: 16px;
+  }
+  
+  main {
+    max-width: 600px;
+    margin: 60px;
+  }
+  
+  .application-logo-header {
+    height: 50px;
+  }
+  
+  h3 {
+    font-size: 30px;
+    margin: 20px 0;
+  }
+  
+  label {
+    margin: 2px 0;
+  }
+  
+  button {
+    font-size: 18px;
+    padding: 10px 16px;
+  }
+  
+  input, 
+  option,
+  textarea {
+    padding: 12px;
+    font-size: 16px;
+  }
+  
+  select {
+    padding: 0px 8px;
+    font-size: 16px;
+  }
+  
+  .field-help {
+    font-size: 15px;
+  }
+  
+}
+
+/* WIDE */
+@media screen and (min-width: 1025px) {
+
+  
 }
