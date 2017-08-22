@@ -22,6 +22,7 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
 
+
   </head>
   <body>
     <main>
@@ -288,7 +289,7 @@
 	
 	      </section>
 	
-	      <section class="form-section section-attachments">
+	      <section class="form-section section-attachments" data-skip="true">
 	        
 	        <h3>Hakemuksen liitteet</h3>
 	
@@ -373,9 +374,9 @@
 	    <div class="application-file template" style="display:none;">
 	      <div class="application-file-details">
 	        <span class="application-file-name"><a class="application-file-link" target="_blank"></a></span>
-	        <span class="application-file-delete"></span>
+          <span class="application-file-size"></span>
+	        <span class="application-file-delete">Poista</span>
 	      </div>
-	      <div class="application-file-progress"></div>
 	    </div>
 	    
     </main>
