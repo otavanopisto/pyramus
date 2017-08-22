@@ -8,6 +8,8 @@
 <html>
   <head>
     <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/scripts/parsley/parsley.css"/>
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/application.css"/>
@@ -19,9 +21,6 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/parsley/fi.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
-    
-    <style>
-    </style>
 
   </head>
   <body>
@@ -31,6 +30,8 @@
         <input type="hidden" id="field-application-id" name="field-application-id" value="${applicationId}" data-parsley-excluded="true"/>
         <input type="hidden" id="field-studyprogramme-id" name="field-studyprogramme-id" data-parsley-excluded="true"/>
         <input type="hidden" id="field-reference-code" name="field-reference-code" data-parsley-excluded="true"/>
+	      
+	      <header class="application-logo-header"></header>
 	      
 	      <section class="form-section section-line">
 	
