@@ -55,6 +55,7 @@ public class SaveTransferCreditsJSONRequestController extends JSONRequestControl
       Date date = jsonRequestContext.getDate(colPrefix + ".date");
       Long userId = jsonRequestContext.getLong(colPrefix + ".user");
       Long curriculumId = jsonRequestContext.getLong(colPrefix + ".curriculum");
+      boolean offCurriculum = new Long(1).equals(jsonRequestContext.getLong(colPrefix + ".offCurriculum"));
       
       Grade grade = gradeDAO.findById(gradeId);
       Subject subject = subjectDAO.findById(subjectId);
@@ -67,9 +68,11 @@ public class SaveTransferCreditsJSONRequestController extends JSONRequestControl
       
       if (id != null && id >= 0) {
         transferCredit = transferCreditDAO.findById(id);
-        transferCreditDAO.update(transferCredit, courseName, courseNumber, courseLength, timeUnit, school, subject, courseOptionality, student, staffMember, grade, date, transferCredit.getVerbalAssessment(), curriculum);
+        transferCreditDAO.update(transferCredit, courseName, courseNumber, courseLength, timeUnit, school, subject, 
+            courseOptionality, student, staffMember, grade, date, transferCredit.getVerbalAssessment(), curriculum, offCurriculum);
       } else {
-        transferCredit = transferCreditDAO.create(courseName, courseNumber, courseLength, timeUnit, school, subject, courseOptionality, student, staffMember, grade, date, "", curriculum); 
+        transferCredit = transferCreditDAO.create(courseName, courseNumber, courseLength, timeUnit, school, subject, 
+            courseOptionality, student, staffMember, grade, date, "", curriculum, offCurriculum);
       }
     }
     
