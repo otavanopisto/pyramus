@@ -34,6 +34,11 @@
         for (var i = 0; i < files.length; i++) {
           uploadAttachment(files[i]);
         }
+        
+        
+        
+        
+        
       });
     });
     
@@ -158,10 +163,9 @@
       $('.application-form').parsley().validate({group: 'block-' + curIndex()});
     });
 
-    $('.button-submit').click(function() {
+    $('.button-submit-create-application').click(function() {
       // TODO Disable UI, show saving message 
       var data = JSON.stringify($('.application-form').serializeObject());
-      console.log('storing ' + data);
       $.ajax({
         url: "/1/application/createapplication",
         type: "POST",
@@ -170,7 +174,6 @@
         contentType: "application/json; charset=utf-8",
         success: function(response) {
           // TODO Navigate to section-done
-          console.log('success with reference ' + response.referenceCode);
           $('#edit-info-last-name').text($('#field-last-name').val());
           $('#edit-info-reference-code').text(response.referenceCode);
           $('#edit-info-email').text($('#field-email').val());
@@ -181,11 +184,38 @@
         }
       });
     });
+    
+    $('.button-submit-edit-application-gate').click(function() {
+      if ($('.application-form').parsley().validate()) {
+        var data = JSON.stringify($('.application-form').serializeObject());
+        $.ajax({
+          url: "/1/application/getapplicationid",
+          type: "POST",
+          data: data, 
+          dataType: "json",
+          contentType: "application/json; charset=utf-8",
+          success: function(response) {
+            window.location.replace(window.location.href + '?applicationId=' + response.applicationId);
+          },
+          error: function() {
+            // TODO Navigate to section-error (implement)
+            console.log('error');
+          }
+        });
+      }
+    });
 
     $(applicationSections).each(function(index, section) {
       $(section).find(':input').attr('data-parsley-group', 'block-' + index);
     });
     navigateTo(0);
+
+    // Previously stored data
+    
+    var existingApplication = $('#field-application-id').attr('data-preload');
+    if (existingApplication) {
+      preloadApplication($('#field-application-id').val());
+    }
   });
 
   function navigateTo(index) {
@@ -200,6 +230,73 @@
     return $(applicationSections).index($(applicationSections).filter('.current'));
   }
   
+  function preloadApplication() {
+    var applicationId = $('#field-application-id').val();
+    $.ajax({
+      url: "/1/application/getapplicationdata/" + applicationId,
+      type: "GET",
+      contentType: "application/json; charset=utf-8",
+      success: function(result) {
+        for (var key in result) {
+          if (key.startsWith('field-attachments-')) {
+            continue;
+          }
+          var formElement = $('[name="' + key + '"]');
+          if (formElement.length) {
+            if ($(formElement).is('select')) {
+              $('option', $(formElement)).each(function() {
+                if (this.value == result[key]) {
+                  $(this).prop('selected', true);
+                }
+              });
+            }
+            else if ($(formElement).is('textarea')) {
+              $(formElement).val(result[key]);
+            }
+            else {
+              switch ($(formElement).attr("type")) {
+              case 'text':
+              case 'email':
+              case 'hidden':
+                $(formElement).val(result[key]);
+                break;
+              case 'radio':
+              case 'checkbox':
+                var values = Array.isArray(result[key]) ? result[key] : [result[key]];
+                $(formElement).each(function() {
+                  for (var i = 0; i < values.length; i++) {
+                    if ($(this).attr('value') == values[i]) {
+                      $(this).prop('checked', true);
+                    }
+                  }
+                });
+                break;
+              }
+            }
+            $(formElement).trigger('change');
+          }
+        }
+        preloadApplicationAttachments(result);
+      }
+    });
+  }
+  
+  function preloadApplicationAttachments(result) {
+    var applicationId = $('#field-application-id').val();
+    var fileContainer = $('#field-attachments-files');
+    var files = result['field-attached-file'];
+    for (var i = 0; i < files.length; i++) {
+      var fileElement = $('.application-file.template').clone();
+      fileElement.removeClass('template');
+      fileElement.find('.application-file-progress').remove();
+      fileContainer.append(fileElement);
+      fileElement.show();
+      fileElement.find('.application-file-link').attr('href', '/1/application/getattachment/' + applicationId + '?attachment=' + files[i]);
+      fileElement.find('.application-file-link').text(files[i]);
+      
+    }
+  }
+  
   function uploadAttachment(file) {
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('.field-attachments-files'); 
@@ -211,12 +308,11 @@
     var fileElement = $('.application-file.template').clone();
     fileElement.removeClass('template');
     fileContainer.append(fileElement);
-    fileElement.show();
     fileElement.find('.application-file-name a').text(file.name);
-    fileElement.find('.application-file-size').text((file.size / 1024).toFixed(0) + " KB");
     var fileProgressElement = fileElement.find('.application-file-progress').progressbar({
       value: 0
     });
+    fileElement.show();
 
     $.ajax({
       url: '/1/application/createattachment',
@@ -240,7 +336,7 @@
         fileElement.find('.application-file-link').attr('href', '/1/application/getattachment/' + applicationId + '?attachment=' + file.name);
         fileElement.find('.application-file-progress').remove();
         // TODO Delete file
-        $('.field-attachments-uploader').append($('<input>').attr({type: 'hidden', name: 'attached-file', 'value': file.name}));
+        $('.field-attachments-uploader').append($('<input>').attr({type: 'hidden', name: 'field-attached-file', 'value': file.name}));
       },
       error: function(err) {
         // TODO Show error message for file

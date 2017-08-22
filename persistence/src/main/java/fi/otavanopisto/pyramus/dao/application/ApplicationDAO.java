@@ -4,14 +4,18 @@ import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
+import fi.otavanopisto.pyramus.domainmodel.application.Application_;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 
 @Stateless
-public class ApplicationDAO extends PyramusEntityDAO<ApplicationDAO> {
+public class ApplicationDAO extends PyramusEntityDAO<Application> {
 
   public Application createApplication(
       String applicationId,
@@ -42,6 +46,37 @@ public class ApplicationDAO extends PyramusEntityDAO<ApplicationDAO> {
     entityManager.persist(application);
 
     return application;
+  }
+  
+  public Application findByApplicationId(String applicationId) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Application> criteria = criteriaBuilder.createQuery(Application.class);
+    Root<Application> root = criteria.from(Application.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(Application_.applicationId), applicationId)
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+  
+  public Application findByLastNameAndReferenceCode(String lastName, String referenceCode) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Application> criteria = criteriaBuilder.createQuery(Application.class);
+    Root<Application> root = criteria.from(Application.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Application_.lastName), lastName),
+        criteriaBuilder.equal(root.get(Application_.referenceCode), referenceCode)
+      )
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
   }
 
 }
