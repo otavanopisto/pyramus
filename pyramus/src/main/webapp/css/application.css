@@ -125,6 +125,7 @@ button {
   border: 1px solid #fff;
   color: #fff;
   text-transform: uppercase;
+  cursor: pointer;
 }
 
 button.previous {
@@ -159,13 +160,34 @@ button.button-submit {
 /* FILE UPLOAD */
 .field-attachments-selector {
   width: 100%;
+  background: #fff;
   padding: 20px 5px;
-  color: #2c2c2c;
+  color: #5db5c5;
   text-align: center;
   vertical-align: middle;
   border: 1px solid #5db5c5;
   cursor: pointer;
   border-radius:3px;
+}
+
+.field-attachments-files {
+  
+}
+
+.application-file {
+  padding: 4px;
+}
+
+.application-file-name a {
+  color: #009fe3;
+}
+
+.application-file-size {
+  font-size: 13px;
+}
+
+.application-file-delete {
+  
 }
 
 /* PAD */
