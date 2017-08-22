@@ -27,9 +27,8 @@
     <main>
 	    <form class="application-form">
 	    
-        <input type="hidden" id="field-application-id" name="field-application-id" value="${applicationId}" data-parsley-excluded="true"/>
+        <input type="hidden" id="field-application-id" name="field-application-id" value="${applicationId}" data-preload="${preload}" data-parsley-excluded="true"/>
         <input type="hidden" id="field-studyprogramme-id" name="field-studyprogramme-id" data-parsley-excluded="true"/>
-        <input type="hidden" id="field-reference-code" name="field-reference-code" data-parsley-excluded="true"/>
 	      
 	      <header class="application-logo-header"></header>
 	      
@@ -311,9 +310,9 @@
 	
 	        <div class="field-container field-attachments">
 	          <div class="field-attachments-uploader">
-	            <input type="file" name="field-attachments" multiple="true" style="display:none;">
+              <input type="file" id="field-attachments" name="field-attachments" multiple="true" style="display:none;">
 	            <div class="field-attachments-selector">Lisää liitteitä klikkaamalla tästä tai raahaamalla niitä tähän laatikkoon (TODO raahaus)</div>
-	            <div class="field-attachments-files"></div>
+	            <div id="field-attachments-files" class="field-attachments-files"></div>
 	          </div>
 	        </div>
 	
@@ -370,7 +369,7 @@
 	
 	      <div>
 	        <button type="button" class="button-validate">Validoi</button>
-	        <button type="button" class="button-submit">Lähetä</button>
+	        <button type="button" class="button-submit-create-application">Lähetä</button>
 	      </div>
 	 
 	    </form>
@@ -378,7 +377,6 @@
 	    <div class="application-file template" style="display:none;">
 	      <div class="application-file-details">
 	        <span class="application-file-name"><a class="application-file-link" target="_blank"></a></span>
-	        <span class="application-file-size"></span>
 	        <span class="application-file-delete"></span>
 	      </div>
 	      <div class="application-file-progress"></div>

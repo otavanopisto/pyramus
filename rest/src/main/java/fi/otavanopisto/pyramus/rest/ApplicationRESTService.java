@@ -35,6 +35,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
+import com.fasterxml.jackson.core.JsonParser;
+
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
@@ -81,7 +83,7 @@ public class ApplicationRESTService extends AbstractRESTService {
   @Unsecure
   @Consumes(MediaType.MULTIPART_FORM_DATA + ";charset=UTF-8")
   public Response createAttachment(MultipartFormDataInput multipart, @HeaderParam("Referer") String referer) {
-    if (!isApplicationCall(referer, "application/create.page")) {
+    if (!isApplicationCall(referer)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     String attachmentsFolder = getSettingValue("application.storagePath");
@@ -110,6 +112,61 @@ public class ApplicationRESTService extends AbstractRESTService {
     }
     return Response.noContent().build();
   }
+  
+  @Path("/getapplicationid")
+  @POST
+  @Unsecure
+  public Response getApplicationId(Object object, @HeaderParam("Referer") String referer) {
+    if (!isApplicationCall(referer)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    JSONObject formData = JSONObject.fromObject(object);
+    try {
+      String lastName = formData.getString("field-last-name");
+      if (lastName == null) {
+        logger.log(Level.WARNING, "Refusing entry to application edit due to missing last name");
+        return Response.status(Status.BAD_REQUEST).build();
+      }
+      String referenceCode = formData.getString("field-reference-code");
+      if (referenceCode == null) {
+        logger.log(Level.WARNING, "Refusing entry to application edit due to missing reference code");
+        return Response.status(Status.BAD_REQUEST).build();
+      }
+      
+      ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+      Application application = applicationDAO.findByLastNameAndReferenceCode(lastName, referenceCode);
+      if (application == null || application.getArchived()) {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+      // TODO Evaluate application state; can the data still be modified by the applicant?
+
+      Map<String, String> response = new HashMap<String, String>();
+      response.put("applicationId", application.getApplicationId());
+
+      return Response.ok(response).build();
+    }
+    catch (JSONException e) {
+      logger.log(Level.SEVERE, String.format("Refusing entry to application edit due to malformatted json: %s", e.toString()));
+      return Response.status(Status.BAD_REQUEST).build();
+      
+    }
+  }
+  
+  @Path("/getapplicationdata/{ID}")
+  @GET
+  @Unsecure
+  public Response getApplicationData(@PathParam("ID") String applicationId, @HeaderParam("Referer") String referer) {
+    if (!isApplicationCall(referer)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    Application application = applicationDAO.findByApplicationId(applicationId);
+    if (application == null || application.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    return Response.ok(JSONObject.fromObject(application.getFormData())).build();
+  }
 
   @Path("/getattachment/{ID}")
   @GET
@@ -117,7 +174,7 @@ public class ApplicationRESTService extends AbstractRESTService {
   @Produces("*/*")
   public Response getAttachment(@PathParam("ID") String applicationId, @QueryParam("attachment") String attachment, @HeaderParam("Referer") String referer) {
     try {
-      if (!isApplicationCall(referer, "application/create.page")) {
+      if (!isApplicationCall(referer)) {
         return Response.status(Status.FORBIDDEN).build();
       }
       java.nio.file.Path path = Paths.get(getSettingValue("application.storagePath"), applicationId, attachment);
@@ -143,12 +200,11 @@ public class ApplicationRESTService extends AbstractRESTService {
   @POST
   @Unsecure
   public Response createApplication(Object object, @HeaderParam("Referer") String referer) {
-    if (!isApplicationCall(referer, "application/create.page")) {
+    if (!isApplicationCall(referer)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
     JSONObject formData = JSONObject.fromObject(object);
-    System.out.println("-----------> " + formData.toString());
     
     // Validate key parts of form data
     
@@ -206,7 +262,6 @@ public class ApplicationRESTService extends AbstractRESTService {
     catch (JSONException e) {
       logger.log(Level.SEVERE, String.format("Refusing application creation due to malformatted json: %s", e.toString()));
       return Response.status(Status.BAD_REQUEST).build();
-      
     }
   }
 
@@ -284,11 +339,10 @@ public class ApplicationRESTService extends AbstractRESTService {
     return Response.ok(languageList).build();
   }
 
-  private boolean isApplicationCall(String referer, String expectedPath) {
+  private boolean isApplicationCall(String referer) {
     String s = uri.getBaseUri().toString();
     s = s.substring(0, s.length() - 2); // JaxRsActivator path
-    s += expectedPath;
-    return StringUtils.equals(referer, s);
+    return StringUtils.startsWith(referer, s);
   }
 
   private byte[] getFile(MultipartFormDataInput multipart, String field) {
