@@ -136,7 +136,8 @@ button.next {
   background: #009fe3;
 }
 
-button.button-submit {
+button.button-save-application, 
+button.button-edit-application {
   background: #27b91c;
 }
 
