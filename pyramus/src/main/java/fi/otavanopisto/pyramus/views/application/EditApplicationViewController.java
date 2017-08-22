@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,11 +69,9 @@ public class EditApplicationViewController extends PyramusViewController {
       // If no applicationId has been set, include gateway page
       
       if (applicationId == null) {
-        System.out.println("Sending to edit.jsp");
         pageRequestContext.setIncludeJSP("/templates/application/edit.jsp");
       }
       else {
-        System.out.println("Sending to application.jsp");
         
         // Find application by applicationId and pass form data to page
         

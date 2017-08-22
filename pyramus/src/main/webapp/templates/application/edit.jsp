@@ -45,8 +45,7 @@
         </section> 
 
 	      <div>
-	        <button type="button" class="button-validate">Validoi</button>
-	        <button type="button" class="button-submit-edit-application-gate">Lähetä</button>
+	        <button type="button" class="button-edit-application">Lähetä</button>
 	      </div>
 	 
 	    </form>

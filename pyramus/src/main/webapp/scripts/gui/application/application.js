@@ -47,6 +47,7 @@
     $('select[data-source]').each(function() {
       var field = this;
       $.ajax({
+        async: false,
         url: $(field).attr('data-source'),
         type: "GET",
         contentType: "application/json; charset=utf-8",
@@ -138,45 +139,44 @@
     
     // Form navigation
 
-    $('.form-navigation .previous').click(function() {
-      var newIndex = curIndex() - 1;
-      // TODO better handling for irrelevant sections 
-      if ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
+    $('.button-previous-section').click(function() {
+      var newIndex = currentIndex() - 1;
+      while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
         newIndex--;
       }
-      navigateTo(newIndex);
+      navigateTo($(applicationSections[newIndex]));
     });
 
-    $('.form-navigation .next').click(function() {
+    $('.button-next-section').click(function() {
       // TODO enable section validation
-      //if ($('.application-form').parsley().validate({group: 'block-' + curIndex()})) {
-        var newIndex = curIndex() + 1;  
-        // TODO better handling for irrelevant sections 
-        if ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
+      //if ($('.application-form').parsley().validate({group: 'block-' + currentIndex()})) {
+        var newIndex = currentIndex() + 1;  
+        while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
           newIndex++;
         }
-        navigateTo(newIndex);
+        navigateTo($(applicationSections[newIndex]));
       //}
     });
 
-    $('.button-validate').click(function() {
-      $('.application-form').parsley().validate({group: 'block-' + curIndex()});
+    // TODO Temporary validation hack
+    $('.application-logo-header').click(function() {
+      $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
     });
 
-    $('.button-submit-create-application').click(function() {
+    $('.button-save-application').click(function() {
       // TODO Disable UI, show saving message 
       var data = JSON.stringify($('.application-form').serializeObject());
       $.ajax({
-        url: "/1/application/createapplication",
+        url: "/1/application/saveapplication",
         type: "POST",
         data: data, 
         dataType: "json",
         contentType: "application/json; charset=utf-8",
         success: function(response) {
-          // TODO Navigate to section-done
           $('#edit-info-last-name').text($('#field-last-name').val());
           $('#edit-info-reference-code').text(response.referenceCode);
           $('#edit-info-email').text($('#field-email').val());
+          navigateTo('.section-done');
         },
         error: function() {
           // TODO Navigate to section-error (implement)
@@ -185,7 +185,7 @@
       });
     });
     
-    $('.button-submit-edit-application-gate').click(function() {
+    $('.button-edit-application').click(function() {
       if ($('.application-form').parsley().validate()) {
         var data = JSON.stringify($('.application-form').serializeObject());
         $.ajax({
@@ -208,7 +208,7 @@
     $(applicationSections).each(function(index, section) {
       $(section).find(':input').attr('data-parsley-group', 'block-' + index);
     });
-    navigateTo(0);
+    navigateTo($(applicationSections[0]));
 
     // Previously stored data
     
@@ -218,18 +218,19 @@
     }
   });
 
-  function navigateTo(index) {
-    // Mark the current section with the class 'current'
-    $(applicationSections).removeClass('current').eq(index).addClass('current');
-    $('.form-navigation .previous').toggle(index > 0);
-    var atTheEnd = index >= $(applicationSections).length - 1;
-    $('.form-navigation .next').toggle(!atTheEnd);
-  }
-
-  function curIndex() {
-    return $(applicationSections).index($(applicationSections).filter('.current'));
+  function navigateTo(section) {
+    $('.form-section.current').removeClass('current');
+    $(section).addClass('current');
+    $('.form-navigation').toggle(!$(section).hasClass('section-done'));
+    $('.button-previous-section').toggle(!$(section).hasClass('section-line'));
+    $('.button-next-section').toggle(!$(section).hasClass('section-summary'));
+    $('.button-save-application').toggle($(section).hasClass('section-summary'));
   }
   
+  function currentIndex() {
+    return $(applicationSections).index($(applicationSections).filter('.current')); 
+  }
+
   function preloadApplication() {
     var applicationId = $('#field-application-id').val();
     $.ajax({
@@ -284,16 +285,18 @@
   function preloadApplicationAttachments(result) {
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('#field-attachments-files');
-    var files = result['field-attached-file'];
-    for (var i = 0; i < files.length; i++) {
-      var fileElement = $('.application-file.template').clone();
-      fileElement.removeClass('template');
-      fileElement.find('.application-file-progress').remove();
-      fileContainer.append(fileElement);
-      fileElement.show();
-      fileElement.find('.application-file-link').attr('href', '/1/application/getattachment/' + applicationId + '?attachment=' + files[i]);
-      fileElement.find('.application-file-link').text(files[i]);
-      
+    var files = result['field-attachments-file'];
+    if (files && files.length) {
+      for (var i = 0; i < files.length; i++) {
+        var fileElement = $('.application-file.template').clone();
+        fileElement.removeClass('template');
+        fileElement.find('.application-file-progress').remove();
+        fileContainer.append(fileElement);
+        fileElement.show();
+        fileElement.find('.application-file-link').attr('href', '/1/application/getattachment/' + applicationId + '?attachment=' + files[i]);
+        fileElement.find('.application-file-link').text(files[i]);
+        $('.field-attachments-uploader').append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': files[i]}));
+      }
     }
   }
   
@@ -336,7 +339,7 @@
         fileElement.find('.application-file-link').attr('href', '/1/application/getattachment/' + applicationId + '?attachment=' + file.name);
         fileElement.find('.application-file-progress').remove();
         // TODO Delete file
-        $('.field-attachments-uploader').append($('<input>').attr({type: 'hidden', name: 'field-attached-file', 'value': file.name}));
+        $('.field-attachments-uploader').append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': file.name}));
       },
       error: function(err) {
         // TODO Show error message for file

@@ -13,11 +13,12 @@ import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.application.Application_;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
 public class ApplicationDAO extends PyramusEntityDAO<Application> {
 
-  public Application createApplication(
+  public Application create(
       String applicationId,
       StudyProgramme studyProgramme,
       String firstName,
@@ -43,6 +44,26 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     application.setApplicantLastModified(new Date());
     application.setArchived(Boolean.FALSE);
    
+    entityManager.persist(application);
+
+    return application;
+  }
+  
+  public Application update(Application application, User updatingUser, StudyProgramme studyProgramme, String firstName, String lastName, String email, String formData) {
+    EntityManager entityManager = getEntityManager();
+    
+    application.setStudyProgramme(studyProgramme);
+    application.setFirstName(firstName);
+    application.setLastName(lastName);
+    application.setEmail(email);
+    application.setFormData(formData);
+    if (updatingUser == null) {
+      application.setApplicantLastModified(new Date());
+    }
+    else {
+      application.setLastModifier(updatingUser);
+      application.setLastModified(new Date());
+    }
     entityManager.persist(application);
 
     return application;

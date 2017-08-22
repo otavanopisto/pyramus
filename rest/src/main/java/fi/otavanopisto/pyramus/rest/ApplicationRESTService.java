@@ -35,8 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
-import com.fasterxml.jackson.core.JsonParser;
-
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
@@ -53,7 +51,9 @@ import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
@@ -77,6 +77,9 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Inject
   private LanguageDAO languageDAO;
+
+  @Inject
+  private SessionController sessionController;
 
   @Path("/createattachment")
   @POST
@@ -196,7 +199,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     return Response.status(Status.NOT_FOUND).build();
   }
 
-  @Path("/createapplication")
+  @Path("/saveapplication")
   @POST
   @Unsecure
   public Response createApplication(Object object, @HeaderParam("Referer") String referer) {
@@ -208,7 +211,6 @@ public class ApplicationRESTService extends AbstractRESTService {
     
     // Validate key parts of form data
     
-    String referenceCode = "RANDOM"; // TODO Generate, report back to caller
     try {
       String applicationId = formData.getString("field-application-id");
       if (applicationId == null) {
@@ -240,19 +242,34 @@ public class ApplicationRESTService extends AbstractRESTService {
       // Store application
       
       ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
-      Application application = applicationDAO.createApplication(
-          applicationId,
-          studyProgramme,
-          firstName,
-          lastName,
-          email,
-          referenceCode,
-          formData.toString(),
-          ApplicationState.PENDING);
-
-      logger.log(Level.INFO, String.format("Created new %s application with id %s", studyProgramme.getName(), application.getApplicationId()));
       
-      // TODO Send confirmation mail
+      String referenceCode = "RANDOM"; // TODO Generate, report back to caller
+      Application application = applicationDAO.findByApplicationId(applicationId);
+      if (application == null) {
+        referenceCode = "RANDOM"; // TODO generate, ensure uniqueness
+        application = applicationDAO.create(
+            applicationId,
+            studyProgramme,
+            firstName,
+            lastName,
+            email,
+            referenceCode,
+            formData.toString(),
+            ApplicationState.PENDING);
+        logger.log(Level.INFO, String.format("Created new %s application with id %s", studyProgramme.getName(), application.getApplicationId()));
+        // TODO Send confirmation mail
+      }
+      else {
+        application = applicationDAO.update(
+            application,
+            null,
+            studyProgramme,
+            firstName,
+            lastName,
+            email,
+            formData.toString());
+        referenceCode = application.getReferenceCode();
+      }
       
       Map<String, String> response = new HashMap<String, String>();
       response.put("referenceCode", referenceCode);
@@ -260,7 +277,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       return Response.ok(response).build();
     }
     catch (JSONException e) {
-      logger.log(Level.SEVERE, String.format("Refusing application creation due to malformatted json: %s", e.toString()));
+      logger.log(Level.SEVERE, String.format("Refusing application save due to malformatted json: %s", e.toString()));
       return Response.status(Status.BAD_REQUEST).build();
     }
   }

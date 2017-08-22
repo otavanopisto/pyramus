@@ -362,16 +362,12 @@
 	      </section>
 	
 	      <nav class="form-navigation">
-	        <button type="button" class="previous btn btn-info pull-left">Edellinen</button>
+	        <button type="button" class="button-previous-section previous btn btn-info pull-left">Edellinen</button>
 	        <div class="application-progress-indicator">1 / 5</div>
-	        <button type="button" class="next btn btn-info pull-right">Seuraava</button>
+	        <button type="button" class="button-next-section next btn btn-info pull-right">Seuraava</button>
+          <button type="button" class="button-save-application">Lähetä</button>
 	      </nav>    
 	
-	      <div>
-	        <button type="button" class="button-validate">Validoi</button>
-	        <button type="button" class="button-submit-create-application">Lähetä</button>
-	      </div>
-	 
 	    </form>
 	
 	    <div class="application-file template" style="display:none;">
