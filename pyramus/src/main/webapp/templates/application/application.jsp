@@ -28,8 +28,9 @@
     <main>
 	    <form class="application-form">
 	    
-        <input type="hidden" name="field-application-id" value="${applicationId}" data-parsley-excluded="true"/>
+        <input type="hidden" id="field-application-id" name="field-application-id" value="${applicationId}" data-parsley-excluded="true"/>
         <input type="hidden" id="field-studyprogramme-id" name="field-studyprogramme-id" data-parsley-excluded="true"/>
+        <input type="hidden" id="field-reference-code" name="field-reference-code" data-parsley-excluded="true"/>
 	      
 	      <section class="form-section section-line">
 	
@@ -55,12 +56,12 @@
 	        
 	        <div class="field-container field-last-name">
 	          <label for="field-last-name">Sukunimi</label>
-	          <input type="text" name="field-last-name" data-parsley-required="true">
+	          <input type="text" id="field-last-name" name="field-last-name" data-parsley-required="true">
 	        </div>
 	        
 	        <div class="field-container field-first-names">
 	          <label for="field-first-names">Etunimet</label>
-	          <input type="text" name="field-first-names" data-parsley-required="true">
+	          <input type="text" id="field-first-names" name="field-first-names" data-parsley-required="true">
 	        </div> 
 	        
 	        <div class="field-container field-birthday">
@@ -139,7 +140,7 @@
 	
 	        <div class="field-container field-email">
 	          <label for="field-email">Sähköpostiosoite</label>
-	          <input type="email" name="field-email" data-parsley-required="true">
+	          <input type="email" id="field-email" name="field-email" data-parsley-required="true">
 	        </div>
 	      
 	      </section>
@@ -352,7 +353,12 @@
 	      </section>
 	
 	      <section class="form-section section-done">
-	        <div>Kiitokset, muokkausohjeet</div>
+	        <div>Hakemuksesi on vastaanotettu. Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa</div>
+          <div>https://pyramus.otavanopisto.fi/application/edit.page</div>
+          <div>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen</div>
+          <div>Sukunimi <span id="edit-info-last-name"></span></div>
+          <div>Hakemustunnus <span id="edit-info-reference-code"></span></div>
+          <div>Nämä ohjeet on lähetetty myös antamaasi sähköpostiosoitteeseen <span id="edit-info-email"></span></div>
 	      </section>
 	
 	      <nav class="form-navigation">
@@ -370,9 +376,9 @@
 	
 	    <div class="application-file template" style="display:none;">
 	      <div class="application-file-details">
-	        <span class="applicaton-file-name"><a class="application-file-link" target="_blank"></a></span>
-	        <span class="applicaton-file-size"></span>
-	        <span class="applicaton-file-delete"></span>
+	        <span class="application-file-name"><a class="application-file-link" target="_blank"></a></span>
+	        <span class="application-file-size"></span>
+	        <span class="application-file-delete"></span>
 	      </div>
 	      <div class="application-file-progress"></div>
 	    </div>

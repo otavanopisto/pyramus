@@ -195,13 +195,19 @@ public class ApplicationRESTService extends AbstractRESTService {
           ApplicationState.PENDING);
 
       logger.log(Level.INFO, String.format("Created new %s application with id %s", studyProgramme.getName(), application.getApplicationId()));
+      
+      // TODO Send confirmation mail
+      
+      Map<String, String> response = new HashMap<String, String>();
+      response.put("referenceCode", referenceCode);
+
+      return Response.ok(response).build();
     }
     catch (JSONException e) {
       logger.log(Level.SEVERE, String.format("Refusing application creation due to malformatted json: %s", e.toString()));
       return Response.status(Status.BAD_REQUEST).build();
       
     }
-    return Response.ok(referenceCode).build();
   }
 
   @Path("/municipalities")

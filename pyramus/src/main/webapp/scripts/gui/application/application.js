@@ -159,6 +159,7 @@
     });
 
     $('.button-submit').click(function() {
+      // TODO Disable UI, show saving message 
       var data = JSON.stringify($('.application-form').serializeObject());
       console.log('storing ' + data);
       $.ajax({
@@ -167,14 +168,16 @@
         data: data, 
         dataType: "json",
         contentType: "application/json; charset=utf-8",
-        success: function(result) {
-          console.log('success');
+        success: function(response) {
+          // TODO Navigate to section-done
+          console.log('success with reference ' + response.referenceCode);
+          $('#edit-info-last-name').text($('#field-last-name').val());
+          $('#edit-info-reference-code').text(response.referenceCode);
+          $('#edit-info-email').text($('#field-email').val());
         },
         error: function() {
+          // TODO Navigate to section-error (implement)
           console.log('error');
-        },
-        complete: function() {
-          console.log('complete');
         }
       });
     });
@@ -198,7 +201,7 @@
   }
   
   function uploadAttachment(file) {
-    var applicationId = $('input[name="application-id"]').val();
+    var applicationId = $('#field-application-id').val();
     var fileContainer = $('.field-attachments-files'); 
     var formData = new FormData();
     formData.append('file', file);
@@ -209,8 +212,8 @@
     fileElement.removeClass('template');
     fileContainer.append(fileElement);
     fileElement.show();
-    fileElement.find('.applicaton-file-name a').text(file.name);
-    fileElement.find('.application-file-size').text((file.size / 1024).toFixed(3) + " KB");
+    fileElement.find('.application-file-name a').text(file.name);
+    fileElement.find('.application-file-size').text((file.size / 1024).toFixed(0) + " KB");
     var fileProgressElement = fileElement.find('.application-file-progress').progressbar({
       value: 0
     });
@@ -236,9 +239,12 @@
       success: function(data) {
         fileElement.find('.application-file-link').attr('href', '/1/application/getattachment/' + applicationId + '?attachment=' + file.name);
         fileElement.find('.application-file-progress').remove();
+        // TODO Delete file
         $('.field-attachments-uploader').append($('<input>').attr({type: 'hidden', name: 'attached-file', 'value': file.name}));
       },
       error: function(err) {
+        // TODO Show error message for file
+        console.log('error sending attachment');
         fileElement.find('.application-file-progress').remove();
       }
     });
