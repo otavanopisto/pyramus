@@ -88,6 +88,7 @@ public class EditTransferCreditTemplateViewController extends PyramusViewControl
     }
     
     List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    Collections.sort(curriculums, new StringAttributeComparator("getName"));
     String jsonCurriculums = new JSONArrayExtractor("name", "id").extractString(curriculums);
     setJsDataVariable(pageRequestContext, "curriculums", jsonCurriculums);
     
