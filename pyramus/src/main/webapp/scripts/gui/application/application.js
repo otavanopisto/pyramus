@@ -25,7 +25,7 @@
     
     $('#field-attachments').on('change', function() {
       var files = $(this)[0].files;
-      if ($('.application-file').size() + files.length > 5) {
+      if ($('#field-attachments-files').find('.application-file').size() + files.length > 5) {
         $('.notification-queue').notificationQueue('notification', 'error', 'Voit lähettää korkeintaan viisi liitettä');
         return;
       }
