@@ -330,9 +330,10 @@
     }
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('.field-attachments-files'); 
+    var fileName = decodeURIComponent(file.name);
     var formData = new FormData();
     formData.append('file', file);
-    formData.append('name', decodeURIComponent(file.name));
+    formData.append('name', file.name);
     formData.append('applicationId', applicationId);
 
     $.ajax({
@@ -354,7 +355,7 @@
         return myXhr;
       },
       success: function(data) {
-        createAttachmentFormElement(hash, decodeURIComponent(file.name), file.size);
+        createAttachmentFormElement(hash, fileName, file.size);
       },
       error: function(err) {
         // TODO Show error message for file
