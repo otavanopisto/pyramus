@@ -324,22 +324,127 @@
 	        <h3>Mistä sait tiedon koulutuksesta</h3>
 	      
 	        <div class="field-container field-source">
-	          <label for="field-source">Valitse vähintään yksi</label><br/>
-	          <input type="checkbox" name="field-source" value="tuttu">Ennestään tuttu<br/>
-	          <input type="checkbox" name="field-source" value="google">Google<br/>
-	          <input type="checkbox" name="field-source" value="facebook">Facebook<br/>
-	          <input type="checkbox" name="field-source" value="instagram">Instagram<br/>
-	          <input type="checkbox" name="field-source" value="sanomalehti">Sanomalehti<br/>
-	          <input type="checkbox" name="field-source" value="tienvarsimainos">Tienvarsimainos<br/>
-	          <input type="checkbox" name="field-source" value="valotaulumainos">Valotaulumainos<br/>
-	          <input type="checkbox" name="field-source" value="elokuva">Elokuva- tai TV-mainos<br/>
-	          <input type="checkbox" name="field-source" value="radio">Radio<br/>
-	          <input type="checkbox" name="field-source" value="tuttava">Kuulin kaverilta, tuttavalta, tms.<br/>
-	          <input type="checkbox" name="field-source" value="te-toimisto">TE-toimisto<br/>
-	          <input type="checkbox" name="field-source" value="messut">Messut<br/>
-	          <input type="checkbox" name="field-source" value="nuorisotyo">Nuorisotyö<br/>
-	          <input type="checkbox" name="field-source" value="opot">Opot<br/>
-	          <input type="checkbox" name="field-source" value="muu" data-dependencies="true">Muu<br/>
+	          <label>Valitse vähintään yksi</label>
+	          <div class="field-row-flex">
+	            <div class="field-row-element">
+	              <input id="known" type="checkbox" name="field-source" value="tuttu">
+	            </div>
+	            <div class="field-row-label">
+	              <label for="known">Ennestään tuttu</label>
+	            </div>
+	          </div>
+	          <div class="field-row-flex">
+	            <div class="field-row-element">
+	              <input id="google" type="checkbox" name="field-source" value="google">
+	            </div>
+	            <div class="field-row-label">
+	              <label for="google">Google</label>
+	            </div>
+            </div>
+	          <div class="field-row-flex">
+	            <div class="field-row-element">
+                <input id="facebook" type="checkbox" name="field-source" value="facebook">
+              </div>
+              <div class="field-row-label">
+                <label for="facebook">Facebook</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="instagram" type="checkbox" name="field-source" value="instagram">
+              </div>
+              <div class="field-row-label">
+                <label for="instagram">Instagram</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="sanomalehti" type="checkbox" name="field-source" value="sanomalehti">
+              </div>
+              <div class="field-row-label">
+                <label for="sanomalehti">Sanomalehti</label>
+              </div>
+            </div>
+	          <div class="field-row-flex">
+	            <div class="field-row-element">
+                <input id="tienvarsimainos" type="checkbox" name="field-source" value="tienvarsimainos">
+              </div>
+              <div class="field-row-label">
+                <label for="tienvarsimainos">Tienvarsimainos</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="valotaulumainos" type="checkbox" name="field-source" value="valotaulumainos">
+              </div>
+              <div class="field-row-label">
+                <label for="valotaulumainos">Valotaulumainos</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="elokuva" type="checkbox" name="field-source" value="elokuva">
+              </div>
+              <div class="field-row-label">
+                <label for="elokuva">Elokuva- tai TV-mainos</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="radio" type="checkbox" name="field-source" value="radio">
+              </div>
+              <div class="field-row-label">
+                <label for="radio">Radio</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="tuttava" type="checkbox" name="field-source" value="tuttava">
+              </div>
+              <div class="field-row-label">
+                <label for="tuttava">Kuulin kaverilta, tuttavalta, tms.</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="te-toimisto" type="checkbox" name="field-source" value="te-toimisto">
+              </div>
+              <div class="field-row-label">
+                <label for="te-toimisto">TE-toimisto</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="messut" type="checkbox" name="field-source" value="messut">
+              </div>
+              <div class="field-row-label">
+                <label for="messut">Messut.</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="nuorisotyo" type="checkbox" name="field-source" value="nuorisotyo">
+              </div>
+              <div class="field-row-label">
+                <label for="nuorisotyo">Nuorisotyö</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="opot" type="checkbox" name="field-source" value="opot">
+              </div>
+              <div class="field-row-label">
+                <label for="opot">Opot</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="muu" type="checkbox" name="field-source" value="muu" data-dependencies="true">
+              </div>
+              <div class="field-row-label">
+                <label for="muu">Muu</label>
+              </div>
+            </div>
 	        </div>
 	
 	        <div class="field-container field-source-other dependent" data-dependent-field="field-source" data-dependent-values="muu">
@@ -446,8 +551,8 @@
 	      <div class="application-file-details">
 	        <span class="application-file-name"><a class="application-file-link" target="_blank"></a></span>
           <span class="application-file-size"></span>
-	        <span class="application-file-delete">Poista</span>
 	      </div>
+	      <div class="application-file-delete"></div>
 	    </div>
       
       <div class="application-file-upload-progress template" style="display:none;">
