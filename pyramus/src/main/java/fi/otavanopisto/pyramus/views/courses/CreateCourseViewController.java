@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.dao.modules.ModuleComponentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -142,6 +143,9 @@ public class CreateCourseViewController extends PyramusViewController implements
     // TODO: Support other currencies
     List<Currency> currencies = Arrays.asList(Currency.getInstance("EUR"));
 
+    List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    Collections.sort(curriculums, new StringAttributeComparator("getName"));
+
     pageRequestContext.getRequest().setAttribute("educationSubtypes", educationSubtypes);
     pageRequestContext.getRequest().setAttribute("states", courseStateDAO.listUnarchived());
     pageRequestContext.getRequest().setAttribute("types", courseTypeDAO.listUnarchived());
@@ -155,7 +159,7 @@ public class CreateCourseViewController extends PyramusViewController implements
     pageRequestContext.getRequest().setAttribute("courseDescriptions", descriptionDAO.listByCourseBase(module));
     pageRequestContext.getRequest().setAttribute("courseDescriptionCategories", descriptionCategoryDAO.listUnarchived());
     pageRequestContext.getRequest().setAttribute("currencies", currencies);
-    pageRequestContext.getRequest().setAttribute("curriculums", curriculumDAO.listUnarchived());
+    pageRequestContext.getRequest().setAttribute("curriculums", curriculums);
     
     pageRequestContext.setIncludeJSP("/templates/courses/createcourse.jsp");
   }

@@ -57,6 +57,7 @@ public class ManageTransferCreditsViewController extends PyramusViewController i
     Collections.sort(transferCredits, new StringAttributeComparator("getCourseName", true));
 
     List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    Collections.sort(curriculums, new StringAttributeComparator("getName"));
     String jsonCurriculums = new JSONArrayExtractor("name", "id").extractString(curriculums);
 
     setJsDataVariable(pageRequestContext, "curriculums", jsonCurriculums);

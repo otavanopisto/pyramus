@@ -25,6 +25,7 @@ import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
@@ -98,6 +99,9 @@ public class CreateStudentViewController extends PyramusViewController implement
     List<UserVariableKey> userVariableKeys = variableKeyDAO.listByUserEditable(Boolean.TRUE);
     Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
     
+    List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    Collections.sort(curriculums, new StringAttributeComparator("getName"));
+
     String jsonContactTypes = new JSONArrayExtractor("name", "id").extractString(contactTypes);
     String jsonVariableKeys = new JSONArrayExtractor("variableKey", "variableName", "variableType").extractString(userVariableKeys);
     
@@ -113,7 +117,7 @@ public class CreateStudentViewController extends PyramusViewController implement
     pageRequestContext.getRequest().setAttribute("municipalities", municipalities);
     pageRequestContext.getRequest().setAttribute("languages", languages);
     pageRequestContext.getRequest().setAttribute("studyProgrammes", studyProgrammes);
-    pageRequestContext.getRequest().setAttribute("curriculums", curriculumDAO.listUnarchived());
+    pageRequestContext.getRequest().setAttribute("curriculums", curriculums);
     pageRequestContext.getRequest().setAttribute("studyEndReasons", studyEndReasonDAO.listByParentReason(null));
     pageRequestContext.getRequest().setAttribute("variableKeys", userVariableKeys);
     

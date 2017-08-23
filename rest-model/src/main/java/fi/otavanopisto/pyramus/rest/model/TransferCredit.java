@@ -9,7 +9,7 @@ public class TransferCredit {
 
   public TransferCredit(Long id, Long studentId, OffsetDateTime date, Long gradeId, Long gradingScaleId, String verbalAssessment,
       Long assessorId, Boolean archived, String courseName, Integer courseNumber, Double length, Long lengthUnitId,
-      Long schoolId, Long subjectId, CourseOptionality optionality, Long curriculumId) {
+      Long schoolId, Long subjectId, CourseOptionality optionality, Long curriculumId, Boolean offCurriculum) {
     super();
     this.id = id;
     this.studentId = studentId;
@@ -27,6 +27,7 @@ public class TransferCredit {
     this.subjectId = subjectId;
     this.optionality = optionality;
     this.curriculumId = curriculumId;
+    this.offCurriculum = offCurriculum;
   }
 
   public Long getId() {
@@ -157,6 +158,14 @@ public class TransferCredit {
     this.curriculumId = curriculumId;
   }
 
+  public Boolean getOffCurriculum() {
+    return offCurriculum;
+  }
+
+  public void setOffCurriculum(Boolean offCurriculum) {
+    this.offCurriculum = offCurriculum;
+  }
+
   private Long id;
   private Long studentId;
   private OffsetDateTime date;
@@ -173,4 +182,5 @@ public class TransferCredit {
   private Long subjectId;
   private CourseOptionality optionality;
   private Long curriculumId;
+  private Boolean offCurriculum;
 }

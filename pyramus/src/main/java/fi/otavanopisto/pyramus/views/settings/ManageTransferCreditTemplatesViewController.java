@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.views.settings;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -13,6 +14,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
+import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 
 /**
  * The controller responsible of the List Grading Scales view of the application. 
@@ -34,6 +36,7 @@ public class ManageTransferCreditTemplatesViewController extends PyramusViewCont
     this.setJsDataVariable(pageRequestContext, "transferCreditTemplates", jsonTransferCreditTemplates);
 
     List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    Collections.sort(curriculums, new StringAttributeComparator("getName"));
     String jsonCurriculums = new JSONArrayExtractor("name", "id").extractString(curriculums);
     setJsDataVariable(pageRequestContext, "curriculums", jsonCurriculums);
 
