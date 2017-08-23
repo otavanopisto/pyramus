@@ -231,7 +231,7 @@
   }
   
   function updateProgress() {
-    $('.application-progress-indicator').text(currentPage() + ' / ' + totalPages());    
+    $('.application-page-indicator').text(currentPage() + ' / ' + totalPages());    
   }
   
   function currentPage() {
