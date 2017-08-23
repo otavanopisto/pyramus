@@ -266,9 +266,10 @@ public class ObjectFactory {
             Long subjectId = entity.getSubject() != null ? entity.getSubject().getId() : null;
             CourseOptionality optionality = entity.getOptionality() != null ? CourseOptionality.valueOf(entity.getOptionality().name()) : null;
             Long curriculumId = entity.getCurriculum() != null ? entity.getCurriculum().getId() : null;
+            Boolean offCurriculum = entity.getOffCurriculum() != null ? entity.getOffCurriculum() : Boolean.FALSE;
             
             return new fi.otavanopisto.pyramus.rest.model.TransferCredit(entity.getId(), studentId, date, gradeId, gradigScaleId, entity.getVerbalAssessment(), 
-                assessorId, entity.getArchived(), entity.getCourseName(), entity.getCourseNumber(), length, lengthUnitId, schoolId, subjectId, optionality, curriculumId);
+                assessorId, entity.getArchived(), entity.getCourseName(), entity.getCourseNumber(), length, lengthUnitId, schoolId, subjectId, optionality, curriculumId, offCurriculum);
           }
         },
         
