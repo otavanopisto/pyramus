@@ -41,7 +41,7 @@
 	
 	        <h3>Hakukohde</h3>
 	
-	        <label for="field-line">Valitse linja</label>
+	        <label for="field-line" class="required">Valitse linja</label>
 	        <select id="field-line" name="field-line" data-parsley-required="true" data-dependencies="true">
             <option value="">-- Valitse --</option>
             <option value="nettilukio" data-studyprogramme="6" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
@@ -88,29 +88,29 @@
 	        <h3>Henkilötiedot</h3>
 	        
 	        <div class="field-container field-last-name">
-	          <label for="field-last-name">Sukunimi</label>
+	          <label for="field-last-name" class="required">Sukunimi</label>
 	          <input type="text" id="field-last-name" name="field-last-name" data-parsley-required="true">
 	        </div>
 	        
 	        <div class="field-container field-first-names">
-	          <label for="field-first-names">Etunimet</label>
+	          <label for="field-first-names" class="required">Etunimet</label>
 	          <input type="text" id="field-first-names" name="field-first-names" data-parsley-required="true">
 	        </div> 
 	        
 	        <div class="field-container field-birthday">
-	          <label for="field-birthday">Syntymäaika</label>
+	          <label for="field-birthday" class="required">Syntymäaika</label>
 	          <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true" data-parsley-birthday-format="">
 	          <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
 	        </div>
 	
 	        <div class="field-container field-ssn-end">
-	          <label for="field-ssn-end">Henkilötunnuksen loppuosa</label>
+	          <label for="field-ssn-end" class="required">Henkilötunnuksen loppuosa</label>
 	          <input type="text" name="field-ssn-end" maxlength="4" style="text-transform:uppercase;" data-parsley-required="true" data-parsley-ssn-end-format="">
 	          <span class="field-help">Esitysmuoto XXXX (ilman välimerkkiä A tai -)</span>
 	        </div>
 	
 	        <div class="field-container field-sex">
-	          <label for="field-sex">Sukupuoli</label>
+	          <label for="field-sex" class="required">Sukupuoli</label>
 	          <select name="field-sex" data-parsley-required="true" data-dependencies="true">
 	            <option value="">-- Valitse --</option>
 	            <option value="mies">Mies</option>
@@ -120,59 +120,59 @@
 	        </div>
 	
 	        <div class="field-container field-sex-other dependent" data-dependent-field="field-sex" data-dependent-values="muu">
-	          <label for="field-sex-other">Muu sukupuolesi</label>
+	          <label for="field-sex-other" class="required">Muu sukupuolesi</label>
 	          <input type="text" name="field-sex-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div>
 	
 	        <div class="field-container field-street-address">
-	          <label for="field-street-address">Lähiosoite</label>
+	          <label for="field-street-address" class="required">Lähiosoite</label>
 	          <input type="text" name="field-street-address" data-parsley-required="true">
 	        </div> 
 	
 	        <div class="field-container field-zip-code">
-	          <label for="field-zip-code">Postinumero</label>
+	          <label for="field-zip-code" class="required">Postinumero</label>
 	          <input type="text" name="field-zip-code" data-parsley-required="true">
 	        </div> 
 	
 	        <div class="field-container field-city">
-	          <label for="field-city">Postitoimipaikka</label>
+	          <label for="field-city" class="required">Postitoimipaikka</label>
 	          <input type="text" name="field-city" data-parsley-required="true">
 	        </div> 
 	
 	        <div class="field-container field-country">
-	          <label for="field-country">Maa</label>
+	          <label for="field-country" class="required">Maa</label>
 	          <input type="text" name="field-country" value="Suomi" data-parsley-required="true">
 	        </div> 
 	
 	        <div class="field-container field-municipality">
-	          <label for="field-municipality">Kotikunta</label>
+	          <label for="field-municipality" class="required">Kotikunta</label>
 	          <select name="field-municipality" data-parsley-required="true" data-source="/1/application/municipalities">
 	            <option value="">-- Valitse --</option>
 	          </select>
 	        </div>
 	
 	        <div class="field-container field-nationality">
-	          <label for="field-nationality">Kansalaisuus</label>
+	          <label for="field-nationality" class="required">Kansalaisuus</label>
 	          <select name="field-nationality" data-parsley-required="true" data-source="/1/application/nationalities" data-preselect="Suomi">
 	            <option value="">-- Valitse --</option>
 	          </select>
 	        </div>
 	
 	        <div class="field-container field-language">
-	          <label for="field-language">Äidinkieli</label>
+	          <label for="field-language" class="required">Äidinkieli</label>
 	          <select name="field-language" data-parsley-required="true" data-source="/1/application/languages" data-preselect="suomi">
 	            <option value="">-- Valitse --</option>
 	          </select>
 	        </div>
 	
 	        <div class="field-container field-phone">
-	          <label for="field-phone">Puhelinnumero</label>
+	          <label for="field-phone" class="required">Puhelinnumero</label>
 	          <input type="text" name="field-phone" data-parsley-required="true">
 	          <span class="field-help">Laita mukaan myös maakoodi, jos olet ulkomailla</span>
 	        </div>
 	
 	        <div class="field-container field-email">
-	          <label for="field-email">Sähköpostiosoite</label>
+	          <label for="field-email" class="required">Sähköpostiosoite</label>
 	          <input type="email" id="field-email" name="field-email" data-parsley-required="true">
 	        </div>
 	      
@@ -190,17 +190,17 @@
 	        <div>Huoltajan tiedot</div>
 	        
 	        <div class="field-container field-underage-last-name">
-	          <label for="field-underage-last-name">Sukunimi</label>
+	          <label for="field-underage-last-name" class="required">Sukunimi</label>
 	          <input type="text" name="field-underage-last-name" data-parsley-required="true">
 	        </div> 
 	
 	        <div class="field-container field-underage-first-name">
-	          <label for="field-underage-first-name">Sukunimi</label>
+	          <label for="field-underage-first-name" class="required">Etunimi</label>
 	          <input type="text" name="field-underage-first-name" data-parsley-required="true">
 	        </div> 
 	        
 	        <div class="field-container field-underage-phone">
-	          <label for="field-underage-phone">Puhelinnumero</label>
+	          <label for="field-underage-phone" class="required">Puhelinnumero</label>
 	          <input type="text" name="field-underage-phone" data-parsley-required="true">
 	        </div> 
 	
@@ -210,22 +210,22 @@
 	        </div> 
 	        
 	        <div class="field-container field-underage-street-address">
-	          <label for="field-underage-street-address">Lähiosoite</label>
+	          <label for="field-underage-street-address" class="required">Lähiosoite</label>
 	          <input type="text" name="field-underage-street-address" data-parsley-required="true">
 	        </div> 
 	
 	        <div class="field-container field-zip-code">
-	          <label for="field-underage-zip-code">Postinumero</label>
+	          <label for="field-underage-zip-code" class="required">Postinumero</label>
 	          <input type="text" name="field-underage-zip-code" data-parsley-required="true">
 	        </div> 
 	
 	        <div class="field-container field-underage-city">
-	          <label for="field-underage-city">Postitoimipaikka</label>
+	          <label for="field-underage-city" class="required">Postitoimipaikka</label>
 	          <input type="text" name="field-underage-city" data-parsley-required="true">
 	        </div> 
 	
 	        <div class="field-container field-underage-country">
-	          <label for="field-underage-country">Maa</label>
+	          <label for="field-underage-country" class="required">Maa</label>
 	          <input type="text" name="field-underage-country" value="Suomi" data-parsley-required="true">
 	        </div> 
 	        
@@ -236,7 +236,7 @@
 	        <h3>Hakemiseen tarvittavat lisätiedot</h3>
 	
 	        <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio,bandilinja">
-	          <label for="field-previous-studies">Aiemmat opinnot</label>
+	          <label for="field-previous-studies" class="required">Aiemmat opinnot</label>
 	          <select name="field-previous-studies" data-parsley-required="true" data-dependencies="true">
 	            <option value="">-- Valitse --</option>
 	            <option value="peruskoulu">Peruskoulu</option>
@@ -250,12 +250,12 @@
 	        </div>
 	
 	        <div class="field-container field-previous-studies-other dependent" data-dependent-field="field-previous-studies" data-dependent-values="muu">
-	          <label for="field-previous-studies-other">Kerro tarkemmin</label>
+	          <label for="field-previous-studies-other" class="required">Kerro tarkemmin</label>
 	          <input type="text" name="field-previous-studies-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div>
 	
 	        <div class="field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio">
-	          <label for="field-other-school">Opiskelen tällä hetkellä toisessa oppilaitoksessa</label>
+	          <label for="field-other-school" class="required">Opiskelen tällä hetkellä toisessa oppilaitoksessa</label>
 	          <select name="field-other-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
 	            <option value="">-- Valitse --</option>
 	            <option value="kylla">Kyllä</option>
@@ -264,12 +264,12 @@
 	        </div>
 	
 	        <div class="field-container field-other-school-name dependent" data-dependent-field="field-other-school" data-dependent-values="kylla">
-	          <label for="field-other-school-name">Missä oppilaitoksessa olet</label>
+	          <label for="field-other-school-name" class="required">Missä oppilaitoksessa olet</label>
 	          <input type="text" name="field-other-school-name" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div>
 	
 	        <div class="field-container field-goals dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,lahilukio">
-	          <label for="field-goals">Opiskelutavoitteet</label>
+	          <label for="field-goals" class="required">Opiskelutavoitteet</label>
 	          <select name="field-goals" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	            <option value="">-- Valitse --</option>
 	            <option value="lukio">Lukion päättötodistus</option>
@@ -279,12 +279,12 @@
 	        </div>
 	
 	        <div class="field-container field-previous-foreign-studies dependent" data-dependent-field="field-line" data-dependent-values="mklinja">
-	          <label for="field-previous-foreign-studies">Aikaisemmat opinnot kotimaassasi ja Suomessa</label>
+	          <label for="field-previous-foreign-studies" class="required">Aikaisemmat opinnot kotimaassasi ja Suomessa</label>
 	          <textarea name="field-previous-foreign-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
 	        </div>
 	
 	        <div class="field-container field-job">
-	          <label for="field-job">Olen tällä hetkellä</label>
+	          <label for="field-job" class="required">Olen tällä hetkellä</label>
 	          <select name="field-job" data-parsley-required="true" data-dependencies="true">
 	            <option value="">-- Valitse --</option>
 	            <option value="tyollinen">Työllinen</option>
@@ -296,12 +296,12 @@
 	        </div>
 	
 	        <div class="field-container field-job-other dependent" data-dependent-field="field-job" data-dependent-values="muu">
-	          <label for="field-job-other">Kerro tarkemmin</label>
+	          <label for="field-job-other" class="required">Kerro tarkemmin</label>
 	          <input type="text" name="field-job-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div>
 	
 	        <div class="field-container field-residence-permit dependent" data-dependent-field="field-line" data-dependent-values="mklinja,apa,luva">
-	          <label for="field-residence-permit">Onko sinulla oleskelulupa Suomeen?</label>
+	          <label for="field-residence-permit" class="required">Onko sinulla oleskelulupa Suomeen?</label>
 	          <select name="field-residence-permit" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	            <option value="">-- Valitse --</option>
 	            <option value="kylla">Kyllä</option>
@@ -359,26 +359,131 @@
 	        <h3>Mistä sait tiedon koulutuksesta</h3>
 	      
 	        <div class="field-container field-source">
-	          <label for="field-source">Valitse vähintään yksi</label><br/>
-	          <input type="checkbox" name="field-source" value="tuttu">Ennestään tuttu<br/>
-	          <input type="checkbox" name="field-source" value="google">Google<br/>
-	          <input type="checkbox" name="field-source" value="facebook">Facebook<br/>
-	          <input type="checkbox" name="field-source" value="instagram">Instagram<br/>
-	          <input type="checkbox" name="field-source" value="sanomalehti">Sanomalehti<br/>
-	          <input type="checkbox" name="field-source" value="tienvarsimainos">Tienvarsimainos<br/>
-	          <input type="checkbox" name="field-source" value="valotaulumainos">Valotaulumainos<br/>
-	          <input type="checkbox" name="field-source" value="elokuva">Elokuva- tai TV-mainos<br/>
-	          <input type="checkbox" name="field-source" value="radio">Radio<br/>
-	          <input type="checkbox" name="field-source" value="tuttava">Kuulin kaverilta, tuttavalta, tms.<br/>
-	          <input type="checkbox" name="field-source" value="te-toimisto">TE-toimisto<br/>
-	          <input type="checkbox" name="field-source" value="messut">Messut<br/>
-	          <input type="checkbox" name="field-source" value="nuorisotyo">Nuorisotyö<br/>
-	          <input type="checkbox" name="field-source" value="opot">Opot<br/>
-	          <input type="checkbox" name="field-source" value="muu" data-dependencies="true">Muu<br/>
+	          <label>Valitse vähintään yksi</label>
+	          <div class="field-row-flex">
+	            <div class="field-row-element">
+	              <input id="known" type="checkbox" name="field-source" value="tuttu">
+	            </div>
+	            <div class="field-row-label">
+	              <label for="known">Ennestään tuttu</label>
+	            </div>
+	          </div>
+	          <div class="field-row-flex">
+	            <div class="field-row-element">
+	              <input id="google" type="checkbox" name="field-source" value="google">
+	            </div>
+	            <div class="field-row-label">
+	              <label for="google">Google</label>
+	            </div>
+            </div>
+	          <div class="field-row-flex">
+	            <div class="field-row-element">
+                <input id="facebook" type="checkbox" name="field-source" value="facebook">
+              </div>
+              <div class="field-row-label">
+                <label for="facebook">Facebook</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="instagram" type="checkbox" name="field-source" value="instagram">
+              </div>
+              <div class="field-row-label">
+                <label for="instagram">Instagram</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="sanomalehti" type="checkbox" name="field-source" value="sanomalehti">
+              </div>
+              <div class="field-row-label">
+                <label for="sanomalehti">Sanomalehti</label>
+              </div>
+            </div>
+	          <div class="field-row-flex">
+	            <div class="field-row-element">
+                <input id="tienvarsimainos" type="checkbox" name="field-source" value="tienvarsimainos">
+              </div>
+              <div class="field-row-label">
+                <label for="tienvarsimainos">Tienvarsimainos</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="valotaulumainos" type="checkbox" name="field-source" value="valotaulumainos">
+              </div>
+              <div class="field-row-label">
+                <label for="valotaulumainos">Valotaulumainos</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="elokuva" type="checkbox" name="field-source" value="elokuva">
+              </div>
+              <div class="field-row-label">
+                <label for="elokuva">Elokuva- tai TV-mainos</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="radio" type="checkbox" name="field-source" value="radio">
+              </div>
+              <div class="field-row-label">
+                <label for="radio">Radio</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="tuttava" type="checkbox" name="field-source" value="tuttava">
+              </div>
+              <div class="field-row-label">
+                <label for="tuttava">Kuulin kaverilta, tuttavalta, tms.</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="te-toimisto" type="checkbox" name="field-source" value="te-toimisto">
+              </div>
+              <div class="field-row-label">
+                <label for="te-toimisto">TE-toimisto</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="messut" type="checkbox" name="field-source" value="messut">
+              </div>
+              <div class="field-row-label">
+                <label for="messut">Messut.</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="nuorisotyo" type="checkbox" name="field-source" value="nuorisotyo">
+              </div>
+              <div class="field-row-label">
+                <label for="nuorisotyo">Nuorisotyö</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="opot" type="checkbox" name="field-source" value="opot">
+              </div>
+              <div class="field-row-label">
+                <label for="opot">Opot</label>
+              </div>
+            </div>
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input id="muu" type="checkbox" name="field-source" value="muu" data-dependencies="true">
+              </div>
+              <div class="field-row-label">
+                <label for="muu">Muu</label>
+              </div>
+            </div>
 	        </div>
 	
 	        <div class="field-container field-source-other dependent" data-dependent-field="field-source" data-dependent-values="muu">
-	          <label for="field-source-other">Kerro tarkemmin mistä</label>
+	          <label for="field-source-other" class="required">Kerro tarkemmin mistä</label>
 	          <input type="text" name="field-source-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div>
 	      
@@ -386,8 +491,79 @@
 	
 	      <section class="form-section section-summary">
 	        <div>Yhteenveto ja tietosuojaseloste?</div>
+	        
+	        <div class="privacy-policy-container" style="display: none;">
+	          <h3>1. Rekisterin pitäjä</h3>
+				    <p>
+				      Otavan Opisto<br> Mikkelin kaupunki
+				    </p>
+				    <p>y-tunnus: 0165116-3</p>
+				    <h3>2. Yhteyshenkilö</h3>
+				    <p>
+				      Riitta Kesonen<br> Otavantie 2 b<br> 50670 OTAVA<br> puh. 044 794 3552
+				    </p>
+				    <h3>3. Rekisterin nimi</h3>
+				    <p>Pyramus -oppilashallintojärjestelmä</p>
+				    <h3>4. Henkilötietojen käsittelyn tarkoitus</h3>
+				    <p>Opetuksen ja koulutuksen järjestäminen</p>
+				    <h3>5. Rekisterin tietosisältö</h3>
+				    <ul>
+				      <li>opiskelija nimi</li>
+				      <li>henkilötunnus</li>
+				      <li>valokuva</li>
+				      <li>kansalaisuus</li>
+				      <li>sukupuoli</li>
+				      <li>äidinkieli</li>
+				      <li>kotikunta ja tarpeelliset yhteystiedot (kotiosoite, puhelinnumero, sähköpostiosoite)&nbsp;</li>
+				      <li>opiskelijan aikaisempaa koulutusta ja koulumenestystä koskevat tiedot</li>
+				      <li>koulutukseen hakemista, hyväksymistä ja opiskelijaksi ottamista koskevat tiedot</li>
+				      <li>opiskelijaksi ottamiseen vaikuttavat tiedot työkokemuksesta&nbsp;</li>
+				      <li>haastatteluissa ja muissa yhteydenotoissa kertyvä aineisto</li>
+				      <li>viitetieto opiskelijan järjestelmässä tekemiin sähköisiin allekirjoituksiin</li>
+				      <li>oppilaitoksessa opiskeluun, opintojen etenemiseen ja&nbsp; suoritteisiin liittyvät tiedot</li>
+				      <li>ylioppilastutkintoa koskevat tiedot</li>
+				    </ul>
+				    <h3>6. Säännönmukaiset&nbsp; tietolähteet</h3>
+				    <ul>
+				      <li>Opiskelija täyttää haku-/ilmoittautumislomakkeelle tiedot itse</li>
+				      <li>Osa rekisteriin talletetuista tiedoista on koottu opiskelijan kanssa käytyjen keskustelujen perusteella</li>
+				      <li>Opettajat ja ohjaajat tallentavat arviointitiedot järjestelmään</li>
+				      <li>Oppimisympäristössä toteutettavat kurssi-ilmoittautumiset, saadut arvosanat, sekä muut opiskeluun liittyvät opiskelijan tekemät
+				        tapahtumat kirjautuvat rekisteriin automaattisesti</li>
+				    </ul>
+				    <h3>7. Säännönmukaiset tietojen luovutukset</h3>
+				    <p>Opiskelijatietoja luovutetaan eteenpäin toisille viranomaisille tilastointi- ja rahoitusteknisistä syistä. Tietoja luovutetaan
+				      seuraaville tahoille:</p>
+				    <ul>
+				      <li>Opetushallitus</li>
+				      <li>Tilastokeskus</li>
+				      <li>Kansaneläkelaitos</li>
+				      <li>Mikkelin kaupungin opetustoimi</li>
+				      <li>Ylioppilastutkintolautakunta</li>
+				    </ul>
+				    <p>Opiskelijan yhteystiedot luovutetaan nuorisolain edellyttämissä tapauksissa opiskelijan kotikunnan etsivälle nuorisotyölle.</p>
+				    <p>Lisäksi abiturienttien nimet, osoite ja oppilaitoksen nimi luovutetaan Akateemiselle kustannusliikkeelle Spes Patriae
+				      -ylioppilaskuvastoa varten.</p>
+				    <h3>8. Rekisterin suojauksen periaatteet</h3>
+				    <p>Henkilötiedot suojataan asiattomalta pääsyltä ja laittomalta käsittelyltä (esim. hävittäminen, muuttaminen tai luovuttaminen).
+				      Salassa pidettävien ja arkaluonteisten tietojen suojaamiseen kiinnitetään erityistä huomiota.</p>
+				    <p>Suojaus perustuu järjestelmätasolla valvottujen käyttäjäoikeuksien käyttäjätileihin. Tietokanta varmuuskopioidaan
+				      maantieteellisesti erillään sijaitsevaan konesaliin kiintolevypohjaiseen varmistusjärjestelmään. Levytallennusjärjestelmästä
+				      tallennetaan tiedot vielä varmuuskopiointinauhoille kolmanteen, edelleen maantieteellisesti erillään sijaitsevaan paikkaan.
+				      Varmistusnauha-asema sijaitsee lukitussa murtovalvonnan alaisena olevassa tilassa. Nauhat säilytetään kassakaapissa.</p>
+				    <h3>9. Rekisteröidyn tarkastusoikeus&nbsp;</h3>
+				    <p>Rekisteröidyllä on oikeus tarkastaa itseään koskevat rekisterin tiedot.</p>
+				    <p>Tarkastuspyyntö tehdään henkilökohtaisen käynnin yhteydessä tai omakätisesti allekirjoitetulla tai muulla luotettavalla tavalla
+				      varmennetulla asiakirjalla. Tarkastuspyyntö kohdistetaan rekisterin yhteyshenkilölle.</p>
+				    <h3>10. Tiedon korjaaminen</h3>
+				    <p>Rekisterissä olevien virheellisten, puutteellisten tai vanhentuneiden henkilötietojen korjauspyynnöt voidaan osoittaa rekisterin
+				      yhteyshenkilölle. Henkilöllisyytensä varmistaneen henkilön vaatimat rekisteriä koskevat korjaukset ja muut muutokset tehdään viipymättä.</p>
+				    <p>Jollei muutospyyntöä katsota perustelluksi, annetaan muutospyynnön esittäjälle kirjallinen todistus, jossa selvitetään syyt miksi
+				      muutosvaatimusta ei olla hyväksytty. Rekisteröity voi saattaa asian tietosuojavaltuutetun käsiteltäväksi.</p>
+	        
+	        </div>
 	      </section>
-	
+	      
 	      <section class="form-section section-done" data-skip="true">
 	        <div>Hakemuksesi on vastaanotettu. Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa</div>
           <div><a href="/application/edit.page">https://pyramus.otavanopisto.fi/application/edit.page</a></div>
@@ -399,7 +575,7 @@
 	
 	      <nav class="form-navigation" style="display:none;">
 	        <button type="button" class="button-previous-section previous btn btn-info pull-left">Edellinen</button>
-	        <div class="application-progress-indicator"></div>
+	        <div class="application-page-indicator"></div>
 	        <button type="button" class="button-next-section next btn btn-info pull-right">Seuraava</button>
           <button type="button" class="button-save-application">Lähetä</button>
 	      </nav>    
@@ -410,13 +586,13 @@
 	      <div class="application-file-details">
 	        <span class="application-file-name"><a class="application-file-link" target="_blank"></a></span>
           <span class="application-file-size"></span>
-	        <span class="application-file-delete">Poista</span>
 	      </div>
+	      <div class="application-file-delete"></div>
 	    </div>
       
       <div class="application-file-upload-progress template" style="display:none;">
-        <span class="application-file-upload-progress-text"></span>
-        <span class="application-file-upload-progress-bar"></span>
+        <div class="application-file-upload-progress-text"></div>
+        <div class="application-file-upload-progress-bar"></div>
       </div>
 	    
     </main>
