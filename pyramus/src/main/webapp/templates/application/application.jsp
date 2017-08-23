@@ -339,8 +339,10 @@
 	
 	        <div class="field-container field-attachments">
 	          <div class="field-attachments-uploader">
-              <input type="file" id="field-attachments" name="field-attachments" multiple="true" style="display:none;">
-	            <div class="field-attachments-selector">Lisää liitteitä klikkaamalla tästä tai raahaamalla niitä tähän laatikkoon (TODO raahaus)</div>
+	            <div class="field-attachments-selector-container">
+		            <input type="file" id="field-attachments" name="field-attachments" multiple="true" class="field-attachments-selector">
+		            <div class="file-upload-description">Lisää liitteitä klikkaamalla tästä tai raahaamalla niitä tähän laatikkoon (TODO raahaus)</div>
+	            </div>
 	            <div id="field-attachments-files" class="field-attachments-files"></div>
 	          </div>
 	        </div>

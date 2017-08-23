@@ -207,16 +207,30 @@ button.button-edit-application {
 }
 
 /* FILE UPLOAD */
-.field-attachments-selector {
-  width: 100%;
+.field-attachments-selector-container {
+  position: relative;
   background: #fff;
-  padding: 20px;
-  color: #5db5c5;
-  text-align: center;
-  vertical-align: middle;
   border: 1px solid #5db5c5;
   cursor: pointer;
   border-radius:3px;
+}
+
+.field-attachments-selector {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-upload-description {
+  padding: 20px;
+  color: #5db5c5;
+  text-align: center;
 }
 
 .field-attachments-files {
