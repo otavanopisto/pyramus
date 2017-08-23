@@ -170,11 +170,12 @@ public class GradingService extends PyramusService {
     Grade grade = gradeDAO.findById(gradeId);
     CourseOptionality courseOptionality = null;
     Curriculum curriculum = null;
+    boolean offCurriculum = false;
     
     if (!StringUtils.isBlank(optionality))
       courseOptionality = CourseOptionality.valueOf(optionality);
       
-    TransferCredit transferCredit = transferCreditDAO.create(courseName, courseNumber, courseLength, courseLengthUnit, school, subject, courseOptionality, student, assessingUser, grade, date, verbalAssessment, curriculum);
+    TransferCredit transferCredit = transferCreditDAO.create(courseName, courseNumber, courseLength, courseLengthUnit, school, subject, courseOptionality, student, assessingUser, grade, date, verbalAssessment, curriculum, offCurriculum);
     
     validateEntity(transferCredit);
     
