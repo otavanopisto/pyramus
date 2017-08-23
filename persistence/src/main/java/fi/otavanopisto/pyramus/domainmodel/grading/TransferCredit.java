@@ -92,6 +92,14 @@ public class TransferCredit extends Credit {
     this.curriculum = curriculum;
   }
 
+  public Boolean getOffCurriculum() {
+    return offCurriculum;
+  }
+
+  public void setOffCurriculum(Boolean offCurriculum) {
+    this.offCurriculum = offCurriculum;
+  }
+
   @ManyToOne  
   @JoinColumn(name="student")
   private Student student;
@@ -121,4 +129,8 @@ public class TransferCredit extends Credit {
 
   @ManyToOne
   private Curriculum curriculum;
+
+  @NotNull
+  @Column(nullable = false)
+  private Boolean offCurriculum;
 }

@@ -37,11 +37,13 @@ import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -195,6 +197,12 @@ public class EditStudentViewController extends PyramusViewController implements 
         }
       }
     }
+
+    List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    Collections.sort(curriculums, new StringAttributeComparator("getName"));
+
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
+    Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
     
     pageRequestContext.getRequest().setAttribute("tags", studentTags);
     pageRequestContext.getRequest().setAttribute("person", person);
@@ -208,8 +216,8 @@ public class EditStudentViewController extends PyramusViewController implements 
     pageRequestContext.getRequest().setAttribute("municipalities", municipalities);
     pageRequestContext.getRequest().setAttribute("languages", languages);
     pageRequestContext.getRequest().setAttribute("schools", schools);
-    pageRequestContext.getRequest().setAttribute("studyProgrammes", studyProgrammeDAO.listUnarchived());
-    pageRequestContext.getRequest().setAttribute("curriculums", curriculumDAO.listUnarchived());
+    pageRequestContext.getRequest().setAttribute("studyProgrammes", studyProgrammes);
+    pageRequestContext.getRequest().setAttribute("curriculums", curriculums);
     pageRequestContext.getRequest().setAttribute("studyEndReasons", studyEndReasonDAO.listByParentReason(null));
     pageRequestContext.getRequest().setAttribute("variableKeys", userVariableKeys);
     pageRequestContext.getRequest().setAttribute("studentHasCredits", studentHasCredits);

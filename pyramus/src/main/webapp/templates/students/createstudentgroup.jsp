@@ -327,7 +327,7 @@
                 <jsp:param name="helpLocale" value="students.createStudentGroup.guidanceGroupHelp"/>
               </jsp:include>
 
-              <input type="checkbox" id="guidanceGroup" name="guidanceGroup" />
+              <input type="checkbox" id="guidanceGroup" name="guidanceGroup" value="true" />
               <fmt:message key="students.createStudentGroup.guidanceGroupLabel" />
             </div>
 

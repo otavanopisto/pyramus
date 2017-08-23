@@ -16,6 +16,7 @@ import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
@@ -51,6 +52,9 @@ public class CreateModuleViewController extends PyramusViewController implements
     List<EducationType> educationTypes = educationTypeDAO.listUnarchived();
     Collections.sort(educationTypes, new StringAttributeComparator("getName"));
 
+    List<Curriculum> curriculums = curriculumDAO.listUnarchived();
+    Collections.sort(curriculums, new StringAttributeComparator("getName"));
+
     // Subjects
     Map<Long, List<Subject>> subjectsByEducationType = new HashMap<>();
     List<Subject> subjectsByNoEducationType = subjectDAO.listByEducationType(null);
@@ -79,7 +83,7 @@ public class CreateModuleViewController extends PyramusViewController implements
     pageRequestContext.getRequest().setAttribute("subjectsByEducationType", subjectsByEducationType);
     pageRequestContext.getRequest().setAttribute("moduleLengthTimeUnits", educationalTimeUnits);
     pageRequestContext.getRequest().setAttribute("courseDescriptionCategories", descriptionCategoryDAO.listUnarchived());
-    pageRequestContext.getRequest().setAttribute("curriculums", curriculumDAO.listUnarchived());
+    pageRequestContext.getRequest().setAttribute("curriculums", curriculums);
     pageRequestContext.setIncludeJSP("/templates/modules/createmodule.jsp");
   }
 
