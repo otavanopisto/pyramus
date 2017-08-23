@@ -66,8 +66,8 @@
       var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
       $('#field-studyprogramme-id').val($(option).attr('data-studyprogramme'));
       $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
-      $('.application-progress-indicator').text(currentPage() + ' / ' + totalPages());
       $('#field-birthday').trigger('change');
+      updateProgress();
     });
     $('#field-birthday').on('change', function() {
       var birthday = $(this).val();
@@ -80,7 +80,7 @@
         var hasUnderageSupport = $('#field-line option:selected').attr('data-underage-support') == 'true';
         $('.section-underage').attr('data-skip', !hasUnderageSupport || years >= 18);
       }
-      $('.application-progress-indicator').text(currentPage() + ' / ' + totalPages());
+      updateProgress();
     });
     
     // Custom validators
@@ -227,7 +227,11 @@
     $('.button-previous-section').toggle(!$(section).hasClass('section-line'));
     $('.button-next-section').toggle(!$(section).hasClass('section-summary'));
     $('.button-save-application').toggle($(section).hasClass('section-summary'));
-    $('.application-progress-indicator').text(currentPage() + ' / ' + totalPages());
+    updateProgress();
+  }
+  
+  function updateProgress() {
+    $('.application-progress-indicator').text(currentPage() + ' / ' + totalPages());    
   }
   
   function currentPage() {
