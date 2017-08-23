@@ -20,11 +20,15 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/parsley/parsley.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/parsley/fi.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/notificationqueue/notificationqueue.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
-
 
   </head>
   <body>
+    <div class="notification-queue">
+      <div class="notification-queue-items">
+      </div>
+    </div>
     <main>
 	    <form class="application-form">
 	    
@@ -341,7 +345,7 @@
 	          <div class="field-attachments-uploader">
 	            <div class="field-attachments-selector-container">
 		            <input type="file" id="field-attachments" name="field-attachments" multiple="true" class="field-attachments-selector">
-		            <div class="file-upload-description">Lisää liitteitä klikkaamalla tästä tai raahaamalla niitä tähän laatikkoon (TODO raahaus)</div>
+		            <div class="file-upload-description">Lisää liitteitä klikkaamalla tästä tai raahaamalla niitä tähän laatikkoon. Voit lisätä korkeintaan viisi liitettä, joiden yhteiskoon on oltava alle 10 MB</div>
 	            </div>
 	            <div id="field-attachments-files" class="field-attachments-files"></div>
 	          </div>
