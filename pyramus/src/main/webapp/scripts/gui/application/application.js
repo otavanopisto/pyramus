@@ -21,38 +21,29 @@
       return o;
     };
     
-    // File uploaders
+    // Attachments uploader
     
-    $('.field-attachments-uploader').each(function() {
-      var fileInput = $(this).find('input');
-      var fileSelector = $(this).find('.field-attachments-selector');
-      fileSelector.on('click', function() {
-        fileInput.click();
+    $('#field-attachments').on('change', function() {
+      var files = $(this)[0].files;
+      if ($('.application-file').size() + files.length > 5) {
+        $('.notification-queue').notificationQueue('notification', 'error', 'Voit lähettää korkeintaan viisi liitettä');
+        return;
+      }
+      var filesSize = 0;
+      $('#field-attachments-files').find('.application-file').each(function() {
+        var hash = $(this).find('input[name="field-attachments-file"]').val();
+        filesSize += parseInt($(this).find('input[name="field-attachments-file-' + hash + '-size"]').val());
       });
-      fileInput.on('change', function() {
-        var files = fileInput[0].files;
-        if ($('.application-file').size() + files.length > 5) {
-          $('.notification-queue').notificationQueue('notification', 'error', 'Voit lähettää korkeintaan viisi liitettä');
-          return;
-        }
-        var filesSize = 0;
-        $('#field-attachments-files').find('.application-file').each(function() {
-          var hash = $(this).find('input[name="field-attachments-file"]').val();
-          filesSize += parseInt($(this).find('input[name="field-attachments-file-' + hash + '-size"]').val());
-          console.log('existing file -> ' + filesSize);
-        });
-        for (var i = 0; i < files.length; i++) {
-         filesSize += files[i].size;
-         console.log('incoming file -> ' + filesSize);
-        }
-        if (filesSize > 10485760) {
-          $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on 10 MB');
-          return;
-        }
-        for (var i = 0; i < files.length; i++) {
-          uploadAttachment(files[i]);
-        }
-      });
+      for (var i = 0; i < files.length; i++) {
+       filesSize += files[i].size;
+      }
+      if (filesSize > 10485760) {
+        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on 10 MB');
+        return;
+      }
+      for (var i = 0; i < files.length; i++) {
+        uploadAttachment(files[i]);
+      }
     });
     
     // Dynamic data
