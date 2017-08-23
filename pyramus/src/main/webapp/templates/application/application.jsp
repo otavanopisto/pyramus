@@ -22,6 +22,7 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
 
+
   </head>
   <body>
     <main>
@@ -288,7 +289,7 @@
 	
 	      </section>
 	
-	      <section class="form-section section-attachments">
+	      <section class="form-section section-attachments" data-skip="true">
 	        
 	        <h3>Hakemuksen liitteet</h3>
 	
@@ -425,7 +426,7 @@
 	      
 	      <section class="form-section section-done">
 	        <div>Hakemuksesi on vastaanotettu. Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa</div>
-          <div>https://pyramus.otavanopisto.fi/application/edit.page</div>
+          <div><a href="/application/edit.page">https://pyramus.otavanopisto.fi/application/edit.page</a></div>
           <div>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen</div>
           <div>Sukunimi <span id="edit-info-last-name"></span></div>
           <div>Hakemustunnus <span id="edit-info-reference-code"></span></div>
@@ -444,10 +445,15 @@
 	    <div class="application-file template" style="display:none;">
 	      <div class="application-file-details">
 	        <span class="application-file-name"><a class="application-file-link" target="_blank"></a></span>
-	        <span class="application-file-delete"></span>
+          <span class="application-file-size"></span>
+	        <span class="application-file-delete">Poista</span>
 	      </div>
-	      <div class="application-file-progress"></div>
 	    </div>
+      
+      <div class="application-file-upload-progress template" style="display:none;">
+        <span class="application-file-upload-progress-text"></span>
+        <span class="application-file-upload-progress-bar"></span>
+      </div>
 	    
     </main>
 

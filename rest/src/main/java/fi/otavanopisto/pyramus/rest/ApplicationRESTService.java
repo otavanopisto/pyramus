@@ -16,6 +16,7 @@ import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -51,9 +52,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
-import fi.otavanopisto.pyramus.security.impl.SessionController;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
@@ -77,9 +76,6 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Inject
   private LanguageDAO languageDAO;
-
-  @Inject
-  private SessionController sessionController;
 
   @Path("/createattachment")
   @POST
@@ -115,6 +111,31 @@ public class ApplicationRESTService extends AbstractRESTService {
     }
     return Response.noContent().build();
   }
+  
+  @Path("/removeattachment/{ID}")
+  @DELETE
+  @Unsecure
+  public Response removeAttachment(@PathParam("ID") String applicationId, @QueryParam("attachment") String attachment, @HeaderParam("Referer") String referer) {
+    try {
+      if (!isApplicationCall(referer)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+      java.nio.file.Path path = Paths.get(getSettingValue("application.storagePath"), applicationId, attachment);
+      File file = path.toFile();
+      if (file.exists()) {
+        if (file.delete()) {
+          logger.log(Level.INFO, String.format("Removed application attachment %s", file.getAbsolutePath()));
+          return Response.noContent().build();
+        }
+      }
+    }
+    catch (Exception e) {
+      logger.log(Level.SEVERE, String.format("Exception serving application attachment %s", attachment), e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
+    return Response.status(Status.NOT_FOUND).build();
+  }
+
   
   @Path("/getapplicationid")
   @POST

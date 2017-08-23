@@ -19,8 +19,8 @@
         }
       });
       return o;
-    };    
-
+    };
+    
     // File uploaders
     
     $('.field-attachments-uploader').each(function() {
@@ -34,11 +34,6 @@
         for (var i = 0; i < files.length; i++) {
           uploadAttachment(files[i]);
         }
-        
-        
-        
-        
-        
       });
     });
     
@@ -70,7 +65,6 @@
       var option =  $(this).find('option:selected');
       var isLocalLine = $(option).attr('data-local-line');
       $('#field-studyprogramme-id').val($(option).attr('data-studyprogramme'));
-      $('.section-other-studies').attr('data-skip', !isLocalLine);
       $('.section-attachments').attr('data-skip', !isLocalLine);
     });
     $('input[name="field-birthday"]').on('change', function() {
@@ -226,7 +220,7 @@
     $('.button-next-section').toggle(!$(section).hasClass('section-summary'));
     $('.button-save-application').toggle($(section).hasClass('section-summary'));
   }
-  
+
   function currentIndex() {
     return $(applicationSections).index($(applicationSections).filter('.current')); 
   }
@@ -288,34 +282,69 @@
     var files = result['field-attachments-file'];
     if (files && files.length) {
       for (var i = 0; i < files.length; i++) {
-        var fileElement = $('.application-file.template').clone();
-        fileElement.removeClass('template');
-        fileElement.find('.application-file-progress').remove();
-        fileContainer.append(fileElement);
-        fileElement.show();
-        fileElement.find('.application-file-link').attr('href', '/1/application/getattachment/' + applicationId + '?attachment=' + files[i]);
-        fileElement.find('.application-file-link').text(files[i]);
-        $('.field-attachments-uploader').append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': files[i]}));
+        var name = result['field-attachments-file-' + files[i] + '-name'];
+        var size = result['field-attachments-file-' + files[i] + '-size'];
+        createAttachmentFormElement(files[i], name, size);
       }
     }
   }
   
-  function uploadAttachment(file) {
+  function createAttachmentFormElement(hash, name, size) {
     var applicationId = $('#field-application-id').val();
-    var fileContainer = $('.field-attachments-files'); 
-    var formData = new FormData();
-    formData.append('file', file);
-    formData.append('name', file.name);
-    formData.append('applicationId', applicationId);
-
+    var fileContainer = $('#field-attachments-files');
     var fileElement = $('.application-file.template').clone();
     fileElement.removeClass('template');
     fileContainer.append(fileElement);
-    fileElement.find('.application-file-name a').text(file.name);
-    var fileProgressElement = fileElement.find('.application-file-progress').progressbar({
-      value: 0
+    fileElement.find('.application-file-link').attr('href', '/1/application/getattachment/' + applicationId + '?attachment=' + name);
+    fileElement.find('.application-file-size').text((size / 1024 + 1).toFixed(0) + ' KB');
+    fileElement.find('.application-file-link').text(name);
+    fileElement.find('.application-file-delete').on('click', function() {
+      $.ajax({
+        url: '/1/application/removeattachment/' + applicationId + '?attachment=' + name,
+        type: 'DELETE',
+        success: function(data) {
+          fileElement.remove();
+        },
+        error: function(err) {
+          // TODO Show error message for file
+          console.log('error removing attachment');
+        }
+      });
     });
+    // TODO Delete attachment support
+    $(fileElement).append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': hash}));
+    $(fileElement).append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-name', 'value': name}));
+    $(fileElement).append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-size', 'value': size}));
     fileElement.show();
+  }
+  
+  function uploadAttachment(file) {
+    var hash = 0, i, chr;
+    if (file.name.length > 0) {
+      for (i = 0; i < file.name.length; i++) {
+        chr = file.name.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0;
+      }
+      hash = Math.abs(hash);
+    }
+    var applicationId = $('#field-application-id').val();
+    var fileContainer = $('.field-attachments-files'); 
+    var fileName = decodeURIComponent(file.name);
+    var formData = new FormData();
+    formData.append('file', file);
+    formData.append('name', fileName);
+    formData.append('applicationId', applicationId);
+    
+    var progressElement = $('.application-file-upload-progress.template').clone();
+    progressElement.removeClass('template');
+    progressElement.find('.application-file-upload-progress-text').text('Lähetetään tiedostoa ' + fileName);
+    var progressBarElement = progressElement.find('.application-file-upload-progress-bar');
+    progressBarElement.progressbar({
+      value: 47
+    });
+    $('#field-attachments-files').append(progressElement);
+    progressElement.show();
 
     $.ajax({
       url: '/1/application/createattachment',
@@ -329,22 +358,20 @@
           myXhr.upload.addEventListener('progress', function(evt) {
             if (evt.lengthComputable) {
               var percentComplete = (evt.loaded / evt.total) * 100;
-              fileProgressElement.progressbar('value', percentComplete);
+              progressBarElement.progressbar('value', percentComplete);
             }
           }, false);
         }
         return myXhr;
       },
       success: function(data) {
-        fileElement.find('.application-file-link').attr('href', '/1/application/getattachment/' + applicationId + '?attachment=' + file.name);
-        fileElement.find('.application-file-progress').remove();
-        // TODO Delete file
-        $('.field-attachments-uploader').append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': file.name}));
+        progressElement.remove();
+        createAttachmentFormElement(hash, fileName, file.size);
       },
       error: function(err) {
         // TODO Show error message for file
         console.log('error sending attachment');
-        fileElement.find('.application-file-progress').remove();
+        progressElement.remove();
       }
     });
   }
