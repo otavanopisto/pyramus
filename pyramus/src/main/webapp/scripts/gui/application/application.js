@@ -60,19 +60,27 @@
     
     // Section checks
     
-    $('select[name="field-line"]').on('change', function() {
+    $('#field-line').on('change', function() {
       var line = $(this).val();
       var option =  $(this).find('option:selected');
-      var isLocalLine = $(option).attr('data-local-line');
+      var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
       $('#field-studyprogramme-id').val($(option).attr('data-studyprogramme'));
-      $('.section-attachments').attr('data-skip', !isLocalLine);
+      $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
+      $('.application-progress-indicator').text(currentPage() + ' / ' + totalPages());
+      $('#field-birthday').trigger('change');
     });
-    $('input[name="field-birthday"]').on('change', function() {
+    $('#field-birthday').on('change', function() {
       var birthday = $(this).val();
-      var years = moment().diff(moment(birthday, "D.M.YYYY"), 'years');
-      var line = $('select[name="field-line"]').val();
-      var isLocalLine = line == 'nettilukio' || line == 'nettipk' || line == 'lahilukio' && line == 'bandilinja';
-      $('.section-underage').attr('data-skip', !isLocalLine || years >= 18);
+      if (birthday == '') {
+        $('.section-underage').attr('data-skip', 'true');
+      }
+      else {
+        var years = moment().diff(moment(birthday, "D.M.YYYY"), 'years');
+        var line = $('select[name="field-line"]').val();
+        var hasUnderageSupport = $('#field-line option:selected').attr('data-underage-support') == 'true';
+        $('.section-underage').attr('data-skip', !hasUnderageSupport || years >= 18);
+      }
+      $('.application-progress-indicator').text(currentPage() + ' / ' + totalPages());
     });
     
     // Custom validators
@@ -202,7 +210,7 @@
     $(applicationSections).each(function(index, section) {
       $(section).find(':input').attr('data-parsley-group', 'block-' + index);
     });
-    navigateTo($(applicationSections[0]));
+    navigateTo($(applicationSections).get(0));
 
     // Previously stored data
     
@@ -219,6 +227,34 @@
     $('.button-previous-section').toggle(!$(section).hasClass('section-line'));
     $('.button-next-section').toggle(!$(section).hasClass('section-summary'));
     $('.button-save-application').toggle($(section).hasClass('section-summary'));
+    $('.application-progress-indicator').text(currentPage() + ' / ' + totalPages());
+  }
+  
+  function currentPage() {
+    var page = 0;
+    for (var i = 0; i < $(applicationSections).size(); i++) {
+      var section = $(applicationSections).get(i);
+      if ($(section).attr('data-skip') == 'true') {
+        continue;
+      }
+      page++;
+      if ($(section).hasClass('current')) {
+        break;
+      }
+    }
+    return page;
+  }
+  
+  function totalPages() {
+    var pages = 0;
+    for (var i = 0; i < $(applicationSections).size(); i++) {
+      var section = $(applicationSections).get(i);
+      if ($(section).attr('data-skip') == 'true') {
+        continue;
+      }
+      pages++;
+    }
+    return pages;
   }
 
   function currentIndex() {

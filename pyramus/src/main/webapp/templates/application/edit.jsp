@@ -39,7 +39,7 @@
   
           <div class="field-container field-reference-code">
             <label for="field-reference-code">Hakemustunnus</label>
-            <input type="text" id="field-reference-code" name="field-reference-code" data-parsley-required="true">
+            <input type="text" id="field-reference-code" name="field-reference-code" maxlength="6" style="text-transform:uppercase;" data-parsley-required="true">
           </div>
         
         </section> 

@@ -38,16 +38,44 @@
 	        <h3>Hakukohde</h3>
 	
 	        <label for="field-line">Valitse linja</label>
-	        <select name="field-line" data-parsley-required="true" data-dependencies="true">
+	        <select id="field-line" name="field-line" data-parsley-required="true" data-dependencies="true">
             <option value="">-- Valitse --</option>
-            <option value="nettilukio" data-studyprogramme="6" data-local-line="true">Nettilukio</option>
-            <option value="nettipk" data-studyprogramme="7" data-local-line="true">Nettiperuskoulu</option>
-            <option value="lahilukio" data-studyprogramme="1" data-local-line="true">Lähilukio</option>
-            <option value="bandilinja" data-studyprogramme="8" data-local-line="true">Bändilinja</option>
-            <option value="mklinja" data-studyprogramme="15" data-local-line="false">Monikulttuurinen peruskoululinja</option>
-            <option value="apa" data-studyprogramme="29" data-local-line="false">Aikuisten perusopetuksen alkuvaiheen opetus</option>
-            <option value="luva" data-studyprogramme="27" data-local-line="false">LUVA eli lukioon valmentava koulutus maahanmuuttajille</option>
+            <option value="nettilukio" data-studyprogramme="6" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
+            <option value="nettipk" data-studyprogramme="7" data-underage-support="true" data-attachment-support="true">Nettiperuskoulu</option>
+            <option value="lahilukio" data-studyprogramme="1" data-underage-support="true" data-attachment-support="true">Lähilukio</option>
+            <option value="bandilinja" data-studyprogramme="8" data-underage-support="true" data-attachment-support="true">Bändilinja</option>
+            <option value="mklinja" data-studyprogramme="15" data-underage-support="false" data-attachment-support="false">Monikulttuurinen peruskoululinja</option>
+            <option value="apa" data-studyprogramme="29" data-underage-support="false" data-attachment-support="false">Aikuisten perusopetuksen alkuvaiheen opetus</option>
+            <option value="luva" data-studyprogramme="27" data-underage-support="false" data-attachment-support="false">LUVA eli lukioon valmentava koulutus maahanmuuttajille</option>
 	        </select>
+
+          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
+            <div>Nettilukion esittelyteksti</div>
+          </div>
+          
+          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
+            <div>Nettiperuskoulun esittelyteksti</div>
+          </div>
+          
+          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="lahilukio">
+            <div>Lähilukion esittelyteksti</div>
+          </div>
+          
+          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="bandilinja">
+            <div>Bändilinjan esittelyteksti</div>
+          </div>
+          
+          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="mklinja">
+            <div>MK-linjan esittelyteksti</div>
+          </div>
+          
+          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="apa">
+            <div>APA-esittelyteksti</div>
+          </div>
+          
+          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="luva">
+            <div>LUVA-esittelyteksti</div>
+          </div>
 	
 	      </section>
 	      
@@ -67,7 +95,7 @@
 	        
 	        <div class="field-container field-birthday">
 	          <label for="field-birthday">Syntymäaika</label>
-	          <input type="text" name="field-birthday" data-parsley-required="true" data-parsley-birthday-format="">
+	          <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true" data-parsley-birthday-format="">
 	          <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
 	        </div>
 	
@@ -353,7 +381,7 @@
 	        <div>Yhteenveto ja tietosuojaseloste?</div>
 	      </section>
 	
-	      <section class="form-section section-done">
+	      <section class="form-section section-done" data-skip="true">
 	        <div>Hakemuksesi on vastaanotettu. Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa</div>
           <div><a href="/application/edit.page">https://pyramus.otavanopisto.fi/application/edit.page</a></div>
           <div>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen</div>
@@ -362,9 +390,9 @@
           <div>Nämä ohjeet on lähetetty myös antamaasi sähköpostiosoitteeseen <span id="edit-info-email"></span></div>
 	      </section>
 	
-	      <nav class="form-navigation">
+	      <nav class="form-navigation" style="display:none;">
 	        <button type="button" class="button-previous-section previous btn btn-info pull-left">Edellinen</button>
-	        <div class="application-progress-indicator">1 / 5</div>
+	        <div class="application-progress-indicator"></div>
 	        <button type="button" class="button-next-section next btn btn-info pull-right">Seuraava</button>
           <button type="button" class="button-save-application">Lähetä</button>
 	      </nav>    
