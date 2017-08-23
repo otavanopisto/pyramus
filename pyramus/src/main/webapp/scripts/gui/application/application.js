@@ -333,8 +333,18 @@
     var fileName = decodeURIComponent(file.name);
     var formData = new FormData();
     formData.append('file', file);
-    formData.append('name', file.name);
+    formData.append('name', fileName);
     formData.append('applicationId', applicationId);
+    
+    var progressElement = $('.application-file-upload-progress.template').clone();
+    progressElement.removeClass('template');
+    progressElement.find('.application-file-upload-progress-text').text('Lähetetään tiedostoa ' + fileName);
+    var progressBarElement = progressElement.find('.application-file-upload-progress-bar');
+    progressBarElement.progressbar({
+      value: 47
+    });
+    $('#field-attachments-files').append(progressElement);
+    progressElement.show();
 
     $.ajax({
       url: '/1/application/createattachment',
@@ -348,19 +358,20 @@
           myXhr.upload.addEventListener('progress', function(evt) {
             if (evt.lengthComputable) {
               var percentComplete = (evt.loaded / evt.total) * 100;
-              // TODO Show progress somewhere?
+              progressBarElement.progressbar('value', percentComplete);
             }
           }, false);
         }
         return myXhr;
       },
       success: function(data) {
+        progressElement.remove();
         createAttachmentFormElement(hash, fileName, file.size);
       },
       error: function(err) {
         // TODO Show error message for file
         console.log('error sending attachment');
-        fileElement.remove();
+        progressElement.remove();
       }
     });
   }

@@ -355,7 +355,7 @@
 	
 	      <section class="form-section section-done">
 	        <div>Hakemuksesi on vastaanotettu. Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa</div>
-          <div>https://pyramus.otavanopisto.fi/application/edit.page</div>
+          <div><a href="/application/edit.page">https://pyramus.otavanopisto.fi/application/edit.page</a></div>
           <div>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen</div>
           <div>Sukunimi <span id="edit-info-last-name"></span></div>
           <div>Hakemustunnus <span id="edit-info-reference-code"></span></div>
@@ -378,6 +378,11 @@
 	        <span class="application-file-delete">Poista</span>
 	      </div>
 	    </div>
+      
+      <div class="application-file-upload-progress template" style="display:none;">
+        <span class="application-file-upload-progress-text"></span>
+        <span class="application-file-upload-progress-bar"></span>
+      </div>
 	    
     </main>
 
