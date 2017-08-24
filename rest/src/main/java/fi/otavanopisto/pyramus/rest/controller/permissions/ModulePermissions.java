@@ -16,11 +16,11 @@ public class ModulePermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_MODULE = "CREATE_MODULE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String LIST_MODULES = "LIST_MODULES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String FIND_MODULE = "FIND_MODULE";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -32,11 +32,11 @@ public class ModulePermissions extends AbstractPyramusPermissionCollection imple
   public static final String DELETE_MODULE = "DELETE_MODULE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String LIST_COURSESBYMODULE = "LIST_COURSESBYMODULE";
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String LIST_PROJECTSBYMODULE = "LIST_PROJECTSBYMODULE";
   
   /**
@@ -48,11 +48,11 @@ public class ModulePermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_MODULECOMPONENT = "CREATE_MODULECOMPONENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String LIST_MODULECOMPONENTS = "LIST_MODULECOMPONENTS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String FIND_MODULECOMPONENT = "FIND_MODULECOMPONENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
