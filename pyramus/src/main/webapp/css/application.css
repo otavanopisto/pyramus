@@ -275,7 +275,44 @@ button.button-edit-application {
   height: 16px;
   font-size: 13px;
   cursor: pointer;
-  background: url('../gfx/icons/16x16/actions/delete-attachment.png') no-repeat;
+  background: url('../gfx/icons/48x48/actions/close-notif-queue.png') center center no-repeat;
+  background-size: contain;
+}
+
+.notification-queue {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.notification-queue-item {
+  color: #fff;
+  position: relative;
+  background: #000;
+  opacity: 0.8;
+}
+
+.notification-queue-item-error {
+  background: #d31111;
+}
+
+.notification-message-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 0;
+  position: relative;
+}
+
+.notification-queue-item-close {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  margin: -16px 0 0;
+  height: 32px;
+  width: 32px;
+  background: url('../gfx/icons/48x48/actions/close-notif-queue.png') center center no-repeat;
+  background-size: contain;
 }
 
 /* PAD */
