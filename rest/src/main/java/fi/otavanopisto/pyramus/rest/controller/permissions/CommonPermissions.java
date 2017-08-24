@@ -228,11 +228,11 @@ public class CommonPermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_COURSEBASEVARIABLEKEY = "CREATE_COURSEBASEVARIABLEKEY";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ EVERYONE })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, USER, GUEST, STUDENT })
   public static final String LIST_COURSEBASEVARIABLEKEYS = "LIST_COURSEBASEVARIABLEKEYS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ EVERYONE })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, USER, GUEST, STUDENT })
   public static final String FIND_COURSEBASEVARIABLEKEY = "FIND_COURSEBASEVARIABLEKEY";
   
   @Scope (PermissionScope.ENVIRONMENT)
