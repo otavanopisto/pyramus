@@ -390,7 +390,7 @@
     progressElement.find('.application-file-upload-progress-text').text('Lähetetään tiedostoa ' + fileName);
     var progressBarElement = progressElement.find('.application-file-upload-progress-bar');
     progressBarElement.progressbar({
-      value: 47
+      value: 0
     });
     $('#field-attachments-files').append(progressElement);
     progressElement.show();
