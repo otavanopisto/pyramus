@@ -36,12 +36,14 @@ public class WebhookController {
   }
 
   public void sendWebhookNotifications(List<Webhook> webhooks, WebhookPayload<?> payload) {
+    System.out.println("sendWebhookNotifications");
     if (!webhooks.isEmpty()) {
       ObjectMapper objectMapper = new ObjectMapper();
       try {
         String data = objectMapper.writeValueAsString(payload);
 
         for (Webhook webhook : webhooks) {
+          System.out.println("webhook: " + webhook.getUrl() + " data: " + data);
           FutureTask<Boolean> futureTask = new FutureTask<>(new NotificationCallable(webhook.getUrl(), webhook.getSignature(), data));
           executorService.execute(futureTask);
         }
@@ -64,6 +66,8 @@ public class WebhookController {
     @Override
     public Boolean call() throws Exception {
       try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
+        System.out.println("callable: " + url + " data: " + data);
+
         HttpPost httpPost = new HttpPost(url);
         try {
           StringEntity dataEntity = new StringEntity(data);

@@ -2,13 +2,17 @@ package fi.otavanopisto.pyramus.webhooks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.Stateful;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -223,9 +227,28 @@ public class Webhooks {
   }
  
   /* StudentGroup */
+
+  @Resource
+  private TransactionSynchronizationRegistry transactionRegistry;
   
-  public void onStudentGroupCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupCreatedEvent event) {
-    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupCreatePayload(event.getStudentGroupId()));
+  private Queue<WebhookPayload<?>> queue = new ArrayBlockingQueue<>(10);
+  private void flushQueue() {
+    while (!queue.isEmpty()) {
+      WebhookPayload<?> payload = queue.poll();
+      System.out.println("payload: " + payload.getType().toString());
+      Object key = transactionRegistry.getTransactionKey();
+      System.out.println("Transaction key: " + key);
+      webhookController.sendWebhookNotifications(webhooks, payload);
+    }
+  }
+
+  public void onStudentGroupCreatedAfter(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupCreatedEvent event) {
+    flushQueue();
+  }
+  
+  public void onStudentGroupCreated(@Observes(during=TransactionPhase.IN_PROGRESS) StudentGroupCreatedEvent event) {
+    queue.add(new WebhookStudentGroupCreatePayload(event.getStudentGroupId()));
+//    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupCreatePayload(event.getStudentGroupId()));
   }
 
   public void onStudentGroupUpdated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupUpdatedEvent event) {
@@ -236,9 +259,15 @@ public class Webhooks {
     webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupArchivePayload(event.getStudentGroupId()));
   }
 
-  public void onStudentGroupStaffMemberCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStaffMemberCreatedEvent event) {
-    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupStaffMemberCreatePayload(
+  public void onStudentGroupStaffMemberCreatedAfter(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStaffMemberCreatedEvent event) {
+    flushQueue();
+  }
+  
+  public void onStudentGroupStaffMemberCreated(@Observes(during=TransactionPhase.IN_PROGRESS) StudentGroupStaffMemberCreatedEvent event) {
+    queue.add(new WebhookStudentGroupStaffMemberCreatePayload(
         event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStaffMemberId()));
+//    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupStaffMemberCreatePayload(
+//        event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStaffMemberId()));
   }
 
   public void onStudentGroupStaffMemberUpdated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStaffMemberUpdatedEvent event) {
@@ -251,9 +280,15 @@ public class Webhooks {
         event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStaffMemberId()));
   }
 
-  public void onStudentGroupStudentCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStudentCreatedEvent event) {
-    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupStudentCreatePayload(
+  public void onStudentGroupStudentCreatedAfter(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStudentCreatedEvent event) {
+    flushQueue();
+  }
+  
+  public void onStudentGroupStudentCreated(@Observes(during=TransactionPhase.IN_PROGRESS) StudentGroupStudentCreatedEvent event) {
+    queue.add(new WebhookStudentGroupStudentCreatePayload(
         event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStudentId()));
+//    webhookController.sendWebhookNotifications(webhooks, new WebhookStudentGroupStudentCreatePayload(
+//        event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStudentId()));
   }
 
   public void onStudentGroupStudentUpdated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStudentUpdatedEvent event) {
