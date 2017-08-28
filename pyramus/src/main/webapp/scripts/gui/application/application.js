@@ -75,6 +75,10 @@
       var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
       $('#field-studyprogramme-id').val($(option).attr('data-studyprogramme'));
       $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
+      var existingApplication = $('#field-application-id').attr('data-preload');
+      if (existingApplication) {
+        $('.section-attachments').toggle(hasAttachmentSupport);
+      }
       $('#field-birthday').trigger('change');
       updateProgress();
     });
@@ -88,6 +92,10 @@
         var line = $('select[name="field-line"]').val();
         var hasUnderageSupport = $('#field-line option:selected').attr('data-underage-support') == 'true';
         $('.section-underage').attr('data-skip', !hasUnderageSupport || years >= 18);
+      }
+      var existingApplication = $('#field-application-id').attr('data-preload');
+      if (existingApplication) {
+        $('.section-underage').toggle($('.section-underage').attr('data-skip') != 'true');
       }
       updateProgress();
     });
