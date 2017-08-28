@@ -32,6 +32,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -264,10 +265,9 @@ public class ApplicationRESTService extends AbstractRESTService {
       
       ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
       
-      String referenceCode = "RANDOM"; // TODO Generate, report back to caller
+      String referenceCode = generateReferenceCode(lastName);
       Application application = applicationDAO.findByApplicationId(applicationId);
       if (application == null) {
-        referenceCode = "RANDOM"; // TODO generate, ensure uniqueness
         application = applicationDAO.create(
             applicationId,
             studyProgramme,
@@ -281,6 +281,12 @@ public class ApplicationRESTService extends AbstractRESTService {
         // TODO Send confirmation mail
       }
       else {
+        if (!StringUtils.equals(application.getLastName(), lastName)) {
+          referenceCode = generateReferenceCode(lastName);
+        }
+        else {
+          referenceCode = application.getReferenceCode();
+        }
         application = applicationDAO.update(
             application,
             null,
@@ -288,8 +294,8 @@ public class ApplicationRESTService extends AbstractRESTService {
             firstName,
             lastName,
             email,
+            referenceCode,
             formData.toString());
-        referenceCode = application.getReferenceCode();
       }
       
       Map<String, String> response = new HashMap<String, String>();
@@ -423,6 +429,15 @@ public class ApplicationRESTService extends AbstractRESTService {
       }
     }
     return null;
+  }
+  
+  private String generateReferenceCode(String lastName) {
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    String referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
+    while (applicationDAO.findByLastNameAndReferenceCode(lastName, referenceCode) != null) {
+      referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
+    }
+    return referenceCode;
   }
 
 }

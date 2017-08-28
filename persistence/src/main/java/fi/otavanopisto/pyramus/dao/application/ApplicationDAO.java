@@ -49,13 +49,14 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     return application;
   }
   
-  public Application update(Application application, User updatingUser, StudyProgramme studyProgramme, String firstName, String lastName, String email, String formData) {
+  public Application update(Application application, User updatingUser, StudyProgramme studyProgramme, String firstName, String lastName, String email, String referenceCode, String formData) {
     EntityManager entityManager = getEntityManager();
     
     application.setStudyProgramme(studyProgramme);
     application.setFirstName(firstName);
     application.setLastName(lastName);
     application.setEmail(email);
+    application.setReferenceCode(referenceCode);
     application.setFormData(formData);
     if (updatingUser == null) {
       application.setApplicantLastModified(new Date());

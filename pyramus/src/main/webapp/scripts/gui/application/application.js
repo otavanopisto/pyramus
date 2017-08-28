@@ -159,41 +159,45 @@
     });
 
     $('.button-next-section').click(function() {
-      // TODO enable section validation
-      //if ($('.application-form').parsley().validate({group: 'block-' + currentIndex()})) {
+      if ($('.application-form').parsley().validate({group: 'block-' + currentIndex()})) {
         var newIndex = currentIndex() + 1;  
         while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
           newIndex++;
         }
         navigateTo($(applicationSections[newIndex]));
-      //}
-    });
-
-    // TODO Temporary validation hack
-    $('.application-logo-header').click(function() {
-      $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
+      }
     });
 
     $('.button-save-application').click(function() {
       // TODO Disable UI, show saving message 
-      var data = JSON.stringify($('.application-form').serializeObject());
-      $.ajax({
-        url: "/1/application/saveapplication",
-        type: "POST",
-        data: data, 
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-          $('#edit-info-last-name').text($('#field-last-name').val());
-          $('#edit-info-reference-code').text(response.referenceCode);
-          $('#edit-info-email').text($('#field-email').val());
-          navigateTo('.section-done');
-        },
-        error: function() {
-          // TODO Navigate to section-error (implement)
-          console.log('error');
-        }
-      });
+      var valid = false;
+      var existingApplication = $('#field-application-id').attr('data-preload');
+      if (existingApplication) {
+        valid = $('.application-form').parsley().validate();
+      }
+      else {
+        valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
+      }
+      if (valid) {
+        var data = JSON.stringify($('.application-form').serializeObject());
+        $.ajax({
+          url: "/1/application/saveapplication",
+          type: "POST",
+          data: data, 
+          dataType: "json",
+          contentType: "application/json; charset=utf-8",
+          success: function(response) {
+            $('#edit-info-last-name').text($('#field-last-name').val());
+            $('#edit-info-reference-code').text(response.referenceCode);
+            $('#edit-info-email').text($('#field-email').val());
+            navigateTo('.section-done');
+          },
+          error: function() {
+            // TODO Navigate to section-error (implement)
+            console.log('error');
+          }
+        });
+      }
     });
     
     $('.button-edit-application').click(function() {
@@ -225,13 +229,19 @@
     
     var existingApplication = $('#field-application-id').attr('data-preload');
     if (existingApplication) {
+      $('#application-page-indicator').hide();
+      $('#button-previous-section').hide();
+      $('#button-next-section').hide();
+      $('#button-save-application').show();
+      $('.form-navigation').show();
       preloadApplication($('#field-application-id').val());
     }
   });
 
   function navigateTo(section) {
     $('.form-section.current').removeClass('current');
-    $(section).addClass('current');
+    $('.form-section').hide();
+    $(section).addClass('current').show();
     $('.form-navigation').toggle(!$(section).hasClass('section-done'));
     $('.button-previous-section').toggle(!$(section).hasClass('section-line'));
     $('.button-next-section').toggle(!$(section).hasClass('section-summary'));
@@ -321,6 +331,9 @@
           }
         }
         preloadApplicationAttachments(result);
+        $('.form-section').each(function() {
+          $(this).toggle($(this).attr('data-skip') != 'true');
+        });
       }
     });
   }

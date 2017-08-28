@@ -191,17 +191,17 @@
 	        
 	        <div class="field-container field-underage-last-name">
 	          <label for="field-underage-last-name" class="required">Sukunimi</label>
-	          <input type="text" name="field-underage-last-name" data-parsley-required="true">
+	          <input type="text" name="field-underage-last-name" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div> 
 	
 	        <div class="field-container field-underage-first-name">
 	          <label for="field-underage-first-name" class="required">Etunimi</label>
-	          <input type="text" name="field-underage-first-name" data-parsley-required="true">
+	          <input type="text" name="field-underage-first-name" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div> 
 	        
 	        <div class="field-container field-underage-phone">
 	          <label for="field-underage-phone" class="required">Puhelinnumero</label>
-	          <input type="text" name="field-underage-phone" data-parsley-required="true">
+	          <input type="text" name="field-underage-phone" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div> 
 	
 	        <div class="field-container field-underage-email">
@@ -211,22 +211,22 @@
 	        
 	        <div class="field-container field-underage-street-address">
 	          <label for="field-underage-street-address" class="required">Lähiosoite</label>
-	          <input type="text" name="field-underage-street-address" data-parsley-required="true">
+	          <input type="text" name="field-underage-street-address" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div> 
 	
 	        <div class="field-container field-zip-code">
 	          <label for="field-underage-zip-code" class="required">Postinumero</label>
-	          <input type="text" name="field-underage-zip-code" data-parsley-required="true">
+	          <input type="text" name="field-underage-zip-code" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div> 
 	
 	        <div class="field-container field-underage-city">
 	          <label for="field-underage-city" class="required">Postitoimipaikka</label>
-	          <input type="text" name="field-underage-city" data-parsley-required="true">
+	          <input type="text" name="field-underage-city" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div> 
 	
 	        <div class="field-container field-underage-country">
 	          <label for="field-underage-country" class="required">Maa</label>
-	          <input type="text" name="field-underage-country" value="Suomi" data-parsley-required="true">
+	          <input type="text" name="field-underage-country" value="Suomi" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div> 
 	        
 	      </section>
@@ -573,10 +573,10 @@
 	      </section>
 	
 	      <nav class="form-navigation" style="display:none;">
-	        <button type="button" class="button-previous-section previous btn btn-info pull-left">Edellinen</button>
-	        <div class="application-page-indicator"></div>
-	        <button type="button" class="button-next-section next btn btn-info pull-right">Seuraava</button>
-          <button type="button" class="button-save-application">Lähetä</button>
+	        <button id="button-previous-section" type="button" class="button-previous-section previous btn btn-info pull-left">Edellinen</button>
+	        <div id="application-page-indicator" class="application-page-indicator"></div>
+	        <button id="button-next-section" type="button" class="button-next-section next btn btn-info pull-right">Seuraava</button>
+          <button id="button-save-application" type="button" class="button-save-application">Lähetä</button>
 	      </nav>    
 	
 	    </form>
