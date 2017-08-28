@@ -167,7 +167,7 @@
 	
 	        <div class="field-container field-phone">
 	          <label for="field-phone" class="required">Puhelinnumero</label>
-	          <input type="text" name="field-phone" data-parsley-required="true">
+	          <input type="text" id="field-phone" name="field-phone" data-parsley-required="true">
 	          <span class="field-help">Laita mukaan myös maakoodi, jos olet ulkomailla</span>
 	        </div>
 	
@@ -237,7 +237,7 @@
 	
 	        <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio,bandilinja">
 	          <label for="field-previous-studies" class="required">Aiemmat opinnot</label>
-	          <select name="field-previous-studies" data-parsley-required="true" data-dependencies="true">
+	          <select name="field-previous-studies" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
 	            <option value="">-- Valitse --</option>
 	            <option value="peruskoulu">Peruskoulu</option>
 	            <option value="kansakoulu">Kansakoulu</option>
@@ -358,7 +358,6 @@
 	        <h3>Mistä sait tiedon koulutuksesta</h3>
 	      
 	        <div class="field-container field-source">
-	          <label>Valitse vähintään yksi</label>
 	          <div class="field-row-flex">
 	            <div class="field-row-element">
 	              <input id="known" type="checkbox" name="field-source" value="tuttu">
@@ -489,7 +488,25 @@
 	      </section>
 	
 	      <section class="form-section section-summary">
-	        <div>Yhteenveto ja tietosuojaseloste?</div>
+          <div>Tarkista vielä yhteystietosi mahdollisia yhteydenottoja varten</div>
+
+          <div>
+            <label for="summary-name">Nimi</label>
+            <div id="summary-name"/>
+          </div>
+          <div>
+            <label for="summary-phone">Puhelinnumero</label>
+            <div id="summary-phone"/>
+          </div>
+          <div>
+            <label for="summary-email">Sähköpostiosoite</label>
+            <div id="summary-email"/>
+          </div>
+
+          <div class="field-container field-privacy">
+            <label for="field-privacy">Olen lukenut <a href="#" class="summary-privacy-link">tietosuojaselosteen</a> ja hyväksyn, että tietoni tallennetaan Otavan Opiston oppilashallintojärjestelmään sekä verkko-oppimisympäristöön. </label>
+            <input type="checkbox" name="field-privacy" value="kylla" data-parsley-required="true">
+          </div>
 	        
 	        <div class="privacy-policy-container" style="display: none;">
 	          <h3>1. Rekisterin pitäjä</h3>

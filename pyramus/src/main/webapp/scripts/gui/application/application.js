@@ -148,6 +148,12 @@
       });
     });
     
+    // Privacy policy
+    
+    $('.summary-privacy-link').on('click', function() {
+      $('.privacy-policy-container').toggle();
+    });
+    
     // Form navigation
 
     $('.button-previous-section').click(function() {
@@ -246,6 +252,11 @@
     $('.button-previous-section').toggle(!$(section).hasClass('section-line'));
     $('.button-next-section').toggle(!$(section).hasClass('section-summary'));
     $('.button-save-application').toggle($(section).hasClass('section-summary'));
+    if ($(section).hasClass('section-summary')) {
+      $('#summary-name').text($('#field-first-names').val() + ' ' + $('#field-last-name').val());
+      $('#summary-phone').text($('#field-phone').val());
+      $('#summary-email').text($('#field-email').val());
+    }
     updateProgress();
   }
   
@@ -332,7 +343,7 @@
         }
         preloadApplicationAttachments(result);
         $('.form-section').each(function() {
-          $(this).toggle($(this).attr('data-skip') != 'true');
+          $(this).toggle($(this).attr('data-skip') != 'true' && !$(this).hasClass('section-summary'));
         });
       }
     });
