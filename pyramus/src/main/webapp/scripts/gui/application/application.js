@@ -159,6 +159,12 @@
     // Privacy policy
     
     $('.summary-privacy-link').on('click', function() {
+      $('.privacy-policy-overlay').toggle();
+      $('.privacy-policy-container').toggle();
+    });
+    
+    $('.privacy-policy-close').on('click', function() {
+      $('.privacy-policy-overlay').toggle();
       $('.privacy-policy-container').toggle();
     });
     

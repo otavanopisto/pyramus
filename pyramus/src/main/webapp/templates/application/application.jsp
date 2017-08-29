@@ -488,27 +488,36 @@
 	      </section>
 	
 	      <section class="form-section section-summary">
-          <div>Tarkista vielä yhteystietosi mahdollisia yhteydenottoja varten</div>
+          <h3>Tarkista vielä yhteystietosi mahdollisia yhteydenottoja varten</h3>
 
-          <div>
+          <div class="summary-container">
             <label for="summary-name">Nimi</label>
-            <div id="summary-name"/>
+            <div id="summary-name"></div>
           </div>
-          <div>
+          <div class="summary-container">
             <label for="summary-phone">Puhelinnumero</label>
-            <div id="summary-phone"/>
+            <div id="summary-phone"></div>
           </div>
-          <div>
+          <div class="summary-container">
             <label for="summary-email">Sähköpostiosoite</label>
-            <div id="summary-email"/>
+            <div id="summary-email"></div>
           </div>
 
-          <div class="field-container field-privacy">
-            <label for="field-privacy">Olen lukenut <a href="#" class="summary-privacy-link">tietosuojaselosteen</a> ja hyväksyn, että tietoni tallennetaan Otavan Opiston oppilashallintojärjestelmään sekä verkko-oppimisympäristöön. </label>
-            <input type="checkbox" name="field-privacy" value="kylla" data-parsley-required="true">
-          </div>
+          <div class="summary-container field-privacy">
+	          <div class="field-row-flex">
+		          <div class="field-row-element">
+		            <input type="checkbox" id="field-privacy" name="field-privacy" value="kylla" data-parsley-required="true">
+		          </div>
+		          <div class="field-row-label">
+		            <label for="field-privacy">Olen lukenut <a href="#" class="summary-privacy-link">tietosuojaselosteen</a> ja hyväksyn, että tietoni tallennetaan Otavan Opiston oppilashallintojärjestelmään sekä verkko-oppimisympäristöön. </label>
+		          </div>
+		        </div>
+	        </div>
 	        
-	        <div class="privacy-policy-container" style="display: none;">
+	        <div class="privacy-policy-overlay" style="display: none;">
+	        </div>
+          <div class="privacy-policy-container" style="display: none;">
+            <div class="privacy-policy-close"></div>
 	          <h3>1. Rekisterin pitäjä</h3>
 				    <p>
 				      Otavan Opisto<br> Mikkelin kaupunki
@@ -576,8 +585,7 @@
 				      yhteyshenkilölle. Henkilöllisyytensä varmistaneen henkilön vaatimat rekisteriä koskevat korjaukset ja muut muutokset tehdään viipymättä.</p>
 				    <p>Jollei muutospyyntöä katsota perustelluksi, annetaan muutospyynnön esittäjälle kirjallinen todistus, jossa selvitetään syyt miksi
 				      muutosvaatimusta ei olla hyväksytty. Rekisteröity voi saattaa asian tietosuojavaltuutetun käsiteltäväksi.</p>
-	        
-	        </div>
+          </div>
 	      </section>
 	      
 	      <section class="form-section section-done" data-skip="true">
