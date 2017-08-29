@@ -186,12 +186,12 @@ public class WebhookEventListeners {
     webhookPayloadQueue.queuePayload(new WebhookStudentGroupCreatePayload(event.getStudentGroupId()));
   }
 
-  public void onStudentGroupUpdated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupUpdatedEvent event) {
-    webhooks.sendWebhookNotification(new WebhookStudentGroupUpdatePayload(event.getStudentGroupId()));
+  public void onStudentGroupUpdated(@Observes StudentGroupUpdatedEvent event) {
+    webhookPayloadQueue.queuePayload(new WebhookStudentGroupUpdatePayload(event.getStudentGroupId()));
   }
 
-  public void onStudentGroupArchived(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupArchivedEvent event) {
-    webhooks.sendWebhookNotification(new WebhookStudentGroupArchivePayload(event.getStudentGroupId()));
+  public void onStudentGroupArchived(@Observes StudentGroupArchivedEvent event) {
+    webhookPayloadQueue.queuePayload(new WebhookStudentGroupArchivePayload(event.getStudentGroupId()));
   }
 
   /* StudentGroupStaffMember */
@@ -200,13 +200,13 @@ public class WebhookEventListeners {
     webhookPayloadQueue.queuePayload(new WebhookStudentGroupStaffMemberCreatePayload(event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStaffMemberId()));
   }
 
-  public void onStudentGroupStaffMemberUpdated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStaffMemberUpdatedEvent event) {
-    webhooks.sendWebhookNotification(new WebhookStudentGroupStaffMemberUpdatePayload(
+  public void onStudentGroupStaffMemberUpdated(@Observes StudentGroupStaffMemberUpdatedEvent event) {
+    webhookPayloadQueue.queuePayload(new WebhookStudentGroupStaffMemberUpdatePayload(
         event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStaffMemberId()));
   }
 
-  public void onStudentGroupStaffMemberRemoved(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStaffMemberRemovedEvent event) {
-    webhooks.sendWebhookNotification(new WebhookStudentGroupStaffMemberRemovePayload(
+  public void onStudentGroupStaffMemberRemoved(@Observes StudentGroupStaffMemberRemovedEvent event) {
+    webhookPayloadQueue.queuePayload(new WebhookStudentGroupStaffMemberRemovePayload(
         event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStaffMemberId()));
   }
 
@@ -216,13 +216,13 @@ public class WebhookEventListeners {
     webhookPayloadQueue.queuePayload(new WebhookStudentGroupStudentCreatePayload(event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStudentId()));
   }
 
-  public void onStudentGroupStudentUpdated(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStudentUpdatedEvent event) {
-    webhooks.sendWebhookNotification(new WebhookStudentGroupStudentUpdatePayload(
+  public void onStudentGroupStudentUpdated(@Observes StudentGroupStudentUpdatedEvent event) {
+    webhookPayloadQueue.queuePayload(new WebhookStudentGroupStudentUpdatePayload(
         event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStudentId()));
   }
 
-  public void onStudentGroupStudentRemoved(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentGroupStudentRemovedEvent event) {
-    webhooks.sendWebhookNotification(new WebhookStudentGroupStudentRemovePayload(
+  public void onStudentGroupStudentRemoved(@Observes StudentGroupStudentRemovedEvent event) {
+    webhookPayloadQueue.queuePayload(new WebhookStudentGroupStudentRemovePayload(
         event.getStudentGroupUserId(), event.getStudentGroupId(), event.getStudentId()));
   }
 
