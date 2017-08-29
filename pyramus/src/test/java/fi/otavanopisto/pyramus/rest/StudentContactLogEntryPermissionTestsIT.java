@@ -12,6 +12,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.jayway.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentContactLogEntryPermissions;
+import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType;
 
@@ -32,6 +33,7 @@ public class StudentContactLogEntryPermissionTestsIT extends AbstractRESTPermiss
     return getGeneratedRoleData();
   }
   
+  private StudentPermissions studentPermissions = new StudentPermissions();
   private StudentContactLogEntryPermissions studentContactLogEntryPermissions = new StudentContactLogEntryPermissions();
   
   private final static long TEST_STUDENT_ID = 3l;
@@ -59,15 +61,24 @@ public class StudentContactLogEntryPermissionTestsIT extends AbstractRESTPermiss
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{ID}/contactLogEntries", TEST_STUDENT_ID);
 
-    assertOk(response, studentContactLogEntryPermissions, StudentContactLogEntryPermissions.LIST_STUDENTCONTACTLOGENTRIES);
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(response, studentContactLogEntryPermissions, StudentContactLogEntryPermissions.LIST_STUDENTCONTACTLOGENTRIES, 403);
+    }
+    else {
+      assertOk(response, studentContactLogEntryPermissions, StudentContactLogEntryPermissions.LIST_STUDENTCONTACTLOGENTRIES);
+    }
   }
   
   @Test
   public void testFindStudentContactLogEntry() throws NoSuchFieldException {
     Response response = given().headers(getAuthHeaders())
       .get("/students/students/{STUDENTID}/contactLogEntries/{ID}", TEST_STUDENT_ID, 1l);
-  
-    assertOk(response, studentContactLogEntryPermissions, StudentContactLogEntryPermissions.FIND_STUDENTCONTACTLOGENTRY);
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      assertOk(response, studentContactLogEntryPermissions, StudentContactLogEntryPermissions.FIND_STUDENTCONTACTLOGENTRY, 403);
+    }
+    else {
+      assertOk(response, studentContactLogEntryPermissions, StudentContactLogEntryPermissions.FIND_STUDENTCONTACTLOGENTRY);
+    }
   }
   
   @Test

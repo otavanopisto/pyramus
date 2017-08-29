@@ -44,11 +44,11 @@ public class SchoolPermissions extends AbstractPyramusPermissionCollection imple
   public static final String CREATE_SCHOOLFIELD = "CREATE_SCHOOLFIELD";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String LIST_SCHOOLFIELDS = "LIST_SCHOOLFIELDS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String FIND_SCHOOLFIELD = "FIND_SCHOOLFIELD";
   
   @Scope (PermissionScope.ENVIRONMENT)

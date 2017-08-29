@@ -16,11 +16,11 @@ public class ProjectPermissions extends AbstractPyramusPermissionCollection impl
   public static final String CREATE_PROJECT = "CREATE_PROJECT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String LIST_PROJECTS = "LIST_PROJECTS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String FIND_PROJECT = "FIND_PROJECT";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -36,11 +36,11 @@ public class ProjectPermissions extends AbstractPyramusPermissionCollection impl
   public static final String CREATE_PROJECTMODULE = "CREATE_PROJECTMODULE";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String LIST_PROJECTMODULES = "LIST_PROJECTMODULES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String FIND_PROJECTMODULE = "FIND_PROJECTMODULE";
   
   @Scope (PermissionScope.ENVIRONMENT)
