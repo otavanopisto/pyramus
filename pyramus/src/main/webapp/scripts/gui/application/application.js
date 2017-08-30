@@ -75,9 +75,11 @@
       var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
       $('#field-studyprogramme-id').val($(option).attr('data-studyprogramme'));
       $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
+      $('.section-internetix-school').attr('data-skip', option.val() != 'internetix');
       var existingApplication = $('#field-application-id').attr('data-preload');
       if (existingApplication) {
         $('.section-attachments').toggle(hasAttachmentSupport);
+        $('.section-internetix-school').toggle(option.val() == 'internetix');
       }
       $('#field-birthday').trigger('change');
       updateProgress();
@@ -154,6 +156,9 @@
         }
         $(this).toggle(show);
       });
+      if ($(this).hasClass('parsley-success') || $(this).hasClass('parsley-error')) {
+        $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
+      } 
     });
     
     // Privacy policy

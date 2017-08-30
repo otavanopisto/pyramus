@@ -42,6 +42,9 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
+import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
+import fi.otavanopisto.pyramus.dao.base.SchoolFieldDAO;
+import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
@@ -50,6 +53,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
@@ -68,6 +72,15 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Context
   private UriInfo uri;
+
+  @Inject
+  private SchoolDAO schoolDAO;
+  
+  @Inject
+  private SchoolVariableDAO schoolVariableDAO;
+
+  @Inject
+  private SchoolFieldDAO schoolFieldDAO;
 
   @Inject
   private MunicipalityDAO municipalityDAO;
@@ -321,20 +334,44 @@ public class ApplicationRESTService extends AbstractRESTService {
     });
 
     List<HashMap<String, String>> municipalityList = new ArrayList<HashMap<String, String>>();
-
-    HashMap<String, String> municipalityData = new HashMap<String, String>();
-    municipalityData.put("text", "Ei kotikuntaa Suomessa");
-    municipalityData.put("value", "none");
-    municipalityList.add(municipalityData);
-
     for (Municipality municipality : municipalities) {
-      municipalityData = new HashMap<String, String>();
+      HashMap<String, String> municipalityData = new HashMap<String, String>();
       municipalityData.put("text", municipality.getName());
       municipalityData.put("value", municipality.getId().toString());
       municipalityList.add(municipalityData);
     }
 
     return Response.ok(municipalityList).build();
+  }
+
+  @Path("/contractschools")
+  @GET
+  @Unsecure
+  public Response listContractSchools() {
+    List<School> contractSchools = schoolDAO.listByVariable("contractSchool", "1");
+    contractSchools.sort(new Comparator<School>() {
+      public int compare(School o1, School o2) {
+        return o1.getName().compareTo(o2.getName());
+      }
+    });
+
+    // TODO schoolDAO.listByVariable should be the one to strip archived schools
+    
+    for (int i = contractSchools.size() - 1; i >= 0; i--) {
+      if (Boolean.TRUE.equals(contractSchools.get(i).getArchived())) {
+        contractSchools.remove(i);
+      }
+    }
+
+    List<HashMap<String, String>> schoolList = new ArrayList<HashMap<String, String>>();
+    for (School school : contractSchools) {
+      HashMap<String, String> schoolData = new HashMap<String, String>();
+      schoolData.put("text", school.getName());
+      schoolData.put("value", school.getId().toString());
+      schoolList.add(schoolData);
+    }
+
+    return Response.ok(schoolList).build();
   }
 
   @Path("/nationalities")
