@@ -144,7 +144,7 @@
     
     $('[data-dependencies]').change(function() {
       var name = $(this).attr('name');
-      var value = $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val();
+      var value = $(this).is(':visible') ? $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val() : '';
       $('.field-container[data-dependent-field="' + name + '"]').each(function() {
         var show = false;
         var values = $(this).attr('data-dependent-values').split(',');
@@ -155,6 +155,7 @@
           }
         }
         $(this).toggle(show);
+        $(this).find('[data-dependencies]').trigger('change');
       });
       if ($(this).hasClass('parsley-success') || $(this).hasClass('parsley-error')) {
         $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
