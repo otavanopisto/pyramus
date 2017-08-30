@@ -380,8 +380,14 @@
 	        </div>
 	
 	        <div class="field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="lahilukio,mklinja,apa,luva">
-	          <label for="field-lodging">Tarvitsen asunnon opiston kampukselta</label>
-	          <input type="checkbox" name="field-lodging" value="kylla">
+            <div class="field-row-flex">
+              <div class="field-row-element">
+                <input type="checkbox" id="field-lodging" name="field-lodging" value="kylla">
+              </div>
+              <div class="field-row-label">
+                <label for="field-lodging">Tarvitsen asunnon opiston kampukselta</label>
+              </div>
+            </div>
 	        </div>
 	
 	      </section>
