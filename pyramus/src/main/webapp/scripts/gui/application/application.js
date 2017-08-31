@@ -24,12 +24,8 @@
     // Attachments uploader
     
     $('#field-attachments').on('change', function() {
-      var files = $(this)[0].files;
-      if ($('#field-attachments-files').find('.application-file').size() + files.length > 5) {
-        $('.notification-queue').notificationQueue('notification', 'error', 'Voit lähettää korkeintaan viisi liitettä');
-        return;
-      }
       var filesSize = 0;
+      var files = $(this)[0].files;
       $('#field-attachments-files').find('.application-file').each(function() {
         var hash = $(this).find('input[name="field-attachments-file"]').val();
         filesSize += parseInt($(this).find('input[name="field-attachments-file-' + hash + '-size"]').val());
@@ -44,6 +40,7 @@
       for (var i = 0; i < files.length; i++) {
         uploadAttachment(files[i]);
       }
+      $(this).val('');
     });
     
     // Dynamic data
@@ -130,6 +127,15 @@
         var element = event.element;
         if ($(element).is(':visible')) { 
           if (!value || value.trim().length == 0) {
+            return false;
+          }
+        }
+        return true;
+      },
+      validateMultiple: function(value, requirement, event) {
+        var element = event.element;
+        if ($(element).is(':visible')) { 
+          if (value.length == 0) {
             return false;
           }
         }
@@ -399,15 +405,13 @@
           fileElement.remove();
         },
         error: function(err) {
-          // TODO Show error message for file
-          console.log('error removing attachment');
+          fileElement.remove();
         }
       });
     });
-    // TODO Delete attachment support
-    $(fileElement).append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': hash}));
-    $(fileElement).append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-name', 'value': name}));
-    $(fileElement).append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-size', 'value': size}));
+    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': hash}));
+    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-name', 'value': name}));
+    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-size', 'value': size}));
     fileElement.show();
   }
   
@@ -462,8 +466,12 @@
         createAttachmentFormElement(hash, fileName, file.size);
       },
       error: function(err) {
-        // TODO Show error message for file
-        console.log('error sending attachment');
+        if (err.status == 409) {
+          $('.notification-queue').notificationQueue('notification', 'warn', 'Hakemuksessa on jo samanniminen liite');
+        }
+        else {
+          $('.notification-queue').notificationQueue('notification', 'error', 'Virhe tallennettaessa liitettä: ' + err.statusText);
+        }
         progressElement.remove();
       }
     });

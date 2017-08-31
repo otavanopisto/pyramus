@@ -95,7 +95,7 @@
 
           <div class="field-container field-internetix-school">
             <label for="field-internetix-school" class="required">Opiskelu muussa oppilaitoksessa</label>
-            <select name="field-internetix-school" data-parsley-required="true" data-dependencies="true">
+            <select name="field-internetix-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
               <option value="">-- Valitse --</option>
               <option value="en">En opiskele missään oppilaitoksessa</option>
               <option value="kylla">Opiskelen toisessa oppilaitoksessa</option>
@@ -416,7 +416,7 @@
 	          <div class="field-attachments-uploader">
 	            <div class="field-attachments-selector-container">
 		            <input type="file" id="field-attachments" name="field-attachments" multiple="true" class="field-attachments-selector">
-		            <div class="file-upload-description">Lisää liitteitä klikkaamalla tästä tai raahaamalla niitä tähän laatikkoon. Voit lisätä korkeintaan viisi liitettä, joiden yhteiskoon on oltava alle 10 MB</div>
+		            <div class="file-upload-description">Lisää liitteitä klikkaamalla tästä tai raahaamalla niitä tähän laatikkoon. Liitteiden suurin sallittu yhteiskoko on 10 MB</div>
 	            </div>
 	            <div id="field-attachments-files" class="field-attachments-files"></div>
 	          </div>
@@ -577,7 +577,7 @@
           <div class="summary-container field-privacy">
 	          <div class="field-row-flex">
 		          <div class="field-row-element">
-		            <input type="checkbox" id="field-privacy" name="field-privacy" value="kylla" data-parsley-required="true">
+		            <input type="checkbox" id="field-privacy" name="field-privacy" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 		          </div>
 		          <div class="field-row-label">
 		            <label for="field-privacy">Olen lukenut <a href="#" class="summary-privacy-link">tietosuojaselosteen</a> ja hyväksyn, että tietoni tallennetaan Otavan Opiston oppilashallintojärjestelmään sekä verkko-oppimisympäristöön. </label>
