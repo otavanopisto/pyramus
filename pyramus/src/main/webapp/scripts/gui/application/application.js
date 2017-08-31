@@ -135,6 +135,15 @@
         }
         return true;
       },
+      validateMultiple: function(value, requirement, event) {
+        var element = event.element;
+        if ($(element).is(':visible')) { 
+          if (value.length == 0) {
+            return false;
+          }
+        }
+        return true;
+      },
       messages: {
         fi: 'Tämä kenttä on pakollinen'
       }
@@ -399,15 +408,13 @@
           fileElement.remove();
         },
         error: function(err) {
-          // TODO Show error message for file
-          console.log('error removing attachment');
+          fileElement.remove();
         }
       });
     });
-    // TODO Delete attachment support
-    $(fileElement).append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': hash}));
-    $(fileElement).append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-name', 'value': name}));
-    $(fileElement).append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-size', 'value': size}));
+    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': hash}));
+    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-name', 'value': name}));
+    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-size', 'value': size}));
     fileElement.show();
   }
   
