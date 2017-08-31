@@ -24,12 +24,8 @@
     // Attachments uploader
     
     $('#field-attachments').on('change', function() {
-      var files = $(this)[0].files;
-      if ($('#field-attachments-files').find('.application-file').size() + files.length > 5) {
-        $('.notification-queue').notificationQueue('notification', 'error', 'Voit lähettää korkeintaan viisi liitettä');
-        return;
-      }
       var filesSize = 0;
+      var files = $(this)[0].files;
       $('#field-attachments-files').find('.application-file').each(function() {
         var hash = $(this).find('input[name="field-attachments-file"]').val();
         filesSize += parseInt($(this).find('input[name="field-attachments-file-' + hash + '-size"]').val());
@@ -44,6 +40,7 @@
       for (var i = 0; i < files.length; i++) {
         uploadAttachment(files[i]);
       }
+      $(this).val('');
     });
     
     // Dynamic data
@@ -469,8 +466,12 @@
         createAttachmentFormElement(hash, fileName, file.size);
       },
       error: function(err) {
-        // TODO Show error message for file
-        console.log('error sending attachment');
+        if (err.status == 409) {
+          $('.notification-queue').notificationQueue('notification', 'warn', 'Hakemuksessa on jo samanniminen liite');
+        }
+        else {
+          $('.notification-queue').notificationQueue('notification', 'error', 'Virhe tallennettaessa liitettä: ' + err.statusText);
+        }
         progressElement.remove();
       }
     });
