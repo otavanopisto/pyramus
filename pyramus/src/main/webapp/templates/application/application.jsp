@@ -660,12 +660,12 @@
 	      </section>
 	      
 	      <section class="form-section section-done" data-skip="true">
-	        <div>Hakemuksesi on vastaanotettu. Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa</div>
-          <div><a href="/application/edit.page">https://pyramus.otavanopisto.fi/application/edit.page</a></div>
-          <div>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen</div>
-          <div>Sukunimi <span id="edit-info-last-name"></span></div>
-          <div>Hakemustunnus <span id="edit-info-reference-code"></span></div>
-          <div>Nämä ohjeet on lähetetty myös antamaasi sähköpostiosoitteeseen <span id="edit-info-email"></span></div>
+	        <h3>Hakemuksesi on vastaanotettu.</h3>
+          <p>Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa <a href="/application/edit.page">https://pyramus.otavanopisto.fi/application/edit.page</a></p>
+          <p>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen:</p>
+          <p class="important">Sukunimi <span class="name" id="edit-info-last-name"></span></p>
+          <p class="important">Hakemustunnus <span class="code" id="edit-info-reference-code"></span></p>
+          <p>Nämä ohjeet on lähetetty myös antamaasi sähköpostiosoitteeseen <span class="email" id="edit-info-email"></span></p>
 	      </section>
 	
 	      <nav class="form-navigation" style="display:none;">
