@@ -359,6 +359,32 @@ button.button-edit-application {
   cursor: pointer;
 }
 
+.important {
+	font-weight: 400;
+	font-size: 20px;
+}	
+
+.important	span {
+	border-radius: 3px;
+	padding: 8px;
+	background: #e1ffff;
+	font-size: 26px;
+  margin: 0 10px;
+  display: inline-block;
+  font-weight: 300;
+}
+
+.important span.name {
+	
+}
+
+.important span.code {
+	
+}
+
+.important span.email {
+	font-weight: 400;
+}
 
 /* PAD */
 @media screen and (min-width: 600px) {
