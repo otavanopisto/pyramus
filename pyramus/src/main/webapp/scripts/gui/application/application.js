@@ -207,6 +207,8 @@
 
     $('.button-save-application').click(function() {
       // TODO Disable UI, show saving message 
+      var valid = true;
+      /* TODO Actual code, restore
       var valid = false;
       var existingApplication = $('#field-application-id').attr('data-preload');
       if (existingApplication) {
@@ -215,6 +217,7 @@
       else {
         valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
       }
+      */
       if (valid) {
         var data = JSON.stringify($('.application-form').serializeObject());
         $.ajax({
