@@ -43,9 +43,6 @@ import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
-import fi.otavanopisto.pyramus.dao.base.SchoolFieldDAO;
-import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
-import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
@@ -54,7 +51,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
-import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
@@ -75,12 +71,6 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Inject
   private SchoolDAO schoolDAO;
-  
-  @Inject
-  private SchoolVariableDAO schoolVariableDAO;
-
-  @Inject
-  private SchoolFieldDAO schoolFieldDAO;
 
   @Inject
   private MunicipalityDAO municipalityDAO;
@@ -252,6 +242,11 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.WARNING, "Refusing application creation due to missing applicationId");
         return Response.status(Status.BAD_REQUEST).build();
       }
+      String line = formData.getString("field-line");
+      if (line == null) {
+        logger.log(Level.WARNING, "Refusing application creation due to missing line");
+        return Response.status(Status.BAD_REQUEST).build();
+      }
       String firstName = formData.getString("field-first-names");
       if (firstName == null) {
         logger.log(Level.WARNING, "Refusing application creation due to missing first name");
@@ -267,12 +262,6 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.WARNING, "Refusing application creation due to missing email");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      Long studyProgrammeId = formData.getLong("field-studyprogramme-id");
-      StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
-      StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
-      if (studyProgramme == null) {
-        logger.log(Level.WARNING, String.format("Refusing application creation due to study programme with id %d not found", studyProgrammeId));
-      }
       
       // Store application
       
@@ -283,14 +272,14 @@ public class ApplicationRESTService extends AbstractRESTService {
       if (application == null) {
         application = applicationDAO.create(
             applicationId,
-            studyProgramme,
+            line,
             firstName,
             lastName,
             email,
             referenceCode,
             formData.toString(),
             ApplicationState.PENDING);
-        logger.log(Level.INFO, String.format("Created new %s application with id %s", studyProgramme.getName(), application.getApplicationId()));
+        logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
         // TODO Send confirmation mail
       }
       else {
@@ -302,13 +291,13 @@ public class ApplicationRESTService extends AbstractRESTService {
         }
         application = applicationDAO.update(
             application,
-            null,
-            studyProgramme,
+            line,
             firstName,
             lastName,
             email,
             referenceCode,
-            formData.toString());
+            formData.toString(),
+            null);
       }
       
       Map<String, String> response = new HashMap<String, String>();

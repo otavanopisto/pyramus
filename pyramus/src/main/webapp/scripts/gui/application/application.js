@@ -69,27 +69,36 @@
       var line = $(this).val();
       var option =  $(this).find('option:selected');
       var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
-      $('#field-studyprogramme-id').val($(option).attr('data-studyprogramme'));
       $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
       $('.section-internetix-school').attr('data-skip', option.val() != 'internetix');
+      // section toggle for existing applications
       var existingApplication = $('#field-application-id').attr('data-preload');
       if (existingApplication) {
         $('.section-attachments').toggle(hasAttachmentSupport);
-        $('.section-internetix-school').toggle(option.val() == 'internetix');
+        $('.section-internetix-school').toggle(line == 'internetix');
       }
+      // age check when line changes 
       $('#field-birthday').trigger('change');
+      // semi-required ssn postfix
+      if (line == 'mk') {
+        $('label[for="field-ssn-end"]').removeClass('required');
+      }
+      else {
+        $('label[for="field-ssn-end"]').addClass('required');
+      }
+      // update page count
       updateProgress();
     });
     $('#field-birthday').on('change', function() {
       var birthday = $(this).val();
-      if (birthday == '') {
-        $('.section-underage').attr('data-skip', 'true');
-      }
-      else {
+      if (birthday) {
         var years = moment().diff(moment(birthday, "D.M.YYYY"), 'years');
         var line = $('select[name="field-line"]').val();
         var hasUnderageSupport = $('#field-line option:selected').attr('data-underage-support') == 'true';
         $('.section-underage').attr('data-skip', !hasUnderageSupport || years >= 18);
+      }
+      else {
+        $('.section-underage').attr('data-skip', 'true');
       }
       var existingApplication = $('#field-application-id').attr('data-preload');
       if (existingApplication) {
@@ -113,7 +122,7 @@
     Parsley.addValidator('ssnEndFormat', {
       requirementType: 'string',
       validateString: function(value) {
-        return value && value.length == 4 && /^[a-zA-Z0-9]{4}/.test(value);
+        return isValidSsnEnd(value, $('#field-line').val() == 'mk');
       },
       messages: {
         fi: 'Henkilötunnuksen loppuosan muoto on virheellinen'
@@ -142,6 +151,22 @@
       },
       messages: {
         fi: 'Tämä kenttä on pakollinen'
+      }
+    });
+    
+    // Allow other sex with valid ssn postfix
+    
+    $('#field-ssn-end').on('change', function() {
+      var valid = isValidSsnEnd($(this).val(), false);
+      var otherOption = $('#field-sex option[value="muu"]');
+      if (valid && otherOption.length == 0) {
+        $('#field-sex').append($('<option>').attr('value', 'muu').text('Muu'));
+      }
+      else {
+        $(otherOption).remove();
+        if ($('#field-sex').val() == 'muu') {
+          $('#field-sex').val('');
+        }
       }
     });
     
@@ -189,26 +214,18 @@
       navigateTo($(applicationSections[newIndex]));
     });
     
-    $('.application-logo-header').click(function() {
-      // TODO Debug code; remove
-      $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
-    });
-
     $('.button-next-section').click(function() {
-      // TODO Actual code; restore
-      //if ($('.application-form').parsley().validate({group: 'block-' + currentIndex()})) {
+      if ($('.application-form').parsley().validate({group: 'block-' + currentIndex()})) {
         var newIndex = currentIndex() + 1;  
         while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
           newIndex++;
         }
         navigateTo($(applicationSections[newIndex]));
-      //}
+      }
     });
 
     $('.button-save-application').click(function() {
       // TODO Disable UI, show saving message 
-      var valid = true;
-      /* TODO Actual code, restore
       var valid = false;
       var existingApplication = $('#field-application-id').attr('data-preload');
       if (existingApplication) {
@@ -217,7 +234,6 @@
       else {
         valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
       }
-      */
       if (valid) {
         var data = JSON.stringify($('.application-form').serializeObject());
         $.ajax({
@@ -233,8 +249,7 @@
             navigateTo('.section-done');
           },
           error: function() {
-            // TODO Navigate to section-error (implement)
-            console.log('error');
+            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe tallennettaessa hakemusta: ' + err.statusText);
           }
         });
       }
@@ -292,6 +307,13 @@
       $('#summary-email').text($('#field-email').val());
     }
     updateProgress();
+  }
+  
+  function isValidSsnEnd(value, allowEmpty) {
+    if (value == '') {
+      return allowEmpty;
+    }
+    return value != '' && value.length == 4 && /^[0-9]{3}[a-zA-Z0-9]{1}/.test(value);
   }
   
   function updateProgress() {
@@ -387,7 +409,10 @@
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('#field-attachments-files');
     var files = result['field-attachments-file'];
-    if (files && files.length) {
+    if (files) {
+      if (!$.isArray(files)) {
+        files = JSON.parse('[' + files + ']');
+      }
       for (var i = 0; i < files.length; i++) {
         var name = result['field-attachments-file-' + files[i] + '-name'];
         var size = result['field-attachments-file-' + files[i] + '-size'];

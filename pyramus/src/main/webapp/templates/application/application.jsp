@@ -33,25 +33,21 @@
 	    <form class="application-form">
 	    
         <input type="hidden" id="field-application-id" name="field-application-id" value="${applicationId}" data-preload="${preload}" data-parsley-excluded="true"/>
-        <input type="hidden" id="field-studyprogramme-id" name="field-studyprogramme-id" data-parsley-excluded="true"/>
 	      
 	      <header class="application-logo-header"></header>
 	      
 	      <section class="form-section section-line">
 	
-	        <h3>Hakukohde</h3>
+	        <h3>Valitse hakukohteesi</h3>
 	
-	        <label for="field-line" class="required">Valitse linja</label>
 	        <select id="field-line" name="field-line" data-parsley-required="true" data-dependencies="true">
             <option value="">-- Valitse --</option>
-            <option value="internetix" data-studyprogramme="13" data-underage-support="true" data-attachment-support="false">Aineopiskelu</option>
-            <option value="nettilukio" data-studyprogramme="6" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
-            <option value="nettipk" data-studyprogramme="7" data-underage-support="true" data-attachment-support="true">Nettiperuskoulu</option>
-            <option value="lahilukio" data-studyprogramme="1" data-underage-support="true" data-attachment-support="true">Lähilukio</option>
-            <option value="bandilinja" data-studyprogramme="8" data-underage-support="true" data-attachment-support="true">Bändilinja</option>
-            <option value="mklinja" data-studyprogramme="15" data-underage-support="false" data-attachment-support="false">Monikulttuurinen peruskoululinja</option>
-            <option value="apa" data-studyprogramme="29" data-underage-support="false" data-attachment-support="false">Aikuisten perusopetuksen alkuvaiheen opetus</option>
-            <option value="luva" data-studyprogramme="27" data-underage-support="false" data-attachment-support="false">LUVA eli lukioon valmentava koulutus maahanmuuttajille</option>
+            <option value="internetix" data-underage-support="true" data-attachment-support="false">Aineopiskelu</option>
+            <option value="nettilukio" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
+            <option value="nettipk" data-underage-support="true" data-attachment-support="true">Nettiperuskoulu</option>
+            <option value="lahilukio" data-underage-support="true" data-attachment-support="true">Lähilukio</option>
+            <option value="bandilinja" data-underage-support="true" data-attachment-support="true">Bändilinja</option>
+            <option value="mk" data-underage-support="false" data-attachment-support="true">Maahanmuuttajakoulutukset</option>
 	        </select>
 
           <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="internetix">
@@ -157,6 +153,11 @@
 	          <label for="field-first-names" class="required">Etunimet</label>
 	          <input type="text" id="field-first-names" name="field-first-names" data-parsley-required="true">
 	        </div> 
+
+          <div class="field-container field-nickname">
+            <label for="field-nickname">Kutsumanimi</label>
+            <input type="text" id="field-nickname" name="field-nickname">
+          </div> 
 	        
 	        <div class="field-container field-birthday">
 	          <label for="field-birthday" class="required">Syntymäaika</label>
@@ -164,25 +165,19 @@
 	          <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
 	        </div>
 	
-	        <div class="field-container field-ssn-end">
-	          <label for="field-ssn-end" class="required">Henkilötunnuksen loppuosa</label>
-	          <input type="text" name="field-ssn-end" maxlength="4" style="text-transform:uppercase;" data-parsley-required="true" data-parsley-ssn-end-format="">
-	          <span class="field-help">Esitysmuoto XXXX (ilman välimerkkiä A tai -)</span>
-	        </div>
-	
+          <div class="field-container field-ssn-end">
+            <label for="field-ssn-end">Henkilötunnuksen loppuosa</label>
+            <input type="text" id="field-ssn-end" name="field-ssn-end" maxlength="4" style="text-transform:uppercase;" data-parsley-validate-if-empty="true" data-parsley-ssn-end-format="">
+            <span class="field-help">Esitysmuoto XXXX (ilman edeltävää välimerkkiä A tai -)</span>
+          </div>
+  
 	        <div class="field-container field-sex">
 	          <label for="field-sex" class="required">Sukupuoli</label>
-	          <select name="field-sex" data-parsley-required="true" data-dependencies="true">
+	          <select id="field-sex" name="field-sex" data-parsley-required="true">
 	            <option value="">-- Valitse --</option>
 	            <option value="mies">Mies</option>
 	            <option value="nainen">Nainen</option>
-	            <option value="muu">Muu</option>
 	          </select>
-	        </div>
-	
-	        <div class="field-container field-sex-other dependent" data-dependent-field="field-sex" data-dependent-values="muu">
-	          <label for="field-sex-other" class="required">Muu sukupuolesi</label>
-	          <input type="text" name="field-sex-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div>
 	
 	        <div class="field-container field-street-address">
@@ -241,15 +236,13 @@
 	      </section>
 	
 	      <section class="form-section section-underage" data-skip="true">
-	      
-	        <h3>Huoltajan tiedot ja alaikäisen hakemusperusteet</h3>
+
+          <h3>Huoltajan tiedot</h3>
 	
-	        <div class="field-container field-underage-grounds">
+	        <div class="field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio,bandilinja">
 	          <label for="field-underage-grounds">Alaikäisen hakemusperusteet</label>
 	          <textarea name="field-underage-grounds" rows="5" cols="40"></textarea>
 	        </div>
-	        
-	        <div>Huoltajan tiedot</div>
 	        
 	        <div class="field-container field-underage-last-name">
 	          <label for="field-underage-last-name" class="required">Sukunimi</label>
@@ -267,8 +260,8 @@
 	        </div> 
 	
 	        <div class="field-container field-underage-email">
-	          <label for="field-underage-email">Sähköpostiosoite</label>
-	          <input type="text" name="field-underage-email">
+	          <label for="field-underage-email" class="required">Sähköpostiosoite</label>
+	          <input type="text" name="field-underage-email" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div> 
 	        
 	        <div class="field-container field-underage-street-address">
@@ -397,20 +390,24 @@
 	        <h3>Hakemuksen liitteet</h3>
 	
 	        <div class="field-container field-nettilukio-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
-	          <div>Voit liittää tähän todistusjäljennökset sähköisesti. Voit toimittaa todistusjäljennökset myös sähköpostin liitetiedostoina eeva.lehikoinen@otavanopisto.fi tai postitse (Otavan Opisto / nettilukio, Otavantie 2 B, 50670, Otava)</div>
+	          <div>Voit liittää tähän todistusjäljennökset sähköisesti. Voit toimittaa todistusjäljennökset myös sähköpostin liitetiedostoina eeva.lehikoinen@otavanopisto.fi tai postitse (Otavan Opisto / nettilukio, Otavantie 2 B, 50670 Otava)</div>
 	        </div>
 	
 	        <div class="field-container field-nettipk-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
-	          <div>Voit liittää tähän todistusjäljennökset sähköisesti. Voit toimittaa todistusjäljennökset myös sähköpostin liitetiedostona elise.hokkanen@otavanopisto.fi tai postitse (Otavan Opisto / nettiperuskoulu, Otavantie 2 B, 50670, Otava)</div>
+	          <div>Voit liittää tähän todistusjäljennökset sähköisesti. Voit toimittaa todistusjäljennökset myös sähköpostin liitetiedostona elise.hokkanen@otavanopisto.fi tai postitse (Otavan Opisto / nettiperuskoulu, Otavantie 2 B, 50670 Otava)</div>
 	        </div>
 	
 	        <div class="field-container field-nettipk-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="lahilukio">
-	          <div>Voit liittää tähän todistusjäljennökset sähköisesti. Voit toimittaa todistusjäljennökset myös sähköpostin liitetiedostona petri.louhivuori@otavanopisto.fi tai postitse (Otavan Opisto / nettilukio, Otavantie 2 B, 50670, Otava)</div>
+	          <div>Voit liittää tähän todistusjäljennökset sähköisesti. Voit toimittaa todistusjäljennökset myös sähköpostin liitetiedostona petri.louhivuori@otavanopisto.fi tai postitse (Otavan Opisto / nettilukio, Otavantie 2 B, 50670 Otava)</div>
 	        </div>
 	
 	        <div class="field-container field-bandilinja-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="bandilinja">
 	          <div>Voit liittää tähän musiikkinäytteitäsi sähköisesti. Voit toimittaa musiikkinäytteet myös sähköpostin liitetiedostona osoitteeseen jukka.tikkanen@otavanopisto.fi.</div>
 	        </div>
+
+          <div class="field-container field-nettipk-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="mk">
+            <div>Voit liittää tähän todistusjäljennökset sähköisesti. Voit toimittaa todistusjäljennökset myös sähköpostin liitetiedostona anna-maria.suora@otavanopisto.fi tai postitse (Otavan Opisto / maahanmuuttajakoulutukset, Otavantie 2 B, 50670 Otava)</div>
+          </div>
 	
 	        <div class="field-container field-attachments">
 	          <div class="field-attachments-uploader">
@@ -551,9 +548,9 @@
             </div>
 	        </div>
 	
-	        <div class="field-container field-source-other dependent" data-dependent-field="field-source" data-dependent-values="muu">
+	        <div class="field-container field-source-other">
 	          <label for="field-source-other" class="required">Kerro tarkemmin mistä</label>
-	          <input type="text" name="field-source-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+	          <input type="text" name="field-source-other" data-parsley-required="true">
 	        </div>
 	      
 	      </section>

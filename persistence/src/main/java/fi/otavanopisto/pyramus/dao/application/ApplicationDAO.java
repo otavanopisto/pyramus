@@ -12,7 +12,6 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.application.Application_;
-import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
@@ -20,7 +19,7 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
 
   public Application create(
       String applicationId,
-      StudyProgramme studyProgramme,
+      String line,
       String firstName,
       String lastName,
       String email,
@@ -32,7 +31,7 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     Application application = new Application();
     
     application.setApplicationId(applicationId);
-    application.setStudyProgramme(studyProgramme);
+    application.setLine(line);
     application.setFirstName(firstName);
     application.setLastName(lastName);
     application.setEmail(email);
@@ -49,10 +48,10 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     return application;
   }
   
-  public Application update(Application application, User updatingUser, StudyProgramme studyProgramme, String firstName, String lastName, String email, String referenceCode, String formData) {
+  public Application update(Application application, String line, String firstName, String lastName, String email, String referenceCode, String formData, User updatingUser) {
     EntityManager entityManager = getEntityManager();
     
-    application.setStudyProgramme(studyProgramme);
+    application.setLine(line);
     application.setFirstName(firstName);
     application.setLastName(lastName);
     application.setEmail(email);
