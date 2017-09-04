@@ -374,16 +374,9 @@ button.button-edit-application {
   font-weight: 300;
 }
 
-.important span.name {
-	
-}
-
-.important span.code {
-	
-}
-
-.important span.email {
+span.email {
 	font-weight: 400;
+  display: inline-block;
 }
 
 /* PAD */
