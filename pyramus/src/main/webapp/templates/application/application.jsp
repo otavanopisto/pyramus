@@ -42,44 +42,36 @@
 	
 	        <select id="field-line" name="field-line" data-parsley-required="true" data-dependencies="true">
             <option value="">-- Valitse --</option>
-            <option value="internetix" data-underage-support="true" data-attachment-support="false">Aineopiskelu</option>
+            <option value="aineopiskelu" data-underage-support="true" data-attachment-support="false">Aineopiskelu</option>
             <option value="nettilukio" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
             <option value="nettipk" data-underage-support="true" data-attachment-support="true">Nettiperuskoulu</option>
-            <option value="lahilukio" data-underage-support="true" data-attachment-support="true">Lähilukio</option>
+            <option value="aikuislukio" data-underage-support="true" data-attachment-support="true">Aikuislukio</option>
             <option value="bandilinja" data-underage-support="true" data-attachment-support="true">Bändilinja</option>
             <option value="mk" data-underage-support="false" data-attachment-support="true">Maahanmuuttajakoulutukset</option>
 	        </select>
 
-          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="internetix">
-            <div>Aineopiskelun esittelyteksti</div>
+          <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu">
+            <p>Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.</p>
           </div>
 
-          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
-            <div>Nettilukion esittelyteksti</div>
+          <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
+            <p>Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.</p>
           </div>
           
-          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
-            <div>Nettiperuskoulun esittelyteksti</div>
+          <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
+            <p>Nettiperuskoulun esittelyteksti</p>
           </div>
           
-          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="lahilukio">
-            <div>Lähilukion esittelyteksti</div>
+          <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio">
+            <p>Aikuislukiossa opiskelet koko lukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Aikuislukiossa voit myös tehdä loppuun aiemmin kesken jääneet toisessa päivä- tai aikuislukiossa aloittamasi lukio-opinnot.</p>
           </div>
           
-          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="bandilinja">
-            <div>Bändilinjan esittelyteksti</div>
+          <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="bandilinja">
+            <p>Bändilinjan esittelyteksti</p>
           </div>
           
-          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="mklinja">
-            <div>MK-linjan esittelyteksti</div>
-          </div>
-          
-          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="apa">
-            <div>APA-esittelyteksti</div>
-          </div>
-          
-          <div class="field-container field-nettilukio-intro dependent" data-dependent-field="field-line" data-dependent-values="luva">
-            <div>LUVA-esittelyteksti</div>
+          <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="mk">
+            <p>Maahanmuuttajakoulutukset ovat sellaisia opiskelijoita varten, joiden äidinkieli ei ole suomi ja jotka tarvitsevat peruskoulun päättötodistuksen jatko-opintoja varten.</p>
           </div>
 	
 	      </section>
@@ -239,7 +231,7 @@
 
           <h3>Huoltajan tiedot</h3>
 	
-	        <div class="field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio,bandilinja">
+	        <div class="field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja">
 	          <label for="field-underage-grounds">Alaikäisen hakemusperusteet</label>
 	          <textarea name="field-underage-grounds" rows="5" cols="40"></textarea>
 	        </div>
@@ -290,7 +282,7 @@
 	
 	        <h3>Hakemiseen tarvittavat lisätiedot</h3>
 	
-	        <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio,bandilinja,internetix">
+	        <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,aineopiskelu">
 	          <label for="field-previous-studies" class="required">Aiemmat opinnot</label>
 	          <select name="field-previous-studies" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
 	            <option value="">-- Valitse --</option>
@@ -312,7 +304,7 @@
 	          <input type="text" name="field-previous-studies-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div>
 	
-	        <div class="field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,lahilukio">
+	        <div class="field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio">
 	          <label for="field-other-school" class="required">Opiskelen tällä hetkellä toisessa oppilaitoksessa</label>
 	          <select name="field-other-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
 	            <option value="">-- Valitse --</option>
@@ -326,7 +318,7 @@
 	          <input type="text" name="field-other-school-name" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div>
 	
-	        <div class="field-container field-goals dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,lahilukio">
+	        <div class="field-container field-goals dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,aikuislukio">
 	          <label for="field-goals" class="required">Opiskelutavoitteet</label>
 	          <select name="field-goals" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	            <option value="">-- Valitse --</option>
@@ -335,8 +327,17 @@
 	            <option value="molemmat">Molemmat</option>
 	          </select>
 	        </div>
+
+          <div class="field-container field-foreign-student dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu">
+            <label for="field-foreign-student" class="required">Oletko ulkomainen vaihto-opiskelija?</label>
+            <select name="field-foreign-student" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+              <option value="">-- Valitse --</option>
+              <option value="kylla">Kyllä</option>
+              <option value="en">En</option>
+            </select>
+          </div>
 	
-	        <div class="field-container field-previous-foreign-studies dependent" data-dependent-field="field-line" data-dependent-values="mklinja">
+	        <div class="field-container field-previous-foreign-studies dependent" data-dependent-field="field-line" data-dependent-values="mk">
 	          <label for="field-previous-foreign-studies" class="required">Aikaisemmat opinnot kotimaassasi ja Suomessa</label>
 	          <textarea name="field-previous-foreign-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
 	        </div>
@@ -357,8 +358,30 @@
 	          <label for="field-job-other" class="required">Kerro tarkemmin</label>
 	          <input type="text" name="field-job-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	        </div>
+
+          <div class="field-container field-foreign-line dependent" data-dependent-field="field-line" data-dependent-values="mk">
+            <label for="field-foreign-line" class="required">Opintojen tyyppi</label>
+            <select name="field-foreign-line" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
+              <option value="">-- Valitse --</option>
+              <option value="apa">Aikuisten perusopetuksen alkuvaiheen koulutus</option>
+              <option value="pk">Monikulttuurinen peruskoululinja (Aikuisten perusopetuksen päättövaihe)</option>
+              <option value="luva">LUVA eli lukioon valmentava koulutus maahanmuuttajille</option>
+            </select>
+          </div>
+
+          <div class="field-container dependent" data-dependent-field="field-foreign-line" data-dependent-values="apa">
+            <p>Perusopetuksen alkuvaiheessa opiskelet peruskouluopiskelussa tarvittavia perustietoja ja -taitoja. Lisäksi harjoitellaan opiskelu- ja tiedonhankintataitoja.</p>
+          </div>
+
+          <div class="field-container dependent" data-dependent-field="field-foreign-line" data-dependent-values="pk">
+            <p>Monikulttuurisen peruskoululinjan tavoitteena on peruskoulun päättötodistus.</p>
+          </div>
+
+          <div class="field-container dependent" data-dependent-field="field-foreign-line" data-dependent-values="luva">
+            <p>Koulutus on tarkoitettu maahanmuuttajille ja vieraskielisille, joiden tavoitteena ovat lukio-opinnot ja joilla on jo peruskoulun päättötodistus tai vastaavat tiedot.</p>
+          </div>
 	
-	        <div class="field-container field-residence-permit dependent" data-dependent-field="field-line" data-dependent-values="mklinja,apa,luva">
+	        <div class="field-container field-residence-permit dependent" data-dependent-field="field-line" data-dependent-values="mk">
 	          <label for="field-residence-permit" class="required">Onko sinulla oleskelulupa Suomeen?</label>
 	          <select name="field-residence-permit" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
 	            <option value="">-- Valitse --</option>
@@ -372,7 +395,7 @@
 	          <textarea name="field-info" rows="5" cols="40"></textarea>
 	        </div>
 	
-	        <div class="field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="lahilukio,mklinja,apa,luva">
+	        <div class="field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio,bandilinja,mk">
             <div class="field-row-flex">
               <div class="field-row-element">
                 <input type="checkbox" id="field-lodging" name="field-lodging" value="kylla">
@@ -397,7 +420,7 @@
 	          <div>Voit liittää tähän todistusjäljennökset sähköisesti. Voit toimittaa todistusjäljennökset myös sähköpostin liitetiedostona elise.hokkanen@otavanopisto.fi tai postitse (Otavan Opisto / nettiperuskoulu, Otavantie 2 B, 50670 Otava)</div>
 	        </div>
 	
-	        <div class="field-container field-nettipk-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="lahilukio">
+	        <div class="field-container field-nettipk-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio">
 	          <div>Voit liittää tähän todistusjäljennökset sähköisesti. Voit toimittaa todistusjäljennökset myös sähköpostin liitetiedostona petri.louhivuori@otavanopisto.fi tai postitse (Otavan Opisto / nettilukio, Otavantie 2 B, 50670 Otava)</div>
 	        </div>
 	

@@ -55,7 +55,7 @@
           for (var i = 0; i < result.length; i++) {
             var option = $('<option>').attr('value', result[i].value).text(result[i].text);
             $(field).append(option);
-            if ($(field).attr('data-preselect') && result[i].text == $(field).attr('data-preselect')) {
+            if ($(field).val() == '' && $(field).attr('data-preselect') && result[i].text == $(field).attr('data-preselect')) {
               $(option).prop('selected', true);
             }
           }
@@ -70,12 +70,12 @@
       var option =  $(this).find('option:selected');
       var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
       $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
-      $('.section-internetix-school').attr('data-skip', option.val() != 'internetix');
+      $('.section-internetix-school').attr('data-skip', option.val() != 'aineopiskelu');
       // section toggle for existing applications
       var existingApplication = $('#field-application-id').attr('data-preload');
       if (existingApplication) {
         $('.section-attachments').toggle(hasAttachmentSupport);
-        $('.section-internetix-school').toggle(line == 'internetix');
+        $('.section-internetix-school').toggle(line == 'aineopiskelu');
       }
       // age check when line changes 
       $('#field-birthday').trigger('change');
@@ -268,8 +268,7 @@
             window.location.replace(window.location.href + '?applicationId=' + response.applicationId);
           },
           error: function() {
-            // TODO Navigate to section-error (implement)
-            console.log('error');
+            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe hakemusta ladattaessa: ' + err.statusText);
           }
         });
       }
@@ -365,6 +364,7 @@
           var formElement = $('[name="' + key + '"]');
           if (formElement.length) {
             if ($(formElement).is('select')) {
+              $(formElement).val(result[key]);
               $('option', $(formElement)).each(function() {
                 if (this.value == result[key]) {
                   $(this).prop('selected', true);
