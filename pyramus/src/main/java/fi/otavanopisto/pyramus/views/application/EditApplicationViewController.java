@@ -3,8 +3,6 @@ package fi.otavanopisto.pyramus.views.application;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,8 +27,7 @@ public class EditApplicationViewController extends PyramusViewController {
   
   public void process(PageRequestContext pageRequestContext) {
     
-    Map<String, String> queryMap = getQueryMap(pageRequestContext.getRequest().getQueryString());
-    String applicationId = queryMap.get("applicationId");
+    String applicationId = pageRequestContext.getRequest().getParameter("applicationId");
     String referer = pageRequestContext.getRequest().getHeader("Referer");
     String requestUrl = pageRequestContext.getRequest().getRequestURL().toString();
     try {
@@ -97,18 +94,5 @@ public class EditApplicationViewController extends PyramusViewController {
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.EVERYONE };
   }
-  
-  private Map<String, String> getQueryMap(String query) {
-    Map<String, String> map = new HashMap<String, String>();
-    if (StringUtils.isNotEmpty(query)) {
-      String[] params = query.split("&");
-      for (String param : params) {
-        String name = param.split("=")[0];
-        String value = param.split("=")[1];
-        map.put(name, value);
-      }
-    }
-    return map;
-  }  
 
 }
