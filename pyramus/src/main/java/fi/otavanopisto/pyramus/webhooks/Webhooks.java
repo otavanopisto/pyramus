@@ -3,10 +3,8 @@ package fi.otavanopisto.pyramus.webhooks;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,53 +48,37 @@ public class Webhooks {
         String data = objectMapper.writeValueAsString(payload);
 
         for (Webhook webhook : webhooks) {
-          FutureTask<Boolean> futureTask = new FutureTask<>(new NotificationCallable(webhook.getUrl(), webhook.getSignature(), data));
-          executorService.execute(futureTask);
+          executorService.execute(() -> notifyWebhook(webhook.getUrl(), webhook.getSignature(), data));
         }
       } catch (JsonProcessingException e) {
-        logger.log(Level.SEVERE, "Failed to send webhook notifications", e);
+        logger.log(Level.SEVERE, "Failed to form webhook notification payload JSON.", e);
       }
     }
   }
   
+  private Boolean notifyWebhook(String url, String signature, String data) {
+    try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
+      HttpPost httpPost = new HttpPost(url);
+      try {
+        StringEntity dataEntity = new StringEntity(data);
+        try {
+          httpPost.addHeader("X-Pyramus-Signature", signature);
+          httpPost.setEntity(dataEntity);
+          client.execute(httpPost);
+          return true;
+        } finally {
+          EntityUtils.consume(dataEntity);
+        }
+      } finally {
+        httpPost.releaseConnection();
+      }
+    } catch (IOException e) {
+      logger.log(Level.SEVERE, "Failed to send webhook notification to " + url, e);
+    }
+    
+    return false;
+  }
+
   private ExecutorService executorService;
   private List<fi.otavanopisto.pyramus.webhooks.Webhook> webhooks;
-
-  private class NotificationCallable implements Callable<Boolean> {
-    
-    public NotificationCallable(String url, String signature, String data) {
-      this.url = url;
-      this.signature = signature;
-      this.data = data;
-    }
-    
-    @Override
-    public Boolean call() throws Exception {
-      try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
-        HttpPost httpPost = new HttpPost(url);
-        try {
-          StringEntity dataEntity = new StringEntity(data);
-          try {
-            httpPost.addHeader("X-Pyramus-Signature", signature);
-            httpPost.setEntity(dataEntity);
-            client.execute(httpPost);
-            return true;
-          } finally {
-            EntityUtils.consume(dataEntity);
-          }
-        } finally {
-          httpPost.releaseConnection();
-        }
-      } catch (IOException e) {
-        logger.log(Level.SEVERE, "Failed to send webhook notification to " + url, e);
-      }
-      
-      return false;
-    }
-   
-    private String url;
-    private String signature;
-    private String data;
-  }
-  
 }
