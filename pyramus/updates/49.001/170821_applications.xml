@@ -7,24 +7,24 @@
   <sql>
     create table Application (
       id bigint not null,
-      applicantLastModified datetime not null,
-      applicationId varchar(255) not null,
-      archived bit not null,
-      created datetime not null,
-      email varchar(255) not null,
       firstName varchar(255) not null,
-      formData longtext not null,
-      lastModified datetime not null,
       lastName varchar(255) not null,
+      email varchar(255) not null,
+      line varchar(255),
       referenceCode varchar(255) not null,
+      applicationId varchar(255) not null,
+      formData longtext not null,
       state varchar(255),
+      applicantEditable bit not null,
+      created datetime not null,
+      applicantLastModified datetime not null,
+      lastModified datetime not null,
       lastModifier bigint,
-      studyProgramme bigint,
+      archived bit not null,
       primary key (id));
   </sql>
   
   <sql>alter table Application add constraint UK_tageinnby3smv061oabxl7qgt unique (applicationId);</sql>
   <sql>alter table Application add constraint FKc3glhha6int04qu1e1f0wy8l1 foreign key (lastModifier) references User (id);</sql>
-  <sql>alter table Application add constraint FK6qepua13m2a55e272amul7gy6 foreign key (studyProgramme) references StudyProgramme (id);</sql>  
 
 </update>

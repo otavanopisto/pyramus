@@ -12,7 +12,6 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.application.Application_;
-import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
@@ -20,19 +19,20 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
 
   public Application create(
       String applicationId,
-      StudyProgramme studyProgramme,
+      String line,
       String firstName,
       String lastName,
       String email,
       String referenceCode,
       String formData,
+      Boolean applicantEditable,
       ApplicationState state) {
     EntityManager entityManager = getEntityManager();
 
     Application application = new Application();
     
     application.setApplicationId(applicationId);
-    application.setStudyProgramme(studyProgramme);
+    application.setLine(line);
     application.setFirstName(firstName);
     application.setLastName(lastName);
     application.setEmail(email);
@@ -42,6 +42,7 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     application.setCreated(new Date());
     application.setLastModified(new Date());
     application.setApplicantLastModified(new Date());
+    application.setApplicantEditable(applicantEditable);
     application.setArchived(Boolean.FALSE);
    
     entityManager.persist(application);
@@ -49,15 +50,27 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     return application;
   }
   
-  public Application update(Application application, User updatingUser, StudyProgramme studyProgramme, String firstName, String lastName, String email, String referenceCode, String formData) {
+  public Application update(
+      Application application,
+      String line,
+      String firstName,
+      String lastName,
+      String email,
+      String referenceCode,
+      String formData,
+      ApplicationState state,
+      Boolean applicantEditable,
+      User updatingUser) {
     EntityManager entityManager = getEntityManager();
     
-    application.setStudyProgramme(studyProgramme);
+    application.setLine(line);
     application.setFirstName(firstName);
     application.setLastName(lastName);
     application.setEmail(email);
     application.setReferenceCode(referenceCode);
     application.setFormData(formData);
+    application.setState(state);
+    application.setApplicantEditable(applicantEditable);
     if (updatingUser == null) {
       application.setApplicantLastModified(new Date());
     }

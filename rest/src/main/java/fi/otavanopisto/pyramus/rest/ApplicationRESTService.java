@@ -43,9 +43,6 @@ import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
-import fi.otavanopisto.pyramus.dao.base.SchoolFieldDAO;
-import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
-import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
@@ -54,7 +51,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
-import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
@@ -75,12 +71,6 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Inject
   private SchoolDAO schoolDAO;
-  
-  @Inject
-  private SchoolVariableDAO schoolVariableDAO;
-
-  @Inject
-  private SchoolFieldDAO schoolFieldDAO;
 
   @Inject
   private MunicipalityDAO municipalityDAO;
@@ -96,26 +86,49 @@ public class ApplicationRESTService extends AbstractRESTService {
   @Unsecure
   @Consumes(MediaType.MULTIPART_FORM_DATA + ";charset=UTF-8")
   public Response createAttachment(MultipartFormDataInput multipart, @HeaderParam("Referer") String referer) {
+    
+    // Allow calls from within the application only
+    
     if (!isApplicationCall(referer)) {
       return Response.status(Status.FORBIDDEN).build();
     }
+    
+    // Ensure attachment storage has been defined
+    
     String attachmentsFolder = getSettingValue("application.storagePath");
+    if (StringUtils.isEmpty(attachmentsFolder)) {
+      logger.log(Level.SEVERE, "application.storagePath not set");
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
+
     try {
+      
+      // Ensure file content exists and sanitize both its name and the folder where it will be stored 
+      
       byte[] fileData = getFile(multipart, "file");
-      String name = getString(multipart, "name");
-      String attachmentFolder = getString(multipart, "applicationId");
-      if (fileData == null || fileData.length == 0 || name == null || attachmentFolder == null) {
+      String name = sanitizeFilename(getString(multipart, "name"));
+      String attachmentFolder = sanitizeFilename(getString(multipart, "applicationId"));
+      if (fileData == null || fileData.length == 0 || StringUtils.isEmpty(name) || StringUtils.isEmpty(attachmentFolder)) {
         logger.log(Level.SEVERE, "Application attachment preconditions not met");
         return Response.status(Status.INTERNAL_SERVER_ERROR).build();
       }
+      
+      // Create attachment folder, if needed
+      
       File folder = Paths.get(attachmentsFolder, attachmentFolder).toFile();
       if (!folder.exists()) {
         folder.mkdir();
       }
+      
+      // Create file, unless a file with the same name already exists
+      
       File file = Paths.get(attachmentsFolder, attachmentFolder, name).toFile();
       if (file.exists()) {
         return Response.status(Status.CONFLICT).build();
       }
+      
+      // Write data to file
+      
       FileUtils.writeByteArrayToFile(file, fileData);
       logger.log(Level.INFO, String.format("Stored application attachment %s", file.getAbsolutePath()));
     }
@@ -125,22 +138,92 @@ public class ApplicationRESTService extends AbstractRESTService {
     }
     return Response.noContent().build();
   }
+
+  @Path("/getattachment/{ID}")
+  @GET
+  @Unsecure
+  @Produces("*/*")
+  public Response getAttachment(@PathParam("ID") String applicationId, @QueryParam("attachment") String attachment, @HeaderParam("Referer") String referer) {
+
+    // Allow calls from within the application only
+    
+    if (!isApplicationCall(referer)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    // Ensure attachment storage has been defined
+    
+    String attachmentsFolder = getSettingValue("application.storagePath");
+    if (StringUtils.isEmpty(attachmentsFolder)) {
+      logger.log(Level.SEVERE, "application.storagePath not set");
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
+    
+    // Sanitize folder and file names before retrieval
+
+    applicationId = sanitizeFilename(applicationId);
+    attachment = sanitizeFilename(attachment);
+    if (StringUtils.isEmpty(applicationId) || StringUtils.isEmpty(attachment)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    // Serve file
+
+    try {
+      java.nio.file.Path path = Paths.get(attachmentsFolder, applicationId, attachment);
+      File file = path.toFile();
+      if (file.exists()) {
+        String contentType = Files.probeContentType(path);
+        byte[] data = FileUtils.readFileToByteArray(file);
+        return Response.ok(data)
+            .type(contentType)
+            .header("Content-Length", data.length)
+            .header("Content-Disposition", String.format("inline; filename=\"%s\"", attachment))
+            .build();
+      }
+    }
+    catch (Exception e) {
+      logger.log(Level.SEVERE, String.format("Exception serving application attachment %s", attachment), e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
+    return Response.status(Status.NOT_FOUND).build();
+  }
   
   @Path("/removeattachment/{ID}")
   @DELETE
   @Unsecure
   public Response removeAttachment(@PathParam("ID") String applicationId, @QueryParam("attachment") String attachment, @HeaderParam("Referer") String referer) {
+
+    // Allow calls from within the application only
+    
+    if (!isApplicationCall(referer)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    // Ensure attachment storage has been defined
+    
+    String attachmentsFolder = getSettingValue("application.storagePath");
+    if (StringUtils.isEmpty(attachmentsFolder)) {
+      logger.log(Level.SEVERE, "application.storagePath not set");
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
+    
+    // Sanitize folder and file names before removal
+
+    applicationId = sanitizeFilename(applicationId);
+    attachment = sanitizeFilename(attachment);
+    if (StringUtils.isEmpty(applicationId) || StringUtils.isEmpty(attachment)) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    // Remove the file
+    
     try {
-      if (!isApplicationCall(referer)) {
-        return Response.status(Status.FORBIDDEN).build();
-      }
-      java.nio.file.Path path = Paths.get(getSettingValue("application.storagePath"), applicationId, attachment);
+      java.nio.file.Path path = Paths.get(attachmentsFolder, applicationId, attachment);
       File file = path.toFile();
-      if (file.exists()) {
-        if (file.delete()) {
-          logger.log(Level.INFO, String.format("Removed application attachment %s", file.getAbsolutePath()));
-          return Response.noContent().build();
-        }
+      if (file.exists() && file.delete()) {
+        logger.log(Level.INFO, String.format("Removed application attachment %s", file.getAbsolutePath()));
+        return Response.noContent().build();
       }
     }
     catch (Exception e) {
@@ -206,34 +289,6 @@ public class ApplicationRESTService extends AbstractRESTService {
     return Response.ok(JSONObject.fromObject(application.getFormData())).build();
   }
 
-  @Path("/getattachment/{ID}")
-  @GET
-  @Unsecure
-  @Produces("*/*")
-  public Response getAttachment(@PathParam("ID") String applicationId, @QueryParam("attachment") String attachment, @HeaderParam("Referer") String referer) {
-    try {
-      if (!isApplicationCall(referer)) {
-        return Response.status(Status.FORBIDDEN).build();
-      }
-      java.nio.file.Path path = Paths.get(getSettingValue("application.storagePath"), applicationId, attachment);
-      File file = path.toFile();
-      if (file.exists()) {
-        String contentType = Files.probeContentType(path);
-        byte[] data = FileUtils.readFileToByteArray(file);
-        return Response.ok(data)
-            .type(contentType)
-            .header("Content-Length", data.length)
-            .header("Content-Disposition", String.format("inline; filename=\"%s\"", StringUtils.replace(attachment, "\"", "\\\"")))
-            .build();
-      }
-    }
-    catch (Exception e) {
-      logger.log(Level.SEVERE, String.format("Exception serving application attachment %s", attachment), e);
-      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-    }
-    return Response.status(Status.NOT_FOUND).build();
-  }
-
   @Path("/saveapplication")
   @POST
   @Unsecure
@@ -252,6 +307,11 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.WARNING, "Refusing application creation due to missing applicationId");
         return Response.status(Status.BAD_REQUEST).build();
       }
+      String line = formData.getString("field-line");
+      if (line == null) {
+        logger.log(Level.WARNING, "Refusing application creation due to missing line");
+        return Response.status(Status.BAD_REQUEST).build();
+      }
       String firstName = formData.getString("field-first-names");
       if (firstName == null) {
         logger.log(Level.WARNING, "Refusing application creation due to missing first name");
@@ -267,12 +327,6 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.WARNING, "Refusing application creation due to missing email");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      Long studyProgrammeId = formData.getLong("field-studyprogramme-id");
-      StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
-      StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
-      if (studyProgramme == null) {
-        logger.log(Level.WARNING, String.format("Refusing application creation due to study programme with id %d not found", studyProgrammeId));
-      }
       
       // Store application
       
@@ -283,14 +337,15 @@ public class ApplicationRESTService extends AbstractRESTService {
       if (application == null) {
         application = applicationDAO.create(
             applicationId,
-            studyProgramme,
+            line,
             firstName,
             lastName,
             email,
             referenceCode,
             formData.toString(),
+            Boolean.TRUE,
             ApplicationState.PENDING);
-        logger.log(Level.INFO, String.format("Created new %s application with id %s", studyProgramme.getName(), application.getApplicationId()));
+        logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
         // TODO Send confirmation mail
       }
       else {
@@ -302,13 +357,15 @@ public class ApplicationRESTService extends AbstractRESTService {
         }
         application = applicationDAO.update(
             application,
-            null,
-            studyProgramme,
+            line,
             firstName,
             lastName,
             email,
             referenceCode,
-            formData.toString());
+            formData.toString(),
+            application.getState(),
+            application.getApplicantEditable(),
+            null);
       }
       
       Map<String, String> response = new HashMap<String, String>();
@@ -466,6 +523,19 @@ public class ApplicationRESTService extends AbstractRESTService {
       }
     }
     return null;
+  }
+  
+  /**
+   * Sanitizes the given filename so that it can be safely used as part of a file path. The filename
+   * is first stripped of traditional invalid filename characters (\ / : * ? " < > |) and then of all
+   * leading and trailing periods.
+   * 
+   * @param filename Filename to be sanitized
+   * 
+   * @return Sanitized filename
+   */
+  private String sanitizeFilename(String filename) {
+    return StringUtils.stripEnd(StringUtils.stripStart(StringUtils.strip(filename, "\\/:*?\"<>|"), "."), ".");
   }
   
   private String generateReferenceCode(String lastName) {

@@ -24,7 +24,7 @@ after_success:
     mvn deploy --settings ~/.m2/trasettings.xml;
   fi;
 after_failure:
-- cat pyramus/target/cargo/configurations/wildfly8x/log/server.log
+- cat pyramus/target/cargo/configurations/wildfly10x/log/server.log
 # Notifications
 notifications:
   irc:
