@@ -24,9 +24,24 @@ body {
   justify-content: center;
 }
 
+@media screen and (min-width: 600px) {
+  
+  body {
+    margin: 60px;
+    font-size: 16px;
+  }
+}
+
 main {
   max-width: 100%;
   flex: 1 1 auto;
+}
+
+@media screen and (min-width: 600px) {
+  
+  main {
+    max-width: 600px;
+  } 
 }
 
 .application-logo-header {
@@ -37,6 +52,13 @@ main {
   height: 30px;
 }
 
+@media screen and (min-width: 600px) {
+  
+  .application-logo-header {
+    height: 50px;
+  }
+}
+
 h3 {
   margin:10px 0;
   padding: 0;
@@ -44,6 +66,14 @@ h3 {
   font-weight: 200;
   font-size: 26px;
   color: #009fe3;
+}
+
+@media screen and (min-width: 600px) {
+  
+  h3 {
+    font-size: 30px;
+    margin: 20px 0;
+  }
 }
 
 a {
@@ -104,6 +134,13 @@ label {
   display: block;
 }
 
+@media screen and (min-width: 600px) {
+  
+  label {
+    margin: 2px 0;
+  }
+}
+
 label.required::after {
   content: '*';
   font-size: 14px;
@@ -125,6 +162,13 @@ label.required::after {
   font-style: italic;
 }
 
+@media screen and (min-width: 600px) {
+  
+  .field-help {
+    font-size: 15px;
+  }
+}
+
 input,
 textarea {
   margin: 0;
@@ -137,6 +181,15 @@ textarea {
   border: 1px solid #5db5c5;
   max-width: 100%;
   width: 100%;
+}
+
+@media screen and (min-width: 600px) {
+  
+  input,
+  textarea {
+    padding: 12px;
+    font-size: 16px;
+  }
 }
 
 input[type="checkbox"],
@@ -153,6 +206,14 @@ select {
   border: 1px solid #5db5c5;
   max-width: 100%;
   padding: 4px;
+}
+
+@media screen and (min-width: 600px) {
+  
+  select {
+    padding: 8px;
+    font-size: 16px;
+  }
 }
 
 option {
@@ -179,6 +240,14 @@ button {
   color: #fff;
   text-transform: uppercase;
   cursor: pointer;
+}
+
+@media screen and (min-width: 600px) {
+  
+  button {
+    font-size: 18px;
+    padding: 10px 16px;
+  }
 }
 
 button.previous,
@@ -345,6 +414,21 @@ button.button-edit-application {
  left: 0;
 }
 
+@media screen and (min-width: 600px) {
+  
+  .privacy-policy-container {
+    max-width: 600px;
+    margin: 0 0 0 -300px;
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    padding: 0 20px;
+    z-index: 100;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+  }
+}
+
 .privacy-policy-close {
   background: url('../gfx/icons/48x48/actions/close.png') #009fe3;
   background-size: contain;
@@ -377,70 +461,4 @@ button.button-edit-application {
 span.email {
 	font-weight: 400;
   display: inline-block;
-}
-
-/* PAD */
-@media screen and (min-width: 600px) {
-  
-  body {
-    margin: 60px;
-    font-size: 16px;
-  }
-  
-  main {
-    max-width: 600px;
-  }
-  
-  .application-logo-header {
-    height: 50px;
-  }
-  
-  h3 {
-    font-size: 30px;
-    margin: 20px 0;
-  }
-  
-  label {
-    margin: 2px 0;
-  }
-  
-  button {
-    font-size: 18px;
-    padding: 10px 16px;
-  }
-  
-  input,
-  textarea {
-    padding: 12px;
-    font-size: 16px;
-  }
-  
-  select {
-    padding: 8px;
-    font-size: 16px;
-  }
-  
-  .field-help {
-    font-size: 15px;
-  }
-  
-  .privacy-policy-container {
-    max-width: 600px;
-    margin: 0 0 0 -300px;
-    background: #fff;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    padding: 0 20px;
-    z-index: 100;
-    position: absolute;
-    top: 20px;
-    left: 50%;
-
-  }
-  
-}
-
-/* WIDE */
-@media screen and (min-width: 1025px) {
-
-  
 }
