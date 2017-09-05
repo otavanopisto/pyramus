@@ -134,6 +134,14 @@ public class Application {
     this.line = line;
   }
 
+  public Boolean getApplicantEditable() {
+    return applicantEditable;
+  }
+
+  public void setApplicantEditable(Boolean applicantEditable) {
+    this.applicantEditable = applicantEditable;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Application")
   @TableGenerator(name="Application", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -197,6 +205,11 @@ public class Application {
   @Enumerated (EnumType.STRING)
   @Field(store = Store.NO)
   private ApplicationState state;
+
+  @NotNull
+  @Column (nullable = false)
+  @Field
+  private Boolean applicantEditable;
 
   @NotNull
   @Column (nullable = false)

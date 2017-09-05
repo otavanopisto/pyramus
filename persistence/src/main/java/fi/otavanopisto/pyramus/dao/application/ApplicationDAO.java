@@ -25,6 +25,7 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
       String email,
       String referenceCode,
       String formData,
+      Boolean applicantEditable,
       ApplicationState state) {
     EntityManager entityManager = getEntityManager();
 
@@ -41,6 +42,7 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     application.setCreated(new Date());
     application.setLastModified(new Date());
     application.setApplicantLastModified(new Date());
+    application.setApplicantEditable(applicantEditable);
     application.setArchived(Boolean.FALSE);
    
     entityManager.persist(application);
@@ -48,7 +50,17 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     return application;
   }
   
-  public Application update(Application application, String line, String firstName, String lastName, String email, String referenceCode, String formData, User updatingUser) {
+  public Application update(
+      Application application,
+      String line,
+      String firstName,
+      String lastName,
+      String email,
+      String referenceCode,
+      String formData,
+      ApplicationState state,
+      Boolean applicantEditable,
+      User updatingUser) {
     EntityManager entityManager = getEntityManager();
     
     application.setLine(line);
@@ -57,6 +69,8 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     application.setEmail(email);
     application.setReferenceCode(referenceCode);
     application.setFormData(formData);
+    application.setState(state);
+    application.setApplicantEditable(applicantEditable);
     if (updatingUser == null) {
       application.setApplicantLastModified(new Date());
     }

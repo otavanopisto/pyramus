@@ -15,6 +15,7 @@
       applicationId varchar(255) not null,
       formData longtext not null,
       state varchar(255),
+      applicantEditable bit not null,
       created datetime not null,
       applicantLastModified datetime not null,
       lastModified datetime not null,

@@ -278,6 +278,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             email,
             referenceCode,
             formData.toString(),
+            Boolean.TRUE,
             ApplicationState.PENDING);
         logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
         // TODO Send confirmation mail
@@ -297,6 +298,8 @@ public class ApplicationRESTService extends AbstractRESTService {
             email,
             referenceCode,
             formData.toString(),
+            application.getState(),
+            application.getApplicantEditable(),
             null);
       }
       
