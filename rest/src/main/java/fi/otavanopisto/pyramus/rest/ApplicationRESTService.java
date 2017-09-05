@@ -32,6 +32,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -41,7 +42,7 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
-import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
@@ -49,7 +50,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
-import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
+import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
@@ -67,6 +68,9 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Context
   private UriInfo uri;
+
+  @Inject
+  private SchoolDAO schoolDAO;
 
   @Inject
   private MunicipalityDAO municipalityDAO;
@@ -238,6 +242,11 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.WARNING, "Refusing application creation due to missing applicationId");
         return Response.status(Status.BAD_REQUEST).build();
       }
+      String line = formData.getString("field-line");
+      if (line == null) {
+        logger.log(Level.WARNING, "Refusing application creation due to missing line");
+        return Response.status(Status.BAD_REQUEST).build();
+      }
       String firstName = formData.getString("field-first-names");
       if (firstName == null) {
         logger.log(Level.WARNING, "Refusing application creation due to missing first name");
@@ -253,43 +262,45 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.WARNING, "Refusing application creation due to missing email");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      Long studyProgrammeId = formData.getLong("field-studyprogramme-id");
-      StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
-      StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
-      if (studyProgramme == null) {
-        logger.log(Level.WARNING, String.format("Refusing application creation due to study programme with id %d not found", studyProgrammeId));
-      }
       
       // Store application
       
       ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
       
-      String referenceCode = "RANDOM"; // TODO Generate, report back to caller
+      String referenceCode = generateReferenceCode(lastName);
       Application application = applicationDAO.findByApplicationId(applicationId);
       if (application == null) {
-        referenceCode = "RANDOM"; // TODO generate, ensure uniqueness
         application = applicationDAO.create(
             applicationId,
-            studyProgramme,
+            line,
             firstName,
             lastName,
             email,
             referenceCode,
             formData.toString(),
+            Boolean.TRUE,
             ApplicationState.PENDING);
-        logger.log(Level.INFO, String.format("Created new %s application with id %s", studyProgramme.getName(), application.getApplicationId()));
+        logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
         // TODO Send confirmation mail
       }
       else {
+        if (!StringUtils.equals(application.getLastName(), lastName)) {
+          referenceCode = generateReferenceCode(lastName);
+        }
+        else {
+          referenceCode = application.getReferenceCode();
+        }
         application = applicationDAO.update(
             application,
-            null,
-            studyProgramme,
+            line,
             firstName,
             lastName,
             email,
-            formData.toString());
-        referenceCode = application.getReferenceCode();
+            referenceCode,
+            formData.toString(),
+            application.getState(),
+            application.getApplicantEditable(),
+            null);
       }
       
       Map<String, String> response = new HashMap<String, String>();
@@ -315,20 +326,44 @@ public class ApplicationRESTService extends AbstractRESTService {
     });
 
     List<HashMap<String, String>> municipalityList = new ArrayList<HashMap<String, String>>();
-
-    HashMap<String, String> municipalityData = new HashMap<String, String>();
-    municipalityData.put("text", "Ei kotikuntaa Suomessa");
-    municipalityData.put("value", "none");
-    municipalityList.add(municipalityData);
-
     for (Municipality municipality : municipalities) {
-      municipalityData = new HashMap<String, String>();
+      HashMap<String, String> municipalityData = new HashMap<String, String>();
       municipalityData.put("text", municipality.getName());
       municipalityData.put("value", municipality.getId().toString());
       municipalityList.add(municipalityData);
     }
 
     return Response.ok(municipalityList).build();
+  }
+
+  @Path("/contractschools")
+  @GET
+  @Unsecure
+  public Response listContractSchools() {
+    List<School> contractSchools = schoolDAO.listByVariable("contractSchool", "1");
+    contractSchools.sort(new Comparator<School>() {
+      public int compare(School o1, School o2) {
+        return o1.getName().compareTo(o2.getName());
+      }
+    });
+
+    // TODO schoolDAO.listByVariable should be the one to strip archived schools
+    
+    for (int i = contractSchools.size() - 1; i >= 0; i--) {
+      if (Boolean.TRUE.equals(contractSchools.get(i).getArchived())) {
+        contractSchools.remove(i);
+      }
+    }
+
+    List<HashMap<String, String>> schoolList = new ArrayList<HashMap<String, String>>();
+    for (School school : contractSchools) {
+      HashMap<String, String> schoolData = new HashMap<String, String>();
+      schoolData.put("text", school.getName());
+      schoolData.put("value", school.getId().toString());
+      schoolList.add(schoolData);
+    }
+
+    return Response.ok(schoolList).build();
   }
 
   @Path("/nationalities")
@@ -423,6 +458,15 @@ public class ApplicationRESTService extends AbstractRESTService {
       }
     }
     return null;
+  }
+  
+  private String generateReferenceCode(String lastName) {
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    String referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
+    while (applicationDAO.findByLastNameAndReferenceCode(lastName, referenceCode) != null) {
+      referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
+    }
+    return referenceCode;
   }
 
 }

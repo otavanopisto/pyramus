@@ -24,12 +24,8 @@
     // Attachments uploader
     
     $('#field-attachments').on('change', function() {
-      var files = $(this)[0].files;
-      if ($('#field-attachments-files').find('.application-file').size() + files.length > 5) {
-        $('.notification-queue').notificationQueue('notification', 'error', 'Voit lähettää korkeintaan viisi liitettä');
-        return;
-      }
       var filesSize = 0;
+      var files = $(this)[0].files;
       $('#field-attachments-files').find('.application-file').each(function() {
         var hash = $(this).find('input[name="field-attachments-file"]').val();
         filesSize += parseInt($(this).find('input[name="field-attachments-file-' + hash + '-size"]').val());
@@ -44,6 +40,7 @@
       for (var i = 0; i < files.length; i++) {
         uploadAttachment(files[i]);
       }
+      $(this).val('');
     });
     
     // Dynamic data
@@ -51,7 +48,6 @@
     $('select[data-source]').each(function() {
       var field = this;
       $.ajax({
-        async: false,
         url: $(field).attr('data-source'),
         type: "GET",
         contentType: "application/json; charset=utf-8",
@@ -59,7 +55,7 @@
           for (var i = 0; i < result.length; i++) {
             var option = $('<option>').attr('value', result[i].value).text(result[i].text);
             $(field).append(option);
-            if ($(field).attr('data-preselect') && result[i].text == $(field).attr('data-preselect')) {
+            if ($(field).val() == '' && $(field).attr('data-preselect') && result[i].text == $(field).attr('data-preselect')) {
               $(option).prop('selected', true);
             }
           }
@@ -73,21 +69,40 @@
       var line = $(this).val();
       var option =  $(this).find('option:selected');
       var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
-      $('#field-studyprogramme-id').val($(option).attr('data-studyprogramme'));
       $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
+      $('.section-internetix-school').attr('data-skip', option.val() != 'aineopiskelu');
+      // section toggle for existing applications
+      var existingApplication = $('#field-application-id').attr('data-preload');
+      if (existingApplication) {
+        $('.section-attachments').toggle(hasAttachmentSupport);
+        $('.section-internetix-school').toggle(line == 'aineopiskelu');
+      }
+      // age check when line changes 
       $('#field-birthday').trigger('change');
+      // semi-required ssn postfix
+      if (line == 'mk') {
+        $('label[for="field-ssn-end"]').removeClass('required');
+      }
+      else {
+        $('label[for="field-ssn-end"]').addClass('required');
+      }
+      // update page count
       updateProgress();
     });
     $('#field-birthday').on('change', function() {
       var birthday = $(this).val();
-      if (birthday == '') {
-        $('.section-underage').attr('data-skip', 'true');
-      }
-      else {
+      if (birthday) {
         var years = moment().diff(moment(birthday, "D.M.YYYY"), 'years');
         var line = $('select[name="field-line"]').val();
         var hasUnderageSupport = $('#field-line option:selected').attr('data-underage-support') == 'true';
         $('.section-underage').attr('data-skip', !hasUnderageSupport || years >= 18);
+      }
+      else {
+        $('.section-underage').attr('data-skip', 'true');
+      }
+      var existingApplication = $('#field-application-id').attr('data-preload');
+      if (existingApplication) {
+        $('.section-underage').toggle($('.section-underage').attr('data-skip') != 'true');
       }
       updateProgress();
     });
@@ -107,7 +122,7 @@
     Parsley.addValidator('ssnEndFormat', {
       requirementType: 'string',
       validateString: function(value) {
-        return value && value.length == 4 && /^[a-zA-Z0-9]{4}/.test(value);
+        return isValidSsnEnd(value, $('#field-line').val() == 'mk');
       },
       messages: {
         fi: 'Henkilötunnuksen loppuosan muoto on virheellinen'
@@ -125,8 +140,33 @@
         }
         return true;
       },
+      validateMultiple: function(value, requirement, event) {
+        var element = event.element;
+        if ($(element).is(':visible')) { 
+          if (value.length == 0) {
+            return false;
+          }
+        }
+        return true;
+      },
       messages: {
         fi: 'Tämä kenttä on pakollinen'
+      }
+    });
+    
+    // Allow other sex with valid ssn postfix
+    
+    $('#field-ssn-end').on('change', function() {
+      var valid = isValidSsnEnd($(this).val(), false);
+      var otherOption = $('#field-sex option[value="muu"]');
+      if (valid && otherOption.length == 0) {
+        $('#field-sex').append($('<option>').attr('value', 'muu').text('Muu'));
+      }
+      else {
+        $(otherOption).remove();
+        if ($('#field-sex').val() == 'muu') {
+          $('#field-sex').val('');
+        }
       }
     });
     
@@ -134,7 +174,7 @@
     
     $('[data-dependencies]').change(function() {
       var name = $(this).attr('name');
-      var value = $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val();
+      var value = $(this).is(':visible') ? $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val() : '';
       $('.field-container[data-dependent-field="' + name + '"]').each(function() {
         var show = false;
         var values = $(this).attr('data-dependent-values').split(',');
@@ -145,7 +185,23 @@
           }
         }
         $(this).toggle(show);
+        $(this).find('[data-dependencies]').trigger('change');
       });
+      if ($(this).hasClass('parsley-success') || $(this).hasClass('parsley-error')) {
+        $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
+      } 
+    });
+    
+    // Privacy policy
+    
+    $('.summary-privacy-link').on('click', function() {
+      $('.privacy-policy-overlay').toggle();
+      $('.privacy-policy-container').toggle();
+    });
+    
+    $('.privacy-policy-close').on('click', function() {
+      $('.privacy-policy-overlay').toggle();
+      $('.privacy-policy-container').toggle();
     });
     
     // Form navigation
@@ -157,43 +213,46 @@
       }
       navigateTo($(applicationSections[newIndex]));
     });
-
+    
     $('.button-next-section').click(function() {
-      // TODO enable section validation
-      //if ($('.application-form').parsley().validate({group: 'block-' + currentIndex()})) {
+      if ($('.application-form').parsley().validate({group: 'block-' + currentIndex()})) {
         var newIndex = currentIndex() + 1;  
         while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
           newIndex++;
         }
         navigateTo($(applicationSections[newIndex]));
-      //}
-    });
-
-    // TODO Temporary validation hack
-    $('.application-logo-header').click(function() {
-      $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
+      }
     });
 
     $('.button-save-application').click(function() {
       // TODO Disable UI, show saving message 
-      var data = JSON.stringify($('.application-form').serializeObject());
-      $.ajax({
-        url: "/1/application/saveapplication",
-        type: "POST",
-        data: data, 
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-          $('#edit-info-last-name').text($('#field-last-name').val());
-          $('#edit-info-reference-code').text(response.referenceCode);
-          $('#edit-info-email').text($('#field-email').val());
-          navigateTo('.section-done');
-        },
-        error: function() {
-          // TODO Navigate to section-error (implement)
-          console.log('error');
-        }
-      });
+      var valid = false;
+      var existingApplication = $('#field-application-id').attr('data-preload');
+      if (existingApplication) {
+        valid = $('.application-form').parsley().validate();
+      }
+      else {
+        valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
+      }
+      if (valid) {
+        var data = JSON.stringify($('.application-form').serializeObject());
+        $.ajax({
+          url: "/1/application/saveapplication",
+          type: "POST",
+          data: data, 
+          dataType: "json",
+          contentType: "application/json; charset=utf-8",
+          success: function(response) {
+            $('#edit-info-last-name').text($('#field-last-name').val());
+            $('#edit-info-reference-code').text(response.referenceCode);
+            $('#edit-info-email').text($('#field-email').val());
+            navigateTo('.section-done');
+          },
+          error: function() {
+            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe tallennettaessa hakemusta: ' + err.statusText);
+          }
+        });
+      }
     });
     
     $('.button-edit-application').click(function() {
@@ -209,8 +268,7 @@
             window.location.replace(window.location.href + '?applicationId=' + response.applicationId);
           },
           error: function() {
-            // TODO Navigate to section-error (implement)
-            console.log('error');
+            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe hakemusta ladattaessa: ' + err.statusText);
           }
         });
       }
@@ -225,18 +283,36 @@
     
     var existingApplication = $('#field-application-id').attr('data-preload');
     if (existingApplication) {
+      $('#application-page-indicator').hide();
+      $('#button-previous-section').hide();
+      $('#button-next-section').hide();
+      $('#button-save-application').show();
+      $('.form-navigation').show();
       preloadApplication($('#field-application-id').val());
     }
   });
 
   function navigateTo(section) {
     $('.form-section.current').removeClass('current');
-    $(section).addClass('current');
+    $('.form-section').hide();
+    $(section).addClass('current').show();
     $('.form-navigation').toggle(!$(section).hasClass('section-done'));
     $('.button-previous-section').toggle(!$(section).hasClass('section-line'));
     $('.button-next-section').toggle(!$(section).hasClass('section-summary'));
     $('.button-save-application').toggle($(section).hasClass('section-summary'));
+    if ($(section).hasClass('section-summary')) {
+      $('#summary-name').text($('#field-first-names').val() + ' ' + $('#field-last-name').val());
+      $('#summary-phone').text($('#field-phone').val());
+      $('#summary-email').text($('#field-email').val());
+    }
     updateProgress();
+  }
+  
+  function isValidSsnEnd(value, allowEmpty) {
+    if (value == '') {
+      return allowEmpty;
+    }
+    return value != '' && value.length == 4 && /^[0-9]{3}[a-zA-Z0-9]{1}/.test(value);
   }
   
   function updateProgress() {
@@ -288,6 +364,7 @@
           var formElement = $('[name="' + key + '"]');
           if (formElement.length) {
             if ($(formElement).is('select')) {
+              $(formElement).val(result[key]);
               $('option', $(formElement)).each(function() {
                 if (this.value == result[key]) {
                   $(this).prop('selected', true);
@@ -321,6 +398,9 @@
           }
         }
         preloadApplicationAttachments(result);
+        $('.form-section').each(function() {
+          $(this).toggle($(this).attr('data-skip') != 'true' && !$(this).hasClass('section-summary'));
+        });
       }
     });
   }
@@ -329,7 +409,10 @@
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('#field-attachments-files');
     var files = result['field-attachments-file'];
-    if (files && files.length) {
+    if (files) {
+      if (!$.isArray(files)) {
+        files = JSON.parse('[' + files + ']');
+      }
       for (var i = 0; i < files.length; i++) {
         var name = result['field-attachments-file-' + files[i] + '-name'];
         var size = result['field-attachments-file-' + files[i] + '-size'];
@@ -355,15 +438,13 @@
           fileElement.remove();
         },
         error: function(err) {
-          // TODO Show error message for file
-          console.log('error removing attachment');
+          fileElement.remove();
         }
       });
     });
-    // TODO Delete attachment support
-    $(fileElement).append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': hash}));
-    $(fileElement).append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-name', 'value': name}));
-    $(fileElement).append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-size', 'value': size}));
+    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': hash}));
+    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-name', 'value': name}));
+    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-size', 'value': size}));
     fileElement.show();
   }
   
@@ -418,8 +499,12 @@
         createAttachmentFormElement(hash, fileName, file.size);
       },
       error: function(err) {
-        // TODO Show error message for file
-        console.log('error sending attachment');
+        if (err.status == 409) {
+          $('.notification-queue').notificationQueue('notification', 'warn', 'Hakemuksessa on jo samanniminen liite');
+        }
+        else {
+          $('.notification-queue').notificationQueue('notification', 'error', 'Virhe tallennettaessa liitettä: ' + err.statusText);
+        }
         progressElement.remove();
       }
     });

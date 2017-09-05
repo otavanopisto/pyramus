@@ -21,7 +21,6 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Entity
@@ -103,14 +102,6 @@ public class Application {
     this.email = email;
   }
 
-  public StudyProgramme getStudyProgramme() {
-    return studyProgramme;
-  }
-
-  public void setStudyProgramme(StudyProgramme studyProgramme) {
-    this.studyProgramme = studyProgramme;
-  }
-
   public ApplicationState getState() {
     return state;
   }
@@ -135,6 +126,22 @@ public class Application {
     this.archived = archived;
   }
 
+  public String getLine() {
+    return line;
+  }
+
+  public void setLine(String line) {
+    this.line = line;
+  }
+
+  public Boolean getApplicantEditable() {
+    return applicantEditable;
+  }
+
+  public void setApplicantEditable(Boolean applicantEditable) {
+    this.applicantEditable = applicantEditable;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Application")
   @TableGenerator(name="Application", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -145,9 +152,10 @@ public class Application {
   @NotEmpty
   private String applicationId;
 
-  @ManyToOne  
-  @JoinColumn(name="studyProgramme")
-  private StudyProgramme studyProgramme;
+  @NotNull
+  @Column (nullable = false)
+  @NotEmpty
+  private String line;
 
   @NotNull
   @Column (nullable = false)
@@ -197,6 +205,11 @@ public class Application {
   @Enumerated (EnumType.STRING)
   @Field(store = Store.NO)
   private ApplicationState state;
+
+  @NotNull
+  @Column (nullable = false)
+  @Field
+  private Boolean applicantEditable;
 
   @NotNull
   @Column (nullable = false)

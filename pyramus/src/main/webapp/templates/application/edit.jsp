@@ -27,10 +27,12 @@
   <body>
     <main>
 	    <form class="application-form">
+	    
+	      <header class="application-logo-header"></header>
 
         <section class="form-section section-edit-info">
         
-          <div>Tervetuloa hakemuksen muokkaamiseen ja niin pois päin</div>
+          <h3>Tervetuloa hakemuksen muokkaamiseen</h3>
         
           <div class="field-container field-last-name">
             <label for="field-last-name">Sukunimi</label>
