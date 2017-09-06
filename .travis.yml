@@ -15,10 +15,9 @@ branches:
   - develop
 env:
   global:
-  - JAVA_OPTS="$JAVA_OPTS -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses"
   - secure: "FyBpg9F7v2eQvKZ838usSF/lTSbNjKXBNHj/nJ04fXHJq6vR7n1HDXpeorqIdPv3bNRtBgEYjDVrGdxk50b4tSGGwtN5W0Yji8t6o/0EVoK190xKEHH45fUrenv8aRvOYcCYEeTZ60N/0hez63XfwLqDwJMdMZMPry/YAcurZkI="
   - secure: "fP2UJjbNpT/dWYfE3yJ0riWO5/+dBcjZiJzosmCtQUhQGFlIAAwrWYOXLjEXxCsksO6/m5y3OE5/Hnm076OBgubghpGZadF7YC0VzIsjrPYUuqkxEeF/Oyo46dtuMsCIH0ZqzvIo/q4XPHyIBsivMG5JfLBOgh2a/p7JY0R5FZk="
-script: mvn verify -Djava.net.preferIPv4Stack=true -Prest-it
+script: mvn verify -Prest-it
 after_success:
 - if [ $TRAVIS_PULL_REQUEST == false ]; then
     python travis-prepare-maven.py & wait;

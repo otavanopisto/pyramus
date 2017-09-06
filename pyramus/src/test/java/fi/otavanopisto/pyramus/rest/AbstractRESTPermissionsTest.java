@@ -14,6 +14,7 @@ import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
+import org.junit.After;
 import org.junit.Before;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -28,6 +29,7 @@ import fi.otavanopisto.pyramus.AbstractIntegrationTest;
 import fi.otavanopisto.pyramus.Common;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
+import fi.otavanopisto.pyramus.util.TestUtilities;
 
 public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest {
 
@@ -102,6 +104,11 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 		}
 	}
 
+  @After
+  public void memStats() {
+    TestUtilities.printMemoryUse();
+  }
+	
 	public String getAccessToken() {
 		return accessToken;
 	}
