@@ -469,7 +469,7 @@
                 <it.keystore.alias>${it.keystore.alias}</it.keystore.alias>
                 <it.keystore.storepass>${it.keystore.pass}</it.keystore.storepass>
               </systemPropertyVariables>
-              <argLine>-Xmx2G -XX:MaxPermSize=1G</argLine>
+              <argLine>-Xmx2G</argLine>
             </configuration>
             <executions>
               <execution>
@@ -975,7 +975,7 @@
                 <properties>
                   <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
                   <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
-                  <cargo.jvmargs>-Xms64m -Xmx1152m -XX:MaxPermSize=512m -XX:-UseSplitVerifier</cargo.jvmargs>
+                  <cargo.jvmargs>-Xms64m -Xmx2048m -XX:-UseSplitVerifier</cargo.jvmargs>
                   <cargo.datasource.datasource.pyrit>
                     cargo.datasource.driver=${it.jdbc.driver}|
                     cargo.datasource.url=${it.jdbc.url}|
