@@ -1,110 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>rest</artifactId>
-	<packaging>jar</packaging>
-	<name>Pyramus REST API</name>
-	<description>Pyramus REST API</description>
 
-	<parent>
-		<groupId>fi.otavanopisto.pyramus</groupId>
-		<artifactId>parent</artifactId>
-		<version>0.7.75-SNAPSHOT</version>
-		<relativePath>../</relativePath>
-	</parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>rest</artifactId>
+  <packaging>jar</packaging>
+  <name>Pyramus REST API</name>
+  <description>Pyramus REST API</description>
 
-	<dependencies>
+  <parent>
+    <groupId>fi.otavanopisto.pyramus</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.7.75-SNAPSHOT</version>
+    <relativePath>../</relativePath>
+  </parent>
 
-		<!-- RestEasy -->
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.jboss.spec.javax.ws.rs</groupId>
-			<artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
+  <dependencies>
 
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jackson2-provider</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-		    <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-databind</artifactId>
-		</dependency>
+    <!-- RestEasy -->
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jaxrs</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-		<!-- CDI -->
+    <dependency>
+      <groupId>org.jboss.spec.javax.ws.rs</groupId>
+      <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-multipart-provider</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.jboss.spec.javax.interceptor</groupId>
-			<artifactId>jboss-interceptors-api_1.2_spec</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jackson2-provider</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-		<!-- EJB -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
 
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.2_spec</artifactId>
-		</dependency>
+    <!-- CDI -->
 
-		<!-- Commons -->
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+    </dependency>
 
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.interceptor</groupId>
+      <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+    </dependency>
 
-		<!-- Oltu -->
+    <!-- EJB -->
 
-		<dependency>
-			<groupId>org.apache.oltu.oauth2</groupId>
-			<artifactId>org.apache.oltu.oauth2.common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.oltu.oauth2</groupId>
-			<artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.oltu.oauth2</groupId>
-			<artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.ejb</groupId>
+      <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+    </dependency>
 
-		<!-- Pyramus -->
-      
-      <dependency>
-        <groupId>fi.otavanopisto.pyramus</groupId>
-        <artifactId>rest-model</artifactId>
-      </dependency>
-  
-      <dependency>
-        <groupId>fi.otavanopisto.pyramus</groupId>
-        <artifactId>persistence</artifactId>
-      </dependency>
-    
-      <dependency>
-        <groupId>fi.otavanopisto.pyramus</groupId>
-        <artifactId>framework</artifactId>
-      </dependency>
+    <!-- Commons -->
 
-      <dependency>
-        <groupId>fi.otavanopisto.pyramus</groupId>
-        <artifactId>plugin-core</artifactId>
-      </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
 
-      <dependency>
-        <groupId>com.fasterxml.jackson.datatype</groupId>
-        <artifactId>jackson-datatype-jsr310</artifactId>
-      </dependency>
-	</dependencies>
+    <!-- Oltu -->
+
+    <dependency>
+      <groupId>org.apache.oltu.oauth2</groupId>
+      <artifactId>org.apache.oltu.oauth2.common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.oltu.oauth2</groupId>
+      <artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.oltu.oauth2</groupId>
+      <artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
+    </dependency>
+
+    <!-- Pyramus -->
+
+    <dependency>
+      <groupId>fi.otavanopisto.pyramus</groupId>
+      <artifactId>rest-model</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>fi.otavanopisto.pyramus</groupId>
+      <artifactId>persistence</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>fi.otavanopisto.pyramus</groupId>
+      <artifactId>framework</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>fi.otavanopisto.pyramus</groupId>
+      <artifactId>plugin-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+  </dependencies>
+
 </project>

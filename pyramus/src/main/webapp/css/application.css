@@ -1,0 +1,464 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css?family=Exo+2:200|Open+Sans:300,400');
+
+/* 
+  FONTS: 
+  - Open Sans = Body font used i every paragraph etc.
+  - Exo 2 = Title font used in section titles and headers 
+*/
+
+* {
+  box-sizing: border-box;
+}
+
+/* BASIC STYLING - MOBILE FIRST */
+body {
+  margin: 20px;
+  padding: 0;
+  background: #fff;
+  font-family: "Open Sans";
+  font-weight: 300;
+  font-size: 14px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+@media screen and (min-width: 600px) {
+  
+  body {
+    margin: 60px;
+    font-size: 16px;
+  }
+}
+
+main {
+  max-width: 100%;
+  flex: 1 1 auto;
+}
+
+@media screen and (min-width: 600px) {
+  
+  main {
+    max-width: 600px;
+  } 
+}
+
+.application-logo-header {
+  background: url('/../gfx/gui/logo_otavanopisto.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 30px;
+}
+
+@media screen and (min-width: 600px) {
+  
+  .application-logo-header {
+    height: 50px;
+  }
+}
+
+h3 {
+  margin:10px 0;
+  padding: 0;
+  font-family: "Exo 2";
+  font-weight: 200;
+  font-size: 26px;
+  color: #009fe3;
+}
+
+@media screen and (min-width: 600px) {
+  
+  h3 {
+    font-size: 30px;
+    margin: 20px 0;
+  }
+}
+
+a {
+  color: #009fe3;
+}
+
+/* FORM STRUCTURE */
+.form-section {
+  display: none;
+}
+
+.form-section.current {
+  display: inherit;
+}
+
+.field-container {
+  margin: 10px 0;
+} 
+ 
+.summary-container {
+  margin: 20px 0;
+} 
+
+
+.field-row-flex {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.field-row-flex .field-row-element {
+  flex: 0 1 auto;
+}
+
+.field-row-flex .field-row-label {
+  flex: 1 1 auto;
+}
+
+.field-row {
+  
+}
+
+.field-row .field-row-element {
+  
+}
+
+.field-row .field-row-label {
+  
+}
+
+.field-container.dependent {
+  display: none;
+} 
+
+/* FORM ELEMENTS */
+label {
+  font-weight: 400;
+  display: block;
+}
+
+@media screen and (min-width: 600px) {
+  
+  label {
+    margin: 2px 0;
+  }
+}
+
+label.required::after {
+  content: '*';
+  font-size: 14px;
+  color: #d31111;
+  padding: 0 4px;
+}
+
+.field-row label {
+  display: inline-block;
+}
+
+.field-row-element input[type="checkbox"],
+.field-row-element input[type="checkbox"] {
+  margin: 10px;
+}
+
+.field-help {
+  font-size: 13px;
+  font-style: italic;
+}
+
+@media screen and (min-width: 600px) {
+  
+  .field-help {
+    font-size: 15px;
+  }
+}
+
+input,
+textarea {
+  margin: 0;
+  padding: 8px;
+  background: #fff;
+  font-family: "Open Sans";
+  font-weight: 300;
+  font-size: 14px;
+  border-radius: 3px;
+  border: 1px solid #5db5c5;
+  max-width: 100%;
+  width: 100%;
+}
+
+@media screen and (min-width: 600px) {
+  
+  input,
+  textarea {
+    padding: 12px;
+    font-size: 16px;
+  }
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+}
+
+select {
+  background: #fff;
+  font-family: "Open Sans";
+  font-weight: 300;
+  font-size: 14px;
+  border-radius: 3px;
+  border: 1px solid #5db5c5;
+  max-width: 100%;
+  padding: 4px;
+}
+
+@media screen and (min-width: 600px) {
+  
+  select {
+    padding: 8px;
+    font-size: 16px;
+  }
+}
+
+option {
+  background: #fff;
+  font-family: "Open Sans";
+  font-weight: 300;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+/* FORM NAVIGATION */
+.form-navigation {
+  text-align: center;
+  margin: 20px 0 0;
+}
+
+button {
+  font-family: "Open Sans";
+  font-weight: 300;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: 1px solid #fff;
+  color: #fff;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+@media screen and (min-width: 600px) {
+  
+  button {
+    font-size: 18px;
+    padding: 10px 16px;
+  }
+}
+
+button.previous,
+button.next {
+  background: #009fe3;
+}
+
+button.button-save-application, 
+button.button-edit-application {
+  background: #27b91c;
+}
+
+.application-page-indicator {
+  display: inline-block;
+  padding: 0 10px;
+}
+
+/* UPLOAD PROGRESS */
+.ui-progressbar {
+  width: 100%;
+  height: 20px;
+}
+
+.ui-progressbar-value {
+  background: #87d7e6;
+  width: 100%;
+  height: 20px;
+  border-radius: 3px;  
+}
+
+.application-file-upload-progress-text {
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* FILE UPLOAD */
+.field-attachments-selector-container {
+  position: relative;
+  background: #fff;
+  border: 1px solid #5db5c5;
+  cursor: pointer;
+  border-radius:3px;
+}
+
+.field-attachments-selector {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-upload-description {
+  padding: 20px;
+  color: #5db5c5;
+  text-align: center;
+}
+
+.field-attachments-files {
+   margin: 20px 0 0;
+}
+
+.application-file {
+  padding: 6px;
+  background: #5db5c5;
+  margin: 8px 0;
+  border-radius: 3px;
+  color: #fff;
+  position: relative;
+}
+
+.application-file-details {
+  margin: 0 30px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.application-file-name a {
+  color: #fff;
+  font-size: 14px;
+}
+
+.application-file-size {
+  font-size: 13px;
+  padding: 0 10px;
+  font-style: italic;
+  color: #bef7fe;
+}
+
+.application-file-delete {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  bottom: 0;
+  margin: -8px 0 0;
+  width: 16px;
+  height: 16px;
+  font-size: 13px;
+  cursor: pointer;
+  background: url('../gfx/icons/48x48/actions/close.png') center center no-repeat;
+  background-size: contain;
+}
+
+.notification-queue {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.notification-queue-item {
+  color: #fff;
+  position: relative;
+  background: #000;
+  opacity: 0.9;
+}
+
+.notification-queue-item-error {
+  background: #d31111;
+}
+
+.notification-message-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 0;
+  position: relative;
+}
+
+.notification-queue-item-close {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  margin: -16px 0 0;
+  height: 32px;
+  width: 32px;
+  background: url('../gfx/icons/48x48/actions/close.png') center center no-repeat;
+  background-size: contain;
+}
+
+.privacy-policy-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: #000;
+  opacity: 0.8;
+  z-index: 99;
+  width: 100%;
+}
+
+.privacy-policy-container {
+ max-width: 600px;
+ margin: 0;
+ background: #fff;
+ padding: 0 20px;
+ z-index: 100;
+ position: absolute;
+ top: 0;
+ left: 0;
+}
+
+@media screen and (min-width: 600px) {
+  
+  .privacy-policy-container {
+    max-width: 600px;
+    margin: 0 0 0 -300px;
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    padding: 0 20px;
+    z-index: 100;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+  }
+}
+
+.privacy-policy-close {
+  background: url('../gfx/icons/48x48/actions/close.png') #009fe3;
+  background-size: contain;
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  border-radius: 100%;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  border: 5px solid #009fe3;
+  cursor: pointer;
+}
+
+.important {
+	font-weight: 400;
+	font-size: 20px;
+}	
+
+.important	span {
+	border-radius: 3px;
+	padding: 8px;
+	background: #e1ffff;
+	font-size: 26px;
+  margin: 0 10px;
+  display: inline-block;
+  font-weight: 300;
+}
+
+span.email {
+	font-weight: 400;
+  display: inline-block;
+}
