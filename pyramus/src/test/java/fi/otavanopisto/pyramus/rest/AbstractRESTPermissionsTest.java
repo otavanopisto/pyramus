@@ -29,7 +29,6 @@ import fi.otavanopisto.pyramus.AbstractIntegrationTest;
 import fi.otavanopisto.pyramus.Common;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
-import fi.otavanopisto.pyramus.util.TestUtilities;
 
 public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest {
 
@@ -103,11 +102,6 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 			setAdminAccessToken(accessToken);
 		}
 	}
-
-  @After
-  public void memStats() {
-    TestUtilities.printMemoryUse();
-  }
 	
 	public String getAccessToken() {
 		return accessToken;
