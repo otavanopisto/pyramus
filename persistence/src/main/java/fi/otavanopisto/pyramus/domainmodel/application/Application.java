@@ -18,13 +18,24 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.FullTextFilterDef;
+import org.hibernate.search.annotations.FullTextFilterDefs;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
 @Entity
-public class Application {
+@Indexed
+@FullTextFilterDefs (
+  @FullTextFilterDef (
+    name="ArchivedApplication",
+    impl=ArchivedEntityFilterFactory.class
+  )
+)
+public class Application implements ArchivableEntity {
   
   public Long getId() {
     return id;
@@ -150,31 +161,37 @@ public class Application {
   @NotNull
   @Column (nullable = false, unique = true)
   @NotEmpty
+  @Field
   private String applicationId;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
+  @Field
   private String line;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
+  @Field
   private String firstName;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
+  @Field
   private String lastName;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
+  @Field
   private String email;
 
   @NotNull
   @Column (nullable = false)
   @NotEmpty
+  @Field
   private String referenceCode;
 
   @NotNull
@@ -199,11 +216,12 @@ public class Application {
   @Lob
   @NotNull
   @Column (nullable=false)
+  @Field
   private String formData;
   
   @Column
   @Enumerated (EnumType.STRING)
-  @Field(store = Store.NO)
+  @Field
   private ApplicationState state;
 
   @NotNull
