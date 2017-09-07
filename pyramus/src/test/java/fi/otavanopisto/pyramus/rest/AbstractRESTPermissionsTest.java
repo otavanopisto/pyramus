@@ -63,51 +63,51 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 	public void createAccessTokens() {
 
 		OAuthClientRequest tokenRequest = null;
-		if(testConnection()){
-		  if (!Role.EVERYONE.name().equals(role)) {
-	      try {
-	        tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
-	            .setGrantType(GrantType.AUTHORIZATION_CODE)
-	            .setClientId(fi.otavanopisto.pyramus.Common.CLIENT_ID)
-	            .setClientSecret(fi.otavanopisto.pyramus.Common.CLIENT_SECRET)
-	            .setRedirectURI(fi.otavanopisto.pyramus.Common.REDIRECT_URL)
-	            .setCode(fi.otavanopisto.pyramus.Common.getRoleAuth(Common.strToRole(role))).buildBodyMessage();
-	      } catch (OAuthSystemException e) {
-	        e.printStackTrace();
-	      }
 
-	      Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
-	          .post("/oauth/token");
-	      String accessToken = response.body().jsonPath().getString("access_token");
-	      setAccessToken(accessToken);
-	    } else {
-	      setAccessToken("");
-	    }
+	  if (!Role.EVERYONE.name().equals(role)) {
+      try {
+        tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
+            .setGrantType(GrantType.AUTHORIZATION_CODE)
+            .setClientId(fi.otavanopisto.pyramus.Common.CLIENT_ID)
+            .setClientSecret(fi.otavanopisto.pyramus.Common.CLIENT_SECRET)
+            .setRedirectURI(fi.otavanopisto.pyramus.Common.REDIRECT_URL)
+            .setCode(fi.otavanopisto.pyramus.Common.getRoleAuth(Common.strToRole(role))).buildBodyMessage();
+      } catch (OAuthSystemException e) {
+        e.printStackTrace();
+      }
 
-	    /**
-	     * AdminAccessToken
-	     */
-	    if (!Role.ADMINISTRATOR.name().equals(role)) {
-	      tokenRequest = null;
-	      try {
-	        tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
-	            .setGrantType(GrantType.AUTHORIZATION_CODE)
-	            .setClientId(fi.otavanopisto.pyramus.Common.CLIENT_ID)
-	            .setClientSecret(fi.otavanopisto.pyramus.Common.CLIENT_SECRET)
-	            .setRedirectURI(fi.otavanopisto.pyramus.Common.REDIRECT_URL)
-	            .setCode(fi.otavanopisto.pyramus.Common.getRoleAuth(Role.ADMINISTRATOR)).buildBodyMessage();
-	      } catch (OAuthSystemException e) {
-	        e.printStackTrace();
-	      }
-	      Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
-	          .post("/oauth/token");
+      Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
+          .post("/oauth/token");
+      String accessToken = response.body().jsonPath().getString("access_token");
+      setAccessToken(accessToken);
+    } else {
+      setAccessToken("");
+    }
 
-	      String adminAccessToken = response.body().jsonPath().getString("access_token");
-	      setAdminAccessToken(adminAccessToken);
-	    } else {
-	      setAdminAccessToken(accessToken);
-	    }
-		}
+    /**
+     * AdminAccessToken
+     */
+    if (!Role.ADMINISTRATOR.name().equals(role)) {
+      tokenRequest = null;
+      try {
+        tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
+            .setGrantType(GrantType.AUTHORIZATION_CODE)
+            .setClientId(fi.otavanopisto.pyramus.Common.CLIENT_ID)
+            .setClientSecret(fi.otavanopisto.pyramus.Common.CLIENT_SECRET)
+            .setRedirectURI(fi.otavanopisto.pyramus.Common.REDIRECT_URL)
+            .setCode(fi.otavanopisto.pyramus.Common.getRoleAuth(Role.ADMINISTRATOR)).buildBodyMessage();
+      } catch (OAuthSystemException e) {
+        e.printStackTrace();
+      }
+      Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
+          .post("/oauth/token");
+
+      String adminAccessToken = response.body().jsonPath().getString("access_token");
+      setAdminAccessToken(adminAccessToken);
+    } else {
+      setAdminAccessToken(accessToken);
+    }
+		
 		
 	}
 	
@@ -230,21 +230,6 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 
 	protected void setRole(String role) {
 		this.role = role;
-	}
-
-	private boolean testConnection() {
-    Socket socket = new Socket();
-	  try {
-	    socket.connect(new InetSocketAddress(getAppUrl(true) + "/1", getPortHttps()), 2000);
-      return true;
-	  }catch (IOException e) {
-      return false; // Either timeout or unreachable or failed DNS lookup.
-    }finally {
-	    try {
-        socket.close();
-      } catch (IOException e) {
-      }
-    }
 	}
 	
 	protected String role;
