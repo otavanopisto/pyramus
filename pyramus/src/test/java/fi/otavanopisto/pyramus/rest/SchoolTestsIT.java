@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasKey;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.jayway.restassured.response.Response;
+import io.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.rest.model.School;
 

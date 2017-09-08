@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
-import static com.jayway.restassured.RestAssured.certificate;
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.certificate;
+import static io.restassured.RestAssured.given;
 
 import java.util.Map;
 
@@ -13,12 +13,12 @@ import org.junit.Before;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.config.ObjectMapperConfig;
-import com.jayway.restassured.config.RestAssuredConfig;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory;
-import com.jayway.restassured.response.Response;
+import io.restassured.RestAssured;
+import io.restassured.config.ObjectMapperConfig;
+import io.restassured.config.RestAssuredConfig;
+import io.restassured.http.ContentType;
+import io.restassured.mapper.factory.Jackson2ObjectMapperFactory;
+import io.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.AbstractIntegrationTest;
 
