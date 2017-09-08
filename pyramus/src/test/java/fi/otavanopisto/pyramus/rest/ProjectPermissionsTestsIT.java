@@ -32,19 +32,7 @@ public class ProjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
   public ProjectPermissionsTestsIT(String role) {
     this.role = role;
   }
-  
-  @Before
-  public void testConnection() throws IOException {
-    Socket socket = new Socket();
-    try {
-      socket.connect(new InetSocketAddress(getHost(), getPortHttp()), 0);
-    }catch (IOException e) {
-      throw new AssertionError("WRONG");
-    }finally {
-      socket.close();
-    }
-  }
-  
+    
   @Test
   public void testPermissionsCreateProject() throws NoSuchFieldException {
     Project project = new Project(null, 

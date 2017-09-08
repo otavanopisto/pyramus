@@ -111,6 +111,19 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 		
 	}
 	
+  @Before
+  public void testConnection() throws IOException {
+    Socket socket = new Socket();
+    try {
+      socket.connect(new InetSocketAddress(getHost(), getPortHttp()), 0);
+    }catch (IOException e) {
+      throw new AssertionError("WRONG");
+    }finally {
+      socket.close();
+    }
+  }
+
+	
 	public String getAccessToken() {
 		return accessToken;
 	}
