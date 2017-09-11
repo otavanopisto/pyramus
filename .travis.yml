@@ -24,6 +24,7 @@ env:
 before_script:
   - echo $JAVA_OPTS
   - export JAVA_OPTS="-Djava.net.preferIPv4Addresses=true -Djava.net.preferIPv4Stack=true"
+  - export _JAVA_OPTIONS="-Xmx2048m -Xms512m -Djava.net.preferIPv4Addresses=true -Djava.net.preferIPv4Stack=true"
   - echo $JAVA_OPTS
 script: mvn verify -Prest-it
 after_success:
