@@ -34,6 +34,7 @@ after_success:
   fi;
 after_failure:
 - cat pyramus/target/cargo/configurations/wildfly10x/log/server.log
+- cat pyramus/target/cargo/configurations/wildfly10x/configuration/standalone.xml
 # Notifications
 notifications:
   irc:
