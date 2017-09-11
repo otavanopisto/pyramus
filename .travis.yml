@@ -22,10 +22,10 @@ before_script:
   - echo $JAVA_OPTS
   - export JAVA_OPTS="-Djava.net.preferIPv4Addresses=true -Djava.net.preferIPv4Stack=true"
   - echo $JAVA_OPTS
-  - sudo echo net.ipv6.conf.all.disable_ipv6 = 1 >> /etc/sysctl.conf
-  - sudo echo net.ipv6.conf.default.disable_ipv6 = 1 >> /etc/sysctl.conf
-  - sudo echo net.ipv6.conf.lo.disable_ipv6 = 1 >> /etc/sysctl.conf
-  - sudo cat /etc/sysctl.conf
+#  - sudo echo net.ipv6.conf.all.disable_ipv6 = 1 >> /etc/sysctl.conf
+#  - sudo echo net.ipv6.conf.default.disable_ipv6 = 1 >> /etc/sysctl.conf
+#  - sudo echo net.ipv6.conf.lo.disable_ipv6 = 1 >> /etc/sysctl.conf
+#  - sudo cat /etc/sysctl.conf
 script: mvn verify -Prest-it -Djava.net.preferIPv4Stack=true
 after_success:
 - if [ $TRAVIS_PULL_REQUEST == false ]; then
