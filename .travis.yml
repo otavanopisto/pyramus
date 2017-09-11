@@ -1,6 +1,5 @@
-dist: trusty
-group: deprecated-2017Q3
 sudo: required
+dist: trusty
 language: java
 jdk:
 - oraclejdk8
