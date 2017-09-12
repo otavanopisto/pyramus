@@ -37,6 +37,7 @@ public class ManageApplicationViewController extends PyramusViewController {
       pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());
       pageRequestContext.getRequest().setAttribute("referenceCode", application.getReferenceCode());
       pageRequestContext.getRequest().setAttribute("preload", Boolean.TRUE);
+      pageRequestContext.getRequest().setAttribute("donePage", Boolean.FALSE);
       pageRequestContext.getRequest().setAttribute("saveUrl", "/applications/saveapplication.json");
       
       pageRequestContext.setIncludeJSP("/templates/applications/manage.jsp");

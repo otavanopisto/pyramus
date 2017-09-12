@@ -243,10 +243,15 @@
           dataType: "json",
           contentType: "application/json; charset=utf-8",
           success: function(response) {
-            $('#edit-info-last-name').text($('#field-last-name').val());
-            $('#edit-info-reference-code').text(response.referenceCode);
-            $('#edit-info-email').text($('#field-email').val());
-            navigateTo('.section-done');
+            if ($('#application-form').attr('data-done-page') == 'true') {
+              $('#edit-info-last-name').text($('#field-last-name').val());
+              $('#edit-info-reference-code').text(response.referenceCode);
+              $('#edit-info-email').text($('#field-email').val());
+              navigateTo('.section-done');
+            }
+            else {
+              $('.notification-queue').notificationQueue('notification', 'info', 'Hakemus tallennettu');
+            }
           },
           error: function(err) {
             $('.notification-queue').notificationQueue('notification', 'error', 'Virhe tallennettaessa hakemusta: ' + err.statusText);

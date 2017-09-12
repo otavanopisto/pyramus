@@ -82,6 +82,7 @@ public class EditApplicationViewController extends PyramusViewController {
         pageRequestContext.getRequest().setAttribute("applicationId", applicationId);
         pageRequestContext.getRequest().setAttribute("referenceCode", application.getReferenceCode());
         pageRequestContext.getRequest().setAttribute("preload", Boolean.TRUE);
+        pageRequestContext.getRequest().setAttribute("donePage", Boolean.TRUE);
         pageRequestContext.getRequest().setAttribute("saveUrl", "/1/applications/saveapplication");
         pageRequestContext.setIncludeJSP("/templates/applications/application.jsp");
       }

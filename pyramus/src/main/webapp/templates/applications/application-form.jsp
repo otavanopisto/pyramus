@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<form id="application-form" class="application-form" data-save-url="${saveUrl}">
+<form id="application-form" class="application-form" data-save-url="${saveUrl}" data-done-page="${donePage}">
 
   <input type="hidden" id="field-application-id" name="field-application-id" value="${applicationId}" data-preload="${preload}" data-parsley-excluded="true"/>
   
