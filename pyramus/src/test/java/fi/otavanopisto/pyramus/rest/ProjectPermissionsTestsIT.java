@@ -28,7 +28,7 @@ public class ProjectPermissionsTestsIT extends AbstractRESTPermissionsTest {
   public ProjectPermissionsTestsIT(String role) {
     this.role = role;
   }
-  
+    
   @Test
   public void testPermissionsCreateProject() throws NoSuchFieldException {
     Project project = new Project(null, 
