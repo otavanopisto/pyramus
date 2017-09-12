@@ -2,14 +2,12 @@ package fi.otavanopisto.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.certificate;
 import static com.jayway.restassured.RestAssured.given;
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +17,6 @@ import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
-import org.junit.After;
 import org.junit.Before;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -117,7 +114,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     try {
       socket.connect(new InetSocketAddress(getHost(), getPortHttp()), 0);
     }catch (IOException e) {
-      throw new AssertionError("WRONG");
+      throw new AssertionError("Could not establish connection to server!");
     }finally {
       socket.close();
     }

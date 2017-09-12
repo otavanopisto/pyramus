@@ -2,13 +2,9 @@ package fi.otavanopisto.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.given;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
