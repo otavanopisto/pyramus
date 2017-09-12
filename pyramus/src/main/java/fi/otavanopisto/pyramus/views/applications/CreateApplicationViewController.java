@@ -56,7 +56,7 @@ public class CreateApplicationViewController extends PyramusViewController {
     // Create a unique application identifier and include the application form
     
     pageRequestContext.getRequest().setAttribute("applicationId", UUID.randomUUID().toString()); 
-    pageRequestContext.setIncludeJSP("/templates/application/application.jsp");
+    pageRequestContext.setIncludeJSP("/templates/applications/application.jsp");
   }
 
   public UserRole[] getAllowedRoles() {
