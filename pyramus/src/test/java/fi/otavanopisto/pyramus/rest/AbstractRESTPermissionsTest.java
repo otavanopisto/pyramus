@@ -1,7 +1,8 @@
 package fi.otavanopisto.pyramus.rest;
 
-import static com.jayway.restassured.RestAssured.certificate;
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.certificate;
+import static io.restassured.RestAssured.given;
+import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -21,11 +22,11 @@ import org.junit.Before;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.config.ObjectMapperConfig;
-import com.jayway.restassured.config.RestAssuredConfig;
-import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory;
-import com.jayway.restassured.response.Response;
+import io.restassured.RestAssured;
+import io.restassured.config.ObjectMapperConfig;
+import io.restassured.config.RestAssuredConfig;
+import io.restassured.mapper.factory.Jackson2ObjectMapperFactory;
+import io.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.AbstractIntegrationTest;
 import fi.otavanopisto.pyramus.Common;
@@ -34,34 +35,34 @@ import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
 
 public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest {
 
-	@Before
-	public void setupRestAssured() {
+  @Before
+  public void setupRestAssured() {
 
-		RestAssured.baseURI = getAppUrl(true) + "/1";
-		RestAssured.port = getPortHttps();
-		RestAssured.authentication = certificate(getKeystoreFile(), getKeystorePass());
+    RestAssured.baseURI = getAppUrl(true) + "/1";
+    RestAssured.port = getPortHttps();
+    RestAssured.authentication = certificate(getKeystoreFile(), getKeystorePass());
 
-		RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
-				ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory() {
+    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+        ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory() {
 
-					@SuppressWarnings("rawtypes")
-					@Override
-					public com.fasterxml.jackson.databind.ObjectMapper create(Class cls, String charset) {
-						com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-						objectMapper.registerModule(new JSR310Module());
-						objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-						return objectMapper;
-					}
-				}));
+          @SuppressWarnings("rawtypes")
+          @Override
+          public com.fasterxml.jackson.databind.ObjectMapper create(Class cls, String charset) {
+            com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            objectMapper.registerModule(new JSR310Module());
+            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            return objectMapper;
+          }
+        }));
 
-	}
+  }
 
-	@Before
-	public void createAccessTokens() {
+  @Before
+  public void createAccessTokens() {
 
-		OAuthClientRequest tokenRequest = null;
+    OAuthClientRequest tokenRequest = null;
 
-	  if (!Role.EVERYONE.name().equals(role)) {
+    if (!Role.EVERYONE.name().equals(role)) {
       try {
         tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
             .setGrantType(GrantType.AUTHORIZATION_CODE)
@@ -104,9 +105,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     } else {
       setAdminAccessToken(accessToken);
     }
-		
-		
-	}
+  }
 	
   @Before
   public void testConnection() throws IOException {
@@ -121,47 +120,47 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   }
 
 	
-	public String getAccessToken() {
-		return accessToken;
-	}
+  public String getAccessToken() {
+    return accessToken;
+  }
 
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
-	}
+  public void setAccessToken(String accessToken) {
+    this.accessToken = accessToken;
+  }
 
-	public String getAdminAccessToken() {
-		return adminAccessToken;
-	}
+  public String getAdminAccessToken() {
+    return adminAccessToken;
+  }
 
-	public void setAdminAccessToken(String adminAccesToken) {
-		this.adminAccessToken = adminAccesToken;
-	}
+  public void setAdminAccessToken(String adminAccesToken) {
+    this.adminAccessToken = adminAccesToken;
+  }
 
-	public Map<String, String> getAuthHeaders() {
-		OAuthClientRequest bearerClientRequest = null;
-		try {
-			bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi")
-					.setAccessToken(this.getAccessToken()).buildHeaderMessage();
-		} catch (OAuthSystemException e) {
-		}
+  public Map<String, String> getAuthHeaders() {
+    OAuthClientRequest bearerClientRequest = null;
+    try {
+      bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi").setAccessToken(this.getAccessToken())
+          .buildHeaderMessage();
+    } catch (OAuthSystemException e) {
+    }
 
-		return bearerClientRequest.getHeaders();
-	}
+    return bearerClientRequest.getHeaders();
+  }
 
-	public Map<String, String> getAdminAuthHeaders() {
-		OAuthClientRequest bearerClientRequest = null;
-		try {
-			bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi")
-					.setAccessToken(this.getAdminAccessToken()).buildHeaderMessage();
-		} catch (OAuthSystemException e) {
-		}
-		return bearerClientRequest.getHeaders();
-	}
+  public Map<String, String> getAdminAuthHeaders() {
+    OAuthClientRequest bearerClientRequest = null;
+    try {
+      bearerClientRequest = new OAuthBearerClientRequest("https://dev.pyramus.fi")
+          .setAccessToken(this.getAdminAccessToken()).buildHeaderMessage();
+    } catch (OAuthSystemException e) {
+    }
+    return bearerClientRequest.getHeaders();
+  }
 
-	public Long getUserIdForRole(String role) {
-		// TODO: could this use the /system/whoami end-point?
-		return Common.getUserId(Common.strToRole(role));
-	}
+  public Long getUserIdForRole(String role) {
+    // TODO: could this use the /system/whoami end-point?
+    return Common.getUserId(Common.strToRole(role));
+  }
 
   public boolean roleIsAllowed(String role, PyramusPermissionCollection permissionCollection, String permission) throws NoSuchFieldException {
     List<String> allowedRoles = Arrays.asList(permissionCollection.getDefaultRoles(permission));
@@ -169,80 +168,80 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     return roleIsAllowed(getRole(), allowedRoles);
   }
 	
-	public boolean roleIsAllowed(String role, List<String> allowedRoles) {
-		// Everyone -> every role has access
-		if (allowedRoles.contains(Role.EVERYONE.name()))
-			return true;
+  public boolean roleIsAllowed(String role, List<String> allowedRoles) {
+    // Everyone -> every role has access
+    if (allowedRoles.contains(Role.EVERYONE.name()))
+      return true;
 
-		for (String str : allowedRoles) {
-			if (str.equals(role)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    for (String str : allowedRoles) {
+      if (str.equals(role)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-	public void assertOk(String path, List<String> allowedRoles) {
-		if (!Role.EVERYONE.name().equals(getRole())) {
-			if (roleIsAllowed(getRole(), allowedRoles)) {
-				given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(200);
-			} else {
-				given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(403);
-			}
-		} else
-			given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(400);
-	}
+  public void assertOk(String path, List<String> allowedRoles) {
+    if (!Role.EVERYONE.name().equals(getRole())) {
+      if (roleIsAllowed(getRole(), allowedRoles)) {
+        given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(200);
+      } else {
+        given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(403);
+      }
+    } else
+      given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(400);
+  }
 
-	public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission)
-			throws NoSuchFieldException {
-		assertOk(response, permissionCollection, permission, 200);
-	}
+  public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission)
+      throws NoSuchFieldException {
+    assertOk(response, permissionCollection, permission, 200);
+  }
 
-	public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission,
-			int successStatusCode) throws NoSuchFieldException {
-		if (!Role.EVERYONE.name().equals(getRole())) {
-			int expectedStatusCode = roleIsAllowed(getRole(), permissionCollection, permission) ? successStatusCode : 403;
+  public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission,
+      int successStatusCode) throws NoSuchFieldException {
+    if (!Role.EVERYONE.name().equals(getRole())) {
+      int expectedStatusCode = roleIsAllowed(getRole(), permissionCollection, permission) ? successStatusCode : 403;
 
-			assertThat(
-					String.format("Status code <%d> didn't match expected code <%d> when Role = %s, Permission = %s",
-							response.statusCode(), expectedStatusCode, getRole(), permission),
-					response.statusCode(), is(expectedStatusCode));
-		} else
-			response.then().assertThat().statusCode(400);
-	}
+      assertThat(
+          String.format("Status code <%d> didn't match expected code <%d> when Role = %s, Permission = %s",
+              response.statusCode(), expectedStatusCode, getRole(), permission),
+          response.statusCode(), is(expectedStatusCode));
+    } else
+      response.then().assertThat().statusCode(400);
+  }
 
-	public static List<Object[]> getGeneratedRoleData() {
-		// The parameter generator returns a List of
-		// arrays. Each array has two elements: { role }.
+  public static List<Object[]> getGeneratedRoleData() {
+    // The parameter generator returns a List of
+    // arrays. Each array has two elements: { role }.
 
-		List<Object[]> data = new ArrayList<>();
+    List<Object[]> data = new ArrayList<>();
 
-		for (Role role : Role.values()) {
-			data.add(new Object[] { role.name() });
-		}
+    for (Role role : Role.values()) {
+      data.add(new Object[] { role.name() });
+    }
 
-		return data;
+    return data;
 
-		// return Arrays.asList(new Object[][] {
-		// { Role.EVERYONE.name() },
-		// { Role.GUEST.name() },
-		// { Role.USER.name() },
-		// { Role.STUDENT.name() },
-		// { Role.MANAGER.name() },
-		// { Role.ADMINISTRATOR.name() }
-		// }
-		// );
-	}
+    // return Arrays.asList(new Object[][] {
+    // { Role.EVERYONE.name() },
+    // { Role.GUEST.name() },
+    // { Role.USER.name() },
+    // { Role.STUDENT.name() },
+    // { Role.MANAGER.name() },
+    // { Role.ADMINISTRATOR.name() }
+    // }
+    // );
+  }
 
-	protected String getRole() {
-		return role;
-	}
+  protected String getRole() {
+    return role;
+  }
 
-	protected void setRole(String role) {
-		this.role = role;
-	}
-	
-	protected String role;
-	private String accessToken;
-	private String adminAccessToken;
+  protected void setRole(String role) {
+    this.role = role;
+  }
+
+  protected String role;
+  private String accessToken;
+  private String adminAccessToken;
 }

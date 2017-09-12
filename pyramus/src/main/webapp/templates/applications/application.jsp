@@ -681,7 +681,7 @@
         
         <section class="form-section section-done" data-skip="true">
           <h3>Hakemuksesi on vastaanotettu.</h3>
-          <p>Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa <a href="/application/edit.page">https://pyramus.otavanopisto.fi/application/edit.page</a></p>
+          <p>Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa <a href="/applications/edit.page">https://pyramus.otavanopisto.fi/applications/edit.page</a></p>
           <p>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen:</p>
           <p class="important">Sukunimi <span class="name" id="edit-info-last-name"></span></p>
           <p class="important">Hakemustunnus <span class="code" id="edit-info-reference-code"></span></p>

@@ -4,15 +4,27 @@ import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.Query;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.FullTextQuery;
+import org.hibernate.search.jpa.Search;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.application.Application_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
 @Stateless
 public class ApplicationDAO extends PyramusEntityDAO<Application> {
@@ -48,6 +60,55 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     entityManager.persist(application);
 
     return application;
+  }
+  
+  @SuppressWarnings("unchecked")
+  public SearchResult<Application> searchApplications(int resultsPerPage, int page, String line, ApplicationState state, boolean filterArchived) {
+    int firstResult = page * resultsPerPage;
+
+    StringBuilder queryBuilder = new StringBuilder();
+    if (!StringUtils.isBlank(line)) {
+      addTokenizedSearchCriteria(queryBuilder, "line", line, true);
+    }
+    if (state != null) {
+      addTokenizedSearchCriteria(queryBuilder, "state", state.toString(), true);
+    }
+    
+    EntityManager entityManager = getEntityManager();
+    FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+
+    try {
+      QueryParser parser = new QueryParser("", new StandardAnalyzer());
+      String queryString = queryBuilder.toString();
+      Query luceneQuery;
+
+      if (StringUtils.isBlank(queryString)) {
+        luceneQuery = new MatchAllDocsQuery();
+      }
+      else {
+        luceneQuery = parser.parse(queryString);
+      }
+
+      FullTextQuery query = (FullTextQuery) fullTextEntityManager.createFullTextQuery(luceneQuery, Application.class)
+          .setFirstResult(firstResult)
+          .setMaxResults(resultsPerPage);
+
+      if (filterArchived) {
+        query.enableFullTextFilter("ArchivedApplication").setParameter("archived", Boolean.FALSE);
+      }
+
+      int hits = query.getResultSize();
+      int pages = hits / resultsPerPage;
+      if (hits % resultsPerPage > 0)
+        pages++;
+
+      int lastResult = Math.min(firstResult + resultsPerPage, hits) - 1;
+
+      return new SearchResult<>(page, pages, hits, firstResult, lastResult, query.getResultList());
+    }
+    catch (ParseException e) {
+      throw new PersistenceException(e);
+    }
   }
   
   public Application update(
