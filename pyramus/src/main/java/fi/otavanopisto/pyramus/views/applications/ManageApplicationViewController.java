@@ -1,0 +1,53 @@
+package fi.otavanopisto.pyramus.views.applications;
+
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.math.NumberUtils;
+
+import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.framework.PyramusViewController;
+import fi.otavanopisto.pyramus.framework.UserRole;
+
+public class ManageApplicationViewController extends PyramusViewController {
+
+  private static final Logger logger = Logger.getLogger(EditApplicationViewController.class.getName());
+  
+  public void process(PageRequestContext pageRequestContext) {
+    try {
+      
+      Long applicationId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("application"));
+      if (applicationId == null) {
+        pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+        return;
+      }
+      ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+      Application application = applicationDAO.findById(applicationId);
+      if (application == null) {
+        pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+        return;
+      }
+
+      pageRequestContext.getRequest().setAttribute("applicationId", applicationId);
+      pageRequestContext.getRequest().setAttribute("referenceCode", application.getReferenceCode());
+      pageRequestContext.getRequest().setAttribute("preload", Boolean.TRUE);
+      
+      pageRequestContext.setIncludeJSP("/templates/applications/manage.jsp");
+    }
+    catch (IOException e) {
+      logger.log(Level.SEVERE, "Unable to serve error response", e);
+      return;
+    }
+  }
+
+  public UserRole[] getAllowedRoles() {
+    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER };
+  }
+
+}
