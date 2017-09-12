@@ -32,7 +32,7 @@ public class PersonVariableDAO extends PyramusEntityDAO<PersonVariable> {
     return persist(personVariable);
   }
   
-  public PersonVariable findByUserAndVariableKey(Person person, PersonVariableKey key) {
+  public PersonVariable findByPersonAndVariableKey(Person person, PersonVariableKey key) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -48,12 +48,12 @@ public class PersonVariableDAO extends PyramusEntityDAO<PersonVariable> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
-  public String findByUserAndKey(Person person, String key) {
+  public String findByPersonAndKey(Person person, String key) {
     PersonVariableKeyDAO variableKeyDAO = DAOFactory.getInstance().getPersonVariableKeyDAO();
     
     PersonVariableKey personVariableKey = variableKeyDAO.findByVariableKey(key);
     if (personVariableKey != null) {
-      PersonVariable personVariable = findByUserAndVariableKey(person, personVariableKey); 
+      PersonVariable personVariable = findByPersonAndVariableKey(person, personVariableKey); 
       return personVariable == null ? null : personVariable.getValue();
     }
     else {
@@ -75,7 +75,7 @@ public class PersonVariableDAO extends PyramusEntityDAO<PersonVariable> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public List<PersonVariable> listByUserAndUserEditable(Person person, Boolean userEditable) {
+  public List<PersonVariable> listByPersonAndUserEditable(Person person, Boolean userEditable) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -99,7 +99,7 @@ public class PersonVariableDAO extends PyramusEntityDAO<PersonVariable> {
     
     PersonVariableKey personVariableKey = variableKeyDAO.findByVariableKey(key);
     if (personVariableKey != null) {
-      PersonVariable personVariable = findByUserAndVariableKey(person, personVariableKey);
+      PersonVariable personVariable = findByPersonAndVariableKey(person, personVariableKey);
       if (StringUtils.isBlank(value)) {
         if (personVariable != null) {
           delete(personVariable);
