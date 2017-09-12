@@ -2,9 +2,12 @@ package fi.otavanopisto.pyramus.rest;
 
 import static com.jayway.restassured.RestAssured.certificate;
 import static com.jayway.restassured.RestAssured.given;
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,50 +61,66 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 
 		OAuthClientRequest tokenRequest = null;
 
-		if (!Role.EVERYONE.name().equals(role)) {
-			try {
-				tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
-						.setGrantType(GrantType.AUTHORIZATION_CODE)
-						.setClientId(fi.otavanopisto.pyramus.Common.CLIENT_ID)
-						.setClientSecret(fi.otavanopisto.pyramus.Common.CLIENT_SECRET)
-						.setRedirectURI(fi.otavanopisto.pyramus.Common.REDIRECT_URL)
-						.setCode(fi.otavanopisto.pyramus.Common.getRoleAuth(Common.strToRole(role))).buildBodyMessage();
-			} catch (OAuthSystemException e) {
-				e.printStackTrace();
-			}
-			Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
-					.post("/oauth/token");
-			String accessToken = response.body().jsonPath().getString("access_token");
-			setAccessToken(accessToken);
-		} else {
-			setAccessToken("");
-		}
+	  if (!Role.EVERYONE.name().equals(role)) {
+      try {
+        tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
+            .setGrantType(GrantType.AUTHORIZATION_CODE)
+            .setClientId(fi.otavanopisto.pyramus.Common.CLIENT_ID)
+            .setClientSecret(fi.otavanopisto.pyramus.Common.CLIENT_SECRET)
+            .setRedirectURI(fi.otavanopisto.pyramus.Common.REDIRECT_URL)
+            .setCode(fi.otavanopisto.pyramus.Common.getRoleAuth(Common.strToRole(role))).buildBodyMessage();
+      } catch (OAuthSystemException e) {
+        e.printStackTrace();
+      }
 
-		/**
-		 * AdminAccessToken
-		 */
-		if (!Role.ADMINISTRATOR.name().equals(role)) {
-			tokenRequest = null;
-			try {
-				tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
-						.setGrantType(GrantType.AUTHORIZATION_CODE)
-						.setClientId(fi.otavanopisto.pyramus.Common.CLIENT_ID)
-						.setClientSecret(fi.otavanopisto.pyramus.Common.CLIENT_SECRET)
-						.setRedirectURI(fi.otavanopisto.pyramus.Common.REDIRECT_URL)
-						.setCode(fi.otavanopisto.pyramus.Common.getRoleAuth(Role.ADMINISTRATOR)).buildBodyMessage();
-			} catch (OAuthSystemException e) {
-				e.printStackTrace();
-			}
-			Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
-					.post("/oauth/token");
+      Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
+          .post("/oauth/token");
+      String accessToken = response.body().jsonPath().getString("access_token");
+      setAccessToken(accessToken);
+    } else {
+      setAccessToken("");
+    }
 
-			String adminAccessToken = response.body().jsonPath().getString("access_token");
-			setAdminAccessToken(adminAccessToken);
-		} else {
-			setAdminAccessToken(accessToken);
-		}
+    /**
+     * AdminAccessToken
+     */
+    if (!Role.ADMINISTRATOR.name().equals(role)) {
+      tokenRequest = null;
+      try {
+        tokenRequest = OAuthClientRequest.tokenLocation("https://dev.pyramus.fi:8443/1/oauth/token")
+            .setGrantType(GrantType.AUTHORIZATION_CODE)
+            .setClientId(fi.otavanopisto.pyramus.Common.CLIENT_ID)
+            .setClientSecret(fi.otavanopisto.pyramus.Common.CLIENT_SECRET)
+            .setRedirectURI(fi.otavanopisto.pyramus.Common.REDIRECT_URL)
+            .setCode(fi.otavanopisto.pyramus.Common.getRoleAuth(Role.ADMINISTRATOR)).buildBodyMessage();
+      } catch (OAuthSystemException e) {
+        e.printStackTrace();
+      }
+      Response response = given().contentType("application/x-www-form-urlencoded").body(tokenRequest.getBody())
+          .post("/oauth/token");
+
+      String adminAccessToken = response.body().jsonPath().getString("access_token");
+      setAdminAccessToken(adminAccessToken);
+    } else {
+      setAdminAccessToken(accessToken);
+    }
+		
+		
 	}
+	
+  @Before
+  public void testConnection() throws IOException {
+    Socket socket = new Socket();
+    try {
+      socket.connect(new InetSocketAddress(getHost(), getPortHttp()), 0);
+    }catch (IOException e) {
+      throw new AssertionError("Could not establish connection to server!");
+    }finally {
+      socket.close();
+    }
+  }
 
+	
 	public String getAccessToken() {
 		return accessToken;
 	}
@@ -222,7 +241,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 	protected void setRole(String role) {
 		this.role = role;
 	}
-
+	
 	protected String role;
 	private String accessToken;
 	private String adminAccessToken;
