@@ -53,11 +53,13 @@ import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
-@Path("/application")
+@Path("/applications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateful
@@ -80,6 +82,9 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Inject
   private LanguageDAO languageDAO;
+
+  @Inject
+  private SessionController sessionController;
 
   @Path("/createattachment")
   @POST
@@ -355,6 +360,17 @@ public class ApplicationRESTService extends AbstractRESTService {
         else {
           referenceCode = application.getReferenceCode();
         }
+        
+        User user = null;
+        try {
+          user = sessionController.getUser();
+          System.out.println("User is " + user.getFullName());
+        }
+        catch (Exception e) {
+          e.printStackTrace();
+          System.out.println("There is no user");
+        }
+        
         application = applicationDAO.update(
             application,
             line,

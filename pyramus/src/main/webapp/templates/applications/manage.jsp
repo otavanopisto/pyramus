@@ -9,10 +9,11 @@
   <head>
     <meta charset="UTF-8"/>
 
-    <jsp:include page="/templates/generic/head_generic_jquery.jsp"></jsp:include>
-
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/scripts/parsley/parsley.css"/>
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/application.css"/>
+
+    <script defer="defer" type="text/javascript" src="//code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script defer="defer" type="text/javascript" src="//code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script defer="defer" type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.fileupload.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/parsley/parsley.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/parsley/fi.js"></script>
@@ -24,9 +25,22 @@
 
   </head>
   <body>
-    <jsp:include page="/templates/generic/header.jsp"></jsp:include>
+    <input id="saveUrl" name="saveUrl" type="hidden"/>
+    <div class="notification-queue">
+      <div class="notification-queue-items">
+      </div>
+    </div>
     <main>
-      <h1>Hello World</h1>
+      <div class="application-form-container">
+        <h1>Toimintoja</h1>
+      </div>
+      <div class="application-form-container">
+        <h1>Hakemus</h1>
+        <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
+      </div>
+      <div class="application-history-container">
+        <h1>Käsittelyhistoria</h1>
+      </div>
     </main>
   </body>
 </html>

@@ -34,9 +34,10 @@ public class ManageApplicationViewController extends PyramusViewController {
         return;
       }
 
-      pageRequestContext.getRequest().setAttribute("applicationId", applicationId);
+      pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());
       pageRequestContext.getRequest().setAttribute("referenceCode", application.getReferenceCode());
       pageRequestContext.getRequest().setAttribute("preload", Boolean.TRUE);
+      pageRequestContext.getRequest().setAttribute("saveUrl", "/applications/saveapplication.json");
       
       pageRequestContext.setIncludeJSP("/templates/applications/manage.jsp");
     }
