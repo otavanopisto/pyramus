@@ -36,6 +36,10 @@
       <artifactId>resteasy-jaxrs</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+    </dependency>
   </dependencies>
   
 </project>
