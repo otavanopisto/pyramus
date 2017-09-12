@@ -10,6 +10,7 @@ import fi.otavanopisto.pyramus.dao.accesslog.AccessLogEntryDAO;
 import fi.otavanopisto.pyramus.dao.accesslog.AccessLogEntryPathDAO;
 import fi.otavanopisto.pyramus.dao.accommodation.RoomDAO;
 import fi.otavanopisto.pyramus.dao.accommodation.RoomTypeDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.base.AcademicTermDAO;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.BillingDetailsDAO;
@@ -126,6 +127,8 @@ import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
+import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
+import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
@@ -153,6 +156,12 @@ public class DAOFactory {
     return (DraftDAO) findByClass(DraftDAO.class);
   }
   
+  /* Application */
+
+  public fi.otavanopisto.pyramus.dao.application.ApplicationDAO getApplicationDAO() {
+    return (ApplicationDAO) findByClass(fi.otavanopisto.pyramus.dao.application.ApplicationDAO.class);
+  }
+
   /* Student */
   
   public fi.otavanopisto.pyramus.dao.students.StudentDAO getStudentDAO() {
@@ -337,6 +346,14 @@ public class DAOFactory {
   
   public UserIdentificationDAO getUserIdentificationDAO(){
     return (UserIdentificationDAO) findByClass(UserIdentificationDAO.class);
+  }
+  
+  public PersonVariableDAO getPersonVariableDAO() {
+    return (PersonVariableDAO) findByClass(PersonVariableDAO.class);
+  }
+  
+  public PersonVariableKeyDAO getPersonVariableKeyDAO() {
+    return (PersonVariableKeyDAO) findByClass(PersonVariableKeyDAO.class);
   }
   
   /* Webhooks */

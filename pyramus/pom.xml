@@ -7,7 +7,7 @@
   <parent>
     <groupId>fi.otavanopisto.pyramus</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.74-SNAPSHOT</version>
+    <version>0.7.76-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
@@ -433,6 +433,7 @@
         <it.keystore.pass>storepass</it.keystore.pass>
         <it.keystore.file>${project.build.directory}${file.separator}pyrit.keystore</it.keystore.file>
         <it.wildfly.cli-batch>true</it.wildfly.cli-batch>
+        <it.skipserverstop>false</it.skipserverstop>
       </properties>
 
       <dependencies>
@@ -474,8 +475,9 @@
                 <it.keystore.file>${it.keystore.file}</it.keystore.file>
                 <it.keystore.alias>${it.keystore.alias}</it.keystore.alias>
                 <it.keystore.storepass>${it.keystore.pass}</it.keystore.storepass>
+                <it.skipserverstop>${it.skipserverstop}</it.skipserverstop>
               </systemPropertyVariables>
-              <argLine>-Xmx2G -XX:MaxPermSize=1G</argLine>
+              <argLine>-Xmx2G</argLine>
             </configuration>
             <executions>
               <execution>
@@ -628,7 +630,7 @@
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-maven2-plugin</artifactId>
-            <version>1.5.0</version>
+            <version>1.6.4</version>
 						<configuration>
               <container>
                 <containerId>wildfly10x</containerId>
@@ -650,7 +652,7 @@
                 <properties>
                   <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
                   <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
-                  <cargo.jvmargs>-Xms64m -Xmx1152m -XX:MaxPermSize=512m</cargo.jvmargs>
+                  <cargo.jvmargs>-Xms64m -Xmx2G -XX:MaxMetaspaceSize=2G</cargo.jvmargs>
                   <cargo.datasource.datasource.pyramus>
                     cargo.datasource.driver=${it.jdbc.driver}|
                     cargo.datasource.url=${it.jdbc.url}|
@@ -687,7 +689,7 @@
           <plugin>
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
-            <version>1.0.2.Final</version>
+            <version>1.2.0.Final</version>
             <executions>
               <execution>
                 <id>deploy</id>
@@ -765,6 +767,7 @@
         <it.keystore.alias>pyrit</it.keystore.alias>
         <it.keystore.pass>storepass</it.keystore.pass>
         <it.keystore.file>${project.build.directory}${file.separator}pyrit.keystore</it.keystore.file>
+        <it.skipserverstop>${it.skipserverstop}</it.skipserverstop>
       </properties>
 
       <dependencies>
@@ -806,6 +809,7 @@
                 <it.keystore.file>${it.keystore.file}</it.keystore.file>
                 <it.keystore.alias>${it.keystore.alias}</it.keystore.alias>
                 <it.keystore.storepass>${it.keystore.pass}</it.keystore.storepass>
+                <it.skipserverstop>${it.skipserverstop}</it.skipserverstop>
               </systemPropertyVariables>
             </configuration>
             <executions>
@@ -959,7 +963,7 @@
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-maven2-plugin</artifactId>
-            <version>1.5.0</version>
+            <version>1.6.4</version>
             <configuration>
               <container>
                 <containerId>wildfly10x</containerId>
@@ -981,7 +985,7 @@
                 <properties>
                   <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
                   <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
-                  <cargo.jvmargs>-Xms64m -Xmx1152m -XX:MaxPermSize=512m -XX:-UseSplitVerifier</cargo.jvmargs>
+                  <cargo.jvmargs>-Xms64m -Xmx2048m -XX:-UseSplitVerifier</cargo.jvmargs>
                   <cargo.datasource.datasource.pyrit>
                     cargo.datasource.driver=${it.jdbc.driver}|
                     cargo.datasource.url=${it.jdbc.url}|

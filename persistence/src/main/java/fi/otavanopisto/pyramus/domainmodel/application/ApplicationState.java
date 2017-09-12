@@ -1,0 +1,15 @@
+package fi.otavanopisto.pyramus.domainmodel.application;
+
+public enum ApplicationState {
+  
+  PENDING,
+  PROCESSING,
+  WAITING_STAFF_APPROVAL,
+  WAITING_APPLICANT_SIGNATURE,
+  SIGNED_BY_APPLICANT,
+  APPROVED_BY_STAFF,
+  APPROVED_BY_APPLICANT,
+  TRANSFERRED_AS_STUDENT,
+  REJECTED
+
+}

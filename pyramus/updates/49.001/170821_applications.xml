@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>insert into SettingKey (id,name) select max(id) + 1, 'application.storagePath' from SettingKey;</sql>
+  <sql>update hibernate_sequences set sequence_next_hi_value = (select max(id) + 1 from SettingKey) where sequence_name = 'SettingKey';</sql>
+  
+  <sql>
+    create table Application (
+      id bigint not null,
+      firstName varchar(255) not null,
+      lastName varchar(255) not null,
+      email varchar(255) not null,
+      line varchar(255),
+      referenceCode varchar(255) not null,
+      applicationId varchar(255) not null,
+      formData longtext not null,
+      state varchar(255),
+      applicantEditable bit not null,
+      created datetime not null,
+      applicantLastModified datetime not null,
+      lastModified datetime not null,
+      lastModifier bigint,
+      archived bit not null,
+      primary key (id));
+  </sql>
+  
+  <sql>alter table Application add constraint UK_tageinnby3smv061oabxl7qgt unique (applicationId);</sql>
+  <sql>alter table Application add constraint FKc3glhha6int04qu1e1f0wy8l1 foreign key (lastModifier) references User (id);</sql>
+
+</update>
