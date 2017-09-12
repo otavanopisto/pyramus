@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table PersonVariableKey (
+      id bigint not null, 
+      userEditable bit not null, 
+      variableKey varchar(255) not null, 
+      variableName varchar(255) not null, 
+      variableType varchar(255), 
+      version bigint not null, 
+      primary key (id)
+    );
+  </sql>
+
+  <sql>
+    create table PersonVariable (
+      id bigint not null, 
+      value varchar(255), 
+      version bigint not null, 
+      variableKey bigint, 
+      person bigint, 
+      primary key (id)
+    );
+  </sql>
+  
+  <sql>alter table PersonVariableKey add constraint UK_jwbaj3vwdhakjj5kpc25d9bkh unique (variableKey);</sql>
+  <sql>alter table PersonVariable add constraint FKq5shr64eleqvle7m9kd4bp4t1 foreign key (variableKey) references PersonVariableKey (id);</sql>
+  <sql>alter table PersonVariable add constraint FKj2fjk0oypbi3bx9oi16x5bxcu foreign key (person) references Person (id);</sql>
+
+</update>
