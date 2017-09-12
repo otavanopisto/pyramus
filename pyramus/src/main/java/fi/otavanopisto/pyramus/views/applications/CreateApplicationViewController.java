@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.views.application;
+package fi.otavanopisto.pyramus.views.applications;
 
 import java.io.File;
 import java.io.IOException;
