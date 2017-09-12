@@ -39,7 +39,7 @@
 
 		<!-- REST-assured -->
 
-		<rest-assured.version>2.3.1</rest-assured.version>
+		<rest-assured.version>3.0.3</rest-assured.version>
 
 		<!-- Hamcrest -->
 
@@ -213,7 +213,7 @@
 			<!-- Rest Assured -->
 
 			<dependency>
-				<groupId>com.jayway.restassured</groupId>
+				<groupId>io.rest-assured</groupId>
 				<artifactId>rest-assured</artifactId>
 				<version>${rest-assured.version}</version>
 			</dependency>

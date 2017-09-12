@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
 import org.junit.Test;
