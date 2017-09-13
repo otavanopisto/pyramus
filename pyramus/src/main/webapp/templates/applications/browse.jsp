@@ -122,8 +122,7 @@
             onclick : function(event) {
               var table = event.tableComponent;
               var applicationId = table.getCellValue(event.row, table.getNamedColumnIndex('applicationId'));
-              console.log('Edit application ' + applicationId);
-              //redirectTo(GLOBAL_contextPath + '/applications/editapplication.page?application=' + applicationId);
+              redirectTo(GLOBAL_contextPath + '/applications/manage.page?application=' + applicationId);
             }
           }]
         });

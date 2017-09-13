@@ -54,10 +54,11 @@ import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
-@Path("/application")
+@Path("/applications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateful
@@ -80,6 +81,9 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Inject
   private LanguageDAO languageDAO;
+
+  @Inject
+  private SessionController sessionController;
 
   @Path("/createattachment")
   @POST
@@ -292,7 +296,7 @@ public class ApplicationRESTService extends AbstractRESTService {
   @Path("/saveapplication")
   @POST
   @Unsecure
-  public Response createApplication(Object object, @HeaderParam("Referer") String referer) {
+  public Response createOrUpdateApplication(Object object, @HeaderParam("Referer") String referer) {
     if (!isApplicationCall(referer)) {
       return Response.status(Status.FORBIDDEN).build();
     }
@@ -304,27 +308,27 @@ public class ApplicationRESTService extends AbstractRESTService {
     try {
       String applicationId = formData.getString("field-application-id");
       if (applicationId == null) {
-        logger.log(Level.WARNING, "Refusing application creation due to missing applicationId");
+        logger.log(Level.WARNING, "Refusing application due to missing applicationId");
         return Response.status(Status.BAD_REQUEST).build();
       }
       String line = formData.getString("field-line");
       if (line == null) {
-        logger.log(Level.WARNING, "Refusing application creation due to missing line");
+        logger.log(Level.WARNING, "Refusing application due to missing line");
         return Response.status(Status.BAD_REQUEST).build();
       }
       String firstName = formData.getString("field-first-names");
       if (firstName == null) {
-        logger.log(Level.WARNING, "Refusing application creation due to missing first name");
+        logger.log(Level.WARNING, "Refusing application due to missing first name");
         return Response.status(Status.BAD_REQUEST).build();
       }
       String lastName = formData.getString("field-last-name");
       if (lastName == null) {
-        logger.log(Level.WARNING, "Refusing application creation due to missing last name");
+        logger.log(Level.WARNING, "Refusing application due to missing last name");
         return Response.status(Status.BAD_REQUEST).build();
       }
       String email = formData.getString("field-email");
       if (email == null) {
-        logger.log(Level.WARNING, "Refusing application creation due to missing email");
+        logger.log(Level.WARNING, "Refusing application due to missing email");
         return Response.status(Status.BAD_REQUEST).build();
       }
       
@@ -366,6 +370,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             application.getState(),
             application.getApplicantEditable(),
             null);
+        logger.log(Level.INFO, String.format("Updated %s application with id %s", line, application.getApplicationId()));
       }
       
       Map<String, String> response = new HashMap<String, String>();

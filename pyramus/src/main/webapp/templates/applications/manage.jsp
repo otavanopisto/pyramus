@@ -8,8 +8,6 @@
 <html>
   <head>
     <meta charset="UTF-8"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/scripts/parsley/parsley.css"/>
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/application.css"/>
@@ -22,16 +20,29 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/notificationqueue/notificationqueue.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
+    
+    <style>
+    </style>
 
   </head>
   <body>
+    <input id="saveUrl" name="saveUrl" type="hidden"/>
     <div class="notification-queue">
       <div class="notification-queue-items">
       </div>
     </div>
     <main>
-      <header class="application-logo-header"></header>
-      <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
+      <div class="application-form-container">
+        <h1>Toimintoja</h1>
+      </div>
+      <div class="application-form-container">
+        <h1>Hakemus</h1>
+        <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
+      </div>
+      <div class="application-history-container">
+        <h1>Käsittelyhistoria</h1>
+      </div>
     </main>
   </body>
 </html>
+
