@@ -29,9 +29,16 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
     try {
       StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
       StaffMember staffMember = staffMemberDAO.findById(requestContext.getLoggedUserId());
+      if (staffMember == null) {
+        logger.log(Level.WARNING, "Refusing application due to staff member not found");
+        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
       String formDataStr = getFormData(requestContext.getRequest());
       if (formDataStr == null) {
+        logger.log(Level.WARNING, "Refusing application due to missing form data");
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
       }
       
       // Form validation
