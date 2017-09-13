@@ -65,7 +65,7 @@ public class SearchApplicationsJSONRequestController extends JSONRequestControll
       applicationInfo.put("state", application.getState());
       Date date = getLatest(application.getCreated(), application.getApplicantLastModified(), application.getLastModified());
       applicationInfo.put("date", date == null ? null : date.getTime());
-      applicationInfo.put("handler", application.getLastModifier() == null ? null : String.format("%s %s", application.getLastModifier().getFullName()));
+      applicationInfo.put("handler", application.getLastModifier() == null ? null : application.getLastModifier().getFullName());
       
       results.add(applicationInfo);
     }

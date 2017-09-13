@@ -8,12 +8,18 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import net.sf.json.JSONObject;
 
 public class SaveApplicationJSONRequestController extends JSONRequestController {
 
@@ -23,10 +29,68 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
     try {
       StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
       StaffMember staffMember = staffMemberDAO.findById(requestContext.getLoggedUserId());
-      String formData = getFormData(requestContext.getRequest());
-      if (formData == null) {
+      String formDataStr = getFormData(requestContext.getRequest());
+      if (formDataStr == null) {
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
       }
+      
+      // Form validation
+      
+      JSONObject formData = JSONObject.fromObject(formDataStr);
+      String applicationId = formData.getString("field-application-id");
+      if (applicationId == null) {
+        logger.log(Level.WARNING, "Refusing application due to missing applicationId");
+        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
+      String line = formData.getString("field-line");
+      if (line == null) {
+        logger.log(Level.WARNING, "Refusing application due to missing line");
+        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
+      String firstName = formData.getString("field-first-names");
+      if (firstName == null) {
+        logger.log(Level.WARNING, "Refusing application due to missing first name");
+        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
+      String lastName = formData.getString("field-last-name");
+      if (lastName == null) {
+        logger.log(Level.WARNING, "Refusing application due to missing last name");
+        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
+      String email = formData.getString("field-email");
+      if (email == null) {
+        logger.log(Level.WARNING, "Refusing application due to missing email");
+        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
+      
+      // Save application
+      
+      ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+      Application application = applicationDAO.findByApplicationId(applicationId);
+      if (application == null) {
+        requestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+        return;
+      }
+      boolean referenceCodeModified = !StringUtils.equals(application.getLastName(), lastName);
+      String referenceCode = referenceCodeModified ? generateReferenceCode(lastName) : application.getReferenceCode(); 
+      application = applicationDAO.update(
+          application,
+          line,
+          firstName,
+          lastName,
+          email,
+          referenceCode,
+          formDataStr,
+          application.getState(),
+          application.getApplicantEditable(),
+          staffMember);
+      requestContext.addResponseParameter("referenceCode",  referenceCode);
+      requestContext.addResponseParameter("referenceCodeModified",  referenceCodeModified);
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Error saving application", e);
@@ -50,6 +114,15 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
       reader.close();
     }
     return sb.toString();
+  }
+
+  private String generateReferenceCode(String lastName) {
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    String referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
+    while (applicationDAO.findByLastNameAndReferenceCode(lastName, referenceCode) != null) {
+      referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
+    }
+    return referenceCode;
   }
 
 }
