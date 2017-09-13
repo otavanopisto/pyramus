@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table ApplicationLog (
+      id bigint not null,
+      application bigint,
+      text longtext not null,
+      user bigint,
+      date datetime not null,
+      archived bit not null,
+      primary key (id)
+    );
+  </sql>
+
+  <sql>alter table ApplicationLog add constraint FKqpws7go21y3bqq2f924nwwh75 foreign key (application) references Application (id);</sql>
+  <sql>alter table ApplicationLog add constraint FKo8fwu0cbku555dssnpal5jla2 foreign key (user) references User (id);</sql>
+
+</update>
