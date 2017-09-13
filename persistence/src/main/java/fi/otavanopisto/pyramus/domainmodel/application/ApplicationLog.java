@@ -83,6 +83,8 @@ public class ApplicationLog implements ArchivableEntity {
   }
 
   @Id
+  @GeneratedValue(strategy=GenerationType.TABLE, generator="ApplicationLog")
+  @TableGenerator(name="ApplicationLog", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   private Long id;
 
   @ManyToOne  
