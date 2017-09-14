@@ -516,7 +516,6 @@ span.email {
   .application-wrapper {
     display: flex;
     flex-flow: row wrap;
-    margin: 25px 0;
     min-width: 1000px;
   } 
 }
