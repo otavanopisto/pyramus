@@ -583,6 +583,7 @@ span.email {
   border-radius: 5px;
   background: #e9fff9;
   font-size: 13px;
+  position: relative;
 }
 
 .log-entry-header {
@@ -601,3 +602,17 @@ span.email {
   padding: 0 5px 0 0;
 }
 
+.log-entry-archive {
+  background: url('../gfx/icons/48x48/actions/close.png') #e30048;
+  background-size: auto auto;
+  background-size: contain;
+  width: 16px;
+  height: 16px;
+  border-radius: 100%;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  border: 2px solid #e30048;
+  cursor: pointer;
+  box-shadow: 0 0 0 2px #fff;
+}

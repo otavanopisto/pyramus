@@ -27,7 +27,7 @@
       <div class="log-entry-date"></div>
     </div>
     <div class="log-entry-text"></div>
-    <div class="log-entry-archive">X</div>
+    <div class="log-entry-archive"></div>
   </div>  
 
 </section>
