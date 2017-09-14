@@ -34,6 +34,7 @@
         dataType: "json",
         contentType: "application/json; charset=utf-8",
         success: function(response) {
+          $('#log-form-text').val('');
           var logElement = createLogElement(response);
           $('.log-entries-container').prepend(logElement);
           logElement.show();
