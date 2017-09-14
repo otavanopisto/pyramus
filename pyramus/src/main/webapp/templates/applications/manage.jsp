@@ -20,9 +20,7 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/notificationqueue/notificationqueue.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
-    
-    <style>
-    </style>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application-management.js"></script>
 
   </head>
   <body>
@@ -33,15 +31,14 @@
     </div>
     <main>
       <div class="application-form-container">
-        <h1>Toimintoja</h1>
+        <h3>Toimintoja</h3>
+        <div>Tänne kaiketi jotain?</div>
       </div>
       <div class="application-form-container">
-        <h1>Hakemus</h1>
+        <h3>Hakemus</h3>
         <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
       </div>
-      <div class="application-history-container">
-        <h1>Käsittelyhistoria</h1>
-      </div>
+      <jsp:include page="/templates/applications/manage-log.jsp"></jsp:include>
     </main>
   </body>
 </html>
