@@ -32,9 +32,11 @@ body {
   }
 }
 
-main {
+main,
+main.manage-application {
   max-width: 100%;
   flex: 1 1 auto;
+  position: relative;
 }
 
 @media screen and (min-width: 600px) {
@@ -42,7 +44,13 @@ main {
   main {
     max-width: 600px;
   } 
+  
+  main.manage-application {
+    max-width: 1000px;
+  }
 }
+
+
 
 .application-logo-header {
   background: url('/../gfx/gui/logo_otavanopisto.png');
@@ -92,6 +100,10 @@ a {
 .field-container {
   margin: 10px 0;
 } 
+
+.field-button-set {
+  
+}
  
 .summary-container {
   margin: 20px 0;
@@ -260,6 +272,10 @@ button.button-edit-application {
   background: #27b91c;
 }
 
+button.button-save-logentry {
+  background: #184b42;
+}
+
 .application-page-indicator {
   display: inline-block;
   padding: 0 10px;
@@ -356,6 +372,7 @@ button.button-edit-application {
   background-size: contain;
 }
 
+/* NOTIFICATION QUEUE */
 .notification-queue {
   position: fixed;
   top: 0;
@@ -392,6 +409,7 @@ button.button-edit-application {
   background-size: contain;
 }
 
+/* PRIVACY POLICY */
 .privacy-policy-overlay {
   position: fixed;
   top: 0;
@@ -462,3 +480,125 @@ span.email {
 	font-weight: 400;
   display: inline-block;
 }
+
+/* APPLICATITON MANAGEMENT */
+.application-actions-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  padding: 10px;
+  background: #009fe3;
+  text-align: center;
+  z-index:99;
+}
+
+.application-actions-container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+@media screen and (min-width: 1024px) {
+  
+  .application-actions-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+}
+
+.application-wrapper {
+  width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
+  
+  .application-wrapper {
+    display: flex;
+    flex-flow: row wrap;
+    margin: 25px 0;
+    min-width: 1000px;
+  } 
+}
+
+.application-data {
+  width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
+  
+  .application-data {
+    flex: 0 0 570px;
+    min-width: 570px;
+  }
+}
+
+.application-logs {
+  width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
+  
+  .application-logs {
+    margin: 0 0 0 20px;
+    flex: 1 1 350px;
+    padding: 0 20px;
+    display: block;
+  }
+}
+
+.application-logs > h3 {
+  color: #184b42;
+}
+
+.application-logs textarea {
+  border: 1px solid #184b42;
+}
+
+.application-logs button.button-save-logentry {
+  font-size: 14px;
+  padding: 4px 8px;
+}
+
+.application-logs .field-button-set {
+  text-align: right;
+}
+
+@media screen and (min-width: 600px) {
+  
+  .application-logs {
+    border-radius: 5px;
+    background: #fff;
+  } 
+}
+
+/* LOG ENTRIES */
+.log-entries-container {
+  margin: 10px 0 0;
+  padding: 10px 0 0;
+}
+
+.log-entry {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  background: #e9fff9;
+  font-size: 13px;
+}
+
+.log-entry-header {
+  padding: 0 0 4px 0;
+  border-bottom: #fff; 
+}
+
+.log-entry-author {
+  font-weight: 400;
+  display: inline-block;
+  padding: 0 5px 0 0;
+}
+
+.log-entry-date {
+  display: inline-block;
+  padding: 0 5px 0 0;
+}
+
