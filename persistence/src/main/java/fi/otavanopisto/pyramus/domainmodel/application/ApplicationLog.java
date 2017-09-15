@@ -15,23 +15,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
-import org.hibernate.search.annotations.Indexed;
-
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
 @Entity
-@Indexed
-@FullTextFilterDefs (
-  @FullTextFilterDef (
-    name="ArchivedApplicationLog",
-    impl=ArchivedEntityFilterFactory.class
-  )
-)
 public class ApplicationLog implements ArchivableEntity {
 
   public Long getId() {
@@ -94,7 +81,6 @@ public class ApplicationLog implements ArchivableEntity {
   @Lob
   @NotNull
   @Column (nullable=false)
-  @Field
   private String text;
 
   @ManyToOne  
@@ -108,7 +94,6 @@ public class ApplicationLog implements ArchivableEntity {
 
   @NotNull
   @Column (nullable = false)
-  @Field
   private Boolean archived;
 
 }
