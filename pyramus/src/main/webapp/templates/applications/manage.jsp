@@ -20,9 +20,7 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/notificationqueue/notificationqueue.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
-    
-    <style>
-    </style>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application-management.js"></script>
 
   </head>
   <body>
@@ -31,17 +29,22 @@
       <div class="notification-queue-items">
       </div>
     </div>
-    <main>
-      <div class="application-form-container">
-        <h1>Toimintoja</h1>
-      </div>
-      <div class="application-form-container">
-        <h1>Hakemus</h1>
-        <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
-      </div>
-      <div class="application-history-container">
-        <h1>Käsittelyhistoria</h1>
-      </div>
+    <main class="manage-application">
+      <header class="application-actions-header">
+        <div class="application-actions-container">
+          <div class="application-action"></div>
+          <div class="application-action"></div>
+          <div class="application-action"></div>
+          <div class="application-action"></div>
+        </div>
+      </header>
+      <section class="application-wrapper">
+        <section class="application-section application-data">
+          <h3>Hakemus</h3>
+          <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
+        </section>
+        <jsp:include page="/templates/applications/manage-log.jsp"></jsp:include>
+      </section>
     </main>
   </body>
 </html>
