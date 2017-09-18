@@ -62,7 +62,6 @@ public class ApplicationAttachment {
 
   @NotNull
   @Column (nullable = false)
-  @NotEmpty
   private Integer size;
 
 }

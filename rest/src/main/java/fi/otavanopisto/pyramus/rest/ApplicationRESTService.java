@@ -38,6 +38,7 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
@@ -46,6 +47,7 @@ import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -54,7 +56,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
-import fi.otavanopisto.pyramus.security.impl.SessionController;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
@@ -81,9 +82,6 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Inject
   private LanguageDAO languageDAO;
-
-  @Inject
-  private SessionController sessionController;
 
   @Path("/createattachment")
   @POST
@@ -135,12 +133,49 @@ public class ApplicationRESTService extends AbstractRESTService {
       
       FileUtils.writeByteArrayToFile(file, fileData);
       logger.log(Level.INFO, String.format("Stored application attachment %s", file.getAbsolutePath()));
+      
+      ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
+      applicationAttachmentDAO.create(attachmentFolder, name, fileData.length);
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Failed to store application attachment", e);
       return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
     return Response.noContent().build();
+  }
+
+  @Path("/listattachments/{ID}")
+  @GET
+  @Unsecure
+  public Response listAttachments(@PathParam("ID") String applicationId, @HeaderParam("Referer") String referer) {
+
+    // Allow calls from within the application only
+    
+    if (!isApplicationCall(referer)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    // Ensure attachment storage has been defined
+    
+    String attachmentsFolder = getSettingValue("application.storagePath");
+    if (StringUtils.isEmpty(attachmentsFolder)) {
+      logger.log(Level.SEVERE, "application.storagePath not set");
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
+    
+    ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
+    List<ApplicationAttachment> applicationAttachments = applicationAttachmentDAO.listByApplicationId(applicationId);
+
+    List<Map<String, Object>> results = new ArrayList<>();
+    for (ApplicationAttachment applicationAttachment : applicationAttachments) {
+      Map<String, Object> attachmentInfo = new HashMap<>();
+      attachmentInfo.put("id", applicationAttachment.getId());
+      attachmentInfo.put("applicationId", applicationAttachment.getApplicationId());
+      attachmentInfo.put("name", applicationAttachment.getName());
+      attachmentInfo.put("size", applicationAttachment.getSize());
+      results.add(attachmentInfo);
+    }
+    return Response.ok(results).build();
   }
 
   @Path("/getattachment/{ID}")
@@ -225,7 +260,10 @@ public class ApplicationRESTService extends AbstractRESTService {
     try {
       java.nio.file.Path path = Paths.get(attachmentsFolder, applicationId, attachment);
       File file = path.toFile();
-      if (file.exists() && file.delete()) {
+      ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
+      ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, attachment);
+      if (applicationAttachment != null && file.exists() && file.delete()) {
+        applicationAttachmentDAO.delete(applicationAttachment);
         logger.log(Level.INFO, String.format("Removed application attachment %s", file.getAbsolutePath()));
         return Response.noContent().build();
       }

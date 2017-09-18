@@ -27,8 +27,7 @@
       var filesSize = 0;
       var files = $(this)[0].files;
       $('#field-attachments-files').find('.application-file').each(function() {
-        var hash = $(this).find('input[name="field-attachments-file"]').val();
-        filesSize += parseInt($(this).find('input[name="field-attachments-file-' + hash + '-size"]').val());
+        filesSize += parseInt($(this).attr('data-file-size'));
       });
       for (var i = 0; i < files.length; i++) {
        filesSize += files[i].size;
@@ -413,23 +412,26 @@
   function preloadApplicationAttachments(result) {
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('#field-attachments-files');
-    var files = result['field-attachments-file'];
-    if (files) {
-      if (!$.isArray(files)) {
-        files = JSON.parse('[' + files + ']');
+    $.ajax({
+      url: '/1/applications/listattachments/' + applicationId,
+      type: 'GET',
+      contentType: "application/json; charset=utf-8",
+      success: function(files) {
+        for (var i = 0; i < files.length; i++) {
+          createAttachmentFormElement(files[i].name, files[i].size);
+        }
+      },
+      error: function(err) {
+        $('.notification-queue').notificationQueue('notification', 'error', 'Virhe ladattaessa liitteitä: ' + err.statusText);
       }
-      for (var i = 0; i < files.length; i++) {
-        var name = result['field-attachments-file-' + files[i] + '-name'];
-        var size = result['field-attachments-file-' + files[i] + '-size'];
-        createAttachmentFormElement(files[i], name, size);
-      }
-    }
+    });
   }
   
-  function createAttachmentFormElement(hash, name, size) {
+  function createAttachmentFormElement(name, size) {
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('#field-attachments-files');
     var fileElement = $('.application-file.template').clone();
+    fileElement.attr('data-file-size', size);
     fileElement.removeClass('template');
     fileContainer.append(fileElement);
     fileElement.find('.application-file-link').attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + name);
@@ -447,22 +449,10 @@
         }
       });
     });
-    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': hash}));
-    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-name', 'value': name}));
-    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-size', 'value': size}));
     fileElement.show();
   }
   
   function uploadAttachment(file) {
-    var hash = 0, i, chr;
-    if (file.name.length > 0) {
-      for (i = 0; i < file.name.length; i++) {
-        chr = file.name.charCodeAt(i);
-        hash = ((hash << 5) - hash) + chr;
-        hash |= 0;
-      }
-      hash = Math.abs(hash);
-    }
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('.field-attachments-files'); 
     var fileName = decodeURIComponent(file.name);
@@ -501,7 +491,7 @@
       },
       success: function(data) {
         progressElement.remove();
-        createAttachmentFormElement(hash, fileName, file.size);
+        createAttachmentFormElement(fileName, file.size);
       },
       error: function(err) {
         if (err.status == 409) {
