@@ -513,7 +513,7 @@
           <input id="messut" type="checkbox" name="field-source" value="messut">
         </div>
         <div class="field-row-label">
-          <label for="messut">Messut.</label>
+          <label for="messut">Messut</label>
         </div>
       </div>
       <div class="field-row-flex">

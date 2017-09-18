@@ -25,6 +25,28 @@
       }
     });
     
+    var attachmentsContainer = $('#attachments-readonly-container');
+    if (attachmentsContainer.length) {
+      var applicationId = attachmentsContainer.attr('data-application-id');
+      $.ajax({
+        url: '/1/applications/listattachments/' + applicationId,
+        type: 'GET',
+        contentType: "application/json; charset=utf-8",
+        success: function(files) {
+          for (var i = 0; i < files.length; i++) {
+            attachmentsContainer.append($('<div>').append(
+              $('<a>')
+                .attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + files[i].name)
+                .attr('target', '_blank')
+                .text(files[i].name)));
+          }
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', 'Virhe ladattaessa liitteitä: ' + err.statusText);
+        }
+      });
+    }
+    
     $('#log-form-save').on('click', function() {
       var data = JSON.stringify($('#log-form').serializeObject());
       $.ajax({

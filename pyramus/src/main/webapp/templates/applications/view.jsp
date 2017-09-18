@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-
+<% pageContext.setAttribute("newLineChar", "\n"); %>
 <!DOCTYPE html>
 
 <html>
@@ -24,7 +24,6 @@
 
   </head>
   <body>
-    <input id="saveUrl" name="saveUrl" type="hidden"/>
     <div class="notification-queue">
       <div class="notification-queue-items">
       </div>
@@ -40,8 +39,19 @@
       </header>
       <section class="application-wrapper">
         <section class="application-section application-data">
-          <h3>Hakemuksen muokkaus</h3>
-          <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
+          <h3>Hakemuksen tiedot</h3>
+          <c:forEach var="section" items="${sections}">
+            <h4>${section.key}</h4>
+            <c:forEach var="field" items="${section.value}">
+              <div>
+                <span class="field-name">${field.key}</span>
+                <span class="field-value">${fn:replace(field.value, newLineChar, "<br/>")}</span>
+              </div>
+            </c:forEach>
+          </c:forEach>
+          <h4>Liitteet</h4>
+          <div id="attachments-readonly-container" class="attachments-container" data-application-id="${applicationId}">
+          </div>
         </section>
         <jsp:include page="/templates/applications/manage-log.jsp"></jsp:include>
       </section>
