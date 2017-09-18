@@ -163,6 +163,7 @@ public class ViewApplicationViewController extends PyramusViewController {
         fields.put("Mistä sai tiedon koulutuksesta", sb.toString());
       }
       
+      pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());      
       pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());      
       pageRequestContext.getRequest().setAttribute("sections", sections);      
       

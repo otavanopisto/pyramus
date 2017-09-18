@@ -23,7 +23,7 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application-management.js"></script>
 
   </head>
-  <body>
+  <body data-application-entity-id="${applicationEntityId}" data-application-id="${applicationId}">
     <div class="notification-queue">
       <div class="notification-queue-items">
       </div>
@@ -50,7 +50,10 @@
             </c:forEach>
           </c:forEach>
           <h4>Liitteet</h4>
-          <div id="attachments-readonly-container" class="attachments-container" data-application-id="${applicationId}">
+          <div id="attachments-readonly-container" class="attachments-container">
+          </div>
+          <div>
+            <button id="button-edit-application" type="button">Muokkaa</button>
           </div>
         </section>
         <jsp:include page="/templates/applications/manage-log.jsp"></jsp:include>

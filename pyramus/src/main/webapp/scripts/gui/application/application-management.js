@@ -27,7 +27,7 @@
     
     var attachmentsContainer = $('#attachments-readonly-container');
     if (attachmentsContainer.length) {
-      var applicationId = attachmentsContainer.attr('data-application-id');
+      var applicationId = $('body').attr('data-application-id');
       $.ajax({
         url: '/1/applications/listattachments/' + applicationId,
         type: 'GET',
@@ -46,6 +46,10 @@
         }
       });
     }
+    
+    $('#button-edit-application').on('click', function() {
+      window.location.href = '/applications/manage.page?application=' + $('body').attr('data-application-entity-id');
+    });
     
     $('#log-form-save').on('click', function() {
       var data = JSON.stringify($('#log-form').serializeObject());

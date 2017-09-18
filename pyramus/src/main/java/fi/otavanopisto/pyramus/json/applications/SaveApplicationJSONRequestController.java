@@ -96,8 +96,9 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
           application.getState(),
           application.getApplicantEditable(),
           staffMember);
-      requestContext.addResponseParameter("referenceCode",  referenceCode);
-      requestContext.addResponseParameter("referenceCodeModified",  referenceCodeModified);
+      
+      String redirecUrl = requestContext.getRequest().getContextPath() + "/applications/view.page?application=" + application.getId();
+      requestContext.setRedirectURL(redirecUrl);
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Error saving application", e);
