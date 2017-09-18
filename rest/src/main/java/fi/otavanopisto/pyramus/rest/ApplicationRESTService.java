@@ -108,6 +108,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       // Ensure file content exists and sanitize both its name and the folder where it will be stored 
       
       byte[] fileData = getFile(multipart, "file");
+      
       String name = sanitizeFilename(getString(multipart, "name"));
       String attachmentFolder = sanitizeFilename(getString(multipart, "applicationId"));
       if (fileData == null || fileData.length == 0 || StringUtils.isEmpty(name) || StringUtils.isEmpty(attachmentFolder)) {
@@ -120,6 +121,14 @@ public class ApplicationRESTService extends AbstractRESTService {
       File folder = Paths.get(attachmentsFolder, attachmentFolder).toFile();
       if (!folder.exists()) {
         folder.mkdir();
+      }
+
+      // Enforce maximum attachment size
+      
+      long size = fileData.length + FileUtils.sizeOfDirectory(folder);
+      if (size > 10485760) {
+        logger.log(Level.WARNING,"Refusing attachment due to total attachment size over 10MB");
+        return Response.status(Status.BAD_REQUEST).build();
       }
       
       // Create file, unless a file with the same name already exists
