@@ -577,16 +577,16 @@ span.email {
 @media screen and (min-width: 600px) {
 
   .application-action {
-    width: 32px;
-    height: 32px;
-    margin: 10px;
+    width: 28px;
+    height: 28px;
+    margin: 12px;
   }
 }
 
 .application-action.icon-view {
   background-image: url(../gfx/icons/48x48/actions/view.png);
   float: left;
-  margin: 10px 10px 10px 0;
+  margin-left: 0;
 }
 
 .application-action.icon-edit {
@@ -612,7 +612,7 @@ span.email {
 .application-action.icon-mail {
   background-image: url(../gfx/icons/48x48/actions/mail.png);
   float: right;
-  margin: 10px 0 10px 10px;
+  margin-right: 0;
 }
 
 .application-wrapper {
