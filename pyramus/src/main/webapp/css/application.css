@@ -689,21 +689,20 @@ span.email {
   text-align: right;
 }
 
-/* View mode application fields */
-.field-container-view {
-   margin: 10px 0;
+/* View mode application data */
+.data-container {
    display: flex;
    flex-flow:row nowrap;
    justify-content: center;
  }
  
- .field-container-view .field-name {
+.data-name {
    flex: 1 1 49%;
    margin: 0 2% 0 0;
    min-width: 49%;
  }
  
-  .field-container-view .field-value {
+.data-value {
    flex: 1 1 49%;
    font-weight: 400;
    max-width: 49%;
