@@ -24,7 +24,7 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
 
   </head>
-  <body class="application">
+  <body>
     <div class="notification-queue">
       <div class="notification-queue-items">
       </div>

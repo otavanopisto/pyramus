@@ -23,7 +23,7 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application-management.js"></script>
 
   </head>
-  <body class="application-management">
+  <body>
     <input id="saveUrl" name="saveUrl" type="hidden"/>
     <div class="notification-queue">
       <div class="notification-queue-items">

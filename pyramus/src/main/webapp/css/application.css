@@ -21,28 +21,13 @@ body {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-}
-
-body.application {
-  margin: 20px;
-}
-
-@media screen and (min-width: 600px) {
-  
-  body.application {
-    font-size: 16px;
-    margin: 60px;
-  }
-}
-
-body.application-management {
-  margin: 46px 20px 20px;
+  min-width: 300px;
+  margin: 0;
 }
 
 @media screen and (min-width: 600px) {
   
-  body.application-management {
-    margin: 52px 20px 20px;
+  body {
     font-size: 16px;
   }
 }
@@ -51,12 +36,14 @@ main.application {
   max-width: 100%;
   flex: 1 1 auto;
   position: relative;
+  margin: 10px;
 }
 
 @media screen and (min-width: 600px) {
   
   main.application {
     max-width: 600px;
+    margin: 60px;
   } 
 }
 
@@ -64,12 +51,14 @@ main.application-management {
   max-width: 100%;
   flex: 1 1 auto;
   position: relative;
+  margin: 46px 10px;
 }
 
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 600px) {
   
   main.application-management {
     max-width: 1024px;
+    margin: 52px 10px;
   }
 }
 
@@ -410,7 +399,8 @@ button {
   color: #fff;
   position: relative;
   background: #000;
-  opacity: 0.9;
+  opacity: 0.95;
+  padding: 0 10px;
 }
 
 .notification-queue-item-error {
@@ -418,21 +408,42 @@ button {
 }
 
 .notification-message-container {
-  max-width: 600px;
   margin: 0 auto;
-  padding: 40px 0;
+  padding: 20px 45px 20px 0;
   position: relative;
+}
+
+@media screen and (min-width: 600px) {
+
+  .notification-message-container {
+    padding: 40px 60px 40px 0;
+    max-width: 1024px;
+  }
 }
 
 .notification-queue-item-close {
   position: absolute;
-  right: 0;
+  right: 10px;
   top: 50%;
-  margin: -16px 0 0;
-  height: 32px;
-  width: 32px;
+  margin: -12px 0 0;
+  height: 24px;
+  width: 24px;
   background: url('../gfx/icons/48x48/actions/close.png') center center no-repeat;
   background-size: contain;
+}
+
+@media screen and (min-width: 600px) {
+
+  .notification-queue-item-close {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    margin: -16px 0 0;
+    height: 32px;
+    width: 32px;
+    background: url('../gfx/icons/48x48/actions/close.png') center center no-repeat;
+    background-size: contain;
+  }
 }
 
 /* PRIVACY POLICY */
@@ -507,13 +518,7 @@ span.email {
   display: inline-block;
 }
 
-/* APPLICATITON MANAGEMENT
-   Max-width for layout:       768px 
-   Mobile header height:       46px
-   Mobile header icon size:    26px
-   Desktop header height:      52px
-   Desktop header icon size:   32px
-*/
+/* APPLICATITON MANAGEMENT */
 .application-actions-header {
   position: fixed;
   top: 0;
@@ -522,13 +527,16 @@ span.email {
   background: #009fe3;
   text-align: center;
   z-index:99;
-  padding: 0 20px;
+  display: flex;
+  justify-content: center; 
+  flex-flow: row nowrap;
 }
 
 .application-actions-container {
   max-width: 100%;
-  margin: 0 auto;
+  flex: 1 1 auto;
   height: 46px;
+  margin: 0 10px;
 }
 
 /* Icon wrapper size change for mobile */
@@ -536,6 +544,7 @@ span.email {
 
   .application-actions-container {
     height: 52px;
+    margin: 0 10px;
   }
 }
 
@@ -555,6 +564,13 @@ span.email {
   background-position: center center;
   background-repeat: no-repeat;
   margin: 10px;
+  cursor: pointer;
+}
+
+.application-action:hover {
+  border-radius: 2px;
+  background-color: #2bb7f3;
+  box-shadow: 0 0 0 5px #2bb7f3;
 }
 
 /* Icon size change for mobile view */
@@ -570,21 +586,12 @@ span.email {
 .application-action.icon-view {
   background-image: url(../gfx/icons/48x48/actions/view.png);
   float: left;
+  margin: 10px 10px 10px 0;
 }
 
 .application-action.icon-edit {
   background-image: url(../gfx/icons/48x48/actions/edit.png);
   float: left;
-}
-
-.application-action.icon-mail {
-  background-image: url(../gfx/icons/48x48/actions/mail.png);
-  float: right;
-}
-
-.application-action.icon-logs {
-  background-image: url(../gfx/icons/48x48/actions/logs.png);
-  float: right;
 }
 
 .application-action.icon-locked {
@@ -597,10 +604,51 @@ span.email {
   float: left;
 }
 
+.application-action.icon-logs {
+  background-image: url(../gfx/icons/48x48/actions/logs.png);
+  float: right;
+}
+
+.application-action.icon-mail {
+  background-image: url(../gfx/icons/48x48/actions/mail.png);
+  float: right;
+  margin: 10px 0 10px 10px;
+}
+
 .application-wrapper {
   width: 100%;
   flex-flow: row wrap;
   display: flex;
+}
+
+.application-data {
+  max-width: 100%;
+  flex: 1 1 100%;
+}
+
+@media screen and (min-width: 768px) {
+
+  .application-data {
+    flex: 1 1 49%;
+  }
+}
+
+.application-info {
+  max-width: 100%;
+  flex: 1 1 100%;
+}
+
+@media screen and (min-width: 768px) {
+
+  .application-info {
+    flex: 1 1 49%;
+    margin: 0 0 0 2%;
+  }
+}
+
+.application-logs {
+  width: 100%;
+  display: none;
 }
 
 /* Specific h3 style */
@@ -608,13 +656,19 @@ span.email {
   color: #009fe3;
 }
 
-.application-data {
-  width: 100%;
+.application-data-title {
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 300;
+  border-bottom: 1px solid #666;
+  margin: 30px 0 10px;
 }
 
-.application-logs {
-  width: 100%;
-  display: none;
+@media screen and (min-width: 600px) {
+
+  .application-data-title {
+    font-size: 18px;
+  }
 }
 
 /* Specific h3 style */
@@ -634,6 +688,27 @@ span.email {
 .application-logs .field-button-set {
   text-align: right;
 }
+
+/* View mode application fields */
+.field-container-view {
+   margin: 10px 0;
+   display: flex;
+   flex-flow:row nowrap;
+   justify-content: center;
+ }
+ 
+ .field-container-view .field-name {
+   flex: 1 1 49%;
+   margin: 0 2% 0 0;
+   min-width: 49%;
+ }
+ 
+  .field-container-view .field-value {
+   flex: 1 1 49%;
+   font-weight: 400;
+   max-width: 49%;
+   word-wrap: break-word;
+ }
 
 /* LOG ENTRIES */
 .log-entries-container {

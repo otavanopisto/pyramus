@@ -23,7 +23,7 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application-management.js"></script>
 
   </head>
-  <body class="application-management" data-application-entity-id="${applicationEntityId}" data-application-id="${applicationId}">
+  <body data-application-entity-id="${applicationEntityId}" data-application-id="${applicationId}">
     <div class="notification-queue">
       <div class="notification-queue-items">
       </div>
@@ -36,7 +36,7 @@
           <c:forEach var="section" items="${sections}">
             <h4 class="application-data-title">${section.key}</h4>
             <c:forEach var="field" items="${section.value}">
-              <div>
+              <div class="field-container-view">
                 <span class="field-name">${field.key}</span>
                 <span class="field-value">${fn:replace(field.value, newLineChar, "<br/>")}</span>
               </div>
@@ -45,9 +45,9 @@
           <h4 class="application-data-title">Liitteet</h4>
           <div id="attachments-readonly-container" class="attachments-container">
           </div>
-          <div>
-            <button id="button-edit-application" type="button">Muokkaa</button>
-          </div>
+        </section>
+        <section class="application-info">
+          possu kuva ja muut tiedot
         </section>
         <jsp:include page="/templates/applications/manage-log.jsp"></jsp:include>
       </section>

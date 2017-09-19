@@ -6,7 +6,7 @@
 <header class="application-actions-header">
   <div class="application-actions-container">
     <div class="application-action icon-view"></div>
-    <div class="application-action icon-edit"></div>
+    <div class="application-action icon-edit" id="button-edit-application"></div>
     <div class="application-action icon-locked"></div>
     <div class="application-action icon-unlocked"></div>
     <div class="application-action icon-mail"></div>
