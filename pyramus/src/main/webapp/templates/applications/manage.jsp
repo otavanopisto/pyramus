@@ -23,21 +23,14 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application-management.js"></script>
 
   </head>
-  <body>
+  <body class="application-management">
     <input id="saveUrl" name="saveUrl" type="hidden"/>
     <div class="notification-queue">
       <div class="notification-queue-items">
       </div>
     </div>
-    <main class="manage-application">
-      <header class="application-actions-header">
-        <div class="application-actions-container">
-          <div class="application-action"></div>
-          <div class="application-action"></div>
-          <div class="application-action"></div>
-          <div class="application-action"></div>
-        </div>
-      </header>
+    <main class="application-management">
+      <jsp:include page="/templates/applications/manage-header.jsp"></jsp:include>
       <section class="application-wrapper">
         <section class="application-section application-data">
           <h3>Hakemuksen muokkaus</h3>

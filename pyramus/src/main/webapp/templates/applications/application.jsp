@@ -24,12 +24,12 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
 
   </head>
-  <body>
+  <body class="application">
     <div class="notification-queue">
       <div class="notification-queue-items">
       </div>
     </div>
-    <main>
+    <main class="application">
       <header class="application-logo-header"></header>
       <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
     </main>

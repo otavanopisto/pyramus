@@ -23,25 +23,18 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application-management.js"></script>
 
   </head>
-  <body data-application-entity-id="${applicationEntityId}" data-application-id="${applicationId}">
+  <body class="application-management" data-application-entity-id="${applicationEntityId}" data-application-id="${applicationId}">
     <div class="notification-queue">
       <div class="notification-queue-items">
       </div>
     </div>
-    <main class="manage-application">
-      <header class="application-actions-header">
-        <div class="application-actions-container">
-          <div class="application-action"></div>
-          <div class="application-action"></div>
-          <div class="application-action"></div>
-          <div class="application-action"></div>
-        </div>
-      </header>
+    <main class="application-management">
+      <jsp:include page="/templates/applications/manage-header.jsp"></jsp:include>
       <section class="application-wrapper">
         <section class="application-section application-data">
-          <h3>Hakemuksen tiedot</h3>
+          <h3 class="application-data-header">Hakemuksen tiedot</h3>
           <c:forEach var="section" items="${sections}">
-            <h4>${section.key}</h4>
+            <h4 class="application-data-title">${section.key}</h4>
             <c:forEach var="field" items="${section.value}">
               <div>
                 <span class="field-name">${field.key}</span>
@@ -49,7 +42,7 @@
               </div>
             </c:forEach>
           </c:forEach>
-          <h4>Liitteet</h4>
+          <h4 class="application-data-title">Liitteet</h4>
           <div id="attachments-readonly-container" class="attachments-container">
           </div>
           <div>

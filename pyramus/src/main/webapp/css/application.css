@@ -13,7 +13,6 @@
 
 /* BASIC STYLING - MOBILE FIRST */
 body {
-  margin: 20px;
   padding: 0;
   background: #fff;
   font-family: "Open Sans";
@@ -24,16 +23,31 @@ body {
   justify-content: center;
 }
 
+body.application {
+  margin: 20px;
+}
+
 @media screen and (min-width: 600px) {
   
-  body {
+  body.application {
+    font-size: 16px;
     margin: 60px;
+  }
+}
+
+body.application-management {
+  margin: 46px 20px 20px;
+}
+
+@media screen and (min-width: 600px) {
+  
+  body.application-management {
+    margin: 52px 20px 20px;
     font-size: 16px;
   }
 }
 
-main,
-main.manage-application {
+main.application {
   max-width: 100%;
   flex: 1 1 auto;
   position: relative;
@@ -41,16 +55,23 @@ main.manage-application {
 
 @media screen and (min-width: 600px) {
   
-  main {
+  main.application {
     max-width: 600px;
   } 
-  
-  main.manage-application {
-    max-width: 1000px;
-  }
 }
 
+main.application-management {
+  max-width: 100%;
+  flex: 1 1 auto;
+  position: relative;
+}
 
+@media screen and (min-width: 1024px) {
+  
+  main.application-management {
+    max-width: 1024px;
+  }
+}
 
 .application-logo-header {
   background: url('/../gfx/gui/logo_otavanopisto.png');
@@ -73,6 +94,10 @@ h3 {
   font-family: "Exo 2";
   font-weight: 200;
   font-size: 26px;
+}
+
+/* Specific h3 style */
+.application-form-section-header {
   color: #009fe3;
 }
 
@@ -262,18 +287,18 @@ button {
   }
 }
 
-button.previous,
-button.next {
+.previous,
+.next {
   background: #009fe3;
 }
 
-button.button-save-application, 
-button.button-edit-application {
+.button-save-application, 
+.button-edit-application {
   background: #27b91c;
 }
 
-button.button-save-logentry {
-  background: #184b42;
+.button-save-logentry {
+  background: #2dbf90;
 }
 
 .application-page-indicator {
@@ -378,6 +403,7 @@ button.button-save-logentry {
   top: 0;
   left: 0;
   right: 0;
+  z-index: 9999;
 }
 
 .notification-queue-item {
@@ -481,77 +507,123 @@ span.email {
   display: inline-block;
 }
 
-/* APPLICATITON MANAGEMENT */
+/* APPLICATITON MANAGEMENT
+   Max-width for layout:       768px 
+   Mobile header height:       46px
+   Mobile header icon size:    26px
+   Desktop header height:      52px
+   Desktop header icon size:   32px
+*/
 .application-actions-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 60px;
-  padding: 10px;
   background: #009fe3;
   text-align: center;
   z-index:99;
+  padding: 0 20px;
 }
 
 .application-actions-container {
   max-width: 100%;
   margin: 0 auto;
+  height: 46px;
+}
+
+/* Icon wrapper size change for mobile */
+@media screen and (min-width: 600px) {
+
+  .application-actions-container {
+    height: 52px;
+  }
 }
 
 @media screen and (min-width: 1024px) {
-  
+
   .application-actions-container {
-    max-width: 1000px;
-    margin: 0 auto;
+    max-width: 1024px;
+    height: 52px;
   }
+}
+
+.application-action {
+  width: 26px;
+  height: 26px;
+  display: inline-block;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  margin: 10px;
+}
+
+/* Icon size change for mobile view */
+@media screen and (min-width: 600px) {
+
+  .application-action {
+    width: 32px;
+    height: 32px;
+    margin: 10px;
+  }
+}
+
+.application-action.icon-view {
+  background-image: url(../gfx/icons/48x48/actions/view.png);
+  float: left;
+}
+
+.application-action.icon-edit {
+  background-image: url(../gfx/icons/48x48/actions/edit.png);
+  float: left;
+}
+
+.application-action.icon-mail {
+  background-image: url(../gfx/icons/48x48/actions/mail.png);
+  float: right;
+}
+
+.application-action.icon-logs {
+  background-image: url(../gfx/icons/48x48/actions/logs.png);
+  float: right;
+}
+
+.application-action.icon-locked {
+  background-image: url(../gfx/icons/48x48/actions/locked.png);
+  float: left;
+}
+
+.application-action.icon-unlocked {
+  background-image: url(../gfx/icons/48x48/actions/unlocked.png);
+  float: left;
 }
 
 .application-wrapper {
   width: 100%;
+  flex-flow: row wrap;
+  display: flex;
 }
 
-@media screen and (min-width: 1024px) {
-  
-  .application-wrapper {
-    display: flex;
-    flex-flow: row wrap;
-    min-width: 1000px;
-  } 
+/* Specific h3 style */
+.application-data-header {
+  color: #009fe3;
 }
 
 .application-data {
   width: 100%;
 }
 
-@media screen and (min-width: 1024px) {
-  
-  .application-data {
-    flex: 0 0 570px;
-    min-width: 570px;
-  }
-}
-
 .application-logs {
   width: 100%;
+  display: none;
 }
 
-@media screen and (min-width: 1024px) {
-  
-  .application-logs {
-    margin: 0 0 0 20px;
-    flex: 1 1 350px;
-    padding: 0 20px;
-    display: block;
-  }
-}
-
-.application-logs > h3 {
-  color: #184b42;
+/* Specific h3 style */
+.application-log-header {
+  color: #2dbf90;
 }
 
 .application-logs textarea {
-  border: 1px solid #184b42;
+  border: 1px solid #2dbf90;
 }
 
 .application-logs button.button-save-logentry {
@@ -561,14 +633,6 @@ span.email {
 
 .application-logs .field-button-set {
   text-align: right;
-}
-
-@media screen and (min-width: 600px) {
-  
-  .application-logs {
-    border-radius: 5px;
-    background: #fff;
-  } 
 }
 
 /* LOG ENTRIES */
@@ -603,16 +667,16 @@ span.email {
 }
 
 .log-entry-archive {
-  background: url('../gfx/icons/48x48/actions/close.png') #e30048;
+  background: url('../gfx/icons/48x48/actions/close.png') #000;
   background-size: auto auto;
   background-size: contain;
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
   border-radius: 100%;
   position: absolute;
   right: 10px;
   top: 10px;
-  border: 2px solid #e30048;
+  border: 3px solid #000;
   cursor: pointer;
   box-shadow: 0 0 0 2px #fff;
 }

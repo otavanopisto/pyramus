@@ -9,7 +9,7 @@
   
   <section class="form-section section-line">
 
-    <h3>Valitse hakukohteesi</h3>
+    <h3 class="application-form-section-header">Valitse hakukohteesi</h3>
 
     <select id="field-line" name="field-line" data-parsley-required="true" data-dependencies="true">
       <option value="">-- Valitse --</option>
@@ -48,7 +48,7 @@
   </section>
   
   <section class="form-section section-internetix-school" data-skip="true">
-    <h3>Oppilaitostiedot</h3>
+    <h3 class="application-form-section-header">Oppilaitostiedot</h3>
     <p>Kurssimateriaalien käyttäminen itseopiskelussa on ilmaista. Voit siis rekisteröityä Muikun käyttäjäksi ja ilmoittautua kursseille, vaikka et haluaisikaan niistä arviointia tai kurssisuoritusta. Jos haluat, että opettaja arvioi kurssisuorituksesi, se on joissakin tapauksissa maksullista. <a href="http://opinnot.internetix.fi/fi/structure/kansio/ohje_arviointimaksuista" target="_blank">Lue lisää.</a></p>
     <p><b>Huom!</b> Oppilaitostieto tarkistetaan vielä jälkikäteen ja lähetämme laskun kurssin suorittamisesta, mikäli olet opiskelijana jossain toisen asteen oppilaitoksessa.</p>
 
@@ -105,7 +105,7 @@
   
   <section class="form-section section-personal-info">
 
-    <h3>Henkilötiedot</h3>
+    <h3 class="application-form-section-header">Henkilötiedot</h3>
     
     <div class="field-container field-last-name">
       <label for="field-last-name" class="required">Sukunimi</label>
@@ -200,7 +200,7 @@
 
   <section class="form-section section-underage" data-skip="true">
 
-    <h3>Huoltajan tiedot</h3>
+    <h3 class="application-form-section-header">Huoltajan tiedot</h3>
 
     <div class="field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja">
       <label for="field-underage-grounds">Alaikäisen hakemusperusteet</label>
@@ -251,7 +251,7 @@
 
   <section class="form-section section-additional">
 
-    <h3>Hakemiseen tarvittavat lisätiedot</h3>
+    <h3 class="application-form-section-header">Hakemiseen tarvittavat lisätiedot</h3>
 
     <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,aineopiskelu">
       <label for="field-previous-studies" class="required">Aiemmat opinnot</label>
