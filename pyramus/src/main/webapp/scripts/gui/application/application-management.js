@@ -47,8 +47,35 @@
       });
     }
     
-    $('#button-edit-application').on('click', function() {
+    $('#action-application-view').on('click', function() {
+      window.location.href = '/applications/view.page?application=' + $('body').attr('data-application-entity-id');
+    });
+
+    $('#action-application-edit').on('click', function() {
       window.location.href = '/applications/manage.page?application=' + $('body').attr('data-application-entity-id');
+    });
+
+    $('#action-application-toggle-lock').on('click', function() {
+      var _this = this;
+      var applicantEditable = $(this).hasClass('icon-locked');
+      var applicationEntityId = $('body').attr('data-application-entity-id');
+      $.ajax({
+        url: '/applications/toggleapplicanteditable.json',
+        type: 'POST',
+        data: {
+          id: applicationEntityId,
+          applicantEditable: applicantEditable
+        },
+        dataType: "json",
+        success: function(response) {
+          if (applicantEditable) {
+            $(_this).removeClass('icon-locked').addClass('icon-unlocked');
+          }
+          else {
+            $(_this).removeClass('icon-unlocked').addClass('icon-locked');
+          }
+        }
+      });
     });
     
     $('#action-application-log').on('click', function() {

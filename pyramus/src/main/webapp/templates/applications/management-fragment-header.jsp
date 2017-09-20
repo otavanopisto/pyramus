@@ -5,11 +5,17 @@
 
 <header class="application-actions-header">
   <div class="application-actions-container">
-    <div class="application-action icon-view"></div>
-    <div class="application-action icon-edit" id="button-edit-application"></div>
-    <div class="application-action icon-locked"></div>
-    <div class="application-action icon-unlocked"></div>
+    <div class="application-action icon-view" id="action-application-view"></div>
+    <div class="application-action icon-edit" id="action-application-edit"></div>
+    <c:choose>
+      <c:when test="${infoApplicantEditable eq true}">
+        <div class="application-action icon-unlocked" id="action-application-toggle-lock"></div>
+      </c:when>
+      <c:otherwise>
+        <div class="application-action icon-locked" id="action-application-toggle-lock"></div>
+      </c:otherwise>
+    </c:choose>
     <div class="application-action icon-mail"></div>
-    <div id="action-application-log" class="application-action icon-logs"></div>
+    <div class="application-action icon-logs" id="action-application-log"></div>
   </div>
 </header>

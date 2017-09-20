@@ -2,7 +2,6 @@ package fi.otavanopisto.pyramus.views.applications;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -20,7 +19,6 @@ import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
-import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
@@ -173,16 +171,15 @@ public class ViewApplicationViewController extends PyramusViewController {
       
       // Hakemuksen tilatiedot
       
-      pageRequestContext.getRequest().setAttribute("infoState", applicationStateUiValue(application.getState()));
-      pageRequestContext.getRequest().setAttribute("infoApplicantEditable", Boolean.TRUE.equals(application.getApplicantEditable()) ? "Kyllä" : "Ei");
-      if (application.getLastModifier() != null) {
-        pageRequestContext.getRequest().setAttribute("infoHandler", application.getLastModifier().getFullName());
+      pageRequestContext.getRequest().setAttribute("infoState", ApplicationUtils.applicationStateUiValue(application.getState()));
+      pageRequestContext.getRequest().setAttribute("infoApplicantEditable", application.getApplicantEditable());
+      if (application.getHandler() != null) {
+        pageRequestContext.getRequest().setAttribute("infoHandler", application.getHandler().getFullName());
       }
-      pageRequestContext.getRequest().setAttribute("infoLastModified", getLatest(
+      pageRequestContext.getRequest().setAttribute("infoLastModified", ApplicationUtils.getLatest(
           application.getLastModified(),
           application.getApplicantLastModified(),
           application.getCreated()));
-      
       
       pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());      
       pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());      
@@ -198,30 +195,6 @@ public class ViewApplicationViewController extends PyramusViewController {
   
   private String getFormValue(JSONObject object, String key) {
     return object.has(key) ? object.getString(key) : null;
-  }
-  
-  private String applicationStateUiValue(ApplicationState applicationState) {
-    switch (applicationState) {
-    case PENDING:
-      return "Jätetty";
-    case PROCESSING:
-      return "Käsittelyssä";
-    case WAITING_STAFF_SIGNATURE:
-      return "Odottaa virallista hyväksyntää";
-    case STAFF_SIGNED:
-      return "Hyväksyntä allekirjoitettu";
-    case APPROVED_BY_SCHOOL:
-      return "Hyväksytty";
-    case APPROVED_BY_APPLICANT:
-      return "Opiskelupaikka vastaanotettu";
-    case TRANSFERRED_AS_STUDENT:
-      return "Siirretty opiskelijaksi";
-    case REGISTERED_AS_STUDENT:
-      return "Rekisteröitynyt aineopiskelijaksi";
-    case REJECTED:
-      return "Hylätty";
-    }
-    return null;
   }
   
   private String municipalityUiValue(String value) {
@@ -380,16 +353,6 @@ public class ViewApplicationViewController extends PyramusViewController {
     default:
       return null;
     }
-  }
-
-  private Date getLatest(Date...dates) {
-    Date result = null;
-    for (Date date : dates) {
-      if (result == null || date.after(result)) {
-        result = date;
-      }
-    }
-    return result;
   }
 
 }
