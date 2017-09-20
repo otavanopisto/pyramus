@@ -47,6 +47,10 @@
       });
     }
     
+    $('#action-application-view').on('click', function() {
+      window.location.href = '/applications/view.page?application=' + $('body').attr('data-application-entity-id');
+    });
+
     $('#action-application-edit').on('click', function() {
       window.location.href = '/applications/manage.page?application=' + $('body').attr('data-application-entity-id');
     });

@@ -5,7 +5,7 @@
 
 <header class="application-actions-header">
   <div class="application-actions-container">
-    <div class="application-action icon-view"></div>
+    <div class="application-action icon-view" id="action-application-view"></div>
     <div class="application-action icon-edit" id="action-application-edit"></div>
     <c:choose>
       <c:when test="${infoApplicantEditable eq true}">
