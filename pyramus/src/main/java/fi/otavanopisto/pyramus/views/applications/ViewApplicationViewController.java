@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.views.applications;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -18,6 +20,7 @@ import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
@@ -29,6 +32,10 @@ import net.sf.json.JSONObject;
 public class ViewApplicationViewController extends PyramusViewController {
 
   private static final Logger logger = Logger.getLogger(EditApplicationViewController.class.getName());
+
+  public UserRole[] getAllowedRoles() {
+    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER };
+  }
   
   public void process(PageRequestContext pageRequestContext) {
     try {
@@ -54,6 +61,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       Map<String, String> fields = new LinkedHashMap<>();
       sections.put("Perustiedot", fields);
       
+      fields.put("Jätetty", new SimpleDateFormat("d.M.yyyy H:mm").format(application.getCreated()));
       fields.put("Linja", lineUiValue(getFormValue(formData, "field-line")));
       fields.put("Nimi", String.format("%s, %s", getFormValue(formData, "field-last-name"), getFormValue(formData, "field-first-names")));
       if (StringUtils.isNotBlank(getFormValue(formData, "field-nickname"))) {
@@ -163,6 +171,19 @@ public class ViewApplicationViewController extends PyramusViewController {
         fields.put("Mistä sai tiedon koulutuksesta", sb.toString());
       }
       
+      // Hakemuksen tilatiedot
+      
+      pageRequestContext.getRequest().setAttribute("infoState", applicationStateUiValue(application.getState()));
+      pageRequestContext.getRequest().setAttribute("infoApplicantEditable", Boolean.TRUE.equals(application.getApplicantEditable()) ? "Kyllä" : "Ei");
+      if (application.getLastModifier() != null) {
+        pageRequestContext.getRequest().setAttribute("infoHandler", application.getLastModifier().getFullName());
+      }
+      pageRequestContext.getRequest().setAttribute("infoLastModified", getLatest(
+          application.getLastModified(),
+          application.getApplicantLastModified(),
+          application.getCreated()));
+      
+      
       pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());      
       pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());      
       pageRequestContext.getRequest().setAttribute("sections", sections);      
@@ -177,6 +198,30 @@ public class ViewApplicationViewController extends PyramusViewController {
   
   private String getFormValue(JSONObject object, String key) {
     return object.has(key) ? object.getString(key) : null;
+  }
+  
+  private String applicationStateUiValue(ApplicationState applicationState) {
+    switch (applicationState) {
+    case PENDING:
+      return "Jätetty";
+    case PROCESSING:
+      return "Käsittelyssä";
+    case WAITING_STAFF_SIGNATURE:
+      return "Odottaa virallista hyväksyntää";
+    case STAFF_SIGNED:
+      return "Hyväksyntä allekirjoitettu";
+    case APPROVED_BY_SCHOOL:
+      return "Hyväksytty";
+    case APPROVED_BY_APPLICANT:
+      return "Opiskelupaikka vastaanotettu";
+    case TRANSFERRED_AS_STUDENT:
+      return "Siirretty opiskelijaksi";
+    case REGISTERED_AS_STUDENT:
+      return "Rekisteröitynyt aineopiskelijaksi";
+    case REJECTED:
+      return "Hylätty";
+    }
+    return null;
   }
   
   private String municipalityUiValue(String value) {
@@ -337,8 +382,14 @@ public class ViewApplicationViewController extends PyramusViewController {
     }
   }
 
-  public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER };
+  private Date getLatest(Date...dates) {
+    Date result = null;
+    for (Date date : dates) {
+      if (result == null || date.after(result)) {
+        result = date;
+      }
+    }
+    return result;
   }
 
 }

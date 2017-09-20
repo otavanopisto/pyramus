@@ -47,7 +47,24 @@
           </div>
         </section>
         <section class="application-info">
-          possu kuva ja muut tiedot
+          <div class="data-container">
+            <span class="data-name">Hakemuksen tila</span>
+            <span id="info-application-state-value" class="data-value">${infoState}</span>
+          </div>
+          <div class="data-container">
+            <span class="data-name">Hakijan muokattavissa</span>
+            <span id="info-application-last-modified-value" class="data-value">${infoApplicantEditable}</span>
+          </div>
+          <div class="data-container">
+            <span class="data-name">Käsittelijä</span>
+            <span id="info-application-handler-value" class="data-value">${infoHandler}</span>
+          </div>
+          <div class="data-container">
+            <span class="data-name">Muokattu viimeksi</span>
+            <span id="info-application-last-modified-value" class="data-value">
+              <fmt:formatDate pattern="d.M.yyyy H:mm" value="${infoLastModified}"/>
+            </span>
+          </div>
         </section>
         <jsp:include page="/templates/applications/management-fragment-log.jsp"></jsp:include>
       </section>
