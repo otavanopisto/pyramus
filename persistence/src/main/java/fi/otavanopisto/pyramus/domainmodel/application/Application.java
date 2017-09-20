@@ -153,6 +153,14 @@ public class Application implements ArchivableEntity {
     this.applicantEditable = applicantEditable;
   }
 
+  public User getHandler() {
+    return handler;
+  }
+
+  public void setHandler(User handler) {
+    this.handler = handler;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Application")
   @TableGenerator(name="Application", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -223,6 +231,10 @@ public class Application implements ArchivableEntity {
   @Enumerated (EnumType.STRING)
   @Field
   private ApplicationState state;
+
+  @ManyToOne  
+  @JoinColumn(name="handler")
+  private User handler;
 
   @NotNull
   @Column (nullable = false)
