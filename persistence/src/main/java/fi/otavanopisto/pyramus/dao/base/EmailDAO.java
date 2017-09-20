@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.dao.base;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -60,6 +62,21 @@ public class EmailDAO extends PyramusEntityDAO<Email> {
     );
     
     return getSingleResult(entityManager.createQuery(criteria));
+  }
+
+  public List<Email> listByAddressLowercase(String emailAddress) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Email> criteria = criteriaBuilder.createQuery(Email.class);
+    Root<Email> root = criteria.from(Email.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(
+        criteriaBuilder.lower(root.get(Email_.address)), emailAddress.toLowerCase())
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
 
   public Email update(Email email, ContactType contactType, Boolean defaultAddress, String address) {

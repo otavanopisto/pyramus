@@ -36,6 +36,7 @@
           <h3>Hakemuksen muokkaus</h3>
           <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
         </section>
+        <jsp:include page="/templates/applications/management-fragment-meta.jsp"></jsp:include>
         <jsp:include page="/templates/applications/management-fragment-log.jsp"></jsp:include>
       </section>
     </main>

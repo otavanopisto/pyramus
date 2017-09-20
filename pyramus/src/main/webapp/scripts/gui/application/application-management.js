@@ -2,6 +2,8 @@
 
   $(document).ready(function() {
     
+    // Contact log entries
+    
     $.ajax({
       url: '/applications/listlogentries.json',
       type: "GET",
@@ -25,6 +27,8 @@
       }
     });
     
+    // Attachments
+    
     var attachmentsContainer = $('#attachments-readonly-container');
     if (attachmentsContainer.length) {
       var applicationId = $('body').attr('data-application-id');
@@ -46,6 +50,8 @@
         }
       });
     }
+    
+    // Header buttons
     
     $('#action-application-view').on('click', function() {
       window.location.href = '/applications/view.page?application=' + $('body').attr('data-application-entity-id');
@@ -82,6 +88,8 @@
       $('section.application-logs').toggle();
     });
     
+    // Save log entry
+    
     $('#log-form-save').on('click', function() {
       var data = JSON.stringify($('#log-form').serializeObject());
       $.ajax({
@@ -101,6 +109,35 @@
         }
       });
     });
+    
+    // Existing students
+    
+    $.ajax({
+      url: '/applications/listexistingpersons.json',
+      type: "GET",
+      data: {
+        applicationEntityId: $('body').attr('data-application-entity-id')
+      },
+      dataType: "json",
+      contentType: "application/json; charset=utf-8",
+      success: function(response) {
+        if (response.persons.length == 0) {
+          $('div.user-exists-container').hide();
+        }
+        else {
+          for (var i = 0; i < response.persons.length; i++) {
+            var personElement = $('<p>').appendTo($('div.user-exists-container'));
+            var hrefElement = $('<a>').appendTo(personElement);
+            hrefElement.attr('href', '/students/viewstudent.page?person=' + response.persons[i].id);
+            hrefElement.attr('target', '_blank');
+            hrefElement.text(response.persons[i].name);
+          }
+          $('div.user-exists-container').show();
+        }
+      }
+    });
+    
+    // Helper functions
     
     function createLogElement(entry) {
       var logElement = $('.log-entry.template').clone();

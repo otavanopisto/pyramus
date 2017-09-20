@@ -139,6 +139,18 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
+  public List<Person> listBySSNUppercase(String ssn) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Person> criteria = criteriaBuilder.createQuery(Person.class);
+    Root<Person> root = criteria.from(Person.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(criteriaBuilder.upper(root.get(Person_.socialSecurityNumber)), ssn.toUpperCase()));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   public SearchResult<Person> searchPersonsBasic(int resultsPerPage, int page, String queryText) {
     return searchPersonsBasic(resultsPerPage, page, queryText, PersonFilter.ACTIVE_STUDENTS);
   }
