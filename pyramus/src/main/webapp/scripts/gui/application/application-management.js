@@ -51,6 +51,10 @@
       window.location.href = '/applications/manage.page?application=' + $('body').attr('data-application-entity-id');
     });
     
+    $('#action-application-log').on('click', function() {
+      $('section.application-logs').toggle();
+    });
+    
     $('#log-form-save').on('click', function() {
       var data = JSON.stringify($('#log-form').serializeObject());
       $.ajax({

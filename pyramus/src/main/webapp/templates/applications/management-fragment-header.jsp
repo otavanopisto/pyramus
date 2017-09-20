@@ -10,6 +10,6 @@
     <div class="application-action icon-locked"></div>
     <div class="application-action icon-unlocked"></div>
     <div class="application-action icon-mail"></div>
-    <div class="application-action icon-logs"></div>
+    <div id="action-application-log" class="application-action icon-logs"></div>
   </div>
 </header>
