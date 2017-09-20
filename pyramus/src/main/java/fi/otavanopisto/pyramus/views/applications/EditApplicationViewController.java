@@ -66,7 +66,7 @@ public class EditApplicationViewController extends PyramusViewController {
       // If no applicationId has been set, include gateway page
       
       if (applicationId == null) {
-        pageRequestContext.setIncludeJSP("/templates/applications/edit.jsp");
+        pageRequestContext.setIncludeJSP("/templates/applications/application-edit-gateway.jsp");
       }
       else {
         
@@ -84,7 +84,7 @@ public class EditApplicationViewController extends PyramusViewController {
         pageRequestContext.getRequest().setAttribute("preload", Boolean.TRUE);
         pageRequestContext.getRequest().setAttribute("donePage", Boolean.TRUE);
         pageRequestContext.getRequest().setAttribute("saveUrl", "/1/applications/saveapplication");
-        pageRequestContext.setIncludeJSP("/templates/applications/application.jsp");
+        pageRequestContext.setIncludeJSP("/templates/applications/application-edit.jsp");
       }
     }
     catch (IOException e) {

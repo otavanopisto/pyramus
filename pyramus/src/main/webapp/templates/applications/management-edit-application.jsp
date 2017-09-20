@@ -30,13 +30,13 @@
       </div>
     </div>
     <main class="application-management">
-      <jsp:include page="/templates/applications/manage-header.jsp"></jsp:include>
+      <jsp:include page="/templates/applications/management-fragment-header.jsp"></jsp:include>
       <section class="application-wrapper">
         <section class="application-section application-data">
           <h3>Hakemuksen muokkaus</h3>
           <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
         </section>
-        <jsp:include page="/templates/applications/manage-log.jsp"></jsp:include>
+        <jsp:include page="/templates/applications/management-fragment-log.jsp"></jsp:include>
       </section>
     </main>
   </body>

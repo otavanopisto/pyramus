@@ -40,7 +40,7 @@ public class ManageApplicationViewController extends PyramusViewController {
       pageRequestContext.getRequest().setAttribute("donePage", Boolean.FALSE);
       pageRequestContext.getRequest().setAttribute("saveUrl", "/applications/saveapplication.json");
       
-      pageRequestContext.setIncludeJSP("/templates/applications/manage.jsp");
+      pageRequestContext.setIncludeJSP("/templates/applications/management-edit-application.jsp");
     }
     catch (IOException e) {
       logger.log(Level.SEVERE, "Unable to serve error response", e);

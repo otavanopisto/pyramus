@@ -29,7 +29,7 @@
       </div>
     </div>
     <main class="application-management">
-      <jsp:include page="/templates/applications/manage-header.jsp"></jsp:include>
+      <jsp:include page="/templates/applications/management-fragment-header.jsp"></jsp:include>
       <section class="application-wrapper">
         <section class="application-section application-data">
           <h3 class="application-data-header">Hakemuksen tiedot</h3>
@@ -49,7 +49,7 @@
         <section class="application-info">
           possu kuva ja muut tiedot
         </section>
-        <jsp:include page="/templates/applications/manage-log.jsp"></jsp:include>
+        <jsp:include page="/templates/applications/management-fragment-log.jsp"></jsp:include>
       </section>
     </main>
   </body>
