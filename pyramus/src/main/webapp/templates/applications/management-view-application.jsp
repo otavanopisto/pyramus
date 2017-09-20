@@ -60,17 +60,17 @@
           </div>
           <div class="additional-info-wrapper">
             <div class="additional-info-container">
-              <div class="data-container">
-                <span class="data-name">Hakemuksen tila</span>
-                <span id="info-application-state-value" class="data-value">${infoState}</span>
+              <div class="meta-container">
+                <span class="meta-name">Hakemuksen tila</span>
+                <span id="info-application-state-value" class="meta-value">${infoState}</span>
               </div>
-              <div class="data-container">
-                <span class="data-name">Käsittelijä</span>
-                <span id="info-application-handler-value" class="data-value">${infoHandler}</span>
+              <div class="meta-container">
+                <span class="meta-name">Käsittelijä</span>
+                <span id="info-application-handler-value" class="meta-value">${infoHandler}</span>
               </div>
-              <div class="data-container">
-                <span class="data-name">Muokattu viimeksi</span>
-                <span id="info-application-last-modified-value" class="data-value">
+              <div class="meta-container">
+                <span class="meta-name">Muokattu viimeksi</span>
+                <span id="info-application-last-modified-value" class="meta-value">
                   <fmt:formatDate pattern="d.M.yyyy H:mm" value="${infoLastModified}"/>
                 </span>
               </div>

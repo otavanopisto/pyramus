@@ -631,7 +631,7 @@ span.email {
 @media screen and (min-width: 768px) {
 
   .application-data {
-    flex: 1 1 49%;
+    flex: 1 1 58%;
     order: 1;
   }
 }
@@ -659,6 +659,25 @@ span.email {
   }
 }
 
+/* View mode application data */
+.data-container {
+   display: flex;
+   flex-flow:row wrap;
+   justify-content: center;
+   margin: 10px 0;
+ }
+ 
+.data-name {
+   flex: 1 1;
+   margin: 0 2% 0 0;
+ }
+ 
+.data-value {
+   flex: 1 1;
+   font-weight: 400;
+   word-wrap: break-word;
+ }
+
 /* Meta <section> */
 .application-meta {
   max-width: 100%;
@@ -669,7 +688,7 @@ span.email {
 @media screen and (min-width: 768px) {
 
   .application-meta {
-    flex: 1 1 49%;
+    flex: 1 1 40%;
     margin: 0 0 0 2%;
     order: 2;
   }
@@ -679,6 +698,25 @@ span.email {
 .application-meta-header {
   color: #009fe3;
 }
+
+ /* View mode application meta */
+.meta-container {
+   display: flex;
+   flex-flow:row wrap;
+   justify-content: center;
+   margin: 10px 0;
+ }
+ 
+.meta-name {
+   flex: 0 1;
+   min-width: 125px;
+ }
+ 
+.meta-value {
+  flex: 2 1;
+  font-weight: 400;
+  word-wrap: break-word;
+ }
 
 .user-exists-container {
   background: #fcdcdb;
@@ -731,6 +769,7 @@ span.email {
   flex-flow: row nowrap;
   align-items: center;
   margin: 20px 0 20px;
+  font-size: 14px;
 }
 
 .additional-info-container {
@@ -761,28 +800,7 @@ span.email {
   text-align: right;
 }
 
-/* View mode application data/meta */
-.data-container {
-   display: flex;
-   flex-flow:row nowrap;
-   justify-content: center;
-   margin: 10px 0;
- }
- 
-.data-name {
-   flex: 1 1 49%;
-   margin: 0 2% 0 0;
-   min-width: 49%;
- }
- 
-.data-value {
-   flex: 1 1 49%;
-   font-weight: 400;
-   max-width: 49%;
-   word-wrap: break-word;
- }
-
-/* LOG ENTRIES */
+/* Log entries */
 .log-entries-container {
   margin: 10px 0 0;
   padding: 10px 0 0;
