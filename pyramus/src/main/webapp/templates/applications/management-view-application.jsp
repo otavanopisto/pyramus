@@ -51,13 +51,15 @@
         </section>
         
         <section class="application-section application-meta">
+        
           <div class="user-exists-container">
-            <div class="helpful-piggy"></div>
+            <div class="user-exists-description-title">Hakijan sähköpostiosoite löytyy pyramuksesta.</div> 
             <div class="user-exists-description">
-              <div class="user-exists-description-title">Hakijan sähköpostiosoite löytyy pyramuksesta.</div> 
-              <p>Tehdäänkö hakijalle asioita? Hakijalle voidaan tehdä useita eri asiota. Ne kaikki asiat ovat mahtavia. Kaikki tietää sen.</p>
+              <div class="description-piggy"></div>
+              <div class="description-actions">Tehdäänkö hakijalle asioita? Hakijalle voidaan tehdä useita eri asiota. Ne kaikki asiat ovat mahtavia. Kaikki tietää sen.</div>
             </div>
           </div>
+          
           <div class="additional-info-wrapper">
             <div class="additional-info-container">
               <div class="meta-container">

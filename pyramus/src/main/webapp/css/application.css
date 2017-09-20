@@ -524,7 +524,7 @@ span.email {
   top: 0;
   left: 0;
   right: 0;
-  background: #009fe3;
+  background: #0f7b92;
   text-align: center;
   z-index:99;
   display: flex;
@@ -597,11 +597,23 @@ span.email {
 .application-action.icon-locked {
   background-image: url(../gfx/icons/48x48/actions/locked.png);
   float: left;
+  background-color: #d84b2d;
+  border: 5px solid #d84b2d;
+  border-radius: 5px;
+  box-sizing: content-box;
+  margin: 7px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.3);
 }
 
 .application-action.icon-unlocked {
   background-image: url(../gfx/icons/48x48/actions/unlocked.png);
   float: left;
+  background-color: #1ce617;
+  border: 5px solid #1ce617;
+  border-radius: 5px;
+  box-sizing: content-box;
+  margin: 7px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.3);
 }
 
 .application-action.icon-logs {
@@ -726,13 +738,24 @@ span.email {
   border-radius: 20px;
   border: 2px solid #fff;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  display: flex;
-  flex-flow: row nowrap;
   align-items: center;
   margin: 20px 0 0;
 }
 
-.helpful-piggy {
+.user-exists-description-title {
+  font-weight: 400;
+  margin: 0 10px 10px;
+  color: #6e0303;
+  font-size: 16px;
+}
+
+.user-exists-description {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.description-piggy {
   background: url('../gfx/piggy.png') #fcdcdb no-repeat center center;
   background-size: contain;
   width: 80px;
@@ -741,20 +764,9 @@ span.email {
   margin: 2px 15px 0 5px;
 }
 
-.user-exists-description {
-  flex: 1 1 auto;
-}
-
-.user-exists-description-title {
-  font-weight: 400;
-  margin: 0 0 5px 0;
-  color: #6e0303;
-  font-size: 16px;
-}
-
-.user-exists-description p {
-  margin: 10px 0 0;
+.description-actions {
   font-size: 14px;
+  flex: 1 1 auto;
 }
 
 .additional-info-wrapper {
