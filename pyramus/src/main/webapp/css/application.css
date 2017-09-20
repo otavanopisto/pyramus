@@ -598,22 +598,40 @@ span.email {
   background-image: url(../gfx/icons/48x48/actions/locked.png);
   float: left;
   background-color: #d84b2d;
-  border: 5px solid #d84b2d;
+  border: 4px solid #d84b2d;
   border-radius: 5px;
   box-sizing: content-box;
-  margin: 7px;
+  margin: 6px;
   box-shadow: 0 0 4px rgba(0,0,0,0.3);
+}
+
+/* Icon size change for mobile view */
+@media screen and (min-width: 600px) {
+
+  .application-action.icon-locked {
+    margin: 7px;
+    border: 5px solid #d84b2d;
+  }
 }
 
 .application-action.icon-unlocked {
   background-image: url(../gfx/icons/48x48/actions/unlocked.png);
   float: left;
   background-color: #1ce617;
-  border: 5px solid #1ce617;
+  border: 4px solid #1ce617;
   border-radius: 5px;
   box-sizing: content-box;
-  margin: 7px;
+  margin: 6px;
   box-shadow: 0 0 4px rgba(0,0,0,0.3);
+}
+
+/* Icon size change for mobile view */
+@media screen and (min-width: 600px) {
+
+  .application-action.icon-unlocked {
+    margin: 7px;
+    border: 5px solid #1ce617;
+  }
 }
 
 .application-action.icon-logs {
