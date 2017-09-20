@@ -621,34 +621,19 @@ span.email {
   display: flex;
 }
 
+/* Data <section> */
 .application-data {
   max-width: 100%;
   flex: 1 1 100%;
+  order: 2;
 }
 
 @media screen and (min-width: 768px) {
 
   .application-data {
     flex: 1 1 49%;
+    order: 1;
   }
-}
-
-.application-info {
-  max-width: 100%;
-  flex: 1 1 100%;
-}
-
-@media screen and (min-width: 768px) {
-
-  .application-info {
-    flex: 1 1 49%;
-    margin: 0 0 0 2%;
-  }
-}
-
-.application-logs {
-  width: 100%;
-  display: none;
 }
 
 /* Specific h3 style */
@@ -659,9 +644,12 @@ span.email {
 .application-data-title {
   text-transform: uppercase;
   font-size: 16px;
-  font-weight: 300;
-  border-bottom: 1px solid #666;
-  margin: 30px 0 10px;
+  font-weight: 400;
+  margin: 20px 0 0;
+}
+
+.application-sub-section {
+  padding: 0 0 20px;
 }
 
 @media screen and (min-width: 600px) {
@@ -669,6 +657,90 @@ span.email {
   .application-data-title {
     font-size: 18px;
   }
+}
+
+/* Meta <section> */
+.application-meta {
+  max-width: 100%;
+  flex: 1 1 100%;
+  order: 1;
+}
+
+@media screen and (min-width: 768px) {
+
+  .application-meta {
+    flex: 1 1 49%;
+    margin: 0 0 0 2%;
+    order: 2;
+  }
+}
+
+/* Specific h3 style */
+.application-meta-header {
+  color: #009fe3;
+}
+
+.user-exists-container {
+  background: #fcdcdb;
+  width: 100%;
+  min-height: 100px;
+  padding: 10px;
+  border-radius: 20px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin: 20px 0 0;
+}
+
+.helpful-piggy {
+  background: url('../gfx/piggy.png') #fcdcdb no-repeat center center;
+  background-size: contain;
+  width: 80px;
+  height: 80px;
+  flex: 0 0 80px;
+  margin: 2px 15px 0 5px;
+}
+
+.user-exists-description {
+  flex: 1 1 auto;
+}
+
+.user-exists-description-title {
+  font-weight: 400;
+  margin: 0 0 5px 0;
+  color: #6e0303;
+  font-size: 16px;
+}
+
+.user-exists-description p {
+  margin: 10px 0 0;
+  font-size: 14px;
+}
+
+.additional-info-wrapper {
+  background: #d4f6ff;
+  width: 100%;
+  min-height: 100px;
+  padding: 5px 15px;
+  border-radius: 20px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin: 20px 0 20px;
+}
+
+.additional-info-container {
+  flex: 1 1 auto;
+}
+
+/* Logs <section> */
+.application-logs {
+  width: 100%;
+  display: none;
 }
 
 /* Specific h3 style */
@@ -689,11 +761,12 @@ span.email {
   text-align: right;
 }
 
-/* View mode application data */
+/* View mode application data/meta */
 .data-container {
    display: flex;
    flex-flow:row nowrap;
    justify-content: center;
+   margin: 10px 0;
  }
  
 .data-name {
