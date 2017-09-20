@@ -52,10 +52,6 @@
             <span id="info-application-state-value" class="data-value">${infoState}</span>
           </div>
           <div class="data-container">
-            <span class="data-name">Hakijan muokattavissa</span>
-            <span id="info-application-last-modified-value" class="data-value">${infoApplicantEditable}</span>
-          </div>
-          <div class="data-container">
             <span class="data-name">Käsittelijä</span>
             <span id="info-application-handler-value" class="data-value">${infoHandler}</span>
           </div>

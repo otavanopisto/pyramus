@@ -18,6 +18,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
+import fi.otavanopisto.pyramus.views.applications.ApplicationUtils;
 
 public class SearchApplicationsJSONRequestController extends JSONRequestController {
 
@@ -49,8 +50,8 @@ public class SearchApplicationsJSONRequestController extends JSONRequestControll
     Collections.sort(applications, new Comparator<Application>() {
       @Override
       public int compare(Application o1, Application o2) {
-        Date d1 = getLatest(o1.getCreated(), o1.getApplicantLastModified(), o1.getLastModified());
-        Date d2 = getLatest(o2.getCreated(), o2.getApplicantLastModified(), o2.getLastModified());
+        Date d1 = ApplicationUtils.getLatest(o1.getCreated(), o1.getApplicantLastModified(), o1.getLastModified());
+        Date d2 = ApplicationUtils.getLatest(o2.getCreated(), o2.getApplicantLastModified(), o2.getLastModified());
         return d1 == null ? 1 : d2 == null ? -1 : d2.compareTo(d1);
       }
     });
@@ -63,7 +64,7 @@ public class SearchApplicationsJSONRequestController extends JSONRequestControll
       applicationInfo.put("email", application.getEmail());
       applicationInfo.put("line", application.getLine());
       applicationInfo.put("state", application.getState());
-      Date date = getLatest(application.getCreated(), application.getApplicantLastModified(), application.getLastModified());
+      Date date = ApplicationUtils.getLatest(application.getCreated(), application.getApplicantLastModified(), application.getLastModified());
       applicationInfo.put("date", date == null ? null : date.getTime());
       applicationInfo.put("handler", application.getLastModifier() == null ? null : application.getLastModifier().getFullName());
       
@@ -85,16 +86,6 @@ public class SearchApplicationsJSONRequestController extends JSONRequestControll
 
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER };
-  }
-  
-  private Date getLatest(Date...dates) {
-    Date result = null;
-    for (Date date : dates) {
-      if (result == null || date.after(result)) {
-        result = date;
-      }
-    }
-    return result;
   }
 
 }

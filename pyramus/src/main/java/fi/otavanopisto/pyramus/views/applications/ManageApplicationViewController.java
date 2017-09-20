@@ -33,8 +33,24 @@ public class ManageApplicationViewController extends PyramusViewController {
         pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
+      
+      // Hakemuksen tilatiedot
 
+      pageRequestContext.getRequest().setAttribute("infoState", ApplicationUtils.applicationStateUiValue(application.getState()));
+      pageRequestContext.getRequest().setAttribute("infoApplicantEditable", application.getApplicantEditable());
+      if (application.getLastModifier() != null) {
+        pageRequestContext.getRequest().setAttribute("infoHandler", application.getLastModifier().getFullName());
+      }
+      pageRequestContext.getRequest().setAttribute("infoLastModified", ApplicationUtils.getLatest(
+          application.getLastModified(),
+          application.getApplicantLastModified(),
+          application.getCreated()));
+      
+      pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());      
       pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());
+      
+      // Editointinäkymä
+
       pageRequestContext.getRequest().setAttribute("referenceCode", application.getReferenceCode());
       pageRequestContext.getRequest().setAttribute("preload", Boolean.TRUE);
       pageRequestContext.getRequest().setAttribute("donePage", Boolean.FALSE);
