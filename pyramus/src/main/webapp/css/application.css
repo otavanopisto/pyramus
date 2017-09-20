@@ -773,7 +773,7 @@ span.email {
   align-items: center;
 }
 
-.description-piggy {
+.user-exists-description-piggy {
   background: url('../gfx/piggy.png') #fcdcdb no-repeat center center;
   background-size: contain;
   width: 80px;
@@ -782,9 +782,24 @@ span.email {
   margin: 2px 15px 0 5px;
 }
 
-.description-actions {
+.user-exists-description-actions {
   font-size: 14px;
   flex: 1 1 auto;
+}
+
+.user-exists-description-actions span {
+  display: inline-block;
+  margin: 4px 4px 4px 0;
+}
+
+.user-exists-user-link-container a {
+  color: #fff;
+  background: #f563a6;
+  border-radius: 4px;
+  padding: 2px 8px;
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 400;
 }
 
 .additional-info-wrapper {

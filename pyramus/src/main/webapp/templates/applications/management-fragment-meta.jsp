@@ -5,10 +5,12 @@
 
 <section class="application-section application-meta">      
   <div class="user-exists-container">
-    <div class="user-exists-description-title">Hakijan sähköpostiosoite löytyy pyramuksesta.</div> 
+    <div class="user-exists-description-title">Hakija löytyy jo pyramuksesta.</div> 
     <div class="user-exists-description">
-      <div class="description-piggy"></div>
-      <div class="description-actions">Tehdäänkö hakijalle asioita? Hakijalle voidaan tehdä useita eri asiota. Ne kaikki asiat ovat mahtavia. Kaikki tietää sen.</div>
+      <div class="user-exists-description-piggy"></div>
+      <div class="user-exists-description-actions">
+        <span>Hakijan pyramus profiili:</span> 
+      </div>
     </div>
   </div>
   

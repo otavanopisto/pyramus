@@ -126,7 +126,7 @@
         }
         else {
           for (var i = 0; i < response.persons.length; i++) {
-            var personElement = $('<p>').appendTo($('div.user-exists-container'));
+            var personElement = $('<span>').addClass('user-exists-user-link-container').appendTo($('div.user-exists-description-actions'));
             var hrefElement = $('<a>').appendTo(personElement);
             hrefElement.attr('href', '/students/viewstudent.page?person=' + response.persons[i].id);
             hrefElement.attr('target', '_blank');
