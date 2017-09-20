@@ -569,8 +569,8 @@ span.email {
 
 .application-action:hover {
   border-radius: 2px;
-  background-color: #2bb7f3;
-  box-shadow: 0 0 0 5px #2bb7f3;
+  background-color: #0ca0c0;
+  box-shadow: 0 0 0 5px #0ca0c0;
 }
 
 /* Icon size change for mobile view */
