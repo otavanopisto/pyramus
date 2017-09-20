@@ -49,9 +49,8 @@
           <div id="attachments-readonly-container" class="attachments-container">
           </div>
         </section>
-        
+
         <jsp:include page="/templates/applications/management-fragment-meta.jsp"></jsp:include>
-        
         <jsp:include page="/templates/applications/management-fragment-log.jsp"></jsp:include>
         
       </section>
