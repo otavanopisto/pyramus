@@ -167,7 +167,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());      
       pageRequestContext.getRequest().setAttribute("sections", sections);      
       
-      pageRequestContext.setIncludeJSP("/templates/applications/manage-view-application.jsp");
+      pageRequestContext.setIncludeJSP("/templates/applications/management-view-application.jsp");
     }
     catch (IOException e) {
       logger.log(Level.SEVERE, "Unable to serve error response", e);

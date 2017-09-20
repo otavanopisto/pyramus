@@ -36,9 +36,9 @@
           <c:forEach var="section" items="${sections}">
             <h4 class="application-data-title">${section.key}</h4>
             <c:forEach var="field" items="${section.value}">
-              <div class="field-container-view">
-                <span class="field-name">${field.key}</span>
-                <span class="field-value">${fn:replace(field.value, newLineChar, "<br/>")}</span>
+              <div class="data-container">
+                <span class="data-name">${field.key}</span>
+                <span class="data-value">${fn:replace(field.value, newLineChar, "<br/>")}</span>
               </div>
             </c:forEach>
           </c:forEach>
@@ -54,4 +54,3 @@
     </main>
   </body>
 </html>
-
