@@ -28,6 +28,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.views.applications.ApplicationUtils;
 import net.sf.json.JSONObject;
 
 public class ListExistingPersonsJSONRequestController extends JSONRequestController {
@@ -46,10 +47,8 @@ public class ListExistingPersonsJSONRequestController extends JSONRequestControl
       
       JSONObject applicationData = JSONObject.fromObject(application.getFormData());      
       
-      String ssn = constructSSN(applicationData.getString("field-birthday"), applicationData.getString("field-ssn-end"));
+      String ssn = ApplicationUtils.constructSSN(applicationData.getString("field-birthday"), applicationData.getString("field-ssn-end"));
       String emailAddress = StringUtils.lowerCase(StringUtils.trim(applicationData.getString("field-email")));
-      
-      System.out.println("Finding matches for ssn " + ssn + " and email " + emailAddress);
   
       EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
       PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
@@ -58,6 +57,7 @@ public class ListExistingPersonsJSONRequestController extends JSONRequestControl
       Map<Long, Person> existingPersons = new HashMap<>();
       
       // Persons with email
+      
       List<Email> emails = emailDAO.listByAddressLowercase(emailAddress);
       for (Email email : emails) {
         if (email.getContactType() != null && Boolean.FALSE.equals(email.getContactType().getNonUnique())) {
@@ -72,12 +72,14 @@ public class ListExistingPersonsJSONRequestController extends JSONRequestControl
       }
       
       // Persons with SSN
+      
       List<Person> persons = personDAO.listBySSNUppercase(ssn);
       for (Person person : persons) {
         existingPersons.put(person.getId(), person);
       }
       
       // Persons with SSN ("wrong" delimiter)
+      
       char[] ssnChars = ssn.toCharArray();
       ssnChars[6] = ssnChars[6] == 'A' ? '-' : 'A';
       ssn = ssnChars.toString();
@@ -104,22 +106,6 @@ public class ListExistingPersonsJSONRequestController extends JSONRequestControl
 
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER };
-  }
-  
-  private String constructSSN(String birthday, String ssnEnd) {
-    try {
-      StringBuffer ssn = new StringBuffer();
-      Date d = new SimpleDateFormat("d.M.yyyy").parse(birthday);
-      ssn.append(new SimpleDateFormat("ddMMyy").format(d));
-      Calendar calendar = new GregorianCalendar();
-      calendar.setTime(d);
-      ssn.append(calendar.get(Calendar.YEAR) >= 2000 ? 'A' : '-');
-      ssn.append(StringUtils.upperCase(ssnEnd));
-      return ssn.toString();
-    }
-    catch (ParseException e) {
-      return null;
-    }
   }
 
 }

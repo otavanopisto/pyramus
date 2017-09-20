@@ -1,6 +1,12 @@
 package fi.otavanopisto.pyramus.views.applications;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
+import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 
@@ -28,6 +34,22 @@ public class ApplicationUtils {
       return "Hylätty";
     }
     return null;
+  }
+
+  public static String constructSSN(String birthday, String ssnEnd) {
+    try {
+      StringBuffer ssn = new StringBuffer();
+      Date d = new SimpleDateFormat("d.M.yyyy").parse(birthday);
+      ssn.append(new SimpleDateFormat("ddMMyy").format(d));
+      Calendar calendar = new GregorianCalendar();
+      calendar.setTime(d);
+      ssn.append(calendar.get(Calendar.YEAR) >= 2000 ? 'A' : '-');
+      ssn.append(StringUtils.upperCase(ssnEnd));
+      return ssn.toString();
+    }
+    catch (ParseException e) {
+      return null;
+    }
   }
 
   public static Date getLatest(Date...dates) {
