@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <section class="application-section application-logs">
-  <h3>Käsittelyhistoria</h3>
+  <h3 class="application-log-header">Käsittelyhistoria</h3>
   
   <div class="log-form-container">
     <form id="log-form" name="log-form">

@@ -248,6 +248,9 @@
               $('#edit-info-email').text($('#field-email').val());
               navigateTo('.section-done');
             }
+            else if (response.redirectURL) {
+              window.location.href = response.redirectURL;
+            }
             else {
               $('.notification-queue').notificationQueue('notification', 'info', 'Hakemus tallennettu');
             }

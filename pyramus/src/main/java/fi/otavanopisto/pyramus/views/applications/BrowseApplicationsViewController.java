@@ -7,7 +7,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 public class BrowseApplicationsViewController extends PyramusViewController {
   
   public void process(PageRequestContext pageRequestContext) {
-    pageRequestContext.setIncludeJSP("/templates/applications/browse.jsp");
+    pageRequestContext.setIncludeJSP("/templates/applications/management-browse-applications.jsp");
   }
 
   public UserRole[] getAllowedRoles() {

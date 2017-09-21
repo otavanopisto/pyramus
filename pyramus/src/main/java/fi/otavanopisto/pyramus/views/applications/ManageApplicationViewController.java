@@ -33,14 +33,31 @@ public class ManageApplicationViewController extends PyramusViewController {
         pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
+      
+      // Hakemuksen tilatiedot
 
+      pageRequestContext.getRequest().setAttribute("infoState", ApplicationUtils.applicationStateUiValue(application.getState()));
+      pageRequestContext.getRequest().setAttribute("infoApplicantEditable", application.getApplicantEditable());
+      if (application.getHandler() != null) {
+        pageRequestContext.getRequest().setAttribute("infoHandler", application.getHandler().getFullName());
+      }
+      pageRequestContext.getRequest().setAttribute("infoLastModified", ApplicationUtils.getLatest(
+          application.getLastModified(),
+          application.getApplicantLastModified(),
+          application.getCreated()));
+      
+      pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());      
       pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());
+      
+      // Editointinäkymä
+
+      pageRequestContext.getRequest().setAttribute("mode", "edit");
       pageRequestContext.getRequest().setAttribute("referenceCode", application.getReferenceCode());
       pageRequestContext.getRequest().setAttribute("preload", Boolean.TRUE);
       pageRequestContext.getRequest().setAttribute("donePage", Boolean.FALSE);
       pageRequestContext.getRequest().setAttribute("saveUrl", "/applications/saveapplication.json");
       
-      pageRequestContext.setIncludeJSP("/templates/applications/manage.jsp");
+      pageRequestContext.setIncludeJSP("/templates/applications/management-edit-application.jsp");
     }
     catch (IOException e) {
       logger.log(Level.SEVERE, "Unable to serve error response", e);

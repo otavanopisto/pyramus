@@ -24,6 +24,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
@@ -153,6 +154,14 @@ public class Application implements ArchivableEntity {
     this.applicantEditable = applicantEditable;
   }
 
+  public StaffMember getHandler() {
+    return handler;
+  }
+
+  public void setHandler(StaffMember handler) {
+    this.handler = handler;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Application")
   @TableGenerator(name="Application", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -223,6 +232,10 @@ public class Application implements ArchivableEntity {
   @Enumerated (EnumType.STRING)
   @Field
   private ApplicationState state;
+
+  @ManyToOne  
+  @JoinColumn(name="handler")
+  private StaffMember handler;
 
   @NotNull
   @Column (nullable = false)

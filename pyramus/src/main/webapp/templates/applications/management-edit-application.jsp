@@ -8,8 +8,6 @@
 <html>
   <head>
     <meta charset="UTF-8"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/scripts/parsley/parsley.css"/>
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/application.css"/>
@@ -22,16 +20,26 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/notificationqueue/notificationqueue.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application-management.js"></script>
 
   </head>
-  <body>
+  <body data-application-entity-id="${applicationEntityId}" data-application-id="${applicationId}">
+    <input id="saveUrl" name="saveUrl" type="hidden"/>
     <div class="notification-queue">
       <div class="notification-queue-items">
       </div>
     </div>
-    <main>
-      <header class="application-logo-header"></header>
-      <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
+    <main class="application-management">
+      <jsp:include page="/templates/applications/management-fragment-header.jsp"></jsp:include>
+      <section class="application-wrapper">
+        <section class="application-section application-data">
+          <h3>Hakemuksen muokkaus</h3>
+          <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
+        </section>
+        <jsp:include page="/templates/applications/management-fragment-meta.jsp"></jsp:include>
+        <jsp:include page="/templates/applications/management-fragment-log.jsp"></jsp:include>
+      </section>
     </main>
   </body>
 </html>
+
