@@ -24,6 +24,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
@@ -153,11 +154,11 @@ public class Application implements ArchivableEntity {
     this.applicantEditable = applicantEditable;
   }
 
-  public User getHandler() {
+  public StaffMember getHandler() {
     return handler;
   }
 
-  public void setHandler(User handler) {
+  public void setHandler(StaffMember handler) {
     this.handler = handler;
   }
 
@@ -234,7 +235,7 @@ public class Application implements ArchivableEntity {
 
   @ManyToOne  
   @JoinColumn(name="handler")
-  private User handler;
+  private StaffMember handler;
 
   @NotNull
   @Column (nullable = false)

@@ -2,6 +2,6 @@
 <update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
   
   <sql>alter table Application add column handler bigint;</sql>
-  <sql>alter table Application add constraint FKh702ng4uykbey7ae1soxpyjgw foreign key (handler) references User (id);</sql>
+  <sql>alter table Application add constraint FKh702ng4uykbey7ae1soxpyjgw foreign key (handler) references StaffMember (id);</sql>
 
 </update>
