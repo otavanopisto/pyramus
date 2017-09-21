@@ -42,7 +42,8 @@ public class ListExistingPersonsJSONRequestController extends JSONRequestControl
       
       JSONObject applicationData = JSONObject.fromObject(application.getFormData());      
       
-      String ssn = ApplicationUtils.constructSSN(applicationData.getString("field-birthday"), applicationData.getString("field-ssn-end"));
+      boolean hasSsn = applicationData.getString("field-ssn-end") != null;
+      String ssn = hasSsn ? ApplicationUtils.constructSSN(applicationData.getString("field-birthday"), applicationData.getString("field-ssn-end")) : null;
       String emailAddress = StringUtils.lowerCase(StringUtils.trim(applicationData.getString("field-email")));
   
       EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
@@ -68,19 +69,21 @@ public class ListExistingPersonsJSONRequestController extends JSONRequestControl
       
       // Persons with SSN
       
-      List<Person> persons = personDAO.listBySSNUppercase(ssn);
-      for (Person person : persons) {
-        existingPersons.put(person.getId(), person);
-      }
-      
-      // Persons with SSN ("wrong" delimiter)
-      
-      char[] ssnChars = ssn.toCharArray();
-      ssnChars[6] = ssnChars[6] == 'A' ? '-' : 'A';
-      ssn = ssnChars.toString();
-      persons = personDAO.listBySSNUppercase(ssn);
-      for (Person person : persons) {
-        existingPersons.put(person.getId(), person);
+      if (hasSsn) {
+        List<Person> persons = personDAO.listBySSNUppercase(ssn);
+        for (Person person : persons) {
+          existingPersons.put(person.getId(), person);
+        }
+        
+        // Persons with SSN ("wrong" delimiter)
+        
+        char[] ssnChars = ssn.toCharArray();
+        ssnChars[6] = ssnChars[6] == 'A' ? '-' : 'A';
+        ssn = ssnChars.toString();
+        persons = personDAO.listBySSNUppercase(ssn);
+        for (Person person : persons) {
+          existingPersons.put(person.getId(), person);
+        }
       }
       
       List<Map<String, Object>> results = new ArrayList<>();
