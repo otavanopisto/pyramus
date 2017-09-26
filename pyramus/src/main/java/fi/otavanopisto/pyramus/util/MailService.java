@@ -55,7 +55,18 @@ public class MailService {
       Properties props = new Properties();
 
       InitialContext initialContext = new InitialContext(props);
-      Session mailSession = (Session) initialContext.lookup(jndiName);
+      Session mailSession = null;
+      try {
+        mailSession = (Session) initialContext.lookup(jndiName);
+      }
+      catch (Exception e) {
+        logger.log(Level.SEVERE, String.format("Unable to lookup %s", jndiName), e);
+        return;
+      }
+      if (mailSession == null) {
+        logger.severe(String.format("Null lookup for %s", jndiName));
+        return;
+      }
 
       MimeMessage message = new MimeMessage(mailSession);
 
