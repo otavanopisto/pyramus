@@ -31,7 +31,8 @@ public class MailService {
   @Inject
   private Event<MailEvent> mailEvent;
 
-  private static final Logger logger = Logger.getLogger(MailService.class.getName());
+  @Inject
+  private Logger logger;
 
   public void sendMail(String jndiName, String mimeType, String from, List<String> to, List<String> cc, List<String> bcc, String subject,
       String content, List<MailAttachment> attachments) {
