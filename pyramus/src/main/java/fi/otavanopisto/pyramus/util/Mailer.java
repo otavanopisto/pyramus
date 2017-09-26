@@ -5,14 +5,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.PersistenceException;
 
 import org.apache.commons.lang3.StringUtils;
 
-@ApplicationScoped
 public class Mailer {
 
   public static final String PLAINTEXT = "text/plain; charset=UTF-8";
