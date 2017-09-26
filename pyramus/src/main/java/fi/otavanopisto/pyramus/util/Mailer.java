@@ -21,15 +21,19 @@ public class Mailer {
   private static final Logger logger = Logger.getLogger(Mailer.class.getName());
   
   public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content) {
-    sendMail(jndiName, mimeType, from, Collections.singletonList(to), Collections.emptyList(), subject, content, Collections.emptyList());
+    sendMail(jndiName, mimeType, from, toList(to), Collections.emptyList(), subject, content, Collections.emptyList());
+  }
+
+  public static void sendMail(String jndiName, String mimeType, String from, String to, String cc, String subject, String content) {
+    sendMail(jndiName, mimeType, from, toList(to), toList(cc), subject, content, Collections.emptyList());
   }
 
   public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, MailAttachment mailAttachment) {
-    sendMail(jndiName, mimeType, from, Collections.singletonList(to), Collections.emptyList(), subject, content, Collections.singletonList(mailAttachment));
+    sendMail(jndiName, mimeType, from, toList(to), Collections.emptyList(), subject, content, Collections.singletonList(mailAttachment));
   }
 
   public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, List<MailAttachment> mailAttachments) {
-    sendMail(jndiName, mimeType, from, Collections.singletonList(to), Collections.emptyList(), subject, content, mailAttachments);
+    sendMail(jndiName, mimeType, from, toList(to), Collections.emptyList(), subject, content, mailAttachments);
   }
 
   public static void sendMail(String jndiName, String mimeType, String from, List<String> to, String subject, String content) {
@@ -43,14 +47,14 @@ public class Mailer {
   public static void sendMail(String jndiName, String mimeType, String from, List<String> to, List<String> cc, String subject, String content) {
     sendMail(jndiName, mimeType, from, to, cc, subject, content, Collections.emptyList());
   }
-
+  
   public static void sendMail(String jndiName, String mimeType, String from, List<String> to, List<String> cc, String subject, String content, List<MailAttachment> mailAttachments) {
     MailService mailService = (MailService) findByClass(MailService.class);
     if (mailService == null) {
       logger.log(Level.SEVERE, "MailService not bound");
       return;
     }
-    mailService.sendMail(jndiName, mimeType, from, to,  cc,  Collections.emptyList(), subject, content, mailAttachments);
+    mailService.sendMail(jndiName, mimeType, from, to, cc, Collections.emptyList(), subject, content, mailAttachments);
   }
 
   private static String getAppName() throws NamingException {
@@ -74,6 +78,10 @@ public class Mailer {
     } catch (NamingException e) {
       throw new PersistenceException(e);
     }
+  }
+
+  private static List<String> toList(String s) {
+    return s == null ? Collections.emptyList() : Collections.singletonList(s);
   }
 
 }

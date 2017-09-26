@@ -70,7 +70,7 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Context
   private UriInfo uri;
-
+  
   @Inject
   private SchoolDAO schoolDAO;
 
@@ -397,7 +397,6 @@ public class ApplicationRESTService extends AbstractRESTService {
             Boolean.TRUE,
             ApplicationState.PENDING);
         logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
-        // TODO Send confirmation mail
       }
       else {
         if (!StringUtils.equals(application.getLastName(), lastName)) {

@@ -36,6 +36,25 @@ public class ApplicationUtils {
     return null;
   }
 
+  public static String applicationLineUiValue(String value) {
+    switch (value) {
+    case "aineopiskelu":
+      return "Aineopiskelu";
+    case "nettilukio":
+      return "Nettilukio";
+    case "nettipk":
+      return "Nettiperuskoulu";
+    case "aikuislukio":
+      return "Aikuislukio";
+    case "bandilinja":
+      return "Bändilinja";
+    case "mk":
+      return "Maahanmuuttajakoulutukset";
+    default:
+      return null;
+    }
+  }
+
   public static String constructSSN(String birthday, String ssnEnd) {
     try {
       StringBuffer ssn = new StringBuffer();

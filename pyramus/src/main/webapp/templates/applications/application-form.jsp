@@ -656,7 +656,7 @@
     <p>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen:</p>
     <p class="important">Sukunimi <span class="name" id="edit-info-last-name"></span></p>
     <p class="important">Hakemustunnus <span class="code" id="edit-info-reference-code"></span></p>
-    <p>Nämä ohjeet on lähetetty myös antamaasi sähköpostiosoitteeseen <span class="email" id="edit-info-email"></span></p>
+    <p>Uusien hakemuksien tapauksessa nämä ohjeet on lähetetty myös antamaasi sähköpostiosoitteeseen <span class="email" id="edit-info-email"></span></p>
   </section>
 
   <nav class="form-navigation" style="display:none;">

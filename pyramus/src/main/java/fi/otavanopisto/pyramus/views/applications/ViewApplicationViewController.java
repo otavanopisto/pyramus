@@ -60,7 +60,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       sections.put("Perustiedot", fields);
       
       fields.put("Jätetty", new SimpleDateFormat("d.M.yyyy H:mm").format(application.getCreated()));
-      fields.put("Linja", lineUiValue(getFormValue(formData, "field-line")));
+      fields.put("Linja", ApplicationUtils.applicationLineUiValue(getFormValue(formData, "field-line")));
       fields.put("Nimi", String.format("%s, %s", getFormValue(formData, "field-last-name"), getFormValue(formData, "field-first-names")));
       if (StringUtils.isNotBlank(getFormValue(formData, "field-nickname"))) {
         fields.put("Kutsumanimi", getFormValue(formData, "field-nickname"));
@@ -181,7 +181,6 @@ public class ViewApplicationViewController extends PyramusViewController {
           application.getApplicantLastModified(),
           application.getCreated()));
       
-      pageRequestContext.getRequest().setAttribute("mode", "view");
       pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());      
       pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());      
       pageRequestContext.getRequest().setAttribute("sections", sections);      
@@ -307,25 +306,6 @@ public class ViewApplicationViewController extends PyramusViewController {
       return "Eläkeläinen";
     case "muu":
       return "Muu";
-    default:
-      return null;
-    }
-  }
-
-  private String lineUiValue(String value) {
-    switch (value) {
-    case "aineopiskelu":
-      return "Aineopiskelu";
-    case "nettilukio":
-      return "Nettilukio";
-    case "nettipk":
-      return "Nettiperuskoulu";
-    case "aikuislukio":
-      return "Aikuislukio";
-    case "bandilinja":
-      return "Bändilinja";
-    case "mk":
-      return "Maahanmuuttajakoulutukset";
     default:
       return null;
     }
