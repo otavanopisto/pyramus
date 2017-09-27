@@ -71,7 +71,7 @@
       $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
       $('.section-internetix-school').attr('data-skip', option.val() != 'aineopiskelu');
       // section toggle for existing applications
-      var existingApplication = $('#field-application-id').attr('data-preload');
+      var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
       if (existingApplication) {
         $('.section-attachments').toggle(hasAttachmentSupport);
         $('.section-internetix-school').toggle(line == 'aineopiskelu');
@@ -99,7 +99,7 @@
       else {
         $('.section-underage').attr('data-skip', 'true');
       }
-      var existingApplication = $('#field-application-id').attr('data-preload');
+      var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
       if (existingApplication) {
         $('.section-underage').toggle($('.section-underage').attr('data-skip') != 'true');
       }
@@ -226,7 +226,7 @@
     $('.button-save-application').click(function() {
       // TODO Disable UI, show saving message 
       var valid = false;
-      var existingApplication = $('#field-application-id').attr('data-preload');
+      var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
       if (existingApplication) {
         valid = $('.application-form').parsley().validate();
       }
@@ -288,7 +288,7 @@
 
     // Previously stored data
     
-    var existingApplication = $('#field-application-id').attr('data-preload');
+    var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
     if (existingApplication) {
       $('#application-page-indicator').hide();
       $('#button-previous-section').hide();

@@ -51,7 +51,6 @@ public class ManageApplicationViewController extends PyramusViewController {
       
       // Editointinäkymä
 
-      pageRequestContext.getRequest().setAttribute("mode", "edit");
       pageRequestContext.getRequest().setAttribute("referenceCode", application.getReferenceCode());
       pageRequestContext.getRequest().setAttribute("preload", Boolean.TRUE);
       pageRequestContext.getRequest().setAttribute("donePage", Boolean.FALSE);
