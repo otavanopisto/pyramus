@@ -2,6 +2,8 @@ package fi.otavanopisto.pyramus.views.applications;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,18 +29,29 @@ public class EditApplicationViewController extends PyramusViewController {
   private static final Logger logger = Logger.getLogger(EditApplicationViewController.class.getName());
   
   public void process(PageRequestContext pageRequestContext) {
-    
     String applicationId = pageRequestContext.getRequest().getParameter("applicationId");
-    String referer = pageRequestContext.getRequest().getHeader("Referer");
-    String requestUrl = pageRequestContext.getRequest().getRequestURL().toString();
     try {
       
       // Ensure applicationId has been provided by this page
       
-      if (applicationId != null && !StringUtils.equals(referer, requestUrl)) {
-        logger.warning(String.format("Refused application edit. Application id %s from referer %s", applicationId, referer));
-        pageRequestContext.getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
-        return;
+      if (applicationId != null) {
+        boolean validEntry = false;
+        String referer = pageRequestContext.getRequest().getHeader("Referer");
+        if (referer != null) {
+          try {
+            URI requestUri = new URI(pageRequestContext.getRequest().getRequestURL().toString());
+            URI refererUri = new URI(pageRequestContext.getRequest().getHeader("Referer"));
+            validEntry = StringUtils.equals(requestUri.getHost(), refererUri.getHost()) &&
+                StringUtils.equals(requestUri.getPath(), refererUri.getPath());
+          }
+          catch (URISyntaxException e) {
+          }
+        }
+        if (!validEntry) {
+          logger.warning(String.format("Refused application edit. Application id %s from referer %s", applicationId, referer));
+          pageRequestContext.getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
+          return;
+        }
       }
 
       // Ensure attachment storage path has been properly set 
