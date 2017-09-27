@@ -77,6 +77,18 @@ main.application-management {
   }
 }
 
+.application-being-handled-already {
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: #d1ffea; 
+  font-size: 20px;
+  line-height: 1.5em;
+}
+
+ .application-being-handled-already-contact-info {
+   font-weight: 400;
+ }
+
 h3 {
   margin:10px 0;
   padding: 0;
