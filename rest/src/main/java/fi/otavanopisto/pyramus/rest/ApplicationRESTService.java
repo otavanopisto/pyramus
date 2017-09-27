@@ -2,6 +2,8 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -529,9 +531,14 @@ public class ApplicationRESTService extends AbstractRESTService {
   }
 
   private boolean isApplicationCall(String referer) {
-    String s = uri.getBaseUri().toString();
-    s = s.substring(0, s.length() - 2); // JaxRsActivator path
-    return StringUtils.startsWith(referer, s);
+    try {
+      URI refererUri = new URI(referer);
+      URI baseUri = uri.getBaseUri();
+      return StringUtils.equals(refererUri.getHost(), baseUri.getHost());
+    }
+    catch (URISyntaxException e) {
+      return false;
+    }
   }
 
   private byte[] getFile(MultipartFormDataInput multipart, String field) {
