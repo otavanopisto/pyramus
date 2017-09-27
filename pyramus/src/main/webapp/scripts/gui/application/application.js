@@ -100,7 +100,7 @@
         $('.section-underage').attr('data-skip', 'true');
       }
       var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
-      if (existingApplication == 'true') {
+      if (existingApplication) {
         $('.section-underage').toggle($('.section-underage').attr('data-skip') != 'true');
       }
       updateProgress();
