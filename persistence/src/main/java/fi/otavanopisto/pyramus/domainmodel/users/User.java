@@ -35,6 +35,7 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
+import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.security.ContextReference;
@@ -63,6 +64,15 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
 
   public void setLastName(String lastName) {
     this.lastName = lastName;
+  }
+
+  @Transient  
+  public Email getPrimaryEmail() {
+    for (Email email : getContactInfo().getEmails()) {
+      if (email.getDefaultAddress())
+        return email;
+    }
+    return null;
   }
   
   @Transient

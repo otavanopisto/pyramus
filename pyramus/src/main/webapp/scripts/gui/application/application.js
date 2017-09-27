@@ -275,7 +275,7 @@
             window.location.replace(window.location.href + '?applicationId=' + response.applicationId);
           },
           error: function(err) {
-            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe hakemusta ladattaessa: ' + err.statusText);
+            window.location.replace(window.location.href + '?applicationId=404');
           }
         });
       }

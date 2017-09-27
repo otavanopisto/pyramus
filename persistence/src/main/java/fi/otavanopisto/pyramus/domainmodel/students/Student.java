@@ -25,7 +25,6 @@ import org.hibernate.search.annotations.Store;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
-import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
@@ -50,15 +49,6 @@ public class Student extends User implements ArchivableEntity {
     return getFirstName() + ' ' + getLastName();
   }
   
-  @Transient  
-  public Email getPrimaryEmail() {
-    for (Email email : getContactInfo().getEmails()) {
-      if (email.getDefaultAddress())
-        return email;
-    }
-    return null;
-  }
-
   /**
    * Sets additional info for this student.
    * 
