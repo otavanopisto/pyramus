@@ -8,7 +8,9 @@
 <html>
   <head>
     <meta charset="UTF-8"/>
-
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/scripts/parsley/parsley.css"/>
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/application.css"/>
 
@@ -31,9 +33,8 @@
       
       <c:choose>
         <c:when test="${notFound eq true}">
-          <p>Emme löytäneet hakemusta antamillasi tiedoilla.</p>
-          <p></p>
-          <p>Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</p>
+          <p class="application-info-paragraph notify">Emme löytäneet hakemusta antamillasi tiedoilla.</p>
+          <p class="application-contact-info-description">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</p>
           <p><b>Vapaan sivistystyön kurssit</b><br/>koulutussihteeri Heli Auvinen<br/>044 794 3565<br/>kurssit@otavanopisto.fi</p>
           <p><b>Monikulttuuriset koulutukset</b><br/>Anna-Maria Suora<br/>044 794 3515<br/>anna-maria.suora@otavanopisto.fi</p>
           <p><b>Nettilukio</b><br/>Miia Sivén<br/>040 129 4671<br/>miia.siven@otavanopisto.fi</p>
@@ -45,18 +46,17 @@
           <p><a href="/applications/edit.page">Takaisin edelliselle sivule</a></p>
         </c:when>
         <c:when test="${locked eq true}">
-          <p class="application-being-handled-already">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty.</p>
+          <p class="application-info-paragraph in-progress">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty.</p>
           <c:choose>
             <c:when test="${!empty handlerName && !empty handlerEmail}">
               <p></p>
-              <p class="application-being-handled-already-contact-info">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä hakemuksesi käsittelijään:</p>
+              <p class="application-contact-info-description">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä hakemuksesi käsittelijään:</p>
               <p>${handlerName}<br/>${handlerEmail}</p>
               <p></p>
               <p><a href="/applications/edit.page">Takaisin edelliselle sivule</a></p>
             </c:when>
             <c:otherwise>
-              <p></p>
-              <p class="application-being-handled-already-contact-info">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</p>
+              <p class="application-contact-info-description">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</p>
               <p><b>Vapaan sivistystyön kurssit</b><br/>koulutussihteeri Heli Auvinen<br/>044 794 3565<br/>kurssit@otavanopisto.fi</p>
               <p><b>Monikulttuuriset koulutukset</b><br/>Anna-Maria Suora<br/>044 794 3515<br/>anna-maria.suora@otavanopisto.fi</p>
               <p><b>Nettilukio</b><br/>Miia Sivén<br/>040 129 4671<br/>miia.siven@otavanopisto.fi</p>

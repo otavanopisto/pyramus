@@ -77,22 +77,29 @@ main.application-management {
   }
 }
 
-.application-being-handled-already {
+.application-info-paragraph {
   padding: 6px 12px;
   border-radius: 10px;
-  background: #d1ffea; 
   font-size: 16px;
   line-height: 1.5em;
 }
 
 @media screen and (min-width: 600px) {
   
-  .application-being-handled-already {
+  .application-info-paragraph {
     font-size: 20px;
   }
 }
 
- .application-being-handled-already-contact-info {
+.application-info-paragraph.in-progress {
+  background: #dffbfb; 
+}
+
+.application-info-paragraph.notify {
+  background: #ffd8c1; 
+}
+
+ .application-contact-info-description {
    font-weight: 400;
  }
 
