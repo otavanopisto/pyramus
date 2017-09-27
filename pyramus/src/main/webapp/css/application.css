@@ -81,8 +81,15 @@ main.application-management {
   padding: 6px 12px;
   border-radius: 10px;
   background: #d1ffea; 
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.5em;
+}
+
+@media screen and (min-width: 600px) {
+  
+  .application-being-handled-already {
+    font-size: 20px;
+  }
 }
 
  .application-being-handled-already-contact-info {
