@@ -47,6 +47,7 @@
     $('select[data-source]').each(function() {
       var field = this;
       $.ajax({
+        async: false,
         url: $(field).attr('data-source'),
         type: "GET",
         contentType: "application/json; charset=utf-8",

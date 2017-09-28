@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <section class="application-section application-meta">      
-  <div class="user-exists-container">
+  <div class="user-exists-container" style="display:none;">
     <div class="user-exists-description-title">Hakija löytyy jo pyramuksesta.</div> 
     <div class="user-exists-description">
       <div class="user-exists-description-piggy"></div>
