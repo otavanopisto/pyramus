@@ -26,11 +26,11 @@
     </div>
 
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
-      <p>Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.</p>
+      <p>Nettilukiossa opiskelet koko aikuislukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Nettilukiossa voit myös tehdä loppuun aiemmin kesken jääneet lukio-opinnot. Nettilukio on tarkoitettu yli 18-vuotiaille opiskelijoille. Toisessa oppilaitoksessa opiskelevat ja yksittäisiä lukiokursseja suorittavat voivat ilmoittautua aineopiskelijaksi.</p>
     </div>
     
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
-      <p>Nettiperuskoulun esittelyteksti</p>
+      <p>Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.</p>
     </div>
     
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio">
@@ -38,7 +38,7 @@
     </div>
     
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="bandilinja">
-      <p>Bändilinjan esittelyteksti</p>
+      <p><!-- TODO Bändilinjan esittelyteksti --></p>
     </div>
     
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="mk">
