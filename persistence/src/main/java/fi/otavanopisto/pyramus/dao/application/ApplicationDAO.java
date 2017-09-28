@@ -184,8 +184,8 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     criteria.select(root);
     criteria.where(
       criteriaBuilder.and(
-        criteriaBuilder.equal(root.get(Application_.lastName), lastName),
-        criteriaBuilder.equal(root.get(Application_.referenceCode), referenceCode)
+        criteriaBuilder.equal(criteriaBuilder.lower(root.get(Application_.lastName)), lastName.toLowerCase()),
+        criteriaBuilder.equal(criteriaBuilder.upper(root.get(Application_.referenceCode)), referenceCode.toUpperCase())
       )
     );
     

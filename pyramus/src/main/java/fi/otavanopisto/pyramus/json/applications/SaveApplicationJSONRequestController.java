@@ -84,7 +84,7 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
         return;
       }
       boolean referenceCodeModified = !StringUtils.equals(application.getLastName(), lastName);
-      String referenceCode = referenceCodeModified ? generateReferenceCode(lastName) : application.getReferenceCode(); 
+      String referenceCode = referenceCodeModified ? generateReferenceCode(lastName, application.getReferenceCode()) : application.getReferenceCode(); 
       application = applicationDAO.update(
           application,
           line,
@@ -124,9 +124,9 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
     return sb.toString();
   }
 
-  private String generateReferenceCode(String lastName) {
+  private String generateReferenceCode(String lastName, String initialReferenceCode) {
     ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
-    String referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
+    String referenceCode = initialReferenceCode;
     while (applicationDAO.findByLastNameAndReferenceCode(lastName, referenceCode) != null) {
       referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
     }
