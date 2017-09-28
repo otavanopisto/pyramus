@@ -104,7 +104,6 @@ public class EditApplicationViewController extends PyramusViewController {
           pageRequestContext.setIncludeJSP("/templates/applications/application-edit-gateway.jsp");
         }
         else {
-          // TODO Evaluate application state; can the data still be modified by applicant?
           pageRequestContext.getRequest().setAttribute("applicationId", applicationId);
           pageRequestContext.getRequest().setAttribute("referenceCode", application.getReferenceCode());
           pageRequestContext.getRequest().setAttribute("preload", Boolean.TRUE);
