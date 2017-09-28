@@ -2,8 +2,8 @@ package fi.otavanopisto.pyramus.koski.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
-import fi.otavanopisto.pyramus.koski.koodisto.test.KoodistoViite;
 
 public class Laajuus {
 

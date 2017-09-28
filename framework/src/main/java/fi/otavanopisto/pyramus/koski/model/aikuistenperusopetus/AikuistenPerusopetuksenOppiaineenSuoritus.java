@@ -3,9 +3,9 @@ package fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus;
 import java.util.HashSet;
 import java.util.Set;
 
+import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
-import fi.otavanopisto.pyramus.koski.koodisto.test.KoodistoViite;
 
 public class AikuistenPerusopetuksenOppiaineenSuoritus extends AikuistenPerusopetuksenOsasuoritus {
 

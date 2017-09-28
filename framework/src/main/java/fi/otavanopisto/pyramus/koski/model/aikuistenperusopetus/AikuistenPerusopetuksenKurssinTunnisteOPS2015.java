@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus;
 
+import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenKurssit2015;
-import fi.otavanopisto.pyramus.koski.koodisto.test.KoodistoViite;
 
 public class AikuistenPerusopetuksenKurssinTunnisteOPS2015 extends AikuistenPerusopetuksenKurssinTunniste {
 

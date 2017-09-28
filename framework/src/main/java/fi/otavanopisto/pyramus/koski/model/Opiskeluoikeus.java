@@ -5,8 +5,8 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
-import fi.otavanopisto.pyramus.koski.koodisto.test.KoodistoViite;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class Opiskeluoikeus {

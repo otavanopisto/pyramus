@@ -5,10 +5,10 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
-import fi.otavanopisto.pyramus.koski.koodisto.test.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

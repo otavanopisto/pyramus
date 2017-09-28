@@ -4,8 +4,8 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
-import fi.otavanopisto.pyramus.koski.koodisto.test.KoodistoViite;
 
 public class KurssinArviointiSanallinen extends KurssinArviointi {
   

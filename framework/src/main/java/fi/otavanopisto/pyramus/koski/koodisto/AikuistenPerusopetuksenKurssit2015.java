@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.koski.koodisto;
 
-import fi.otavanopisto.pyramus.koski.koodisto.test.KoodistoEnum;
+import fi.otavanopisto.pyramus.koski.KoodistoEnum;
 
 @KoodistoEnum("aikuistenperusopetuksenkurssit2015")
 public enum AikuistenPerusopetuksenKurssit2015 {

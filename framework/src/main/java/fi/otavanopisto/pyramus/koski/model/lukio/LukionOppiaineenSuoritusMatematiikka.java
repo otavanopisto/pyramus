@@ -2,9 +2,9 @@ package fi.otavanopisto.pyramus.koski.model.lukio;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
-import fi.otavanopisto.pyramus.koski.koodisto.test.KoodistoViite;
 
 public class LukionOppiaineenSuoritusMatematiikka extends LukionOppiaineenTunniste {
 

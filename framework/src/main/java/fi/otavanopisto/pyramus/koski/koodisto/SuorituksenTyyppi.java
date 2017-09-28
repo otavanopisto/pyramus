@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.koski.koodisto;
 
-import fi.otavanopisto.pyramus.koski.koodisto.test.KoodistoEnum;
+import fi.otavanopisto.pyramus.koski.KoodistoEnum;
 
 @KoodistoEnum("suorituksentyyppi")
 public enum SuorituksenTyyppi {

@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model.lukio;
 
+import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
-import fi.otavanopisto.pyramus.koski.koodisto.test.KoodistoViite;
 
 public class LukionOppiaineenSuoritusMuuValtakunnallinen extends LukionOppiaineenTunniste {
 

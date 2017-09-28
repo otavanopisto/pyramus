@@ -2,8 +2,8 @@ package fi.otavanopisto.pyramus.koski.model;
 
 import java.util.Date;
 
+import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
-import fi.otavanopisto.pyramus.koski.koodisto.test.KoodistoViite;
 
 public class OpiskeluoikeusJakso {
 
