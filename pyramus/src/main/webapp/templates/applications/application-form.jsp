@@ -253,26 +253,9 @@
 
     <h3 class="application-form-section-header">Hakemiseen tarvittavat lisätiedot</h3>
 
-    <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,aineopiskelu">
-      <label for="field-previous-studies" class="required">Aiemmat opinnot</label>
-      <select name="field-previous-studies" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
-        <option value="">-- Valitse --</option>
-        <option value="peruskoulu-kesken">Peruskoulu (kesken)</option>
-        <option value="peruskoulu">Peruskoulun päättötodistus</option>
-        <option value="kansakoulu">Kansakoulu</option>
-        <option value="lukio-kesken">Lukio (kesken)</option>
-        <option value="lukio-yo">Ylioppilastutkinto</option>
-        <option value="lukio-ei-yo">Lukion päättötodistus (ei ylioppilastutkintoa)</option>
-        <option value="perusopetus">Aikuisten perusopetus</option>
-        <option value="ammatillinen">Ammatillinen 2. aste</option>
-        <option value="korkeakoulu">Korkeakoulu</option>
-        <option value="muu">Muu</option>
-      </select>
-    </div>
-
-    <div class="field-container field-previous-studies-other dependent" data-dependent-field="field-previous-studies" data-dependent-values="muu">
-      <label for="field-previous-studies-other" class="required">Kerro tarkemmin</label>
-      <input type="text" name="field-previous-studies-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+    <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja">
+      <label for="field-previous-studies" class="required">Aiemmat opinnot (listaa myös keskeytyneet)</label>
+      <textarea name="field-previous-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
     </div>
 
     <div class="field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio">

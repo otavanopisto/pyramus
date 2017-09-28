@@ -106,7 +106,6 @@ public class ViewApplicationViewController extends PyramusViewController {
       sections.put("Hakemiseen vaadittavat lisätiedot", fields);
       
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies"))) {
-        // TODO Field will be changed into an array
         fields.put("Aiemmat opinnot", getFormValue(formData, "field-previous-studies"));
       }
       fields.put("Opiskelee toisessa oppilaitoksessa", simpleBooleanUiValue(getFormValue(formData, "field-other-school")));
