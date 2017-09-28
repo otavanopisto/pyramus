@@ -2,6 +2,8 @@ package fi.otavanopisto.pyramus.views.applications;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +18,7 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
@@ -26,18 +29,29 @@ public class EditApplicationViewController extends PyramusViewController {
   private static final Logger logger = Logger.getLogger(EditApplicationViewController.class.getName());
   
   public void process(PageRequestContext pageRequestContext) {
-    
     String applicationId = pageRequestContext.getRequest().getParameter("applicationId");
-    String referer = pageRequestContext.getRequest().getHeader("Referer");
-    String requestUrl = pageRequestContext.getRequest().getRequestURL().toString();
     try {
       
       // Ensure applicationId has been provided by this page
       
-      if (applicationId != null && !StringUtils.equals(referer, requestUrl)) {
-        logger.warning(String.format("Refused application edit. Application id %s from referer %s", applicationId, referer));
-        pageRequestContext.getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
-        return;
+      if (applicationId != null) {
+        boolean validEntry = false;
+        String referer = pageRequestContext.getRequest().getHeader("Referer");
+        if (referer != null) {
+          try {
+            URI requestUri = new URI(pageRequestContext.getRequest().getRequestURL().toString());
+            URI refererUri = new URI(pageRequestContext.getRequest().getHeader("Referer"));
+            validEntry = StringUtils.equals(requestUri.getHost(), refererUri.getHost()) &&
+                StringUtils.equals(requestUri.getPath(), refererUri.getPath());
+          }
+          catch (URISyntaxException e) {
+          }
+        }
+        if (!validEntry) {
+          logger.warning(String.format("Refused application edit. Application id %s from referer %s", applicationId, referer));
+          pageRequestContext.getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
+          return;
+        }
       }
 
       // Ensure attachment storage path has been properly set 
@@ -75,16 +89,28 @@ public class EditApplicationViewController extends PyramusViewController {
         ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
         Application application = applicationDAO.findByApplicationId(applicationId);
         if (application == null || application.getArchived()) {
-          pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
-          return;
+          pageRequestContext.getRequest().setAttribute("notFound", Boolean.TRUE);
+          pageRequestContext.setIncludeJSP("/templates/applications/application-edit-gateway.jsp");
         }
-        // TODO Evaluate application state; can the data still be modified by applicant?
-        pageRequestContext.getRequest().setAttribute("applicationId", applicationId);
-        pageRequestContext.getRequest().setAttribute("referenceCode", application.getReferenceCode());
-        pageRequestContext.getRequest().setAttribute("preload", Boolean.TRUE);
-        pageRequestContext.getRequest().setAttribute("donePage", Boolean.TRUE);
-        pageRequestContext.getRequest().setAttribute("saveUrl", "/1/applications/saveapplication");
-        pageRequestContext.setIncludeJSP("/templates/applications/application-edit.jsp");
+        else if (Boolean.FALSE.equals(application.getApplicantEditable())) {
+          pageRequestContext.getRequest().setAttribute("locked", Boolean.TRUE);
+          if (application.getHandler() != null) {
+            pageRequestContext.getRequest().setAttribute("handlerName", application.getHandler().getFullName());
+            Email email = application.getHandler().getPrimaryEmail();
+            if (email != null && email.getAddress() != null) {
+              pageRequestContext.getRequest().setAttribute("handlerEmail", email.getAddress());
+            }
+          }
+          pageRequestContext.setIncludeJSP("/templates/applications/application-edit-gateway.jsp");
+        }
+        else {
+          pageRequestContext.getRequest().setAttribute("applicationId", applicationId);
+          pageRequestContext.getRequest().setAttribute("referenceCode", application.getReferenceCode());
+          pageRequestContext.getRequest().setAttribute("preload", Boolean.TRUE);
+          pageRequestContext.getRequest().setAttribute("donePage", Boolean.TRUE);
+          pageRequestContext.getRequest().setAttribute("saveUrl", "/1/applications/saveapplication");
+          pageRequestContext.setIncludeJSP("/templates/applications/application-edit.jsp");
+        }
       }
     }
     catch (IOException e) {
