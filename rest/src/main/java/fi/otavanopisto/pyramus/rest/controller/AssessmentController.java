@@ -31,7 +31,9 @@ public class AssessmentController {
     // Create course assessment (reusing archived, if any)...
     CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
     if (courseAssessment != null) {
-      courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, date, verbalAssessment, Boolean.FALSE);
+      if (Boolean.TRUE.equals(courseAssessment.getArchived()))
+        courseAssessmentDAO.unarchive(courseAssessment);
+      courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, date, verbalAssessment);
     }
     else {
       courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, date, verbalAssessment);
@@ -46,7 +48,7 @@ public class AssessmentController {
   
   public CourseAssessment updateCourseAssessment(CourseAssessment courseAssessment, StaffMember assessingUser, Grade grade, Date assessmentDate, String verbalAssessment){
     // Update course assessment...
-    courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment, courseAssessment.getArchived());
+    courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment);
     // ...and mark respective course assessment requests as handled
     List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseAssessment.getCourseStudent());
     for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
