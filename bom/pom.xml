@@ -219,7 +219,7 @@
 			</dependency>
 
       <dependency>
-        <groupId>com.jayway.restassured</groupId>
+        <groupId>io.rest-assured</groupId>
         <artifactId>json-schema-validator</artifactId>
         <version>${rest-assured.version}</version>
       </dependency>
