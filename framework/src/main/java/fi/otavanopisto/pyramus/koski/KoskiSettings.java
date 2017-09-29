@@ -81,6 +81,14 @@ public class KoskiSettings {
       opiskeluoikeustyypit.put(studyProgrammeId, opiskeluoikeudenTyyppi);
       
       modulitunnisteet.put(studyProgrammeId, studyProgramme.getString("modulitunniste"));
+      
+      JSONObject diaariJSON = studyProgramme.getJSONObject("diaari");
+      if (diaariJSON != null) {
+        for (Object curriculumIdKey : diaariJSON.keySet()) {
+          Long curriculumId = Long.parseLong(curriculumIdKey.toString());
+          diaarinumerot.put(String.format("%d.%d", studyProgrammeId, curriculumId), diaariJSON.getString(curriculumIdKey.toString()));
+        }
+      }
     }
   }
 
@@ -112,6 +120,7 @@ public class KoskiSettings {
   private Map<Long, SuorituksenTyyppi> suoritustyypit = new HashMap<>();
   private Map<Long, OpiskeluoikeudenTyyppi> opiskeluoikeustyypit = new HashMap<>();
   private Map<Long, String> modulitunnisteet = new HashMap<>();
+  private Map<String, String> diaarinumerot = new HashMap<>();
 
   /**
    * Is this credit such that it is being reported to the system
@@ -133,5 +142,10 @@ public class KoskiSettings {
 
   public String getModuliTunniste(Long studyProgrammeId) {
     return modulitunnisteet.get(studyProgrammeId);
+  }
+  
+  public String getDiaariNumero(Long studyProgrammeId, Long curriculumId) {
+    String key = String.format("%d.%d", studyProgrammeId, curriculumId);
+    return diaarinumerot.get(key);
   }
 }

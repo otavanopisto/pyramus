@@ -16,10 +16,23 @@ public class KoskiStudentHandler {
   @Inject 
   private UserVariableDAO userVariableDAO;
 
+  @Inject
+  protected KoskiSettings settings;
+  
   protected Kuvaus kuvaus(String fiKuvaus) {
     Kuvaus kuvaus = new Kuvaus();
     kuvaus.setFi(fiKuvaus);
     return kuvaus;
+  }
+
+  protected String getDiaarinumero(Student student) {
+    Long studyProgrammeId = student.getStudyProgramme() != null ? student.getStudyProgramme().getId() : null;
+    Long curriculumId = student.getCurriculum() != null ? student.getCurriculum().getId() : null;
+    
+    if ((studyProgrammeId != null) && (curriculumId != null))
+      return settings.getDiaariNumero(studyProgrammeId, curriculumId);
+    else
+      return null;
   }
 
   protected ArviointiasteikkoYleissivistava getArvosana(Grade grade) {

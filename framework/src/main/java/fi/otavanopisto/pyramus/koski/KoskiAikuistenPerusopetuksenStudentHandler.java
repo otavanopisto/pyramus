@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -55,9 +56,6 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
   @Inject
   private Logger logger;
 
-  @Inject
-  private KoskiSettings settings;
-  
   @Inject 
   private CourseAssessmentDAO courseAssessmentDAO;
 
@@ -78,20 +76,24 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     if (studyOid != null)
       opiskeluoikeus.setOid(studyOid);
     
-    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
-    AikuistenPerusopetuksenOppimaaranSuoritus suoritus = new AikuistenPerusopetuksenOppimaaranSuoritus(
-        SuorituksenTila.KESKEN, PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
-    suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero("19/011/2015"); // TODO
-    opiskeluoikeus.addSuoritus(suoritus);
-    
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
     opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
     
+    SuorituksenTila suorituksenTila = SuorituksenTila.KESKEN;
     if (student.getStudyEndDate() != null) {
       OpiskeluoikeudenTila opintojenLopetusTila = settings.getStudentState(student);
       opiskeluoikeus.getTila().addOpiskeluoikeusJakso(
           new OpiskeluoikeusJakso(student.getStudyEndDate(), opintojenLopetusTila));
+
+      suorituksenTila  = ArrayUtils.contains(OpiskeluoikeudenTila.GRADUATED_STATES, opintojenLopetusTila) ? 
+          SuorituksenTila.VALMIS : SuorituksenTila.KESKEYTYNYT;
     }
+    
+    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
+    AikuistenPerusopetuksenOppimaaranSuoritus suoritus = new AikuistenPerusopetuksenOppimaaranSuoritus(
+        suorituksenTila, PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
+    suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
+    opiskeluoikeus.addSuoritus(suoritus);
     
     Oppija oppija = new Oppija();
     oppija.setHenkilo(henkilo);
