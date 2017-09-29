@@ -136,7 +136,7 @@ public class GradingService extends PyramusService {
     Grade grade = gradeDAO.findById(gradeId);
     CourseAssessment courseAssessment = courseAssessmentDAO.findById(courseAssessmentId);
     
-    courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, date, verbalAssessment, courseAssessment.getArchived());
+    courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, date, verbalAssessment);
     
     validateEntity(courseAssessment);
     
