@@ -2,6 +2,8 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
@@ -46,6 +49,7 @@ import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -57,7 +61,7 @@ import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
-@Path("/application")
+@Path("/applications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateful
@@ -68,7 +72,7 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Context
   private UriInfo uri;
-
+  
   @Inject
   private SchoolDAO schoolDAO;
 
@@ -106,6 +110,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       // Ensure file content exists and sanitize both its name and the folder where it will be stored 
       
       byte[] fileData = getFile(multipart, "file");
+      
       String name = sanitizeFilename(getString(multipart, "name"));
       String attachmentFolder = sanitizeFilename(getString(multipart, "applicationId"));
       if (fileData == null || fileData.length == 0 || StringUtils.isEmpty(name) || StringUtils.isEmpty(attachmentFolder)) {
@@ -119,6 +124,14 @@ public class ApplicationRESTService extends AbstractRESTService {
       if (!folder.exists()) {
         folder.mkdir();
       }
+
+      // Enforce maximum attachment size
+      
+      long size = fileData.length + FileUtils.sizeOfDirectory(folder);
+      if (size > 10485760) {
+        logger.log(Level.WARNING,"Refusing attachment due to total attachment size over 10MB");
+        return Response.status(Status.BAD_REQUEST).build();
+      }
       
       // Create file, unless a file with the same name already exists
       
@@ -131,12 +144,49 @@ public class ApplicationRESTService extends AbstractRESTService {
       
       FileUtils.writeByteArrayToFile(file, fileData);
       logger.log(Level.INFO, String.format("Stored application attachment %s", file.getAbsolutePath()));
+      
+      ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
+      applicationAttachmentDAO.create(attachmentFolder, name, fileData.length);
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Failed to store application attachment", e);
       return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
     return Response.noContent().build();
+  }
+
+  @Path("/listattachments/{ID}")
+  @GET
+  @Unsecure
+  public Response listAttachments(@PathParam("ID") String applicationId, @HeaderParam("Referer") String referer) {
+
+    // Allow calls from within the application only
+    
+    if (!isApplicationCall(referer)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    // Ensure attachment storage has been defined
+    
+    String attachmentsFolder = getSettingValue("application.storagePath");
+    if (StringUtils.isEmpty(attachmentsFolder)) {
+      logger.log(Level.SEVERE, "application.storagePath not set");
+      return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
+    
+    ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
+    List<ApplicationAttachment> applicationAttachments = applicationAttachmentDAO.listByApplicationId(applicationId);
+
+    List<Map<String, Object>> results = new ArrayList<>();
+    for (ApplicationAttachment applicationAttachment : applicationAttachments) {
+      Map<String, Object> attachmentInfo = new HashMap<>();
+      attachmentInfo.put("id", applicationAttachment.getId());
+      attachmentInfo.put("applicationId", applicationAttachment.getApplicationId());
+      attachmentInfo.put("name", applicationAttachment.getName());
+      attachmentInfo.put("size", applicationAttachment.getSize());
+      results.add(attachmentInfo);
+    }
+    return Response.ok(results).build();
   }
 
   @Path("/getattachment/{ID}")
@@ -221,7 +271,10 @@ public class ApplicationRESTService extends AbstractRESTService {
     try {
       java.nio.file.Path path = Paths.get(attachmentsFolder, applicationId, attachment);
       File file = path.toFile();
-      if (file.exists() && file.delete()) {
+      ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
+      ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, attachment);
+      if (applicationAttachment != null && file.exists() && file.delete()) {
+        applicationAttachmentDAO.delete(applicationAttachment);
         logger.log(Level.INFO, String.format("Removed application attachment %s", file.getAbsolutePath()));
         return Response.noContent().build();
       }
@@ -292,7 +345,7 @@ public class ApplicationRESTService extends AbstractRESTService {
   @Path("/saveapplication")
   @POST
   @Unsecure
-  public Response createApplication(Object object, @HeaderParam("Referer") String referer) {
+  public Response createOrUpdateApplication(Object object, @HeaderParam("Referer") String referer) {
     if (!isApplicationCall(referer)) {
       return Response.status(Status.FORBIDDEN).build();
     }
@@ -304,27 +357,27 @@ public class ApplicationRESTService extends AbstractRESTService {
     try {
       String applicationId = formData.getString("field-application-id");
       if (applicationId == null) {
-        logger.log(Level.WARNING, "Refusing application creation due to missing applicationId");
+        logger.log(Level.WARNING, "Refusing application due to missing applicationId");
         return Response.status(Status.BAD_REQUEST).build();
       }
       String line = formData.getString("field-line");
       if (line == null) {
-        logger.log(Level.WARNING, "Refusing application creation due to missing line");
+        logger.log(Level.WARNING, "Refusing application due to missing line");
         return Response.status(Status.BAD_REQUEST).build();
       }
       String firstName = formData.getString("field-first-names");
       if (firstName == null) {
-        logger.log(Level.WARNING, "Refusing application creation due to missing first name");
+        logger.log(Level.WARNING, "Refusing application due to missing first name");
         return Response.status(Status.BAD_REQUEST).build();
       }
       String lastName = formData.getString("field-last-name");
       if (lastName == null) {
-        logger.log(Level.WARNING, "Refusing application creation due to missing last name");
+        logger.log(Level.WARNING, "Refusing application due to missing last name");
         return Response.status(Status.BAD_REQUEST).build();
       }
       String email = formData.getString("field-email");
       if (email == null) {
-        logger.log(Level.WARNING, "Refusing application creation due to missing email");
+        logger.log(Level.WARNING, "Refusing application due to missing email");
         return Response.status(Status.BAD_REQUEST).build();
       }
       
@@ -346,7 +399,6 @@ public class ApplicationRESTService extends AbstractRESTService {
             Boolean.TRUE,
             ApplicationState.PENDING);
         logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
-        // TODO Send confirmation mail
       }
       else {
         if (!StringUtils.equals(application.getLastName(), lastName)) {
@@ -366,6 +418,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             application.getState(),
             application.getApplicantEditable(),
             null);
+        logger.log(Level.INFO, String.format("Updated %s application with id %s", line, application.getApplicationId()));
       }
       
       Map<String, String> response = new HashMap<String, String>();
@@ -478,9 +531,14 @@ public class ApplicationRESTService extends AbstractRESTService {
   }
 
   private boolean isApplicationCall(String referer) {
-    String s = uri.getBaseUri().toString();
-    s = s.substring(0, s.length() - 2); // JaxRsActivator path
-    return StringUtils.startsWith(referer, s);
+    try {
+      URI refererUri = new URI(referer);
+      URI baseUri = uri.getBaseUri();
+      return StringUtils.equals(refererUri.getHost(), baseUri.getHost());
+    }
+    catch (URISyntaxException e) {
+      return false;
+    }
   }
 
   private byte[] getFile(MultipartFormDataInput multipart, String field) {

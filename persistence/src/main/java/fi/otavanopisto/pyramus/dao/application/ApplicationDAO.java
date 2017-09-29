@@ -3,6 +3,8 @@ package fi.otavanopisto.pyramus.dao.application;
 import java.util.Date;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -24,10 +26,14 @@ import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.application.Application_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.events.ApplicationCreatedEvent;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
 @Stateless
 public class ApplicationDAO extends PyramusEntityDAO<Application> {
+
+  @Inject
+  private Event<ApplicationCreatedEvent> applicationCreatedEvent;
 
   public Application create(
       String applicationId,
@@ -58,6 +64,8 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     application.setArchived(Boolean.FALSE);
    
     entityManager.persist(application);
+    
+    applicationCreatedEvent.fire(new ApplicationCreatedEvent(application.getId()));
 
     return application;
   }
@@ -109,6 +117,15 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     catch (ParseException e) {
       throw new PersistenceException(e);
     }
+  }
+  
+  public Application updateApplicantEditable(Application application, Boolean applicantEditable, User user) {
+    EntityManager entityManager = getEntityManager();
+    application.setApplicantEditable(applicantEditable);
+    application.setLastModifier(user);
+    application.setLastModified(new Date());
+    entityManager.persist(application);
+    return application;
   }
   
   public Application update(
@@ -167,8 +184,8 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     criteria.select(root);
     criteria.where(
       criteriaBuilder.and(
-        criteriaBuilder.equal(root.get(Application_.lastName), lastName),
-        criteriaBuilder.equal(root.get(Application_.referenceCode), referenceCode)
+        criteriaBuilder.equal(criteriaBuilder.lower(root.get(Application_.lastName)), lastName.toLowerCase()),
+        criteriaBuilder.equal(criteriaBuilder.upper(root.get(Application_.referenceCode)), referenceCode.toUpperCase())
       )
     );
     

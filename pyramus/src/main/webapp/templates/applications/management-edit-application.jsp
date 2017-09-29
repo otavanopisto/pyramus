@@ -18,42 +18,28 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/parsley/parsley.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/parsley/fi.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/notificationqueue/notificationqueue.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
-    
-    <style>
-    </style>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application-management.js"></script>
 
   </head>
-  <body>
-    <main>
-	    <form class="application-form">
-	    
-	      <header class="application-logo-header"></header>
-
-        <section class="form-section section-edit-info">
-        
-          <h3>Tervetuloa hakemuksen muokkaamiseen</h3>
-        
-          <div class="field-container field-last-name">
-            <label for="field-last-name">Sukunimi</label>
-            <input type="text" id="field-last-name" name="field-last-name" data-parsley-required="true">
-          </div> 
-  
-          <div class="field-container field-reference-code">
-            <label for="field-reference-code">Hakemustunnus</label>
-            <input type="text" id="field-reference-code" name="field-reference-code" maxlength="6" style="text-transform:uppercase;" data-parsley-required="true">
-          </div>
-        
-        </section> 
-
-	      <div>
-	        <button type="button" class="button-edit-application">Lähetä</button>
-	      </div>
-	 
-	    </form>
-	
+  <body data-application-entity-id="${applicationEntityId}" data-application-id="${applicationId}">
+    <input id="saveUrl" name="saveUrl" type="hidden"/>
+    <div class="notification-queue">
+      <div class="notification-queue-items">
+      </div>
+    </div>
+    <main class="application-management">
+      <jsp:include page="/templates/applications/management-fragment-header.jsp"></jsp:include>
+      <section class="application-wrapper">
+        <section class="application-section application-data">
+          <h3>Hakemuksen muokkaus</h3>
+          <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
+        </section>
+        <jsp:include page="/templates/applications/management-fragment-meta.jsp"></jsp:include>
+        <jsp:include page="/templates/applications/management-fragment-log.jsp"></jsp:include>
+      </section>
     </main>
-
   </body>
 </html>
 

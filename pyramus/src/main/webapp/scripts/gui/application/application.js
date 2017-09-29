@@ -12,10 +12,10 @@
           if (!o[this.name].push) {
             o[this.name] = [o[this.name]];
           }
-          o[this.name].push(this.value || '');
+          o[this.name].push(this.value||'');
         }
         else {
-          o[this.name] = this.value || '';
+          o[this.name] = this.value||'';
         }
       });
       return o;
@@ -27,8 +27,7 @@
       var filesSize = 0;
       var files = $(this)[0].files;
       $('#field-attachments-files').find('.application-file').each(function() {
-        var hash = $(this).find('input[name="field-attachments-file"]').val();
-        filesSize += parseInt($(this).find('input[name="field-attachments-file-' + hash + '-size"]').val());
+        filesSize += parseInt($(this).attr('data-file-size'));
       });
       for (var i = 0; i < files.length; i++) {
        filesSize += files[i].size;
@@ -48,6 +47,7 @@
     $('select[data-source]').each(function() {
       var field = this;
       $.ajax({
+        async: false,
         url: $(field).attr('data-source'),
         type: "GET",
         contentType: "application/json; charset=utf-8",
@@ -72,7 +72,7 @@
       $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
       $('.section-internetix-school').attr('data-skip', option.val() != 'aineopiskelu');
       // section toggle for existing applications
-      var existingApplication = $('#field-application-id').attr('data-preload');
+      var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
       if (existingApplication) {
         $('.section-attachments').toggle(hasAttachmentSupport);
         $('.section-internetix-school').toggle(line == 'aineopiskelu');
@@ -100,7 +100,7 @@
       else {
         $('.section-underage').attr('data-skip', 'true');
       }
-      var existingApplication = $('#field-application-id').attr('data-preload');
+      var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
       if (existingApplication) {
         $('.section-underage').toggle($('.section-underage').attr('data-skip') != 'true');
       }
@@ -227,7 +227,7 @@
     $('.button-save-application').click(function() {
       // TODO Disable UI, show saving message 
       var valid = false;
-      var existingApplication = $('#field-application-id').attr('data-preload');
+      var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
       if (existingApplication) {
         valid = $('.application-form').parsley().validate();
       }
@@ -237,18 +237,26 @@
       if (valid) {
         var data = JSON.stringify($('.application-form').serializeObject());
         $.ajax({
-          url: "/1/application/saveapplication",
+          url: $('#application-form').attr('data-save-url'),
           type: "POST",
           data: data, 
           dataType: "json",
           contentType: "application/json; charset=utf-8",
           success: function(response) {
-            $('#edit-info-last-name').text($('#field-last-name').val());
-            $('#edit-info-reference-code').text(response.referenceCode);
-            $('#edit-info-email').text($('#field-email').val());
-            navigateTo('.section-done');
+            if ($('#application-form').attr('data-done-page') == 'true') {
+              $('#edit-info-last-name').text($('#field-last-name').val());
+              $('#edit-info-reference-code').text(response.referenceCode);
+              $('#edit-info-email').text($('#field-email').val());
+              navigateTo('.section-done');
+            }
+            else if (response.redirectURL) {
+              window.location.href = response.redirectURL;
+            }
+            else {
+              $('.notification-queue').notificationQueue('notification', 'info', 'Hakemus tallennettu');
+            }
           },
-          error: function() {
+          error: function(err) {
             $('.notification-queue').notificationQueue('notification', 'error', 'Virhe tallennettaessa hakemusta: ' + err.statusText);
           }
         });
@@ -259,7 +267,7 @@
       if ($('.application-form').parsley().validate()) {
         var data = JSON.stringify($('.application-form').serializeObject());
         $.ajax({
-          url: "/1/application/getapplicationid",
+          url: "/1/applications/getapplicationid",
           type: "POST",
           data: data, 
           dataType: "json",
@@ -267,8 +275,8 @@
           success: function(response) {
             window.location.replace(window.location.href + '?applicationId=' + response.applicationId);
           },
-          error: function() {
-            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe hakemusta ladattaessa: ' + err.statusText);
+          error: function(err) {
+            window.location.replace(window.location.href + '?applicationId=404');
           }
         });
       }
@@ -281,7 +289,7 @@
 
     // Previously stored data
     
-    var existingApplication = $('#field-application-id').attr('data-preload');
+    var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
     if (existingApplication) {
       $('#application-page-indicator').hide();
       $('#button-previous-section').hide();
@@ -353,7 +361,7 @@
   function preloadApplication() {
     var applicationId = $('#field-application-id').val();
     $.ajax({
-      url: "/1/application/getapplicationdata/" + applicationId,
+      url: "/1/applications/getapplicationdata/" + applicationId,
       type: "GET",
       contentType: "application/json; charset=utf-8",
       success: function(result) {
@@ -408,31 +416,34 @@
   function preloadApplicationAttachments(result) {
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('#field-attachments-files');
-    var files = result['field-attachments-file'];
-    if (files) {
-      if (!$.isArray(files)) {
-        files = JSON.parse('[' + files + ']');
+    $.ajax({
+      url: '/1/applications/listattachments/' + applicationId,
+      type: 'GET',
+      contentType: "application/json; charset=utf-8",
+      success: function(files) {
+        for (var i = 0; i < files.length; i++) {
+          createAttachmentFormElement(files[i].name, files[i].size);
+        }
+      },
+      error: function(err) {
+        $('.notification-queue').notificationQueue('notification', 'error', 'Virhe ladattaessa liitteitä: ' + err.statusText);
       }
-      for (var i = 0; i < files.length; i++) {
-        var name = result['field-attachments-file-' + files[i] + '-name'];
-        var size = result['field-attachments-file-' + files[i] + '-size'];
-        createAttachmentFormElement(files[i], name, size);
-      }
-    }
+    });
   }
   
-  function createAttachmentFormElement(hash, name, size) {
+  function createAttachmentFormElement(name, size) {
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('#field-attachments-files');
     var fileElement = $('.application-file.template').clone();
+    fileElement.attr('data-file-size', size);
     fileElement.removeClass('template');
     fileContainer.append(fileElement);
-    fileElement.find('.application-file-link').attr('href', '/1/application/getattachment/' + applicationId + '?attachment=' + name);
+    fileElement.find('.application-file-link').attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + name);
     fileElement.find('.application-file-size').text((size / 1024 + 1).toFixed(0) + ' KB');
     fileElement.find('.application-file-link').text(name);
     fileElement.find('.application-file-delete').on('click', function() {
       $.ajax({
-        url: '/1/application/removeattachment/' + applicationId + '?attachment=' + name,
+        url: '/1/applications/removeattachment/' + applicationId + '?attachment=' + name,
         type: 'DELETE',
         success: function(data) {
           fileElement.remove();
@@ -442,22 +453,10 @@
         }
       });
     });
-    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file', 'value': hash}));
-    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-name', 'value': name}));
-    fileElement.append($('<input>').attr({type: 'hidden', name: 'field-attachments-file-' + hash + '-size', 'value': size}));
     fileElement.show();
   }
   
   function uploadAttachment(file) {
-    var hash = 0, i, chr;
-    if (file.name.length > 0) {
-      for (i = 0; i < file.name.length; i++) {
-        chr = file.name.charCodeAt(i);
-        hash = ((hash << 5) - hash) + chr;
-        hash |= 0;
-      }
-      hash = Math.abs(hash);
-    }
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('.field-attachments-files'); 
     var fileName = decodeURIComponent(file.name);
@@ -477,7 +476,7 @@
     progressElement.show();
 
     $.ajax({
-      url: '/1/application/createattachment',
+      url: '/1/applications/createattachment',
       type: 'POST',
       processData: false,
       contentType: false,
@@ -496,7 +495,7 @@
       },
       success: function(data) {
         progressElement.remove();
-        createAttachmentFormElement(hash, fileName, file.size);
+        createAttachmentFormElement(fileName, file.size);
       },
       error: function(err) {
         if (err.status == 409) {
