@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -18,13 +20,29 @@ import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit_;
+import fi.otavanopisto.pyramus.events.TransferCreditEvent;
+import fi.otavanopisto.pyramus.events.types.Created;
+import fi.otavanopisto.pyramus.events.types.Removed;
+import fi.otavanopisto.pyramus.events.types.Updated;
 
 @Stateless
 public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
 
+  @Inject
+  @Created
+  private Event<TransferCreditEvent> transferCreditCreatedEvent;
+
+  @Inject
+  @Updated
+  private Event<TransferCreditEvent> transferCreditUpdatedEvent;
+  
+  @Inject
+  @Removed
+  private Event<TransferCreditEvent> transferCreditRemovedEvent;
+  
   public TransferCredit create(String courseName, Integer courseNumber, Double courseLength, EducationalTimeUnit courseLengthUnit, 
       School school, Subject subject, CourseOptionality optionality, Student student, StaffMember assessingUser, Grade grade, 
       Date date, String verbalAssessment, Curriculum curriculum, boolean offCurriculum) {
@@ -52,6 +70,9 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
     EntityManager entityManager = getEntityManager();
     entityManager.persist(length);
     entityManager.persist(transferCredit);
+    
+    if (student != null)
+      transferCreditCreatedEvent.fire(new TransferCreditEvent(student.getId(), transferCredit.getId()));
     
     return transferCredit;
   }
@@ -123,9 +144,26 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
     transferCredit.setOffCurriculum(offCurriculum);
     entityManager.persist(transferCredit);
     
+    if (student != null)
+      transferCreditUpdatedEvent.fire(new TransferCreditEvent(student.getId(), transferCredit.getId()));
+    
     return transferCredit;
   }
 
+  public void archive(TransferCredit transferCredit) {
+    super.archive(transferCredit);
+    
+    if (transferCredit.getStudent() != null)
+      transferCreditRemovedEvent.fire(new TransferCreditEvent(transferCredit.getStudent().getId(), transferCredit.getId()));
+  }
+  
+  public void unarchive(TransferCredit transferCredit) {
+    super.unarchive(transferCredit);
+
+    if (transferCredit.getStudent() != null)
+      transferCreditRemovedEvent.fire(new TransferCreditEvent(transferCredit.getStudent().getId(), transferCredit.getId()));
+  }
+  
   public Long countByStudent(Student student) {
     EntityManager entityManager = getEntityManager(); 
     

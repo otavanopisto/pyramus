@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -16,18 +18,34 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment_;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent_;
-import fi.otavanopisto.pyramus.domainmodel.courses.Course_;
-import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment_;
+import fi.otavanopisto.pyramus.events.CourseAssessmentEvent;
+import fi.otavanopisto.pyramus.events.types.Created;
+import fi.otavanopisto.pyramus.events.types.Removed;
+import fi.otavanopisto.pyramus.events.types.Updated;
 
 @Stateless
 public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
 
+  @Inject
+  @Created
+  private Event<CourseAssessmentEvent> courseAssessmentCreatedEvent;
+
+  @Inject
+  @Updated
+  private Event<CourseAssessmentEvent> courseAssessmentUpdatedEvent;
+  
+  @Inject
+  @Removed
+  private Event<CourseAssessmentEvent> courseAssessmentRemovedEvent;
+  
   public CourseAssessment create(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment) {
     CourseAssessment courseAssessment = new CourseAssessment();
     courseAssessment.setAssessor(assessingUser);
@@ -37,7 +55,12 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     courseAssessment.setVerbalAssessment(verbalAssessment);
     courseAssessment.setArchived(Boolean.FALSE);
     
-    return persist(courseAssessment);
+    courseAssessment = persist(courseAssessment);
+    
+    if (courseAssessment.getStudent() != null)
+      courseAssessmentCreatedEvent.fire(new CourseAssessmentEvent(courseAssessment.getStudent().getId(), courseAssessment.getId()));
+    
+    return courseAssessment;
   }
   
   /**
@@ -146,20 +169,34 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
-  public CourseAssessment update(CourseAssessment assessment, StaffMember assessingUser, Grade grade, Date assessmentDate, String verbalAssessment, Boolean archived) {
-    EntityManager entityManager = getEntityManager();
-
+  public CourseAssessment update(CourseAssessment assessment, StaffMember assessingUser, Grade grade, Date assessmentDate, String verbalAssessment) {
     assessment.setAssessor(assessingUser);
     assessment.setGrade(grade);
     assessment.setDate(assessmentDate);
     assessment.setVerbalAssessment(verbalAssessment);
-    assessment.setArchived(archived);
     
-    entityManager.persist(assessment);
+    assessment = persist(assessment);
+    
+    if (assessment.getStudent() != null)
+      courseAssessmentUpdatedEvent.fire(new CourseAssessmentEvent(assessment.getStudent().getId(), assessment.getId()));
     
     return assessment;
   }
+  
+  public void archive(CourseAssessment courseAssessment) {
+    super.archive(courseAssessment);
+    
+    if (courseAssessment.getStudent() != null)
+      courseAssessmentRemovedEvent.fire(new CourseAssessmentEvent(courseAssessment.getStudent().getId(), courseAssessment.getId()));
+  }
 
+  public void unarchive(CourseAssessment courseAssessment) {
+    super.unarchive(courseAssessment);
+    
+    if (courseAssessment.getStudent() != null)
+      courseAssessmentUpdatedEvent.fire(new CourseAssessmentEvent(courseAssessment.getStudent().getId(), courseAssessment.getId()));
+  }
+  
   public Long countByStudent(Student student) {
     EntityManager entityManager = getEntityManager(); 
     

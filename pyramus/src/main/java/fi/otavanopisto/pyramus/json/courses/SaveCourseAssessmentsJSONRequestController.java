@@ -92,7 +92,7 @@ public class SaveCourseAssessmentsJSONRequestController extends JSONRequestContr
         }
 
         if (assessment != null) {
-          assessment = courseAssessmentDAO.update(assessment, assessingUser, grade, assessmentDate, verbalAssessment, assessment.getArchived());
+          assessment = courseAssessmentDAO.update(assessment, assessingUser, grade, assessmentDate, verbalAssessment);
         } else {
           assessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, assessmentDate, verbalAssessment);
         }
