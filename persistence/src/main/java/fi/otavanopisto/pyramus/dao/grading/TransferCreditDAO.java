@@ -161,7 +161,7 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
     super.unarchive(transferCredit);
 
     if (transferCredit.getStudent() != null)
-      transferCreditRemovedEvent.fire(new TransferCreditEvent(transferCredit.getStudent().getId(), transferCredit.getId()));
+      transferCreditUpdatedEvent.fire(new TransferCreditEvent(transferCredit.getStudent().getId(), transferCredit.getId()));
   }
   
   public Long countByStudent(Student student) {
