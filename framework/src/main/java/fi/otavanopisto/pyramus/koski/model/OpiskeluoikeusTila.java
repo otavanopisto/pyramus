@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OpiskeluoikeusTila {
 
@@ -9,13 +9,9 @@ public class OpiskeluoikeusTila {
     opiskeluoikeusjaksot.add(jakso);
   }
   
-  public Set<OpiskeluoikeusJakso> getOpiskeluoikeusjaksot() {
+  public List<OpiskeluoikeusJakso> getOpiskeluoikeusjaksot() {
     return opiskeluoikeusjaksot;
   }
 
-  public void setOpiskeluoikeusjaksot(Set<OpiskeluoikeusJakso> opiskeluoikeusjaksot) {
-    this.opiskeluoikeusjaksot = opiskeluoikeusjaksot;
-  }
-
-  private Set<OpiskeluoikeusJakso> opiskeluoikeusjaksot = new HashSet<>();
+  private final List<OpiskeluoikeusJakso> opiskeluoikeusjaksot = new ArrayList<>();
 }
