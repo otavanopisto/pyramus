@@ -180,6 +180,7 @@ public class ViewApplicationViewController extends PyramusViewController {
           application.getApplicantLastModified(),
           application.getCreated()));
       
+      pageRequestContext.getRequest().setAttribute("mode", "view");
       pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());      
       pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());      
       pageRequestContext.getRequest().setAttribute("sections", sections);      
