@@ -38,10 +38,6 @@ import net.sf.json.JSONObject;
 @ApplicationScoped
 public class KoskiClient {
 
-//  static String baseUrl = "http://192.168.56.101:7021/koski/api";
-//  static String auth = "kalle:kalle"; // base64: 'a2FsbGU6a2FsbGU='
-//  static String authorization = Base64.getEncoder().encodeToString(auth.getBytes());
-  
   private static final String KOSKI_STUDYPERMISSION_ID = "koski.studypermission-id";
   private static final String KOSKI_HENKILO_OID = "koski.henkilo-oid";
   
@@ -164,7 +160,7 @@ public class KoskiClient {
     }
   }
   
-  public void createStudent(Student student) {
+  public void updateStudent(Student student) {
     String personOid = personVariableDAO.findByPersonAndKey(student.getPerson(), KOSKI_HENKILO_OID);
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
     
