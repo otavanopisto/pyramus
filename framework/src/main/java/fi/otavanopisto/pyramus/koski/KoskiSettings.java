@@ -3,7 +3,9 @@ package fi.otavanopisto.pyramus.koski;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -74,6 +76,9 @@ public class KoskiSettings {
       Long studyProgrammeId = Long.parseLong(studyProgrammeKey.toString());
       JSONObject studyProgramme = studyProgrammeMappings.getJSONObject(studyProgrammeId.toString());
       
+      if (studyProgramme.getBoolean("enabled"))
+        enabledStudyProgrammes.add(studyProgrammeId);
+      
       SuorituksenTyyppi suorituksenTyyppi = SuorituksenTyyppi.valueOf(studyProgramme.getString("suorituksentyyppi"));
       suoritustyypit.put(studyProgrammeId, suorituksenTyyppi);
 
@@ -96,6 +101,10 @@ public class KoskiSettings {
     return enabled;
   }
 
+  public boolean isEnabledStudyProgramme(Long studyProgrammeId) {
+    return enabledStudyProgrammes.contains(studyProgrammeId);
+  }
+  
   public OpiskeluoikeudenTila getStudentState(Student student) {
     if (student.getStudyEndReason() != null) {
       return studentStateMap.get(student.getStudyEndReason().getId());
@@ -116,6 +125,7 @@ public class KoskiSettings {
   }
 
   private boolean enabled;
+  private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
   private Map<Long, OpiskeluoikeudenTila> studentStateMap = new HashMap<>();
   private Map<Long, SuorituksenTyyppi> suoritustyypit = new HashMap<>();
   private Map<Long, OpiskeluoikeudenTyyppi> opiskeluoikeustyypit = new HashMap<>();

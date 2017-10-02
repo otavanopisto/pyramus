@@ -13,12 +13,14 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenKurssit2015;
+import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenPaattovaiheenKurssit2017;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
@@ -41,6 +43,7 @@ import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinSuoritus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunniste;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnisteOPS2015;
+import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnistePV2017;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnistePaikallinen;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritus;
@@ -63,6 +66,8 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     OpiskeluoikeudenTyyppi opiskeluoikeudenTyyppi = settings.getOpiskeluoikeudenTyyppi(student.getStudyProgramme().getId());
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, opiskeluoikeudenTyyppi);
     List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
+
+    AikuisOpiskelijanOPS ops = resoveOPS(student);
     
     Henkilo henkilo;
     if (StringUtils.isNotBlank(personOid))
@@ -101,13 +106,28 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
-    assessmentsToModel(studentEducationType , studentSubjects, courseAssessments, suoritus);
+    assessmentsToModel(ops, studentEducationType , studentSubjects, courseAssessments, suoritus);
     
     return oppija;
   }
   
-  private void assessmentsToModel(EducationType studentEducationType, StudentSubjectSelections studentSubjects, List<CourseAssessment> courseAssessments,
-      AikuistenPerusopetuksenOppimaaranSuoritus suoritus) {
+  private AikuisOpiskelijanOPS resoveOPS(Student student) {
+    Curriculum curriculum = student.getCurriculum();
+    if (curriculum != null) {
+      switch (curriculum.getId().intValue()) {
+        case 1:
+          return AikuisOpiskelijanOPS.ops2016;
+        case 2:
+          return AikuisOpiskelijanOPS.ops2005;
+        case 3:
+          return AikuisOpiskelijanOPS.ops2018;
+      }
+    }
+    return null;
+  }
+
+  private void assessmentsToModel(AikuisOpiskelijanOPS ops, EducationType studentEducationType, StudentSubjectSelections studentSubjects, 
+      List<CourseAssessment> courseAssessments, AikuistenPerusopetuksenOppimaaranSuoritus suoritus) {
     
     Map<Subject, AikuistenPerusopetuksenOppiaineenSuoritus> map = new HashMap<>();
     
@@ -118,7 +138,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus = getSubject(studentEducationType, subject, studentSubjects, map);
 
       if (settings.isReportedCredit(ca) && oppiaineenSuoritus != null)
-        oppiaineenSuoritus.addOsasuoritus(createKurssiSuoritus(ca));
+        oppiaineenSuoritus.addOsasuoritus(createKurssiSuoritus(ops, ca));
     }
     
     map.values().forEach(lukionOppiaineenSuoritus -> suoritus.addOsasuoritus(lukionOppiaineenSuoritus));
@@ -200,7 +220,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     }
   }
 
-  protected AikuistenPerusopetuksenKurssinSuoritus createKurssiSuoritus(CourseAssessment ca) {
+  protected AikuistenPerusopetuksenKurssinSuoritus createKurssiSuoritus(AikuisOpiskelijanOPS ops, CourseAssessment ca) {
     Course course = (ca.getCourseStudent() != null) ?
         ca.getCourseStudent().getCourse() : null;
     Subject subject = (ca.getCourseStudent() != null && ca.getCourseStudent().getCourse() != null) ?
@@ -212,9 +232,12 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     KurssinArviointi arviointi = new KurssinArviointiNumeerinen(arvosana, ca.getDate()); // TODO sanallinen arviointi
     AikuistenPerusopetuksenKurssinTunniste tunniste;
     
-    if (EnumUtils.isValidEnum(AikuistenPerusopetuksenKurssit2015.class, kurssiKoodi)) {
+    if (ops == AikuisOpiskelijanOPS.ops2016 && EnumUtils.isValidEnum(AikuistenPerusopetuksenKurssit2015.class, kurssiKoodi)) {
       AikuistenPerusopetuksenKurssit2015 kurssi = AikuistenPerusopetuksenKurssit2015.valueOf(kurssiKoodi);
-      tunniste = new AikuistenPerusopetuksenKurssinTunnisteOPS2015(kurssi); // TODO vk/paikallinen
+      tunniste = new AikuistenPerusopetuksenKurssinTunnisteOPS2015(kurssi);
+    } else if (ops == AikuisOpiskelijanOPS.ops2018 && EnumUtils.isValidEnum(AikuistenPerusopetuksenPaattovaiheenKurssit2017.class, kurssiKoodi)) {
+      AikuistenPerusopetuksenPaattovaiheenKurssit2017 kurssi = AikuistenPerusopetuksenPaattovaiheenKurssit2017.valueOf(kurssiKoodi);
+      tunniste = new AikuistenPerusopetuksenKurssinTunnistePV2017(kurssi);
     } else {
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(subject.getName()));
       tunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(paikallinenKoodi);
@@ -225,4 +248,10 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     return suoritus;
   }
 
+  enum AikuisOpiskelijanOPS {
+    ops2005,
+    ops2016,
+    ops2018
+  }
+  
 }
