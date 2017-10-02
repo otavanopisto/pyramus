@@ -161,6 +161,19 @@ public class KoskiClient {
   }
   
   public void updateStudent(Student student) {
+    if (student == null) {
+      logger.log(Level.WARNING, "updateStudent called with null student.");
+      return;
+    }
+    
+    if (student.getStudyProgramme() == null) {
+      logger.log(Level.WARNING, String.format("Can not update student (%d) without studyprogramme.", student.getId()));
+      return;
+    }
+
+    if (!settings.isEnabledStudyProgramme(student.getStudyProgramme().getId()))
+      return;
+    
     String personOid = personVariableDAO.findByPersonAndKey(student.getPerson(), KOSKI_HENKILO_OID);
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
     
