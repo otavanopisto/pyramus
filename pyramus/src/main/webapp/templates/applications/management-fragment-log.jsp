@@ -31,6 +31,10 @@
       <div class="log-entry-edit log-entry-action"></div>
       <div class="log-entry-archive log-entry-action"></div>
     </div>
+  </div>
+  
+  <div id="delete-log-entry-dialog" title="Merkinnän poistaminen" style="display:none;">
+    <p>Haluatko varmasti poistaa tämän merkinnän?</p>
   </div>  
 
 </section>
