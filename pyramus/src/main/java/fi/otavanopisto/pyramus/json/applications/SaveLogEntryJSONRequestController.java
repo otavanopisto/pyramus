@@ -61,6 +61,7 @@ public class SaveLogEntryJSONRequestController extends JSONRequestController {
       requestContext.addResponseParameter("text", applicationLog.getText());
       requestContext.addResponseParameter("user", staffMember.getFullName());
       requestContext.addResponseParameter("date", applicationLog.getDate().getTime());
+      requestContext.addResponseParameter("owner", Boolean.TRUE);
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Error saving log entry", e);
