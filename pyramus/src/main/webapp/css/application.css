@@ -917,8 +917,8 @@ span.email {
 .log-entry-action {
   background-size: auto auto;
   background-size: contain;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 100%;
   position: absolute;
   cursor: pointer;
