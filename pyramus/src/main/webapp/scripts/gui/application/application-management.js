@@ -143,27 +143,73 @@
       var logElement = $('.log-entry.template').clone();
       logElement.removeClass('template');
       logElement.attr('data-applicationlog-id', entry.id);
-      logElement.find('.log-entry-text').text(entry.text);
+      logElement.attr('data-owner', entry.owner);
+      logElement.find('.log-entry-text').html(entry.type == 'HTML' ? entry.text : entry.text.replace(/\n/g,"<br/>"));
       logElement.find('.log-entry-author').text(entry.user);
       logElement.find('.log-entry-date').text(moment(entry.date).format('D.M.YYYY h:mm'));
-      logElement.find('.log-entry-archive').on('click', $.proxy(function() {
-        var id = this.attr('data-applicationlog-id');
-        $.ajax({
-          url: '/applications/archivelogentry.json',
-          type: "GET",
-          data: {
-            id: id 
-          },
-          dataType: "json",
-          contentType: "application/json; charset=utf-8",
-          success: $.proxy(function(response) {
-            this.remove();
-          }, this),
-          error: function(err) {
-            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe poistaessa merkintää: ' + err.statusText);
-          }
+      if (entry.owner === true) {
+        // Edit log entry
+        logElement.find('.log-entry-edit').on('click', function() {
+          var id = logElement.attr('data-applicationlog-id');
+          $.ajax({
+            url: '/applications/getlogentry.json',
+            type: "GET",
+            data: {
+              id: id
+            },
+            dataType: 'json',
+            success: function(entry) {
+              var editor = $('<textarea>').attr('rows', 5);
+              var saveButton = $('<button>').addClass('button-save-logentry').attr('type', 'button').text('Tallenna');
+              var cancelButton = $('<button>').addClass('button-cancel-logentry').attr('type', 'button').text('Peruuta'); 
+              var textContainer = logElement.find('.log-entry-text');
+              editor.text(entry.text);
+              textContainer.empty().append(editor);
+              textContainer.append(saveButton);
+              textContainer.append(cancelButton);
+              saveButton.on('click', function() {
+                $.ajax({
+                  url: '/applications/updatelogentry.json',
+                  type: "POST",
+                  data: {
+                    id: id,
+                    text: editor.val()
+                  },
+                  dataType: 'json',
+                  success: function(entry) {
+                    textContainer.empty().html(entry.type == 'HTML' ? entry.text : entry.text.replace(/\n/g,"<br/>"));
+                    logElement.find('.log-entry-date').text(moment(entry.date).format('D.M.YYYY h:mm'));
+                  }
+                });
+              });
+              cancelButton.on('click', function() {
+                textContainer.empty().html(entry.type == 'HTML' ? entry.text : entry.text.replace(/\n/g,"<br/>"));
+              });
+            }
+          });
         });
-      }, logElement));
+        // Remove log entry
+        logElement.find('.log-entry-archive').on('click', $.proxy(function() {
+          var id = this.attr('data-applicationlog-id');
+          $.ajax({
+            url: '/applications/archivelogentry.json',
+            type: "POST",
+            data: {
+              id: id 
+            },
+            dataType: 'json',
+            success: $.proxy(function(response) {
+              this.remove();
+            }, this),
+            error: function(err) {
+              $('.notification-queue').notificationQueue('notification', 'error', 'Virhe poistaessa merkintää: ' + err.statusText);
+            }
+          });
+        }, logElement));
+      }
+      else {
+        logElement.find('.log-entry-actions').hide();
+      }
       return logElement;
     }
     
