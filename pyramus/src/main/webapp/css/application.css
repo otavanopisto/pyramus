@@ -21,7 +21,7 @@ body {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  min-width: 300px;
+  min-width: 320px;
   margin: 0;
 }
 
@@ -256,7 +256,7 @@ select {
   font-size: 14px;
   border-radius: 3px;
   border: 1px solid #5db5c5;
-  max-width: 100%;
+  width: 100%;
   padding: 4px;
 }
 
@@ -274,6 +274,7 @@ option {
   font-weight: 300;
   font-size: 14px;
   word-wrap: break-word;
+  overflow: hidden;
 }
 
 /* FORM NAVIGATION */
@@ -623,6 +624,7 @@ span.email {
 .application-action.icon-edit {
   background-image: url(../gfx/icons/48x48/actions/edit.png);
   float: left;
+  margin-left: 0;
 }
 
 .application-action.icon-locked {
