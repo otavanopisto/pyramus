@@ -784,7 +784,7 @@ span.email {
   width: 100%;
   min-height: 100px;
   padding: 10px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 2px solid #fff;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   align-items: center;
@@ -838,7 +838,7 @@ span.email {
   width: 100%;
   min-height: 100px;
   padding: 5px 15px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 2px solid #fff;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   display: flex;
@@ -890,10 +890,12 @@ span.email {
 .log-entry {
   margin: 10px 0;
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 10px;
   background: #e9fff9;
   font-size: 13px;
   position: relative;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .log-entry-header {
@@ -915,12 +917,10 @@ span.email {
 .log-entry-action {
   background-size: auto auto;
   background-size: contain;
-  background-color: #000;
   width: 22px;
   height: 22px;
   border-radius: 100%;
   position: absolute;
-  border: 4px solid #000;
   cursor: pointer;
   box-shadow: 0 0 0 2px #fff;
   top: 6px;
@@ -928,11 +928,15 @@ span.email {
 
 .log-entry-archive {
   background-image: url('../gfx/icons/48x48/actions/close.png');
+  background-color: #b11717;
+  border: 4px solid #b11717;
   right: 10px;
 }
 
 .log-entry-edit {
   background-image: url('../gfx/icons/48x48/actions/edit.png');
+  background-color: #2dbf90;
+  border: 4px solid #2dbf90;
   right: 38px;
 }
 
