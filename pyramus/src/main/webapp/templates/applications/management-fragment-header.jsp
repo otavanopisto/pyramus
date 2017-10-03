@@ -21,6 +21,16 @@
         <div class="application-action icon-locked" id="action-application-toggle-lock"></div>
       </c:otherwise>
     </c:choose>
+    <div class="application-action icon-handling">
+      <div class="application-handling-text">Ota käsittelyyn</div>
+      <div class="application-handling-options-container">
+        <div class="application-handling-option">Tee veroilmoitus</div>
+        <div class="application-handling-option">Nouda vettä kaivosta</div>
+        <div class="application-handling-option">Pelaa spden pelejä</div>
+        <div class="application-handling-option">Ota velkaa pankista</div>
+        <div class="application-handling-option">Mene vankilaan lähtöruudun kautta</div>
+      </div>
+    </div>
     <div class="application-action icon-mail"></div>
     <div class="application-action icon-logs" id="action-application-log"></div>
   </div>
