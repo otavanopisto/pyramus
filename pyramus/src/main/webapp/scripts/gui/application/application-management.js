@@ -101,6 +101,7 @@
         success: function(response) {
           $('#log-form-text').val('');
           var logElement = createLogElement(response);
+          logElement.find('.log-entry-actions').show();
           $('.log-entries-container').prepend(logElement);
           logElement.show();
         },
