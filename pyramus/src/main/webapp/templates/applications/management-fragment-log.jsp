@@ -28,8 +28,8 @@
     </div>
     <div class="log-entry-text"></div>
     <div class="log-entry-actions">
-      <div class="log-entry-edit"></div>
-      <div class="log-entry-archive"></div>
+      <div class="log-entry-edit log-entry-action"></div>
+      <div class="log-entry-archive log-entry-action"></div>
     </div>
   </div>  
 

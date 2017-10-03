@@ -164,9 +164,8 @@
               var cancelButton = $('<button>').addClass('button-cancel-logentry').attr('type', 'button').text('Peruuta'); 
               var textContainer = logElement.find('.log-entry-text');
               editor.text(entry.text);
-              textContainer.empty().append(editor);
-              textContainer.append(saveButton);
-              textContainer.append(cancelButton);
+              textContainer.empty().append($('<div>').addClass('field-container').append(editor));
+              textContainer.append($('<div>').addClass('field-button-set').append(saveButton).append(cancelButton));
               saveButton.on('click', function() {
                 $.ajax({
                   url: '/applications/updatelogentry.json',
