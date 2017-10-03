@@ -189,19 +189,35 @@
         });
         // Remove log entry
         logElement.find('.log-entry-archive').on('click', $.proxy(function() {
+          var logElement = this;
           var id = this.attr('data-applicationlog-id');
-          $.ajax({
-            url: '/applications/archivelogentry.json',
-            type: "POST",
-            data: {
-              id: id 
-            },
-            dataType: 'json',
-            success: $.proxy(function(response) {
-              this.remove();
-            }, this),
-            error: function(err) {
-              $('.notification-queue').notificationQueue('notification', 'error', 'Virhe poistaessa merkintää: ' + err.statusText);
+          var dialog = $('#delete-log-entry-dialog');
+          $(dialog).dialog({
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            buttons: {
+              "Poista": function() {
+                $.ajax({
+                  url: '/applications/archivelogentry.json',
+                  type: "POST",
+                  data: {
+                    id: id 
+                  },
+                  dataType: 'json',
+                  success: $.proxy(function(response) {
+                    logElement.remove();
+                  }, this),
+                  error: function(err) {
+                    $('.notification-queue').notificationQueue('notification', 'error', 'Virhe poistaessa merkintää: ' + err.statusText);
+                  }
+                });
+                $(dialog).dialog("close");
+              },
+              "Peruuta": function() {
+                $(dialog).dialog("close");
+              }
             }
           });
         }, logElement));
