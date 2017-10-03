@@ -258,6 +258,7 @@ select {
   border: 1px solid #5db5c5;
   width: 100%;
   padding: 4px;
+  text-overflow: ellipsis;
 }
 
 @media screen and (min-width: 600px) {
