@@ -238,10 +238,21 @@
     
     // Actions
     
-    $('.application-action.icon-handling').on('click', function() {
-      $('.application-handling-options-container').toggle();
+    // Close handling option container when clicking document 
+    $(document).on("click", function () {
+      $('.application-handling-options-container').hide();
     });
     
+    // Prevent handling option container closing when clicking inside of it
+    $('.application-handling-options-container').on('click', function(event) {
+	  event.stopPropagation();
+	});
+    
+    $('.application-action.icon-handling').on('click', function(event) {
+      event.stopPropagation();
+      $('.application-handling-options-container').toggle();
+    });
+
   });
   
 }).call(this);
