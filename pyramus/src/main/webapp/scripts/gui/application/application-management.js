@@ -228,6 +228,12 @@
       return logElement;
     }
     
+    // Actions
+    
+    $('.application-action.icon-handling').on('click', function() {
+      $('.application-handling-options-container').toggle();
+    });
+    
   });
   
 }).call(this);
