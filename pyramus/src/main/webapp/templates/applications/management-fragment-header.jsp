@@ -22,7 +22,7 @@
       </c:otherwise>
     </c:choose>
     <div class="application-action icon-handling">
-      <div class="application-handling-text">Aloita spedeily t‰‰lt‰</div>
+      <div class="application-handling-text">Hakemuksen k‰sittely</div>
       <div class="application-handling-options-container">
         <div class="application-handling-option">Tee veroilmoitus</div>
         <div class="application-handling-option">Nouda vett‰ kaivosta</div>

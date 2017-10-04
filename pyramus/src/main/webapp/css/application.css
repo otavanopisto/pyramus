@@ -1086,6 +1086,14 @@ span.email {
   color: #fff;
 }
 
+.ui-dialog .ui-dialog-buttonset button.ui-button.remove-button {
+  background: #b11717; 
+}
+
+.ui-dialog .ui-dialog-buttonset button.ui-button.cancel-button {
+  background: #7391a7;
+}
+
 .ui-widget-overlay {
   background: #243a42 !important;
   opacity: 0.6 !important;
