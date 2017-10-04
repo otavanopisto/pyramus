@@ -729,7 +729,7 @@ span.email {
   right: 0;
   background: #4fbedb;
   color: #fff;
-  padding: 5px 10px;
+  padding: 5px;
   box-shadow: 0 5px 10px rgba(0,0,0,0.2);
 }
 
@@ -743,10 +743,16 @@ span.email {
 }
 
 .application-handling-option {
-  padding: 6px;
+  padding: 6px 12px;
   text-align: left;
   text-transform: uppercase;
   font-weight: 400;
+  border-radius: 3px;
+  transition: background 0.2s ease-in;
+}
+
+.application-handling-option:hover {
+  background: #30abcc;
 }
 
 .application-wrapper {
