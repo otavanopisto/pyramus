@@ -59,7 +59,6 @@ public class ViewApplicationViewController extends PyramusViewController {
       Map<String, String> fields = new LinkedHashMap<>();
       sections.put("Perustiedot", fields);
       
-      fields.put("Jätetty", new SimpleDateFormat("d.M.yyyy H:mm").format(application.getCreated()));
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(getFormValue(formData, "field-line")));
       fields.put("Nimi", String.format("%s, %s", getFormValue(formData, "field-last-name"), getFormValue(formData, "field-first-names")));
       if (StringUtils.isNotBlank(getFormValue(formData, "field-nickname"))) {
@@ -175,6 +174,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (application.getHandler() != null) {
         pageRequestContext.getRequest().setAttribute("infoHandler", application.getHandler().getFullName());
       }
+      pageRequestContext.getRequest().setAttribute("infoCreated", application.getCreated());
       pageRequestContext.getRequest().setAttribute("infoLastModified", ApplicationUtils.getLatest(
           application.getLastModified(),
           application.getApplicantLastModified(),

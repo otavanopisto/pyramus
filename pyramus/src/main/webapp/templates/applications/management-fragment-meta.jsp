@@ -25,6 +25,12 @@
         <span id="info-application-handler-value" class="meta-value">${infoHandler}</span>
       </div>
       <div class="meta-container">
+        <span class="meta-name">Jätetty</span>
+        <span id="info-application-created-value" class="meta-value">
+          <fmt:formatDate pattern="d.M.yyyy H:mm" value="${infoCreated}"/>
+        </span>
+      </div>
+      <div class="meta-container">
         <span class="meta-name">Muokattu viimeksi</span>
         <span id="info-application-last-modified-value" class="meta-value">
           <fmt:formatDate pattern="d.M.yyyy H:mm" value="${infoLastModified}"/>
