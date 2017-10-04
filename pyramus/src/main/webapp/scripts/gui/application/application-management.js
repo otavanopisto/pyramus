@@ -195,30 +195,38 @@
           $(dialog).dialog({
             resizable: false,
             height: "auto",
-            width: 400,
+            width: 'auto',
             modal: true,
-            buttons: {
-              "Poista": function() {
-                $.ajax({
-                  url: '/applications/archivelogentry.json',
-                  type: "POST",
-                  data: {
-                    id: id 
-                  },
-                  dataType: 'json',
-                  success: $.proxy(function(response) {
-                    logElement.remove();
-                  }, this),
-                  error: function(err) {
-                    $('.notification-queue').notificationQueue('notification', 'error', 'Virhe poistaessa merkintää: ' + err.statusText);
-                  }
-                });
-                $(dialog).dialog("close");
+            buttons: [
+              {
+                text: "Poista",
+                class: 'remove-button',
+                click: function() {
+	              $.ajax({
+	                url: '/applications/archivelogentry.json',
+	                type: "POST",
+	                data: {
+	                  id: id 
+	                },
+                    dataType: 'json',
+	                success: $.proxy(function(response) {
+	                  logElement.remove();
+	                }, this),
+	                error: function(err) {
+	                  $('.notification-queue').notificationQueue('notification', 'error', 'Virhe poistaessa merkintää: ' + err.statusText);
+	                }
+	              });
+	              $(dialog).dialog("close");
+	            }
               },
-              "Peruuta": function() {
-                $(dialog).dialog("close");
+              {
+                text: "Peruuta",
+                class: 'cancel-button',
+                click: function() {
+  	              $(dialog).dialog("close");
+  	            }
               }
-            }
+            ]
           });
         }, logElement));
       }

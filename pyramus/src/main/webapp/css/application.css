@@ -729,7 +729,7 @@ span.email {
   right: 0;
   background: #4fbedb;
   color: #fff;
-  padding: 5px 10px;
+  padding: 5px;
   box-shadow: 0 5px 10px rgba(0,0,0,0.2);
 }
 
@@ -743,10 +743,16 @@ span.email {
 }
 
 .application-handling-option {
-  padding: 6px;
+  padding: 6px 12px;
   text-align: left;
   text-transform: uppercase;
   font-weight: 400;
+  border-radius: 3px;
+  transition: background 0.2s ease-in;
+}
+
+.application-handling-option:hover {
+  background: #30abcc;
 }
 
 .application-wrapper {
@@ -1015,4 +1021,86 @@ span.email {
 
 .log-entry textarea {
   font-size: 13px;
+}
+
+/* Unfortunate JQuery dialog theme overrides as ThemeRoller is crappy AF */
+.ui-dialog {
+  max-width: 90% !important;
+  width: 90% !important;
+}
+
+@media screen and (min-width: 400px) {
+  
+  .ui-dialog {
+    max-width: 370px !important;
+    width: 370px !important;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  
+  .ui-dialog {
+    max-width: 400px !important;
+    width: 400px !important;
+    box-shadow: 0 0 50px rgba(123, 26, 26, 0.3);
+  }
+}
+
+.ui-dialog.ui-widget.ui-widget-content {
+  border: 0;
+  color: #000;
+  background: #fff;
+  font-family: "Open Sans", "Arial", sans-serif;
+  font-size: 14px;
+  padding: 0;
+  border-radius: 0;
+}
+
+.ui-dialog .ui-dialog-titlebar.ui-widget-header {
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 400;
+  background: #23bef1;
+  border: 0;
+  border-radius: 0;
+  padding: 10px 14px;
+}
+
+.ui-dialog .ui-button.ui-dialog-titlebar-close {
+  background-color: #23bef1;
+  border: 1px solid #23bef1;
+  color: #fff;
+}
+
+.ui-dialog .ui-button .ui-icon,
+.ui-dialog .ui-button:hover .ui-icon,
+.ui-dialog .ui-button:active .ui-icon,
+.ui-dialog .ui-button:focus .ui-icon {
+  background-image: url('https://code.jquery.com/ui/1.12.1/themes/base/images/ui-icons_ffffff_256x240.png');
+}
+
+.ui-dialog .ui-dialog-buttonpane.ui-widget-content {
+  border: 0;
+  padding: 5px;
+}
+
+.ui-dialog .ui-dialog-buttonset button.ui-button {
+  font-family: "Open Sans", "Arial", sans-serif;
+  border: 0;
+  border-radius: 2px;
+  background: #43c7f2;
+  color: #fff;
+}
+
+.ui-dialog .ui-dialog-buttonset button.ui-button.remove-button {
+  background: #b11717; 
+}
+
+.ui-dialog .ui-dialog-buttonset button.ui-button.cancel-button {
+  background: #7391a7;
+}
+
+.ui-widget-overlay {
+  background: #243a42 !important;
+  opacity: 0.6 !important;
 }
