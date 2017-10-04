@@ -5,11 +5,11 @@
 
 <section class="application-section application-meta">      
   <div class="user-exists-container" style="display:none;">
-    <div class="user-exists-description-title">Hakija löytyy jo pyramuksesta.</div> 
+    <div class="user-exists-description-title">Hakija löytyy jo Pyramuksesta.</div> 
     <div class="user-exists-description">
       <div class="user-exists-description-piggy"></div>
       <div class="user-exists-description-actions">
-        <span>Hakijan pyramus profiili:</span> 
+        <span>Hakijan Pyramus-profiili:</span> 
       </div>
     </div>
   </div>
