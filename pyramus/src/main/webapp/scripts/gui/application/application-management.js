@@ -195,7 +195,7 @@
           $(dialog).dialog({
             resizable: false,
             height: "auto",
-            width: 400,
+            width: 'auto',
             modal: true,
             buttons: {
               "Poista": function() {
