@@ -21,7 +21,7 @@ body {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  min-width: 300px;
+  min-width: 320px;
   margin: 0;
 }
 
@@ -256,8 +256,9 @@ select {
   font-size: 14px;
   border-radius: 3px;
   border: 1px solid #5db5c5;
-  max-width: 100%;
+  width: 100%;
   padding: 4px;
+  text-overflow: ellipsis;
 }
 
 @media screen and (min-width: 600px) {
@@ -274,6 +275,7 @@ option {
   font-weight: 300;
   font-size: 14px;
   word-wrap: break-word;
+  overflow: hidden;
 }
 
 /* FORM NAVIGATION */
@@ -623,6 +625,7 @@ span.email {
 .application-action.icon-edit {
   background-image: url(../gfx/icons/48x48/actions/edit.png);
   float: left;
+  margin-left: 0;
 }
 
 .application-action.icon-locked {
@@ -665,6 +668,31 @@ span.email {
   }
 }
 
+.application-action.icon-handling {
+  background-image: url(../gfx/icons/48x48/actions/handling.png);
+  float: left;
+}
+
+@media screen and (min-width: 600px) {
+  
+  .application-action.icon-handling {
+    background-image: url(../gfx/icons/48x48/actions/handling-slim.png);
+    background-size: 16px 16px;
+    background-position: 10px center;
+    border-radius: 3px;
+    width: auto;
+    padding: 0px 10px 0px 35px;
+    text-transform: uppercase;
+    height: 36px;
+    margin: 8px 12px;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    box-shadow: none;
+    position: relative;
+  }
+}
+
 .application-action.icon-logs {
   background-image: url(../gfx/icons/48x48/actions/logs.png);
   float: right;
@@ -674,6 +702,51 @@ span.email {
   background-image: url(../gfx/icons/48x48/actions/mail.png);
   float: right;
   margin-right: 0;
+}
+
+.application-handling-text {
+  display: none;
+}
+
+@media screen and (min-width: 600px) {
+
+  .application-handling-text {
+    display: inline-block;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+ 
+}
+
+.application-handling-options-container {
+  display: none;
+  position: absolute;
+  top: 46px;
+  left: 0;
+  right: 0;
+  background: #4fbedb;
+  color: #fff;
+  padding: 5px 10px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+@media screen and (min-width: 600px) {
+
+  .application-handling-options-container {
+    top: 44px;
+    left: 0;
+    min-width: 400px;
+  }
+}
+
+.application-handling-option {
+  padding: 6px;
+  text-align: left;
+  text-transform: uppercase;
+  font-weight: 400;
 }
 
 .application-wrapper {
