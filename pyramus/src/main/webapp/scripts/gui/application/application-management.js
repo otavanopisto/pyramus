@@ -242,6 +242,10 @@
     $(document).on("click", function () {
       $('.application-handling-options-container').hide();
     });
+    $('.application-handling-option').on('click', function() {
+      var state = this.attr('data-state');
+      console.log('change state to ' + state);
+    });
     
     // Prevent handling option container closing when clicking inside of it
     $('.application-handling-options-container').on('click', function(event) {
