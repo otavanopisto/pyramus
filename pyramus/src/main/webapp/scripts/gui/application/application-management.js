@@ -263,6 +263,9 @@
         }
       });
     });
+    $('.application-handling-options-container').on('click', function(event) {
+      event.stopPropagation();
+    });
     $('.application-action.icon-handling').on('click', function(event) {
       event.stopPropagation();
       $('.application-handling-options-container').toggle();
