@@ -241,6 +241,7 @@
     // Actions
     
     $('.application-handling-option').on('click', function(event) {
+      $('.application-handling-options-container').hide();
       var id = $('body').attr('data-application-entity-id');
       var state = $(event.target).attr('data-state');
       $.ajax({
