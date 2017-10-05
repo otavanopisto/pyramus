@@ -197,11 +197,10 @@
             height: "auto",
             width: 'auto',
             modal: true,
-            buttons: [
-              {
-                text: "Poista",
-                class: 'remove-button',
-                click: function() {
+            buttons: [{
+              text: "Poista",
+              class: 'remove-button',
+              click: function() {
 	              $.ajax({
 	                url: '/applications/archivelogentry.json',
 	                type: "POST",
@@ -218,15 +217,13 @@
 	              });
 	              $(dialog).dialog("close");
 	            }
-              },
-              {
-                text: "Peruuta",
-                class: 'cancel-button',
-                click: function() {
-  	              $(dialog).dialog("close");
-  	            }
-              }
-            ]
+            }, {
+              text: "Peruuta",
+              class: 'cancel-button',
+              click: function() {
+  	            $(dialog).dialog("close");
+  	          }
+            }]
           });
         }, logElement));
       }
@@ -238,23 +235,34 @@
     
     // Actions
     
-    // Close handling option container when clicking document 
-    $(document).on("click", function () {
-      $('.application-handling-options-container').hide();
-    });
     $('.application-handling-option').on('click', function(event) {
+      var id = $('body').attr('data-application-entity-id');
       var state = $(event.target).attr('data-state');
-      console.log('change state to ' + state);
+      $.ajax({
+        url: '/applications/updateapplicationstate.json',
+        type: "POST",
+        data: {
+          id: id,
+          state: state,
+          lockApplication: state == 'PROCESSING',
+          setHandler: state == 'PROCESSING'
+        },
+        dataType: 'json',
+        success: function(response) {
+          $('#info-application-handler-value').text(response.handler||'-');
+          $('#info-application-last-modified-value').text(moment(response.lastModified).format('D.M.YYYY h:mm'));
+          $('#info-application-state-value').text(response.state);
+          $('#action-application-toggle-lock').removeClass('icon-locked icon-unlocked');
+          $('#action-application-toggle-lock').addClass(response.applicantEditable ? 'icon-unlocked' : 'icon-locked');
+        }
+      });
     });
-    
-    // Prevent handling option container closing when clicking inside of it
-    $('.application-handling-options-container').on('click', function(event) {
-	  event.stopPropagation();
-	});
-    
     $('.application-action.icon-handling').on('click', function(event) {
       event.stopPropagation();
       $('.application-handling-options-container').toggle();
+    });
+    $(document).on("click", function () {
+      $('.application-handling-options-container').hide();
     });
 
   });
