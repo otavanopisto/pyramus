@@ -249,8 +249,8 @@
     
     // Prevent handling option container closing when clicking inside of it
     $('.application-handling-options-container').on('click', function(event) {
-	  event.stopPropagation();
-	});
+  	  event.stopPropagation();
+  	});
     
     $('.application-action.icon-handling').on('click', function(event) {
       event.stopPropagation();
