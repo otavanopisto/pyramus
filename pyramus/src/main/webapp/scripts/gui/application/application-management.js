@@ -242,8 +242,8 @@
     $(document).on("click", function () {
       $('.application-handling-options-container').hide();
     });
-    $('.application-handling-option').on('click', function() {
-      var state = this.attr('data-state');
+    $('.application-handling-option').on('click', function(event) {
+      var state = $(event.target).attr('data-state');
       console.log('change state to ' + state);
     });
     

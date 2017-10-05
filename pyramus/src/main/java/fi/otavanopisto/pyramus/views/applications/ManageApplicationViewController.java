@@ -41,6 +41,7 @@ public class ManageApplicationViewController extends PyramusViewController {
       if (application.getHandler() != null) {
         pageRequestContext.getRequest().setAttribute("infoHandler", application.getHandler().getFullName());
       }
+      pageRequestContext.getRequest().setAttribute("infoCreated", application.getCreated());
       pageRequestContext.getRequest().setAttribute("infoLastModified", ApplicationUtils.getLatest(
           application.getLastModified(),
           application.getApplicantLastModified(),
