@@ -4,28 +4,7 @@
     
     // Contact log entries
     
-    $.ajax({
-      url: '/applications/listlogentries.json',
-      type: "GET",
-      data: {
-        applicationId: $('#log-form-application-id').val() 
-      },
-      dataType: "json",
-      contentType: "application/json; charset=utf-8",
-      success: function(response) {
-        var logEntries = response.logEntries;
-        if (logEntries) {
-          for (var i = 0; i < logEntries.length; i++) {
-            var logElement = createLogElement(logEntries[i]);
-            $('.log-entries-container').append(logElement);
-            logElement.show();
-          }
-        }
-      },
-      error: function(err) {
-        $('.notification-queue').notificationQueue('notification', 'error', 'Virhe ladattaessa merkintöjä: ' + err.statusText);
-      }
-    });
+    loadLogEntries();
     
     // Attachments
     
@@ -138,6 +117,32 @@
     });
     
     // Helper functions
+    
+    function loadLogEntries() {
+      $('.log-entries-container').empty();
+      $.ajax({
+        url: '/applications/listlogentries.json',
+        type: "GET",
+        data: {
+          applicationId: $('body').attr('data-application-id') 
+        },
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+          var logEntries = response.logEntries;
+          if (logEntries) {
+            for (var i = 0; i < logEntries.length; i++) {
+              var logElement = createLogElement(logEntries[i]);
+              $('.log-entries-container').append(logElement);
+              logElement.show();
+            }
+          }
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', 'Virhe ladattaessa merkintöjä: ' + err.statusText);
+        }
+      });
+    }
     
     function createLogElement(entry) {
       var logElement = $('.log-entry.template').clone();
@@ -254,6 +259,7 @@
           $('#info-application-state-value').text(response.state);
           $('#action-application-toggle-lock').removeClass('icon-locked icon-unlocked');
           $('#action-application-toggle-lock').addClass(response.applicantEditable ? 'icon-unlocked' : 'icon-locked');
+          loadLogEntries();
         }
       });
     });

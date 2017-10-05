@@ -8,8 +8,10 @@ import javax.servlet.http.HttpServletResponse;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
@@ -45,15 +47,20 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
         requestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
-      application = applicationDAO.updateApplicationState(application, applicationState, staffMember);
-      if (Boolean.TRUE.equals(lockApplication) && application.getApplicantEditable()) {
-        application = applicationDAO.updateApplicantEditable(application, Boolean.FALSE, staffMember);
+      if (application.getState() != applicationState) {
+        application = applicationDAO.updateApplicationState(application, applicationState, staffMember);
+        if (Boolean.TRUE.equals(lockApplication) && application.getApplicantEditable()) {
+          application = applicationDAO.updateApplicantEditable(application, Boolean.FALSE, staffMember);
+        }
+        if (Boolean.TRUE.equals(setHandler)) {
+          application = applicationDAO.updateApplicationHandler(application, staffMember);
+        }
+        ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+        applicationLogDAO.create(application,
+            ApplicationLogType.HTML,
+            String.format("Hakemus siirretty tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState())),
+            staffMember);
       }
-      if (Boolean.TRUE.equals(setHandler)) {
-        application = applicationDAO.updateApplicationHandler(application, staffMember);
-      }
-
-      // Application log entry
 
       // Response parameters
       
