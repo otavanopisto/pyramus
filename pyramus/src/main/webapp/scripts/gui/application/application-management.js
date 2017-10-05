@@ -273,6 +273,11 @@
     $(document).on("click", function () {
       $('.application-handling-options-container').hide();
     });
+    
+    // Recenter dialog after browser resize
+    $(window).resize(function() {
+      $("#delete-log-entry-dialog").dialog("option", "position", {my: "center", at: "center", of: window});
+    });
 
   });
   
