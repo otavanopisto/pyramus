@@ -22,7 +22,12 @@
       </div>
       <div class="meta-container">
         <span class="meta-name">Käsittelijä</span>
-        <span id="info-application-handler-value" class="meta-value">${infoHandler}</span>
+        <span id="info-application-handler-value" class="meta-value">
+          <c:choose>
+            <c:when test="${empty infoHandler}">-</c:when>
+            <c:otherwise>${infoHandler}</c:otherwise>
+          </c:choose>
+        </span>
       </div>
       <div class="meta-container">
         <span class="meta-name">Jätetty</span>
