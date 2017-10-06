@@ -5,11 +5,11 @@
 
 <section class="application-section application-meta">      
   <div class="user-exists-container" style="display:none;">
-    <div class="user-exists-description-title">Hakija löytyy jo pyramuksesta.</div> 
+    <div class="user-exists-description-title">Hakija löytyy jo Pyramuksesta.</div> 
     <div class="user-exists-description">
       <div class="user-exists-description-piggy"></div>
       <div class="user-exists-description-actions">
-        <span>Hakijan pyramus profiili:</span> 
+        <span>Hakijan Pyramus-profiili:</span> 
       </div>
     </div>
   </div>
@@ -22,7 +22,18 @@
       </div>
       <div class="meta-container">
         <span class="meta-name">Käsittelijä</span>
-        <span id="info-application-handler-value" class="meta-value">${infoHandler}</span>
+        <span id="info-application-handler-value" class="meta-value">
+          <c:choose>
+            <c:when test="${empty infoHandler}">-</c:when>
+            <c:otherwise>${infoHandler}</c:otherwise>
+          </c:choose>
+        </span>
+      </div>
+      <div class="meta-container">
+        <span class="meta-name">Jätetty</span>
+        <span id="info-application-created-value" class="meta-value">
+          <fmt:formatDate pattern="d.M.yyyy H:mm" value="${infoCreated}"/>
+        </span>
       </div>
       <div class="meta-container">
         <span class="meta-name">Muokattu viimeksi</span>

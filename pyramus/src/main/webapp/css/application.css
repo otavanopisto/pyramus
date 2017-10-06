@@ -21,7 +21,7 @@ body {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  min-width: 300px;
+  min-width: 320px;
   margin: 0;
 }
 
@@ -256,8 +256,9 @@ select {
   font-size: 14px;
   border-radius: 3px;
   border: 1px solid #5db5c5;
-  max-width: 100%;
+  width: 100%;
   padding: 4px;
+  text-overflow: ellipsis;
 }
 
 @media screen and (min-width: 600px) {
@@ -274,6 +275,7 @@ option {
   font-weight: 300;
   font-size: 14px;
   word-wrap: break-word;
+  overflow: hidden;
 }
 
 /* FORM NAVIGATION */
@@ -314,6 +316,11 @@ button {
 
 .button-save-logentry {
   background: #2dbf90;
+}
+
+.button-cancel-logentry {
+  background: #95bcc3;
+  margin: 0 0 0 10px;
 }
 
 .application-page-indicator {
@@ -618,6 +625,7 @@ span.email {
 .application-action.icon-edit {
   background-image: url(../gfx/icons/48x48/actions/edit.png);
   float: left;
+  margin-left: 0;
 }
 
 .application-action.icon-locked {
@@ -660,6 +668,31 @@ span.email {
   }
 }
 
+.application-action.icon-handling {
+  background-image: url(../gfx/icons/48x48/actions/handling.png);
+  float: left;
+}
+
+@media screen and (min-width: 600px) {
+  
+  .application-action.icon-handling {
+    background-image: url(../gfx/icons/48x48/actions/handling-slim.png);
+    background-size: 16px 16px;
+    background-position: 10px center;
+    border-radius: 3px;
+    width: auto;
+    padding: 0px 10px 0px 35px;
+    text-transform: uppercase;
+    height: 36px;
+    margin: 8px 12px;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    box-shadow: none;
+    position: relative;
+  }
+}
+
 .application-action.icon-logs {
   background-image: url(../gfx/icons/48x48/actions/logs.png);
   float: right;
@@ -669,6 +702,57 @@ span.email {
   background-image: url(../gfx/icons/48x48/actions/mail.png);
   float: right;
   margin-right: 0;
+}
+
+.application-handling-text {
+  display: none;
+}
+
+@media screen and (min-width: 600px) {
+
+  .application-handling-text {
+    display: inline-block;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+ 
+}
+
+.application-handling-options-container {
+  display: none;
+  position: absolute;
+  top: 46px;
+  left: 0;
+  right: 0;
+  background: #4fbedb;
+  color: #fff;
+  padding: 5px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+@media screen and (min-width: 600px) {
+
+  .application-handling-options-container {
+    top: 44px;
+    left: 0;
+    min-width: 400px;
+  }
+}
+
+.application-handling-option {
+  padding: 6px 12px;
+  text-align: left;
+  text-transform: uppercase;
+  font-weight: 400;
+  border-radius: 3px;
+  transition: background 0.2s ease-in;
+}
+
+.application-handling-option:hover {
+  background: #30abcc;
 }
 
 .application-wrapper {
@@ -779,7 +863,7 @@ span.email {
   width: 100%;
   min-height: 100px;
   padding: 10px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 2px solid #fff;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   align-items: center;
@@ -833,7 +917,7 @@ span.email {
   width: 100%;
   min-height: 100px;
   padding: 5px 15px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 2px solid #fff;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   display: flex;
@@ -867,6 +951,11 @@ span.email {
   padding: 4px 8px;
 }
 
+.application-logs button.button-cancel-logentry {
+  font-size: 14px;
+  padding: 4px 8px;
+}
+
 .application-logs .field-button-set {
   text-align: right;
 }
@@ -880,10 +969,12 @@ span.email {
 .log-entry {
   margin: 10px 0;
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 10px;
   background: #e9fff9;
   font-size: 13px;
   position: relative;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .log-entry-header {
@@ -902,17 +993,114 @@ span.email {
   padding: 0 5px 0 0;
 }
 
-.log-entry-archive {
-  background: url('../gfx/icons/48x48/actions/close.png') #000;
+.log-entry-action {
   background-size: auto auto;
   background-size: contain;
-  width: 17px;
-  height: 17px;
+  width: 20px;
+  height: 20px;
   border-radius: 100%;
   position: absolute;
-  right: 10px;
-  top: 10px;
-  border: 3px solid #000;
   cursor: pointer;
   box-shadow: 0 0 0 2px #fff;
+  top: 6px;
+}
+
+.log-entry-archive {
+  background-image: url('../gfx/icons/48x48/actions/close.png');
+  background-color: #b11717;
+  border: 4px solid #b11717;
+  right: 10px;
+}
+
+.log-entry-edit {
+  background-image: url('../gfx/icons/48x48/actions/edit.png');
+  background-color: #2dbf90;
+  border: 4px solid #2dbf90;
+  right: 38px;
+}
+
+.log-entry textarea {
+  font-size: 13px;
+}
+
+/* Unfortunate JQuery dialog theme overrides as ThemeRoller is crappy AF */
+.ui-dialog {
+  max-width: 90% !important;
+  width: 90% !important;
+}
+
+@media screen and (min-width: 400px) {
+  
+  .ui-dialog {
+    max-width: 370px !important;
+    width: 370px !important;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  
+  .ui-dialog {
+    max-width: 400px !important;
+    width: 400px !important;
+    box-shadow: 0 0 50px rgba(123, 26, 26, 0.3);
+  }
+}
+
+.ui-dialog.ui-widget.ui-widget-content {
+  border: 0;
+  color: #000;
+  background: #fff;
+  font-family: "Open Sans", "Arial", sans-serif;
+  font-size: 14px;
+  padding: 0;
+  border-radius: 0;
+}
+
+.ui-dialog .ui-dialog-titlebar.ui-widget-header {
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 400;
+  background: #23bef1;
+  border: 0;
+  border-radius: 0;
+  padding: 10px 14px;
+}
+
+.ui-dialog .ui-button.ui-dialog-titlebar-close {
+  background-color: #23bef1;
+  border: 1px solid #23bef1;
+  color: #fff;
+}
+
+.ui-dialog .ui-button .ui-icon,
+.ui-dialog .ui-button:hover .ui-icon,
+.ui-dialog .ui-button:active .ui-icon,
+.ui-dialog .ui-button:focus .ui-icon {
+  background-image: url('https://code.jquery.com/ui/1.12.1/themes/base/images/ui-icons_ffffff_256x240.png');
+}
+
+.ui-dialog .ui-dialog-buttonpane.ui-widget-content {
+  border: 0;
+  padding: 5px;
+}
+
+.ui-dialog .ui-dialog-buttonset button.ui-button {
+  font-family: "Open Sans", "Arial", sans-serif;
+  border: 0;
+  border-radius: 2px;
+  background: #43c7f2;
+  color: #fff;
+}
+
+.ui-dialog .ui-dialog-buttonset button.ui-button.remove-button {
+  background: #b11717; 
+}
+
+.ui-dialog .ui-dialog-buttonset button.ui-button.cancel-button {
+  background: #7391a7;
+}
+
+.ui-widget-overlay {
+  background: #243a42 !important;
+  opacity: 0.6 !important;
 }

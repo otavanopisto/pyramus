@@ -5,8 +5,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.math.NumberUtils;
-
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
@@ -22,7 +20,7 @@ public class ArchiveLogEntryJSONRequestController extends JSONRequestController 
     try {
       ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
       ApplicationLog applicationLog = null;
-      Long id = NumberUtils.toLong(requestContext.getRequest().getParameter("id"));
+      Long id = requestContext.getLong("id");
       if (id != null) {
         applicationLog = applicationLogDAO.findById(id);
       }

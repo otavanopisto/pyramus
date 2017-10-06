@@ -15,6 +15,7 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLog;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -53,12 +54,14 @@ public class SaveLogEntryJSONRequestController extends JSONRequestController {
       String logEntry = formData.getString("log-form-text");
       
       ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-      ApplicationLog applicationLog = applicationLogDAO.create(application, logEntry, staffMember);
+      ApplicationLog applicationLog = applicationLogDAO.create(application, ApplicationLogType.PLAINTEXT, logEntry, staffMember);
       
       requestContext.addResponseParameter("id", applicationLog.getId());
+      requestContext.addResponseParameter("type", applicationLog.getType());
       requestContext.addResponseParameter("text", applicationLog.getText());
       requestContext.addResponseParameter("user", staffMember.getFullName());
       requestContext.addResponseParameter("date", applicationLog.getDate().getTime());
+      requestContext.addResponseParameter("owner", Boolean.TRUE);
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Error saving log entry", e);

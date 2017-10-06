@@ -4,28 +4,7 @@
     
     // Contact log entries
     
-    $.ajax({
-      url: '/applications/listlogentries.json',
-      type: "GET",
-      data: {
-        applicationId: $('#log-form-application-id').val() 
-      },
-      dataType: "json",
-      contentType: "application/json; charset=utf-8",
-      success: function(response) {
-        var logEntries = response.logEntries;
-        if (logEntries) {
-          for (var i = 0; i < logEntries.length; i++) {
-            var logElement = createLogElement(logEntries[i]);
-            $('.log-entries-container').append(logElement);
-            logElement.show();
-          }
-        }
-      },
-      error: function(err) {
-        $('.notification-queue').notificationQueue('notification', 'error', 'Virhe ladattaessa merkintöjä: ' + err.statusText);
-      }
-    });
+    loadLogEntries();
     
     // Attachments
     
@@ -139,34 +118,168 @@
     
     // Helper functions
     
+    function loadLogEntries() {
+      $('.log-entries-container').empty();
+      $.ajax({
+        url: '/applications/listlogentries.json',
+        type: "GET",
+        data: {
+          applicationId: $('body').attr('data-application-id') 
+        },
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+          var logEntries = response.logEntries;
+          if (logEntries) {
+            for (var i = 0; i < logEntries.length; i++) {
+              var logElement = createLogElement(logEntries[i]);
+              $('.log-entries-container').append(logElement);
+              logElement.show();
+            }
+          }
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', 'Virhe ladattaessa merkintöjä: ' + err.statusText);
+        }
+      });
+    }
+    
     function createLogElement(entry) {
       var logElement = $('.log-entry.template').clone();
       logElement.removeClass('template');
       logElement.attr('data-applicationlog-id', entry.id);
-      logElement.find('.log-entry-text').text(entry.text);
+      logElement.attr('data-owner', entry.owner);
+      logElement.find('.log-entry-text').html(entry.type == 'HTML' ? entry.text : entry.text.replace(/\n/g,"<br/>"));
       logElement.find('.log-entry-author').text(entry.user);
       logElement.find('.log-entry-date').text(moment(entry.date).format('D.M.YYYY h:mm'));
-      logElement.find('.log-entry-archive').on('click', $.proxy(function() {
-        var id = this.attr('data-applicationlog-id');
-        $.ajax({
-          url: '/applications/archivelogentry.json',
-          type: "GET",
-          data: {
-            id: id 
-          },
-          dataType: "json",
-          contentType: "application/json; charset=utf-8",
-          success: $.proxy(function(response) {
-            this.remove();
-          }, this),
-          error: function(err) {
-            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe poistaessa merkintää: ' + err.statusText);
-          }
+      if (entry.owner === true) {
+        // Edit log entry
+        logElement.find('.log-entry-edit').on('click', function() {
+          var id = logElement.attr('data-applicationlog-id');
+          $.ajax({
+            url: '/applications/getlogentry.json',
+            type: "GET",
+            data: {
+              id: id
+            },
+            dataType: 'json',
+            success: function(entry) {
+              var editor = $('<textarea>').attr('rows', 5);
+              var saveButton = $('<button>').addClass('button-save-logentry').attr('type', 'button').text('Tallenna');
+              var cancelButton = $('<button>').addClass('button-cancel-logentry').attr('type', 'button').text('Peruuta'); 
+              var textContainer = logElement.find('.log-entry-text');
+              editor.text(entry.text);
+              textContainer.empty().append($('<div>').addClass('field-container').append(editor));
+              textContainer.append($('<div>').addClass('field-button-set').append(saveButton).append(cancelButton));
+              saveButton.on('click', function() {
+                $.ajax({
+                  url: '/applications/updatelogentry.json',
+                  type: "POST",
+                  data: {
+                    id: id,
+                    text: editor.val()
+                  },
+                  dataType: 'json',
+                  success: function(entry) {
+                    textContainer.empty().html(entry.type == 'HTML' ? entry.text : entry.text.replace(/\n/g,"<br/>"));
+                    logElement.find('.log-entry-date').text(moment(entry.date).format('D.M.YYYY h:mm'));
+                  }
+                });
+              });
+              cancelButton.on('click', function() {
+                textContainer.empty().html(entry.type == 'HTML' ? entry.text : entry.text.replace(/\n/g,"<br/>"));
+              });
+            }
+          });
         });
-      }, logElement));
+        // Remove log entry
+        logElement.find('.log-entry-archive').on('click', $.proxy(function() {
+          var logElement = this;
+          var id = this.attr('data-applicationlog-id');
+          var dialog = $('#delete-log-entry-dialog');
+          $(dialog).dialog({
+            resizable: false,
+            height: "auto",
+            width: 'auto',
+            modal: true,
+            buttons: [{
+              text: "Poista",
+              class: 'remove-button',
+              click: function() {
+	              $.ajax({
+	                url: '/applications/archivelogentry.json',
+	                type: "POST",
+	                data: {
+	                  id: id 
+	                },
+                    dataType: 'json',
+	                success: $.proxy(function(response) {
+	                  logElement.remove();
+	                }, this),
+	                error: function(err) {
+	                  $('.notification-queue').notificationQueue('notification', 'error', 'Virhe poistaessa merkintää: ' + err.statusText);
+	                }
+	              });
+	              $(dialog).dialog("close");
+	            }
+            }, {
+              text: "Peruuta",
+              class: 'cancel-button',
+              click: function() {
+  	            $(dialog).dialog("close");
+  	          }
+            }]
+          });
+        }, logElement));
+      }
+      else {
+        logElement.find('.log-entry-actions').hide();
+      }
       return logElement;
     }
     
+    // Actions
+    
+    $('.application-handling-option').on('click', function(event) {
+      $('.application-handling-options-container').hide();
+      var id = $('body').attr('data-application-entity-id');
+      var state = $(event.target).attr('data-state');
+      $.ajax({
+        url: '/applications/updateapplicationstate.json',
+        type: "POST",
+        data: {
+          id: id,
+          state: state,
+          lockApplication: state == 'PROCESSING',
+          setHandler: state == 'PROCESSING'
+        },
+        dataType: 'json',
+        success: function(response) {
+          $('#info-application-handler-value').text(response.handler||'-');
+          $('#info-application-last-modified-value').text(moment(response.lastModified).format('D.M.YYYY h:mm'));
+          $('#info-application-state-value').text(response.state);
+          $('#action-application-toggle-lock').removeClass('icon-locked icon-unlocked');
+          $('#action-application-toggle-lock').addClass(response.applicantEditable ? 'icon-unlocked' : 'icon-locked');
+          loadLogEntries();
+        }
+      });
+    });
+    $('.application-handling-options-container').on('click', function(event) {
+      event.stopPropagation();
+    });
+    $('.application-action.icon-handling').on('click', function(event) {
+      event.stopPropagation();
+      $('.application-handling-options-container').toggle();
+    });
+    $(document).on("click", function () {
+      $('.application-handling-options-container').hide();
+    });
+    
+    // Recenter dialog after browser resize
+    $(window).resize(function() {
+      $("#delete-log-entry-dialog").dialog("option", "position", {my: "center", at: "center", of: window});
+    });
+
   });
   
 }).call(this);
