@@ -479,7 +479,8 @@
   function setupNicknameSelector() {
     if ($('#field-first-names').length > 0) {
       var currentVal = $('#field-nickname').val();
-      var names = $('#field-first-names').val() == '' ? [] : $('#field-first-names').val().split(/\ +/);
+      var firstNames = $('#field-first-names').val().trim();
+      var names = firstNames == '' ? [] : firstNames.split(/\ +/);
       if (names.length == 0) {
         $('div.field-container.field-nickname').hide();
       }
