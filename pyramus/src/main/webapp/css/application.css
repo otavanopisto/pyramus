@@ -931,6 +931,13 @@ span.email {
   flex: 1 1 auto;
 }
 
+/* Mail <section> */
+
+.application-mail {
+  width: 100%;
+  display: none;
+}
+
 /* Logs <section> */
 .application-logs {
   width: 100%;

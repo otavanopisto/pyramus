@@ -66,6 +66,9 @@
     $('#action-application-log').on('click', function() {
       $('section.application-logs').toggle();
     });
+    $('#action-application-mail').on('click', function() {
+      $('section.application-mail').toggle();
+    });
     
     // Save log entry
     
@@ -237,6 +240,41 @@
       }
       return logElement;
     }
+    
+    // Mail
+    
+    CKEDITOR.replace('mail-form-content');
+    $.ajax({
+      url: '/applications/listmailrecipients.json',
+      type: "GET",
+      data: {
+        applicationEntityId: $('body').attr('data-application-entity-id')
+      },
+      dataType: "json",
+      contentType: "application/json; charset=utf-8",
+      success: function(response) {
+        for (var i = 0; i < response.recipients.length; i++) {
+          var row = $('<div>').addClass('field-row-flex');
+          var rowInputElement = $('<div>').addClass('field-row-element');
+          var rowInput = $('<input>').attr({
+            'id': 'mail-form-recipient-' + i,
+            'type': 'checkbox',
+            'name': 'mail-form-recipient',
+            'value': response.recipients[i].mail});
+          if (response.recipients[i].type == 'to') {
+            $(rowInput).attr('checked', 'checked');
+          }
+          var rowLabelElement = $('<div>').addClass('field-row-label');
+          var rowLabel = $('<label>')
+            .attr('for', 'mail-form-recipient-' + i)
+            .text(response.recipients[i].name + ' <' + response.recipients[i].mail + '>');
+          $(row).append(rowInputElement).append(rowLabelElement);
+          $(rowInputElement).append(rowInput);
+          $(rowLabelElement).append(rowLabel);
+          $('div.mail-form-recipients').append(row);
+        }
+      }
+    });
     
     // Actions
     
