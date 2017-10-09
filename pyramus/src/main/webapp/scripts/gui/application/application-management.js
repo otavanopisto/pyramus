@@ -65,9 +65,15 @@
     
     $('#action-application-log').on('click', function() {
       $('section.application-logs').toggle();
+      if ($('section.application-logs').is(':visible')) {
+        $('section.application-mail').hide();
+      }
     });
     $('#action-application-mail').on('click', function() {
       $('section.application-mail').toggle();
+      if ($('section.application-mail').is(':visible')) {
+        $('section.application-logs').hide();
+      }
     });
     
     // Save log entry
