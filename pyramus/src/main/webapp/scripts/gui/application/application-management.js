@@ -205,6 +205,11 @@
             height: "auto",
             width: 'auto',
             modal: true,
+            position: {
+              my: 'center',
+              at: 'center',
+              of: window
+            },
             buttons: [{
               text: "Poista",
               class: 'remove-button',
@@ -349,12 +354,6 @@
     $(document).on("click", function () {
       $('.application-handling-options-container').hide();
     });
-    
-    // Recenter dialog after browser resize
-    $(window).resize(function() {
-      $("#delete-log-entry-dialog").dialog("option", "position", {my: "center", at: "center", of: window});
-    });
-
   });
   
 }).call(this);
