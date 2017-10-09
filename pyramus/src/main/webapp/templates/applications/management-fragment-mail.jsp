@@ -8,6 +8,7 @@
   
   <div class="mail-form-container">
     <form id="mail-form" name="mail-form">
+      <input type="hidden" name="applicationEntityId" value="${applicationEntityId}"/>
       <div class="field-container mail-form-recipients">
         <h4 class="application-mail-title">Vastaanottajat</h4>
       </div>

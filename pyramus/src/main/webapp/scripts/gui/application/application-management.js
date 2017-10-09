@@ -243,7 +243,19 @@
     
     // Mail
     
-    CKEDITOR.replace('mail-form-content');
+    CKEDITOR.replace('mail-form-content', {
+      toolbar: [
+        ['Cut','Copy','Paste','PasteText'],
+        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+        ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
+        ['NumberedList','BulletedList'],
+        ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+        ['Link','Unlink'],
+        ['Table','SpecialChar']
+      ],
+      entities_latin: false,
+      removePlugins: 'elementspath' 
+    });
     $.ajax({
       url: '/applications/listmailrecipients.json',
       type: "GET",
@@ -259,7 +271,7 @@
           var rowInput = $('<input>').attr({
             'id': 'mail-form-recipient-' + i,
             'type': 'checkbox',
-            'name': 'mail-form-recipient',
+            'name': 'mail-form-recipient-' + response.recipients[i].type,
             'value': response.recipients[i].mail});
           if (response.recipients[i].type == 'to') {
             $(rowInput).attr('checked', 'checked');
@@ -273,6 +285,30 @@
           $(rowLabelElement).append(rowLabel);
           $('div.mail-form-recipients').append(row);
         }
+      }
+    });
+    $('#mail-form-send').on('click', function() {
+      var sendButton = this;
+      if (!$(sendButton).hasClass('loading')) {
+        $(sendButton).addClass('loading');
+        CKEDITOR.instances['mail-form-content'].updateElement();
+        var data = JSON.stringify($('#mail-form').serializeObject());
+        $.ajax({
+          url: '/applications/sendmail.json',
+          type: "POST",
+          data: data, 
+          dataType: "json",
+          contentType: "application/json; charset=utf-8",
+          success: function(response) {
+            $(sendButton).removeClass('loading');
+            loadLogEntries();
+            $('.notification-queue').notificationQueue('notification', 'info', 'Viesti lähetetty');
+          },
+          error: function(err) {
+            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe lähetettäessä postia: ' + err.statusText);
+            $(sendButton).removeClass('loading');
+          }
+        });
       }
     });
     
@@ -299,6 +335,7 @@
           $('#action-application-toggle-lock').removeClass('icon-locked icon-unlocked');
           $('#action-application-toggle-lock').addClass(response.applicantEditable ? 'icon-unlocked' : 'icon-locked');
           loadLogEntries();
+          $('.notification-queue').notificationQueue('notification', 'info', 'Hakemuksen tila vaihdettu');
         }
       });
     });
