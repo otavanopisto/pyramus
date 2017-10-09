@@ -318,6 +318,10 @@ button {
   background: #2dbf90;
 }
 
+.button-send-mail {
+  background: #2dbf90;
+}
+
 .button-cancel-logentry {
   background: #95bcc3;
   margin: 0 0 0 10px;
@@ -953,16 +957,6 @@ span.email {
   border: 1px solid #2dbf90;
 }
 
-.application-logs button.button-save-logentry {
-  font-size: 14px;
-  padding: 4px 8px;
-}
-
-.application-logs button.button-cancel-logentry {
-  font-size: 14px;
-  padding: 4px 8px;
-}
-
 .application-logs .field-button-set {
   text-align: right;
 }
@@ -1030,6 +1024,41 @@ span.email {
   font-size: 13px;
 }
 
+/* Application mail <section> */
+.application-mail {
+  width: 100%;
+  display: none;
+}
+
+/* Specific h3 style */
+.application-mail-header {
+  color: #2dbf90;
+}
+
+.application-mail-title {
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 400;
+  margin: 20px 0 0;
+}
+
+.application-mail #cke_mail-form-content {
+  border: 1px solid #2dbf90;
+}
+
+.application-mail .mail-subject,
+.application-mail input[type="checkbox"] {
+  border: 1px solid #2dbf90;
+}
+
+.application-mail label {
+  font-weight: 300;
+}
+
+.application-mail .field-button-set {
+  text-align: right;
+}
+
 /* Unfortunate JQuery dialog theme overrides as ThemeRoller is crappy AF */
 .ui-dialog {
   max-width: 90% !important;
@@ -1060,7 +1089,15 @@ span.email {
   font-family: "Open Sans", "Arial", sans-serif;
   font-size: 14px;
   padding: 0;
-  border-radius: 0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+@media screen and (min-width: 600px) {
+  
+  .ui-dialog.ui-widget.ui-widget-content {
+   font-size: 16px;
+  }
 }
 
 .ui-dialog .ui-dialog-titlebar.ui-widget-header {
@@ -1069,7 +1106,10 @@ span.email {
   font-weight: 400;
   background: #23bef1;
   border: 0;
-  border-radius: 0;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
   padding: 10px 14px;
 }
 
@@ -1097,6 +1137,15 @@ span.email {
   border-radius: 2px;
   background: #43c7f2;
   color: #fff;
+}
+
+@media screen and (min-width: 600px) {
+  
+  .ui-dialog .ui-dialog-buttonset button.ui-button {
+    padding: 10px 16px;
+    border-radius: 5px;
+    font-size: 16px;
+  }
 }
 
 .ui-dialog .ui-dialog-buttonset button.ui-button.remove-button {

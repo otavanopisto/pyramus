@@ -9,18 +9,18 @@
   <div class="mail-form-container">
     <form id="mail-form" name="mail-form">
       <div class="field-container mail-form-recipients">
-        <div>Vastaanottajat</div>
+        <h4 class="application-mail-title">Vastaanottajat</h4>
       </div>
       <div class="field-container">
-        <div>Otsikko</div>
-        <input id="mail-form-subject" name="mail-form-subject"/>
+        <h4 class="application-mail-title">Otsikko</h4>
+        <input id="mail-form-subject" class="mail-subject" name="mail-form-subject"/>
       </div>
       <div class="field-container">
-        <div>Sisältö</div>
-        <textarea id="mail-form-content" name="mail-form-content" rows="10"></textarea>
+        <h4 class="application-mail-title">Sisältö</h4>
+        <textarea id="mail-form-content" class="mail-content" name="mail-form-content" rows="10"></textarea>
       </div>
       <div class="field-button-set">
-        <button id="mail-form-send" class="mail-form-button-send" type="button">Lähetä</button>
+        <button id="mail-form-send" class="button-send-mail" type="button">Lähetä</button>
       </div>
     </form>
   </div>
