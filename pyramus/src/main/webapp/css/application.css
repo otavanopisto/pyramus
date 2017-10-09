@@ -1044,11 +1044,24 @@ span.email {
 
 .application-mail #cke_mail-form-content {
   border: 1px solid #2dbf90;
+  border-radius: 3px;
+  overflow: hidden;
 }
 
 .application-mail .mail-subject,
 .application-mail input[type="checkbox"] {
   border: 1px solid #2dbf90;
+}
+.application-mail .button-send-mail {
+  transition: padding 0.2s ease-in;
+}
+
+.application-mail .button-send-mail.loading {
+  background-image: url('../gfx/gui/loading.gif');
+  background-repeat: no-repeat;
+  background-position: 2px center;
+  background-size: 32px 32px;
+  padding: 10px 16px 10px 36px;
 }
 
 .application-mail label {
