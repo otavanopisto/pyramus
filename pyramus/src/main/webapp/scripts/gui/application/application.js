@@ -314,6 +314,9 @@
       $('.form-navigation').show();
       preloadApplication($('#field-application-id').val());
     }
+    else {
+      setupNicknameSelector();
+    }
   });
 
   function navigateTo(section) {
@@ -475,7 +478,13 @@
   
   function setupNicknameSelector() {
     var currentVal = $('#field-nickname').val();
-    var names = $('#field-first-names').val().split(' ');
+    var names = $('#field-first-names').val() == '' ? [] : $('#field-first-names').val().split(' ');
+    if (names.length == 0) {
+      $('div.field-container.field-nickname').hide();
+    }
+    else {
+      $('div.field-container.field-nickname').show();
+    }
     var nicknamesContainer = $('div.nicknames-container');
     $(nicknamesContainer).empty();
     var nameFound = false;
