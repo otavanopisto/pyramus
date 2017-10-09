@@ -118,7 +118,7 @@
     </div> 
 
     <div class="field-container field-nickname">
-      <label for="field-nickname">Kutsumanimi</label>
+      <label for="field-nickname" class="required">Kutsumanimi</label>
       <input type="text" style="display:none;" id="field-nickname" name="field-nickname" data-parsley-validate-if-empty="true"  data-parsley-nickname="">
       <div class="nicknames-container">
       </div>
