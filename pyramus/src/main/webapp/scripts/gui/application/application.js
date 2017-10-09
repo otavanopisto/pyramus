@@ -42,6 +42,12 @@
       $(this).val('');
     });
     
+    // Nickname
+    
+    $('#field-first-names').on('change', function() {
+      setupNicknameSelector();
+    });
+    
     // Dynamic data
     
     $('select[data-source]').each(function() {
@@ -116,6 +122,16 @@
       },
       messages: {
         fi: 'Päivämäärän muoto on virheellinen'
+      }
+    });
+    
+    Parsley.addValidator('nickname', {
+      requirementType: 'string',
+      validateString: function(value) {
+        return value != '';
+      },
+      messages: {
+        fi: 'Klikkaa kutsumanimeäsi'
       }
     });
 
@@ -406,6 +422,7 @@
           }
         }
         preloadApplicationAttachments(result);
+        setupNicknameSelector();
         $('.form-section').each(function() {
           $(this).toggle($(this).attr('data-skip') != 'true' && !$(this).hasClass('section-summary'));
         });
@@ -454,6 +471,30 @@
       });
     });
     fileElement.show();
+  }
+  
+  function setupNicknameSelector() {
+    var currentVal = $('#field-nickname').val();
+    var names = $('#field-first-names').val().split(' ');
+    var nicknamesContainer = $('div.nicknames-container');
+    $(nicknamesContainer).empty();
+    var nameFound = false;
+    for (var i = 0; i < names.length; i++) {
+      var nicknameElement = $('<span>').addClass('nickname').text(names[i]);
+      if (currentVal == names[i]) {
+        nameFound = true;
+        nicknameElement.addClass('selected');
+      }
+      $(nicknamesContainer).append(nicknameElement);
+      nicknameElement.on('click', function() {
+        $('#field-nickname').val($(this).text());
+        $('span.nickname').removeClass('selected');
+        $(this).addClass('selected');
+      });
+    }
+    if (!nameFound) {
+      $('#field-nickname').val('');
+    }
   }
   
   function uploadAttachment(file) {
