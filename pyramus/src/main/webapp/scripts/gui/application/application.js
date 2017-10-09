@@ -500,6 +500,7 @@
           $('#field-nickname').val($(this).text());
           $('span.nickname').removeClass('selected');
           $(this).addClass('selected');
+          $('#field-nickname').parsley().validate();
         });
       }
       if (!nameFound) {
