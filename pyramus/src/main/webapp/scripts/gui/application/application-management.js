@@ -65,6 +65,15 @@
     
     $('#action-application-log').on('click', function() {
       $('section.application-logs').toggle();
+      if ($('section.application-logs').is(':visible')) {
+        $('section.application-mail').hide();
+      }
+    });
+    $('#action-application-mail').on('click', function() {
+      $('section.application-mail').toggle();
+      if ($('section.application-mail').is(':visible')) {
+        $('section.application-logs').hide();
+      }
     });
     
     // Save log entry
@@ -202,6 +211,11 @@
             height: "auto",
             width: 'auto',
             modal: true,
+            position: {
+              my: 'center',
+              at: 'center',
+              of: window
+            },
             buttons: [{
               text: "Poista",
               class: 'remove-button',
@@ -238,6 +252,77 @@
       return logElement;
     }
     
+    // Mail
+    
+    CKEDITOR.replace('mail-form-content', {
+      toolbar: [
+        ['Cut','Copy','Paste','PasteText'],
+        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+        ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
+        ['NumberedList','BulletedList'],
+        ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+        ['Link','Unlink'],
+        ['Table','SpecialChar']
+      ],
+      entities_latin: false,
+      removePlugins: 'elementspath' 
+    });
+    $.ajax({
+      url: '/applications/listmailrecipients.json',
+      type: "GET",
+      data: {
+        applicationEntityId: $('body').attr('data-application-entity-id')
+      },
+      dataType: "json",
+      contentType: "application/json; charset=utf-8",
+      success: function(response) {
+        for (var i = 0; i < response.recipients.length; i++) {
+          var row = $('<div>').addClass('field-row-flex');
+          var rowInputElement = $('<div>').addClass('field-row-element');
+          var rowInput = $('<input>').attr({
+            'id': 'mail-form-recipient-' + i,
+            'type': 'checkbox',
+            'name': 'mail-form-recipient-' + response.recipients[i].type,
+            'value': response.recipients[i].mail});
+          if (response.recipients[i].type == 'to') {
+            $(rowInput).attr('checked', 'checked');
+          }
+          var rowLabelElement = $('<div>').addClass('field-row-label');
+          var rowLabel = $('<label>')
+            .attr('for', 'mail-form-recipient-' + i)
+            .text(response.recipients[i].name + ' <' + response.recipients[i].mail + '>');
+          $(row).append(rowInputElement).append(rowLabelElement);
+          $(rowInputElement).append(rowInput);
+          $(rowLabelElement).append(rowLabel);
+          $('div.mail-form-recipients').append(row);
+        }
+      }
+    });
+    $('#mail-form-send').on('click', function() {
+      var sendButton = this;
+      if (!$(sendButton).hasClass('loading')) {
+        $(sendButton).addClass('loading');
+        CKEDITOR.instances['mail-form-content'].updateElement();
+        var data = JSON.stringify($('#mail-form').serializeObject());
+        $.ajax({
+          url: '/applications/sendmail.json',
+          type: "POST",
+          data: data, 
+          dataType: "json",
+          contentType: "application/json; charset=utf-8",
+          success: function(response) {
+            $(sendButton).removeClass('loading');
+            loadLogEntries();
+            $('.notification-queue').notificationQueue('notification', 'info', 'Viesti lähetetty');
+          },
+          error: function(err) {
+            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe lähetettäessä postia: ' + err.statusText);
+            $(sendButton).removeClass('loading');
+          }
+        });
+      }
+    });
+    
     // Actions
     
     $('.application-handling-option').on('click', function(event) {
@@ -261,6 +346,7 @@
           $('#action-application-toggle-lock').removeClass('icon-locked icon-unlocked');
           $('#action-application-toggle-lock').addClass(response.applicantEditable ? 'icon-unlocked' : 'icon-locked');
           loadLogEntries();
+          $('.notification-queue').notificationQueue('notification', 'info', 'Hakemuksen tila vaihdettu');
         }
       });
     });
@@ -274,12 +360,6 @@
     $(document).on("click", function () {
       $('.application-handling-options-container').hide();
     });
-    
-    // Recenter dialog after browser resize
-    $(window).resize(function() {
-      $("#delete-log-entry-dialog").dialog("option", "position", {my: "center", at: "center", of: window});
-    });
-
   });
   
 }).call(this);

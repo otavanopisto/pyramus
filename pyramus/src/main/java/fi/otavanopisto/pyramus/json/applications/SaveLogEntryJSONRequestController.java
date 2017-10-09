@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -52,6 +54,11 @@ public class SaveLogEntryJSONRequestController extends JSONRequestController {
         return;
       }
       String logEntry = formData.getString("log-form-text");
+      if (StringUtils.isEmpty(logEntry)) {
+        logger.log(Level.WARNING, "Refusing log entry due to missing content");
+        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
       
       ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
       ApplicationLog applicationLog = applicationLogDAO.create(application, ApplicationLogType.PLAINTEXT, logEntry, staffMember);

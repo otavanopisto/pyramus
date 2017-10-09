@@ -1,7 +1,6 @@
 package fi.otavanopisto.pyramus.views.applications;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;

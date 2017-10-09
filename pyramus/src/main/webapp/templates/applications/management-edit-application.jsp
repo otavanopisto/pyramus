@@ -24,6 +24,7 @@
         </section>
         <jsp:include page="/templates/applications/management-fragment-meta.jsp"></jsp:include>
         <jsp:include page="/templates/applications/management-fragment-log.jsp"></jsp:include>
+        <jsp:include page="/templates/applications/management-fragment-mail.jsp"></jsp:include>
       </section>
     </main>
   </body>

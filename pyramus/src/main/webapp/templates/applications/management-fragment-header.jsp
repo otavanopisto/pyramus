@@ -27,7 +27,7 @@
         <div class="application-handling-option" data-state="PROCESSING">Ota käsittelyyn</div>
       </div>
     </div>
-    <div class="application-action icon-mail"></div>
+    <div class="application-action icon-mail" id="action-application-mail"></div>
     <div class="application-action icon-logs" id="action-application-log"></div>
   </div>
 </header>
