@@ -505,7 +505,13 @@
         });
       }
       if (!nameFound) {
-        $('#field-nickname').val('');
+        if (names.length == 0) {
+          $('#field-nickname').val('');
+        }
+        else {
+          $('#field-nickname').val(names[0]);
+          $('div.nicknames-container span:first').addClass('selected');
+        }
       }
     }
   }
