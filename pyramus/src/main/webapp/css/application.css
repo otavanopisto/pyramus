@@ -23,6 +23,7 @@ body {
   justify-content: center;
   min-width: 320px;
   margin: 0;
+  color: #000;
 }
 
 @media screen and (min-width: 600px) {
@@ -276,6 +277,21 @@ option {
   font-size: 14px;
   word-wrap: break-word;
   overflow: hidden;
+}
+
+.nicknames-container .nickname {
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: #eee;
+  transition: background 0.2s ease-in;
+  display: inline-block;
+  margin: 2px 5px 2px 0;
+  cursor: pointer;
+}
+
+.nicknames-container .nickname.selected {
+  background: #29b0c4;
+  color: #fff;
 }
 
 /* FORM NAVIGATION */
