@@ -38,7 +38,7 @@ public class GetLogEntryJSONRequestController extends JSONRequestController {
       requestContext.addResponseParameter("date", applicationLog.getDate().getTime());
     }
     catch (Exception e) {
-      logger.log(Level.SEVERE, "Error saving log entry", e);
+      logger.log(Level.SEVERE, "Error retrieving log entry", e);
     }
   }
 

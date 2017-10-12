@@ -67,6 +67,14 @@ public class ApplicationMailTemplate implements ArchivableEntity {
     this.staffMember = staffMember;
   }
 
+  public String getContent() {
+    return content;
+  }
+
+  public void setContent(String content) {
+    this.content = content;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="ApplicationMailTemplate")
   @TableGenerator(name="ApplicationMailTemplate", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
