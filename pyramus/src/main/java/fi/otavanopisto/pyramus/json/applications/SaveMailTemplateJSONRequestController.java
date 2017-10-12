@@ -59,7 +59,7 @@ public class SaveMailTemplateJSONRequestController extends JSONRequestController
       requestContext.addResponseParameter("line", ApplicationUtils.applicationLineUiValue(line));
       requestContext.addResponseParameter("name", applicationMailTemplate.getName());
       requestContext.addResponseParameter("subject", applicationMailTemplate.getSubject());
-      requestContext.addResponseParameter("owner", applicationMailTemplate.getStaffMember().getFullName());
+      requestContext.addResponseParameter("author", applicationMailTemplate.getStaffMember().getFullName());
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Error saving mail template", e);

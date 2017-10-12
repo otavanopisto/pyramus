@@ -78,6 +78,8 @@
             'value': templateJson.id
           }).update(templateJson.name);
           $('template-field-id').insert(template);
+          $('template-author').update(templateJson.author);
+          $('template-author-container').show();
         }
       });
     })

@@ -31,6 +31,14 @@
             <button id="template-button-delete" name="template-button-delete">Poista</button>
           </div>
           <div>
+            <div>Nimi</div>
+            <div><input id="template-field-name" name="template-field-name" type="text" size="40"/></div>
+          </div>
+          <div id="template-author-container">
+            <div>Tekijä</div>
+            <div id="template-author"></div>
+          </div>
+          <div>
             <div>Linja</div>
             <div>
               <select id="template-field-line" name="template-field-line">
@@ -43,14 +51,6 @@
                 <option value="mk">Maahanmuuttajakoulutukset</option>
               </select>
             </div>
-          </div>
-          <div>
-            <div>Nimi</div>
-            <div><input id="template-field-name" name="template-field-name" type="text" size="40"/></div>
-          </div>
-          <div id="template-author-container">
-            <div>Tekijä</div>
-            <div id="template-author"></div>
           </div>
           <div>
             <div>Otsikko</div>
