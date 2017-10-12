@@ -43,6 +43,8 @@
             var template = response.responseText.evalJSON();
             $('template-field-line').setValue(template.line);
             $('template-field-name').setValue(template.name);
+            $('template-author').update(template.author);
+            $('template-author-container').show();
             $('template-field-subject').setValue(template.subject);
             CKEDITOR.instances['template-field-content'].setData(template.content);
             $('template-button-delete').show();
@@ -52,6 +54,7 @@
       else {
         $('template-field-line').setValue('');
         $('template-field-name').setValue('');
+        $('template-author-container').hide();
         $('template-field-subject').setValue('');
         CKEDITOR.instances['template-field-content'].setData('');
         $('template-button-delete').hide();

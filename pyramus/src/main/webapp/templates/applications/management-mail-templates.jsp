@@ -48,6 +48,10 @@
             <div>Nimi</div>
             <div><input id="template-field-name" name="template-field-name" type="text" size="40"/></div>
           </div>
+          <div id="template-author-container">
+            <div>Tekijä</div>
+            <div id="template-author"></div>
+          </div>
           <div>
             <div>Otsikko</div>
             <div><input id="template-field-subject" name="template-field-subject" type="text" size="40"/></div>

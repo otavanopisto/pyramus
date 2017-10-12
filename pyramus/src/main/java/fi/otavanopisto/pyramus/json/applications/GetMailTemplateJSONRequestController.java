@@ -34,6 +34,7 @@ public class GetMailTemplateJSONRequestController extends JSONRequestController 
       requestContext.addResponseParameter("name", applicationMailTemplate.getName());
       requestContext.addResponseParameter("subject", applicationMailTemplate.getSubject());
       requestContext.addResponseParameter("content", applicationMailTemplate.getContent());
+      requestContext.addResponseParameter("author", applicationMailTemplate.getStaffMember().getFullName());
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Error retrieving mail template", e);
