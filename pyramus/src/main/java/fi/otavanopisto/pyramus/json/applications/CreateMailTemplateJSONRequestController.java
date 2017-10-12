@@ -15,11 +15,10 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationMailTemplate;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
-import fi.otavanopisto.pyramus.views.applications.ApplicationUtils;
 
-public class SaveMailTemplateJSONRequestController extends JSONRequestController {
+public class CreateMailTemplateJSONRequestController extends JSONRequestController {
 
-  private static final Logger logger = Logger.getLogger(SaveMailTemplateJSONRequestController.class.getName());
+  private static final Logger logger = Logger.getLogger(CreateMailTemplateJSONRequestController.class.getName());
 
   public void process(JSONRequestContext requestContext) {
     try {
@@ -31,7 +30,6 @@ public class SaveMailTemplateJSONRequestController extends JSONRequestController
         return;
       }
       
-      Long templateId = requestContext.getLong("id");
       String line = requestContext.getString("line");
       String name = requestContext.getString("name");
       String subject = requestContext.getString("subject");
@@ -41,25 +39,10 @@ public class SaveMailTemplateJSONRequestController extends JSONRequestController
         return;
       }
       
-      ApplicationMailTemplate applicationMailTemplate = null;
       ApplicationMailTemplateDAO applicationMailTemplateDAO = DAOFactory.getInstance().getApplicationMailTemplateDAO();
-      if (templateId == null) {
-        applicationMailTemplate = applicationMailTemplateDAO.create(line, name, subject, content, staffMember);
-      }
-      else {
-        applicationMailTemplate = applicationMailTemplateDAO.findById(templateId);
-        if (applicationMailTemplate == null) {
-          requestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
-          return;
-        }
-        applicationMailTemplate = applicationMailTemplateDAO.update(applicationMailTemplate, line, name, subject, content);
-      }
-      
-      requestContext.addResponseParameter("id", applicationMailTemplate.getId());
-      requestContext.addResponseParameter("line", ApplicationUtils.applicationLineUiValue(line));
-      requestContext.addResponseParameter("name", applicationMailTemplate.getName());
-      requestContext.addResponseParameter("subject", applicationMailTemplate.getSubject());
-      requestContext.addResponseParameter("author", applicationMailTemplate.getStaffMember().getFullName());
+      ApplicationMailTemplate applicationMailTemplate = applicationMailTemplateDAO.create(line, name, subject, content, staffMember);
+      String redirectURL = requestContext.getRequest().getContextPath() + "/applications/editmailtemplate.page?template=" + applicationMailTemplate.getId();
+      requestContext.setRedirectURL(redirectURL);
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Error saving mail template", e);

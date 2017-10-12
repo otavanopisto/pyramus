@@ -4,10 +4,10 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
-public class ManageMailTemplatesViewController extends PyramusViewController {
+public class CreateMailTemplateViewController extends PyramusViewController {
   
   public void process(PageRequestContext pageRequestContext) {
-    pageRequestContext.setIncludeJSP("/templates/applications/management-mail-templates.jsp");
+    pageRequestContext.setIncludeJSP("/templates/applications/createmailtemplate.jsp");
   }
 
   public UserRole[] getAllowedRoles() {

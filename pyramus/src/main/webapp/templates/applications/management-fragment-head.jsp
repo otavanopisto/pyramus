@@ -12,5 +12,5 @@
 <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/parsley/fi.js"></script>
 <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
 <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/notificationqueue/notificationqueue.js"></script>
-<script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application.js"></script>
-<script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/application/application-management.js"></script>
+<script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/applications/application.js"></script>
+<script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/applications/application-management.js"></script>
