@@ -101,7 +101,6 @@
             },
             onSuccess: function(response) {
               $('template-field-id').options.item($('template-field-id').selectedIndex).remove();
-              console.log('value now ' + $('template-field-id').getValue());
               $('template-field-id').dispatchEvent(new Event('change'));
             }
           });
