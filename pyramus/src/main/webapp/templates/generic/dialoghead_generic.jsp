@@ -1,3 +1,4 @@
+<meta charset="UTF-8"/>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link href="${pageContext.request.contextPath}/css/theme.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath}/css/dialog_content.css" rel="stylesheet">
