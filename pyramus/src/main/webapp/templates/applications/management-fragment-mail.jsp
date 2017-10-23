@@ -13,11 +13,6 @@
         <h4 class="application-mail-title">Vastaanottajat</h4>
       </div>
       <div class="field-container">
-        <h4 class="application-mail-title">Otsikko</h4>
-        <input id="mail-form-subject" class="mail-subject" name="mail-form-subject"/>
-      </div>
-      
-      <div class="field-container">
         <h4 class="application-mail-title">Viestipohjat</h4>
         <div class="application-templates-filters">
           <span class="application-templates-filter"><input id="mail-templates-filter-line" type="checkbox"> <label for="mail-templates-filter-line"> Vain linjakohtaiset</label></span> 
@@ -27,11 +22,11 @@
           <span id="application-mail-templates" class="application-mail-templates"></span>
           <button id="application-mail-template-apply" class="button-apply-template" type="button">Lisää</button>
         </div>
-          
-          
-        
       </div>
-      
+      <div class="field-container">
+        <h4 class="application-mail-title">Otsikko</h4>
+        <input id="mail-form-subject" class="mail-subject" name="mail-form-subject"/>
+      </div>
       <div class="field-container">
         <h4 class="application-mail-title">Sisältö</h4>
         <textarea id="mail-form-content" class="mail-content" name="mail-form-content" rows="10"></textarea>
