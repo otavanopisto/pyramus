@@ -1,10 +1,13 @@
 package fi.otavanopisto.pyramus.koski;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -12,11 +15,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
-import fi.otavanopisto.pyramus.domainmodel.courses.Course;
-import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
+import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
@@ -30,15 +32,14 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
-import fi.otavanopisto.pyramus.koski.model.Henkilo;
-import fi.otavanopisto.pyramus.koski.model.HenkiloOID;
-import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
+import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
+import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
-import fi.otavanopisto.pyramus.koski.model.Oppija;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
+import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunniste;
@@ -59,21 +60,13 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
   @Inject
   private Logger logger;
 
-  @Inject 
-  private CourseAssessmentDAO courseAssessmentDAO;
-
-  public Oppija studentToModel(Student student, String personOid, String studyOid, String academyIdentifier) {
+  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
     OpiskeluoikeudenTyyppi opiskeluoikeudenTyyppi = settings.getOpiskeluoikeudenTyyppi(student.getStudyProgramme().getId());
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, opiskeluoikeudenTyyppi);
-    List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
+    String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
     
-    Henkilo henkilo;
-    if (StringUtils.isNotBlank(personOid))
-      henkilo = new HenkiloOID(personOid);
-    else
-      henkilo = new HenkiloUusi(student.getPerson().getSocialSecurityNumber(), student.getFirstName(), student.getLastName(), student.getNickname());
-
     LukionOpiskeluoikeus opiskeluoikeus = new LukionOpiskeluoikeus();
+    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(student.getId()));
     opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
     opiskeluoikeus.setPaattymispaiva(student.getStudyEndDate());
     if (studyOid != null)
@@ -81,8 +74,9 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
     opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
-    
+
     SuorituksenTila suorituksenTila = SuorituksenTila.KESKEN;
+    
     if (student.getStudyEndDate() != null) {
       OpiskeluoikeudenTila opintojenLopetusTila = settings.getStudentState(student);
       opiskeluoikeus.getTila().addOpiskeluoikeusJakso(
@@ -94,86 +88,109 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
     LukionOppimaaranSuoritus suoritus = new LukionOppimaaranSuoritus(
-        suorituksenTila, LukionOppimaara.aikuistenops, Kieli.FI, toimipiste);
+        LukionOppimaara.aikuistenops, Kieli.FI, toimipiste, suorituksenTila);
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
+    if (suorituksenTila == SuorituksenTila.VALMIS)
+      suoritus.setVahvistus(getVahvistus(student, academyIdentifier));
     opiskeluoikeus.addSuoritus(suoritus);
     
-    Oppija oppija = new Oppija();
-    oppija.setHenkilo(henkilo);
-    oppija.addOpiskeluoikeus(opiskeluoikeus);
-    
+
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
-    assessmentsToModel(studentEducationType, studentSubjects, courseAssessments, suoritus);
+    assessmentsToModel(student, studentEducationType, studentSubjects, suoritus);
     
-    return oppija;
+    return opiskeluoikeus;
   }
   
-  private void assessmentsToModel(EducationType studentEducationType, StudentSubjectSelections studentSubjects, List<CourseAssessment> courseAssessments,
-      LukionOppimaaranSuoritus suoritus) {
+  private void assessmentsToModel(Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, LukionOppimaaranSuoritus oppimaaranSuoritus) {
+    Collection<CreditStub> credits = listCredits(student);
     
-    Map<Subject, LukionOppiaineenSuoritus> map = new HashMap<>();
+    Map<String, LukionOppiaineenSuoritus> map = new HashMap<>();
     
-    for (CourseAssessment ca : courseAssessments) {
-      Subject subject = (ca.getCourseStudent() != null && ca.getCourseStudent().getCourse() != null) ?
-          ca.getCourseStudent().getCourse().getSubject() : null;
-      
-      LukionOppiaineenSuoritus oppiaineenSuoritus = getSubject(studentEducationType, subject, studentSubjects, map);
+    for (CreditStub credit : credits) {
+      LukionOppiaineenSuoritus oppiaineenSuoritus = getSubject(student, studentEducationType, credit.getSubject(), studentSubjects, map);
 
-      if (settings.isReportedCredit(ca) && oppiaineenSuoritus != null)
-        oppiaineenSuoritus.addOsasuoritus(createKurssiSuoritus(ca));
+      if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
+        LukionKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(credit);
+        if (kurssiSuoritus != null)
+          oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
+      }
     }
     
-    map.values().forEach(lukionOppiaineenSuoritus -> suoritus.addOsasuoritus(lukionOppiaineenSuoritus));
+    for (LukionOppiaineenSuoritus lukionOppiaineenSuoritus : map.values()) {
+      // Valmiille oppiaineelle on rustattava kokonaisarviointi
+      if (oppimaaranSuoritus.getTila().getValue() == SuorituksenTila.VALMIS) {
+        ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(lukionOppiaineenSuoritus);
+        
+        if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
+          KurssinArviointi arviointi = new KurssinArviointiNumeerinen(aineKeskiarvo, student.getStudyEndDate());
+          lukionOppiaineenSuoritus.addArviointi(arviointi);
+        } else if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
+          KurssinArviointi arviointi = new KurssinArviointiSanallinen(aineKeskiarvo, student.getStudyEndDate(), kuvaus("Suoritettu/Hylätty"));
+          lukionOppiaineenSuoritus.addArviointi(arviointi);
+        }
+      }
+      
+      oppimaaranSuoritus.addOsasuoritus(lukionOppiaineenSuoritus);
+    }
   }
 
-  private LukionOppiaineenSuoritus getSubject(EducationType studentEducationType, Subject subject, StudentSubjectSelections studentSubjects, Map<Subject, LukionOppiaineenSuoritus> map) {
-    if (map.containsKey(subject))
-      return map.get(subject);
+  private ArviointiasteikkoYleissivistava getSubjectMeanGrade(LukionOppiaineenSuoritus oppiaineenSuoritus) {
+    Set<ArviointiasteikkoYleissivistava> kurssiarvosanat = new HashSet<>();
+    for (LukionKurssinSuoritus kurssinSuoritus : oppiaineenSuoritus.getOsasuoritukset()) {
+      Set<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
+      Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
+      
+      kurssiarvosanat.add(ArviointiasteikkoYleissivistava.bestGrade(arvosanat));
+    }
+    
+    return meanGrade(kurssiarvosanat);
+  }
+  
+  private LukionOppiaineenSuoritus getSubject(Student student, EducationType studentEducationType, Subject subject, StudentSubjectSelections studentSubjects, Map<String, LukionOppiaineenSuoritus> map) {
+    String subjectCode = subject.getCode();
+
+    if (map.containsKey(subjectCode))
+      return map.get(subjectCode);
     
     boolean matchingEducationType = studentEducationType != null && subject.getEducationType() != null && 
         studentEducationType.getId().equals(subject.getEducationType().getId());
-    String subjectCode = subject.getCode();
     
     if (matchingEducationType && (StringUtils.equals(subjectCode, "MAA") || StringUtils.equals(subjectCode, "MAB"))) {
       if (StringUtils.equals(subjectCode, studentSubjects.getMath())) {
-        LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMatematiikka(OppiaineMatematiikka.valueOf(subjectCode), true); // TODO pakollinen
-        SuorituksenTila tila = SuorituksenTila.KESKEN; // TODO tila
-        
-        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste, tila);
-        map.put(subject, os);
+        LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMatematiikka(
+            OppiaineMatematiikka.valueOf(subjectCode), isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.MA));
+        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
+        map.put(subjectCode, os);
         return os;
       } else
         return null;
     }
     if (matchingEducationType && StringUtils.equals(subjectCode, "MAY")) {
-      LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMatematiikka(OppiaineMatematiikka.MAY, true); // TODO pakollinen
-      SuorituksenTila tila = SuorituksenTila.KESKEN; // TODO tila
-      
-      LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste, tila);
-      map.put(subject, os);
+      LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMatematiikka(
+          OppiaineMatematiikka.MAY, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.MA));
+      LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
+      map.put(subjectCode, os);
       return os;
     }
     
     
     if (matchingEducationType && StringUtils.equals(subjectCode, "ÄI")) {
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
-        LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusAidinkieli(OppiaineAidinkieliJaKirjallisuus.AI1, true); // TODO pakollinen
-        SuorituksenTila tila = SuorituksenTila.KESKEN; // TODO tila
-        
-        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste, tila);
-        map.put(subject, os);
+        LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusAidinkieli(
+            OppiaineAidinkieliJaKirjallisuus.AI1, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
+        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
+        map.put(subjectCode, os);
         return os;
       } else
         return null;
     }
     if (matchingEducationType && StringUtils.equals(subjectCode, "S2")) {
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
-        LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusAidinkieli(OppiaineAidinkieliJaKirjallisuus.AI7, true); // TODO pakollinen
-        SuorituksenTila tila = SuorituksenTila.KESKEN; // TODO tila
-        
-        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste, tila);
-        map.put(subject, os);
+        LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusAidinkieli(
+            OppiaineAidinkieliJaKirjallisuus.AI7, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
+        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
+        map.put(subjectCode, os);
         return os;
       } else
         return null;
@@ -193,11 +210,10 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
                       studentSubjects.isB2Language(subjectCode) ? KoskiOppiaineetYleissivistava.B2 :
                         studentSubjects.isB3Language(subjectCode) ? KoskiOppiaineetYleissivistava.B3 : null;
           
-          LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusVierasKieli(valinta, kieli, true); // TODO pakollinen
-          SuorituksenTila tila = SuorituksenTila.KESKEN; // TODO tila
-          
-          LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste, tila);
-          map.put(subject, os);
+          LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusVierasKieli(valinta, kieli, 
+              isPakollinenOppiaine(student, valinta));
+          LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
+          map.put(subjectCode, os);
           return os;
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
@@ -206,40 +222,44 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       }
     }
 
+    String[] religionSubjects = new String[] { "UE", "UO", "ET" };
+    
+    if (ArrayUtils.contains(religionSubjects, subjectCode)) {
+      if (StringUtils.equals(subjectCode, studentSubjects.getReligion()) || StringUtils.equals(subjectCode, "ET")) {
+        if (map.containsKey("KT"))
+          return map.get("KT");
+        
+        KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
+        LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
+        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
+        map.put("KT", os);
+        return os;
+      } else
+        return null;
+    }
+    
     if (matchingEducationType && EnumUtils.isValidEnum(KoskiOppiaineetYleissivistava.class, StringUtils.upperCase(subjectCode))) {
       // Common national subject
       
-      KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.valueOf(StringUtils.upperCase(subject.getCode()));
-      LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen(kansallinenAine, true); // TODO pakollinen
-      SuorituksenTila tila = SuorituksenTila.KESKEN; // TODO tila
-      
-      LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste, tila);
-      map.put(subject, os);
+      KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.valueOf(StringUtils.upperCase(subjectCode));
+      LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
+      LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
+      map.put(subjectCode, os);
       return os;
     } else {
       // Other local subject
       // TODO Skipped subjects ?? (MUU)
       
-      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(subject.getCode(), kuvaus(subject.getName()));
-      LukionOppiaineenSuoritusPaikallinen tunniste = new LukionOppiaineenSuoritusPaikallinen(paikallinenKoodi, true, kuvaus(subject.getName())); // TODO pakollinen
-      SuorituksenTila tila = SuorituksenTila.KESKEN; // TODO tila
-      
-      LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste, tila);
-      map.put(subject, os);
+      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(subjectCode, kuvaus(subject.getName()));
+      LukionOppiaineenSuoritusPaikallinen tunniste = new LukionOppiaineenSuoritusPaikallinen(paikallinenKoodi, false, kuvaus(subject.getName()));
+      LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
+      map.put(subjectCode, os);
       return os;
     }
   }
 
-  protected LukionKurssinSuoritus createKurssiSuoritus(CourseAssessment ca) {
-    Course course = (ca.getCourseStudent() != null) ?
-        ca.getCourseStudent().getCourse() : null;
-    Subject subject = (ca.getCourseStudent() != null && ca.getCourseStudent().getCourse() != null) ?
-        ca.getCourseStudent().getCourse().getSubject() : null;
-        
-    String kurssiKoodi = subject.getCode() + course.getCourseNumber().toString();
-    ArviointiasteikkoYleissivistava arvosana = getArvosana(ca.getGrade());
-
-    KurssinArviointi arviointi = new KurssinArviointiNumeerinen(arvosana, ca.getDate()); // TODO sanallinen arviointi
+  protected LukionKurssinSuoritus createKurssiSuoritus(CreditStub courseCredit) {
+    String kurssiKoodi = courseCredit.getCourseCode();
     LukionKurssinTunniste tunniste;
     
     if (EnumUtils.isValidEnum(LukionKurssit.class, kurssiKoodi)) {
@@ -247,13 +267,34 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       LukionKurssinTyyppi kurssinTyyppi = LukionKurssinTyyppi.pakollinen; // TODO pakollinen/syventava
       tunniste = new LukionKurssinTunnisteValtakunnallinen(kurssi, kurssinTyyppi); // TODO vk/paikallinen
     } else {
-      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(subject.getName()));
+      PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getSubject().getName()));
       LukionKurssinTyyppi kurssinTyyppi = LukionKurssinTyyppi.soveltava; // TODO syventava/soveltava
-      tunniste = new LukionKurssinTunnistePaikallinen(paikallinenKoodi , kurssinTyyppi, kuvaus(course.getName()));
+      tunniste = new LukionKurssinTunnistePaikallinen(paikallinenKoodi , kurssinTyyppi, kuvaus(courseCredit.getCourseName()));
     }
       
     LukionKurssinSuoritus suoritus = new LukionKurssinSuoritus(tunniste, SuorituksenTila.VALMIS);
-    suoritus.addArviointi(arviointi);
+
+    // Hyväksilukutieto on hölmössä paikassa; jos kaikki arvosanat ovat hyväksilukuja, tallennetaan 
+    // tieto hyväksilukuna - ongelmallista, jos hyväksiluettua kurssia on korotettu 
+    if (courseCredit.getCredits().stream().allMatch(credit -> credit.getCreditType() == CreditType.TransferCredit)) {
+      OsaamisenTunnustaminen tunnustettu = new OsaamisenTunnustaminen(kuvaus("Hyväksiluku"));
+      suoritus.setTunnustettu(tunnustettu);
+    }
+
+    for (Credit credit : courseCredit.getCredits()) {
+      ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());
+  
+      KurssinArviointi arviointi = null;
+      if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
+        arviointi =  new KurssinArviointiNumeerinen(arvosana, credit.getDate());
+      } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
+        arviointi = new KurssinArviointiSanallinen(arvosana, credit.getDate(), kuvaus(credit.getGrade().getName()));
+      }
+
+      if (arviointi != null)
+        suoritus.addArviointi(arviointi);
+    }
+    
     return suoritus;
   }
 

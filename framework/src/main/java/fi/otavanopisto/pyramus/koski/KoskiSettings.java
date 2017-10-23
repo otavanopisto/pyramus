@@ -14,13 +14,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
-import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
+import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
@@ -29,7 +30,10 @@ import net.sf.json.JSONObject;
 @ApplicationScoped
 public class KoskiSettings {
 
+  // Global switch for Koski integration
   private static final String KOSKI_SETTINGKEY_ENABLED = "koski.enabled";
+  // For test environment the saving of oid's needs to be turned off
+  private static final String KOSKI_SETTINGKEY_TESTENVIRONMENT = "koski.testEnvironment";
 
   @Inject
   private Logger logger;
@@ -43,6 +47,7 @@ public class KoskiSettings {
   @PostConstruct
   private void postConstruct() {
     enabled = Boolean.parseBoolean(getSetting(KOSKI_SETTINGKEY_ENABLED));
+    testEnvironment = Boolean.parseBoolean(getSetting(KOSKI_SETTINGKEY_TESTENVIRONMENT));
     
     if (isEnabled()) {
       String fileName = System.getProperty("jboss.server.config.dir") + "/koski-config.json";
@@ -63,6 +68,7 @@ public class KoskiSettings {
   
   private void readSettings(JSONObject settings) {
     JSONObject koskiSettings = settings.getJSONObject("koski");
+    this.academyIdentifier = koskiSettings.getString("academyIdentifier");
     JSONObject studyEndReasonMapping = koskiSettings.getJSONObject("studyEndReasonMapping");
     for (Object studyEndReasonKey : studyEndReasonMapping.keySet()) {
       Long studyEndReasonId = Long.parseLong(studyEndReasonKey.toString());
@@ -94,11 +100,34 @@ public class KoskiSettings {
           diaarinumerot.put(String.format("%d.%d", studyProgrammeId, curriculumId), diaariJSON.getString(curriculumIdKey.toString()));
         }
       }
+      
+      JSONObject vahvistajaJSON = studyProgramme.getJSONObject("vahvistaja");
+      if (vahvistajaJSON != null) {
+        vahvistaja.put(studyProgrammeId, vahvistajaJSON.getString("nimi"));
+        vahvistajanTitteli.put(studyProgrammeId, vahvistajaJSON.getString("titteli"));
+      }
+      
+      String pakollisetOppiaineet = studyProgramme.getString("pakollisetOppiaineet");
+      if (StringUtils.isNotBlank(pakollisetOppiaineet)) {
+        Set<KoskiOppiaineetYleissivistava> set = new HashSet<>();
+        for (String s : StringUtils.split(pakollisetOppiaineet, ',')) {
+          KoskiOppiaineetYleissivistava oppiaine = KoskiOppiaineetYleissivistava.valueOf(s);
+          if (oppiaine != null)
+            set.add(oppiaine);
+          else
+            logger.log(Level.WARNING, String.format("No equivalent enum found for value %s of studyprogramme %d.", s, studyProgrammeId));
+        }
+        this.pakollisetOppiaineet.put(studyProgrammeId, set);
+      }
     }
   }
 
   public boolean isEnabled() {
     return enabled;
+  }
+
+  public boolean isTestEnvironment() {
+    return testEnvironment;
   }
 
   public boolean isEnabledStudyProgramme(Long studyProgrammeId) {
@@ -124,21 +153,13 @@ public class KoskiSettings {
     return null;
   }
 
-  private boolean enabled;
-  private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
-  private Map<Long, OpiskeluoikeudenTila> studentStateMap = new HashMap<>();
-  private Map<Long, SuorituksenTyyppi> suoritustyypit = new HashMap<>();
-  private Map<Long, OpiskeluoikeudenTyyppi> opiskeluoikeustyypit = new HashMap<>();
-  private Map<Long, String> modulitunnisteet = new HashMap<>();
-  private Map<String, String> diaarinumerot = new HashMap<>();
-
   /**
    * Is this credit such that it is being reported to the system
    * 
    * @param ca
    * @return
    */
-  public boolean isReportedCredit(CourseAssessment ca) {
+  public boolean isReportedCredit(CreditStub ca) {
     return true;
   }
 
@@ -158,4 +179,34 @@ public class KoskiSettings {
     String key = String.format("%d.%d", studyProgrammeId, curriculumId);
     return diaarinumerot.get(key);
   }
+
+  public String getVahvistaja(Long studyProgrammeId) {
+    return vahvistaja.get(studyProgrammeId);
+  }
+
+  public String getVahvistajanTitteli(Long studyProgrammeId) {
+    return vahvistajanTitteli.get(studyProgrammeId);
+  }
+
+  public Set<KoskiOppiaineetYleissivistava> getPakollisetOppiaineet(Long studyProgrammeId) {
+    return pakollisetOppiaineet.get(studyProgrammeId);
+  }
+  
+  public String getAcademyIdentifier() {
+    return academyIdentifier;
+  }
+  
+  private boolean enabled;
+  private boolean testEnvironment;
+  private String academyIdentifier;
+  private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
+  private Map<Long, OpiskeluoikeudenTila> studentStateMap = new HashMap<>();
+  private Map<Long, SuorituksenTyyppi> suoritustyypit = new HashMap<>();
+  private Map<Long, OpiskeluoikeudenTyyppi> opiskeluoikeustyypit = new HashMap<>();
+  private Map<Long, String> modulitunnisteet = new HashMap<>();
+  private Map<String, String> diaarinumerot = new HashMap<>();
+  
+  private Map<Long, String> vahvistaja = new HashMap<>();
+  private Map<Long, String> vahvistajanTitteli = new HashMap<>();
+  private Map<Long, Set<KoskiOppiaineetYleissivistava>> pakollisetOppiaineet = new HashMap<>();
 }

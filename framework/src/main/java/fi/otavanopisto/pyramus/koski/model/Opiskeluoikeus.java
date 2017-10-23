@@ -45,8 +45,18 @@ public abstract class Opiskeluoikeus {
     this.oid = oid;
   }
 
+  @JsonProperty("lähdejärjestelmänId")
+  public LahdeJarjestelmaID getLahdejarjestelmanId() {
+    return lahdejarjestelmanId;
+  }
+
+  public void setLahdejarjestelmanId(LahdeJarjestelmaID lahdejarjestelmanId) {
+    this.lahdejarjestelmanId = lahdejarjestelmanId;
+  }
+
   private String oid;
   private Date alkamispaiva;
   private Date paattymispaiva;
   private final KoodistoViite<OpiskeluoikeudenTyyppi> tyyppi = new KoodistoViite<>();
+  private LahdeJarjestelmaID lahdejarjestelmanId;
 }

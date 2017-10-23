@@ -1,9 +1,12 @@
 package fi.otavanopisto.pyramus.koski.model.lukio;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssinTyyppi;
 import fi.otavanopisto.pyramus.koski.model.Laajuus;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class LukionKurssinTunniste {
 
   public LukionKurssinTunniste(LukionKurssinTyyppi kurssinTyyppi) {

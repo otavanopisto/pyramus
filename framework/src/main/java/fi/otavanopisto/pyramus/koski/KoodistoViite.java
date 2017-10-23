@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.koski;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class KoodistoViite<T extends Enum<T>> {
 
   public KoodistoViite() {
@@ -25,6 +27,11 @@ public class KoodistoViite<T extends Enum<T>> {
     }
     
     return null;
+  }
+  
+  @JsonIgnore
+  public T getValue() {
+    return Enum.valueOf(koodiarvo.getDeclaringClass(), koodiarvo.name());
   }
 
   private Enum<T> koodiarvo;

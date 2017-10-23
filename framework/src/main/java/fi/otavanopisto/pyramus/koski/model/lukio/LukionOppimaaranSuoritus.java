@@ -18,22 +18,13 @@ import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LukionOppimaaranSuoritus extends LukionSuoritus {
   
-  public LukionOppimaaranSuoritus(SuorituksenTila suorituksenTila, 
-      LukionOppimaara oppimaara, Kieli suorituskieli, OrganisaationToimipiste toimipiste) {
-    this.toimipiste = toimipiste;
+  public LukionOppimaaranSuoritus(LukionOppimaara oppimaara, Kieli suorituskieli, 
+      OrganisaationToimipiste toimipiste, SuorituksenTila tila) {
+    super(tila, SuorituksenTyyppi.lukionoppimaara, suorituskieli, toimipiste);
     this.oppimaara.setValue(oppimaara);
-    this.suorituskieli.setValue(suorituskieli);
-    this.tila.setValue(suorituksenTila);
+    this.getSuorituskieli().setValue(suorituskieli);
   }
   
-  public OrganisaationToimipiste getToimipiste() {
-    return toimipiste;
-  }
-  
-  public void setToimipiste(OrganisaationToimipiste toimipiste) {
-    this.toimipiste = toimipiste;
-  }
-
   public void addOsasuoritus(LukionOsasuoritus osasuoritus) {
     osasuoritukset.add(osasuoritus);
   }
@@ -51,23 +42,7 @@ public class LukionOppimaaranSuoritus extends LukionSuoritus {
     return oppimaara;
   }
   
-  public KoodistoViite<Kieli> getSuorituskieli() {
-    return suorituskieli;
-  }
-  
-  public KoodistoViite<SuorituksenTila> getTila() {
-    return tila;
-  }
-  
-  public KoodistoViite<SuorituksenTyyppi> getTyyppi() {
-    return tyyppi;
-  }
-
   private final Koulutusmoduuli koulutusmoduuli = new Koulutusmoduuli(Koulutus.K309902);
   private final KoodistoViite<LukionOppimaara> oppimaara = new KoodistoViite<>();
-  private OrganisaationToimipiste toimipiste;
-  private final KoodistoViite<Kieli> suorituskieli = new KoodistoViite<>();
   private final Set<LukionOsasuoritus> osasuoritukset = new HashSet<>();
-  private final KoodistoViite<SuorituksenTila> tila = new KoodistoViite<>();
-  private final KoodistoViite<SuorituksenTyyppi> tyyppi = new KoodistoViite<>(SuorituksenTyyppi.lukionoppimaara);
 }

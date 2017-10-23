@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -20,10 +20,10 @@ public class Oppija {
     opiskeluoikeudet.add(opiskeluoikeus);
   }
   
-  public Set<Opiskeluoikeus> getOpiskeluoikeudet() {
+  public List<Opiskeluoikeus> getOpiskeluoikeudet() {
     return opiskeluoikeudet;
   }
 
   private Henkilo henkilo;
-  private final Set<Opiskeluoikeus> opiskeluoikeudet = new HashSet<>();
+  private final List<Opiskeluoikeus> opiskeluoikeudet = new ArrayList<>();
 }

@@ -4,23 +4,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
-import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
+import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 
 public class AikuistenPerusopetuksenOppiaineenSuoritus extends AikuistenPerusopetuksenOsasuoritus {
 
-  public AikuistenPerusopetuksenOppiaineenSuoritus(AikuistenPerusopetuksenOppiaineenTunniste koulutusmoduuli, 
-      SuorituksenTila tila) {
+  public AikuistenPerusopetuksenOppiaineenSuoritus(AikuistenPerusopetuksenOppiaineenTunniste koulutusmoduuli) {
     this.koulutusmoduuli = koulutusmoduuli;
-    this.tila.setValue(tila);
   }
   
   public AikuistenPerusopetuksenOppiaineenTunniste getKoulutusmoduuli() {
     return koulutusmoduuli;
-  }
-  
-  public KoodistoViite<SuorituksenTila> getTila() {
-    return tila;
   }
   
   public KoodistoViite<SuorituksenTyyppi> getTyyppi() {
@@ -35,8 +29,16 @@ public class AikuistenPerusopetuksenOppiaineenSuoritus extends AikuistenPerusope
     return osasuoritukset;
   }
 
+  public void addArviointi(KurssinArviointi arviointi) {
+    this.arviointi.add(arviointi);
+  }
+  
+  public Set<KurssinArviointi> getArviointi() {
+    return arviointi;
+  }
+
   private final AikuistenPerusopetuksenOppiaineenTunniste koulutusmoduuli;
-  private final KoodistoViite<SuorituksenTila> tila = new KoodistoViite<>();
+  private final Set<KurssinArviointi> arviointi = new HashSet<>();
   private final KoodistoViite<SuorituksenTyyppi> tyyppi = new KoodistoViite<>(SuorituksenTyyppi.aikuistenperusopetuksenoppiaine);
   private final Set<AikuistenPerusopetuksenKurssinSuoritus> osasuoritukset = new HashSet<>();
 }

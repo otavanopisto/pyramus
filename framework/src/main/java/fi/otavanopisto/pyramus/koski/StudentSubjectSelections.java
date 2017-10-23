@@ -102,6 +102,14 @@ public class StudentSubjectSelections {
     return new String[0];
   }
   
+  public String getReligion() {
+    return religion;
+  }
+
+  public void setReligion(String religion) {
+    this.religion = religion;
+  }
+
   private String math;
   private String primaryLanguage;
   private String aLanguages;
@@ -110,4 +118,5 @@ public class StudentSubjectSelections {
   private String b1Languages;
   private String b2Languages;
   private String b3Languages;
+  private String religion;
 }

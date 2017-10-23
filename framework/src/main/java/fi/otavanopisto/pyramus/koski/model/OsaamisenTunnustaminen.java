@@ -2,8 +2,8 @@ package fi.otavanopisto.pyramus.koski.model;
 
 public class OsaamisenTunnustaminen {
 
-  public OsaamisenTunnustaminen(Object osaaminen) {
-    this.osaaminen = osaaminen;
+  public OsaamisenTunnustaminen(Kuvaus selite) {
+    this.selite = selite;
   }
   
   public Kuvaus getSelite() {
@@ -14,6 +14,10 @@ public class OsaamisenTunnustaminen {
     return osaaminen;
   }
 
-  private final Object osaaminen;
-  private final Kuvaus selite = new Kuvaus();
+  public void setOsaaminen(Object osaaminen) {
+    this.osaaminen = osaaminen;
+  }
+
+  private Object osaaminen;
+  private final Kuvaus selite;
 }
