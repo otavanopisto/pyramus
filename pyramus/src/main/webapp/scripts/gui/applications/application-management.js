@@ -268,13 +268,68 @@
       removePlugins: 'elementspath' 
     });
     $.ajax({
+      url: '/applications/listmailtemplates.json',
+      type: 'GET',
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8',
+      success: function(response) {
+        var selectField = $('<select>');
+        $('#application-mail-templates').append(selectField);
+        for (var i = 0; i < response.mailTemplates.length; i++) {
+          var optionField = $('<option>');
+          $(optionField).attr('value', response.mailTemplates[i].id);
+          $(optionField).attr('data-line', response.mailTemplates[i].lineInternal);
+          $(optionField).attr('data-owner', response.mailTemplates[i].owner);
+          $(optionField).text(response.mailTemplates[i].name);
+          $(selectField).append(optionField);
+        }
+      }
+    });
+    $('#mail-templates-filter-line,#mail-templates-filter-owner').on('click', function() {
+      var selectField = $('#application-mail-templates').find('select'); 
+      $(selectField).val('');
+      $(selectField).find('option[data-line]').each(function() {
+        $(this).removeAttr('hidden');
+        if ($('#mail-templates-filter-line').prop('checked') && $('#field-line').val() != $(this).attr('data-line')) {
+          $(this).attr('hidden', 'hidden');
+        }
+        if ($('#mail-templates-filter-owner').prop('checked') && !$(this).attr('data-owner')) {
+          $(this).attr('hidden', 'hidden');
+        }
+        if (!$(this).attr('hidden') && !$(selectField).val()) {
+          $(selectField).val($(this).attr('value'));
+        }
+      });
+    });
+    $('#application-mail-template-apply').on('click', function() {
+      var selectField = $('#application-mail-templates').find('select'); 
+      var templateId = $(selectField).val();
+      if (templateId) {
+        $.ajax({
+          url: '/applications/getmailtemplate.json',
+          type: 'GET',
+          data: {
+            id: templateId
+          },
+          dataType: 'json',
+          contentType: 'application/json; charset=utf-8',
+          success: function(response) {
+            if (response.subject) {
+              $('#mail-form-subject').val(response.subject);
+            }
+            CKEDITOR.instances['mail-form-content'].insertHtml(response.content);
+          }
+        });
+      }
+    });
+    $.ajax({
       url: '/applications/listmailrecipients.json',
-      type: "GET",
+      type: 'GET',
       data: {
         applicationEntityId: $('body').attr('data-application-entity-id')
       },
-      dataType: "json",
-      contentType: "application/json; charset=utf-8",
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8',
       success: function(response) {
         for (var i = 0; i < response.recipients.length; i++) {
           var row = $('<div>').addClass('field-row-flex');
@@ -323,7 +378,7 @@
       }
     });
     
-    // Actions
+    // Application handling options
     
     $('.application-handling-option').on('click', function(event) {
       $('.application-handling-options-container').hide();

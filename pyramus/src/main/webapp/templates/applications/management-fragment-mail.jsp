@@ -20,6 +20,16 @@
         <h4 class="application-mail-title">Sisältö</h4>
         <textarea id="mail-form-content" class="mail-content" name="mail-form-content" rows="10"></textarea>
       </div>
+      <div class="field-container">
+        <h4 class="application-mail-title">Viestipohjat</h4>
+        <div>
+          <span id="application-mail-templates">
+          </span>
+          <input id="mail-templates-filter-line" type="checkbox">Vain linjakohtaiset 
+          <input id="mail-templates-filter-owner" type="checkbox">Vain omat
+          <button id="application-mail-template-apply" class="button-apply-template" type="button">Lisää</button>
+        </div>
+      </div>
       <div class="field-button-set">
         <button id="mail-form-send" class="button-send-mail" type="button">Lähetä</button>
       </div>
