@@ -2,6 +2,10 @@
 
   $(document).ready(function() {
     
+    // Actions
+    
+    refreshActions();
+    
     // Contact log entries
     
     loadLogEntries();
@@ -336,16 +340,20 @@
           id: id,
           state: state,
           lockApplication: state == 'PROCESSING',
-          setHandler: state == 'PROCESSING'
+          setHandler: !$('#info-application-handler-value').attr('data-handler-id'),
+          removeHandler: state == 'PENDING'
         },
         dataType: 'json',
         success: function(response) {
           $('#info-application-handler-value').text(response.handler||'-');
+          $('#info-application-handler-value').attr('data-handler-id', response.handlerId);
           $('#info-application-last-modified-value').text(moment(response.lastModified).format('D.M.YYYY h:mm'));
-          $('#info-application-state-value').text(response.state);
+          $('#info-application-state-value').text(response.stateUi);
+          $('#info-application-state-value').attr('data-state', response.state);
           $('#action-application-toggle-lock').removeClass('icon-locked icon-unlocked');
           $('#action-application-toggle-lock').addClass(response.applicantEditable ? 'icon-unlocked' : 'icon-locked');
           loadLogEntries();
+          refreshActions();
           $('.notification-queue').notificationQueue('notification', 'info', 'Hakemuksen tila vaihdettu');
         }
       });
@@ -360,6 +368,17 @@
     $(document).on("click", function () {
       $('.application-handling-options-container').hide();
     });
+    function refreshActions() {
+      var currentState = $('#info-application-state-value').attr('data-state');
+      $('div.application-handling-option').each(function() {
+        var optionState = $(this).attr('data-state');
+        var applicableStates = [];
+        if ($(this).attr('data-show')) {
+          applicableStates = $(this).attr('data-show').split(',');
+        }
+        $(this).toggle(optionState != currentState && (applicableStates.length == 0 || $.inArray(currentState, applicableStates) >= 0));
+      });
+    }
   });
   
 }).call(this);

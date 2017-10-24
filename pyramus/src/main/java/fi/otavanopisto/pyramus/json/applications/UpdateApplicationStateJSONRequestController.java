@@ -38,6 +38,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
       ApplicationState applicationState = ApplicationState.valueOf(requestContext.getString("state"));
       Boolean lockApplication = requestContext.getBoolean("lockApplication");
       Boolean setHandler = requestContext.getBoolean("setHandler");
+      Boolean removeHandler = requestContext.getBoolean("removeHandler");
       
       // Application update
       
@@ -55,6 +56,9 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
         if (Boolean.TRUE.equals(setHandler)) {
           application = applicationDAO.updateApplicationHandler(application, staffMember);
         }
+        if (Boolean.TRUE.equals(removeHandler)) {
+          application = applicationDAO.updateApplicationHandler(application, null);
+        }
         ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
         applicationLogDAO.create(application,
             ApplicationLogType.HTML,
@@ -65,9 +69,11 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
       // Response parameters
       
       requestContext.addResponseParameter("id", application.getId());
-      requestContext.addResponseParameter("state", ApplicationUtils.applicationStateUiValue(application.getState()));
+      requestContext.addResponseParameter("state", application.getState());
+      requestContext.addResponseParameter("stateUi", ApplicationUtils.applicationStateUiValue(application.getState()));
       requestContext.addResponseParameter("applicantEditable", application.getApplicantEditable());
       requestContext.addResponseParameter("handler", application.getHandler() == null ? null : application.getHandler().getFullName());
+      requestContext.addResponseParameter("handlerId", application.getHandler() == null ? null : application.getHandler().getId());
       requestContext.addResponseParameter("lastModified", application.getLastModified().getTime());
     }
     catch (Exception e) {
