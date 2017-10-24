@@ -334,7 +334,8 @@ button {
   background: #2dbf90;
 }
 
-.button-send-mail {
+.button-send-mail,
+.button-apply-template {
   background: #2dbf90;
 }
 
@@ -1086,6 +1087,34 @@ span.email {
 
 .application-mail .field-button-set {
   text-align: right;
+}
+
+.application-templates-filters {
+  padding: 8px;
+}
+
+.application-templates-filter {
+  padding: 0 10px 0 0;
+}
+
+.application-templates-filter label {
+  display: inline-block;
+  margin: 0 2px;
+}
+
+.application-templates-container {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.application-templates-container .application-mail-templates {
+  flex: 1 1 100%;
+}
+
+.application-templates-container .button-apply-template {
+  flex: 1 0 100px;
+  margin: 0 0 0 10px;
 }
 
 /* Unfortunate JQuery dialog theme overrides as ThemeRoller is crappy AF */

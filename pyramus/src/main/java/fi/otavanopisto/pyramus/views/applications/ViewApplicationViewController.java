@@ -86,16 +86,16 @@ public class ViewApplicationViewController extends PyramusViewController {
         sections.put("Alaikäisen hakemustiedot", fields);
         if (StringUtils.isNotBlank(getFormValue(formData, "field-underage-grounds"))) {
           fields.put("Hakemusperusteet", getFormValue(formData, "field-underage-grounds"));
-          fields.put("Huoltajan yhteystiedot", String.format("%s %s\n%s\n%s %s\n%s\n%s\n%s",
-            getFormValue(formData, "field-underage-first-name"),
-            getFormValue(formData, "field-underage-last-name"),
-            getFormValue(formData, "field-underage-street-address"),
-            getFormValue(formData, "field-underage-zip-code"),
-            getFormValue(formData, "field-underage-city"),
-            getFormValue(formData, "field-underage-country"),
-            "Puh: " + getFormValue(formData, "field-underage-phone"),
-            "Sähköposti: " + getFormValue(formData, "field-underage-email")));
         }
+        fields.put("Huoltajan yhteystiedot", String.format("%s %s\n%s\n%s %s\n%s\n%s\n%s",
+          getFormValue(formData, "field-underage-first-name"),
+          getFormValue(formData, "field-underage-last-name"),
+          getFormValue(formData, "field-underage-street-address"),
+          getFormValue(formData, "field-underage-zip-code"),
+          getFormValue(formData, "field-underage-city"),
+          getFormValue(formData, "field-underage-country"),
+          "Puh: " + getFormValue(formData, "field-underage-phone"),
+          "Sähköposti: " + getFormValue(formData, "field-underage-email")));
       }
 
       // Hakemiseen vaadittavat lisätiedot
