@@ -36,9 +36,11 @@ public class ListMailTemplatesJSONRequestController extends JSONRequestControlle
       for (ApplicationMailTemplate applicationMailTemplate : applicationMailTemplates) {
         Map<String, Object> templateInfo = new HashMap<>();
         templateInfo.put("id", applicationMailTemplate.getId());
-        templateInfo.put("line", ApplicationUtils.applicationLineUiValue(applicationMailTemplate.getLine()));
+        templateInfo.put("lineInternal", applicationMailTemplate.getLine());
+        templateInfo.put("lineUi", ApplicationUtils.applicationLineUiValue(applicationMailTemplate.getLine()));
         templateInfo.put("name", applicationMailTemplate.getName());
-        templateInfo.put("author", applicationMailTemplate.getStaffMember().getFullName());
+        templateInfo.put("authorName", applicationMailTemplate.getStaffMember().getFullName());
+        templateInfo.put("owner", applicationMailTemplate.getStaffMember().getId().equals(requestContext.getLoggedUserId()));
         results.add(templateInfo);
       }
       requestContext.addResponseParameter("mailTemplates", results);
