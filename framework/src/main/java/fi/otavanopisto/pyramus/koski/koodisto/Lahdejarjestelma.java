@@ -11,6 +11,7 @@ public enum Lahdejarjestelma {
   nexttime ("nexttime"),
   peppi ("peppi"),
   primus ("primus"),
+  pyramus ("pyramus"),
   rediteq ("rediteq"),
   studentaplus ("studentaplus"),
   virta ("virta"),

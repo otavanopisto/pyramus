@@ -8,7 +8,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
@@ -26,9 +25,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kunta;
 import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
-import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
-import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.model.HenkilovahvistusPaikkakunnalla;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.LahdeJarjestelmaID;
@@ -74,16 +71,8 @@ public class KoskiStudentHandler {
     return vahvistus;
   }
 
-//  @Deprecated
-//  protected SuorituksenTila getSubjectState(Student student, Subject subject) {
-//    OpiskeluoikeudenTila studentState = settings.getStudentState(student);
-//    if (ArrayUtils.contains(OpiskeluoikeudenTila.GRADUATED_STATES, studentState))
-//      return SuorituksenTila.VALMIS;
-//    return SuorituksenTila.KESKEN; // TODO tila
-//  }
-  
   protected LahdeJarjestelmaID getLahdeJarjestelmaID(Long id) {
-    return new LahdeJarjestelmaID(String.valueOf(id), Lahdejarjestelma.edukit); // TODO
+    return new LahdeJarjestelmaID(String.valueOf(id), Lahdejarjestelma.pyramus);
   }
 
   protected String getDiaarinumero(Student student) {
