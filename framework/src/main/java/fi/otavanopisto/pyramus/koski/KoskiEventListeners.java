@@ -67,25 +67,4 @@ public class KoskiEventListeners implements Serializable {
     studentIds.add(studentId);
   }
   
-//  @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-//  public synchronized void onStudentUpdatedAfterSuccess(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentUpdatedEvent event) {
-//    Long studentId = event.getStudentId();
-//    Student student = studentDAO.findById(studentId);
-//    client.updateStudent(student);
-//  }
-//  
-//  @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-//  public synchronized void onCourseAssessmentEvent(@Observes(during=TransactionPhase.AFTER_SUCCESS) CourseAssessmentEvent event) {
-//    Long studentId = event.getStudentId();
-//    Student student = studentDAO.findById(studentId);
-//    client.updateStudent(student);
-//  }
-//  
-//  @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-//  public synchronized void onTransferCreditEvent(@Observes(during=TransactionPhase.AFTER_SUCCESS) TransferCreditEvent event) {
-//    Long studentId = event.getStudentId();
-//    Student student = studentDAO.findById(studentId);
-//    client.updateStudent(student);
-//  }
-  
 }
