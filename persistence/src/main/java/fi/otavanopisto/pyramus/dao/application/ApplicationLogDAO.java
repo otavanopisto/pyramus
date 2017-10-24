@@ -12,22 +12,36 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLog;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLog_;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Stateless
 public class ApplicationLogDAO extends PyramusEntityDAO<ApplicationLog> {
 
-  public ApplicationLog create(Application application, String text, User user) {
+  public ApplicationLog create(Application application, ApplicationLogType type, String text, User user) {
     EntityManager entityManager = getEntityManager();
 
     ApplicationLog applicationLog = new ApplicationLog();
     
     applicationLog.setApplication(application);
+    applicationLog.setType(type);
     applicationLog.setText(text);
     applicationLog.setUser(user);
     applicationLog.setDate(new Date());
     applicationLog.setArchived(Boolean.FALSE);
+   
+    entityManager.persist(applicationLog);
+
+    return applicationLog;
+  }
+
+  public ApplicationLog update(ApplicationLog applicationLog, String text, User user) {
+    EntityManager entityManager = getEntityManager();
+
+    applicationLog.setText(text);
+    applicationLog.setUser(user);
+    applicationLog.setDate(new Date());
    
     entityManager.persist(applicationLog);
 

@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,6 +37,14 @@ public class ApplicationLog implements ArchivableEntity {
 
   public void setApplication(Application application) {
     this.application = application;
+  }
+
+  public ApplicationLogType getType() {
+    return type;
+  }
+
+  public void setType(ApplicationLogType type) {
+    this.type = type;
   }
 
   public String getText() {
@@ -77,6 +87,11 @@ public class ApplicationLog implements ArchivableEntity {
   @ManyToOne  
   @JoinColumn(name="application")
   private Application application;
+
+  @NotNull
+  @Column (nullable = false)
+  @Enumerated (EnumType.STRING)
+  private ApplicationLogType type;
 
   @Lob
   @NotNull

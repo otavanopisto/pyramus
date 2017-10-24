@@ -10,10 +10,10 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 public class SimpleDialogViewController extends PyramusViewController {
 
   public void process(PageRequestContext requestContext) {
-    String nonlocalizedMessage = requestContext.getString("message");
+    String nonlocalizedMessage = requestContext.getRequest().getParameter("message");
     if (nonlocalizedMessage == null) {
       String localeId = requestContext.getString("localeId");
-      String localeParamsParameter = requestContext.getString("localeParams");
+      String localeParamsParameter = requestContext.getRequest().getParameter("localeParams");
       String[] localeParams = null;
       
       if (!StringUtils.isBlank(localeParamsParameter)) {

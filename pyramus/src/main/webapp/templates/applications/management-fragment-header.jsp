@@ -21,7 +21,13 @@
         <div class="application-action icon-locked" id="action-application-toggle-lock"></div>
       </c:otherwise>
     </c:choose>
-    <div class="application-action icon-mail"></div>
+    <div class="application-action icon-handling">
+      <div class="application-handling-text">Hakemuksen käsittely</div>
+      <div class="application-handling-options-container">
+        <div class="application-handling-option" data-state="PROCESSING">Ota käsittelyyn</div>
+      </div>
+    </div>
+    <div class="application-action icon-mail" id="action-application-mail"></div>
     <div class="application-action icon-logs" id="action-application-log"></div>
   </div>
 </header>

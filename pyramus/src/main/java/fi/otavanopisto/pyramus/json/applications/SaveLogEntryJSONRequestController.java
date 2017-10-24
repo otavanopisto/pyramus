@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -15,6 +17,7 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLog;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -51,14 +54,21 @@ public class SaveLogEntryJSONRequestController extends JSONRequestController {
         return;
       }
       String logEntry = formData.getString("log-form-text");
+      if (StringUtils.isEmpty(logEntry)) {
+        logger.log(Level.WARNING, "Refusing log entry due to missing content");
+        requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
       
       ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-      ApplicationLog applicationLog = applicationLogDAO.create(application, logEntry, staffMember);
+      ApplicationLog applicationLog = applicationLogDAO.create(application, ApplicationLogType.PLAINTEXT, logEntry, staffMember);
       
       requestContext.addResponseParameter("id", applicationLog.getId());
+      requestContext.addResponseParameter("type", applicationLog.getType());
       requestContext.addResponseParameter("text", applicationLog.getText());
       requestContext.addResponseParameter("user", staffMember.getFullName());
       requestContext.addResponseParameter("date", applicationLog.getDate().getTime());
+      requestContext.addResponseParameter("owner", Boolean.TRUE);
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Error saving log entry", e);

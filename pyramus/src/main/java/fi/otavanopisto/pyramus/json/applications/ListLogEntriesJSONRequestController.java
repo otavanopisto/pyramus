@@ -38,9 +38,14 @@ public class ListLogEntriesJSONRequestController extends JSONRequestController {
       for (ApplicationLog logEntry : logEntries) {
         Map<String, Object> logEntryInfo = new HashMap<>();
         logEntryInfo.put("id", logEntry.getId());
+        logEntryInfo.put("type", logEntry.getType());
         logEntryInfo.put("text", logEntry.getText());
         logEntryInfo.put("user", logEntry.getUser().getFullName());
         logEntryInfo.put("date", logEntry.getDate().getTime());
+        logEntryInfo.put("owner", requestContext.getLoggedUserId() != null &&
+            logEntry.getUser() != null &&
+            logEntry.getUser().getId() != null &&
+            requestContext.getLoggedUserId().equals(logEntry.getUser().getId()));
         results.add(logEntryInfo);
       }
       requestContext.addResponseParameter("logEntries", results);
