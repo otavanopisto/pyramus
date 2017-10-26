@@ -197,7 +197,7 @@
 
         return variablesTable;
       }
-          
+
       function openStudentCourseAssessmentRequestsPopupOnElement(element, courseStudentId) {
         var hoverPanel = new IxHoverPanel({
           contentURL: GLOBAL_contextPath + '/students/studentcourseassessmentrequestspopup.page?courseStudent=' + courseStudentId
@@ -1314,7 +1314,6 @@
               }
             }
           }
-          
         </c:forEach>
         
         
@@ -2224,16 +2223,9 @@
                         value="students.viewStudent.lodgingHelp" />
                     </jsp:include>
                     <div class="genericViewFormDataText">
-                      <c:choose>
-                        <c:when test="${student.lodging}">
-                          <fmt:message
-                            key="students.viewStudent.lodgingYes" />
-                        </c:when>
-                        <c:otherwise>
-                          <fmt:message
-                            key="students.viewStudent.lodgingNo" />
-                        </c:otherwise>
-                      </c:choose>
+	                    <c:forEach var="period" items="${studentLodgingPeriods[student.id]}">
+	                      <div><fmt:formatDate value="${period.begin}"/> - <fmt:formatDate value="${period.end}"/></div>
+	                    </c:forEach>
                     </div>
                   </div>
 

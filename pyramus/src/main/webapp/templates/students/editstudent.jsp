@@ -37,6 +37,10 @@
         emailTable.addRow([-1, '', <c:out value="${contactTypes[0].id}" />, '', '', '']);
       }
 
+      function addLodgingPeriodTableRow(lodgingPeriodTable) {
+        lodgingPeriodTable.addRow([-1, '', '', '', '']);
+      }
+
       function initPhoneTable(studentId) {
         var phoneTable = new IxTable($('phoneTable.' + studentId), {
           id : "phoneTable." + studentId,
@@ -308,7 +312,75 @@
 
         return variablesTable;
       }
-          
+
+      function initStudentLodgingPeriodsTable(studentId) {
+        var lodgingPeriodsTable = new IxTable($('lodgingPeriodsTableContainer.' + studentId), {
+          id : "lodgingPeriodsTable." + studentId,
+          columns : [{
+            dataType : 'hidden',
+            left : 0,
+            width : 0,
+            paramName : 'id'
+          }, {
+            header: '<fmt:message key="students.editStudent.lodgingPeriodsTable.begin"/>',
+            left : 8,
+            width: 160,
+            dataType : 'date',
+            editable: true,
+            paramName: 'begin'
+          }, {
+            header: '<fmt:message key="students.editStudent.lodgingPeriodsTable.end"/>',
+            left : 168,
+            width : 160,
+            dataType: 'date',
+            editable: true,
+            paramName: 'end'
+          },{
+            width: 30,
+            left: 8 + 160 + 8 + 160 + 8,
+            dataType: 'button',
+            paramName: 'addButton',
+            hidden: true,
+            imgsrc: GLOBAL_contextPath + '/gfx/list-add.png',
+            tooltip: '<fmt:message key="students.editStudent.lodgingPeriodsTable.addTooltip"/>',
+            onclick: function (event) {
+              addLodgingPeriodTableRow(event.tableComponent);
+            }
+          }, {
+            width: 30,
+            left: 8 + 160 + 8 + 160 + 8,
+            dataType: 'button',
+            paramName: 'removeButton',
+            hidden: true,
+            imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
+            tooltip: '<fmt:message key="students.editStudent.lodgingPeriodsTable.removeTooltip"/>',
+            onclick: function (event) {
+              event.tableComponent.deleteRow(event.row);
+              
+              if (event.tableComponent.getRowCount() == 0) {
+                $('noLodgingPeriodsAddedMessageContainer').setStyle({
+                  display : ''
+                });
+              }
+            }
+          }]
+        });
+
+        lodgingPeriodsTable.addListener("rowAdd", function (event) {
+          var table = event.tableComponent; 
+          var enabledButton = event.row == 0 ? 'addButton' : 'removeButton';
+          lodgingPeriodsTable.showCell(event.row, table.getNamedColumnIndex(enabledButton));
+
+          if (table.getRowCount() > 0) {
+       	    $('noLodgingPeriodsAddedMessageContainer').setStyle({
+       	      display : 'none'
+       	    });
+       	  }
+        });
+
+        return lodgingPeriodsTable;
+      }
+        
       function setupTags() {
         JSONRequest.request("tags/getalltags.json", {
           onSuccess: function (jsonResponse) {
@@ -324,6 +396,12 @@
       function onLoad(event) {
         var tabControl = new IxProtoTabs($('tabs'));
 
+        var studentLodgingPeriodsContainer = JSDATA["studentLodgingPeriods"].evalJSON();
+
+        var data = {
+          studentLodgingPeriodsContainer : studentLodgingPeriodsContainer
+        };
+        
         setupRelatedCommandsBasic();
         setupTags();
 
@@ -332,6 +410,7 @@
         var emailTable;
         var variablesTable;
         var value;
+        var studentId;
         
         <c:forEach var="student" items="${students}">
           <c:choose>
@@ -344,12 +423,14 @@
               <c:set var="sprogName">${fn:escapeXml(student.studyProgramme.name)}</c:set>
             </c:otherwise>
           </c:choose>
-        
-          setupRelatedCommands(${student.id}, '${sprogName}', ${studentHasCredits[student.id]});
+
+          studentId = ${student.id};
+          setupRelatedCommands(studentId, '${sprogName}', ${studentHasCredits[student.id]});
+          setupStudent(studentId, data);
 
           // Addresses
 
-          addressTable = initAddressTable(${student.id});
+          addressTable = initAddressTable(studentId);
   
           <c:forEach var="address" items="${student.contactInfo.addresses}">
             addressTable.addRow([
@@ -372,7 +453,7 @@
 
           // E-mail addresses
 
-          emailTable = initEmailTable(${student.id});
+          emailTable = initEmailTable(studentId);
 
           <c:forEach var="email" items="${student.contactInfo.emails}">
             emailTable.addRow([
@@ -391,7 +472,7 @@
 
           // Phones
 
-          phoneTable = initPhoneTable(${student.id});
+          phoneTable = initPhoneTable(studentId);
   
           <c:forEach var="phone" items="${student.contactInfo.phoneNumbers}">
             phoneTable.addRow([
@@ -407,39 +488,56 @@
             addPhoneTableRow(phoneTable);
             phoneTable.setCellValue(0, 1, true);
           }
-
-          var variables = JSDATA["variables.${student.id}"].evalJSON();
-          if (variables && variables.length > 0) {
-            // Student variables
-            variablesTable = initStudentVariableTable(${student.id});
-
-            for (var i = 0, l = variables.length; i < l; i++) {
-              var rowNumber = variablesTable.addRow([
-                '',
-                variables[i].key,
-                variables[i].name,
-                variables[i].value
-              ]);
-
-              switch (variables[i].type) {
-                case 'NUMBER':
-                  variablesTable.setCellDataType(rowNumber, 3, 'text');
-                break;
-                case 'DATE':
-                  variablesTable.setCellDataType(rowNumber, 3, 'date');
-                break;
-                case 'BOOLEAN':
-                  variablesTable.setCellDataType(rowNumber, 3, 'checkbox');
-                break;
-                default:
-                  variablesTable.setCellDataType(rowNumber, 3, 'text');
-                break;
-              }
-            }
-          }
         </c:forEach>
       }
 
+      function setupStudent(studentId, data) {
+        var variables = JSDATA["variables." + studentId].evalJSON();
+        if (variables && variables.length > 0) {
+          // Student variables
+          variablesTable = initStudentVariableTable(studentId);
+
+          for (var i = 0, l = variables.length; i < l; i++) {
+            var rowNumber = variablesTable.addRow([
+              '',
+              variables[i].key,
+              variables[i].name,
+              variables[i].value
+            ]);
+
+            switch (variables[i].type) {
+              case 'NUMBER':
+                variablesTable.setCellDataType(rowNumber, 3, 'text');
+              break;
+              case 'DATE':
+                variablesTable.setCellDataType(rowNumber, 3, 'date');
+              break;
+              case 'BOOLEAN':
+                variablesTable.setCellDataType(rowNumber, 3, 'checkbox');
+              break;
+              default:
+                variablesTable.setCellDataType(rowNumber, 3, 'text');
+              break;
+            }
+          }
+        }
+          
+        var lodgingPeriods = data.studentLodgingPeriodsContainer[studentId.toString()];
+        var lodgingPeriodsTable = initStudentLodgingPeriodsTable(studentId);
+        
+        if (lodgingPeriods && lodgingPeriods.length > 0) {
+          for (var i = 0, l = lodgingPeriods.length; i < l; i++) {
+            var rowNumber = lodgingPeriodsTable.addRow([
+              lodgingPeriods[i].id,
+              lodgingPeriods[i].begin,
+              lodgingPeriods[i].end,
+              '',
+              ''
+            ]);
+          }
+        }
+      }
+      
       function setupRelatedCommandsBasic() {
         var relatedActionsHoverMenu = new IxHoverMenu($('basicRelatedActionsHoverMenuContainer'), {
           text: '<fmt:message key="students.editStudent.basicTabRelatedActionsLabel"/>'
@@ -1060,18 +1158,12 @@
                   <jsp:param name="titleLocale" value="students.editStudent.lodgingTitle"/>
                   <jsp:param name="helpLocale" value="students.editStudent.lodgingHelp"/>
                 </jsp:include>
-                <select name="lodging.${student.id}">
-                  <c:choose>
-                    <c:when test="${student.lodging}">
-                      <option value="0"><fmt:message key="students.editStudent.lodgingNo"/></option>
-                      <option value="1" selected="selected"><fmt:message key="students.editStudent.lodgingYes"/></option>
-                    </c:when>
-                    <c:otherwise>
-                      <option value="0" selected="selected"><fmt:message key="students.editStudent.lodgingNo"/></option>
-                      <option value="1"><fmt:message key="students.editStudent.lodgingYes"/></option>
-                    </c:otherwise>
-                  </c:choose>
-                </select>
+
+                <div id="noLodgingPeriodsAddedMessageContainer" class="genericTableNotAddedMessageContainer">
+                  <span><fmt:message key="students.editStudent.noLodgingPeriodsAddedPreFix"/> <span onclick="addLodgingPeriodTableRow(getIxTableById('lodgingPeriodsTable.${student.id}'));" class="genericTableAddRowLink"><fmt:message key="students.editStudent.noLodgingPeriodsAddedClickHereLink"/></span>.</span>
+                </div>
+                
+                <div id="lodgingPeriodsTableContainer.${student.id}"></div>
               </div>
   
               <c:choose>
