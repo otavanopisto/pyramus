@@ -57,7 +57,7 @@
             var results = jsonResponse.results;
             for (var i = 0; i < results.length; i++) {
               var studentName = results[i].lastName + ', ' + results[i].firstName;
-              resultsTable.addRow(['', studentName.escapeHTML(), results[i].id, results[i].personId, results[i].lodging]);
+              resultsTable.addRow(['', studentName.escapeHTML(), results[i].id, results[i].personId]);
               var rowIndex = getStudentRowIndex('studentsTable', results[i].id);
               if (rowIndex != -1) {
                 resultsTable.disableRow(resultsTable.getRowCount() - 1);
@@ -94,13 +94,11 @@
           var studentName = table.getCellValue(i, table.getNamedColumnIndex('name'));
           var studentId = table.getCellValue(i, table.getNamedColumnIndex('studentId'));
           var personId = table.getCellValue(i, table.getNamedColumnIndex('personId'));
-          var lodging = table.getCellValue(i, table.getNamedColumnIndex('lodging'));
 
           results.push({
             name: studentName,
             id: studentId,
-            personId: personId,
-            lodging: lodging
+            personId: personId
           });
         }
         return {
@@ -174,8 +172,7 @@
                 var studentId = table.getCellValue(event.row, table.getNamedColumnIndex('studentId'));
                 var studentName = table.getCellValue(event.row, table.getNamedColumnIndex('name'));
                 var personId = table.getCellValue(event.row, table.getNamedColumnIndex('personId'));
-                var lodging = table.getCellValue(event.row, table.getNamedColumnIndex('lodging'));
-                getIxTableById('studentsTable').addRow([studentName, studentId, personId, lodging]);
+                getIxTableById('studentsTable').addRow([studentName, studentId, personId]);
               }
             }, {
               dataType: 'hidden',
@@ -183,9 +180,6 @@
             }, {
               dataType: 'hidden',
               paramName: 'personId'
-            }, {
-              dataType: 'hidden',
-              paramName: 'lodging'
             }
           ]
         });
@@ -217,9 +211,6 @@
             }, {
               dataType: 'hidden',
               paramName: 'personId'
-            }, {
-              dataType: 'hidden',
-              paramName: 'lodging'
             }
           ]
         });

@@ -126,6 +126,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupUserDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentImageDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
@@ -239,6 +240,10 @@ public class DAOFactory {
     return (CourseStudentVariableKeyDAO) findByClass(CourseStudentVariableKeyDAO.class);
   }
 
+  public StudentLodgingPeriodDAO getStudentLodgingPeriodDAO() {
+    return (StudentLodgingPeriodDAO) findByClass(StudentLodgingPeriodDAO.class);
+  }
+  
   /* Course */
   
   public BasicCourseResourceDAO getBasicCourseResourceDAO() {
@@ -747,4 +752,5 @@ public class DAOFactory {
       throw new PersistenceException(e);
     }
   }
+
 }

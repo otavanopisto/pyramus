@@ -28,6 +28,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
@@ -101,12 +102,11 @@ public class StudentsService extends PyramusService {
     School school = oldStudent.getSchool();
     StudyProgramme studyProgramme = studyProgrammeId == null ? null : studyProgrammeDAO.findById(studyProgrammeId);
     StudentStudyEndReason studyEndReason = null; // student.getStudyEndReason();
-    Boolean lodging = false; // oldStudent.getLodging();
     Curriculum curriculum = oldStudent.getCurriculum();
 
     Student newStudent = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType,
         educationalLevel, education, nationality, municipality, language, school, studyProgramme, curriculum, previousStudies, studyStartTime, 
-        studyEndTime, studyEndReason, studyEndText, lodging, false);
+        studyEndTime, studyEndReason, studyEndText, false);
 
     // Contact info
 
@@ -260,6 +260,7 @@ public class StudentsService extends PyramusService {
     ContactInfoDAO contactInfoDAO = DAOFactory.getInstance().getContactInfoDAO();
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
+    StudentLodgingPeriodDAO studentLodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
 
     Person person = personDAO.findById(abstractStudentId);
     Nationality nationality = nationalityId == null ? null : nationalityDAO.findById(nationalityId);
@@ -278,7 +279,10 @@ public class StudentsService extends PyramusService {
     
     Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType,
         examinationType, educationalLevel, education, nationality, municipality, language, school, studyProgramme, null, 
-        previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging, false);
+        previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, false);
+    
+    if (lodging && studyStartDate != null)
+      studentLodgingPeriodDAO.create(student, studyStartDate, studyEndDate);
     
     // TODO Proper handling for phone and parental info
     
@@ -329,10 +333,12 @@ public class StudentsService extends PyramusService {
     firstName = StringUtils.trim(firstName);
     lastName = StringUtils.trim(lastName);
     nickname = StringUtils.trim(nickname);
+
+    // TODO lodging cannot be updated with a single boolean (remove parameter)
     
     studentDAO.update(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType,
         educationalLevel, education, nationality, municipality, language, school, studyProgramme, curriculum, previousStudies, 
-        studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging);
+        studyStartDate, studyEndDate, studyEndReason, studyEndText);
 
     validateEntity(student);
   }

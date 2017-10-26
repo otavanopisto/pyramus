@@ -31,6 +31,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
@@ -52,6 +53,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
@@ -86,6 +88,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
+    StudentLodgingPeriodDAO lodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
 
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
     
@@ -161,157 +164,187 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     }
     
     for (Student student : students) {
-    	Long studentVersion = requestContext.getLong("studentVersion." + student.getId());
+      Long studentVersion = requestContext.getLong("studentVersion." + student.getId());
       if (!student.getVersion().equals(studentVersion))
         throw new StaleObjectStateException(Student.class.getName(), student.getId());
 
       String firstName = StringUtils.trim(requestContext.getString("firstName." + student.getId()));
-	    String lastName = StringUtils.trim(requestContext.getString("lastName." + student.getId()));
-	    String nickname = StringUtils.trim(requestContext.getString("nickname." + student.getId()));
-	    String additionalInfo = requestContext.getString("additionalInfo." + student.getId());
-	    String additionalContactInfo = requestContext.getString("otherContactInfo." + student.getId());
-	    String education = requestContext.getString("education." + student.getId());
-	    Double previousStudies = requestContext.getDouble("previousStudies." + student.getId());
-	    Date studyTimeEnd = requestContext.getDate("studyTimeEnd." + student.getId());
-	    Date studyStartDate = requestContext.getDate("studyStartDate." + student.getId());
-	    Date studyEndDate = requestContext.getDate("studyEndDate." + student.getId());
-	    String studyEndText = requestContext.getString("studyEndText." + student.getId());
-	    Boolean lodging = "1".equals(requestContext.getString("lodging." + student.getId()));
-	    String tagsText = requestContext.getString("tags." + student.getId());
-	    
-	    Set<Tag> tagEntities = new HashSet<>();
-	    if (!StringUtils.isBlank(tagsText)) {
-	      List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
-	      for (String tag : tags) {
-	        if (!StringUtils.isBlank(tag)) {
-  	        Tag tagEntity = tagDAO.findByText(tag.trim());
-  	        if (tagEntity == null)
-  	          tagEntity = tagDAO.create(tag);
-  	        tagEntities.add(tagEntity);
-	        }
-	      }
-	    }
-	    
-	    Long entityId = requestContext.getLong("language." + student.getId());
-	    Language language = entityId == null ? null : languageDAO.findById(entityId);
-	
-	    entityId = requestContext.getLong("activityType." + student.getId());
-	    StudentActivityType activityType = entityId == null ? null : activityTypeDAO.findById(entityId);
-	
-	    entityId = requestContext.getLong("examinationType." + student.getId());
-	    StudentExaminationType examinationType = entityId == null ? null : examinationTypeDAO.findById(entityId);
-	
-	    entityId = requestContext.getLong("educationalLevel." + student.getId());
-	    StudentEducationalLevel educationalLevel = entityId == null ? null : educationalLevelDAO.findById(entityId);
-	
-	    entityId = requestContext.getLong("nationality." + student.getId());
-	    Nationality nationality = entityId == null ? null : nationalityDAO.findById(entityId);
-	
-	    entityId = requestContext.getLong("municipality." + student.getId());
-	    Municipality municipality = entityId == null ? null : municipalityDAO.findById(entityId);
-	
-	    entityId = requestContext.getLong("school." + student.getId());
-	    School school = entityId != null && entityId > 0 ? schoolDAO.findById(entityId) : null;
-	
-	    entityId = requestContext.getLong("studyProgramme." + student.getId());
-	    StudyProgramme studyProgramme = entityId != null && entityId > 0 ? studyProgrammeDAO.findById(entityId) : null;
-	
-	    entityId = requestContext.getLong("studyEndReason." + student.getId());
-	    StudentStudyEndReason studyEndReason = entityId == null ? null : studyEndReasonDAO.findById(entityId);
-	
+      String lastName = StringUtils.trim(requestContext.getString("lastName." + student.getId()));
+      String nickname = StringUtils.trim(requestContext.getString("nickname." + student.getId()));
+      String additionalInfo = requestContext.getString("additionalInfo." + student.getId());
+      String additionalContactInfo = requestContext.getString("otherContactInfo." + student.getId());
+      String education = requestContext.getString("education." + student.getId());
+      Double previousStudies = requestContext.getDouble("previousStudies." + student.getId());
+      Date studyTimeEnd = requestContext.getDate("studyTimeEnd." + student.getId());
+      Date studyStartDate = requestContext.getDate("studyStartDate." + student.getId());
+      Date studyEndDate = requestContext.getDate("studyEndDate." + student.getId());
+      String studyEndText = requestContext.getString("studyEndText." + student.getId());
+      String tagsText = requestContext.getString("tags." + student.getId());
+      
+      Set<Tag> tagEntities = new HashSet<>();
+      if (!StringUtils.isBlank(tagsText)) {
+        List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
+        for (String tag : tags) {
+          if (!StringUtils.isBlank(tag)) {
+            Tag tagEntity = tagDAO.findByText(tag.trim());
+            if (tagEntity == null)
+              tagEntity = tagDAO.create(tag);
+            tagEntities.add(tagEntity);
+          }
+        }
+      }
+      
+      Long entityId = requestContext.getLong("language." + student.getId());
+      Language language = entityId == null ? null : languageDAO.findById(entityId);
+  
+      entityId = requestContext.getLong("activityType." + student.getId());
+      StudentActivityType activityType = entityId == null ? null : activityTypeDAO.findById(entityId);
+  
+      entityId = requestContext.getLong("examinationType." + student.getId());
+      StudentExaminationType examinationType = entityId == null ? null : examinationTypeDAO.findById(entityId);
+  
+      entityId = requestContext.getLong("educationalLevel." + student.getId());
+      StudentEducationalLevel educationalLevel = entityId == null ? null : educationalLevelDAO.findById(entityId);
+  
+      entityId = requestContext.getLong("nationality." + student.getId());
+      Nationality nationality = entityId == null ? null : nationalityDAO.findById(entityId);
+  
+      entityId = requestContext.getLong("municipality." + student.getId());
+      Municipality municipality = entityId == null ? null : municipalityDAO.findById(entityId);
+  
+      entityId = requestContext.getLong("school." + student.getId());
+      School school = entityId != null && entityId > 0 ? schoolDAO.findById(entityId) : null;
+  
+      entityId = requestContext.getLong("studyProgramme." + student.getId());
+      StudyProgramme studyProgramme = entityId != null && entityId > 0 ? studyProgrammeDAO.findById(entityId) : null;
+  
+      entityId = requestContext.getLong("studyEndReason." + student.getId());
+      StudentStudyEndReason studyEndReason = entityId == null ? null : studyEndReasonDAO.findById(entityId);
+  
       entityId = requestContext.getLong("curriculum." + student.getId());
       Curriculum curriculum = entityId == null ? null : curriculumDAO.findById(entityId);
-	    
-	    Integer variableCount = requestContext.getInteger("variablesTable." + student.getId() + ".rowCount");
-	    if (variableCount != null) {
-	      for (int i = 0; i < variableCount; i++) {
-  	      String colPrefix = "variablesTable." + student.getId() + "." + i;
-  	      String variableKey = requestContext.getString(colPrefix + ".key");
-  	      String variableValue = requestContext.getString(colPrefix + ".value");
-  	      userVariableDAO.setUserVariable(student, variableKey, variableValue);
-  	    }
-	    }
-	    
-	    // Student
+      
+      Integer variableCount = requestContext.getInteger("variablesTable." + student.getId() + ".rowCount");
+      if (variableCount != null) {
+        for (int i = 0; i < variableCount; i++) {
+          String colPrefix = "variablesTable." + student.getId() + "." + i;
+          String variableKey = requestContext.getString(colPrefix + ".key");
+          String variableValue = requestContext.getString(colPrefix + ".value");
+          userVariableDAO.setUserVariable(student, variableKey, variableValue);
+        }
+      }
 
-	    studentDAO.update(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd,
-	        activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, 
-	        studyProgramme, curriculum, previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, lodging);
-	   
-	    // Tags
+      Integer lodgingPeriodsCount = requestContext.getInteger("lodgingPeriodsTable." + student.getId() + ".rowCount");
+      if (lodgingPeriodsCount != null) {
+        Set<Long> remainingIds = new HashSet<>();
+        
+        for (int i = 0; i < lodgingPeriodsCount; i++) {
+          String colPrefix = "lodgingPeriodsTable." + student.getId() + "." + i;
+          
+          Long id = requestContext.getLong(colPrefix + ".id");
+          Date begin = requestContext.getDate(colPrefix + ".begin");
+          Date end = requestContext.getDate(colPrefix + ".end");
+          
+          if (id == -1 && begin != null) {
+            StudentLodgingPeriod lodgingPeriod = lodgingPeriodDAO.create(student, begin, end);
+            remainingIds.add(lodgingPeriod.getId());
+          } else if (id > 0) {
+            StudentLodgingPeriod lodgingPeriod = lodgingPeriodDAO.findById(id);
+            remainingIds.add(id);
+            
+            if (begin != null) {
+              if (lodgingPeriod != null) {
+                lodgingPeriodDAO.update(lodgingPeriod, begin, end);
+              }
+            }
+          }
+        }
 
-	    studentDAO.setStudentTags(student, tagEntities);
-	    
-	    // Contact info
-	    
-	    contactInfoDAO.update(student.getContactInfo(), additionalContactInfo);
-	    
-	    // Student addresses
-	    
-	    Set<Long> existingAddresses = new HashSet<>();
-	    int rowCount = requestContext.getInteger("addressTable." + student.getId() + ".rowCount");
-	    for (int i = 0; i < rowCount; i++) {
-	      String colPrefix = "addressTable." + student.getId() + "." + i;
-	      Long addressId = requestContext.getLong(colPrefix + ".addressId");
-	      Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
-	      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
-	      String name = requestContext.getString(colPrefix + ".name");
-	      String street = requestContext.getString(colPrefix + ".street");
-	      String postal = requestContext.getString(colPrefix + ".postal");
-	      String city = requestContext.getString(colPrefix + ".city");
-	      String country = requestContext.getString(colPrefix + ".country");
-	      boolean hasAddress = name != null || street != null || postal != null || city != null || country != null;
-	      if (addressId == -1 && hasAddress) {
-	        Address address = addressDAO.create(student.getContactInfo(), contactType, name, street, postal, city, country, defaultAddress);
-	        existingAddresses.add(address.getId());
-	      }
-	      else if (addressId > 0) {
-	        Address address = addressDAO.findById(addressId);
-	        if (hasAddress) {
-	          existingAddresses.add(addressId);
-	          addressDAO.update(address, defaultAddress, contactType, name, street, postal, city, country);
-	        }
-	      }
-	    }
-	    List<Address> addresses = student.getContactInfo().getAddresses();
-	    for (int i = addresses.size() - 1; i >= 0; i--) {
-	      Address address = addresses.get(i);
-	      if (!existingAddresses.contains(address.getId())) {
-	        addressDAO.delete(address);
-	      }
-	    }
+        List<StudentLodgingPeriod> periods = lodgingPeriodDAO.listByStudent(student);
+        periods.removeIf(period -> remainingIds.contains(period.getId()));
+        periods.forEach(period -> lodgingPeriodDAO.delete(period));
+      }
+      
+      // Student
 
-	    // Email addresses
+      studentDAO.update(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd,
+          activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, 
+          studyProgramme, curriculum, previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText);
+     
+      // Tags
 
-	    Set<Long> existingEmails = new HashSet<>();
-	    rowCount = requestContext.getInteger("emailTable." + student.getId() + ".rowCount");
-	    for (int i = 0; i < rowCount; i++) {
-	      String colPrefix = "emailTable." + student.getId() + "." + i;
+      studentDAO.setStudentTags(student, tagEntities);
+      
+      // Contact info
+      
+      contactInfoDAO.update(student.getContactInfo(), additionalContactInfo);
+      
+      // Student addresses
+      
+      Set<Long> existingAddresses = new HashSet<>();
+      int rowCount = requestContext.getInteger("addressTable." + student.getId() + ".rowCount");
+      for (int i = 0; i < rowCount; i++) {
+        String colPrefix = "addressTable." + student.getId() + "." + i;
+        Long addressId = requestContext.getLong(colPrefix + ".addressId");
         Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
         ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
-	      String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
-	      
-	      if (StringUtils.isNotBlank(email)) {
-  	      Long emailId = requestContext.getLong(colPrefix + ".emailId");
-  	      if (emailId == -1) {
-  	        emailId = emailDAO.create(student.getContactInfo(), contactType, defaultAddress, email).getId(); 
-  	      }
-  	      else {
-  	        emailDAO.update(emailDAO.findById(emailId), contactType, defaultAddress, email);
-  	      }
-  	      existingEmails.add(emailId);
-	      }
-	    }
-	    List<Email> emails = student.getContactInfo().getEmails();
-	    for (int i = emails.size() - 1; i >= 0; i--) {
-	      Email email = emails.get(i);
-	      if (!existingEmails.contains(email.getId())) {
-	        emailDAO.delete(email);
-	      }
-	    }
-	    
-	    // Phone numbers
-	    
+        String name = requestContext.getString(colPrefix + ".name");
+        String street = requestContext.getString(colPrefix + ".street");
+        String postal = requestContext.getString(colPrefix + ".postal");
+        String city = requestContext.getString(colPrefix + ".city");
+        String country = requestContext.getString(colPrefix + ".country");
+        boolean hasAddress = name != null || street != null || postal != null || city != null || country != null;
+        if (addressId == -1 && hasAddress) {
+          Address address = addressDAO.create(student.getContactInfo(), contactType, name, street, postal, city, country, defaultAddress);
+          existingAddresses.add(address.getId());
+        }
+        else if (addressId > 0) {
+          Address address = addressDAO.findById(addressId);
+          if (hasAddress) {
+            existingAddresses.add(addressId);
+            addressDAO.update(address, defaultAddress, contactType, name, street, postal, city, country);
+          }
+        }
+      }
+      List<Address> addresses = student.getContactInfo().getAddresses();
+      for (int i = addresses.size() - 1; i >= 0; i--) {
+        Address address = addresses.get(i);
+        if (!existingAddresses.contains(address.getId())) {
+          addressDAO.delete(address);
+        }
+      }
+
+      // Email addresses
+
+      Set<Long> existingEmails = new HashSet<>();
+      rowCount = requestContext.getInteger("emailTable." + student.getId() + ".rowCount");
+      for (int i = 0; i < rowCount; i++) {
+        String colPrefix = "emailTable." + student.getId() + "." + i;
+        Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
+        ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
+        String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
+        
+        if (StringUtils.isNotBlank(email)) {
+          Long emailId = requestContext.getLong(colPrefix + ".emailId");
+          if (emailId == -1) {
+            emailId = emailDAO.create(student.getContactInfo(), contactType, defaultAddress, email).getId(); 
+          }
+          else {
+            emailDAO.update(emailDAO.findById(emailId), contactType, defaultAddress, email);
+          }
+          existingEmails.add(emailId);
+        }
+      }
+      List<Email> emails = student.getContactInfo().getEmails();
+      for (int i = emails.size() - 1; i >= 0; i--) {
+        Email email = emails.get(i);
+        if (!existingEmails.contains(email.getId())) {
+          emailDAO.delete(email);
+        }
+      }
+      
+      // Phone numbers
+      
       Set<Long> existingPhoneNumbers = new HashSet<>();
       rowCount = requestContext.getInteger("phoneTable." + student.getId() + ".rowCount");
       for (int i = 0; i < rowCount; i++) {

@@ -30,6 +30,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
@@ -46,6 +47,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
@@ -81,6 +83,7 @@ public class EditStudentViewController extends PyramusViewController implements 
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
+    StudentLodgingPeriodDAO studentLodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
 
     User loggedUser = userDAO.findById(pageRequestContext.getLoggedUserId());
     
@@ -128,6 +131,8 @@ public class EditStudentViewController extends PyramusViewController implements 
     List<UserVariableKey> userVariableKeys = userVariableKeyDAO.listByUserEditable(Boolean.TRUE);
     Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
     
+    JSONObject studentLodgingPeriods = new JSONObject();
+    
     for (Student student : students) {
       StringBuilder tagsBuilder = new StringBuilder();
       Iterator<Tag> tagIterator = student.getTags().iterator();
@@ -157,7 +162,20 @@ public class EditStudentViewController extends PyramusViewController implements 
       }
       
       setJsDataVariable(pageRequestContext, "variables." + student.getId(), variables.toString());
+
+      JSONArray lodgingPeriods = new JSONArray(); 
+      for (StudentLodgingPeriod period : studentLodgingPeriodDAO.listByStudent(student)) {
+        JSONObject periodJSON = new JSONObject();
+        periodJSON.put("id", period.getId());
+        periodJSON.put("begin", period.getBegin() != null ? period.getBegin().getTime() : null);
+        periodJSON.put("end", period.getEnd() != null ? period.getEnd().getTime() : null);
+        lodgingPeriods.add(periodJSON);
+      }
+      if (!lodgingPeriods.isEmpty())
+        studentLodgingPeriods.put(student.getId(), lodgingPeriods);
     }
+
+    setJsDataVariable(pageRequestContext, "studentLodgingPeriods", studentLodgingPeriods.toString());
     
     List<Nationality> nationalities = nationalityDAO.listUnarchived();
     Collections.sort(nationalities, new StringAttributeComparator("getName"));

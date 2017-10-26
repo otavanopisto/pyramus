@@ -31,6 +31,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentContactLogEntryDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentImageDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
@@ -53,9 +54,9 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
-import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
@@ -114,6 +115,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
+    StudentLodgingPeriodDAO studentLodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
 
     Long personId = pageRequestContext.getLong("person");
     
@@ -178,6 +180,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     JSONObject studentVariablesJSON = new JSONObject();
     JSONArray studentReportsJSON = new JSONArray();
     JSONArray curriculumsJSON = new JSONArray();
+    JSONObject studentLodgingPeriods = new JSONObject();
     
     List<Report> studentReports = reportDAO.listByContextType(ReportContextType.Student);
     Collections.sort(studentReports, new StringAttributeComparator("getName"));
@@ -199,15 +202,15 @@ public class ViewStudentViewController extends PyramusViewController implements 
     }
     
     for (int i = 0; i < students.size(); i++) {
-    	Student student = students.get(i);
-    	
-    	/**
-    	 * Fetch courses this student is part of and sort the courses by course name
-    	 */
-    	
-    	List<CourseStudent> courseStudentsByStudent = courseStudentDAO.listByStudent(student);
-    	
-    	Collections.sort(courseStudentsByStudent, new Comparator<CourseStudent>() {
+      Student student = students.get(i);
+
+      /**
+       * Fetch courses this student is part of and sort the courses by course name
+       */
+
+      List<CourseStudent> courseStudentsByStudent = courseStudentDAO.listByStudent(student);
+
+      Collections.sort(courseStudentsByStudent, new Comparator<CourseStudent>() {
         private String getCourseAssessmentCompareStr(CourseStudent courseStudent) {
           String result = "";
           if (courseStudent != null)
@@ -230,8 +233,8 @@ public class ViewStudentViewController extends PyramusViewController implements 
        * Course Assessment Requests by Course Student
        */
 
-    	for (CourseStudent courseStudent : courseStudentsByStudent) {
-    	  List<CourseAssessmentRequest> courseAssessmentRequestsByCourseStudent = courseAssessmentRequestDAO.listByCourseStudent(courseStudent);
+      for (CourseStudent courseStudent : courseStudentsByStudent) {
+        List<CourseAssessmentRequest> courseAssessmentRequestsByCourseStudent = courseAssessmentRequestDAO.listByCourseStudent(courseStudent);
 
         Collections.sort(courseAssessmentRequestsByCourseStudent, new Comparator<CourseAssessmentRequest>() {
           @Override
@@ -243,12 +246,12 @@ public class ViewStudentViewController extends PyramusViewController implements 
         if (!courseAssessmentRequestsByCourseStudent.isEmpty()) {
           courseAssessmentRequests.put(courseStudent.getId(), courseAssessmentRequestsByCourseStudent.get(0));
         }
-    	}
-    	
-    	/**
-    	 * Contact log entries
-    	 */
-    	
+      }
+      
+      /**
+       * Contact log entries
+       */
+      
       List<StudentContactLogEntry> listStudentContactEntries = logEntryDAO.listByStudent(student);
 
       // Firstly populate comments
@@ -612,6 +615,17 @@ public class ViewStudentViewController extends PyramusViewController implements 
       if (!variables.isEmpty())
         studentVariablesJSON.put(student.getId(), variables);
       
+      arr = new JSONArray(); 
+      for (StudentLodgingPeriod period : studentLodgingPeriodDAO.listByStudent(student)) {
+        JSONObject periodJSON = new JSONObject();
+        periodJSON.put("id", period.getId());
+        periodJSON.put("begin", period.getBegin() != null ? period.getBegin().getTime() : null);
+        periodJSON.put("end", period.getEnd() != null ? period.getEnd().getTime() : null);
+        arr.add(periodJSON);
+      }
+      if (!arr.isEmpty())
+        studentLodgingPeriods.put(student.getId(), arr);
+
       // Student Image
       studentHasImage.put(student.getId(), imageDAO.findStudentHasImage(student));
 
@@ -629,6 +643,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     setJsDataVariable(pageRequestContext, "studentReports", studentReportsJSON.toString());
     setJsDataVariable(pageRequestContext, "curriculums", curriculumsJSON.toString());
     setJsDataVariable(pageRequestContext, "studentVariables", studentVariablesJSON.toString());
+    setJsDataVariable(pageRequestContext, "studentLodgingPeriods", studentLodgingPeriods.toString());
     
     pageRequestContext.getRequest().setAttribute("students", students);
     pageRequestContext.getRequest().setAttribute("courses", courseStudents);
