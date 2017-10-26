@@ -78,8 +78,6 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
       String addressStreetAddress = jsonRequestContext.getString("addressStreetAddress");
       String phone = jsonRequestContext.getString("phone");
       String title = jsonRequestContext.getString("title");
-      Integer lodgingInt = jsonRequestContext.getInteger("lodging");
-      Boolean lodging = lodgingInt == null ? null : lodgingInt == 1;
       PersonFilter personFilter = (PersonFilter) jsonRequestContext.getEnum("studentFilter", PersonFilter.class);
 
       Language language = null;
@@ -108,7 +106,7 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
       
       searchResult = personDAO.searchPersons(resultsPerPage, page, firstName, lastName, nickname,
           tags, education, email, sex, ssn, addressCity, addressCountry, addressPostalCode, addressStreetAddress,
-          phone, lodging, studyProgramme, language, nationality, municipality, title, personFilter);
+          phone, studyProgramme, language, nationality, municipality, title, personFilter);
     }
     else if ("active".equals(jsonRequestContext.getRequest().getParameter("activeTab"))) {
       String query = jsonRequestContext.getRequest().getParameter("activesQuery");
