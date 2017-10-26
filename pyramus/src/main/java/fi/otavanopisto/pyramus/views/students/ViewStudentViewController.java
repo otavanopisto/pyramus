@@ -173,6 +173,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     // StudentProject.id -> List of module beans
     Map<Long, List<StudentProjectModuleBean>> studentProjectModules = new HashMap<>();
     final Map<Long, List<StudentContactLogEntryComment>> contactEntryComments = new HashMap<>();
+    Map<Long, List<StudentLodgingPeriod>> studentLodgingPeriods = new HashMap<>();
     
     JSONObject linkedCourseAssessments = new JSONObject();
     JSONObject linkedTransferCredits = new JSONObject();
@@ -180,7 +181,6 @@ public class ViewStudentViewController extends PyramusViewController implements 
     JSONObject studentVariablesJSON = new JSONObject();
     JSONArray studentReportsJSON = new JSONArray();
     JSONArray curriculumsJSON = new JSONArray();
-    JSONObject studentLodgingPeriods = new JSONObject();
     
     List<Report> studentReports = reportDAO.listByContextType(ReportContextType.Student);
     Collections.sort(studentReports, new StringAttributeComparator("getName"));
@@ -615,17 +615,6 @@ public class ViewStudentViewController extends PyramusViewController implements 
       if (!variables.isEmpty())
         studentVariablesJSON.put(student.getId(), variables);
       
-      arr = new JSONArray(); 
-      for (StudentLodgingPeriod period : studentLodgingPeriodDAO.listByStudent(student)) {
-        JSONObject periodJSON = new JSONObject();
-        periodJSON.put("id", period.getId());
-        periodJSON.put("begin", period.getBegin() != null ? period.getBegin().getTime() : null);
-        periodJSON.put("end", period.getEnd() != null ? period.getEnd().getTime() : null);
-        arr.add(periodJSON);
-      }
-      if (!arr.isEmpty())
-        studentLodgingPeriods.put(student.getId(), arr);
-
       // Student Image
       studentHasImage.put(student.getId(), imageDAO.findStudentHasImage(student));
 
@@ -635,6 +624,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
       transferCredits.put(student.getId(), transferCreditsByStudent);
       studentGroups.put(student.getId(), studentGroupDAO.listByStudent(student));
       studentProjects.put(student.getId(), studentProjectBeans);
+      studentLodgingPeriods.put(student.getId(), studentLodgingPeriodDAO.listByStudent(student));
     }
 
     setJsDataVariable(pageRequestContext, "linkedCourseAssessments", linkedCourseAssessments.toString());
@@ -643,7 +633,6 @@ public class ViewStudentViewController extends PyramusViewController implements 
     setJsDataVariable(pageRequestContext, "studentReports", studentReportsJSON.toString());
     setJsDataVariable(pageRequestContext, "curriculums", curriculumsJSON.toString());
     setJsDataVariable(pageRequestContext, "studentVariables", studentVariablesJSON.toString());
-    setJsDataVariable(pageRequestContext, "studentLodgingPeriods", studentLodgingPeriods.toString());
     
     pageRequestContext.getRequest().setAttribute("students", students);
     pageRequestContext.getRequest().setAttribute("courses", courseStudents);
@@ -657,6 +646,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     pageRequestContext.getRequest().setAttribute("courseAssessmentsByCourseStudent", courseAssessmentsByCourseStudent);
     pageRequestContext.getRequest().setAttribute("studentHasImage", studentHasImage);
     pageRequestContext.getRequest().setAttribute("courseAssessmentRequests", courseAssessmentRequests);
+    pageRequestContext.getRequest().setAttribute("studentLodgingPeriods", studentLodgingPeriods);
 
     pageRequestContext.setIncludeJSP("/templates/students/viewstudent.jsp");
   }

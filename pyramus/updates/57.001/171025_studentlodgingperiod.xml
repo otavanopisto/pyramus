@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>
+    create table StudentLodgingPeriod (
+      id bigint not null auto_increment, 
+      begin date not null, 
+      end date, 
+      student bigint not null, 
+      primary key (id)
+    );
+  </sql>
+  
+  <sql>
+    alter table StudentLodgingPeriod add constraint FKp5lb4yxvw29ha6abeook1bx32 foreign key (student) references Student (id);
+  </sql>
+
+  <sql>
+    insert into StudentLodgingPeriod (student, begin, end)
+    select 
+      id, studyStartDate, studyEndDate
+    from
+      Student 
+    where
+      lodging = true and studyStartDate is not null;
+  </sql>
+
+  <sql>
+    insert into StudentLodgingPeriod (student, begin)
+    select 
+      id, '2000-01-01'
+    from
+      Student 
+    where
+      lodging = true and studyStartDate is null;
+  </sql>
+  
+  <sql>
+    alter table Student drop column lodging;
+  </sql>
+  
+</update>
