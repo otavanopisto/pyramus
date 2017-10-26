@@ -46,6 +46,14 @@ public class ApplicationNotification {
     this.state = state;
   }
 
+  public Set<User> getUsers() {
+    return users;
+  }
+
+  public void setUsers(Set<User> users) {
+    this.users = users;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="ApplicationNotification")  
   @TableGenerator(name="ApplicationNotification", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
