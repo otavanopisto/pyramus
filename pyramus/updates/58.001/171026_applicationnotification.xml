@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>create table __ApplicationNotificationUsers (notification bigint not null, user bigint not null, primary key (notification, user));</sql>
+  <sql>create table ApplicationNotification (id bigint not null, line varchar(255), state varchar(255), primary key (id));</sql>
+  <sql>alter table __ApplicationNotificationUsers add constraint FKg85k5saoglogf2c5i3qxnhmqt foreign key (user) references User (id);</sql>
+  <sql>alter table __ApplicationNotificationUsers add constraint FKhu8x5do7vdnujss0xajy9wl9g foreign key (notification) references ApplicationNotification (id);</sql>
+
+</update>
