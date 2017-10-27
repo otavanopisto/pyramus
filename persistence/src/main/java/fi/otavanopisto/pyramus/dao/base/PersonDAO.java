@@ -342,7 +342,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
   @SuppressWarnings("unchecked")
   public SearchResult<Person> searchPersons(int resultsPerPage, int page, String firstName, String lastName, String nickname, String tags, 
       String education, String email, Sex sex, String ssn, String addressCity, String addressCountry, String addressPostalCode, String addressStreetAddress,
-      String phone, Boolean lodging, StudyProgramme studyProgramme, Language language, Nationality nationality, Municipality municipality,
+      String phone, StudyProgramme studyProgramme, Language language, Nationality nationality, Municipality municipality,
       String title, PersonFilter personFilter) {
 
     int firstResult = page * resultsPerPage;
@@ -400,9 +400,6 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "inactiveMunicipalityIds", "activeMunicipalityIds", municipality.getId().toString(), true);
         if (language != null)
           addTokenizedSearchCriteria(queryBuilder, "inactiveLanguageIds", "activeLanguageIds", language.getId().toString(), true);
-        if (lodging != null) {
-          addTokenizedSearchCriteria(queryBuilder, "inactiveLodgings", "activeLodgings", lodging.toString(), true);
-        }
 
       break;
       case INACTIVE_STUDENTS:
@@ -446,9 +443,6 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "inactiveMunicipalityIds", municipality.getId().toString(), true);
         if (language != null)
           addTokenizedSearchCriteria(queryBuilder, "inactiveLanguageIds", language.getId().toString(), true);
-        if (lodging != null) {
-          addTokenizedSearchCriteria(queryBuilder, "inactiveLodgings", lodging.toString(), true);
-        }
       break;
       case ACTIVE_STUDENTS:
         
@@ -490,9 +484,6 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "activeMunicipalityIds", municipality.getId().toString(), true);
         if (language != null)
           addTokenizedSearchCriteria(queryBuilder, "activeLanguageIds", language.getId().toString(), true);
-        if (lodging != null) {
-          addTokenizedSearchCriteria(queryBuilder, "activeLodgings", lodging.toString(), true);
-        }
       break;
       
       case STAFFMEMBERS:

@@ -13,7 +13,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DateBridge;
@@ -250,14 +249,6 @@ public class Student extends User implements ArchivableEntity {
     this.nickname = nickname;
   }
 
-  public Boolean getLodging() {
-    return lodging;
-  }
-  
-  public void setLodging(Boolean lodging) {
-    this.lodging = lodging;
-  }
-  
   @Transient
   @Override
   public Role getRole() {
@@ -318,10 +309,6 @@ public class Student extends User implements ArchivableEntity {
   private Double previousStudies; 
   
   private String education;
-  
-  @NotNull
-  @Column (nullable = false)
-  private Boolean lodging = Boolean.FALSE;
   
   @Temporal (value=TemporalType.DATE)
   private Date studyStartDate;

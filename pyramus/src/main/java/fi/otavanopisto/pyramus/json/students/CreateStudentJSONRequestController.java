@@ -28,6 +28,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
@@ -71,6 +72,7 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
+    StudentLodgingPeriodDAO lodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
 
     Long personId = requestContext.getLong("personId");
     
@@ -97,7 +99,6 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     String additionalInfo = requestContext.getString("additionalInfo");
     String otherContactInfo = requestContext.getString("otherContactInfo");
     String education = requestContext.getString("education");
-    Boolean lodging = "1".equals(requestContext.getString("lodging"));
     Double previousStudies = requestContext.getDouble("previousStudies");
     Date studyTimeEnd = requestContext.getDate("studyTimeEnd");
     Date studyStartTime = requestContext.getDate("studyStartDate");
@@ -166,8 +167,22 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, 
         activityType, examinationType, educationalLevel, education, nationality, municipality, language, 
         school, studyProgramme, curriculum, previousStudies, studyStartTime, studyEndTime, studyEndReason, 
-        studyEndText, lodging, false);
+        studyEndText, false);
 
+    // Lodging periods
+    
+    Integer lodgingPeriodsCount = requestContext.getInteger("lodgingPeriodsTable.rowCount");
+    if (lodgingPeriodsCount != null) {
+      for (int i = 0; i < lodgingPeriodsCount; i++) {
+        String colPrefix = "lodgingPeriodsTable." + i;
+        
+        Date begin = requestContext.getDate(colPrefix + ".begin");
+        Date end = requestContext.getDate(colPrefix + ".end");
+        
+        lodgingPeriodDAO.create(student, begin, end);
+      }
+    }
+    
     // Tags
 
     studentDAO.setStudentTags(student, tagEntities);

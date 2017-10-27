@@ -65,17 +65,16 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
     List<Map<String, Object>> results = new ArrayList<>();
     List<Person> persons = searchResult.getResults();
     for (Person person : persons) {
-    	Student student = person.getLatestStudent();
-    	if (student != null) {
+      Student student = person.getLatestStudent();
+      if (student != null) {
         Map<String, Object> info = new HashMap<>();
         info.put("personId", person.getId());
         info.put("id", student.getId());
         info.put("firstName", student.getFirstName());
         info.put("lastName", student.getLastName());
         info.put("archived", student.getArchived());
-        info.put("lodging", Boolean.toString(student.getLodging()));
         results.add(info);
-    	}
+      }
     }
     
     String statusMessage;
