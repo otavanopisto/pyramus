@@ -15,6 +15,7 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationNotificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationNotification;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import net.sf.json.JSONArray;
 
 public class ListNotificationsViewController extends PyramusViewController {
   
@@ -32,11 +33,13 @@ public class ListNotificationsViewController extends PyramusViewController {
     for (ApplicationNotification applicationNotification : applicationNotifications) {
       Map<String, Object> notification = new HashMap<>();
       notification.put("id", applicationNotification.getId());
-      notification.put("line", ApplicationUtils.applicationLineUiValue(applicationNotification.getLine()));
+      notification.put("line", StringUtils.isBlank(applicationNotification.getLine()) ? "Kaikki linjat" : ApplicationUtils.applicationLineUiValue(applicationNotification.getLine()));
       notification.put("state", ApplicationUtils.applicationStateUiValue(applicationNotification.getState()));
       notification.put("userCount", applicationNotification.getUsers().size());
+      results.add(notification);
     }
-    pageRequestContext.getRequest().setAttribute("notifications",  results);
+    String jsonNotifications = JSONArray.fromObject(results).toString();
+    setJsDataVariable(pageRequestContext, "notifications", jsonNotifications);
     pageRequestContext.setIncludeJSP("/templates/applications/listnotifications.jsp");
   }
 
