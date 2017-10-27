@@ -13,11 +13,15 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
-public class CreateNotificationJSONRequestController extends JSONRequestController {
+public class EditNotificationJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext requestContext) {
     ApplicationNotificationDAO applicationNotificationDAO = DAOFactory.getInstance().getApplicationNotificationDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+
+    Long notificationId = requestContext.getLong("notificationId");
+    ApplicationNotification applicationNotification = applicationNotificationDAO.findById(notificationId); 
+    
     String line = requestContext.getString("line");
     ApplicationState state = ApplicationState.valueOf(requestContext.getString("state"));
     Set<User> users = new HashSet<>();
@@ -28,7 +32,7 @@ public class CreateNotificationJSONRequestController extends JSONRequestControll
       User user = userDAO.findById(userId);
       users.add(user);
     }
-    ApplicationNotification applicationNotification = applicationNotificationDAO.create(line, state);
+    applicationNotification = applicationNotificationDAO.update(applicationNotification, line, state);
     applicationNotificationDAO.setUsers(applicationNotification, users);
     requestContext.setRedirectURL(
         requestContext.getRequest().getContextPath() +

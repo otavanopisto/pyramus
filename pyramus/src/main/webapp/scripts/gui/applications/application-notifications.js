@@ -27,6 +27,12 @@ function setupUsersTable() {
       } 
     }]        
   });
+  if (typeof JSDATA != 'undefined' && JSDATA['users']) {
+    var users = JSDATA["users"].evalJSON();
+    for (var i = 0; i < users.length; i++) {
+      usersTable.addRow([users[i].id, users[i].name, '']);
+    }
+  }
 }
 
 function openSearchUsersDialog() {
