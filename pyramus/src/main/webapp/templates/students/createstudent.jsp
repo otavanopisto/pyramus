@@ -365,10 +365,12 @@
                 <jsp:param name="titleLocale" value="students.createStudent.lodgingTitle"/>
                 <jsp:param name="helpLocale" value="students.createStudent.lodgingHelp"/>
               </jsp:include>
-              <select name="lodging">
-                <option value="0" selected="selected"><fmt:message key="students.createStudent.lodgingNo"/></option>
-                <option value="1"><fmt:message key="students.createStudent.lodgingYes"/></option>
-              </select>
+              
+              <div id="noLodgingPeriodsAddedMessageContainer" class="genericTableNotAddedMessageContainer">
+                <span><fmt:message key="students.createStudent.noLodgingPeriodsAddedPreFix"/> <span onclick="addLodgingPeriodTableRow(getIxTableById('lodgingPeriodsTable'));" class="genericTableAddRowLink"><fmt:message key="students.createStudent.noLodgingPeriodsAddedClickHereLink"/></span>.</span>
+              </div>
+              
+              <div id="lodgingPeriodsTableContainer"></div>
             </div>
 
             <c:choose>

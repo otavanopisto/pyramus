@@ -583,11 +583,14 @@ public class ObjectFactory {
             
             String additionalContectInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
             
+            // TODO Remove this from the rest model
+            boolean lodging = false;
+            
             return new fi.otavanopisto.pyramus.rest.model.Student(entity.getId(), personId, entity.getFirstName(), entity.getLastName(), 
                 entity.getNickname(), entity.getAdditionalInfo(), additionalContectInfo, nationalityId, 
                 languageId, municipalityId, schoolId, activityTypeId, examinationTypeId, educationalLevelId, 
                 toOffsetDateTime(entity.getStudyTimeEnd()), studyProgrammeId, curriculumId, entity.getPreviousStudies(), entity.getEducation(), 
-                entity.getLodging(), toOffsetDateTime(entity.getStudyStartDate()), toOffsetDateTime(entity.getStudyEndDate()), studyEndReasonId, 
+                lodging, toOffsetDateTime(entity.getStudyStartDate()), toOffsetDateTime(entity.getStudyEndDate()), studyEndReasonId, 
                 entity.getStudyEndText(), variables, tags, entity.getArchived());
           }
         },

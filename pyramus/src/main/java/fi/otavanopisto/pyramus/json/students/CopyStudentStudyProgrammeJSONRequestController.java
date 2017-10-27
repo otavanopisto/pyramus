@@ -81,13 +81,12 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     School school = oldStudent.getSchool();
     StudyProgramme studyProgramme = null; // student.getStudyProgramme();
     StudentStudyEndReason studyEndReason = null; // student.getStudyEndReason();
-    Boolean lodging = false; // oldStudent.getLodging();
     Curriculum curriculum = oldStudent.getCurriculum();
 
     Student newStudent = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd,
         activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, 
         studyProgramme, curriculum, previousStudies,studyStartTime, studyEndTime, studyEndReason, studyEndText, 
-        lodging, false);
+        false);
     
     // Contact info
     

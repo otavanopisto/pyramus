@@ -17,19 +17,94 @@ function addAddressTableRow(values) {
   getIxTableById('addressTable').addRow(values || [ '', contactTypes[0].id, '', '', '', '', '', '', '' ]);
 };
 
+function addLodgingPeriodTableRow(lodgingPeriodTable) {
+  lodgingPeriodTable.addRow([-1, '', '', '', '']);
+}
+
 function setupTags() {
   JSONRequest.request("tags/getalltags.json", {
-	onSuccess: function (jsonResponse) {
-	  new Autocompleter.Local("tags", "tags_choices", jsonResponse.tags, {
+  onSuccess: function (jsonResponse) {
+    new Autocompleter.Local("tags", "tags_choices", jsonResponse.tags, {
         tokens: [',', '\n', ' ']
-	  });
-	}
+    });
+  }
   });   
 }
+
+function initStudentLodgingPeriodsTable() {
+  var lodgingPeriodsTable = new IxTable($('lodgingPeriodsTableContainer'), {
+    id : "lodgingPeriodsTable",
+    columns : [{
+      dataType : 'hidden',
+      left : 0,
+      width : 0,
+      paramName : 'id'
+    }, {
+      header: getLocale().getText("students.createStudent.lodgingPeriodsTable.begin"),
+      left : 8,
+      width: 160,
+      dataType : 'date',
+      editable: true,
+      paramName: 'begin'
+    }, {
+      header: getLocale().getText("students.createStudent.lodgingPeriodsTable.end"),
+      left : 168,
+      width : 160,
+      dataType: 'date',
+      editable: true,
+      paramName: 'end'
+    },{
+      width: 30,
+      left: 8 + 160 + 8 + 160 + 8,
+      dataType: 'button',
+      paramName: 'addButton',
+      hidden: true,
+      imgsrc: GLOBAL_contextPath + '/gfx/list-add.png',
+      tooltip: getLocale().getText("students.createStudent.lodgingPeriodsTable.addTooltip"),
+      onclick: function (event) {
+        addLodgingPeriodTableRow(event.tableComponent);
+      }
+    }, {
+      width: 30,
+      left: 8 + 160 + 8 + 160 + 8,
+      dataType: 'button',
+      paramName: 'removeButton',
+      hidden: true,
+      imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
+      tooltip: getLocale().getText("students.createStudent.lodgingPeriodsTable.removeTooltip"),
+      onclick: function (event) {
+        event.tableComponent.deleteRow(event.row);
+        
+        if (event.tableComponent.getRowCount() == 0) {
+          $('noLodgingPeriodsAddedMessageContainer').setStyle({
+            display : ''
+          });
+        }
+      }
+    }]
+  });
+  
+  lodgingPeriodsTable.addListener("rowAdd", function (event) {
+    var table = event.tableComponent; 
+    var enabledButton = event.row == 0 ? 'addButton' : 'removeButton';
+    lodgingPeriodsTable.showCell(event.row, table.getNamedColumnIndex(enabledButton));
+  
+    if (table.getRowCount() > 0) {
+      $('noLodgingPeriodsAddedMessageContainer').setStyle({
+        display : 'none'
+      });
+    }
+  });
+  
+  return lodgingPeriodsTable;
+}
+    
 
 function onLoad(event) {
   var tabControl = new IxProtoTabs($('tabs'));
 
+  initStudentLodgingPeriodsTable();
+  
   // E-mail address
 
   var emailTable = new IxTable($('emailTable'), {
@@ -328,6 +403,7 @@ function onLoad(event) {
       } ]
     });
 
+    var valueColumnNumber = variablesTable.getNamedColumnIndex('value');
     variablesTable.detachFromDom();
     for ( var i = 0, l = variableKeys.length; i < l; i++) {
       var rowNumber = variablesTable.addRow([ '', jsonEscapeHTML(variableKeys[i].variableKey),
@@ -341,13 +417,13 @@ function onLoad(event) {
           dataType = 'date';
         break;
         case 'BOOLEAN':
-          dataType = 'boolean';
+          dataType = 'checkbox';
         break;
         default:
           dataType = 'text';
         break;
       }
-      variablesTable.setCellDataType(rowNumber, 3, dataType);
+      variablesTable.setCellDataType(rowNumber, valueColumnNumber, dataType);
     }
     variablesTable.reattachToDom();
   }

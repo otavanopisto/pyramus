@@ -36,10 +36,12 @@ public class ManageApplicationViewController extends PyramusViewController {
       
       // Hakemuksen tilatiedot
 
-      pageRequestContext.getRequest().setAttribute("infoState", ApplicationUtils.applicationStateUiValue(application.getState()));
+      pageRequestContext.getRequest().setAttribute("infoState", application.getState());
+      pageRequestContext.getRequest().setAttribute("infoStateUi", ApplicationUtils.applicationStateUiValue(application.getState()));
       pageRequestContext.getRequest().setAttribute("infoApplicantEditable", application.getApplicantEditable());
       if (application.getHandler() != null) {
         pageRequestContext.getRequest().setAttribute("infoHandler", application.getHandler().getFullName());
+        pageRequestContext.getRequest().setAttribute("infoHandlerId", application.getHandler().getId());
       }
       pageRequestContext.getRequest().setAttribute("infoCreated", application.getCreated());
       pageRequestContext.getRequest().setAttribute("infoLastModified", ApplicationUtils.getLatest(

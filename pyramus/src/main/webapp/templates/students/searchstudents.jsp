@@ -40,7 +40,6 @@
             nationality: searchForm.nationality.value,
             municipality: searchForm.municipality.value,
             language: searchForm.language.value,
-            lodging: searchForm.lodging.value,
             studyProgramme: searchForm.studyProgramme.value,
             ssn: searchForm.ssn.value,
             studentFilter: searchForm.studentFilter.value,
@@ -381,18 +380,6 @@
               </div>
               
               <div id="searchStudentsAdvancedSearchRight">
-
-                <div class="genericFormSection">   
-                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                    <jsp:param name="titleLocale" value="students.searchStudents.advancedSearchLodgingTitle"/>
-                    <jsp:param name="helpLocale" value="students.searchStudents.advancedSearchLodgingHelp"/>
-                  </jsp:include>                                     
-                  <select name="lodging">
-                    <option></option>
-                    <option value="0"><fmt:message key="students.searchStudents.advancedSearchLodgingNo"/></option>
-                    <option value="1"><fmt:message key="students.searchStudents.advancedSearchLodgingYes"/></option>
-                  </select>
-                </div>
 
                 <div class="genericFormSection">   
                   <jsp:include page="/templates/generic/fragments/formtitle.jsp">

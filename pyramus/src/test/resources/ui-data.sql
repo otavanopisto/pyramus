@@ -356,10 +356,12 @@ values
 
 insert into 
   Student (id, language, studyStartDate, studyEndReason, previousStudies, additionalInfo, municipality, 
-  studyTimeEnd, studyProgramme, educationalLevel, studyEndDate, archived, nationality, lodging, 
+  studyTimeEnd, studyProgramme, educationalLevel, studyEndDate, archived, nationality, 
   examinationType, studyEndText, education, school, activityType, nickname)
 values
-  (8, null, PARSEDATETIME('1 1 2010', 'd M yyyy'), null, null, null, null, null, 1, null, null, 0, null, 0, null, null, null, null, null, null);
+  (8, null, PARSEDATETIME('1 1 2010', 'd M yyyy'), null, null, null, null, 
+  null, 1, null, null, 0, null, 
+  null, null, null, null, null, null);
 
 insert into StudentGroupStudent
   (id, studentGroup, student, version)

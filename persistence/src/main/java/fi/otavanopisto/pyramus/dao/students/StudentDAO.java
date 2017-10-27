@@ -132,7 +132,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
       Date studyTimeEnd, StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, 
       String education, Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, 
       Curriculum curriculum, Double previousStudies, Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, 
-      String studyEndText, Boolean lodging, Boolean archived) {
+      String studyEndText, Boolean archived) {
 
     EntityManager entityManager = getEntityManager();
 
@@ -159,7 +159,6 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setStudyEndDate(studyEndDate);
     student.setStudyEndReason(studyEndReason);
     student.setStudyEndText(studyEndText);
-    student.setLodging(lodging);
     student.setContactInfo(contactInfo);
     student.setArchived(archived);
 
@@ -178,7 +177,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
       Date studyTimeEnd, StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, 
       String education, Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, 
       Curriculum curriculum, Double previousStudies, Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, 
-      String studyEndText, Boolean lodging) {
+      String studyEndText) {
     EntityManager entityManager = getEntityManager();
 
     student.setFirstName(firstName);
@@ -200,7 +199,6 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setStudyEndDate(studyEndDate);
     student.setStudyEndReason(studyEndReason);
     student.setStudyEndText(studyEndText);
-    student.setLodging(lodging);
     student.setCurriculum(curriculum);
 
     entityManager.persist(student);

@@ -199,7 +199,6 @@ public class PersonTestsIT extends AbstractRESTServiceTest {
       .body("studyProgrammeId[0]", is(1))
       .body("previousStudies[0]", is(0f))
       .body("education[0]", is("Education #1"))
-      .body("lodging[0]", is(false))
       .body("studyStartDate[0]", is(getDate(2010, 1, 1).toString()))
       .body("studyEndDate[0]", is((String) null))
       .body("studyEndReasonId[0]", is((Integer) null))

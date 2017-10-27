@@ -440,20 +440,6 @@ public class Person implements ContextReference {
 
   @Transient
   @Field
-  public String getInactiveLodgings() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && !student.getActive()) {
-        if (student.getLodging() != null) {
-          results.add(student.getLodging().toString());
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
   public String getInactiveStudyProgrammeIds() {
     Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
@@ -682,20 +668,6 @@ public class Person implements ContextReference {
       if (!student.getArchived() && student.getActive()) {
         for (PhoneNumber phoneNumber : student.getContactInfo().getPhoneNumbers()) {
           results.add(phoneNumber.getNumber());
-        }
-      }
-    }
-    return setToString(results);
-  }
-
-  @Transient
-  @Field
-  public String getActiveLodgings() {
-    Set<String> results = new HashSet<>();
-    for (Student student : getStudents()) {
-      if (!student.getArchived() && student.getActive()) {
-        if (student.getLodging() != null) {
-          results.add(student.getLodging().toString());
         }
       }
     }

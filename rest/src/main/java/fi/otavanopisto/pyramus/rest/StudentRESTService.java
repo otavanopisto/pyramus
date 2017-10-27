@@ -1414,7 +1414,11 @@ public class StudentRESTService extends AbstractRESTService {
     Student student = studentController.createStudent(person, firstName, lastName, nickname, entity.getAdditionalInfo(),
         toDate(entity.getStudyTimeEnd()), activityType, examinationType, educationalLevel, entity.getEducation(), nationality, municipality, language, school,
         studyProgramme, curriculum, entity.getPreviousStudies(), toDate(entity.getStudyStartDate()), toDate(entity.getStudyEndDate()), studyEndReason,
-        entity.getStudyEndText(), lodging);
+        entity.getStudyEndText());
+    
+    if (Boolean.TRUE.equals(lodging) && entity.getStudyStartDate() != null)
+      studentController.addLodgingPeriod(student, toDate(entity.getStudyStartDate()), toDate(entity.getStudyEndDate()));
+      
     userController.updateUserVariables(student, entity.getVariables());
     studentController.updateStudentTags(student, entity.getTags());
     studentController.updateStudentAdditionalContactInfo(student, entity.getAdditionalContactInfo());
@@ -1497,9 +1501,8 @@ public class StudentRESTService extends AbstractRESTService {
     String firstName = StringUtils.trim(entity.getFirstName());
     String lastName = StringUtils.trim(entity.getLastName());
     String nickname = StringUtils.trim(entity.getNickname());
-    Boolean lodging = entity.getLodging();
 
-    if (personId == null || studyProgrammeId == null || lodging == null) {
+    if (personId == null || studyProgrammeId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -1531,9 +1534,11 @@ public class StudentRESTService extends AbstractRESTService {
         .getStudyEndReasonId()) : null;
     Curriculum curriculum = entity.getCurriculumId() != null ? curriculumController.findCurriculumById(entity.getCurriculumId()) : null;
 
+    // TODO lodging cannot be updated via boolean
+    
     studentController.updateStudent(student, firstName, lastName, nickname, entity.getAdditionalInfo(), toDate(entity.getStudyTimeEnd()),
         activityType, examinationType, educationalLevel, entity.getEducation(), nationality, municipality, language, school, studyProgramme, curriculum,
-        entity.getPreviousStudies(), toDate(entity.getStudyStartDate()), toDate(entity.getStudyEndDate()), studyEndReason, entity.getStudyEndText(), lodging);
+        entity.getPreviousStudies(), toDate(entity.getStudyStartDate()), toDate(entity.getStudyEndDate()), studyEndReason, entity.getStudyEndText());
 
     studentController.updateStudentPerson(student, person);
     userController.updateUserVariables(student, entity.getVariables());

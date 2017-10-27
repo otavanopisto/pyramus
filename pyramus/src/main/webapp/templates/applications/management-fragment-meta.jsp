@@ -18,11 +18,11 @@
     <div class="additional-info-container">
       <div class="meta-container">
         <span class="meta-name">Hakemuksen tila</span>
-        <span id="info-application-state-value" class="meta-value">${infoState}</span>
+        <span id="info-application-state-value" data-state="${infoState}" class="meta-value">${infoStateUi}</span>
       </div>
       <div class="meta-container">
         <span class="meta-name">Käsittelijä</span>
-        <span id="info-application-handler-value" class="meta-value">
+        <span id="info-application-handler-value" data-handler-id="${infoHandlerId}" class="meta-value">
           <c:choose>
             <c:when test="${empty infoHandler}">-</c:when>
             <c:otherwise>${infoHandler}</c:otherwise>

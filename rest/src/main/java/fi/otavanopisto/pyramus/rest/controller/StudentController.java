@@ -18,6 +18,7 @@ import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
@@ -38,6 +39,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -74,15 +76,18 @@ public class StudentController {
   
   @Inject
   private TransferCreditDAO transferCreditDAO;
+
+  @Inject
+  private StudentLodgingPeriodDAO studentLodgingPeriodDAO;
   
   public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
       Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Curriculum curriculum,
-      Double previousStudies, Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, String studyEndText, Boolean lodging) {
+      Double previousStudies, Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, String studyEndText) {
 
     Student student = studentDAO.create(person, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType,
         educationalLevel, education, nationality, municipality, language, school, studyProgramme, curriculum, previousStudies, studyStartDate, 
-        studyEndDate, studyEndReason, studyEndText, lodging, false);
+        studyEndDate, studyEndReason, studyEndText, false);
 
     // Default user
     
@@ -119,11 +124,11 @@ public class StudentController {
   public Student updateStudent(Student student, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
       Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Curriculum curriculum, 
-      Double previousStudies, Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, String studyEndText, Boolean lodging) {
+      Double previousStudies, Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, String studyEndText) {
     
     studentDAO.update(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType, educationalLevel,
         education, nationality, municipality, language, school, studyProgramme, curriculum, previousStudies, studyStartDate, studyEndDate, 
-        studyEndReason, studyEndText, lodging);
+        studyEndReason, studyEndText);
     
     return student;
   }
@@ -270,6 +275,20 @@ public class StudentController {
 
   public List<TransferCredit> listStudentTransferCredits(Student student) {
     return transferCreditDAO.listByStudent(student);
+  }
+  
+  /* Lodging Period */
+
+  public void addLodgingPeriod(Student student, Date begin, Date end) {
+    studentLodgingPeriodDAO.create(student, begin, end);
+  }
+  
+  public List<StudentLodgingPeriod> listLodgingPeriods(Student student) {
+    return studentLodgingPeriodDAO.listByStudent(student);
+  }
+  
+  public void deleteLodgingPeriod(StudentLodgingPeriod period) {
+    studentLodgingPeriodDAO.delete(period);
   }
 
 }
