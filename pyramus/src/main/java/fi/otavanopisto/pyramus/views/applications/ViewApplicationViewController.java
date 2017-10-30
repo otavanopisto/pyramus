@@ -184,6 +184,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       pageRequestContext.getRequest().setAttribute("mode", "view");
       pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());      
       pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());      
+      pageRequestContext.getRequest().setAttribute("applicationLine", application.getLine());      
       pageRequestContext.getRequest().setAttribute("sections", sections);      
       
       pageRequestContext.setIncludeJSP("/templates/applications/management-view-application.jsp");
