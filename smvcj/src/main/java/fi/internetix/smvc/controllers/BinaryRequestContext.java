@@ -81,7 +81,7 @@ public class BinaryRequestContext extends RequestContext {
   public void writePostCommitResponse(int statusCode) throws Exception {
     if (statusCode == StatusCode.OK) {
       if (fileName != null) {
-        getResponse().setHeader("Content-Disposition", "attachment; filename=" + fileName);
+        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
       }
       
       if (contentType != null && content != null) {
