@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.koski;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,10 +22,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
@@ -71,6 +74,9 @@ public class KoskiClient {
   @Inject 
   private UserVariableDAO userVariableDAO;
 
+  @Inject
+  private KoskiPersonLogDAO koskiPersonLogDAO;
+  
   @Inject
   private KoskiLukioStudentHandler lukioHandler;
 
@@ -164,34 +170,24 @@ public class KoskiClient {
   }
   
   public void updateStudent(Student student) throws KoskiException {
-    if (!settings.isEnabled())
-      return;
-    
-    if (student == null) {
-      logger.log(Level.WARNING, "updateStudent called with null student.");
-      return;
-    }
-    
-    if (student.getStudyProgramme() == null) {
-      logger.log(Level.WARNING, String.format("Can not update student (%d) without studyprogramme.", student.getId()));
-      return;
-    }
-
-    if (!settings.isEnabledStudyProgramme(student.getStudyProgramme().getId()))
-      return;
-    
-    String personOid = personVariableDAO.findByPersonAndKey(student.getPerson(), KOSKI_HENKILO_OID);
-//    String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
-    
-    String uri = String.format("%s/oppija", getBaseUrl());
     try {
-      Client client = ClientBuilder.newClient();
-      WebTarget target = client.target(uri);
-      Builder request = target
-          .request(MediaType.APPLICATION_JSON_TYPE)
-          .header("Authorization", "Basic " + getAuth());
-        
-      StringWriter writer = new StringWriter();
+      if (!settings.isEnabled())
+        return;
+      
+      if (student == null) {
+        logger.log(Level.WARNING, "updateStudent called with null student.");
+        return;
+      }
+      
+      if (student.getPerson() == null || student.getStudyProgramme() == null) {
+        logger.log(Level.WARNING, String.format("Can not update student (%d) with missing person or studyprogramme.", student.getId()));
+        return;
+      }
+  
+      if (!settings.isEnabledStudyProgramme(student.getStudyProgramme().getId()))
+        return;
+      
+      String personOid = personVariableDAO.findByPersonAndKey(student.getPerson(), KOSKI_HENKILO_OID);
       
       Henkilo henkilo;
       if (StringUtils.isNotBlank(personOid))
@@ -202,10 +198,9 @@ public class KoskiClient {
       Oppija oppija = new Oppija();
       oppija.setHenkilo(henkilo);
       
-//      Oppija oppija;
-
       List<Student> reportedStudents = new ArrayList<>();
       
+      // TODO: report all or just the given one? (editstudent likely reports all though)
       for (Student s : student.getPerson().getStudents()) {
         Opiskeluoikeus o = studentToOpiskeluoikeus(s);
         if (o != null) {
@@ -214,20 +209,27 @@ public class KoskiClient {
         }
       }
       
+      String uri = String.format("%s/oppija", getBaseUrl());
+      
+      Client client = ClientBuilder.newClient();
+      WebTarget target = client.target(uri);
+      Builder request = target
+          .request(MediaType.APPLICATION_JSON_TYPE)
+          .header("Authorization", "Basic " + getAuth());
+
       ObjectMapper mapper = new ObjectMapper();
+      StringWriter writer = new StringWriter();
       mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
       mapper.writeValue(writer, oppija);
       
       String requestStr = writer.toString();
-      System.out.println("Request: " + requestStr);
+//      System.out.println("Request: " + requestStr);
 
       Response response = request.put(Entity.json(requestStr));
-      String ret = response.readEntity(String.class);
       if (response.getStatus() == 200) {
-        System.out.println("Response: " + ret);
-        
+        // For test environment the oid's are not saved
         if (!settings.isTestEnvironment()) {
-          OppijaReturnVal oppijaReturnVal = mapper.readValue(ret, OppijaReturnVal.class);
+          OppijaReturnVal oppijaReturnVal = response.readEntity(OppijaReturnVal.class);
           String servedPersonOid = oppijaReturnVal.getHenkilo().getOid();
           
           if (StringUtils.isEmpty(personOid)) {
@@ -259,11 +261,26 @@ public class KoskiClient {
                 oppijaReturnVal.getOpiskeluoikeudet().size(), reportedStudents.size()));
           }
         }
-      } else
-        logger.log(Level.SEVERE, String.format("Koski server returned %d when trying to create student. Content %s", response.getStatus(), ret));
+
+        // Log successful event
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.SUCCESS, new Date(), null);
+        logger.info(String.format("KoskiClient: successfully updated person %d.", student.getPerson().getId()));
+      } else {
+        String ret = response.readEntity(String.class);
+        System.out.println("Response: " + ret);
         
+        // Log failed event
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.SERVER_FAILURE, new Date(), ret);
+        logger.log(Level.SEVERE, String.format("Koski server returned %d when trying to create person %d. Content %s", response.getStatus(), student.getPerson().getId(), ret));
+      }
     } catch (Exception ex) {
-      ex.printStackTrace();
+      try {
+        // Log failed event
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNKNOWN_FAILURE, new Date(), null);
+      } catch (Exception e) {
+      }
+      
+      logger.log(Level.SEVERE, String.format("Unknown failure while updating person %d", student.getPerson().getId()), ex);
     }
   }
 

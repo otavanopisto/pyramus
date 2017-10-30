@@ -18,15 +18,10 @@ public class KoskiUpdater {
   
   @Asynchronous
   public void updateStudent(Long studentId) {
-    System.out.println("client: " + koskiClient.toString());
-    System.out.println("dao: " + studentDAO.hashCode());
-
     Student student = studentDAO.findById(studentId);
     try {
       koskiClient.updateStudent(student);
     } catch (KoskiException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
     }
   }
   
