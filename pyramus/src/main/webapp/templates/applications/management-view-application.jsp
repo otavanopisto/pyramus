@@ -18,6 +18,7 @@
       <jsp:include page="/templates/applications/management-fragment-header.jsp"></jsp:include>
       <section class="application-wrapper">
       
+        <input type="hidden" id="field-line" name="field-line" value="${applicationLine}"/>
         <section class="application-section application-data">
           <h3 class="application-data-header">Hakemuksen tiedot</h3>
           <c:forEach var="section" items="${sections}">
