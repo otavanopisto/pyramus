@@ -47,7 +47,8 @@ public class ApplicationMailerUtils {
           application.getFirstName(),
           application.getLastName(),
           application.getEmail(),
-          ApplicationUtils.applicationLineUiValue(application.getLine()), viewUrl);
+          ApplicationUtils.applicationLineUiValue(application.getLine()),
+          viewUrl);
       Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, application.getEmail(),
           application.getHandler().getPrimaryEmail().getAddress(), subject, content);
     }

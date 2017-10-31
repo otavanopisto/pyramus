@@ -106,7 +106,7 @@ public class ApplicationUtils {
           viewUrl);
       }
       else {
-        mailSubject = String.format("Hakemus linjalle %s", ApplicationUtils.applicationLineUiValue(application.getLine()));
+        mailSubject = "Hakemuksen tila on muuttunut";
         mailContent = String.format(
           "<p>Hakijan <b>%s %s</b> (%s) hakemus linjalle <b>%s</b> on siirtynyt tilaan <b>%s</b>.</p>" +
           "<p>Pääset hakemustietoihin <b><a href=\"%s\">tästä linkistä</a></b>.</p>",
@@ -130,10 +130,11 @@ public class ApplicationUtils {
     
     if (!newApplication) {
       ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-      applicationLogDAO.create(application,
-          ApplicationLogType.HTML,
-          String.format("Hakemus siirretty tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState())),
-          staffMember);
+      applicationLogDAO.create(
+        application,
+        ApplicationLogType.HTML,
+        String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState())),
+        staffMember);
     }
   }
 
