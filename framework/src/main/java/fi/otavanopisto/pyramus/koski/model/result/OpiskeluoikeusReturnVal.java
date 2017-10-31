@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model.result;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OpiskeluoikeusReturnVal {
@@ -21,6 +22,16 @@ public class OpiskeluoikeusReturnVal {
     this.versionumero = versionumero;
   }
 
+  @JsonProperty("lähdejärjestelmänId")
+  public LahdejarjestelmaIdReturnVal getLahdejarjestelmanId() {
+    return lahdejarjestelmanId;
+  }
+
+  public void setLahdejarjestelmanId(LahdejarjestelmaIdReturnVal lahdejarjestelmanId) {
+    this.lahdejarjestelmanId = lahdejarjestelmanId;
+  }
+
   private String oid;
   private Long versionumero;
+  private LahdejarjestelmaIdReturnVal lahdejarjestelmanId;
 }
