@@ -2,8 +2,8 @@ package fi.otavanopisto.pyramus.json.applications;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,12 +66,12 @@ public class SendMailJSONRequestController extends JSONRequestController {
       
       // Mail content
       
-      List<String> toRecipients = new ArrayList<String>();
+      Set<String> toRecipients = new HashSet<String>();
       JSONArray recipients = toJSONArray(formData.getString("mail-form-recipient-to"));
       for (int i = 0; i < recipients.size(); i++) {
         toRecipients.add(recipients.get(i).toString());
       }
-      List<String> ccRecipients = new ArrayList<String>();
+      Set<String> ccRecipients = new HashSet<String>();
       if (formData.has("mail-form-recipient-cc")) {
         recipients = toJSONArray(formData.getString("mail-form-recipient-cc"));
         for (int i = 0; i < recipients.size(); i++) {
