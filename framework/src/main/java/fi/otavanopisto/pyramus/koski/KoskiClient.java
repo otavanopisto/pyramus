@@ -19,10 +19,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
@@ -37,6 +39,7 @@ import fi.otavanopisto.pyramus.koski.model.HenkiloTiedotJaOID;
 import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.Oppija;
+import fi.otavanopisto.pyramus.koski.model.result.OpiskeluoikeusReturnVal;
 import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
 
 /**
@@ -70,6 +73,9 @@ public class KoskiClient {
 
   @Inject 
   private PersonVariableDAO personVariableDAO;
+  
+  @Inject
+  private StudentDAO studentDAO;
   
   @Inject 
   private UserVariableDAO userVariableDAO;
@@ -217,6 +223,7 @@ public class KoskiClient {
           .request(MediaType.APPLICATION_JSON_TYPE)
           .header("Authorization", "Basic " + getAuth());
 
+      
       ObjectMapper mapper = new ObjectMapper();
       StringWriter writer = new StringWriter();
       mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
@@ -227,9 +234,13 @@ public class KoskiClient {
 
       Response response = request.put(Entity.json(requestStr));
       if (response.getStatus() == 200) {
+        String ret = response.readEntity(String.class);
+//        System.out.println("Response: " + ret);
+        
         // For test environment the oid's are not saved
         if (!settings.isTestEnvironment()) {
-          OppijaReturnVal oppijaReturnVal = response.readEntity(OppijaReturnVal.class);
+//          OppijaReturnVal oppijaReturnVal = response.readEntity(OppijaReturnVal.class);
+          OppijaReturnVal oppijaReturnVal = mapper.readValue(ret, OppijaReturnVal.class);
           String servedPersonOid = oppijaReturnVal.getHenkilo().getOid();
           
           if (StringUtils.isEmpty(personOid)) {
@@ -241,42 +252,47 @@ public class KoskiClient {
               throw new RuntimeException("Returned person oid doesn't match the saved oid");
           }
 
-          // TODO: käytä palautettuja lähdejärjestelmäid:tä
-          if (oppijaReturnVal.getOpiskeluoikeudet().size() == reportedStudents.size()) {
-            for (int i = 0; i < oppijaReturnVal.getOpiskeluoikeudet().size(); i++) {
-              Student reportedStudent = reportedStudents.get(i);
-              String studyOid = userVariableDAO.findByUserAndKey(reportedStudent, KOSKI_STUDYPERMISSION_ID);
-              String servedStudyOid = oppijaReturnVal.getOpiskeluoikeudet().get(i).getOid();
-                  
-              if (StringUtils.isBlank(studyOid)) {
-                userVariableDAO.setUserVariable(reportedStudent, KOSKI_STUDYPERMISSION_ID, servedStudyOid);
+          for (OpiskeluoikeusReturnVal opiskeluoikeus : oppijaReturnVal.getOpiskeluoikeudet()) {
+            if (opiskeluoikeus.getLahdejarjestelmanId() != null && 
+                opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma() != null &&
+                StringUtils.equals(opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma().getKoodiarvo(), "pyramus")) {
+              long servedStudentId = NumberUtils.toLong(opiskeluoikeus.getLahdejarjestelmanId().getId(), -1);
+              if (servedStudentId != -1) {
+                Student reportedStudent = studentDAO.findById(servedStudentId);
+                String studyOid = userVariableDAO.findByUserAndKey(reportedStudent, KOSKI_STUDYPERMISSION_ID);
+                String servedStudyOid = opiskeluoikeus.getOid();
+
+                if (StringUtils.isBlank(studyOid)) {
+                  userVariableDAO.setUserVariable(reportedStudent, KOSKI_STUDYPERMISSION_ID, servedStudyOid);
+                } else {
+                  // Validate the oid is the same
+                  if (!StringUtils.equals(studyOid, servedStudyOid))
+                    throw new RuntimeException(String.format("Returned study permit oid %s doesn't match the saved oid %s.", servedStudyOid, studyOid));
+                }
               } else {
-                // Validate the oid is the same
-                if (!StringUtils.equals(studyOid, servedStudyOid))
-                  throw new RuntimeException(String.format("Returned study permit oid %s doesn't match the saved oid %s.", servedStudyOid, studyOid));
+                logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id was -1 (Person %d).", student.getPerson().getId()));
               }
+            } else {
+              logger.log(Level.WARNING, String.format("Could not update student oid because returned source system was not defined or isn't this system."));
             }
-          } else {
-            logger.log(Level.SEVERE, String.format("Koski server returned %d study permits while %d was sent.", 
-                oppijaReturnVal.getOpiskeluoikeudet().size(), reportedStudents.size()));
           }
         }
 
         // Log successful event
-        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.SUCCESS, new Date(), null);
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.SUCCESS, new Date());
         logger.info(String.format("KoskiClient: successfully updated person %d.", student.getPerson().getId()));
       } else {
         String ret = response.readEntity(String.class);
         System.out.println("Response: " + ret);
         
         // Log failed event
-        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.SERVER_FAILURE, new Date(), ret);
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.SERVER_FAILURE, new Date());
         logger.log(Level.SEVERE, String.format("Koski server returned %d when trying to create person %d. Content %s", response.getStatus(), student.getPerson().getId(), ret));
       }
     } catch (Exception ex) {
       try {
         // Log failed event
-        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNKNOWN_FAILURE, new Date(), null);
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNKNOWN_FAILURE, new Date());
       } catch (Exception e) {
       }
       
