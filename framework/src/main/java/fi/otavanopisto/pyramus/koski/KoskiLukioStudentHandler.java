@@ -264,11 +264,11 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     
     if (EnumUtils.isValidEnum(LukionKurssit.class, kurssiKoodi)) {
       LukionKurssit kurssi = LukionKurssit.valueOf(kurssiKoodi);
-      LukionKurssinTyyppi kurssinTyyppi = LukionKurssinTyyppi.pakollinen; // TODO pakollinen/syventava
-      tunniste = new LukionKurssinTunnisteValtakunnallinen(kurssi, kurssinTyyppi); // TODO vk/paikallinen
+      LukionKurssinTyyppi kurssinTyyppi = LukionKurssinTyyppi.pakollinen; // TODO pakollinen/syventava -> rukseista
+      tunniste = new LukionKurssinTunnisteValtakunnallinen(kurssi, kurssinTyyppi);
     } else {
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getSubject().getName()));
-      LukionKurssinTyyppi kurssinTyyppi = LukionKurssinTyyppi.soveltava; // TODO syventava/soveltava
+      LukionKurssinTyyppi kurssinTyyppi = LukionKurssinTyyppi.syventava; // TODO paikallinen syventava/soveltava
       tunniste = new LukionKurssinTunnistePaikallinen(paikallinenKoodi , kurssinTyyppi, kuvaus(courseCredit.getCourseName()));
     }
       
