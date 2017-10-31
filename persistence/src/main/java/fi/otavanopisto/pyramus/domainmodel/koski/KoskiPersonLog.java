@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,14 +40,6 @@ public class KoskiPersonLog {
     this.state = state;
   }
 
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
   public Date getDate() {
     return date;
   }
@@ -72,8 +63,4 @@ public class KoskiPersonLog {
   
   @Enumerated (EnumType.STRING)
   private KoskiPersonState state;
-  
-  @Lob
-  @Column
-  private String message;
 }

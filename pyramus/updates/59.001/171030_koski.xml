@@ -5,7 +5,6 @@
     create table KoskiPersonLog (
       id bigint not null auto_increment, 
       date datetime not null, 
-      message longtext, 
       state varchar(255), 
       person bigint not null, 
       primary key (id)

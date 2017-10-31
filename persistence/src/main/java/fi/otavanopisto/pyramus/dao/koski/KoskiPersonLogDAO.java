@@ -18,13 +18,12 @@ import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 @Stateless
 public class KoskiPersonLogDAO extends PyramusEntityDAO<KoskiPersonLog> {
 
-  public KoskiPersonLog create(Person person, KoskiPersonState state, Date date, String message) {
+  public KoskiPersonLog create(Person person, KoskiPersonState state, Date date) {
     KoskiPersonLog koskiPersonLog = new KoskiPersonLog();
     
     koskiPersonLog.setPerson(person);
     koskiPersonLog.setState(state);
     koskiPersonLog.setDate(date);
-    koskiPersonLog.setMessage(message);
 
     return persist(koskiPersonLog);
   }
