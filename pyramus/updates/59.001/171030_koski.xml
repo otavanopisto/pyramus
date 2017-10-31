@@ -46,6 +46,16 @@
   </sql>
   
   <sql>
+    insert ignore into UserVariableKey (id, userEditable, variableKey, variableName, variableType, version)
+    select max(id) + 1, true, 'under18studyStartReason', 'Alle 18-vuotiaana aloittaneen aloittamissyy', 'TEXT', 0 from UserVariableKey;
+  </sql>
+
+  <sql>
+    insert ignore into UserVariableKey (id, userEditable, variableKey, variableName, variableType, version)
+    select max(id) + 1, true, 'extendedStudyTime', 'Pidennetty päättymispäivä', 'BOOLEAN', 0 from UserVariableKey;
+  </sql>
+
+  <sql>
     update hibernate_sequences
     set sequence_next_hi_value = (select max(id) + 1 from SettingKey)
     where sequence_name = 'SettingKey';
