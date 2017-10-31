@@ -314,7 +314,7 @@ public class KoskiClient {
     return null;
   }
 
-  private Opiskeluoikeus studentToOpiskeluoikeus(Student student) {
+  private Opiskeluoikeus studentToOpiskeluoikeus(Student student) throws KoskiException {
     OpiskeluoikeudenTyyppi opiskeluoikeudenTyyppi = settings.getOpiskeluoikeudenTyyppi(student.getStudyProgramme().getId());
     switch (opiskeluoikeudenTyyppi) {
       case aikuistenperusopetus:

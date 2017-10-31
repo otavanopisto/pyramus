@@ -19,6 +19,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
+import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenKurssit2015;
 import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenPaattovaiheenKurssit2017;
@@ -58,13 +59,15 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
   @Inject
   private Logger logger;
 
-  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
+  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) throws KoskiException {
+    AikuisOpiskelijanOPS ops = resolveOPS(student);
+    if (ops == null)
+      throw new KoskiException(String.format("Cannot report student %d without curriculum.", student.getId()), KoskiPersonState.NO_CURRICULUM);
+    
     OpiskeluoikeudenTyyppi opiskeluoikeudenTyyppi = settings.getOpiskeluoikeudenTyyppi(student.getStudyProgramme().getId());
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, opiskeluoikeudenTyyppi);
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
 
-    AikuisOpiskelijanOPS ops = resoveOPS(student);
-    
     AikuistenPerusopetuksenOpiskeluoikeus opiskeluoikeus = new AikuistenPerusopetuksenOpiskeluoikeus();
     opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(student.getId()));
     opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
@@ -101,7 +104,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     return opiskeluoikeus;
   }
   
-  private AikuisOpiskelijanOPS resoveOPS(Student student) {
+  private AikuisOpiskelijanOPS resolveOPS(Student student) {
     Curriculum curriculum = student.getCurriculum();
     if (curriculum != null) {
       switch (curriculum.getId().intValue()) {
