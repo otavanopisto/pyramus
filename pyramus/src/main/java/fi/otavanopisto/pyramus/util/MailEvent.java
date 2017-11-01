@@ -1,10 +1,11 @@
 package fi.otavanopisto.pyramus.util;
 
 import java.util.List;
+import java.util.Set;
 
 public class MailEvent {
 
-  public MailEvent(String jndiName, String mimeType, String from, List<String> to, List<String> cc, List<String> bcc,
+  public MailEvent(String jndiName, String mimeType, String from, Set<String> to, Set<String> cc, Set<String> bcc,
       String subject, String content, List<MailAttachment> attachments) {
     super();
     this.jndiName = jndiName;
@@ -30,15 +31,15 @@ public class MailEvent {
     return from;
   }
 
-  public List<String> getTo() {
+  public Set<String> getTo() {
     return to;
   }
 
-  public List<String> getCc() {
+  public Set<String> getCc() {
     return cc;
   }
 
-  public List<String> getBcc() {
+  public Set<String> getBcc() {
     return bcc;
   }
 
@@ -57,9 +58,9 @@ public class MailEvent {
   private String jndiName;
   private String mimeType;
   private String from;
-  private List<String> to;
-  private List<String> cc;
-  private List<String> bcc;
+  private Set<String> to;
+  private Set<String> cc;
+  private Set<String> bcc;
   private String subject;
   private String content;
   private List<MailAttachment> attachments;

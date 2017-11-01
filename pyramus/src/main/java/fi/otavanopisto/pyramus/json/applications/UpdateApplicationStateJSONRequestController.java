@@ -8,10 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
-import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
-import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
@@ -59,11 +57,10 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
         if (Boolean.TRUE.equals(removeHandler)) {
           application = applicationDAO.updateApplicationHandler(application, null);
         }
-        ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-        applicationLogDAO.create(application,
-            ApplicationLogType.HTML,
-            String.format("Hakemus siirretty tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState())),
-            staffMember);
+        
+        // Email notifications and log entries
+        
+        ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, false);
       }
 
       // Response parameters
