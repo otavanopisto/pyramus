@@ -56,6 +56,11 @@
   </sql>
 
   <sql>
+    insert ignore into UserVariableKey (id, userEditable, variableKey, variableName, variableType, version)
+    select max(id) + 1, false, 'koski.skippedStudent', 'Skipped student for koski-integration', 'BOOLEAN', 0 from UserVariableKey;
+  </sql>
+  
+  <sql>
     update hibernate_sequences
     set sequence_next_hi_value = (select max(id) + 1 from SettingKey)
     where sequence_name = 'SettingKey';

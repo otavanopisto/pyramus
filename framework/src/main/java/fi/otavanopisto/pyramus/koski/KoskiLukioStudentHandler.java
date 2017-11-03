@@ -1,8 +1,10 @@
 package fi.otavanopisto.pyramus.koski;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -17,9 +19,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course;
+import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
+import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
@@ -35,6 +41,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
+import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
@@ -45,6 +52,7 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunniste;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnistePaikallinen;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinen;
+import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeudenLisatiedot;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusAidinkieli;
@@ -56,6 +64,9 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenTunniste;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppimaaranSuoritus;
 
 public class KoskiLukioStudentHandler extends KoskiStudentHandler {
+
+  public static final String USERVARIABLE_EXTENDEDSTUDYTIME = "extendedStudyTime";
+  public static final String USERVARIABLE_UNDER18STARTREASON = "under18studyStartReason";
 
   @Inject
   private Logger logger;
@@ -72,6 +83,8 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     if (studyOid != null)
       opiskeluoikeus.setOid(studyOid);
 
+    opiskeluoikeus.setLisatiedot(getLisatiedot(student));
+    
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
     opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
 
@@ -102,6 +115,27 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     return opiskeluoikeus;
   }
   
+  private LukionOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
+    boolean pidennettyPaattymispaiva = Boolean.valueOf(userVariableDAO.findByUserAndKey(student, USERVARIABLE_EXTENDEDSTUDYTIME));
+    boolean ulkomainenVaihtoopiskelija = false;
+    boolean yksityisopiskelija = false;
+    boolean oikeusMaksuttomaanAsuntolapaikkaan = settings.isFreeLodging(student.getStudyProgramme().getId());
+    LukionOpiskeluoikeudenLisatiedot lisatiedot = new LukionOpiskeluoikeudenLisatiedot(
+        pidennettyPaattymispaiva, ulkomainenVaihtoopiskelija, yksityisopiskelija, oikeusMaksuttomaanAsuntolapaikkaan);
+
+    String under18startReason = userVariableDAO.findByUserAndKey(student, USERVARIABLE_UNDER18STARTREASON);
+    if (StringUtils.isNotBlank(under18startReason))
+      lisatiedot.setAlle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy(kuvaus(under18startReason));
+    
+    List<StudentLodgingPeriod> lodgingPeriods = lodgingPeriodDAO.listByStudent(student);
+    for (StudentLodgingPeriod lodgingPeriod : lodgingPeriods) {
+      Majoitusjakso jakso = new Majoitusjakso(lodgingPeriod.getBegin(), lodgingPeriod.getEnd());
+      lisatiedot.addSisaoppilaitosmainenMajoitus(jakso);
+    }
+    
+    return lisatiedot;
+  }
+
   private void assessmentsToModel(Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, LukionOppimaaranSuoritus oppimaaranSuoritus) {
     Collection<CreditStub> credits = listCredits(student);
     
@@ -198,8 +232,8 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     
     if (matchingEducationType && studentSubjects.isAdditionalLanguage(subjectCode)) {
       if (subjectCode.length() > 2) {
-        String langCode = subjectCode.substring(0, 2);
-        Kielivalikoima kieli = Kielivalikoima.valueOf(langCode); // TODO MAPPING! RU=russian, RU=Ruotsi...
+        String langCode = settings.getSubjectToLanguageMapping(subjectCode.substring(0, 2).toUpperCase());
+        Kielivalikoima kieli = Kielivalikoima.valueOf(langCode);
         
         if (kieli != null) {
           KoskiOppiaineetYleissivistava valinta = 
@@ -264,11 +298,11 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     
     if (EnumUtils.isValidEnum(LukionKurssit.class, kurssiKoodi)) {
       LukionKurssit kurssi = LukionKurssit.valueOf(kurssiKoodi);
-      LukionKurssinTyyppi kurssinTyyppi = LukionKurssinTyyppi.pakollinen; // TODO pakollinen/syventava -> rukseista
+      LukionKurssinTyyppi kurssinTyyppi = findCourseType(courseCredit, LukionKurssinTyyppi.pakollinen, LukionKurssinTyyppi.syventava);
       tunniste = new LukionKurssinTunnisteValtakunnallinen(kurssi, kurssinTyyppi);
     } else {
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getSubject().getName()));
-      LukionKurssinTyyppi kurssinTyyppi = LukionKurssinTyyppi.syventava; // TODO paikallinen syventava/soveltava
+      LukionKurssinTyyppi kurssinTyyppi = findCourseType(courseCredit, LukionKurssinTyyppi.syventava, LukionKurssinTyyppi.soveltava);
       tunniste = new LukionKurssinTunnistePaikallinen(paikallinenKoodi , kurssinTyyppi, kuvaus(courseCredit.getCourseName()));
     }
       
@@ -296,6 +330,53 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     }
     
     return suoritus;
+  }
+
+  private LukionKurssinTyyppi findCourseType(CreditStub courseCredit, LukionKurssinTyyppi ... allowedValues) {
+    Set<LukionKurssinTyyppi> resolvedTypes = new HashSet<>();
+    
+    for (Credit credit : courseCredit.getCredits()) {
+      if (credit instanceof CourseAssessment) {
+        System.out.println(((CourseAssessment) credit).getCourseStudent().getCourse().getSubject().getCode());
+        CourseAssessment courseAssessment = (CourseAssessment) credit;
+        if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
+          Course course = courseAssessment.getCourseStudent().getCourse();
+          Set<Long> educationSubTypeIds = course.getCourseEducationTypes().stream().flatMap(
+              educationType -> educationType.getCourseEducationSubtypes().stream().map(subType -> subType.getEducationSubtype().getId())).collect(Collectors.toSet());
+          for (Long educationSubTypeId : educationSubTypeIds) {
+            String mappedValue = settings.getCourseTypeMapping(educationSubTypeId);
+            if (mappedValue != null && EnumUtils.isValidEnum(LukionKurssinTyyppi.class, mappedValue)) {
+              resolvedTypes.add(LukionKurssinTyyppi.valueOf(mappedValue));
+            }
+          }
+        } else
+          logger.warning(String.format("CourseAssessment %d has no courseStudent or Course", courseAssessment.getId()));
+      } else if (credit instanceof TransferCredit) {
+        // TODO This will require another issue to be resolved first (Add course subtypes to transfercredits)
+        resolvedTypes.add(LukionKurssinTyyppi.syventava);
+      } else {
+        logger.warning(String.format("Unknown credit type %s", credit.getClass().getSimpleName()));
+      }
+    }
+    
+    Set<LukionKurssinTyyppi> allowedSet = new HashSet<>(Arrays.asList(allowedValues));
+    allowedSet.removeIf(element -> !resolvedTypes.contains(element));
+    
+    if (allowedSet.size() == 0) {
+      logger.warning(String.format("Course %s has no feasible subtypes.", courseCredit.getCourseCode()));
+      return allowedValues[0];
+    } else if (allowedSet.size() == 1) {
+      return allowedSet.iterator().next();
+    } else {
+      for (LukionKurssinTyyppi type : allowedValues) {
+        if (allowedSet.contains(type)) {
+          logger.warning(String.format("Course %s has several matching subtypes.", courseCredit.getCourseCode()));
+          return type;
+        }
+      }
+    }
+    
+    return allowedValues[0];
   }
 
 }

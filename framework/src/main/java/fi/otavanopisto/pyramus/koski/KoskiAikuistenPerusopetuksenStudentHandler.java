@@ -185,8 +185,8 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     
     if (matchingEducationType && studentSubjects.isAdditionalLanguage(subjectCode)) {
       if (subjectCode.length() > 2) {
-        String langCode = subjectCode.substring(0, 2);
-        Kielivalikoima kieli = Kielivalikoima.valueOf(langCode); // TODO MAPPING! RU=russian, RU=Ruotsi...
+        String langCode = settings.getSubjectToLanguageMapping(subjectCode.substring(0, 2).toUpperCase());
+        Kielivalikoima kieli = Kielivalikoima.valueOf(langCode);
         
         if (kieli != null) {
           KoskiOppiaineetYleissivistava valinta = 

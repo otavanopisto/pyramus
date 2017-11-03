@@ -46,23 +46,20 @@ public class KoskiSettings {
   
   @PostConstruct
   private void postConstruct() {
-    enabled = Boolean.parseBoolean(getSetting(KOSKI_SETTINGKEY_ENABLED));
     testEnvironment = Boolean.parseBoolean(getSetting(KOSKI_SETTINGKEY_TESTENVIRONMENT));
     
-    if (isEnabled()) {
-      String fileName = System.getProperty("jboss.server.config.dir") + "/koski-config.json";
-      File file = new File(fileName);
-      if (file.exists()) {
-        try {
-          String json = FileUtils.readFileToString(file);
-          JSONObject settings = JSONObject.fromObject(json);
-          readSettings(settings);
-        } catch (IOException e) {
-          logger.log(Level.SEVERE, String.format("IO exception while reading Koski-integration configuration file.", fileName), e);
-        }
-      } else {
-        logger.log(Level.SEVERE, String.format("Koski-integration is enabled but configuration file %s couldn't be loaded.", fileName));
+    String fileName = System.getProperty("jboss.server.config.dir") + "/koski-config.json";
+    File file = new File(fileName);
+    if (file.exists()) {
+      try {
+        String json = FileUtils.readFileToString(file);
+        JSONObject settings = JSONObject.fromObject(json);
+        readSettings(settings);
+      } catch (IOException e) {
+        logger.log(Level.SEVERE, String.format("Exception while reading Koski-integration configuration file %s.", fileName), e);
       }
+    } else {
+      logger.log(Level.SEVERE, String.format("Koski-integration configuration file %s couldn't be loaded.", fileName));
     }
   }
   
@@ -76,6 +73,18 @@ public class KoskiSettings {
       OpiskeluoikeudenTila koskiStudyState = OpiskeluoikeudenTila.valueOf(studyEndReasonSetting.getString("koski-status"));
       studentStateMap.put(studyEndReasonId, koskiStudyState);
     }
+
+    JSONObject courseTypeMapping = koskiSettings.getJSONObject("courseTypeMapping");
+    for (Object courseTypeMappingKey : courseTypeMapping.keySet()) {
+      Long courseSubTypeId = Long.parseLong(courseTypeMappingKey.toString());
+      this.courseTypeMapping.put(courseSubTypeId, courseTypeMapping.getString(courseSubTypeId.toString()));
+    }
+  
+    JSONObject subjectToLanguageMapping = koskiSettings.getJSONObject("subjectToLanguageMapping");
+    for (Object key : subjectToLanguageMapping.keySet()) {
+      String keyStr = (String) key;
+      this.subjectToLanguageMapping.put(keyStr, subjectToLanguageMapping.getString(keyStr));
+    }
     
     JSONObject studyProgrammeMappings = koskiSettings.getJSONObject("studyProgrammes");
     for (Object studyProgrammeKey : studyProgrammeMappings.keySet()) {
@@ -84,6 +93,9 @@ public class KoskiSettings {
       
       if (studyProgramme.getBoolean("enabled"))
         enabledStudyProgrammes.add(studyProgrammeId);
+      
+      if (studyProgramme.getBoolean("freeLodging"))
+        freeLodgingStudyProgrammes.add(studyProgrammeId);
       
       SuorituksenTyyppi suorituksenTyyppi = SuorituksenTyyppi.valueOf(studyProgramme.getString("suorituksentyyppi"));
       suoritustyypit.put(studyProgrammeId, suorituksenTyyppi);
@@ -123,7 +135,7 @@ public class KoskiSettings {
   }
 
   public boolean isEnabled() {
-    return enabled;
+    return Boolean.parseBoolean(getSetting(KOSKI_SETTINGKEY_ENABLED));
   }
 
   public boolean isTestEnvironment() {
@@ -132,6 +144,10 @@ public class KoskiSettings {
 
   public boolean isEnabledStudyProgramme(Long studyProgrammeId) {
     return enabledStudyProgrammes.contains(studyProgrammeId);
+  }
+  
+  public boolean isFreeLodging(Long studyProgrammeId) {
+    return freeLodgingStudyProgrammes.contains(studyProgrammeId);
   }
   
   public OpiskeluoikeudenTila getStudentState(Student student) {
@@ -195,16 +211,26 @@ public class KoskiSettings {
   public String getAcademyIdentifier() {
     return academyIdentifier;
   }
+
+  public String getCourseTypeMapping(Long educationSubTypeId) {
+    return courseTypeMapping.get(educationSubTypeId);
+  }
   
-  private boolean enabled;
+  public String getSubjectToLanguageMapping(String subjectCode) {
+    return subjectToLanguageMapping.get(subjectCode);
+  }
+
   private boolean testEnvironment;
   private String academyIdentifier;
   private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
+  private Set<Long> freeLodgingStudyProgrammes = new HashSet<Long>();
   private Map<Long, OpiskeluoikeudenTila> studentStateMap = new HashMap<>();
   private Map<Long, SuorituksenTyyppi> suoritustyypit = new HashMap<>();
   private Map<Long, OpiskeluoikeudenTyyppi> opiskeluoikeustyypit = new HashMap<>();
   private Map<Long, String> modulitunnisteet = new HashMap<>();
   private Map<String, String> diaarinumerot = new HashMap<>();
+  private Map<Long, String> courseTypeMapping = new HashMap<>();
+  private Map<String, String> subjectToLanguageMapping = new HashMap<>();
   
   private Map<Long, String> vahvistaja = new HashMap<>();
   private Map<Long, String> vahvistajanTitteli = new HashMap<>();

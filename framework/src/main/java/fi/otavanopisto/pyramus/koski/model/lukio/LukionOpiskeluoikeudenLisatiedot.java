@@ -28,6 +28,7 @@ public class LukionOpiskeluoikeudenLisatiedot {
     this.alle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy = alle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy;
   }
   
+  @JsonProperty("pidennettyPäättymispäivä")
   public boolean isPidennettyPaattymispaiva() {
     return pidennettyPaattymispaiva;
   }
@@ -44,6 +45,10 @@ public class LukionOpiskeluoikeudenLisatiedot {
     return oikeusMaksuttomaanAsuntolapaikkaan;
   }
 
+  public void addSisaoppilaitosmainenMajoitus(Majoitusjakso jakso) {
+    sisaoppilaitosmainenMajoitus.add(jakso);
+  }
+  
   @JsonProperty("sisäoppilaitosmainenMajoitus")
   public List<Majoitusjakso> getSisaoppilaitosmainenMajoitus() {
     return sisaoppilaitosmainenMajoitus;

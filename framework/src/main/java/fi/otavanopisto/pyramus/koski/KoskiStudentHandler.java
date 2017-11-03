@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -43,6 +44,9 @@ public class KoskiStudentHandler {
   @Inject 
   protected UserVariableDAO userVariableDAO;
 
+  @Inject
+  protected StudentLodgingPeriodDAO lodgingPeriodDAO;
+  
   @Inject 
   private CourseAssessmentDAO courseAssessmentDAO;
 

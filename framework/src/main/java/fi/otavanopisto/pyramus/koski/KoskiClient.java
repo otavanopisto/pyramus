@@ -45,20 +45,16 @@ import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
 /**
  * https://dev.koski.opintopolku.fi/koski/documentation
  */
-//@ApplicationScoped
 @RequestScoped
 public class KoskiClient {
 
   private static final String KOSKI_STUDYPERMISSION_ID = "koski.studypermission-id";
   private static final String KOSKI_HENKILO_OID = "koski.henkilo-oid";
+  private static final String KOSKI_SKIPPED_STUDENT = "koski.skippedStudent";
   
   private static final String KOSKI_SETTINGKEY_BASEURL = "koski.baseUrl";
   private static final String KOSKI_SETTINGKEY_AUTH = "koski.auth";
   
-//  public static KoskiClient getInstance() {
-//    return CDI.current().select(KoskiClient.class).get();
-//  }
-
   @Inject
   private Logger logger;
   
@@ -109,71 +105,71 @@ public class KoskiClient {
     return null;
   }
   
-  public void findStudentByOID(String oid) {
-    String uri = String.format("%s/oppija/%s", getBaseUrl(), oid);
-    
-    try {
-      Client client = ClientBuilder.newClient();
-      WebTarget target = client.target(uri);
-      Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
-      
-      request.header("Authorization", "Basic " + getAuth());
-      request.accept(MediaType.APPLICATION_JSON_TYPE);
-      
-  //    Response response = request.get();
-    
-      String ret = request.get(String.class);
-      System.out.println(ret);
-      
-      
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-  }
+//  public void findStudentByOID(String oid) {
+//    String uri = String.format("%s/oppija/%s", getBaseUrl(), oid);
+//    
+//    try {
+//      Client client = ClientBuilder.newClient();
+//      WebTarget target = client.target(uri);
+//      Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
+//      
+//      request.header("Authorization", "Basic " + getAuth());
+//      request.accept(MediaType.APPLICATION_JSON_TYPE);
+//      
+//  //    Response response = request.get();
+//    
+//      String ret = request.get(String.class);
+//      System.out.println(ret);
+//      
+//      
+//    } catch (Exception ex) {
+//      ex.printStackTrace();
+//    }
+//  }
   
-  public void searchStudent(String query) {
-    String uri = String.format("%s/henkilo/search?query=%s", getBaseUrl(), query);
-  
-    try {
-      Client client = ClientBuilder.newClient();
-      WebTarget target = client.target(uri);
-      Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
-      
-      request.header("Authorization", "Basic " + getAuth());
-      
-  //    Response response = request.get();
-    
-      String ret = request.get(String.class);
-      System.out.println(ret);
-      
-      
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-  }
+//  public void searchStudent(String query) {
+//    String uri = String.format("%s/henkilo/search?query=%s", getBaseUrl(), query);
+//  
+//    try {
+//      Client client = ClientBuilder.newClient();
+//      WebTarget target = client.target(uri);
+//      Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
+//      
+//      request.header("Authorization", "Basic " + getAuth());
+//      
+//  //    Response response = request.get();
+//    
+//      String ret = request.get(String.class);
+//      System.out.println(ret);
+//      
+//      
+//    } catch (Exception ex) {
+//      ex.printStackTrace();
+//    }
+//  }
 
-  private <T> T createResponse(Response response, Class<T> type) {
-    return response.readEntity(type);
-  }
+//  private <T> T createResponse(Response response, Class<T> type) {
+//    return response.readEntity(type);
+//  }
   
-  public void findStudentBySSN(String ssn) {
-    String uri = String.format("%s/henkilo/hetu/%s", getBaseUrl(), ssn);
-
-    try {
-      Client client = ClientBuilder.newClient();
-      WebTarget target = client.target(uri);
-      Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
-      
-      request.header("Authorization", "Basic " + getAuth());
-      
-      Response response = request.get();
-      String ret = createResponse(response, String.class);
-      System.out.println(ret);
-      
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-  }
+//  public void findStudentBySSN(String ssn) {
+//    String uri = String.format("%s/henkilo/hetu/%s", getBaseUrl(), ssn);
+//
+//    try {
+//      Client client = ClientBuilder.newClient();
+//      WebTarget target = client.target(uri);
+//      Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
+//      
+//      request.header("Authorization", "Basic " + getAuth());
+//      
+//      Response response = request.get();
+//      String ret = createResponse(response, String.class);
+//      System.out.println(ret);
+//      
+//    } catch (Exception ex) {
+//      ex.printStackTrace();
+//    }
+//  }
   
   public void updateStudent(Student student) throws KoskiException {
     try {
@@ -190,9 +186,6 @@ public class KoskiClient {
         return;
       }
   
-      if (!settings.isEnabledStudyProgramme(student.getStudyProgramme().getId()))
-        return;
-      
       String personOid = personVariableDAO.findByPersonAndKey(student.getPerson(), KOSKI_HENKILO_OID);
       
       Henkilo henkilo;
@@ -208,12 +201,20 @@ public class KoskiClient {
       
       // TODO: report all or just the given one? (editstudent likely reports all though)
       for (Student s : student.getPerson().getStudents()) {
-        Opiskeluoikeus o = studentToOpiskeluoikeus(s);
-        if (o != null) {
-          oppija.addOpiskeluoikeus(o);
-          reportedStudents.add(s);
+        if (settings.isEnabledStudyProgramme(s.getStudyProgramme().getId())) {
+          boolean skipped = Boolean.valueOf(userVariableDAO.findByUserAndKey(s, KOSKI_SKIPPED_STUDENT));
+          if (!skipped) {
+            Opiskeluoikeus o = studentToOpiskeluoikeus(s);
+            if (o != null) {
+              oppija.addOpiskeluoikeus(o);
+              reportedStudents.add(s);
+            }
+          }
         }
       }
+      
+      if (oppija.getOpiskeluoikeudet().size() == 0)
+        return;
       
       String uri = String.format("%s/oppija", getBaseUrl());
       
