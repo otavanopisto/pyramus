@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.util;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,40 +22,40 @@ public class Mailer {
   private static final Logger logger = Logger.getLogger(Mailer.class.getName());
   
   public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content) {
-    sendMail(jndiName, mimeType, from, toList(to), Collections.emptyList(), subject, content, Collections.emptyList());
+    sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), subject, content, Collections.emptyList());
   }
 
   public static void sendMail(String jndiName, String mimeType, String from, String to, String cc, String subject, String content) {
-    sendMail(jndiName, mimeType, from, toList(to), toList(cc), subject, content, Collections.emptyList());
+    sendMail(jndiName, mimeType, from, toSet(to), toSet(cc), subject, content, Collections.emptyList());
   }
 
   public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, MailAttachment mailAttachment) {
-    sendMail(jndiName, mimeType, from, toList(to), Collections.emptyList(), subject, content, Collections.singletonList(mailAttachment));
+    sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), subject, content, Collections.singletonList(mailAttachment));
   }
 
   public static void sendMail(String jndiName, String mimeType, String from, String to, String subject, String content, List<MailAttachment> mailAttachments) {
-    sendMail(jndiName, mimeType, from, toList(to), Collections.emptyList(), subject, content, mailAttachments);
+    sendMail(jndiName, mimeType, from, toSet(to), Collections.emptySet(), subject, content, mailAttachments);
   }
 
-  public static void sendMail(String jndiName, String mimeType, String from, List<String> to, String subject, String content) {
-    sendMail(jndiName, mimeType, from, to, Collections.emptyList(), subject, content, Collections.emptyList());
+  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, String subject, String content) {
+    sendMail(jndiName, mimeType, from, to, Collections.emptySet(), subject, content, Collections.emptyList());
+  }
+  
+  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, String cc, String subject, String content) {
+    sendMail(jndiName, mimeType, from, to, Collections.singleton(cc), subject, content, Collections.emptyList());
   }
 
-  public static void sendMail(String jndiName, String mimeType, String from, List<String> to, String cc, String subject, String content) {
-    sendMail(jndiName, mimeType, from, to, Collections.singletonList(cc), subject, content, Collections.emptyList());
-  }
-
-  public static void sendMail(String jndiName, String mimeType, String from, List<String> to, List<String> cc, String subject, String content) {
+  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, Set<String> cc, String subject, String content) {
     sendMail(jndiName, mimeType, from, to, cc, subject, content, Collections.emptyList());
   }
   
-  public static void sendMail(String jndiName, String mimeType, String from, List<String> to, List<String> cc, String subject, String content, List<MailAttachment> mailAttachments) {
+  public static void sendMail(String jndiName, String mimeType, String from, Set<String> to, Set<String> cc, String subject, String content, List<MailAttachment> mailAttachments) {
     MailService mailService = (MailService) findByClass(MailService.class);
     if (mailService == null) {
       logger.log(Level.SEVERE, "MailService not bound");
       return;
     }
-    mailService.sendMail(jndiName, mimeType, from, to, cc, Collections.emptyList(), subject, content, mailAttachments);
+    mailService.sendMail(jndiName, mimeType, from, to, cc, Collections.emptySet(), subject, content, mailAttachments);
   }
 
   private static String getAppName() throws NamingException {
@@ -80,8 +81,8 @@ public class Mailer {
     }
   }
 
-  private static List<String> toList(String s) {
-    return s == null ? Collections.emptyList() : Collections.singletonList(s);
+  private static Set<String> toSet(String s) {
+    return s == null ? Collections.emptySet() : Collections.singleton(s);
   }
 
 }
