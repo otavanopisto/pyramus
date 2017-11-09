@@ -58,8 +58,6 @@ public class LukionOpiskeluoikeudenLisatiedot {
   private final boolean ulkomainenVaihtoopiskelija;
   private Kuvaus alle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy;
   private final boolean yksityisopiskelija;
-//  private List<ErityisenKoulutustehtavanJaksot> erityisenKoulutustehtävänJaksot;
-//  private List<UlkomaanJakso> ulkomaanjaksot;
   private final boolean oikeusMaksuttomaanAsuntolapaikkaan;
   private final List<Majoitusjakso> sisaoppilaitosmainenMajoitus = new ArrayList<>();
 }

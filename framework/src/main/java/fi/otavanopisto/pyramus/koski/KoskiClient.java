@@ -165,16 +165,13 @@ public class KoskiClient {
       mapper.writeValue(writer, oppija);
       
       String requestStr = writer.toString();
-//      System.out.println("Request: " + requestStr);
 
       Response response = request.put(Entity.json(requestStr));
       if (response.getStatus() == 200) {
         String ret = response.readEntity(String.class);
-//        System.out.println("Response: " + ret);
         
         // For test environment the oid's are not saved
         if (!settings.isTestEnvironment()) {
-//          OppijaReturnVal oppijaReturnVal = response.readEntity(OppijaReturnVal.class);
           OppijaReturnVal oppijaReturnVal = mapper.readValue(ret, OppijaReturnVal.class);
           String servedPersonOid = oppijaReturnVal.getHenkilo().getOid();
           
