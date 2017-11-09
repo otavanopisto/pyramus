@@ -170,7 +170,7 @@ public class KoskiStudentHandler {
     if (StringUtils.isBlank(studentSubjects.getPrimaryLanguage())) {
       switch (opiskeluoikeudenTyyppi) {
         case lukiokoulutus:
-          studentSubjects.setPrimaryLanguage("AI");
+          studentSubjects.setPrimaryLanguage("ÄI");
         break;
         
         case aikuistenperusopetus:

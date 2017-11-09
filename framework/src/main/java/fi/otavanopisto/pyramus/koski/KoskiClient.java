@@ -105,72 +105,6 @@ public class KoskiClient {
     return null;
   }
   
-//  public void findStudentByOID(String oid) {
-//    String uri = String.format("%s/oppija/%s", getBaseUrl(), oid);
-//    
-//    try {
-//      Client client = ClientBuilder.newClient();
-//      WebTarget target = client.target(uri);
-//      Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
-//      
-//      request.header("Authorization", "Basic " + getAuth());
-//      request.accept(MediaType.APPLICATION_JSON_TYPE);
-//      
-//  //    Response response = request.get();
-//    
-//      String ret = request.get(String.class);
-//      System.out.println(ret);
-//      
-//      
-//    } catch (Exception ex) {
-//      ex.printStackTrace();
-//    }
-//  }
-  
-//  public void searchStudent(String query) {
-//    String uri = String.format("%s/henkilo/search?query=%s", getBaseUrl(), query);
-//  
-//    try {
-//      Client client = ClientBuilder.newClient();
-//      WebTarget target = client.target(uri);
-//      Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
-//      
-//      request.header("Authorization", "Basic " + getAuth());
-//      
-//  //    Response response = request.get();
-//    
-//      String ret = request.get(String.class);
-//      System.out.println(ret);
-//      
-//      
-//    } catch (Exception ex) {
-//      ex.printStackTrace();
-//    }
-//  }
-
-//  private <T> T createResponse(Response response, Class<T> type) {
-//    return response.readEntity(type);
-//  }
-  
-//  public void findStudentBySSN(String ssn) {
-//    String uri = String.format("%s/henkilo/hetu/%s", getBaseUrl(), ssn);
-//
-//    try {
-//      Client client = ClientBuilder.newClient();
-//      WebTarget target = client.target(uri);
-//      Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
-//      
-//      request.header("Authorization", "Basic " + getAuth());
-//      
-//      Response response = request.get();
-//      String ret = createResponse(response, String.class);
-//      System.out.println(ret);
-//      
-//    } catch (Exception ex) {
-//      ex.printStackTrace();
-//    }
-//  }
-  
   public void updateStudent(Student student) throws KoskiException {
     try {
       if (!settings.isEnabled())
@@ -284,8 +218,6 @@ public class KoskiClient {
         logger.info(String.format("KoskiClient: successfully updated person %d.", student.getPerson().getId()));
       } else {
         String ret = response.readEntity(String.class);
-        System.out.println("Response: " + ret);
-        
         // Log failed event
         koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.SERVER_FAILURE, new Date());
         logger.log(Level.SEVERE, String.format("Koski server returned %d when trying to create person %d. Content %s", response.getStatus(), student.getPerson().getId(), ret));

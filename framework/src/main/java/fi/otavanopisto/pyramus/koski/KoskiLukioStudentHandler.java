@@ -337,7 +337,6 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     
     for (Credit credit : courseCredit.getCredits()) {
       if (credit instanceof CourseAssessment) {
-        System.out.println(((CourseAssessment) credit).getCourseStudent().getCourse().getSubject().getCode());
         CourseAssessment courseAssessment = (CourseAssessment) credit;
         if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
           Course course = courseAssessment.getCourseStudent().getCourse();
