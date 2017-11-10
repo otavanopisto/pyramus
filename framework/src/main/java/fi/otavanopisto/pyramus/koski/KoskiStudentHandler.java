@@ -83,10 +83,11 @@ public class KoskiStudentHandler {
     Long studyProgrammeId = student.getStudyProgramme() != null ? student.getStudyProgramme().getId() : null;
     Long curriculumId = student.getCurriculum() != null ? student.getCurriculum().getId() : null;
     
-    if ((studyProgrammeId != null) && (curriculumId != null))
+    if ((studyProgrammeId != null) && (curriculumId != null)) {
       return settings.getDiaariNumero(studyProgrammeId, curriculumId);
-    else
+    } else {
       return null;
+    }
   }
 
   protected ArviointiasteikkoYleissivistava getArvosana(Grade grade) {
@@ -116,9 +117,9 @@ public class KoskiStudentHandler {
 
   protected boolean isPakollinenOppiaine(Student student, KoskiOppiaineetYleissivistava oppiaine) {
     Set<KoskiOppiaineetYleissivistava> pakollisetOppiaineet = settings.getPakollisetOppiaineet(student.getStudyProgramme().getId());
-    if (pakollisetOppiaineet != null)
+    if (pakollisetOppiaineet != null) {
       return pakollisetOppiaineet.contains(oppiaine);
-    // TODO Vapautetut aineet
+    }
     return false; 
   }
   
@@ -135,26 +136,35 @@ public class KoskiStudentHandler {
     String b3Lang = userVariableDAO.findByUserAndKey(student, "lukioKieliB3");
     String religion = userVariableDAO.findByUserAndKey(student, "lukioUskonto");
 
-    if (StringUtils.isNotBlank(math))
+    if (StringUtils.isNotBlank(math)) {
       studentSubjects.setMath(math);
-    if (StringUtils.isNotBlank(lang))
+    }
+    if (StringUtils.isNotBlank(lang)) {
       studentSubjects.setPrimaryLanguage(lang);
+    }
 
-    if (StringUtils.isNotBlank(aLang))
+    if (StringUtils.isNotBlank(aLang)) {
       studentSubjects.setALanguages(aLang);
-    if (StringUtils.isNotBlank(a1Lang))
+    }
+    if (StringUtils.isNotBlank(a1Lang)) {
       studentSubjects.setA1Languages(a1Lang);
-    if (StringUtils.isNotBlank(a2Lang))
+    }
+    if (StringUtils.isNotBlank(a2Lang)) {
       studentSubjects.setA2Languages(a2Lang);
+    }
     
-    if (StringUtils.isNotBlank(b1Lang))
+    if (StringUtils.isNotBlank(b1Lang)) {
       studentSubjects.setB1Languages(b1Lang);
-    if (StringUtils.isNotBlank(b2Lang))
+    }
+    if (StringUtils.isNotBlank(b2Lang)) {
       studentSubjects.setB2Languages(b2Lang);
-    if (StringUtils.isNotBlank(b3Lang))
+    }
+    if (StringUtils.isNotBlank(b3Lang)) {
       studentSubjects.setB3Languages(b3Lang);
-    if (StringUtils.isNotBlank(religion))
+    }
+    if (StringUtils.isNotBlank(religion)) {
       studentSubjects.setReligion(religion);
+    }
 
     if (StringUtils.isBlank(studentSubjects.getMath())) {
       switch (opiskeluoikeudenTyyppi) {
@@ -275,8 +285,9 @@ public class KoskiStudentHandler {
   
   protected boolean allNotNull(final Object ... objects) {
     for (Object o : objects) {
-      if (o == null)
+      if (o == null) {
         return false;
+      }
     }
     return true;
   }
@@ -297,18 +308,21 @@ public class KoskiStudentHandler {
       
       if (gradeCount > 0) {
         return ArviointiasteikkoYleissivistava.get(String.valueOf(Math.round((double) gradeSum / gradeCount)));
-      } else
+      } else {
         return null;
+      }
     } else {
       if (grades.stream().anyMatch(grade -> ArviointiasteikkoYleissivistava.isLiteral(grade))) {
         // Literal grade S/H
         
-        if (grades.stream().anyMatch(grade -> ArviointiasteikkoYleissivistava.GRADE_S == grade))
+        if (grades.stream().anyMatch(grade -> ArviointiasteikkoYleissivistava.GRADE_S == grade)) {
           return ArviointiasteikkoYleissivistava.GRADE_S;
-        else
+        } else {
           return ArviointiasteikkoYleissivistava.GRADE_H;
-      } else
+        }
+      } else {
         return null;
+      }
     }
   }
 

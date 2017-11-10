@@ -282,7 +282,6 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       return os;
     } else {
       // Other local subject
-      // TODO Skipped subjects ?? (MUU)
       
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(subjectCode, kuvaus(subject.getName()));
       LukionOppiaineenSuoritusPaikallinen tunniste = new LukionOppiaineenSuoritusPaikallinen(paikallinenKoodi, false, kuvaus(subject.getName()));
@@ -351,7 +350,6 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
         } else
           logger.warning(String.format("CourseAssessment %d has no courseStudent or Course", courseAssessment.getId()));
       } else if (credit instanceof TransferCredit) {
-        // TODO This will require another issue to be resolved first (Add course subtypes to transfercredits)
         resolvedTypes.add(LukionKurssinTyyppi.syventava);
       } else {
         logger.warning(String.format("Unknown credit type %s", credit.getClass().getSimpleName()));

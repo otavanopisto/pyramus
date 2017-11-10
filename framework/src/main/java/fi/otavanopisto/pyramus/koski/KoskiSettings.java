@@ -91,11 +91,13 @@ public class KoskiSettings {
       Long studyProgrammeId = Long.parseLong(studyProgrammeKey.toString());
       JSONObject studyProgramme = studyProgrammeMappings.getJSONObject(studyProgrammeId.toString());
       
-      if (studyProgramme.getBoolean("enabled"))
+      if (studyProgramme.getBoolean("enabled")) {
         enabledStudyProgrammes.add(studyProgrammeId);
+      }
       
-      if (studyProgramme.getBoolean("freeLodging"))
+      if (studyProgramme.getBoolean("freeLodging")) {
         freeLodgingStudyProgrammes.add(studyProgrammeId);
+      }
       
       SuorituksenTyyppi suorituksenTyyppi = SuorituksenTyyppi.valueOf(studyProgramme.getString("suorituksentyyppi"));
       suoritustyypit.put(studyProgrammeId, suorituksenTyyppi);
@@ -124,10 +126,11 @@ public class KoskiSettings {
         Set<KoskiOppiaineetYleissivistava> set = new HashSet<>();
         for (String s : StringUtils.split(pakollisetOppiaineet, ',')) {
           KoskiOppiaineetYleissivistava oppiaine = KoskiOppiaineetYleissivistava.valueOf(s);
-          if (oppiaine != null)
+          if (oppiaine != null) {
             set.add(oppiaine);
-          else
+          } else {
             logger.log(Level.WARNING, String.format("No equivalent enum found for value %s of studyprogramme %d.", s, studyProgrammeId));
+          }
         }
         this.pakollisetOppiaineet.put(studyProgrammeId, set);
       }
@@ -162,8 +165,9 @@ public class KoskiSettings {
     if (key != null) {
       Setting setting = settingDAO.findByKey(key);
       
-      if (setting != null)
+      if (setting != null) {
         return setting.getValue();
+      }
     }
     
     return null;

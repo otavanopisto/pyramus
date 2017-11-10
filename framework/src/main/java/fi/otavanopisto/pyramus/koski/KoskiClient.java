@@ -133,7 +133,6 @@ public class KoskiClient {
       
       List<Student> reportedStudents = new ArrayList<>();
       
-      // TODO: report all or just the given one? (editstudent likely reports all though)
       for (Student s : student.getPerson().getStudents()) {
         if (settings.isEnabledStudyProgramme(s.getStudyProgramme().getId())) {
           boolean skipped = Boolean.valueOf(userVariableDAO.findByUserAndKey(s, KOSKI_SKIPPED_STUDENT));
