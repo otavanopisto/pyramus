@@ -226,8 +226,9 @@ public class KoskiStudentHandler {
       if (!stubs.containsKey(courseCode)) {
         stub = new CreditStub(courseCode, course.getName(), subject);
         stubs.put(courseCode, stub);
-      } else
+      } else {
         stub = stubs.get(courseCode);
+      }
       
       stub.addCredit(ca);
     }
@@ -238,8 +239,9 @@ public class KoskiStudentHandler {
       if (!stubs.containsKey(courseCode)) {
         stub = new CreditStub(courseCode, tc.getCourseName(), tc.getSubject());
         stubs.put(courseCode, stub);
-      } else
+      } else {
         stub = stubs.get(courseCode);
+      }
       
       stub.addCredit(tc);
     }
@@ -273,8 +275,9 @@ public class KoskiStudentHandler {
         if (!stubs.containsKey(courseCode)) {
           stub = new CreditStub(courseCode, courseName, subject);
           stubs.put(courseCode, stub);
-        } else
+        } else {
           stub = stubs.get(courseCode);
+        }
         
         stub.addCredit(cl.getCredit());
       }

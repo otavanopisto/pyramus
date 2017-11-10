@@ -55,8 +55,9 @@ public enum ArviointiasteikkoYleissivistava implements Comparable<Arviointiastei
     ArviointiasteikkoYleissivistava bestGrade = null;
     
     for (ArviointiasteikkoYleissivistava grade : collection) {
-      if (bestGrade == null || comparator.compare(grade, bestGrade) > 0)
+      if (bestGrade == null || comparator.compare(grade, bestGrade) > 0) {
         bestGrade = grade;
+      }
     }
     
     return bestGrade;
