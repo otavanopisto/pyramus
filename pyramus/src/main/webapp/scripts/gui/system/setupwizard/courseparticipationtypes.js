@@ -17,7 +17,7 @@ function onLoad(event) {
       header : getLocale().getText("system.setupwizard.courseparticipationtypes.courseParticipationTypesTableInitialTypeHeader"),
       left : 8,
       width : 100,
-      dataType : 'checkbox',
+      dataType : 'radiobutton',
       editable : true,
       paramName : 'initialType'
     }, {
