@@ -29,9 +29,11 @@ import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.controller.AssessmentController;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
+import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CourseAssessmentPermissions;
+import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.composite.CompositeAssessmentRequest;
 import fi.otavanopisto.pyramus.rest.model.composite.CompositeGrade;
 import fi.otavanopisto.pyramus.rest.model.composite.CompositeGradingScale;
@@ -58,6 +60,9 @@ public class CompositeRESTService {
 
   @Inject
   private UserController userController;
+
+  @Inject
+  private StudentController studentController;
 
   @Path("/gradingScales")
   @GET
@@ -100,8 +105,14 @@ public class CompositeRESTService {
       courseStudents = courseController.listCourseStudentsByCourse(course);
     }
     
+    boolean isStudyGuider = sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION);
     List<CompositeAssessmentRequest> assessmentRequests = new ArrayList<CompositeAssessmentRequest>();
     for (CourseStudent courseStudent : courseStudents) {
+      if (isStudyGuider) {
+        StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+        if (staffMember == null || !studentController.isStudentGuider(staffMember, courseStudent.getStudent()))
+        continue;
+      }
       CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestByCourseStudent(courseStudent);
       CourseAssessment courseAssessment = assessmentController.findCourseAssessmentByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
       CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
