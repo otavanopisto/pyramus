@@ -255,7 +255,7 @@
 
     <h3 class="application-form-section-header">Hakemiseen tarvittavat lisätiedot</h3>
 
-    <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,mk">
+    <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja">
       <label for="field-previous-studies" class="required">Aiemmat opinnot (listaa myös keskeytyneet)</label>
       <textarea name="field-previous-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
     </div>

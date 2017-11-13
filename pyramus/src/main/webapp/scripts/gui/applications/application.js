@@ -339,7 +339,19 @@
     if (value == '') {
       return allowEmpty;
     }
-    return value != '' && value.length == 4 && /^[0-9]{3}[a-zA-Z0-9]{1}/.test(value);
+    var valid = value != '' && value.length == 4 && /^[0-9]{3}[a-zA-Z0-9]{1}/.test(value);
+    if (valid) {
+      valid = false;
+      var num = $('#field-birthday').val();
+      if (num) {
+        num = moment(num, "D.M.YYYY").format('DDMMYY') + value.substring(0, 3);
+        if (!isNaN(num)) {
+          var checksumChars = '0123456789ABCDEFHJKLMNPRSTUVWXY';
+          valid = checksumChars[num % 31] == value.substring(3, 4).toUpperCase();
+        }
+      }
+    }
+    return valid;
   }
   
   function updateProgress() {
