@@ -4,9 +4,9 @@ import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssinTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssit;
 
-public class LukionKurssinTunnisteValtakunnallinen extends LukionKurssinTunniste {
+public class LukionKurssinTunnisteValtakunnallinenOPS2015 extends LukionKurssinTunniste {
 
-  public LukionKurssinTunnisteValtakunnallinen(LukionKurssit tunniste, 
+  public LukionKurssinTunnisteValtakunnallinenOPS2015(LukionKurssit tunniste, 
       LukionKurssinTyyppi kurssinTyyppi) {
     super(kurssinTyyppi);
     this.tunniste.setValue(tunniste);
