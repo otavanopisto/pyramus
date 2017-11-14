@@ -28,7 +28,7 @@ public class CourseStatesSetupWizardViewController extends SetupWizardController
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "courseStatesTable." + i;
       
-      Boolean initialState = "1".equals(requestContext.getString(colPrefix + ".initialState"));
+      Boolean initialState = "true".equals(requestContext.getString(colPrefix + ".initialState"));
       String name = requestContext.getRequest().getParameter(colPrefix + ".name");
       CourseState courseState = courseStateDAO.create(name);
       

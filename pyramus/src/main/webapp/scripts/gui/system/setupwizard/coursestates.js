@@ -21,7 +21,7 @@ function onLoad(event) {
       header : getLocale().getText("system.setupwizard.coursestates.courseStatesTableInitialStateHeader"),
       left : 8,
       width : 100,
-      dataType : 'checkbox',
+      dataType : 'radiobutton',
       editable : false,
       paramName : 'initialState'
     }, {
