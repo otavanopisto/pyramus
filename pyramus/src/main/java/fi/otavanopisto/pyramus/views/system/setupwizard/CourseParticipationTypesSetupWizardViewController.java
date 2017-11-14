@@ -28,7 +28,7 @@ public class CourseParticipationTypesSetupWizardViewController extends SetupWiza
     for (int i = 0; i < rowCount; i++) {
       String colPrefix = "courseParticipationTypesTable." + i;
 
-      Boolean initialType = "1".equals(requestContext.getString(colPrefix + ".initialType"));
+      Boolean initialType = "true".equals(requestContext.getString(colPrefix + ".initialType"));
       String name = requestContext.getString(colPrefix + ".name");
 
       CourseParticipationType courseParticipationType = participationTypeDAO.create(name);

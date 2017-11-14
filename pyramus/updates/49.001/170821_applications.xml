@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
 
-  <sql>insert into SettingKey (id,name) select max(id) + 1, 'application.storagePath' from SettingKey;</sql>
+  <sql>insert into SettingKey (id,name) select coalesce(max(id),0) + 1, 'application.storagePath' from SettingKey;</sql>
   <sql>update hibernate_sequences set sequence_next_hi_value = (select max(id) + 1 from SettingKey) where sequence_name = 'SettingKey';</sql>
   
   <sql>
