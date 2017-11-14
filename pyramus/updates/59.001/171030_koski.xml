@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table KoskiPersonLog (
+      id bigint not null auto_increment, 
+      date datetime not null, 
+      state varchar(255), 
+      person bigint not null, 
+      primary key (id)
+    );
+  </sql>
+
+  <sql>
+    alter table KoskiPersonLog add constraint FKmdm2gsv5s7305yhetyfphovsa foreign key (person) references Person (id);
+  </sql>
+  
+  <sql>
+    insert ignore into SettingKey (id, name)
+    select max(id) + 1, 'koski.enabled' from SettingKey;
+  </sql>
+
+  <sql>
+    insert ignore into SettingKey (id, name)
+    select max(id) + 1, 'koski.testEnvironment' from SettingKey;
+  </sql>
+
+  <sql>
+    insert ignore into SettingKey (id, name)
+    select max(id) + 1, 'koski.baseUrl' from SettingKey;
+  </sql>
+
+  <sql>
+    insert ignore into SettingKey (id, name)
+    select max(id) + 1, 'koski.auth' from SettingKey;
+  </sql>
+
+  <sql>
+    insert ignore into UserVariableKey (id, userEditable, variableKey, variableName, variableType, version)
+    select max(id) + 1, false, 'koski.studypermission-id', 'Koski: opiskelijaoikeuden id', 'TEXT', 0 from UserVariableKey;
+  </sql>
+
+  <sql>
+    insert ignore into PersonVariableKey (id, userEditable, variableKey, variableName, variableType, version)
+    select max(id) + 1, false, 'koski.henkilo-oid', 'Koski: henkilön oid', 'TEXT', 0 from PersonVariableKey;
+  </sql>
+  
+  <sql>
+    insert ignore into UserVariableKey (id, userEditable, variableKey, variableName, variableType, version)
+    select max(id) + 1, true, 'under18studyStartReason', 'Alle 18-vuotiaana aloittaneen aloittamissyy', 'TEXT', 0 from UserVariableKey;
+  </sql>
+
+  <sql>
+    insert ignore into UserVariableKey (id, userEditable, variableKey, variableName, variableType, version)
+    select max(id) + 1, true, 'extendedStudyTime', 'Pidennetty päättymispäivä', 'BOOLEAN', 0 from UserVariableKey;
+  </sql>
+
+  <sql>
+    insert ignore into UserVariableKey (id, userEditable, variableKey, variableName, variableType, version)
+    select max(id) + 1, false, 'koski.skippedStudent', 'Skipped student for koski-integration', 'BOOLEAN', 0 from UserVariableKey;
+  </sql>
+  
+  <sql>
+    update hibernate_sequences
+    set sequence_next_hi_value = (select max(id) + 1 from SettingKey)
+    where sequence_name = 'SettingKey';
+  </sql>
+
+  <sql>
+    update hibernate_sequences
+    set sequence_next_hi_value = (select max(id) + 1 from UserVariableKey)
+    where sequence_name = 'UserVariableKey';
+  </sql>
+
+  <sql>
+    update hibernate_sequences
+    set sequence_next_hi_value = (select max(id) + 1 from PersonVariableKey)
+    where sequence_name = 'PersonVariableKey';
+  </sql>
+
+</update>
