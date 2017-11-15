@@ -15,7 +15,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
@@ -60,7 +59,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
   private Logger logger;
 
   public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) throws KoskiException {
-    AikuisOpiskelijanOPS ops = resolveOPS(student);
+    OpiskelijanOPS ops = resolveOPS(student);
     if (ops == null)
       throw new KoskiException(String.format("Cannot report student %d without curriculum.", student.getId()), KoskiPersonState.NO_CURRICULUM);
     
@@ -104,22 +103,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     return opiskeluoikeus;
   }
   
-  private AikuisOpiskelijanOPS resolveOPS(Student student) {
-    Curriculum curriculum = student.getCurriculum();
-    if (curriculum != null) {
-      switch (curriculum.getId().intValue()) {
-        case 1:
-          return AikuisOpiskelijanOPS.ops2016;
-        case 2:
-          return AikuisOpiskelijanOPS.ops2005;
-        case 3:
-          return AikuisOpiskelijanOPS.ops2018;
-      }
-    }
-    return null;
-  }
-
-  private void assessmentsToModel(AikuisOpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, 
+  private void assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, 
       AikuistenPerusopetuksenOppimaaranSuoritus oppimaaranSuoritus) {
     Collection<CreditStub> credits = listCredits(student);
     
@@ -248,14 +232,14 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     }
   }
 
-  protected AikuistenPerusopetuksenKurssinSuoritus createKurssiSuoritus(AikuisOpiskelijanOPS ops, CreditStub courseCredit) {
+  protected AikuistenPerusopetuksenKurssinSuoritus createKurssiSuoritus(OpiskelijanOPS ops, CreditStub courseCredit) {
     String kurssiKoodi = StringUtils.upperCase(courseCredit.getCourseCode());
     AikuistenPerusopetuksenKurssinTunniste tunniste;
     
-    if (ops == AikuisOpiskelijanOPS.ops2016 && EnumUtils.isValidEnum(AikuistenPerusopetuksenKurssit2015.class, kurssiKoodi)) {
+    if (ops == OpiskelijanOPS.ops2016 && EnumUtils.isValidEnum(AikuistenPerusopetuksenKurssit2015.class, kurssiKoodi)) {
       AikuistenPerusopetuksenKurssit2015 kurssi = AikuistenPerusopetuksenKurssit2015.valueOf(kurssiKoodi);
       tunniste = new AikuistenPerusopetuksenKurssinTunnisteOPS2015(kurssi);
-    } else if (ops == AikuisOpiskelijanOPS.ops2018 && EnumUtils.isValidEnum(AikuistenPerusopetuksenPaattovaiheenKurssit2017.class, kurssiKoodi)) {
+    } else if (ops == OpiskelijanOPS.ops2018 && EnumUtils.isValidEnum(AikuistenPerusopetuksenPaattovaiheenKurssit2017.class, kurssiKoodi)) {
       AikuistenPerusopetuksenPaattovaiheenKurssit2017 kurssi = AikuistenPerusopetuksenPaattovaiheenKurssit2017.valueOf(kurssiKoodi);
       tunniste = new AikuistenPerusopetuksenKurssinTunnistePV2017(kurssi);
     } else {
@@ -292,12 +276,6 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     }
     
     return meanGrade(kurssiarvosanat);
-  }
-  
-  enum AikuisOpiskelijanOPS {
-    ops2005,
-    ops2016,
-    ops2018
   }
   
 }

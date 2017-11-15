@@ -32,6 +32,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssinTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssit;
+import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssitOPS2004Aikuiset;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionOppimaara;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
@@ -51,7 +52,8 @@ import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunniste;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnistePaikallinen;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinen;
+import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinenOPS2004;
+import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinenOPS2015;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeudenLisatiedot;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritus;
@@ -75,6 +77,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     OpiskeluoikeudenTyyppi opiskeluoikeudenTyyppi = settings.getOpiskeluoikeudenTyyppi(student.getStudyProgramme().getId());
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, opiskeluoikeudenTyyppi);
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
+    OpiskelijanOPS ops = resolveOPS(student);
     
     LukionOpiskeluoikeus opiskeluoikeus = new LukionOpiskeluoikeus();
     opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(student.getId()));
@@ -110,7 +113,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
-    assessmentsToModel(student, studentEducationType, studentSubjects, suoritus);
+    assessmentsToModel(ops, student, studentEducationType, studentSubjects, suoritus);
     
     return opiskeluoikeus;
   }
@@ -136,7 +139,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     return lisatiedot;
   }
 
-  private void assessmentsToModel(Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, LukionOppimaaranSuoritus oppimaaranSuoritus) {
+  private void assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, LukionOppimaaranSuoritus oppimaaranSuoritus) {
     Collection<CreditStub> credits = listCredits(student);
     
     Map<String, LukionOppiaineenSuoritus> map = new HashMap<>();
@@ -145,7 +148,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       LukionOppiaineenSuoritus oppiaineenSuoritus = getSubject(student, studentEducationType, credit.getSubject(), studentSubjects, map);
 
       if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
-        LukionKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(credit);
+        LukionKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(ops, credit);
         if (kurssiSuoritus != null)
           oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
       }
@@ -291,14 +294,20 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     }
   }
 
-  protected LukionKurssinSuoritus createKurssiSuoritus(CreditStub courseCredit) {
+  protected LukionKurssinSuoritus createKurssiSuoritus(OpiskelijanOPS ops, CreditStub courseCredit) {
     String kurssiKoodi = courseCredit.getCourseCode();
     LukionKurssinTunniste tunniste;
     
-    if (EnumUtils.isValidEnum(LukionKurssit.class, kurssiKoodi)) {
+    if (ops == OpiskelijanOPS.ops2016 && EnumUtils.isValidEnum(LukionKurssit.class, kurssiKoodi)) {
+      // OPS 2016 (2015)
       LukionKurssit kurssi = LukionKurssit.valueOf(kurssiKoodi);
       LukionKurssinTyyppi kurssinTyyppi = findCourseType(courseCredit, LukionKurssinTyyppi.pakollinen, LukionKurssinTyyppi.syventava);
-      tunniste = new LukionKurssinTunnisteValtakunnallinen(kurssi, kurssinTyyppi);
+      tunniste = new LukionKurssinTunnisteValtakunnallinenOPS2015(kurssi, kurssinTyyppi);
+    } else if (ops == OpiskelijanOPS.ops2005 && EnumUtils.isValidEnum(LukionKurssitOPS2004Aikuiset.class, kurssiKoodi)) {
+      // OPS 2005 (2004)
+      LukionKurssitOPS2004Aikuiset kurssi = LukionKurssitOPS2004Aikuiset.valueOf(kurssiKoodi);
+      LukionKurssinTyyppi kurssinTyyppi = findCourseType(courseCredit, LukionKurssinTyyppi.pakollinen, LukionKurssinTyyppi.syventava);
+      tunniste = new LukionKurssinTunnisteValtakunnallinenOPS2004(kurssi, kurssinTyyppi);
     } else {
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getSubject().getName()));
       LukionKurssinTyyppi kurssinTyyppi = findCourseType(courseCredit, LukionKurssinTyyppi.syventava, LukionKurssinTyyppi.soveltava);

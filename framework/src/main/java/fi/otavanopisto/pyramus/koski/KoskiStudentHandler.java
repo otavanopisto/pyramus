@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -15,6 +16,7 @@ import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
@@ -221,29 +223,33 @@ public class KoskiStudentHandler {
       Course course = ca.getCourseStudent() != null ? ca.getCourseStudent().getCourse() : null;
       Subject subject = course != null ? course.getSubject() : null;
       
-      String courseCode = subject.getCode() + course.getCourseNumber();
-      CreditStub stub;
-      if (!stubs.containsKey(courseCode)) {
-        stub = new CreditStub(courseCode, course.getName(), subject);
-        stubs.put(courseCode, stub);
-      } else {
-        stub = stubs.get(courseCode);
+      if (matchingCurriculum(student, course)) {
+        String courseCode = subject.getCode() + course.getCourseNumber();
+        CreditStub stub;
+        if (!stubs.containsKey(courseCode)) {
+          stub = new CreditStub(courseCode, course.getName(), subject);
+          stubs.put(courseCode, stub);
+        } else {
+          stub = stubs.get(courseCode);
+        }
+        
+        stub.addCredit(ca);
       }
-      
-      stub.addCredit(ca);
     }
     
     for (TransferCredit tc : transferCredits) {
-      String courseCode = tc.getSubject().getCode() + tc.getCourseNumber();
-      CreditStub stub;
-      if (!stubs.containsKey(courseCode)) {
-        stub = new CreditStub(courseCode, tc.getCourseName(), tc.getSubject());
-        stubs.put(courseCode, stub);
-      } else {
-        stub = stubs.get(courseCode);
+      if (matchingCurriculum(student, tc)) {
+        String courseCode = tc.getSubject().getCode() + tc.getCourseNumber();
+        CreditStub stub;
+        if (!stubs.containsKey(courseCode)) {
+          stub = new CreditStub(courseCode, tc.getCourseName(), tc.getSubject());
+          stubs.put(courseCode, stub);
+        } else {
+          stub = stubs.get(courseCode);
+        }
+        
+        stub.addCredit(tc);
       }
-      
-      stub.addCredit(tc);
     }
     
     for (CreditLink cl : creditLinks) {
@@ -255,12 +261,22 @@ public class KoskiStudentHandler {
         case CourseAssessment:
           CourseAssessment ca = (CourseAssessment) cl.getCredit();
           Course course = ca.getCourseStudent() != null ? ca.getCourseStudent().getCourse() : null;
+
+          if (!matchingCurriculum(student, course)) {
+            continue;
+          }
+          
           subject = course != null ? course.getSubject() : null;
           courseNumber = course.getCourseNumber();
           courseName = course.getName();
         break;
         case TransferCredit:
           TransferCredit tc = (TransferCredit) cl.getCredit();
+          
+          if (!matchingCurriculum(student, tc)) {
+            continue;
+          }
+          
           subject = tc.getSubject();
           courseNumber = tc.getCourseNumber();
           courseName = tc.getCourseName();
@@ -284,6 +300,20 @@ public class KoskiStudentHandler {
     }
     
     return stubs.values();
+  }
+  
+  protected boolean matchingCurriculum(Student student, Course course) {
+    return 
+        student.getCurriculum() == null || 
+        course.getCurriculums().isEmpty() || 
+        course.getCurriculums().contains(student.getCurriculum());
+  }
+  
+  protected boolean matchingCurriculum(Student student, TransferCredit transferCredit) {
+    return 
+        student.getCurriculum() == null || 
+        transferCredit.getCurriculum() == null || 
+        Objects.equals(student.getCurriculum(), transferCredit.getCurriculum());
   }
   
   protected boolean allNotNull(final Object ... objects) {
@@ -327,6 +357,21 @@ public class KoskiStudentHandler {
         return null;
       }
     }
+  }
+
+  protected OpiskelijanOPS resolveOPS(Student student) {
+    Curriculum curriculum = student.getCurriculum();
+    if (curriculum != null) {
+      switch (curriculum.getId().intValue()) {
+        case 1:
+          return OpiskelijanOPS.ops2016;
+        case 2:
+          return OpiskelijanOPS.ops2005;
+        case 3:
+          return OpiskelijanOPS.ops2018;
+      }
+    }
+    return null;
   }
 
 }
