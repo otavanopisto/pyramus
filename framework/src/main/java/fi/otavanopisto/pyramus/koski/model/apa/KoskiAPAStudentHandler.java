@@ -95,6 +95,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
   
   private StudentSubjectSelections getDefaultStudentSubjectSelections() {
     StudentSubjectSelections studentSubjects = new StudentSubjectSelections();
+    studentSubjects.setA1Languages("aena");
     return studentSubjects;
   }
 
