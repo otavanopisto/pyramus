@@ -5,7 +5,6 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.Koulutus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
@@ -19,8 +18,7 @@ public class AikuistenPerusopetuksenOppimaaranSuoritus extends AikuistenPerusope
   
   public AikuistenPerusopetuksenOppimaaranSuoritus(PerusopetuksenSuoritusTapa suoritustapa, 
       Kieli suorituskieli, OrganisaationToimipiste toimipiste, SuorituksenTila tila) {
-    super(tila, SuorituksenTyyppi.aikuistenperusopetuksenoppimaara, suorituskieli, toimipiste);
-    this.suoritustapa.setValue(suoritustapa);
+    super(suoritustapa, tila, SuorituksenTyyppi.aikuistenperusopetuksenoppimaara, suorituskieli, toimipiste);
   }
   
   public void addOsasuoritus(AikuistenPerusopetuksenOsasuoritus osasuoritus) {
@@ -35,11 +33,6 @@ public class AikuistenPerusopetuksenOppimaaranSuoritus extends AikuistenPerusope
     return koulutusmoduuli;
   }
   
-  public KoodistoViite<PerusopetuksenSuoritusTapa> getSuoritustapa() {
-    return suoritustapa;
-  }
-
   private final Koulutusmoduuli koulutusmoduuli = new Koulutusmoduuli(Koulutus.K201101);
-  private final KoodistoViite<PerusopetuksenSuoritusTapa> suoritustapa = new KoodistoViite<>();
   private final Set<AikuistenPerusopetuksenOsasuoritus> osasuoritukset = new HashSet<>();
 }

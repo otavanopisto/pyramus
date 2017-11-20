@@ -23,7 +23,6 @@ import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
-import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import net.sf.json.JSONObject;
 
@@ -102,8 +101,8 @@ public class KoskiSettings {
       SuorituksenTyyppi suorituksenTyyppi = SuorituksenTyyppi.valueOf(studyProgramme.getString("suorituksentyyppi"));
       suoritustyypit.put(studyProgrammeId, suorituksenTyyppi);
 
-      OpiskeluoikeudenTyyppi opiskeluoikeudenTyyppi = OpiskeluoikeudenTyyppi.valueOf(studyProgramme.getString("opiskeluoikeudentyyppi"));
-      opiskeluoikeustyypit.put(studyProgrammeId, opiskeluoikeudenTyyppi);
+      KoskiStudyProgrammeHandler handlerType = KoskiStudyProgrammeHandler.valueOf(studyProgramme.getString("handler"));
+      handlerTypes.put(studyProgrammeId, handlerType);
       
       modulitunnisteet.put(studyProgrammeId, studyProgramme.getString("modulitunniste"));
       
@@ -183,10 +182,6 @@ public class KoskiSettings {
     return true;
   }
 
-  public OpiskeluoikeudenTyyppi getOpiskeluoikeudenTyyppi(Long studyProgrammeId) {
-    return opiskeluoikeustyypit.get(studyProgrammeId);
-  }
-
   public SuorituksenTyyppi getSuorituksenTyyppi(Long studyProgrammeId) {
     return suoritustyypit.get(studyProgrammeId);
   }
@@ -224,13 +219,17 @@ public class KoskiSettings {
     return subjectToLanguageMapping.get(subjectCode);
   }
 
+  public KoskiStudyProgrammeHandler getStudyProgrammeHandlerType(Long studyProgrammeId) {
+    return handlerTypes.get(studyProgrammeId);
+  }
+  
   private boolean testEnvironment;
   private String academyIdentifier;
   private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
   private Set<Long> freeLodgingStudyProgrammes = new HashSet<Long>();
   private Map<Long, OpiskeluoikeudenTila> studentStateMap = new HashMap<>();
   private Map<Long, SuorituksenTyyppi> suoritustyypit = new HashMap<>();
-  private Map<Long, OpiskeluoikeudenTyyppi> opiskeluoikeustyypit = new HashMap<>();
+  private Map<Long, KoskiStudyProgrammeHandler> handlerTypes = new HashMap<>();
   private Map<Long, String> modulitunnisteet = new HashMap<>();
   private Map<String, String> diaarinumerot = new HashMap<>();
   private Map<Long, String> courseTypeMapping = new HashMap<>();

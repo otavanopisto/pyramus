@@ -35,7 +35,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssit;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssitOPS2004Aikuiset;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionOppimaara;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
-import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
@@ -74,8 +73,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
   private Logger logger;
 
   public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
-    OpiskeluoikeudenTyyppi opiskeluoikeudenTyyppi = settings.getOpiskeluoikeudenTyyppi(student.getStudyProgramme().getId());
-    StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, opiskeluoikeudenTyyppi);
+    StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
     OpiskelijanOPS ops = resolveOPS(student);
     
@@ -118,6 +116,14 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     return opiskeluoikeus;
   }
   
+  private StudentSubjectSelections getDefaultSubjectSelections() {
+    StudentSubjectSelections studentSubjects = new StudentSubjectSelections();
+    studentSubjects.setMath("MAB");
+    studentSubjects.setPrimaryLanguage("ÄI");
+    studentSubjects.setReligion("UE");
+    return studentSubjects;
+  }
+
   private LukionOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
     boolean pidennettyPaattymispaiva = Boolean.valueOf(userVariableDAO.findByUserAndKey(student, USERVARIABLE_EXTENDEDSTUDYTIME));
     boolean ulkomainenVaihtoopiskelija = false;

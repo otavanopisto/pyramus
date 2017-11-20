@@ -33,12 +33,12 @@ import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
-import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.Henkilo;
 import fi.otavanopisto.pyramus.koski.model.HenkiloTiedotJaOID;
 import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.Oppija;
+import fi.otavanopisto.pyramus.koski.model.apa.KoskiAPAStudentHandler;
 import fi.otavanopisto.pyramus.koski.model.result.OpiskeluoikeusReturnVal;
 import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
 
@@ -79,6 +79,9 @@ public class KoskiClient {
   @Inject
   private KoskiPersonLogDAO koskiPersonLogDAO;
   
+  @Inject
+  private KoskiAPAStudentHandler apaHandler;
+
   @Inject
   private KoskiLukioStudentHandler lukioHandler;
 
@@ -244,13 +247,15 @@ public class KoskiClient {
   }
 
   private Opiskeluoikeus studentToOpiskeluoikeus(Student student) throws KoskiException {
-    OpiskeluoikeudenTyyppi opiskeluoikeudenTyyppi = settings.getOpiskeluoikeudenTyyppi(student.getStudyProgramme().getId());
-    switch (opiskeluoikeudenTyyppi) {
+    KoskiStudyProgrammeHandler handler = settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
+    switch (handler) {
       case aikuistenperusopetus:
         return aikuistenPerusopetuksenHandler.studentToModel(student, settings.getAcademyIdentifier());
-      case lukiokoulutus:
+      case lukio:
         return lukioHandler.studentToModel(student, settings.getAcademyIdentifier());
-      
+      case aikuistenperusopetuksenalkuvaihe:
+        return apaHandler.studentToModel(student, settings.getAcademyIdentifier());
+        
       default:
         logger.log(Level.WARNING, String.format("Student %d with studyprogramme %s was not reported to Koski because no handler was specified.", 
             student.getId(), student.getStudyProgramme().getName()));
