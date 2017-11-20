@@ -61,8 +61,9 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(student.getId()));
     opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
     opiskeluoikeus.setPaattymispaiva(student.getStudyEndDate());
-    if (studyOid != null)
+    if (studyOid != null) {
       opiskeluoikeus.setOid(studyOid);
+    }
     
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
     opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
@@ -110,8 +111,9 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
 
       if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
         APAKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(ops, credit);
-        if (kurssiSuoritus != null)
+        if (kurssiSuoritus != null) {
           oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
+        }
       }
     }
     
@@ -137,8 +139,9 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
       StudentSubjectSelections studentSubjects, Subject subject, Map<String, APAOppiaineenSuoritus> map) {
     String subjectCode = subject.getCode();
 
-    if (map.containsKey(subjectCode))
+    if (map.containsKey(subjectCode)) {
       return map.get(subjectCode);
+    }
     
     boolean matchingEducationType = studentEducationType != null && subject.getEducationType() != null && 
         studentEducationType.getId().equals(subject.getEducationType().getId());
@@ -154,8 +157,8 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     
     // APA has only A1 foreign language
     if (matchingEducationType && studentSubjects.isA1Language(subjectCode)) {
-      if (subjectCode.length() > 3) {
-        // Subject codes are of form a + code so substring without the a
+      if (subjectCode.length() >= 3) {
+        // APA Subject codes are of form a + code so substring without the a
         String langCode = settings.getSubjectToLanguageMapping(subjectCode.substring(1, 3).toUpperCase());
         Kielivalikoima kieli = Kielivalikoima.valueOf(langCode);
         
