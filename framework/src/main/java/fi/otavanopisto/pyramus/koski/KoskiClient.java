@@ -146,8 +146,10 @@ public class KoskiClient {
         }
       }
       
-      if (oppija.getOpiskeluoikeudet().size() == 0)
+      if (oppija.getOpiskeluoikeudet().size() == 0) {
+        logger.info(String.format("Updating person %d was skipped due to no updateable study permits.", student.getPerson().getId()));
         return;
+      }
       
       String uri = String.format("%s/oppija", getBaseUrl());
       

@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.koski;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -80,8 +81,10 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, opiskeluoikeudenTyyppi);
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
     OpiskelijanOPS ops = resolveOPS(student);
-    if (ops == null)
-      throw new KoskiException(String.format("Cannot report student %d without curriculum.", student.getId()), KoskiPersonState.NO_CURRICULUM);
+    if (ops == null) {
+      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_CURRICULUM, new Date());
+      return null;
+    }
     
     LukionOpiskeluoikeus opiskeluoikeus = new LukionOpiskeluoikeus();
     opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(student.getId()));

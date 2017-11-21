@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.koski;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -61,8 +62,10 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
 
   public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) throws KoskiException {
     OpiskelijanOPS ops = resolveOPS(student);
-    if (ops == null)
-      throw new KoskiException(String.format("Cannot report student %d without curriculum.", student.getId()), KoskiPersonState.NO_CURRICULUM);
+    if (ops == null) {
+      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_CURRICULUM, new Date());
+      return null;
+    }
     
     OpiskeluoikeudenTyyppi opiskeluoikeudenTyyppi = settings.getOpiskeluoikeudenTyyppi(student.getStudyProgramme().getId());
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, opiskeluoikeudenTyyppi);
