@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -114,12 +115,20 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
 
       if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
         AikuistenPerusopetuksenKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(ops, credit);
-        if (kurssiSuoritus != null)
+        if (kurssiSuoritus != null) {
           oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
+        } else {
+          logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
+        }
       }
     }
     
     for (AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus : map.values()) {
+      if (CollectionUtils.isEmpty(oppiaineenSuoritus.getOsasuoritukset())) {
+        // Skip empty subjects
+        continue;
+      }
+      
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
       // TODO Miten määritetään "valmis" oppiaine (oppimäärän tila poistuu)
       if (oppimaaranSuoritus.getTila().getValue() == SuorituksenTila.VALMIS) {
@@ -252,15 +261,21 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     for (Credit credit : courseCredit.getCredits()) {
       ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());
 
-      KurssinArviointi arviointi;
+      KurssinArviointi arviointi = null;
       if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
         arviointi =  new KurssinArviointiNumeerinen(arvosana, credit.getDate());
       } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
         arviointi = new KurssinArviointiSanallinen(arvosana, credit.getDate(), kuvaus(credit.getGrade().getName()));
-      } else
-        return null; // TODO virheenkäsittely
-
-      suoritus.addArviointi(arviointi);
+      }
+      
+      if (arviointi != null) {
+        suoritus.addArviointi(arviointi);
+      }
+    }
+    
+    // Don't report the course if there's no credits
+    if (CollectionUtils.isEmpty(suoritus.getArviointi())) {
+      return null;
     }
     
     return suoritus;

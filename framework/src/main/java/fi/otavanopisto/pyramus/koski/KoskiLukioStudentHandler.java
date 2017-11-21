@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -149,12 +150,20 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
       if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
         LukionKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(ops, credit);
-        if (kurssiSuoritus != null)
+        if (kurssiSuoritus != null) {
           oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
+        } else {
+          logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
+        }
       }
     }
     
     for (LukionOppiaineenSuoritus lukionOppiaineenSuoritus : map.values()) {
+      if (CollectionUtils.isEmpty(lukionOppiaineenSuoritus.getOsasuoritukset())) {
+        // Skip empty subjects
+        continue;
+      }
+      
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
       if (oppimaaranSuoritus.getTila().getValue() == SuorituksenTila.VALMIS) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(lukionOppiaineenSuoritus);
@@ -333,8 +342,14 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
         arviointi = new KurssinArviointiSanallinen(arvosana, credit.getDate(), kuvaus(credit.getGrade().getName()));
       }
 
-      if (arviointi != null)
+      if (arviointi != null) {
         suoritus.addArviointi(arviointi);
+      }
+    }
+
+    // Don't report the course if there's no credits
+    if (CollectionUtils.isEmpty(suoritus.getArviointi())) {
+      return null;
     }
     
     return suoritus;
