@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.koski;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +26,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
@@ -76,6 +79,10 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
     OpiskelijanOPS ops = resolveOPS(student);
+    if (ops == null) {
+      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_CURRICULUM, new Date());
+      return null;
+    }
     
     LukionOpiskeluoikeus opiskeluoikeus = new LukionOpiskeluoikeus();
     opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(student.getId()));
@@ -155,12 +162,20 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
       if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
         LukionKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(ops, credit);
-        if (kurssiSuoritus != null)
+        if (kurssiSuoritus != null) {
           oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
+        } else {
+          logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
+        }
       }
     }
     
     for (LukionOppiaineenSuoritus lukionOppiaineenSuoritus : map.values()) {
+      if (CollectionUtils.isEmpty(lukionOppiaineenSuoritus.getOsasuoritukset())) {
+        // Skip empty subjects
+        continue;
+      }
+      
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
       if (oppimaaranSuoritus.getTila().getValue() == SuorituksenTila.VALMIS) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(lukionOppiaineenSuoritus);
@@ -267,7 +282,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
     String[] religionSubjects = new String[] { "UE", "UO", "ET" };
     
-    if (ArrayUtils.contains(religionSubjects, subjectCode)) {
+    if (matchingEducationType && ArrayUtils.contains(religionSubjects, subjectCode)) {
       if (StringUtils.equals(subjectCode, studentSubjects.getReligion()) || StringUtils.equals(subjectCode, "ET")) {
         if (map.containsKey("KT"))
           return map.get("KT");
@@ -339,8 +354,14 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
         arviointi = new KurssinArviointiSanallinen(arvosana, credit.getDate(), kuvaus(credit.getGrade().getName()));
       }
 
-      if (arviointi != null)
+      if (arviointi != null) {
         suoritus.addArviointi(arviointi);
+      }
+    }
+
+    // Don't report the course if there's no credits
+    if (CollectionUtils.isEmpty(suoritus.getArviointi())) {
+      return null;
     }
     
     return suoritus;

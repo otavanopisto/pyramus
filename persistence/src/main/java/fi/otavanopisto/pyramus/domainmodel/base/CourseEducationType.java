@@ -159,12 +159,12 @@ public class CourseEducationType {
 
   @ManyToOne
   @JoinColumn(name = "educationType", updatable = false)
-  @IndexedEmbedded
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
   private EducationType educationType;
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "courseEducationType")
-  @IndexedEmbedded
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
   private List<CourseEducationSubtype> courseEducationSubtypes = new Vector<>();
 
   @Version
