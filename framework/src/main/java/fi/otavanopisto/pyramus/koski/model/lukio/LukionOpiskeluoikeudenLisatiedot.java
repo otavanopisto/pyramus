@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class LukionOpiskeluoikeudenLisatiedot {
 
   public LukionOpiskeluoikeudenLisatiedot(boolean pidennettyPaattymispaiva, boolean ulkomainenVaihtoopiskelija, boolean yksityisopiskelija, boolean oikeusMaksuttomaanAsuntolapaikkaan) {
