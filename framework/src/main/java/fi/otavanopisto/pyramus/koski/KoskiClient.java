@@ -258,7 +258,9 @@ public class KoskiClient {
       case aikuistenperusopetus:
         return aikuistenPerusopetuksenHandler.studentToModel(student, settings.getAcademyIdentifier());
       case lukio:
-        return lukioHandler.studentToModel(student, settings.getAcademyIdentifier());
+        return lukioHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.lukio);
+      case aineopiskelulukio:
+        return lukioHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.aineopiskelulukio);
       case aikuistenperusopetuksenalkuvaihe:
         return apaHandler.studentToModel(student, settings.getAcademyIdentifier());
         
