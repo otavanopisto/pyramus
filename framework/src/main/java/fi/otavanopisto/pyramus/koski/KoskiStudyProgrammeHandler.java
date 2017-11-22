@@ -4,6 +4,8 @@ public enum KoskiStudyProgrammeHandler {
 
   aikuistenperusopetuksenalkuvaihe,
   lukio,
-  aikuistenperusopetus
+  aikuistenperusopetus,
+  aineopiskelulukio,
+  aineopiskeluperusopetus
   
 }
