@@ -76,7 +76,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
   @Inject
   private Logger logger;
 
-  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
+  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier, KoskiStudyProgrammeHandler handler) {
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
     OpiskelijanOPS ops = resolveOPS(student);
@@ -114,7 +114,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
 
-    if (oppimäärä) {
+    if (handler == KoskiStudyProgrammeHandler.lukio) {
       // Oppimäärän opiskelija
       
       LukionOppimaaranSuoritus suoritus = new LukionOppimaaranSuoritus(
