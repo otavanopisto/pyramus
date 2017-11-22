@@ -4,7 +4,7 @@ import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 
-public class AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli extends AikuistenPerusopetuksenOppiaineenTunniste {
+public class AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli extends AikuistenPerusopetuksenValtakunnallinenOppiaineenTunniste {
 
   public AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli(KoskiOppiaineetYleissivistava tunniste, Kielivalikoima kieli, boolean pakollinen) {
     super(pakollinen);

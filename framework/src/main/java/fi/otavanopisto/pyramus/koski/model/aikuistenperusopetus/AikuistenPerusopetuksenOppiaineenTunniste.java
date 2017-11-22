@@ -7,18 +7,6 @@ import fi.otavanopisto.pyramus.koski.model.Laajuus;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AikuistenPerusopetuksenOppiaineenTunniste {
 
-  public AikuistenPerusopetuksenOppiaineenTunniste(boolean pakollinen) {
-    this.pakollinen = pakollinen;
-  }
-  
-  public boolean getPakollinen() {
-    return pakollinen;
-  }
-
-  public void setPakollinen(boolean pakollinen) {
-    this.pakollinen = pakollinen;
-  }
-
   public String getPerusteenDiaarinumero() {
     return perusteenDiaarinumero;
   }
@@ -35,7 +23,6 @@ public abstract class AikuistenPerusopetuksenOppiaineenTunniste {
     this.laajuus = laajuus;
   }
 
-  private boolean pakollinen;
   private String perusteenDiaarinumero;
   private Laajuus laajuus;
 }

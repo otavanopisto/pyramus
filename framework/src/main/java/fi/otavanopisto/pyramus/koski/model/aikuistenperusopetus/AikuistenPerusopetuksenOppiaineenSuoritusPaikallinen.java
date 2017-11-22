@@ -6,7 +6,7 @@ import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 public class AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen extends AikuistenPerusopetuksenOppiaineenTunniste {
 
   public AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen(PaikallinenKoodi tunniste, boolean pakollinen, Kuvaus kuvaus) {
-    super(pakollinen);
+    super();
     this.tunniste = tunniste;
     this.kuvaus = kuvaus;
   }

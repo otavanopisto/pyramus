@@ -149,8 +149,10 @@ public class KoskiClient {
         }
       }
       
-      if (oppija.getOpiskeluoikeudet().size() == 0)
+      if (oppija.getOpiskeluoikeudet().size() == 0) {
+        logger.info(String.format("Updating person %d was skipped due to no updateable study permits.", student.getPerson().getId()));
         return;
+      }
       
       String uri = String.format("%s/oppija", getBaseUrl());
       
@@ -223,8 +225,12 @@ public class KoskiClient {
       }
     } catch (Exception ex) {
       try {
+        KoskiPersonState reason = KoskiPersonState.UNKNOWN_FAILURE;
+        if (ex instanceof KoskiException) {
+          reason = ((KoskiException) ex).getState();
+        }
         // Log failed event
-        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNKNOWN_FAILURE, new Date());
+        koskiPersonLogDAO.create(student.getPerson(), reason, new Date());
       } catch (Exception e) {
       }
       
