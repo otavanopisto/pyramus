@@ -3,7 +3,7 @@ package fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus;
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 
-public class AikuistenPerusopetuksenOppiaineenSuoritusMuu extends AikuistenPerusopetuksenOppiaineenTunniste {
+public class AikuistenPerusopetuksenOppiaineenSuoritusMuu extends AikuistenPerusopetuksenValtakunnallinenOppiaineenTunniste {
 
   public AikuistenPerusopetuksenOppiaineenSuoritusMuu(KoskiOppiaineetYleissivistava tunniste, boolean pakollinen) {
     super(pakollinen);
