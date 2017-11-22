@@ -29,7 +29,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
-import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
@@ -67,8 +66,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       return null;
     }
     
-    OpiskeluoikeudenTyyppi opiskeluoikeudenTyyppi = settings.getOpiskeluoikeudenTyyppi(student.getStudyProgramme().getId());
-    StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, opiskeluoikeudenTyyppi);
+    StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
 
     AikuistenPerusopetuksenOpiskeluoikeus opiskeluoikeus = new AikuistenPerusopetuksenOpiskeluoikeus();
@@ -105,6 +103,13 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     assessmentsToModel(ops, student, studentEducationType, studentSubjects, suoritus);
     
     return opiskeluoikeus;
+  }
+  
+  private StudentSubjectSelections getDefaultSubjectSelections() {
+    StudentSubjectSelections studentSubjects = new StudentSubjectSelections();
+    studentSubjects.setPrimaryLanguage("äi");
+    studentSubjects.setReligion("ue");
+    return studentSubjects;
   }
   
   private void assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, 

@@ -29,7 +29,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kunta;
 import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
-import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.HenkilovahvistusPaikkakunnalla;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.LahdeJarjestelmaID;
@@ -128,10 +127,16 @@ public class KoskiStudentHandler {
     }
     return false; 
   }
-  
-  protected StudentSubjectSelections loadStudentSubjectSelections(Student student, OpiskeluoikeudenTyyppi opiskeluoikeudenTyyppi) {
-    StudentSubjectSelections studentSubjects = new StudentSubjectSelections();
-    
+
+  /**
+   * Fills studentSubjects based on selections. Default values can be provided in studentSubjects, 
+   * they are only overwritten if values exist in database.
+   * 
+   * @param student
+   * @param studentSubjects
+   * @return
+   */
+  protected StudentSubjectSelections loadStudentSubjectSelections(Student student, StudentSubjectSelections studentSubjects) {
     String math = userVariableDAO.findByUserAndKey(student, "lukioMatematiikka");
     String lang = userVariableDAO.findByUserAndKey(student, "lukioAidinkieli");
     String aLang = userVariableDAO.findByUserAndKey(student, "lukioKieliA");
@@ -172,47 +177,6 @@ public class KoskiStudentHandler {
       studentSubjects.setReligion(religion);
     }
 
-    if (StringUtils.isBlank(studentSubjects.getMath())) {
-      switch (opiskeluoikeudenTyyppi) {
-        case lukiokoulutus:
-          studentSubjects.setMath("MAB");
-        break;
-        
-        default:
-        break;
-      }
-    }
-    
-    if (StringUtils.isBlank(studentSubjects.getPrimaryLanguage())) {
-      switch (opiskeluoikeudenTyyppi) {
-        case lukiokoulutus:
-          studentSubjects.setPrimaryLanguage("ÄI");
-        break;
-        
-        case aikuistenperusopetus:
-          studentSubjects.setPrimaryLanguage("äi");
-        break;
-
-        default:
-        break;
-      }
-    }
-
-    if (StringUtils.isBlank(studentSubjects.getReligion())) {
-      switch (opiskeluoikeudenTyyppi) {
-        case lukiokoulutus:
-          studentSubjects.setReligion("UE");
-        break;
-        
-        case aikuistenperusopetus:
-          studentSubjects.setReligion("ue");
-        break;
-
-        default:
-        break;
-      }
-    }
-    
     return studentSubjects;
   }
  
