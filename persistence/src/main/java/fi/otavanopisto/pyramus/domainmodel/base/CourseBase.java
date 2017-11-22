@@ -376,7 +376,7 @@ public abstract class CourseBase implements ArchivableEntity {
   
   @ManyToOne  
   @JoinColumn(name="subject")
-  @IndexedEmbedded
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
   private Subject subject;
 
   @Column
@@ -389,7 +389,7 @@ public abstract class CourseBase implements ArchivableEntity {
   
   @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn (name="courseBase")
-  @IndexedEmbedded
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
   private List<CourseEducationType> courseEducationTypes = new Vector<>();
 
   @NotNull
@@ -410,6 +410,6 @@ public abstract class CourseBase implements ArchivableEntity {
   
   @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable (name = "__CourseBaseCurriculums", joinColumns = @JoinColumn(name = "courseBase"), inverseJoinColumns = @JoinColumn(name = "curriculum"))
-  @IndexedEmbedded 
+  @IndexedEmbedded(includeEmbeddedObjectId = true) 
   private Set<Curriculum> curriculums = new HashSet<>();
 }

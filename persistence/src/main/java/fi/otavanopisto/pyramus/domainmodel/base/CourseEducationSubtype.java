@@ -99,7 +99,7 @@ public class CourseEducationSubtype {
 
   @ManyToOne
   @JoinColumn(name = "educationSubtype", updatable = false)
-  @IndexedEmbedded
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
   private EducationSubtype educationSubtype;
 
   @Version

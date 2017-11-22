@@ -252,7 +252,7 @@ public class ModuleDAO extends PyramusEntityDAO<Module> {
         addTokenizedSearchCriteria(queryBuilder, "subject.id", subject.getId().toString(), true);
 
       if (hasCurriculum)
-        addTokenizedSearchCriteria(queryBuilder, "curriculum.id", curriculum.getId().toString(), true);
+        addTokenizedSearchCriteria(queryBuilder, "curriculums.id", curriculum.getId().toString(), true);
 
       if (hasEduType)
         addTokenizedSearchCriteria(queryBuilder, "courseEducationTypes.educationType.id", educationType.getId().toString(), true);
