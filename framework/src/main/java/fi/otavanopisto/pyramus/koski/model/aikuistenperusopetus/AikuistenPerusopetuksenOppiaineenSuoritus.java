@@ -3,6 +3,8 @@ package fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
@@ -33,6 +35,7 @@ public class AikuistenPerusopetuksenOppiaineenSuoritus extends AikuistenPerusope
     this.arviointi.add(arviointi);
   }
   
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public Set<KurssinArviointi> getArviointi() {
     return arviointi;
   }
