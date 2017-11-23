@@ -152,11 +152,11 @@ public class KoskiSettings {
     return freeLodgingStudyProgrammes.contains(studyProgrammeId);
   }
   
-  public OpiskeluoikeudenTila getStudentState(Student student) {
+  public OpiskeluoikeudenTila getStudentState(Student student, OpiskeluoikeudenTila defaultValue) {
     if (student.getStudyEndReason() != null) {
       return studentStateMap.get(student.getStudyEndReason().getId());
     } else
-      return OpiskeluoikeudenTila.lasna;
+      return defaultValue;
   }
   
   private String getSetting(String settingName) {
