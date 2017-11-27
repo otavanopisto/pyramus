@@ -71,7 +71,7 @@ public class SchoolVariableKey {
   private Long id;
   
   @NotNull
-  @Column (nullable = false)
+  @Column (nullable = false, unique = true)
   @NotEmpty
   private String variableKey;
   
