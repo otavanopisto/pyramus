@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,6 +34,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
+import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
@@ -89,6 +91,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     StudentLodgingPeriodDAO lodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
+    PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
 
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
     
@@ -149,6 +152,21 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     
     // Abstract student
     personDAO.update(person, birthday, ssecId, sex, basicInfo, secureInfo);
+
+    // Person Variables
+    
+    Integer personVariableCount = requestContext.getInteger("personVariablesTable.rowCount");
+    if (personVariableCount != null) {
+      for (int i = 0; i < personVariableCount; i++) {
+        String colPrefix = "personVariablesTable." + i;
+        Long edited = requestContext.getLong(colPrefix + ".edited");
+        if (Objects.equals(new Long(1), edited)) {
+          String variableKey = requestContext.getString(colPrefix + ".key");
+          String variableValue = requestContext.getString(colPrefix + ".value");
+          personVariableDAO.setPersonVariable(person, variableKey, variableValue);
+        }
+      }
+    }
 
     List<Student> students = studentDAO.listByPerson(person);
 
