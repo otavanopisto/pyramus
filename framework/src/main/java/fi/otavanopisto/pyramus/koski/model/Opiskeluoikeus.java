@@ -54,9 +54,28 @@ public abstract class Opiskeluoikeus {
     this.lahdejarjestelmanId = lahdejarjestelmanId;
   }
 
+  @JsonProperty("sisältyyOpiskeluoikeuteen")
+  public SisaltavaOpiskeluoikeus getSisaltyyOpiskeluoikeuteen() {
+    return sisaltyyOpiskeluoikeuteen;
+  }
+
+  public void setSisaltyyOpiskeluoikeuteen(SisaltavaOpiskeluoikeus sisaltyyOpiskeluoikeuteen) {
+    this.sisaltyyOpiskeluoikeuteen = sisaltyyOpiskeluoikeuteen;
+  }
+
+  public Oppilaitos getOppilaitos() {
+    return oppilaitos;
+  }
+
+  public void setOppilaitos(Oppilaitos oppilaitos) {
+    this.oppilaitos = oppilaitos;
+  }
+
   private String oid;
   private Date alkamispaiva;
   private Date paattymispaiva;
   private final KoodistoViite<OpiskeluoikeudenTyyppi> tyyppi = new KoodistoViite<>();
   private LahdeJarjestelmaID lahdejarjestelmanId;
+  private SisaltavaOpiskeluoikeus sisaltyyOpiskeluoikeuteen;
+  private Oppilaitos oppilaitos;
 }

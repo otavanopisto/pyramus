@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.koski;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
@@ -24,6 +26,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
@@ -32,13 +35,18 @@ import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
 import fi.otavanopisto.pyramus.koski.model.HenkilovahvistusPaikkakunnalla;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.LahdeJarjestelmaID;
+import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
+import fi.otavanopisto.pyramus.koski.model.Oppilaitos;
 import fi.otavanopisto.pyramus.koski.model.Organisaatio;
 import fi.otavanopisto.pyramus.koski.model.OrganisaatioHenkilo;
 import fi.otavanopisto.pyramus.koski.model.OrganisaatioOID;
+import fi.otavanopisto.pyramus.koski.model.SisaltavaOpiskeluoikeus;
 
 public class KoskiStudentHandler {
 
   public static final String KOSKI_STUDYPERMISSION_ID = "koski.studypermission-id";
+  public static final String KOSKI_LINKED_STUDYPERMISSION_ID = "koski.linked-to-studypermission-id";
+  public static final String KOSKI_SCHOOL_OID = "koski.schooloid";
   
   @Inject
   protected KoskiSettings settings;
@@ -60,6 +68,9 @@ public class KoskiStudentHandler {
   
   @Inject
   protected KoskiPersonLogDAO koskiPersonLogDAO;
+  
+  @Inject
+  protected SchoolVariableDAO schoolVariableDAO;
   
   protected Kuvaus kuvaus(String fiKuvaus) {
     Kuvaus kuvaus = new Kuvaus();
@@ -342,4 +353,17 @@ public class KoskiStudentHandler {
     return null;
   }
 
+  protected void handleLinkedStudyOID(Student student, Opiskeluoikeus opiskeluoikeus) {
+    if (student.getSchool() != null) {
+      String linkedStudyOID = userVariableDAO.findByUserAndKey(student, KOSKI_LINKED_STUDYPERMISSION_ID);
+      String schoolOID = schoolVariableDAO.findValueBySchoolAndKey(student.getSchool(), KOSKI_SCHOOL_OID);
+      if (StringUtils.isNotBlank(linkedStudyOID) && StringUtils.isNotBlank(schoolOID)) {
+        Oppilaitos oppilaitos = new Oppilaitos(schoolOID);
+        opiskeluoikeus.setSisaltyyOpiskeluoikeuteen(new SisaltavaOpiskeluoikeus(oppilaitos, linkedStudyOID));
+      } else {
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.LINKED_MISSING_VALUES, new Date());
+      }
+    }
+  }
+  
 }

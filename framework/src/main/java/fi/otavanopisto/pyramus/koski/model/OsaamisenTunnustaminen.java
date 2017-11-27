@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.koski.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class OsaamisenTunnustaminen {
 
   public OsaamisenTunnustaminen(Kuvaus selite) {
