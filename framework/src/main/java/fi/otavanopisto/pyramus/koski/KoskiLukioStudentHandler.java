@@ -58,6 +58,7 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunna
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinenOPS2015;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeudenLisatiedot;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
+import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenArviointi;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusAidinkieli;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMatematiikka;
@@ -180,12 +181,11 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       if (oppimaaranSuoritus.getTila().getValue() == SuorituksenTila.VALMIS) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(lukionOppiaineenSuoritus);
         
-        if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
-          KurssinArviointi arviointi = new KurssinArviointiNumeerinen(aineKeskiarvo, student.getStudyEndDate());
+        if (aineKeskiarvo != null) {
+          LukionOppiaineenArviointi arviointi = new LukionOppiaineenArviointi(aineKeskiarvo, student.getStudyEndDate());
           lukionOppiaineenSuoritus.addArviointi(arviointi);
-        } else if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
-          KurssinArviointi arviointi = new KurssinArviointiSanallinen(aineKeskiarvo, student.getStudyEndDate(), kuvaus("Suoritettu/Hylätty"));
-          lukionOppiaineenSuoritus.addArviointi(arviointi);
+        } else {
+          logger.warning(String.format("Unresolved mean grade for person %d.", student.getPerson().getId()));
         }
       }
       

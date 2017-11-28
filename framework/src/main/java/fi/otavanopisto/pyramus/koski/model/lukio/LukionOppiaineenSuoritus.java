@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
-import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 
 public class LukionOppiaineenSuoritus extends LukionOsasuoritus {
 
@@ -31,17 +30,17 @@ public class LukionOppiaineenSuoritus extends LukionOsasuoritus {
     return osasuoritukset;
   }
 
-  public void addArviointi(KurssinArviointi arviointi) {
+  public void addArviointi(LukionOppiaineenArviointi arviointi) {
     this.arviointi.add(arviointi);
   }
   
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  public List<KurssinArviointi> getArviointi() {
+  public List<LukionOppiaineenArviointi> getArviointi() {
     return arviointi;
   }
 
   private final LukionOppiaineenTunniste koulutusmoduuli;
-  private final List<KurssinArviointi> arviointi = new ArrayList<>();
+  private final List<LukionOppiaineenArviointi> arviointi = new ArrayList<>();
   private final KoodistoViite<SuorituksenTyyppi> tyyppi = new KoodistoViite<>(SuorituksenTyyppi.lukionoppiaine);
   private final List<LukionKurssinSuoritus> osasuoritukset = new ArrayList<>();
 }
