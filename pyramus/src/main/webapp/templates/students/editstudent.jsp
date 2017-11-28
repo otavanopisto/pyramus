@@ -451,7 +451,7 @@
         if (personVariables && personVariables.length > 0) {
           var personVariablesTable = initPersonVariablesTable();
           
-	        for (var i = 0, l = personVariables.length; i < l; i++) {
+          for (var i = 0, l = personVariables.length; i < l; i++) {
             var rowNumber = personVariablesTable.addRow([
               '',
               personVariables[i].key,

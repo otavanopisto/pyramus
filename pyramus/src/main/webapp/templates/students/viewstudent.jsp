@@ -2223,14 +2223,14 @@
                   </c:choose>
 
                   <c:choose>
-	                  <c:when test="${hasPersonVariables}">
-		                  <div class="genericFormSection">
-		                    <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-		                      <jsp:param name="titleLocale" value="students.viewStudent.personVariablesTitle" />
-		                      <jsp:param name="helpLocale" value="students.viewStudent.personVariablesHelp" />
-		                    </jsp:include>
-		                    <div id="personVariablesTableContainer"></div>
-		                  </div>
+                    <c:when test="${hasPersonVariables}">
+                      <div class="genericFormSection">
+                        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                          <jsp:param name="titleLocale" value="students.viewStudent.personVariablesTitle" />
+                          <jsp:param name="helpLocale" value="students.viewStudent.personVariablesHelp" />
+                        </jsp:include>
+                        <div id="personVariablesTableContainer"></div>
+                      </div>
                     </c:when>
                   </c:choose>
                   
