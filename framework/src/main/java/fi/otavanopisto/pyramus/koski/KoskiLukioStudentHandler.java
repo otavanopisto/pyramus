@@ -58,6 +58,7 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunna
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinenOPS2015;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeudenLisatiedot;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
+import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenOppimaaranSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusAidinkieli;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMatematiikka;
@@ -66,7 +67,6 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusPaikall
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusVierasKieli;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenTunniste;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppimaaranSuoritus;
-import fi.otavanopisto.pyramus.koski.model.lukio.aine.LukionOppiaineenOppimaaranSuoritus;
 
 public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
@@ -110,11 +110,10 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
           SuorituksenTila.VALMIS : SuorituksenTila.KESKEYTYNYT;
     }
 
+    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
     Set<LukionOppiaineenSuoritus> oppiaineet = assessmentsToModel(ops, student, studentEducationType, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS);
-
-    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
 
     if (handler == KoskiStudyProgrammeHandler.lukio) {
       // Oppimäärän opiskelija
@@ -197,7 +196,6 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       }
       
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
-//      if (oppimaaranSuoritus.getTila().getValue() == SuorituksenTila.VALMIS) {
       if (calculateMeanGrades) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(lukionOppiaineenSuoritus);
         
@@ -210,7 +208,6 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
         }
       }
       
-//      oppimaaranSuoritus.addOsasuoritus(lukionOppiaineenSuoritus);
       results.add(lukionOppiaineenSuoritus);
     }
     

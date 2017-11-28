@@ -256,14 +256,16 @@ public class KoskiClient {
     KoskiStudyProgrammeHandler handler = settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
     switch (handler) {
       case aikuistenperusopetus:
-        return aikuistenPerusopetuksenHandler.studentToModel(student, settings.getAcademyIdentifier());
+        return aikuistenPerusopetuksenHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.aikuistenperusopetus);
+      case aineopiskeluperusopetus:
+        return aikuistenPerusopetuksenHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.aineopiskeluperusopetus);
       case lukio:
         return lukioHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.lukio);
       case aineopiskelulukio:
         return lukioHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.aineopiskelulukio);
       case aikuistenperusopetuksenalkuvaihe:
         return apaHandler.studentToModel(student, settings.getAcademyIdentifier());
-        
+
       default:
         logger.log(Level.WARNING, String.format("Student %d with studyprogramme %s was not reported to Koski because no handler was specified.", 
             student.getId(), student.getStudyProgramme().getName()));

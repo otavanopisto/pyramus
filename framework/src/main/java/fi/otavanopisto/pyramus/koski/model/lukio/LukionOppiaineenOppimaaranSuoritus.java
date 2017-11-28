@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.koski.model.lukio.aine;
+package fi.otavanopisto.pyramus.koski.model.lukio;
 
 import java.util.Set;
 
@@ -9,10 +9,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinSuoritus;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritus;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenTunniste;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionSuoritus;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class LukionOppiaineenOppimaaranSuoritus extends LukionSuoritus {
