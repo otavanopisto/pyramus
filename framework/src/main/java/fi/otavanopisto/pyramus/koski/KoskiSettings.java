@@ -14,6 +14,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
@@ -101,8 +102,12 @@ public class KoskiSettings {
       SuorituksenTyyppi suorituksenTyyppi = SuorituksenTyyppi.valueOf(studyProgramme.getString("suorituksentyyppi"));
       suoritustyypit.put(studyProgrammeId, suorituksenTyyppi);
 
-      KoskiStudyProgrammeHandler handlerType = KoskiStudyProgrammeHandler.valueOf(studyProgramme.getString("handler"));
-      handlerTypes.put(studyProgrammeId, handlerType);
+      if (EnumUtils.isValidEnum(KoskiStudyProgrammeHandler.class, studyProgramme.getString("handler"))) {
+        KoskiStudyProgrammeHandler handlerType = KoskiStudyProgrammeHandler.valueOf(studyProgramme.getString("handler"));
+        handlerTypes.put(studyProgrammeId, handlerType);
+      } else {
+        logger.warning(String.format("Unknown handler %s", studyProgramme.getString("handler")));
+      }
       
       modulitunnisteet.put(studyProgrammeId, studyProgramme.getString("modulitunniste"));
       
