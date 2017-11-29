@@ -37,6 +37,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssinTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssit;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssitOPS2004Aikuiset;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionOppimaara;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
@@ -98,6 +99,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     handleLinkedStudyOID(student, opiskeluoikeus);
     
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
+    jakso.setOpintojenRahoitus(new KoodistoViite<>(student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6));
     opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
 
     SuorituksenTila suorituksenTila = SuorituksenTila.KESKEN;
