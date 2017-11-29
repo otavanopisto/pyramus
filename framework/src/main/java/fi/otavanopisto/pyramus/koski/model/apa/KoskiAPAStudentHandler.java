@@ -65,6 +65,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     if (studyOid != null) {
       opiskeluoikeus.setOid(studyOid);
     }
+    handleLinkedStudyOID(student, opiskeluoikeus);
     
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
     opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);

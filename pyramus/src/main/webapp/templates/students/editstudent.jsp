@@ -313,6 +313,48 @@
         return variablesTable;
       }
 
+      function initPersonVariablesTable() {
+        var variablesTable = new IxTable($('personVariablesTableContainer'), {
+          id : "personVariablesTable",
+          columns : [{
+            left: 8,
+            width: 30,
+            dataType: 'button',
+            imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+            tooltip: '<fmt:message key="students.editStudent.variablesTableEditTooltip"/>',
+            onclick: function (event) {
+              var table = event.tableComponent;
+              var valueColumn = table.getNamedColumnIndex('value');
+              var editable = table.isCellEditable(event.row, valueColumn) == false;
+              table.setCellEditable(event.row, valueColumn, editable);
+              table.setCellValue(event.row, table.getNamedColumnIndex('edited'), editable ? "1" : "0");
+            }
+          }, {
+            dataType : 'hidden',
+            editable: false,
+            paramName: 'key'
+          },{
+            left : 30 + 8,
+            width: 250,
+            dataType : 'text',
+            editable: false,
+            paramName: 'name'
+          }, {
+            left : 30 + 8 + 250 + 8,
+            width : 350,
+            dataType: 'text',
+            editable: false,
+            paramName: 'value'
+          }, {
+            dataType: 'hidden',
+            editable: false,
+            paramName: 'edited'
+          }]
+        });
+
+        return variablesTable;
+      }
+      
       function initStudentLodgingPeriodsTable(studentId) {
         var lodgingPeriodsTable = new IxTable($('lodgingPeriodsTableContainer.' + studentId), {
           id : "lodgingPeriodsTable." + studentId,
@@ -404,6 +446,36 @@
         
         setupRelatedCommandsBasic();
         setupTags();
+        
+        var personVariables = JSDATA["personVariables"].evalJSON();
+        if (personVariables && personVariables.length > 0) {
+          var personVariablesTable = initPersonVariablesTable();
+          
+          for (var i = 0, l = personVariables.length; i < l; i++) {
+            var rowNumber = personVariablesTable.addRow([
+              '',
+              personVariables[i].key,
+              personVariables[i].name,
+              personVariables[i].value,
+              '0'
+            ]);
+
+            switch (personVariables[i].type) {
+              case 'NUMBER':
+                personVariablesTable.setCellDataType(rowNumber, 3, 'text');
+              break;
+              case 'DATE':
+                personVariablesTable.setCellDataType(rowNumber, 3, 'date');
+              break;
+              case 'BOOLEAN':
+                personVariablesTable.setCellDataType(rowNumber, 3, 'checkbox');
+              break;
+              default:
+                personVariablesTable.setCellDataType(rowNumber, 3, 'text');
+              break;
+            }
+          }
+        }
 
         var addressTable;
         var phoneTable;
@@ -763,6 +835,18 @@
               </c:choose>
               <fmt:message key="students.editStudent.secureInfoCheckboxLabel"/>
             </div>
+
+            <c:choose>
+              <c:when test="${fn:length(personVariableKeys) gt 0}">
+                <div class="genericFormSection">  
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="students.editStudent.personVariablesTitle"/>
+                    <jsp:param name="helpLocale" value="students.editStudent.personVariablesHelp"/>
+                  </jsp:include>
+                  <div id="personVariablesTableContainer"></div>
+                </div>
+              </c:when>
+            </c:choose>
 
             <div class="genericFormSection">         
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">

@@ -198,6 +198,27 @@
         return variablesTable;
       }
 
+      function initPersonVariablesTable() {
+        var variablesTable = new IxTable($('personVariablesTableContainer'), {
+          id : "personVariablesTable",
+          columns : [{
+            left : 8,
+            width: 160,
+            dataType : 'text',
+            editable: false,
+            paramName: 'name'
+          }, {
+            left : 180,
+            width : 500,
+            dataType: 'text',
+            editable: false,
+            paramName: 'value'
+          }]
+        });
+
+        return variablesTable;
+      }
+
       function openStudentCourseAssessmentRequestsPopupOnElement(element, courseStudentId) {
         var hoverPanel = new IxHoverPanel({
           contentURL: GLOBAL_contextPath + '/students/studentcourseassessmentrequestspopup.page?courseStudent=' + courseStudentId
@@ -923,6 +944,33 @@
         var linkedTransferCreditsContainer = JSDATA["linkedTransferCredits"].evalJSON();
         var curriculumContainer = JSDATA["curriculums"].evalJSON();
         var studentVariablesContainer = JSDATA["studentVariables"].evalJSON();
+
+        var personVariables = JSDATA["personVariables"].evalJSON();
+        if (personVariables && personVariables.length > 0) {
+          var personVariablesTable = initPersonVariablesTable();
+          
+          for (var i = 0, l = personVariables.length; i < l; i++) {
+            var rowNumber = personVariablesTable.addRow([
+              personVariables[i].name,
+              personVariables[i].value
+            ]);
+
+            switch (personVariables[i].type) {
+              case 'NUMBER':
+                personVariablesTable.setCellDataType(rowNumber, 1, 'text');
+              break;
+              case 'DATE':
+                personVariablesTable.setCellDataType(rowNumber, 1, 'date');
+              break;
+              case 'BOOLEAN':
+                personVariablesTable.setCellDataType(rowNumber, 1, 'checkbox');
+              break;
+              default:
+                personVariablesTable.setCellDataType(rowNumber, 1, 'text');
+              break;
+            }
+          }
+        }
         
         <c:forEach var="student" items="${students}">
           // Setup basics
@@ -2174,6 +2222,18 @@
                     </c:when>
                   </c:choose>
 
+                  <c:choose>
+                    <c:when test="${hasPersonVariables}">
+                      <div class="genericFormSection">
+                        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                          <jsp:param name="titleLocale" value="students.viewStudent.personVariablesTitle" />
+                          <jsp:param name="helpLocale" value="students.viewStudent.personVariablesHelp" />
+                        </jsp:include>
+                        <div id="personVariablesTableContainer"></div>
+                      </div>
+                    </c:when>
+                  </c:choose>
+                  
                   <div class="genericFormSection">
                     <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                       <jsp:param name="titleLocale" value="students.viewStudent.studentVariablesTitle" />

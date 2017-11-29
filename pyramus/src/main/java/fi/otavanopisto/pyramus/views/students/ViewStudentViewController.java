@@ -32,6 +32,8 @@ import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentImageDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
+import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
+import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
@@ -55,6 +57,8 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
+import fi.otavanopisto.pyramus.domainmodel.users.PersonVariable;
+import fi.otavanopisto.pyramus.domainmodel.users.PersonVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
@@ -116,6 +120,8 @@ public class ViewStudentViewController extends PyramusViewController implements 
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     StudentLodgingPeriodDAO studentLodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
+    PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
+    PersonVariableKeyDAO personVariableKeyDAO = DAOFactory.getInstance().getPersonVariableKeyDAO();
 
     Long personId = pageRequestContext.getLong("person");
     
@@ -191,6 +197,25 @@ public class ViewStudentViewController extends PyramusViewController implements 
       obj.put("name", report.getName());
       studentReportsJSON.add(obj);
     }
+    
+    /* PersonVariables */
+    
+    List<PersonVariableKey> personVariableKeys = personVariableKeyDAO.listUserEditablePersonVariableKeys();
+    Collections.sort(personVariableKeys, new StringAttributeComparator("getVariableName"));
+    
+    JSONArray personVariablesJSON = new JSONArray();
+    for (PersonVariableKey personVariableKey : personVariableKeys) {
+      PersonVariable personVariable = personVariableDAO.findByPersonAndVariableKey(person, personVariableKey);
+      JSONObject personVariableJSON = new JSONObject();
+      personVariableJSON.put("type", personVariableKey.getVariableType());
+      personVariableJSON.put("name", personVariableKey.getVariableName());
+      personVariableJSON.put("key", personVariableKey.getVariableKey());
+      personVariableJSON.put("value", personVariable != null ? personVariable.getValue() : "");
+      personVariablesJSON.add(personVariableJSON);
+    }
+    setJsDataVariable(pageRequestContext, "personVariables", personVariablesJSON.toString());
+    
+    /* Curriculums */
     
     List<Curriculum> curriculums = curriculumDAO.listUnarchived();
     
@@ -647,6 +672,8 @@ public class ViewStudentViewController extends PyramusViewController implements 
     pageRequestContext.getRequest().setAttribute("studentHasImage", studentHasImage);
     pageRequestContext.getRequest().setAttribute("courseAssessmentRequests", courseAssessmentRequests);
     pageRequestContext.getRequest().setAttribute("studentLodgingPeriods", studentLodgingPeriods);
+
+    pageRequestContext.getRequest().setAttribute("hasPersonVariables", CollectionUtils.isNotEmpty(personVariableKeys));
 
     pageRequestContext.setIncludeJSP("/templates/students/viewstudent.jsp");
   }
