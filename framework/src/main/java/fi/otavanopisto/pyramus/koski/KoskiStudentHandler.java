@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.koski;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
@@ -191,7 +193,7 @@ public class KoskiStudentHandler {
     return studentSubjects;
   }
  
-  protected Collection<CreditStub> listCredits(Student student) {
+  protected List<CreditStub> listCredits(Student student) {
     List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
     List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
     List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
@@ -206,7 +208,7 @@ public class KoskiStudentHandler {
         String courseCode = subject.getCode() + course.getCourseNumber();
         CreditStub stub;
         if (!stubs.containsKey(courseCode)) {
-          stub = new CreditStub(courseCode, course.getName(), subject);
+          stub = new CreditStub(courseCode, course.getCourseNumber(), course.getName(), subject);
           stubs.put(courseCode, stub);
         } else {
           stub = stubs.get(courseCode);
@@ -221,7 +223,7 @@ public class KoskiStudentHandler {
         String courseCode = tc.getSubject().getCode() + tc.getCourseNumber();
         CreditStub stub;
         if (!stubs.containsKey(courseCode)) {
-          stub = new CreditStub(courseCode, tc.getCourseName(), tc.getSubject());
+          stub = new CreditStub(courseCode, tc.getCourseNumber(), tc.getCourseName(), tc.getSubject());
           stubs.put(courseCode, stub);
         } else {
           stub = stubs.get(courseCode);
@@ -268,7 +270,7 @@ public class KoskiStudentHandler {
         String courseCode = subject.getCode() + courseNumber;
         CreditStub stub;
         if (!stubs.containsKey(courseCode)) {
-          stub = new CreditStub(courseCode, courseName, subject);
+          stub = new CreditStub(courseCode, courseNumber, courseName, subject);
           stubs.put(courseCode, stub);
         } else {
           stub = stubs.get(courseCode);
@@ -278,7 +280,9 @@ public class KoskiStudentHandler {
       }
     }
     
-    return stubs.values();
+    List<CreditStub> stubList = new ArrayList<>(stubs.values());
+    stubList.sort((a, b) -> ObjectUtils.compare(a.getCourseNumber(), b.getCourseNumber()));
+    return stubList;
   }
   
   protected boolean matchingCurriculum(Student student, Course course) {

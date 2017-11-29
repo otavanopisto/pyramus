@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus;
 
-import java.util.Set;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -21,7 +21,7 @@ public class PerusopetuksenOppiaineenOppimaaranSuoritus extends AikuistenPerusop
     this.oppiaine = oppiaine;
   }
   
-  public Set<AikuistenPerusopetuksenKurssinSuoritus> getOsasuoritukset() {
+  public List<AikuistenPerusopetuksenKurssinSuoritus> getOsasuoritukset() {
     return oppiaine.getOsasuoritukset();
   }
   
@@ -29,7 +29,7 @@ public class PerusopetuksenOppiaineenOppimaaranSuoritus extends AikuistenPerusop
     return oppiaine.getKoulutusmoduuli();
   }
  
-  public Set<KurssinArviointi> getArviointi() {
+  public List<KurssinArviointi> getArviointi() {
     return oppiaine.getArviointi();
   }
   

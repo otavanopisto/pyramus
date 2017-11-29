@@ -239,7 +239,7 @@ public class ObjectFactory {
             Long gradeId = entity.getGrade() != null ? entity.getGrade().getId() : null;
             Long gradingScaleId = entity.getGrade() != null && entity.getGrade().getGradingScale() != null ? entity.getGrade().getGradingScale().getId() : null;
             Long assessorId = entity.getAssessor() != null ? entity.getAssessor().getId() : null;
-            Boolean passing = entity.getGrade().getPassingGrade();
+            Boolean passing = entity.getGrade() != null ? entity.getGrade().getPassingGrade() : null;
             
             return new fi.otavanopisto.pyramus.rest.model.CourseAssessment(entity.getId(), 
                 courseStudentId, 

@@ -84,7 +84,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     SuorituksenTila suorituksenTila = SuorituksenTila.KESKEN;
 
     if (student.getStudyEndDate() != null) {
-      OpiskeluoikeudenTila opintojenLopetusTila = settings.getStudentState(student);
+      OpiskeluoikeudenTila opintojenLopetusTila = settings.getStudentState(student, OpiskeluoikeudenTila.eronnut);
       opiskeluoikeus.getTila().addOpiskeluoikeusJakso(
           new OpiskeluoikeusJakso(student.getStudyEndDate(), opintojenLopetusTila));
 

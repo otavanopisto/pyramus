@@ -58,6 +58,7 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunna
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinenOPS2015;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeudenLisatiedot;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
+import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenArviointi;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenOppimaaranSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusAidinkieli;
@@ -102,7 +103,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     SuorituksenTila suorituksenTila = SuorituksenTila.KESKEN;
     
     if (student.getStudyEndDate() != null) {
-      OpiskeluoikeudenTila opintojenLopetusTila = settings.getStudentState(student);
+      OpiskeluoikeudenTila opintojenLopetusTila = settings.getStudentState(student, OpiskeluoikeudenTila.eronnut);
       opiskeluoikeus.getTila().addOpiskeluoikeusJakso(
           new OpiskeluoikeusJakso(student.getStudyEndDate(), opintojenLopetusTila));
       
@@ -199,12 +200,11 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       if (calculateMeanGrades) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(lukionOppiaineenSuoritus);
         
-        if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
-          KurssinArviointi arviointi = new KurssinArviointiNumeerinen(aineKeskiarvo, student.getStudyEndDate());
+        if (aineKeskiarvo != null) {
+          LukionOppiaineenArviointi arviointi = new LukionOppiaineenArviointi(aineKeskiarvo, student.getStudyEndDate());
           lukionOppiaineenSuoritus.addArviointi(arviointi);
-        } else if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
-          KurssinArviointi arviointi = new KurssinArviointiSanallinen(aineKeskiarvo, student.getStudyEndDate(), kuvaus("Suoritettu/Hylätty"));
-          lukionOppiaineenSuoritus.addArviointi(arviointi);
+        } else {
+          logger.warning(String.format("Unresolved mean grade for person %d.", student.getPerson().getId()));
         }
       }
       

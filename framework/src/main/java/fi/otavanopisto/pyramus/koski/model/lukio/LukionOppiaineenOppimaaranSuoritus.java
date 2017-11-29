@@ -1,13 +1,12 @@
 package fi.otavanopisto.pyramus.koski.model.lukio;
 
-import java.util.Set;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
-import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -23,11 +22,11 @@ public class LukionOppiaineenOppimaaranSuoritus extends LukionSuoritus {
     return oppiaine.getKoulutusmoduuli();
   }
   
-  public Set<KurssinArviointi> getArviointi() {
+  public List<LukionOppiaineenArviointi> getArviointi() {
     return oppiaine.getArviointi();
   }
   
-  public Set<LukionKurssinSuoritus> getOsasuoritukset() {
+  public List<LukionKurssinSuoritus> getOsasuoritukset() {
     return oppiaine.getOsasuoritukset();
   }
   
