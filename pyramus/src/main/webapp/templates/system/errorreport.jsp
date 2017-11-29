@@ -27,11 +27,9 @@
       </fmt:message>
     </div>
   </div>
-  
-   <div class="errorPageDetailsContainer">
-     <h3>Error message sent!</h3>
-   </div> 
-  
+  <div class="errorPageDetailsContainer">
+    <h3>Error message sent!</h3>
+  </div>
   <jsp:include page="/templates/generic/footer.jsp"></jsp:include>
 </body>
 </html>

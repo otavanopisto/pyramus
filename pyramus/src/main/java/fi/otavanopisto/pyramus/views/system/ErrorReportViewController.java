@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 public class ErrorReportViewController extends PyramusFormViewController {
 
   private static final Logger logger = Logger.getLogger(ErrorReportViewController.class.getName());
+  
   @Override
   public void processForm(PageRequestContext requestContext) {
     requestContext.setIncludeJSP("/templates/system/errorreport.jsp");

@@ -27,38 +27,46 @@
       </fmt:message>
     </div>
   </div>
-  
-   <div class="errorPageDetailsContainer">
-     <div class="errorPageSubTitle">
-       <fmt:message key="generic.errorPage.statusCode">
-         <fmt:param>${statusCode}</fmt:param>
-       </fmt:message>
-     </div>
-       
-     <div class="errorPageStackTraceContainer">
-       <div class="errorPageSubTitle"><fmt:message key="generic.errorPage.stackTraceTitle"/></div>
-       
-       <div class="errorPageStackTrace">
-         <div class="errorPageStackTraceElement">${exception}
-           <c:forEach var="stackTraceElement" items="${exception.stackTrace}">
-             <div class="errorPageStackTraceElement">at ${stackTraceElement}</div>
-           </c:forEach>
-         </div>
-       </div>
-     </div>
-     <form action="/system/errorreport.page" method="POST">
-     <div class="errorPageReportContainer">
-       <div class="errorPageSubTitle"><fmt:message key="generic.errorPage.reportTitle"/></div> 
-       <div class="errorPageReportAdditionalInfoContainer">
-         <textarea name = "errorMessage" class="errorPageReportAdditionnalInfo"></textarea>
-       </div>
-       <div class="errorPageReportButtonContainer">
-         <input type="submit" value="<fmt:message key="generic.errorPage.sendReportButton"/>"/>
-       </div>
-     </div>
-     </form>
-   </div> 
-  
+
+  <div class="errorPageDetailsContainer">
+    <div class="errorPageSubTitle">
+      <fmt:message key="generic.errorPage.statusCode">
+        <fmt:param>${statusCode}</fmt:param>
+      </fmt:message>
+    </div>
+
+    <div class="errorPageStackTraceContainer">
+      <div class="errorPageSubTitle">
+        <fmt:message key="generic.errorPage.stackTraceTitle" />
+      </div>
+
+      <div class="errorPageStackTrace">
+        <div class="errorPageStackTraceElement">${exception}
+          <c:forEach var="stackTraceElement"
+            items="${exception.stackTrace}">
+            <div class="errorPageStackTraceElement">at
+              ${stackTraceElement}</div>
+          </c:forEach>
+        </div>
+      </div>
+    </div>
+    <form action="/system/errorreport.page" method="POST">
+      <div class="errorPageReportContainer">
+        <div class="errorPageSubTitle">
+          <fmt:message key="generic.errorPage.reportTitle" />
+        </div>
+        <div class="errorPageReportAdditionalInfoContainer">
+          <textarea name="errorMessage"
+            class="errorPageReportAdditionnalInfo"></textarea>
+        </div>
+        <div class="errorPageReportButtonContainer">
+          <input type="submit"
+            value="<fmt:message key="generic.errorPage.sendReportButton"/>" />
+        </div>
+      </div>
+    </form>
+  </div>
+
   <jsp:include page="/templates/generic/footer.jsp"></jsp:include>
 </body>
 </html>
