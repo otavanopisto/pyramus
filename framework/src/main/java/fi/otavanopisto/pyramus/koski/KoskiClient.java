@@ -125,6 +125,11 @@ public class KoskiClient {
   
       String personOid = personVariableDAO.findByPersonAndKey(student.getPerson(), KOSKI_HENKILO_OID);
       
+      if (StringUtils.isBlank(student.getPerson().getSocialSecurityNumber()) && StringUtils.isBlank(personOid)) {
+        logger.warning(String.format("Can not update person (%d) without SSN or OID.", student.getPerson().getId()));
+        return;
+      }
+      
       Henkilo henkilo;
       if (StringUtils.isNotBlank(personOid))
         henkilo = new HenkiloTiedotJaOID(personOid, student.getPerson().getSocialSecurityNumber(), student.getFirstName(), student.getLastName(), getCallname(student));
