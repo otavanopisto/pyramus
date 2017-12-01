@@ -21,6 +21,9 @@
 <jsp:include page="/templates/generic/jsonrequest_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/hoverpanel_support.jsp"></jsp:include>
 
+<script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
+<script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/koski.js"></script>
+
 <!-- Used to render memo values with line breaks; for some reason this is the only approach that works -->
 <%
   pageContext.setAttribute("newLineChar", "\n");
@@ -945,6 +948,9 @@
         var curriculumContainer = JSDATA["curriculums"].evalJSON();
         var studentVariablesContainer = JSDATA["studentVariables"].evalJSON();
 
+        Event.observe($('koski-status'), 'click', toggleKoskiLogDetailsVisibility);
+        loadLogEntries(${person.id});
+        
         var personVariables = JSDATA["personVariables"].evalJSON();
         if (personVariables && personVariables.length > 0) {
           var personVariablesTable = initPersonVariablesTable();
@@ -1422,7 +1428,7 @@
           </c:if>
         </c:if>
       }
-      
+
       function onStudentProjectHeaderClick(event) {
         Event.stop(event);
         var element = Event.element(event);
@@ -1635,7 +1641,12 @@
     <fmt:message key="students.viewStudent.pageTitle">
       <fmt:param value="${person.latestStudent.fullName}" />
     </fmt:message>
+    
+    <span id="koski-status" class="koski-status">KOSKI</span>
   </h1>
+  
+  <div id="koski-status-details" style="display: none;">
+  </div>
 
   <div id="extensionHoverMenuLinks" style="display: none;">
     <ix:extensionHook name="students.viewStudent.hoverMenuLinks" />

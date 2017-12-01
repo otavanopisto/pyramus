@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
@@ -149,8 +150,11 @@ public class KoskiSettings {
     return testEnvironment;
   }
 
-  public boolean isEnabledStudyProgramme(Long studyProgrammeId) {
-    return enabledStudyProgrammes.contains(studyProgrammeId);
+  public boolean isEnabledStudyProgramme(StudyProgramme studyProgramme) {
+    if (studyProgramme == null)
+      return false;
+    
+    return enabledStudyProgrammes.contains(studyProgramme.getId());
   }
   
   public boolean isFreeLodging(Long studyProgrammeId) {

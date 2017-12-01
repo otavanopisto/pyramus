@@ -23,6 +23,36 @@ h1.genericPageHeader{
   font-family:verdana;
 }
 
+.koski-status {
+  border-radius: 3px;
+	color: #FFF;
+	cursor: pointer;
+  display: none;
+  font-size: 12px;
+  margin-left: 10px;
+  padding: 2px 4px;
+}
+
+.koski-pending {
+  background-color: #d3d3d3;
+  display: inline-block;
+}
+
+.koski-success {
+  background-color: #4ada4a;
+  display: inline-block;
+}
+
+.koski-error {
+  background-color: #fd5050;
+  display: inline-block;
+}
+
+.koski-warning {
+  background-color: #dede46;
+  display: inline-block;
+}
+
 .draftSavedContainer {
   display: inline-block;
   position: absolute;

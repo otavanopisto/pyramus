@@ -98,6 +98,7 @@ import fi.otavanopisto.pyramus.dao.help.HelpItemDAO;
 import fi.otavanopisto.pyramus.dao.help.HelpItemTitleDAO;
 import fi.otavanopisto.pyramus.dao.help.HelpPageContentDAO;
 import fi.otavanopisto.pyramus.dao.help.HelpPageDAO;
+import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleComponentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.plugins.PluginDAO;
@@ -734,7 +735,12 @@ public class DAOFactory {
     return (RoomDAO) findByClass(RoomDAO.class);
   }
 
+  /* Koski */
   
+  public KoskiPersonLogDAO getKoskiPersonLogDAO() {
+    return (KoskiPersonLogDAO) findByClass(KoskiPersonLogDAO.class);
+  }
+
   private String getAppName() throws NamingException {
     String appName = "";
     try {

@@ -23,6 +23,9 @@
     <jsp:include page="/templates/generic/ckeditor_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/hovermenu_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/locale_support.jsp"></jsp:include>
+
+		<script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
+		<script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/koski.js"></script>
     
     <script type="text/javascript">
       function addAddressTableRow(addressTable) {
@@ -446,6 +449,9 @@
         
         setupRelatedCommandsBasic();
         setupTags();
+
+        Event.observe($('koski-status'), 'click', toggleKoskiLogDetailsVisibility);
+        loadLogEntries(${person.id});
         
         var personVariables = JSDATA["personVariables"].evalJSON();
         if (personVariables && personVariables.length > 0) {
@@ -740,7 +746,12 @@
       <fmt:message key="students.editStudent.pageTitle">
         <fmt:param value="${person.latestStudent.fullName}"/>
       </fmt:message>
+      
+      <span id="koski-status" class="koski-status">KOSKI</span>
     </h1>
+
+    <div id="koski-status-details" style="display: none;">
+    </div>
 
     <div id="editStudentEditFormContainer"> 
       <div class="genericFormContainer"> 

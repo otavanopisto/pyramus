@@ -1,7 +1,9 @@
 package fi.otavanopisto.pyramus.koski;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +19,11 @@ import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonLog;
+import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.events.CourseAssessmentEvent;
 import fi.otavanopisto.pyramus.events.StudentUpdatedEvent;
 import fi.otavanopisto.pyramus.events.TransferCreditEvent;
@@ -34,6 +41,12 @@ public class KoskiEventListeners implements Serializable {
 
   @Inject
   private KoskiUpdater koskiUpdater;
+
+  @Inject
+  private KoskiPersonLogDAO koskiPersonLogDAO;
+  
+  @Inject
+  private StudentDAO studentDAO;
   
   private Set<Long> studentIds = new HashSet<>();
   
@@ -55,16 +68,31 @@ public class KoskiEventListeners implements Serializable {
   public void onStudentUpdated(@Observes StudentUpdatedEvent event) {
     Long studentId = event.getStudentId();
     studentIds.add(studentId);
+    clearPersonLog(studentId);
   }
 
   public void onTransferCreditEvent(@Observes TransferCreditEvent event) {
     Long studentId = event.getStudentId();
     studentIds.add(studentId);
+    clearPersonLog(studentId);
   }
   
   public void onCourseAssessmentEvent(@Observes CourseAssessmentEvent event) {
     Long studentId = event.getStudentId();
     studentIds.add(studentId);
+    clearPersonLog(studentId);
+  }
+  
+  private void clearPersonLog(Long studentId) {
+    try {
+      Student student = studentDAO.findById(studentId);
+      
+      List<KoskiPersonLog> entries = koskiPersonLogDAO.listByPerson(student.getPerson());
+      entries.forEach(entry -> koskiPersonLogDAO.delete(entry));
+      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.PENDING, new Date());
+    } catch (Exception ex) {
+      logger.log(Level.SEVERE, "Couldn't clear person log.", ex);
+    }
   }
   
 }
