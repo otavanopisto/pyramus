@@ -19,6 +19,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -37,6 +38,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssinTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssit;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssitOPS2004Aikuiset;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionOppimaara;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
@@ -98,6 +100,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     handleLinkedStudyOID(student, opiskeluoikeus);
     
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
+    jakso.setOpintojenRahoitus(new KoodistoViite<>(student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6));
     opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
 
     SuorituksenTila suorituksenTila = SuorituksenTila.KESKEN;
@@ -343,16 +346,16 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     if (ops == OpiskelijanOPS.ops2016 && EnumUtils.isValidEnum(LukionKurssit.class, kurssiKoodi)) {
       // OPS 2016 (2015)
       LukionKurssit kurssi = LukionKurssit.valueOf(kurssiKoodi);
-      LukionKurssinTyyppi kurssinTyyppi = findCourseType(courseCredit, LukionKurssinTyyppi.pakollinen, LukionKurssinTyyppi.syventava);
+      LukionKurssinTyyppi kurssinTyyppi = findCourseType(courseCredit, true, LukionKurssinTyyppi.pakollinen, LukionKurssinTyyppi.syventava);
       tunniste = new LukionKurssinTunnisteValtakunnallinenOPS2015(kurssi, kurssinTyyppi);
     } else if (ops == OpiskelijanOPS.ops2005 && EnumUtils.isValidEnum(LukionKurssitOPS2004Aikuiset.class, kurssiKoodi)) {
       // OPS 2005 (2004)
       LukionKurssitOPS2004Aikuiset kurssi = LukionKurssitOPS2004Aikuiset.valueOf(kurssiKoodi);
-      LukionKurssinTyyppi kurssinTyyppi = findCourseType(courseCredit, LukionKurssinTyyppi.pakollinen, LukionKurssinTyyppi.syventava);
+      LukionKurssinTyyppi kurssinTyyppi = findCourseType(courseCredit, true, LukionKurssinTyyppi.pakollinen, LukionKurssinTyyppi.syventava);
       tunniste = new LukionKurssinTunnisteValtakunnallinenOPS2004(kurssi, kurssinTyyppi);
     } else {
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(kurssiKoodi, kuvaus(courseCredit.getSubject().getName()));
-      LukionKurssinTyyppi kurssinTyyppi = findCourseType(courseCredit, LukionKurssinTyyppi.syventava, LukionKurssinTyyppi.soveltava);
+      LukionKurssinTyyppi kurssinTyyppi = findCourseType(courseCredit, true, LukionKurssinTyyppi.syventava, LukionKurssinTyyppi.soveltava);
       tunniste = new LukionKurssinTunnistePaikallinen(paikallinenKoodi , kurssinTyyppi, kuvaus(courseCredit.getCourseName()));
     }
       
@@ -388,7 +391,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     return suoritus;
   }
 
-  private LukionKurssinTyyppi findCourseType(CreditStub courseCredit, LukionKurssinTyyppi ... allowedValues) {
+  private LukionKurssinTyyppi findCourseType(CreditStub courseCredit, boolean national, LukionKurssinTyyppi ... allowedValues) {
     Set<LukionKurssinTyyppi> resolvedTypes = new HashSet<>();
     
     for (Credit credit : courseCredit.getCredits()) {
@@ -407,7 +410,12 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
         } else
           logger.warning(String.format("CourseAssessment %d has no courseStudent or Course", courseAssessment.getId()));
       } else if (credit instanceof TransferCredit) {
-        resolvedTypes.add(LukionKurssinTyyppi.syventava);
+        TransferCredit transferCredit = (TransferCredit) credit;
+        if (national && transferCredit.getOptionality() == CourseOptionality.MANDATORY) {
+          resolvedTypes.add(LukionKurssinTyyppi.pakollinen);
+        } else {
+          resolvedTypes.add(LukionKurssinTyyppi.syventava);
+        }
       } else {
         logger.warning(String.format("Unknown credit type %s", credit.getClass().getSimpleName()));
       }
