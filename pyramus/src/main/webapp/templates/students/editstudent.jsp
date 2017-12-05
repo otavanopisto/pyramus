@@ -24,8 +24,8 @@
     <jsp:include page="/templates/generic/hovermenu_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/locale_support.jsp"></jsp:include>
 
-		<script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
-		<script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/koski.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/koski.js"></script>
     
     <script type="text/javascript">
       function addAddressTableRow(addressTable) {
