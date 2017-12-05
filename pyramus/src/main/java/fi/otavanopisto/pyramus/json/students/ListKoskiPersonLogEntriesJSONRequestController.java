@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.json.students;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +47,7 @@ public class ListKoskiPersonLogEntriesJSONRequestController extends JSONRequestC
       
       Person person = personDAO.findById(personId);
       List<KoskiPersonLog> logEntries = koskiPersonLogDAO.listByPerson(person);
+      logEntries.sort((a, b) -> Comparator.nullsFirst(Date::compareTo).reversed().compare(a.getDate(), b.getDate()));
       
       Locale locale = requestContext.getRequest().getLocale();
       

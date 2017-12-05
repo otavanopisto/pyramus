@@ -39,8 +39,6 @@ public class KoskiPersonLogDAO extends PyramusEntityDAO<KoskiPersonLog> {
         criteriaBuilder.equal(root.get(KoskiPersonLog_.person), person)
     );
     
-    criteria.orderBy(criteriaBuilder.desc(root.get(KoskiPersonLog_.date)));
-    
     return entityManager.createQuery(criteria).getResultList();
   }
   
