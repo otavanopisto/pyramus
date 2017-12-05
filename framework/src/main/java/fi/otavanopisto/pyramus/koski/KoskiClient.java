@@ -54,7 +54,6 @@ public class KoskiClient {
 
   private static final String KOSKI_STUDYPERMISSION_ID = "koski.studypermission-id";
   private static final String KOSKI_HENKILO_OID = "koski.henkilo-oid";
-  private static final String KOSKI_SKIPPED_STUDENT = "koski.skippedStudent";
   
   private static final String KOSKI_SETTINGKEY_BASEURL = "koski.baseUrl";
   private static final String KOSKI_SETTINGKEY_AUTH = "koski.auth";
@@ -128,7 +127,7 @@ public class KoskiClient {
       }
 
       // Does the person have any reported study programmes
-      if (!student.getPerson().getStudents().stream().anyMatch((Student s) -> isReportedStudent(s))) {
+      if (!settings.hasReportedStudents(student.getPerson())) {
         return;
       }
 
@@ -153,7 +152,7 @@ public class KoskiClient {
       List<Student> reportedStudents = new ArrayList<>();
       
       for (Student s : student.getPerson().getStudents()) {
-        if (isReportedStudent(student)) {
+        if (settings.isReportedStudent(student)) {
           Opiskeluoikeus o = studentToOpiskeluoikeus(s);
           if (o != null) {
             oppija.addOpiskeluoikeus(o);
@@ -265,12 +264,6 @@ public class KoskiClient {
     entries.forEach(entry -> koskiPersonLogDAO.delete(entry));
   }
 
-  private boolean isReportedStudent(Student student) {
-    return 
-        settings.isEnabledStudyProgramme(student.getStudyProgramme()) &&
-        !Boolean.valueOf(userVariableDAO.findByUserAndKey(student, KOSKI_SKIPPED_STUDENT));
-  }
-  
   private String getCallname(Student student) {
     if (StringUtils.isNotBlank(student.getNickname()) && (StringUtils.containsIgnoreCase(student.getFirstName(), student.getNickname())))
       return student.getNickname();

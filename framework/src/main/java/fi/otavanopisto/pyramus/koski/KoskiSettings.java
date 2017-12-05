@@ -19,6 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
@@ -36,6 +38,9 @@ public class KoskiSettings {
   // For test environment the saving of oid's needs to be turned off
   private static final String KOSKI_SETTINGKEY_TESTENVIRONMENT = "koski.testEnvironment";
 
+  // Skipped from integration
+  private static final String KOSKI_SKIPPED_STUDENT = "koski.skippedStudent";
+
   @Inject
   private Logger logger;
 
@@ -44,6 +49,9 @@ public class KoskiSettings {
 
   @Inject
   private SettingKeyDAO settingKeyDAO;
+
+  @Inject
+  private UserVariableDAO userVariableDAO;
   
   @PostConstruct
   private void postConstruct() {
@@ -191,6 +199,16 @@ public class KoskiSettings {
     return true;
   }
 
+  public boolean hasReportedStudents(Person person) {
+    return person.getStudents().stream().anyMatch((Student s) -> isReportedStudent(s));
+  }
+  
+  public boolean isReportedStudent(Student student) {
+    return 
+        isEnabledStudyProgramme(student.getStudyProgramme()) &&
+        !Boolean.valueOf(userVariableDAO.findByUserAndKey(student, KOSKI_SKIPPED_STUDENT));
+  }
+  
   public SuorituksenTyyppi getSuorituksenTyyppi(Long studyProgrammeId) {
     return suoritustyypit.get(studyProgrammeId);
   }

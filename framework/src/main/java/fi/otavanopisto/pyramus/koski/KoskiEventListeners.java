@@ -43,6 +43,9 @@ public class KoskiEventListeners implements Serializable {
   private KoskiUpdater koskiUpdater;
 
   @Inject
+  private KoskiSettings settings;
+  
+  @Inject
   private KoskiPersonLogDAO koskiPersonLogDAO;
   
   @Inject
@@ -86,10 +89,12 @@ public class KoskiEventListeners implements Serializable {
   private void clearPersonLog(Long studentId) {
     try {
       Student student = studentDAO.findById(studentId);
-      
-      List<KoskiPersonLog> entries = koskiPersonLogDAO.listByPerson(student.getPerson());
-      entries.forEach(entry -> koskiPersonLogDAO.delete(entry));
-      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.PENDING, new Date());
+
+      if (settings.hasReportedStudents(student.getPerson())) {
+        List<KoskiPersonLog> entries = koskiPersonLogDAO.listByPerson(student.getPerson());
+        entries.forEach(entry -> koskiPersonLogDAO.delete(entry));
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.PENDING, new Date());
+      }
     } catch (Exception ex) {
       logger.log(Level.SEVERE, "Couldn't clear person log.", ex);
     }
