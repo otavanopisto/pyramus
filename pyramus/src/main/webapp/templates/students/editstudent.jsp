@@ -292,7 +292,9 @@
             onclick: function (event) {
               var table = event.tableComponent;
               var valueColumn = table.getNamedColumnIndex('value');
-              table.setCellEditable(event.row, valueColumn, table.isCellEditable(event.row, valueColumn) == false);
+              var editable = table.isCellEditable(event.row, valueColumn) == false;
+              table.setCellEditable(event.row, valueColumn, editable);
+              table.setCellValue(event.row, table.getNamedColumnIndex('edited'), editable ? "1" : "0");
             }
           }, {
             dataType : 'hidden',
@@ -310,6 +312,10 @@
             dataType: 'text',
             editable: false,
             paramName: 'value'
+          }, {
+            dataType: 'hidden',
+            editable: false,
+            paramName: 'edited'
           }]
         });
 
@@ -573,14 +579,15 @@
         var variables = JSDATA["variables." + studentId].evalJSON();
         if (variables && variables.length > 0) {
           // Student variables
-          variablesTable = initStudentVariableTable(studentId);
+          var variablesTable = initStudentVariableTable(studentId);
 
           for (var i = 0, l = variables.length; i < l; i++) {
             var rowNumber = variablesTable.addRow([
               '',
               variables[i].key,
               variables[i].name,
-              variables[i].value
+              variables[i].value,
+              '0'
             ]);
 
             switch (variables[i].type) {

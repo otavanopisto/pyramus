@@ -246,9 +246,12 @@ public class EditStudentJSONRequestController extends JSONRequestController {
       if (variableCount != null) {
         for (int i = 0; i < variableCount; i++) {
           String colPrefix = "variablesTable." + student.getId() + "." + i;
-          String variableKey = requestContext.getString(colPrefix + ".key");
-          String variableValue = requestContext.getString(colPrefix + ".value");
-          userVariableDAO.setUserVariable(student, variableKey, variableValue);
+          Long edited = requestContext.getLong(colPrefix + ".edited");
+          if (Objects.equals(new Long(1), edited)) {
+            String variableKey = requestContext.getString(colPrefix + ".key");
+            String variableValue = requestContext.getString(colPrefix + ".value");
+            userVariableDAO.setUserVariable(student, variableKey, variableValue);
+          }
         }
       }
 
