@@ -12,7 +12,7 @@ public class TestKoskiJSONValidator extends AbstractKoskiTest {
 
   @Test
   public void testSchemaMatching() throws IOException {
-    URL testFile = this.getClass().getResource("test.json");
+    URL testFile = this.getClass().getResource("test-student.json");
     String testJSON = IOUtils.toString(testFile);
     
     assertThat(testJSON, getSchemaValidator());
