@@ -1,0 +1,21 @@
+package fi.otavanopisto.pyramus.koski;
+
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import java.net.URL;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+
+public class TestKoskiJSONValidator extends AbstractKoskiTest {
+
+  @Test
+  public void testSchemaMatching() throws IOException {
+    URL testFile = this.getClass().getResource("test.json");
+    String testJSON = IOUtils.toString(testFile);
+    
+    assertThat(testJSON, getSchemaValidator());
+  }
+
+}
