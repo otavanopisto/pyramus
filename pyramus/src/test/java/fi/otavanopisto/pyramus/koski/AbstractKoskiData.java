@@ -14,7 +14,7 @@ import fi.otavanopisto.pyramus.koski.model.OrganisaatioOID;
 
 public class AbstractKoskiData {
 
-  public static String ACADEMYOID = "1.2.246.562.10.17749422402";
+  public static final String ACADEMYOID = "1.2.246.562.10.17749422402";
   
   /**
    * Utility method to unify date creation
@@ -49,7 +49,7 @@ public class AbstractKoskiData {
     return vahvistus;
   }
 
-  protected LahdeJarjestelmaID getLahdeJarjestelmaID(Long id) {
+  protected static LahdeJarjestelmaID getLahdeJarjestelmaID(Long id) {
     return new LahdeJarjestelmaID(String.valueOf(id), Lahdejarjestelma.pyramus);
   }
 

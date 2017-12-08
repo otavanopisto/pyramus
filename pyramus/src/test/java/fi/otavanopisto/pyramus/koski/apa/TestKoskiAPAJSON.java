@@ -13,4 +13,9 @@ public class TestKoskiAPAJSON extends AbstractKoskiTest {
     assertOppija(APAData.getTestStudentMinimal());
   }
 
+  @Test
+  public void test() throws IOException {
+    assertOppija(APAData.getTestStudent());
+  }
+
 }

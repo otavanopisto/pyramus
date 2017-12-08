@@ -4,6 +4,8 @@ import java.util.Date;
 
 import fi.otavanopisto.pyramus.koski.AbstractKoskiData;
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
+import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenKurssit2015;
+import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
@@ -11,10 +13,17 @@ import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
+import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
+import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
 import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.Oppija;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
+import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
+import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinSuoritus;
+import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunniste;
+import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnisteOPS2015;
+import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnistePaikallinen;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli;
@@ -67,7 +76,17 @@ public class APOOppiaineenOppimaaraData extends AbstractKoskiData {
         PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, SuorituksenTila.KESKEN, oppiaine);
     opiskeluoikeus.addSuoritus(suoritus);
     
-    suoritus.setVahvistus(getVahvistus(paattymispaiva, ACADEMYOID));
+    // Kurssi 1
+    AikuistenPerusopetuksenKurssinTunniste kurssinTunniste = new AikuistenPerusopetuksenKurssinTunnisteOPS2015(AikuistenPerusopetuksenKurssit2015.ÄI1);
+    AikuistenPerusopetuksenKurssinSuoritus kurssi = new AikuistenPerusopetuksenKurssinSuoritus(kurssinTunniste, SuorituksenTila.VALMIS);
+    kurssi.addArviointi(new KurssinArviointiNumeerinen(ArviointiasteikkoYleissivistava.GRADE_9, paattymispaiva));
+    oppiaine.addOsasuoritus(kurssi);
+    
+    // Kurssi 2
+    kurssinTunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(new PaikallinenKoodi("ÄI123", kuvaus("ABC")));
+    kurssi = new AikuistenPerusopetuksenKurssinSuoritus(kurssinTunniste, SuorituksenTila.VALMIS);
+    kurssi.addArviointi(new KurssinArviointiSanallinen(ArviointiasteikkoYleissivistava.GRADE_S, paattymispaiva, kuvaus("S")));
+    oppiaine.addOsasuoritus(kurssi);
     
     return oppija;
   }

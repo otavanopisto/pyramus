@@ -14,8 +14,18 @@ public class TestKoskiAPOJSON extends AbstractKoskiTest {
   }
 
   @Test
+  public void testOppimaara() throws IOException {
+    assertOppija(APOOppimaaraData.getTestStudent());
+  }
+
+  @Test
   public void testOppiaineenOppimaaraMinimal() throws IOException {
     assertOppija(APOOppiaineenOppimaaraData.getTestStudentMinimal());
+  }
+
+  @Test
+  public void testOppiaineenOppimaara() throws IOException {
+    assertOppija(APOOppiaineenOppimaaraData.getTestStudent());
   }
 
 }

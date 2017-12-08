@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.otavanopisto.pyramus.koski.model.Oppija;
 import io.restassured.module.jsv.JsonSchemaValidator;
 
-public class AbstractKoskiTest {
+public abstract class AbstractKoskiTest {
 
   public void assertOppija(Oppija oppija) throws JsonGenerationException, JsonMappingException, IOException {
     String oppijaStr = oppijaToString(oppija);
