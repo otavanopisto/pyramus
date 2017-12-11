@@ -4,8 +4,8 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import fi.otavanopisto.pyramus.dao.students.StudentDAO;
-import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.dao.base.PersonDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Person;
 
 @Stateless
 public class KoskiUpdater {
@@ -14,13 +14,13 @@ public class KoskiUpdater {
   private KoskiClient koskiClient;
   
   @Inject
-  private StudentDAO studentDAO;
+  private PersonDAO personDAO;
   
   @Asynchronous
-  public void updateStudent(Long studentId) {
-    Student student = studentDAO.findById(studentId);
+  public void updatePerson(Long personId) {
+    Person person = personDAO.findById(personId);
     try {
-      koskiClient.updateStudent(student);
+      koskiClient.updatePerson(person);
     } catch (KoskiException e) {
     }
   }

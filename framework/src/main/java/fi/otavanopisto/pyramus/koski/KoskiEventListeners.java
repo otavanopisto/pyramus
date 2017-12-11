@@ -17,6 +17,8 @@ import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.events.CourseAssessmentEvent;
 import fi.otavanopisto.pyramus.events.StudentUpdatedEvent;
 import fi.otavanopisto.pyramus.events.TransferCreditEvent;
@@ -35,36 +37,52 @@ public class KoskiEventListeners implements Serializable {
   @Inject
   private KoskiUpdater koskiUpdater;
   
-  private Set<Long> studentIds = new HashSet<>();
+  @Inject
+  private StudentDAO studentDAO;
+  
+  private Set<Long> personIds = new HashSet<>();
   
   @PreDestroy
   private void preDestroy() {
+    System.out.println("sList: " + personIds.stream().map(studentId -> studentId != null ? studentId.toString() : "null").collect(Collectors.joining(", ")));
     if (transactionRegistry.getTransactionStatus() == Status.STATUS_COMMITTED) {
-      for (Long studentId : studentIds) {
-        koskiUpdater.updateStudent(studentId);
+      for (Long personId : personIds) {
+        koskiUpdater.updatePerson(personId);
       }
     } else {
-      if (CollectionUtils.isNotEmpty(studentIds)) {
-        String list = studentIds.stream().map(studentId -> studentId != null ? studentId.toString() : "null").collect(Collectors.joining(", "));
+      if (CollectionUtils.isNotEmpty(personIds)) {
+        String list = personIds.stream().map(studentId -> studentId != null ? studentId.toString() : "null").collect(Collectors.joining(", "));
         
         logger.log(Level.WARNING, String.format("Koski was not updated for students %s as transaction was closed with status %d.", list, transactionRegistry.getTransactionStatus()));
       }
     }
   }
 
+  private void addStudentId(Long studentId) {
+    Student student = studentDAO.findById(studentId);
+    if (student != null && student.getPerson() != null) {
+      personIds.add(student.getPerson().getId());
+    } else {
+      logger.severe(String.format("Student was not found with id %d", studentId));
+    }
+  }
+  
   public void onStudentUpdated(@Observes StudentUpdatedEvent event) {
-    Long studentId = event.getStudentId();
-    studentIds.add(studentId);
+//    Long studentId = event.getStudentId();
+//    studentIds.add(studentId);
+    addStudentId(event.getStudentId());
   }
 
   public void onTransferCreditEvent(@Observes TransferCreditEvent event) {
-    Long studentId = event.getStudentId();
-    studentIds.add(studentId);
+//    Long studentId = event.getStudentId();
+//    studentIds.add(studentId);
+    addStudentId(event.getStudentId());
   }
   
   public void onCourseAssessmentEvent(@Observes CourseAssessmentEvent event) {
-    Long studentId = event.getStudentId();
-    studentIds.add(studentId);
+//    Long studentId = event.getStudentId();
+//    studentIds.add(studentId);
+    addStudentId(event.getStudentId());
   }
   
 }
