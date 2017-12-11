@@ -23,6 +23,9 @@
     <jsp:include page="/templates/generic/ckeditor_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/hovermenu_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/locale_support.jsp"></jsp:include>
+
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/koski.js"></script>
     
     <script type="text/javascript">
       function addAddressTableRow(addressTable) {
@@ -289,7 +292,9 @@
             onclick: function (event) {
               var table = event.tableComponent;
               var valueColumn = table.getNamedColumnIndex('value');
-              table.setCellEditable(event.row, valueColumn, table.isCellEditable(event.row, valueColumn) == false);
+              var editable = table.isCellEditable(event.row, valueColumn) == false;
+              table.setCellEditable(event.row, valueColumn, editable);
+              table.setCellValue(event.row, table.getNamedColumnIndex('edited'), editable ? "1" : "0");
             }
           }, {
             dataType : 'hidden',
@@ -307,6 +312,10 @@
             dataType: 'text',
             editable: false,
             paramName: 'value'
+          }, {
+            dataType: 'hidden',
+            editable: false,
+            paramName: 'edited'
           }]
         });
 
@@ -446,6 +455,9 @@
         
         setupRelatedCommandsBasic();
         setupTags();
+
+        Event.observe($('koski-status'), 'click', toggleKoskiLogDetailsVisibility);
+        loadLogEntries(${person.id});
         
         var personVariables = JSDATA["personVariables"].evalJSON();
         if (personVariables && personVariables.length > 0) {
@@ -567,14 +579,15 @@
         var variables = JSDATA["variables." + studentId].evalJSON();
         if (variables && variables.length > 0) {
           // Student variables
-          variablesTable = initStudentVariableTable(studentId);
+          var variablesTable = initStudentVariableTable(studentId);
 
           for (var i = 0, l = variables.length; i < l; i++) {
             var rowNumber = variablesTable.addRow([
               '',
               variables[i].key,
               variables[i].name,
-              variables[i].value
+              variables[i].value,
+              '0'
             ]);
 
             switch (variables[i].type) {
@@ -740,7 +753,12 @@
       <fmt:message key="students.editStudent.pageTitle">
         <fmt:param value="${person.latestStudent.fullName}"/>
       </fmt:message>
+      
+      <span id="koski-status" class="koski-status">KOSKI</span>
     </h1>
+
+    <div id="koski-status-details" style="display: none;">
+    </div>
 
     <div id="editStudentEditFormContainer"> 
       <div class="genericFormContainer"> 
