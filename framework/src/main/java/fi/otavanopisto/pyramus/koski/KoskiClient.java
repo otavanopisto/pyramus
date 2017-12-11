@@ -152,7 +152,7 @@ public class KoskiClient {
       List<Student> reportedStudents = new ArrayList<>();
       
       for (Student s : student.getPerson().getStudents()) {
-        if (settings.isReportedStudent(student)) {
+        if (settings.isReportedStudent(s)) {
           Opiskeluoikeus o = studentToOpiskeluoikeus(s);
           if (o != null) {
             oppija.addOpiskeluoikeus(o);
