@@ -55,7 +55,6 @@ public class KoskiEventListeners implements Serializable {
   
   @PreDestroy
   private void preDestroy() {
-    System.out.println("sList: " + personIds.stream().map(studentId -> studentId != null ? studentId.toString() : "null").collect(Collectors.joining(", ")));
     if (transactionRegistry.getTransactionStatus() == Status.STATUS_COMMITTED) {
       for (Long personId : personIds) {
         koskiUpdater.updatePerson(personId);
