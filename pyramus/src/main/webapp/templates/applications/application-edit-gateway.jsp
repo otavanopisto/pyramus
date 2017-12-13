@@ -35,13 +35,12 @@
         <c:when test="${notFound eq true}">
           <p class="application-info-paragraph notify">Emme löytäneet hakemusta antamillasi tiedoilla.</p>
           <p class="application-contact-info-description">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</p>
-          <p><b>Vapaan sivistystyön kurssit</b><br/>koulutussihteeri Heli Auvinen<br/>044 794 3565<br/>kurssit@otavanopisto.fi</p>
-          <p><b>Monikulttuuriset koulutukset</b><br/>Anna-Maria Suora<br/>044 794 3515<br/>anna-maria.suora@otavanopisto.fi</p>
-          <p><b>Nettilukio</b><br/>Miia Sivén<br/>040 129 4671<br/>miia.siven@otavanopisto.fi</p>
-          <p><b>Nettiperuskoulu</b><br/>Annukka Manninen<br/>044 794 5108<br/>annukka.manninen@otavanopisto.fi</p>
-          <p><b>Aineopiskelu</b><br/>Sari Jaaranen<br/>044 794 5271<br/>sari.jaaranen@otavanopisto.fi</p>
-          <p><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>p. 015 194 3552<br/>info@otavanopisto.fi</p>
-          <p><b>Bändilinja</b><br/>Jukka Tikkanen<br/>044 794 5103<br/>bandilinja@otavanopisto.fi</p>
+          <p><b>Monikulttuuriset koulutukset</b><br/>Anna-Maria Suora<br/>anna-maria.suora@otavanopisto.fi<br/>044 794 3515</p>
+          <p><b>Nettilukio</b><br/>Eeva Lehikoinen<br/>eeva.lehikoinen@otavanopisto.fi<br/>044 794 5107</p>
+          <p><b>Nettiperuskoulu</b><br/>Elise Hokkanen<br/>elise.hokkanen@otavanopisto.fi<br/>044 794 3273</p>
+          <p><b>Aineopiskelu</b><br/>Sari Jaaranen<br/>sari.jaaranen@otavanopisto.fi<br/>044 794 5271</p>
+          <p><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavanopisto.fi<br/>015 194 3552</p>
+          <p><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
           <p></p>
           <p><a href="/applications/edit.page">Takaisin edelliselle sivule</a></p>
         </c:when>
@@ -53,17 +52,16 @@
               <p class="application-contact-info-description">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä hakemuksesi käsittelijään:</p>
               <p>${handlerName}<br/>${handlerEmail}</p>
               <p></p>
-              <p><a href="/applications/edit.page">Takaisin edelliselle sivule</a></p>
+              <p><a href="/applications/edit.page">Takaisin edelliselle sivulle</a></p>
             </c:when>
             <c:otherwise>
               <p class="application-contact-info-description">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</p>
-              <p><b>Vapaan sivistystyön kurssit</b><br/>koulutussihteeri Heli Auvinen<br/>044 794 3565<br/>kurssit@otavanopisto.fi</p>
-              <p><b>Monikulttuuriset koulutukset</b><br/>Anna-Maria Suora<br/>044 794 3515<br/>anna-maria.suora@otavanopisto.fi</p>
-              <p><b>Nettilukio</b><br/>Miia Sivén<br/>040 129 4671<br/>miia.siven@otavanopisto.fi</p>
-              <p><b>Nettiperuskoulu</b><br/>Annukka Manninen<br/>044 794 5108<br/>annukka.manninen@otavanopisto.fi</p>
-              <p><b>Aineopiskelu</b><br/>Sari Jaaranen<br/>044 794 5271<br/>sari.jaaranen@otavanopisto.fi</p>
-              <p><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>p. 015 194 3552<br/>info@otavanopisto.fi</p>
-              <p><b>Bändilinja</b><br/>Jukka Tikkanen<br/>044 794 5103<br/>bandilinja@otavanopisto.fi</p>
+              <p><b>Monikulttuuriset koulutukset</b><br/>Anna-Maria Suora<br/>anna-maria.suora@otavanopisto.fi<br/>044 794 3515</p>
+              <p><b>Nettilukio</b><br/>Eeva Lehikoinen<br/>eeva.lehikoinen@otavanopisto.fi<br/>044 794 5107</p>
+              <p><b>Nettiperuskoulu</b><br/>Elise Hokkanen<br/>elise.hokkanen@otavanopisto.fi<br/>044 794 3273</p>
+              <p><b>Aineopiskelu</b><br/>Sari Jaaranen<br/>sari.jaaranen@otavanopisto.fi<br/>044 794 5271</p>
+              <p><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavanopisto.fi<br/>015 194 3552</p>
+              <p><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
               <p></p>
               <p><a href="/applications/edit.page">Takaisin edelliselle sivule</a></p>
             </c:otherwise>
