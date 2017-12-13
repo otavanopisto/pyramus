@@ -1,9 +1,13 @@
 package fi.otavanopisto.pyramus.koski.model.apa;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +25,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.KoskiException;
@@ -40,11 +45,13 @@ import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
+import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
+import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOpiskeluoikeus;
 
 public class KoskiAPAStudentHandler extends KoskiStudentHandler {
@@ -67,6 +74,9 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     if (studyOid != null) {
       opiskeluoikeus.setOid(studyOid);
     }
+    
+    opiskeluoikeus.setLisatiedot(getLisatiedot(student));
+    
     handleLinkedStudyOID(student, opiskeluoikeus);
     
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
@@ -99,6 +109,31 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     return opiskeluoikeus;
   }
   
+  private AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
+    AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot lisatiedot = new AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot();
+    
+    lisatiedot.setVuosiluokkiinSitoutumatonOpetus(true);
+    
+    List<StudentLodgingPeriod> lodgingPeriods = lodgingPeriodDAO.listByStudent(student);
+    for (StudentLodgingPeriod lodgingPeriod : lodgingPeriods) {
+      lisatiedot.addSisaoppilaitosmainenMajoitus(new Majoitusjakso(lodgingPeriod.getBegin(), lodgingPeriod.getEnd()));
+    }
+    
+    if (!lodgingPeriods.isEmpty()) {
+      Date minBeginDate = lodgingPeriods.stream().map(StudentLodgingPeriod::getBegin).filter(Objects::nonNull)
+          .min(Comparator.nullsLast(Date::compareTo)).orElse(null);
+      
+      if (minBeginDate != null) {
+        Date maxEndDate = lodgingPeriods.stream().map(StudentLodgingPeriod::getEnd).filter(Objects::nonNull)
+            .max(Comparator.nullsLast(Date::compareTo)).orElse(null);
+        
+        lisatiedot.setOikeusMaksuttomaanAsuntolapaikkaan(new Majoitusjakso(minBeginDate, maxEndDate));
+      }
+    }
+    
+    return lisatiedot;
+  }
+
   private StudentSubjectSelections getDefaultStudentSubjectSelections() {
     StudentSubjectSelections studentSubjects = new StudentSubjectSelections();
     studentSubjects.setA1Languages("aena");
@@ -149,7 +184,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
 
   private APAOppiaineenSuoritus getSubject(Student student, EducationType studentEducationType, 
       StudentSubjectSelections studentSubjects, Subject subject, Map<String, APAOppiaineenSuoritus> map) {
-    String subjectCode = subject.getCode();
+    String subjectCode = subjectCode(subject);
 
     if (map.containsKey(subjectCode)) {
       return map.get(subjectCode);
