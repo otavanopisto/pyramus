@@ -230,7 +230,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
   }
   
   private LukionOppiaineenSuoritus getSubject(Student student, EducationType studentEducationType, Subject subject, StudentSubjectSelections studentSubjects, Map<String, LukionOppiaineenSuoritus> map) {
-    String subjectCode = subject.getCode();
+    String subjectCode = subjectCode(subject);
 
     if (map.containsKey(subjectCode))
       return map.get(subjectCode);
