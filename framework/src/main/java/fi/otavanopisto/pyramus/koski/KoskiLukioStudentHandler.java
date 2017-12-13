@@ -304,10 +304,11 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       }
     }
 
-    String[] religionSubjects = new String[] { "UE", "UO", "ET" };
+    String[] religionSubjects = new String[] { "UE", "UO" };
     
     if (matchingEducationType && ArrayUtils.contains(religionSubjects, subjectCode)) {
-      if (StringUtils.equals(subjectCode, studentSubjects.getReligion()) || StringUtils.equals(subjectCode, "ET")) {
+      // Only the religion that student has selected is reported
+      if (StringUtils.equals(subjectCode, studentSubjects.getReligion())) {
         if (map.containsKey("KT"))
           return map.get("KT");
         

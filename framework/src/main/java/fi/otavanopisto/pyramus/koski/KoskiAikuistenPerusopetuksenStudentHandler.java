@@ -267,10 +267,11 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       }
     }
 
-    String[] religionSubjects = new String[] { "ue", "uo", "et" };
+    String[] religionSubjects = new String[] { "ue", "uo" };
     
     if (matchingEducationType && ArrayUtils.contains(religionSubjects, subjectCode)) {
-      if (StringUtils.equals(subjectCode, studentSubjects.getReligion()) || StringUtils.equals(subjectCode, "et")) {
+      // Only the religion that student has selected is reported
+      if (StringUtils.equals(subjectCode, studentSubjects.getReligion())) {
         if (map.containsKey("KT"))
           return map.get("KT");
         
