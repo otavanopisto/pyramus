@@ -18,6 +18,7 @@
       <option value="nettipk" data-underage-support="true" data-attachment-support="true">Nettiperuskoulu</option>
       <option value="aikuislukio" data-underage-support="true" data-attachment-support="true">Aikuislukio</option>
       <option value="bandilinja" data-underage-support="true" data-attachment-support="true">Bändilinja</option>
+      <option value="laakislinja" data-underage-support="true" data-attachment-support="false">Lääkislinja</option>
       <option value="mk" data-underage-support="false" data-attachment-support="true">Maahanmuuttajakoulutukset</option>
     </select>
 
@@ -39,6 +40,10 @@
     
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="bandilinja">
       <p><!-- TODO Bändilinjan esittelyteksti --></p>
+    </div>
+
+    <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="laakislinja">
+      <p>Lääkislinjalla kerrataan ja syvennetään lukion biologian, fysiikan ja kemian oppimääriä, tehdään harjoituspääsykokeita ja valmistaudutaan lääketieteellisen pääsykokeisiin.</p>
     </div>
     
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="mk">
@@ -204,7 +209,7 @@
 
     <h3 class="application-form-section-header">Huoltajan tiedot</h3>
 
-    <div class="field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja">
+    <div class="field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,laakislinja">
       <label for="field-underage-grounds">Alaikäisen hakemusperusteet</label>
       <textarea name="field-underage-grounds" rows="5" cols="40"></textarea>
     </div>
@@ -255,7 +260,7 @@
 
     <h3 class="application-form-section-header">Hakemiseen tarvittavat lisätiedot</h3>
 
-    <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja">
+    <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,laakislinja">
       <label for="field-previous-studies" class="required">Aiemmat opinnot (listaa myös keskeytyneet)</label>
       <textarea name="field-previous-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
     </div>
@@ -351,7 +356,7 @@
       <textarea name="field-info" rows="5" cols="40"></textarea>
     </div>
 
-    <div class="field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio,bandilinja,mk">
+    <div class="field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio,bandilinja,laakislinja,mk">
       <div class="field-row-flex">
         <div class="field-row-element">
           <input type="checkbox" id="field-lodging" name="field-lodging" value="kylla">
