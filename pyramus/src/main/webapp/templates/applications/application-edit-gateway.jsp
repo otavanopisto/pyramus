@@ -41,8 +41,9 @@
           <p><b>Aineopiskelu</b><br/>Sari Jaaranen<br/>sari.jaaranen@otavanopisto.fi<br/>044 794 5271</p>
           <p><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavanopisto.fi<br/>015 194 3552</p>
           <p><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
+          <p><b>Lääkislinja</b><br/>Minna Vähämäki<br/>minna.vahamaki@otavanopisto.fi<br/>040 189 7053</p>
           <p></p>
-          <p><a href="/applications/edit.page">Takaisin edelliselle sivule</a></p>
+          <p><a href="/applications/edit.page">Takaisin edelliselle sivulle</a></p>
         </c:when>
         <c:when test="${locked eq true}">
           <p class="application-info-paragraph in-progress">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty.</p>
@@ -62,6 +63,7 @@
               <p><b>Aineopiskelu</b><br/>Sari Jaaranen<br/>sari.jaaranen@otavanopisto.fi<br/>044 794 5271</p>
               <p><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavanopisto.fi<br/>015 194 3552</p>
               <p><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
+              <p><b>Lääkislinja</b><br/>Minna Vähämäki<br/>minna.vahamaki@otavanopisto.fi<br/>040 189 7053</p>
               <p></p>
               <p><a href="/applications/edit.page">Takaisin edelliselle sivule</a></p>
             </c:otherwise>
