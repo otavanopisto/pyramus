@@ -39,7 +39,7 @@
 
 		<!-- REST-assured -->
 
-		<rest-assured.version>3.0.3</rest-assured.version>
+		<rest-assured.version>3.0.6</rest-assured.version>
 
 		<!-- Hamcrest -->
 
