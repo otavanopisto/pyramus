@@ -62,16 +62,39 @@ public class ApplicationMailerUtils {
       // Mail to the applicant
 
       JSONObject formData = JSONObject.fromObject(application.getFormData());
-      String line = ApplicationUtils.applicationLineUiValue(formData.getString("field-line"));
+      String line = formData.getString("field-line");
+      String lineUi = ApplicationUtils.applicationLineUiValue(line);
       String surname = application.getLastName();
       String referenceCode = application.getReferenceCode();
       String applicantMail = application.getEmail();
       String guardianMail = formData.getString("field-underage-email");
       try {
+        
+        // Confirmation mail subject and content
+        
         String subject = "Hakemus opiskelemaan Otavan Opistoon vastaanotettu";
-        String content = IOUtils.toString(
-            httpRequest.getServletContext().getResourceAsStream("/templates/applications/mail-confirmation.html"));
-        content = String.format(content, line, surname, referenceCode);
+        String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+            "/templates/applications/mail-confirmation.html"));
+        
+        // #577: Contact information depends on the line selected; append suitable footer to mail content
+        
+        try {
+          String contentFooter = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+              String.format("/templates/applications/mail-confirmation-footer-%s.html", line)));
+          if (contentFooter != null) {
+            content += contentFooter;
+          }
+        }
+        catch (Exception e) {
+          logger.log(Level.WARNING, String.format("No mail confirmation footer for line %s", line), e);
+        }
+        
+        // Replace the dynamic parts of the mail content
+        
+        content = String.format(content, lineUi, surname, referenceCode);
+        
+        // Send mail to applicant or, for minors, applicant and guardian
+        
         if (StringUtils.isEmpty(guardianMail)) {
           Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content);
         }
@@ -79,7 +102,7 @@ public class ApplicationMailerUtils {
           Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content);
         }
 
-        // Notification mails and log entries
+        // Handle notification mails and log entries
 
         ApplicationUtils.sendNotifications(application, httpRequest, null, true);
       }

@@ -1,7 +1,10 @@
 package fi.otavanopisto.pyramus.koski.model.apa;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import fi.otavanopisto.pyramus.koski.model.Laajuus;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class APAKurssinTunniste {
 
   public Laajuus getLaajuus() {

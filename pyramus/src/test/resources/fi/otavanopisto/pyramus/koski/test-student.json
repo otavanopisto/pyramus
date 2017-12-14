@@ -1,0 +1,624 @@
+{
+	"opiskeluoikeudet": [
+		{
+			"oid": "1.2.246.562.15.41093583288",
+			"tyyppi": {
+				"koodiarvo": "lukiokoulutus",
+				"koodistoUri": "opiskeluoikeudentyyppi"
+			},
+			"tila": {
+				"opiskeluoikeusjaksot": [
+					{
+						"alku": "2017-09-14",
+						"tila": {
+							"koodiarvo": "lasna",
+							"koodistoUri": "koskiopiskeluoikeudentila"
+						},
+						"opintojenRahoitus": {
+							"koodiarvo": "1",
+							"koodistoUri": "opintojenrahoitus"
+						}
+					},
+					{
+						"alku": "2017-09-29",
+						"tila": {
+							"koodiarvo": "valmistunut",
+							"koodistoUri": "koskiopiskeluoikeudentila"
+						}
+					}
+				]
+			},
+			"suoritukset": [
+				{
+					"toimipiste": {
+						"oid": "1.2.246.562.10.51720121923"
+					},
+					"vahvistus": {
+						"paikkakunta": {
+							"koodiarvo": "491",
+							"koodistoUri": "kunta"
+						},
+						"päivä": "2017-09-29",
+						"myöntäjäOrganisaatio": {
+							"oid": "1.2.246.562.10.51720121923"
+						},
+						"myöntäjäHenkilöt": [
+							{
+								"nimi": "Jari Kinnula",
+								"titteli": {
+									"fi": "vararehtori"
+								},
+								"organisaatio": {
+									"oid": "1.2.246.562.10.51720121923"
+								}
+							}
+						]
+					},
+					"suorituskieli": {
+						"koodiarvo": "FI",
+						"koodistoUri": "kieli"
+					},
+					"tyyppi": {
+						"koodiarvo": "lukionoppimaara",
+						"koodistoUri": "suorituksentyyppi"
+					},
+					"tila": {
+						"koodiarvo": "VALMIS",
+						"koodistoUri": "suorituksentila"
+					},
+					"koulutusmoduuli": {
+						"perusteenDiaarinumero": "70/011/2015",
+						"tunniste": {
+							"koodiarvo": "309902",
+							"koodistoUri": "koulutus"
+						}
+					},
+					"osasuoritukset": [
+						{
+							"koulutusmoduuli": {
+								"pakollinen": true,
+								"tunniste": {
+									"koodiarvo": "AI",
+									"koodistoUri": "koskioppiaineetyleissivistava"
+								},
+								"kieli": {
+									"koodiarvo": "AI1",
+									"koodistoUri": "oppiaineaidinkielijakirjallisuus"
+								}
+							},
+							"arviointi": [
+								{
+									"arvosana": {
+										"koodiarvo": "8",
+										"koodistoUri": "arviointiasteikkoyleissivistava"
+									},
+									"päivä": "2017-09-29"
+								}
+							],
+							"tyyppi": {
+								"koodiarvo": "lukionoppiaine",
+								"koodistoUri": "suorituksentyyppi"
+							},
+							"osasuoritukset": [
+								{
+									"koulutusmoduuli": {
+										"kurssinTyyppi": {
+											"koodiarvo": "pakollinen",
+											"koodistoUri": "lukionkurssintyyppi"
+										},
+										"tunniste": {
+											"koodiarvo": "ÄI1",
+											"koodistoUri": "lukionkurssit"
+										}
+									},
+									"tila": {
+										"koodiarvo": "VALMIS",
+										"koodistoUri": "suorituksentila"
+									},
+									"arviointi": [
+										{
+											"arvosana": {
+												"koodiarvo": "8",
+												"koodistoUri": "arviointiasteikkoyleissivistava"
+											},
+											"päivä": "2017-09-21"
+										}
+									],
+									"tyyppi": {
+										"koodiarvo": "lukionkurssi",
+										"koodistoUri": "suorituksentyyppi"
+									},
+									"suoritettuLukiodiplomina": false,
+									"suoritettuSuullisenaKielikokeena": false
+								}
+							]
+						},
+						{
+							"koulutusmoduuli": {
+								"pakollinen": false,
+								"tunniste": {
+									"koodiarvo": "RUB1",
+									"nimi": {
+										"fi": "Ruotsi"
+									}
+								},
+								"kuvaus": {
+									"fi": "Ruotsi"
+								}
+							},
+							"arviointi": [
+								{
+									"arvosana": {
+										"koodiarvo": "6",
+										"koodistoUri": "arviointiasteikkoyleissivistava"
+									},
+									"päivä": "2017-09-29"
+								}
+							],
+							"tyyppi": {
+								"koodiarvo": "lukionoppiaine",
+								"koodistoUri": "suorituksentyyppi"
+							},
+							"osasuoritukset": [
+								{
+									"koulutusmoduuli": {
+										"kurssinTyyppi": {
+											"koodiarvo": "pakollinen",
+											"koodistoUri": "lukionkurssintyyppi"
+										},
+										"tunniste": {
+											"koodiarvo": "RUB13",
+											"koodistoUri": "lukionkurssit"
+										}
+									},
+									"tila": {
+										"koodiarvo": "VALMIS",
+										"koodistoUri": "suorituksentila"
+									},
+									"arviointi": [
+										{
+											"arvosana": {
+												"koodiarvo": "6",
+												"koodistoUri": "arviointiasteikkoyleissivistava"
+											},
+											"päivä": "2017-11-10"
+										}
+									],
+									"tunnustettu": {
+										"selite": {
+											"fi": "Hyväksiluku"
+										}
+									},
+									"tyyppi": {
+										"koodiarvo": "lukionkurssi",
+										"koodistoUri": "suorituksentyyppi"
+									},
+									"suoritettuLukiodiplomina": false,
+									"suoritettuSuullisenaKielikokeena": false
+								}
+							]
+						},
+						{
+							"koulutusmoduuli": {
+								"pakollinen": true,
+								"tunniste": {
+									"koodiarvo": "MA",
+									"koodistoUri": "koskioppiaineetyleissivistava"
+								},
+								"oppimäärä": {
+									"koodiarvo": "MAA",
+									"koodistoUri": "oppiainematematiikka"
+								}
+							},
+							"arviointi": [
+								{
+									"arvosana": {
+										"koodiarvo": "6",
+										"koodistoUri": "arviointiasteikkoyleissivistava"
+									},
+									"päivä": "2017-09-29"
+								}
+							],
+							"tyyppi": {
+								"koodiarvo": "lukionoppiaine",
+								"koodistoUri": "suorituksentyyppi"
+							},
+							"osasuoritukset": [
+								{
+									"koulutusmoduuli": {
+										"kurssinTyyppi": {
+											"koodiarvo": "pakollinen",
+											"koodistoUri": "lukionkurssintyyppi"
+										},
+										"tunniste": {
+											"koodiarvo": "MAA2",
+											"koodistoUri": "lukionkurssit"
+										}
+									},
+									"tila": {
+										"koodiarvo": "VALMIS",
+										"koodistoUri": "suorituksentila"
+									},
+									"arviointi": [
+										{
+											"arvosana": {
+												"koodiarvo": "6",
+												"koodistoUri": "arviointiasteikkoyleissivistava"
+											},
+											"päivä": "2017-09-25"
+										}
+									],
+									"tyyppi": {
+										"koodiarvo": "lukionkurssi",
+										"koodistoUri": "suorituksentyyppi"
+									},
+									"suoritettuLukiodiplomina": false,
+									"suoritettuSuullisenaKielikokeena": false
+								}
+							]
+						},
+						{
+							"koulutusmoduuli": {
+								"pakollinen": true,
+								"tunniste": {
+									"koodiarvo": "HI",
+									"koodistoUri": "koskioppiaineetyleissivistava"
+								}
+							},
+							"arviointi": [
+								{
+									"arvosana": {
+										"koodiarvo": "8",
+										"koodistoUri": "arviointiasteikkoyleissivistava"
+									},
+									"päivä": "2017-09-29"
+								}
+							],
+							"tyyppi": {
+								"koodiarvo": "lukionoppiaine",
+								"koodistoUri": "suorituksentyyppi"
+							},
+							"osasuoritukset": [
+								{
+									"koulutusmoduuli": {
+										"kurssinTyyppi": {
+											"koodiarvo": "pakollinen",
+											"koodistoUri": "lukionkurssintyyppi"
+										},
+										"tunniste": {
+											"koodiarvo": "HI1",
+											"koodistoUri": "lukionkurssit"
+										}
+									},
+									"tila": {
+										"koodiarvo": "VALMIS",
+										"koodistoUri": "suorituksentila"
+									},
+									"arviointi": [
+										{
+											"arvosana": {
+												"koodiarvo": "7",
+												"koodistoUri": "arviointiasteikkoyleissivistava"
+											},
+											"päivä": "2017-09-25"
+										}
+									],
+									"tyyppi": {
+										"koodiarvo": "lukionkurssi",
+										"koodistoUri": "suorituksentyyppi"
+									},
+									"suoritettuLukiodiplomina": false,
+									"suoritettuSuullisenaKielikokeena": false
+								},
+								{
+									"koulutusmoduuli": {
+										"kurssinTyyppi": {
+											"koodiarvo": "pakollinen",
+											"koodistoUri": "lukionkurssintyyppi"
+										},
+										"tunniste": {
+											"koodiarvo": "HI2",
+											"koodistoUri": "lukionkurssit"
+										}
+									},
+									"tila": {
+										"koodiarvo": "VALMIS",
+										"koodistoUri": "suorituksentila"
+									},
+									"arviointi": [
+										{
+											"arvosana": {
+												"koodiarvo": "8",
+												"koodistoUri": "arviointiasteikkoyleissivistava"
+											},
+											"päivä": "2017-09-25"
+										}
+									],
+									"tyyppi": {
+										"koodiarvo": "lukionkurssi",
+										"koodistoUri": "suorituksentyyppi"
+									},
+									"suoritettuLukiodiplomina": false,
+									"suoritettuSuullisenaKielikokeena": false
+								}
+							]
+						},
+						{
+							"koulutusmoduuli": {
+								"pakollinen": false,
+								"tunniste": {
+									"koodiarvo": "AT",
+									"nimi": {
+										"fi": "Tietotekniikka"
+									}
+								},
+								"kuvaus": {
+									"fi": "Tietotekniikka"
+								}
+							},
+							"arviointi": [
+								{
+									"arvosana": {
+										"koodiarvo": "10",
+										"koodistoUri": "arviointiasteikkoyleissivistava"
+									},
+									"päivä": "2017-09-29"
+								}
+							],
+							"tyyppi": {
+								"koodiarvo": "lukionoppiaine",
+								"koodistoUri": "suorituksentyyppi"
+							},
+							"osasuoritukset": [
+								{
+									"koulutusmoduuli": {
+										"kurssinTyyppi": {
+											"koodiarvo": "syventava",
+											"koodistoUri": "lukionkurssintyyppi"
+										},
+										"tunniste": {
+											"koodiarvo": "AT2",
+											"nimi": {
+												"fi": "Tietotekniikka"
+											}
+										},
+										"kuvaus": {
+											"fi": "AT2 - Tekstinkäsittely"
+										}
+									},
+									"tila": {
+										"koodiarvo": "VALMIS",
+										"koodistoUri": "suorituksentila"
+									},
+									"arviointi": [
+										{
+											"arvosana": {
+												"koodiarvo": "10",
+												"koodistoUri": "arviointiasteikkoyleissivistava"
+											},
+											"päivä": "2017-09-25"
+										}
+									],
+									"tyyppi": {
+										"koodiarvo": "lukionkurssi",
+										"koodistoUri": "suorituksentyyppi"
+									},
+									"suoritettuLukiodiplomina": false,
+									"suoritettuSuullisenaKielikokeena": false
+								}
+							]
+						},
+						{
+							"koulutusmoduuli": {
+								"pakollinen": true,
+								"tunniste": {
+									"koodiarvo": "BI",
+									"koodistoUri": "koskioppiaineetyleissivistava"
+								}
+							},
+							"arviointi": [
+								{
+									"arvosana": {
+										"koodiarvo": "7",
+										"koodistoUri": "arviointiasteikkoyleissivistava"
+									},
+									"päivä": "2017-09-29"
+								}
+							],
+							"tyyppi": {
+								"koodiarvo": "lukionoppiaine",
+								"koodistoUri": "suorituksentyyppi"
+							},
+							"osasuoritukset": [
+								{
+									"koulutusmoduuli": {
+										"kurssinTyyppi": {
+											"koodiarvo": "pakollinen",
+											"koodistoUri": "lukionkurssintyyppi"
+										},
+										"tunniste": {
+											"koodiarvo": "BI1",
+											"koodistoUri": "lukionkurssit"
+										}
+									},
+									"tila": {
+										"koodiarvo": "VALMIS",
+										"koodistoUri": "suorituksentila"
+									},
+									"arviointi": [
+										{
+											"arvosana": {
+												"koodiarvo": "7",
+												"koodistoUri": "arviointiasteikkoyleissivistava"
+											},
+											"päivä": "2017-10-18"
+										}
+									],
+									"tunnustettu": {
+										"selite": {
+											"fi": "Hyväksiluku"
+										}
+									},
+									"tyyppi": {
+										"koodiarvo": "lukionkurssi",
+										"koodistoUri": "suorituksentyyppi"
+									},
+									"suoritettuLukiodiplomina": false,
+									"suoritettuSuullisenaKielikokeena": false
+								}
+							]
+						},
+						{
+							"koulutusmoduuli": {
+								"pakollinen": false,
+								"tunniste": {
+									"koodiarvo": "MU",
+									"koodistoUri": "koskioppiaineetyleissivistava"
+								}
+							},
+							"arviointi": [
+								{
+									"arvosana": {
+										"koodiarvo": "9",
+										"koodistoUri": "arviointiasteikkoyleissivistava"
+									},
+									"päivä": "2017-09-29"
+								}
+							],
+							"tyyppi": {
+								"koodiarvo": "lukionoppiaine",
+								"koodistoUri": "suorituksentyyppi"
+							},
+							"osasuoritukset": [
+								{
+									"koulutusmoduuli": {
+										"kurssinTyyppi": {
+											"koodiarvo": "pakollinen",
+											"koodistoUri": "lukionkurssintyyppi"
+										},
+										"tunniste": {
+											"koodiarvo": "MU1",
+											"koodistoUri": "lukionkurssit"
+										}
+									},
+									"tila": {
+										"koodiarvo": "VALMIS",
+										"koodistoUri": "suorituksentila"
+									},
+									"arviointi": [
+										{
+											"arvosana": {
+												"koodiarvo": "9",
+												"koodistoUri": "arviointiasteikkoyleissivistava"
+											},
+											"päivä": "2017-09-29"
+										}
+									],
+									"tyyppi": {
+										"koodiarvo": "lukionkurssi",
+										"koodistoUri": "suorituksentyyppi"
+									},
+									"suoritettuLukiodiplomina": false,
+									"suoritettuSuullisenaKielikokeena": false
+								}
+							]
+						},
+						{
+							"koulutusmoduuli": {
+								"pakollinen": false,
+								"tunniste": {
+									"koodiarvo": "OP",
+									"koodistoUri": "koskioppiaineetyleissivistava"
+								}
+							},
+							"arviointi": [
+								{
+									"arvosana": {
+										"koodiarvo": "S",
+										"koodistoUri": "arviointiasteikkoyleissivistava"
+									},
+									"päivä": "2017-09-29"
+								}
+							],
+							"tyyppi": {
+								"koodiarvo": "lukionoppiaine",
+								"koodistoUri": "suorituksentyyppi"
+							},
+							"osasuoritukset": [
+								{
+									"koulutusmoduuli": {
+										"kurssinTyyppi": {
+											"koodiarvo": "syventava",
+											"koodistoUri": "lukionkurssintyyppi"
+										},
+										"tunniste": {
+											"koodiarvo": "OP1",
+											"koodistoUri": "lukionkurssit"
+										}
+									},
+									"tila": {
+										"koodiarvo": "VALMIS",
+										"koodistoUri": "suorituksentila"
+									},
+									"arviointi": [
+										{
+											"arvosana": {
+												"koodiarvo": "S",
+												"koodistoUri": "arviointiasteikkoyleissivistava"
+											},
+											"kuvaus": {
+												"fi": "S"
+											},
+											"päivä": "2017-11-28"
+										}
+									],
+									"tyyppi": {
+										"koodiarvo": "lukionkurssi",
+										"koodistoUri": "suorituksentyyppi"
+									},
+									"suoritettuLukiodiplomina": false,
+									"suoritettuSuullisenaKielikokeena": false
+								}
+							]
+						}
+					],
+					"oppimäärä": {
+						"koodiarvo": "aikuistenops",
+						"koodistoUri": "lukionoppimaara"
+					}
+				}
+			],
+			"alkamispäivä": "2017-09-14",
+			"päättymispäivä": "2017-09-29",
+			"lähdejärjestelmänId": {
+				"id": "17419",
+				"lähdejärjestelmä": {
+					"koodiarvo": "pyramus",
+					"koodistoUri": "lahdejarjestelma"
+				}
+			},
+			"lisätiedot": {
+				"ulkomainenVaihtoopiskelija": false,
+				"yksityisopiskelija": false,
+				"oikeusMaksuttomaanAsuntolapaikkaan": true,
+				"pidennettyPäättymispäivä": false,
+				"sisäoppilaitosmainenMajoitus": [
+					{
+						"alku": "2017-08-08",
+						"loppu": "2017-08-11"
+					},
+					{
+						"alku": "2017-10-02"
+					}
+				]
+			}
+		}
+	],
+	"henkilö": {
+		"oid": "1.2.246.562.24.00000000044",
+		"hetu": "111111A111C",
+		"etunimet": "Lilli",
+		"sukunimi": "Liputin",
+		"kutsumanimi": "Lilli"
+	}
+}
