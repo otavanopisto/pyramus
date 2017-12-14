@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.koski;
 
 import java.io.StringWriter;
+import java.net.ConnectException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -29,6 +31,8 @@ import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonLog;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
@@ -50,7 +54,6 @@ public class KoskiClient {
 
   private static final String KOSKI_STUDYPERMISSION_ID = "koski.studypermission-id";
   private static final String KOSKI_HENKILO_OID = "koski.henkilo-oid";
-  private static final String KOSKI_SKIPPED_STUDENT = "koski.skippedStudent";
   
   private static final String KOSKI_SETTINGKEY_BASEURL = "koski.baseUrl";
   private static final String KOSKI_SETTINGKEY_AUTH = "koski.auth";
@@ -122,7 +125,14 @@ public class KoskiClient {
         logger.log(Level.WARNING, String.format("Can not update student (%d) with missing person or studyprogramme.", student.getId()));
         return;
       }
-  
+
+      // Does the person have any reported study programmes
+      if (!settings.hasReportedStudents(student.getPerson())) {
+        return;
+      }
+
+      clearPersonLog(student.getPerson());
+      
       String personOid = personVariableDAO.findByPersonAndKey(student.getPerson(), KOSKI_HENKILO_OID);
       
       if (StringUtils.isBlank(student.getPerson().getSocialSecurityNumber()) && StringUtils.isBlank(personOid)) {
@@ -142,14 +152,11 @@ public class KoskiClient {
       List<Student> reportedStudents = new ArrayList<>();
       
       for (Student s : student.getPerson().getStudents()) {
-        if (settings.isEnabledStudyProgramme(s.getStudyProgramme().getId())) {
-          boolean skipped = Boolean.valueOf(userVariableDAO.findByUserAndKey(s, KOSKI_SKIPPED_STUDENT));
-          if (!skipped) {
-            Opiskeluoikeus o = studentToOpiskeluoikeus(s);
-            if (o != null) {
-              oppija.addOpiskeluoikeus(o);
-              reportedStudents.add(s);
-            }
+        if (settings.isReportedStudent(s)) {
+          Opiskeluoikeus o = studentToOpiskeluoikeus(s);
+          if (o != null) {
+            oppija.addOpiskeluoikeus(o);
+            reportedStudents.add(s);
           }
         }
       }
@@ -234,6 +241,15 @@ public class KoskiClient {
         if (ex instanceof KoskiException) {
           reason = ((KoskiException) ex).getState();
         }
+        
+        if (ex instanceof ProcessingException) {
+          ProcessingException pe = (ProcessingException) ex;
+          
+          if (pe.getCause() instanceof ConnectException) {
+            reason = KoskiPersonState.SERVER_UNAVAILABLE;
+          }
+        }
+        
         // Log failed event
         koskiPersonLogDAO.create(student.getPerson(), reason, new Date());
       } catch (Exception e) {
@@ -241,6 +257,11 @@ public class KoskiClient {
       
       logger.log(Level.SEVERE, String.format("Unknown failure while updating person %d", student.getPerson().getId()), ex);
     }
+  }
+
+  private void clearPersonLog(Person person) {
+    List<KoskiPersonLog> entries = koskiPersonLogDAO.listByPerson(person);
+    entries.forEach(entry -> koskiPersonLogDAO.delete(entry));
   }
 
   private String getCallname(Student student) {
