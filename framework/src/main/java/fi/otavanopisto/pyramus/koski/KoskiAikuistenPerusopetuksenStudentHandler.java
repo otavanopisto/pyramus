@@ -131,6 +131,11 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
           oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, academyIdentifier));
         opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
       }
+      
+      if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
+        return null;
+      }
     }
     
     return opiskeluoikeus;
