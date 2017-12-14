@@ -299,7 +299,13 @@
     });
 
     $(applicationSections).each(function(index, section) {
-      $(section).find(':input').attr('data-parsley-group', 'block-' + index);
+      $(section).find(':input').each(function(idx, input) {
+        $(input).attr('data-parsley-group', 'block-' + index);
+        // #545: Validate fields as soon as they lose focus
+        $(input).on('focusout', function() {
+          $(input).parsley().validate();
+        });
+      });
     });
     navigateTo($(applicationSections).get(0));
 
