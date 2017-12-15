@@ -1,10 +1,13 @@
 package fi.otavanopisto.pyramus.koski;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +25,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenKurssit2015;
 import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenPaattovaiheenKurssit2017;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
@@ -36,6 +40,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
+import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
@@ -46,6 +51,7 @@ import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusop
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnisteOPS2015;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnistePV2017;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnistePaikallinen;
+import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli;
@@ -75,8 +81,12 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(student.getId()));
     opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
     opiskeluoikeus.setPaattymispaiva(student.getStudyEndDate());
-    if (studyOid != null)
+    if (studyOid != null) {
       opiskeluoikeus.setOid(studyOid);
+    }
+
+    opiskeluoikeus.setLisatiedot(getLisatiedot(student));
+    
     handleLinkedStudyOID(student, opiskeluoikeus);
     
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
@@ -121,11 +131,41 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
           oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, academyIdentifier));
         opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
       }
+      
+      if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
+        return null;
+      }
     }
     
     return opiskeluoikeus;
   }
   
+  private AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
+    AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot lisatiedot = new AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot();
+    
+    lisatiedot.setVuosiluokkiinSitoutumatonOpetus(true);
+    
+    List<StudentLodgingPeriod> lodgingPeriods = lodgingPeriodDAO.listByStudent(student);
+    for (StudentLodgingPeriod lodgingPeriod : lodgingPeriods) {
+      lisatiedot.addSisaoppilaitosmainenMajoitus(new Majoitusjakso(lodgingPeriod.getBegin(), lodgingPeriod.getEnd()));
+    }
+    
+    if (!lodgingPeriods.isEmpty()) {
+      Date minBeginDate = lodgingPeriods.stream().map(StudentLodgingPeriod::getBegin).filter(Objects::nonNull)
+          .min(Comparator.nullsLast(Date::compareTo)).orElse(null);
+      
+      if (minBeginDate != null) {
+        Date maxEndDate = lodgingPeriods.stream().map(StudentLodgingPeriod::getEnd).filter(Objects::nonNull)
+            .max(Comparator.nullsLast(Date::compareTo)).orElse(null);
+        
+        lisatiedot.setOikeusMaksuttomaanAsuntolapaikkaan(new Majoitusjakso(minBeginDate, maxEndDate));
+      }
+    }
+    
+    return lisatiedot;
+  }
+
   private StudentSubjectSelections getDefaultSubjectSelections() {
     StudentSubjectSelections studentSubjects = new StudentSubjectSelections();
     studentSubjects.setPrimaryLanguage("äi");
@@ -179,7 +219,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
 
   private AikuistenPerusopetuksenOppiaineenSuoritus getSubject(Student student, EducationType studentEducationType, 
       StudentSubjectSelections studentSubjects, Subject subject, Map<String, AikuistenPerusopetuksenOppiaineenSuoritus> map) {
-    String subjectCode = subject.getCode();
+    String subjectCode = subjectCode(subject);
 
     // SubjectCode for religious subjects is different
     if (StringUtils.equals(subjectCode, "ue") || StringUtils.equals(subjectCode, "uo") || StringUtils.equals(subjectCode, "et"))
@@ -232,10 +272,11 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       }
     }
 
-    String[] religionSubjects = new String[] { "ue", "uo", "et" };
+    String[] religionSubjects = new String[] { "ue", "uo" };
     
     if (matchingEducationType && ArrayUtils.contains(religionSubjects, subjectCode)) {
-      if (StringUtils.equals(subjectCode, studentSubjects.getReligion()) || StringUtils.equals(subjectCode, "et")) {
+      // Only the religion that student has selected is reported
+      if (StringUtils.equals(subjectCode, studentSubjects.getReligion())) {
         if (map.containsKey("KT"))
           return map.get("KT");
         

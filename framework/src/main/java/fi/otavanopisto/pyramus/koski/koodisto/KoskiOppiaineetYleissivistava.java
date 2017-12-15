@@ -11,6 +11,7 @@ public enum KoskiOppiaineetYleissivistava {
   B2,
   B3,
   BI,
+  ET,
   FI,
   FY,
   GE,

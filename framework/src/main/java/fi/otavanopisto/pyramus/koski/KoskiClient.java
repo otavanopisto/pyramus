@@ -111,47 +111,51 @@ public class KoskiClient {
     return null;
   }
   
-  public void updateStudent(Student student) throws KoskiException {
+  public void updatePerson(Person person) throws KoskiException {
     try {
       if (!settings.isEnabled())
         return;
       
-      if (student == null) {
-        logger.log(Level.WARNING, "updateStudent called with null student.");
+      if (person == null) {
+        logger.log(Level.WARNING, "updateStudent called with null person.");
         return;
       }
       
-      if (student.getPerson() == null || student.getStudyProgramme() == null) {
-        logger.log(Level.WARNING, String.format("Can not update student (%d) with missing person or studyprogramme.", student.getId()));
-        return;
-      }
-
       // Does the person have any reported study programmes
-      if (!settings.hasReportedStudents(student.getPerson())) {
+      if (!settings.hasReportedStudents(person)) {
         return;
       }
 
-      clearPersonLog(student.getPerson());
+      clearPersonLog(person);
       
-      String personOid = personVariableDAO.findByPersonAndKey(student.getPerson(), KOSKI_HENKILO_OID);
+      String personOid = personVariableDAO.findByPersonAndKey(person, KOSKI_HENKILO_OID);
       
-      if (StringUtils.isBlank(student.getPerson().getSocialSecurityNumber()) && StringUtils.isBlank(personOid)) {
-        logger.warning(String.format("Can not update person (%d) without SSN or OID.", student.getPerson().getId()));
+      if (StringUtils.isBlank(person.getSocialSecurityNumber()) && StringUtils.isBlank(personOid)) {
+        logger.warning(String.format("Can not update person (%d) without SSN or OID.", person.getId()));
+        koskiPersonLogDAO.create(person, KoskiPersonState.NO_UNIQUE_ID, new Date());
+        return;
+      }
+      
+      Student latestStudent = person.getLatestStudent();
+      
+      if (latestStudent == null) {
+        logger.severe(String.format("Could not resolve latest student for person %d.", person.getId()));
+        koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date());
         return;
       }
       
       Henkilo henkilo;
       if (StringUtils.isNotBlank(personOid))
-        henkilo = new HenkiloTiedotJaOID(personOid, student.getPerson().getSocialSecurityNumber(), student.getFirstName(), student.getLastName(), getCallname(student));
+        henkilo = new HenkiloTiedotJaOID(personOid, person.getSocialSecurityNumber(), latestStudent.getFirstName(), latestStudent.getLastName(), getCallname(latestStudent));
       else
-        henkilo = new HenkiloUusi(student.getPerson().getSocialSecurityNumber(), student.getFirstName(), student.getLastName(), getCallname(student));
+        henkilo = new HenkiloUusi(person.getSocialSecurityNumber(), latestStudent.getFirstName(), latestStudent.getLastName(), getCallname(latestStudent));
 
       Oppija oppija = new Oppija();
       oppija.setHenkilo(henkilo);
       
       List<Student> reportedStudents = new ArrayList<>();
       
-      for (Student s : student.getPerson().getStudents()) {
+      for (Student s : person.getStudents()) {
         if (settings.isReportedStudent(s)) {
           Opiskeluoikeus o = studentToOpiskeluoikeus(s);
           if (o != null) {
@@ -162,7 +166,7 @@ public class KoskiClient {
       }
       
       if (oppija.getOpiskeluoikeudet().size() == 0) {
-        logger.info(String.format("Updating person %d was skipped due to no updateable study permits.", student.getPerson().getId()));
+        logger.info(String.format("Updating person %d was skipped due to no updateable study permits.", person.getId()));
         return;
       }
       
@@ -193,7 +197,7 @@ public class KoskiClient {
           
           if (StringUtils.isEmpty(personOid)) {
             // If the oid was empty in db, save the given one
-            personVariableDAO.setPersonVariable(student.getPerson(), KOSKI_HENKILO_OID, servedPersonOid);
+            personVariableDAO.setPersonVariable(person, KOSKI_HENKILO_OID, servedPersonOid);
           } else {
             // Validate the oid is the same
             if (!StringUtils.equals(personOid, servedPersonOid))
@@ -218,7 +222,7 @@ public class KoskiClient {
                     throw new RuntimeException(String.format("Returned study permit oid %s doesn't match the saved oid %s.", servedStudyOid, studyOid));
                 }
               } else {
-                logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id was -1 (Person %d).", student.getPerson().getId()));
+                logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id was -1 (Person %d).", person.getId()));
               }
             } else {
               logger.log(Level.WARNING, String.format("Could not update student oid because returned source system was not defined or isn't this system."));
@@ -227,13 +231,13 @@ public class KoskiClient {
         }
 
         // Log successful event
-        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.SUCCESS, new Date());
-        logger.info(String.format("KoskiClient: successfully updated person %d.", student.getPerson().getId()));
+        koskiPersonLogDAO.create(person, KoskiPersonState.SUCCESS, new Date());
+        logger.info(String.format("KoskiClient: successfully updated person %d.", person.getId()));
       } else {
         String ret = response.readEntity(String.class);
         // Log failed event
-        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.SERVER_FAILURE, new Date());
-        logger.log(Level.SEVERE, String.format("Koski server returned %d when trying to create person %d. Content %s", response.getStatus(), student.getPerson().getId(), ret));
+        koskiPersonLogDAO.create(person, KoskiPersonState.SERVER_FAILURE, new Date());
+        logger.log(Level.SEVERE, String.format("Koski server returned %d when trying to create person %d. Content %s", response.getStatus(), person.getId(), ret));
       }
     } catch (Exception ex) {
       try {
@@ -251,11 +255,11 @@ public class KoskiClient {
         }
         
         // Log failed event
-        koskiPersonLogDAO.create(student.getPerson(), reason, new Date());
+        koskiPersonLogDAO.create(person, reason, new Date());
       } catch (Exception e) {
       }
       
-      logger.log(Level.SEVERE, String.format("Unknown failure while updating person %d", student.getPerson().getId()), ex);
+      logger.log(Level.SEVERE, String.format("Unknown failure while updating person %d", person.getId()), ex);
     }
   }
 

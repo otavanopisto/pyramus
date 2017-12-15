@@ -8,6 +8,8 @@ public enum KoskiPersonState {
   SERVER_UNAVAILABLE,
   UNKNOWN_FAILURE, 
   NO_CURRICULUM,
+  NO_UNIQUE_ID,
+  NO_RESOLVABLE_SUBJECTS,
   LINKED_MISSING_VALUES;
   
   /* Pending states */
@@ -15,7 +17,7 @@ public enum KoskiPersonState {
   /* Success states */
   public static KoskiPersonState[] SUCCESS_STATES = { SUCCESS };
   /* Warning states which indicate succeeded update but with warnings */
-  public static KoskiPersonState[] WARNING_STATES = { LINKED_MISSING_VALUES };
+  public static KoskiPersonState[] WARNING_STATES = { LINKED_MISSING_VALUES, NO_RESOLVABLE_SUBJECTS };
   /* Error states which prevent the update altogether */
-  public static KoskiPersonState[] ERROR_STATES = { SERVER_FAILURE, SERVER_UNAVAILABLE, UNKNOWN_FAILURE, NO_CURRICULUM };
+  public static KoskiPersonState[] ERROR_STATES = { SERVER_FAILURE, SERVER_UNAVAILABLE, UNKNOWN_FAILURE, NO_CURRICULUM, NO_UNIQUE_ID };
 }
