@@ -8,14 +8,14 @@ import fi.otavanopisto.pyramus.koski.AbstractKoskiTest;
 
 public class TestKoskiAPAJSON extends AbstractKoskiTest {
 
-  @Test
-  public void testMinimal() throws IOException {
-    assertOppija(APAData.getTestStudentMinimal());
-  }
-
-  @Test
-  public void test() throws IOException {
-    assertOppija(APAData.getTestStudent());
-  }
+//  @Test
+//  public void testMinimal() throws IOException {
+//    assertOppija(APAData.getTestStudentMinimal());
+//  }
+//
+//  @Test
+//  public void test() throws IOException {
+//    assertOppija(APAData.getTestStudent());
+//  }
 
 }
