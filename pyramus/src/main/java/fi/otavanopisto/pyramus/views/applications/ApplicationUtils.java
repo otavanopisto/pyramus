@@ -62,6 +62,8 @@ public class ApplicationUtils {
       return "Aikuislukio";
     case "bandilinja":
       return "Bändilinja";
+    case "kasvatustieteet":
+      return "Kasvatustieteen linja";
     case "laakislinja":
       return "Lääkislinja";
     case "mk":

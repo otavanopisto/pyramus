@@ -140,6 +140,11 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
           oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, academyIdentifier));
         opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
       }
+      
+      if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
+        return null;
+      }
     }
     
     return opiskeluoikeus;
@@ -230,7 +235,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
   }
   
   private LukionOppiaineenSuoritus getSubject(Student student, EducationType studentEducationType, Subject subject, StudentSubjectSelections studentSubjects, Map<String, LukionOppiaineenSuoritus> map) {
-    String subjectCode = subject.getCode();
+    String subjectCode = subjectCode(subject);
 
     if (map.containsKey(subjectCode))
       return map.get(subjectCode);
@@ -304,10 +309,11 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       }
     }
 
-    String[] religionSubjects = new String[] { "UE", "UO", "ET" };
+    String[] religionSubjects = new String[] { "UE", "UO" };
     
     if (matchingEducationType && ArrayUtils.contains(religionSubjects, subjectCode)) {
-      if (StringUtils.equals(subjectCode, studentSubjects.getReligion()) || StringUtils.equals(subjectCode, "ET")) {
+      // Only the religion that student has selected is reported
+      if (StringUtils.equals(subjectCode, studentSubjects.getReligion())) {
         if (map.containsKey("KT"))
           return map.get("KT");
         

@@ -205,7 +205,7 @@ public class KoskiStudentHandler {
       Subject subject = course != null ? course.getSubject() : null;
       
       if (matchingCurriculum(student, course)) {
-        String courseCode = subject.getCode() + course.getCourseNumber();
+        String courseCode = courseCode(subject, course.getCourseNumber(), ca.getId());
         CreditStub stub;
         if (!stubs.containsKey(courseCode)) {
           stub = new CreditStub(courseCode, course.getCourseNumber(), course.getName(), subject);
@@ -220,7 +220,7 @@ public class KoskiStudentHandler {
     
     for (TransferCredit tc : transferCredits) {
       if (matchingCurriculum(student, tc)) {
-        String courseCode = tc.getSubject().getCode() + tc.getCourseNumber();
+        String courseCode = courseCode(tc.getSubject(), tc.getCourseNumber(), tc.getId());
         CreditStub stub;
         if (!stubs.containsKey(courseCode)) {
           stub = new CreditStub(courseCode, tc.getCourseNumber(), tc.getCourseName(), tc.getSubject());
@@ -267,7 +267,7 @@ public class KoskiStudentHandler {
       }
       
       if (allNotNull(subject, courseNumber, courseName)) {
-        String courseCode = subject.getCode() + courseNumber;
+        String courseCode = courseCode(subject, courseNumber, cl.getCredit().getId());
         CreditStub stub;
         if (!stubs.containsKey(courseCode)) {
           stub = new CreditStub(courseCode, courseNumber, courseName, subject);
@@ -283,6 +283,26 @@ public class KoskiStudentHandler {
     List<CreditStub> stubList = new ArrayList<>(stubs.values());
     stubList.sort((a, b) -> ObjectUtils.compare(a.getCourseNumber(), b.getCourseNumber()));
     return stubList;
+  }
+
+  protected String courseCode(Subject subject, Integer courseNumber, Long creditId) {
+    if (subject != null && StringUtils.isNotBlank(subject.getCode()) && courseNumber != null) {
+      return subject.getCode() + courseNumber;
+    } else {
+      return String.valueOf(creditId);
+    }
+  }
+  
+  protected String subjectCode(Subject subject) {
+    if (subject != null) {
+      if (StringUtils.isNotBlank(subject.getCode())) {
+        return subject.getCode();
+      } else {
+        return subject.getId().toString();
+      }
+    } else {
+      return null;
+    }
   }
   
   protected boolean matchingCurriculum(Student student, Course course) {

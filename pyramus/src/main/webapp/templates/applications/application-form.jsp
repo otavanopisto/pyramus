@@ -18,6 +18,7 @@
       <option value="nettipk" data-underage-support="true" data-attachment-support="true">Nettiperuskoulu</option>
       <option value="aikuislukio" data-underage-support="true" data-attachment-support="true">Aikuislukio</option>
       <option value="bandilinja" data-underage-support="true" data-attachment-support="true">Bändilinja</option>
+      <option value="kasvatustieteet" data-underage-support="true" data-attachment-support="false">Kasvatustieteen linja</option>
       <option value="laakislinja" data-underage-support="true" data-attachment-support="false">Lääkislinja</option>
       <option value="mk" data-underage-support="false" data-attachment-support="true">Maahanmuuttajakoulutukset</option>
     </select>
@@ -40,6 +41,10 @@
     
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="bandilinja">
       <p><!-- TODO Bändilinjan esittelyteksti --></p>
+    </div>
+
+    <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="kasvatustieteet">
+      <p><!-- TODO Kasvatustieteen linjan esittelyteksti --></p>
     </div>
 
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="laakislinja">
