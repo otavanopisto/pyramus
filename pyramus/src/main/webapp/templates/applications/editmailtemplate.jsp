@@ -64,6 +64,7 @@
               <option value="nettipk" <c:if test="${template.line == 'nettipk'}">selected="selected"</c:if>>Nettiperuskoulu</option>
               <option value="aikuislukio" <c:if test="${template.line == 'aikuislukio'}">selected="selected"</c:if>>Aikuislukio</option>
               <option value="bandilinja" <c:if test="${template.line == 'bandilinja'}">selected="selected"</c:if>>Bändilinja</option>
+              <option value="kasvatustieteet" <c:if test="${template.line == 'kasvatustieteet'}">selected="selected"</c:if>>Kasvatustieteen linja</option>
               <option value="laakislinja" <c:if test="${template.line == 'laakislinja'}">selected="selected"</c:if>>Lääkislinja</option>
               <option value="mk" <c:if test="${template.line == 'mk'}">selected="selected"</c:if>>Maahanmuuttajakoulutukset</option>
             </select>
