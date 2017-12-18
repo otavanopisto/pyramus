@@ -22,6 +22,8 @@ public abstract class AbstractKoskiTest {
   public void assertOppija(Oppija oppija) throws JsonGenerationException, JsonMappingException, IOException {
     String oppijaStr = oppijaToString(oppija);
     
+    System.out.println("GENEROITU: " + oppijaStr);
+    
     assertThat(oppijaStr, getSchemaValidator());
   }
   
@@ -38,6 +40,11 @@ public abstract class AbstractKoskiTest {
     InputStream resource = AbstractKoskiTest.class.getResourceAsStream("koski-oppija-schema.json");
     
 //    return matchesJsonSchema(new InputStreamReader(resource, Charset.defaultCharset()));
-    return matchesJsonSchema(IOUtils.toString(resource, "UTF-8"));
+    
+    String s = IOUtils.toString(resource, "UTF-8");
+    
+    System.out.println("SCHEMA: " + s);
+    
+    return matchesJsonSchema(s);
   }
 }
