@@ -466,7 +466,7 @@
     </profile>
 
     <profile>
-      <id>rest-it</id>
+      <id>it</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
