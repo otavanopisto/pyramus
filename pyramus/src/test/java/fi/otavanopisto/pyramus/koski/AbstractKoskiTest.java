@@ -22,6 +22,7 @@ public abstract class AbstractKoskiTest {
   public void assertOppija(Oppija oppija) throws JsonGenerationException, JsonMappingException, IOException {
     String oppijaStr = oppijaToString(oppija);
     
+    System.out.println("=======================================================");
     System.out.println("GENEROITU: " + oppijaStr);
     
     assertThat(oppijaStr, getSchemaValidator());
@@ -43,6 +44,7 @@ public abstract class AbstractKoskiTest {
     
     String s = IOUtils.toString(resource, "UTF-8");
     
+    System.out.println("=======================================================");
     System.out.println("SCHEMA: " + s);
     
     return matchesJsonSchema(s);
