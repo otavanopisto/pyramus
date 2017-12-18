@@ -5,11 +5,10 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+
+import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -35,9 +34,10 @@ public abstract class AbstractKoskiTest {
     return writer.toString();
   }
   
-  protected JsonSchemaValidator getSchemaValidator() throws UnsupportedEncodingException {
+  protected JsonSchemaValidator getSchemaValidator() throws IOException {
     InputStream resource = AbstractKoskiTest.class.getResourceAsStream("koski-oppija-schema.json");
     
-    return matchesJsonSchema(new InputStreamReader(resource, Charset.defaultCharset()));
+//    return matchesJsonSchema(new InputStreamReader(resource, Charset.defaultCharset()));
+    return matchesJsonSchema(IOUtils.toString(resource, "UTF-8"));
   }
 }
