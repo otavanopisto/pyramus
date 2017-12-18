@@ -448,13 +448,13 @@
             </configuration>
             <executions>
               <execution>
-                <id>integration-test</id>
+                <id>koski-integration-test</id>
                 <goals>
                   <goal>integration-test</goal>
                 </goals>
               </execution>
               <execution>
-                <id>verify</id>
+                <id>koski-verify</id>
                 <goals>
                   <goal>verify</goal>
                 </goals>
@@ -513,6 +513,7 @@
             <configuration>
               <includes>
                 <include>fi/otavanopisto/pyramus/rest/**/*IT.java</include>
+                <include>fi/otavanopisto/pyramus/koski/**/*IT.java</include>
               </includes>
               <systemPropertyVariables>
                 <it.project.version>${project.version}</it.project.version>
