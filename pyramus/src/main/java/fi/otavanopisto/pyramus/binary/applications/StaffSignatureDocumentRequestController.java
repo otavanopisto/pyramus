@@ -1,39 +1,20 @@
 package fi.otavanopisto.pyramus.binary.applications;
 
-import java.io.ByteArrayOutputStream;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.io.IOUtils;
-import org.xhtmlrenderer.pdf.ITextRenderer;
-
-import fi.internetix.smvc.SmvcRuntimeException;
-import fi.internetix.smvc.StatusCode;
 import fi.internetix.smvc.controllers.BinaryRequestContext;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.BinaryRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.json.applications.OnnistuuClient;
 
 public class StaffSignatureDocumentRequestController extends BinaryRequestController {
 
   public void process(BinaryRequestContext binaryRequestContext) {
-    try {
-      HttpServletRequest httpRequest = binaryRequestContext.getRequest();
-      StringBuilder baseUrl = new StringBuilder();
-      baseUrl.append(httpRequest.getScheme());
-      baseUrl.append("://");
-      baseUrl.append(httpRequest.getServerName());
-      baseUrl.append(":");
-      baseUrl.append(httpRequest.getServerPort());
-      String document = IOUtils.toString(binaryRequestContext.getServletContext().getResourceAsStream("/templates/applications/document-staff-signed.html"), "UTF-8");
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      ITextRenderer renderer = new ITextRenderer();
-      renderer.setDocumentFromString(document, baseUrl.toString());
-      renderer.layout();
-      renderer.createPDF(out);
-      binaryRequestContext.setResponseContent(out.toByteArray(), "application/pdf");
-    } catch (Exception e) {
-      throw new SmvcRuntimeException(StatusCode.FILE_HANDLING_FAILURE, "Unable to serve document", e);
-    }
+    OnnistuuClient oc = OnnistuuClient.getInstance();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StaffMember staffMember = staffMemberDAO.findById(binaryRequestContext.getLoggedUserId());
+    binaryRequestContext.setResponseContent(oc.generateStaffSignatureDocument(binaryRequestContext, "Kerkko Paavali Perämetsä", "nettipk", staffMember), "application/pdf");
   }
 
   public UserRole[] getAllowedRoles() {
