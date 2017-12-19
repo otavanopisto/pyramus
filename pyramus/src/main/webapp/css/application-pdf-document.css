@@ -45,13 +45,13 @@ body {
   margin: 0 0 10px;
 }
 
-.document__signing-primary,
-.document__signing-secondary {
+.document__signature-primary,
+.document__signature-secondary {
   margin: 80px 0;
 }
 
-.document__signing-primary p,
-.document__signing-secondary p {
+.document__signature-primary p,
+.document__signature-secondary p {
   margin: 0 0 5px;
 }
 
