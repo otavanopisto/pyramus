@@ -205,7 +205,6 @@ public class KoskiSettings {
   
   public boolean isReportedStudent(Student student) {
     return 
-        Boolean.FALSE.equals(student.getArchived()) &&
         isEnabledStudyProgramme(student.getStudyProgramme()) &&
         !Boolean.valueOf(userVariableDAO.findByUserAndKey(student, KOSKI_SKIPPED_STUDENT));
   }

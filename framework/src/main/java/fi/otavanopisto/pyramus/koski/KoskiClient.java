@@ -211,15 +211,21 @@ public class KoskiClient {
               long servedStudentId = NumberUtils.toLong(opiskeluoikeus.getLahdejarjestelmanId().getId(), -1);
               if (servedStudentId != -1) {
                 Student reportedStudent = studentDAO.findById(servedStudentId);
-                String studyOid = userVariableDAO.findByUserAndKey(reportedStudent, KOSKI_STUDYPERMISSION_ID);
-                String servedStudyOid = opiskeluoikeus.getOid();
+                
+                if (!reportedStudent.getArchived()) {
+                  String studyOid = userVariableDAO.findByUserAndKey(reportedStudent, KOSKI_STUDYPERMISSION_ID);
+                  String servedStudyOid = opiskeluoikeus.getOid();
 
-                if (StringUtils.isBlank(studyOid)) {
-                  userVariableDAO.setUserVariable(reportedStudent, KOSKI_STUDYPERMISSION_ID, servedStudyOid);
+                  if (StringUtils.isBlank(studyOid)) {
+                    userVariableDAO.setUserVariable(reportedStudent, KOSKI_STUDYPERMISSION_ID, servedStudyOid);
+                  } else {
+                    // Validate the oid is the same
+                    if (!StringUtils.equals(studyOid, servedStudyOid))
+                      throw new RuntimeException(String.format("Returned study permit oid %s doesn't match the saved oid %s.", servedStudyOid, studyOid));
+                  }
                 } else {
-                  // Validate the oid is the same
-                  if (!StringUtils.equals(studyOid, servedStudyOid))
-                    throw new RuntimeException(String.format("Returned study permit oid %s doesn't match the saved oid %s.", servedStudyOid, studyOid));
+                  // For archived student the studypermission oid is cleared as Koski doesn't want to receive this id ever again
+                  userVariableDAO.setUserVariable(reportedStudent, KOSKI_STUDYPERMISSION_ID, null);
                 }
               } else {
                 logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id was -1 (Person %d).", person.getId()));
