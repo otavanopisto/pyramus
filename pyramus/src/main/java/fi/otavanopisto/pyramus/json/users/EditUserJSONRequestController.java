@@ -16,6 +16,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
+import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -102,6 +103,15 @@ public class EditUserJSONRequestController extends JSONRequestController {
     
     staffDAO.update(user, firstName, lastName, role);
     staffDAO.updateTitle(user, title);
+    
+    // SSN
+
+    String ssn = requestContext.getString("ssn");
+    String existingSsn = user.getPerson().getSocialSecurityNumber();
+    if (!StringUtils.equals(ssn, existingSsn)) {
+      PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+      personDAO.updateSocialSecurityNumber(user.getPerson(), ssn);
+    }
 
     // Tags
 
