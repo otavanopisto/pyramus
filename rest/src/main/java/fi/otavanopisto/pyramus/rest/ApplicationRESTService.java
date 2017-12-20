@@ -99,9 +99,9 @@ public class ApplicationRESTService extends AbstractRESTService {
     
     // Ensure attachment storage has been defined
     
-    String attachmentsFolder = getSettingValue("application.storagePath");
+    String attachmentsFolder = getSettingValue("applications.storagePath");
     if (StringUtils.isEmpty(attachmentsFolder)) {
-      logger.log(Level.SEVERE, "application.storagePath not set");
+      logger.log(Level.SEVERE, "applications.storagePath not set");
       return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
 
@@ -168,9 +168,9 @@ public class ApplicationRESTService extends AbstractRESTService {
 
     // Ensure attachment storage has been defined
     
-    String attachmentsFolder = getSettingValue("application.storagePath");
+    String attachmentsFolder = getSettingValue("applications.storagePath");
     if (StringUtils.isEmpty(attachmentsFolder)) {
-      logger.log(Level.SEVERE, "application.storagePath not set");
+      logger.log(Level.SEVERE, "applications.storagePath not set");
       return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
     
@@ -203,9 +203,9 @@ public class ApplicationRESTService extends AbstractRESTService {
 
     // Ensure attachment storage has been defined
     
-    String attachmentsFolder = getSettingValue("application.storagePath");
+    String attachmentsFolder = getSettingValue("applications.storagePath");
     if (StringUtils.isEmpty(attachmentsFolder)) {
-      logger.log(Level.SEVERE, "application.storagePath not set");
+      logger.log(Level.SEVERE, "applications.storagePath not set");
       return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
     
@@ -252,9 +252,9 @@ public class ApplicationRESTService extends AbstractRESTService {
 
     // Ensure attachment storage has been defined
     
-    String attachmentsFolder = getSettingValue("application.storagePath");
+    String attachmentsFolder = getSettingValue("applications.storagePath");
     if (StringUtils.isEmpty(attachmentsFolder)) {
-      logger.log(Level.SEVERE, "application.storagePath not set");
+      logger.log(Level.SEVERE, "applications.storagePath not set");
       return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
     
