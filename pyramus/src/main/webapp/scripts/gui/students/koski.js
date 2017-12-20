@@ -23,6 +23,9 @@ function loadLogEntries(personId) {
         }
       }
       $('koski-status').addClassName('koski-' + status.toLowerCase());
+    },
+    onFailure: function() {
+      // Not that critical to do anything
     }
   });
 }
