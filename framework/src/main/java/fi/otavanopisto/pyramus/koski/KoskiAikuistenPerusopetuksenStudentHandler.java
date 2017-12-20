@@ -77,11 +77,16 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
 
+    // Skip student if it is archived and the studyoid is blank
+    if (Boolean.TRUE.equals(student.getArchived()) && StringUtils.isBlank(studyOid)) {
+      return null;
+    }
+    
     AikuistenPerusopetuksenOpiskeluoikeus opiskeluoikeus = new AikuistenPerusopetuksenOpiskeluoikeus();
     opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(student.getId()));
     opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
     opiskeluoikeus.setPaattymispaiva(student.getStudyEndDate());
-    if (studyOid != null) {
+    if (StringUtils.isNotBlank(studyOid)) {
       opiskeluoikeus.setOid(studyOid);
     }
 
@@ -89,7 +94,8 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     
     handleLinkedStudyOID(student, opiskeluoikeus);
     
-    OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
+    OpiskeluoikeudenTila jaksonTila = !Boolean.TRUE.equals(student.getArchived()) ? OpiskeluoikeudenTila.lasna : OpiskeluoikeudenTila.mitatoity;
+    OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), jaksonTila);
     jakso.setOpintojenRahoitus(new KoodistoViite<>(student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6));
     opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
 

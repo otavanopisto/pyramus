@@ -26,6 +26,7 @@ import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonLog;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.events.CourseAssessmentEvent;
+import fi.otavanopisto.pyramus.events.StudentArchivedEvent;
 import fi.otavanopisto.pyramus.events.StudentUpdatedEvent;
 import fi.otavanopisto.pyramus.events.TransferCreditEvent;
 
@@ -70,6 +71,10 @@ public class KoskiEventListeners implements Serializable {
   }
 
   public void onStudentUpdated(@Observes StudentUpdatedEvent event) {
+    studentChanged(event.getStudentId());
+  }
+  
+  public void onStudentArchived(@Observes StudentArchivedEvent event) {
     studentChanged(event.getStudentId());
   }
 
