@@ -4,6 +4,8 @@ import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchema;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 
@@ -31,7 +33,9 @@ public abstract class AbstractKoskiTest {
     return writer.toString();
   }
   
-  protected JsonSchemaValidator getSchemaValidator() {
-    return matchesJsonSchema(AbstractKoskiTest.class.getResource("koski-oppija-schema.json"));
+  protected JsonSchemaValidator getSchemaValidator() throws IOException {
+    InputStream resource = AbstractKoskiTest.class.getResourceAsStream("koski-oppija-schema.json");
+    
+    return matchesJsonSchema(new InputStreamReader(resource, "UTF-8"));
   }
 }

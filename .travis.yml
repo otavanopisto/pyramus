@@ -21,7 +21,7 @@ env:
 before_script:
   - export JAVA_OPTS="-Djava.net.preferIPv4Addresses=true -Djava.net.preferIPv4Stack=true"
   - export _JAVA_OPTIONS="-Xmx2048m -Xms512m -Djava.net.preferIPv4Addresses=true -Djava.net.preferIPv4Stack=true"
-script: mvn verify -Prest-it
+script: mvn verify -Pit
 after_success:
 - if [ $TRAVIS_PULL_REQUEST == false ]; then
     python travis-prepare-maven.py & wait;

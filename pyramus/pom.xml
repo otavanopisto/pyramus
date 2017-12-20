@@ -420,7 +420,53 @@
 
   <profiles>
     <profile>
-      <id>rest-it</id>
+      <id>koski-it</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+
+      <properties>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.14.1</version>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.19</version>
+            <configuration>
+              <includes>
+                <include>fi/otavanopisto/pyramus/koski/**/*IT.java</include>
+              </includes>
+            </configuration>
+            <executions>
+              <execution>
+                <id>koski-integration-test</id>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>koski-verify</id>
+                <goals>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>it</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
@@ -467,6 +513,7 @@
             <configuration>
               <includes>
                 <include>fi/otavanopisto/pyramus/rest/**/*IT.java</include>
+                <include>fi/otavanopisto/pyramus/koski/**/*IT.java</include>
               </includes>
               <systemPropertyVariables>
                 <it.project.version>${project.version}</it.project.version>
