@@ -448,6 +448,9 @@
               .text('Hyväksymisasiakirja')
           );
         $('.signatures-document-link').show();
+        if (docState == 'PDF_UPLOADED') {
+          showSignatures();
+        }
       }
       else {
         $('#signatures-generate-document-button').show();
@@ -471,6 +474,7 @@
                 );
                 $('#signatures-generate-document-button').hide();
                 $('.signatures-document-link').show();
+                showSignatures();
               }
               else {
                 $('.notification-queue').notificationQueue('notification', 'error', response.reason);
@@ -482,6 +486,20 @@
           });
         });
       }
+    }
+    function showSignatures() {
+      $.getJSON('/applications/listsignaturesources.json', function(data) {
+        $.each(data.sources.methods, function(index, method) {
+          $('.signatures-auth-container').append(
+            $('<img>')
+              .addClass('auth-source')
+              .attr('src', method.image)
+              .attr('data-identifier', method.identifier)
+              .attr('title', method.name)
+          );
+        });
+        $('.signatures-auth-container').show();          
+      });
     }
   });
   

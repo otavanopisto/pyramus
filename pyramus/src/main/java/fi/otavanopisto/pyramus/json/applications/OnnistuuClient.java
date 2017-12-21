@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.ajax.JSON;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import fi.internetix.smvc.controllers.RequestContext;
@@ -106,6 +107,12 @@ public class OnnistuuClient {
       logger.log(Level.SEVERE, e.getMessage(), e);
       throw new OnnistuuClientException(String.format("PDF-dokumentin hakeminen epäonnistui (%s)", e.getMessage()));
     }
+  }
+  
+  public JSONObject listSignatureSources() throws OnnistuuClientException {
+    Response response = doGet("/api/v1/auth/methods");
+    String jsonData = response.readEntity(String.class);
+    return response.getStatus() == 200 ? JSONObject.fromObject(jsonData) : null;
   }
   
   private Response doGet(String path) throws OnnistuuClientException {

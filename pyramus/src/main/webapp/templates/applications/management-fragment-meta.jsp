@@ -52,7 +52,6 @@
         <div class="signatures-document-link" style="display:none;"></div>
       </div>
       <div class="signatures-auth-container" style="display:none;">
-        <p>Allekirjoita</p>
         <div class="signatures-auth-sources"></div>
       </div>
     </div>
