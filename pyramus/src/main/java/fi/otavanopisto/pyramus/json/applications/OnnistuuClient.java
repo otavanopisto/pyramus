@@ -1,12 +1,13 @@
 package fi.otavanopisto.pyramus.json.applications;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +20,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
@@ -43,14 +43,14 @@ public class OnnistuuClient {
     return INSTANCE;
   }
   
-  public String createDocument(String name) {
-    
+  public String createDocument(String name) throws OnnistuuClientException {
+
     // Payload
     
     JSONObject document = new JSONObject();
-    document.put("name",  name);
+    document.put("name", name);
     JSONObject payload = new JSONObject();
-    payload.put("document",  document);
+    payload.put("document", document);
     String json = payload.toString(); 
     
     // Call
@@ -62,42 +62,53 @@ public class OnnistuuClient {
     // Validation
     
     if (response.getStatus() == 201) {
-      String location = StringUtils.substringAfterLast(response.getHeaderString("Location"), "/");
-      if (StringUtils.length(location) != 36) { // should be uuid
-        // ERROR!
+      String location = response.getHeaderString("Location");
+      String documentId = StringUtils.substringAfterLast(location, "/");
+      if (StringUtils.length(documentId) != 36) { // should be uuid
+        logger.severe(String.format("Invalid Onnistuu document uuid %s parsed from location %s", documentId, location));
+        throw new OnnistuuClientException("Virheellinen dokumenttitunniste");
       }
-      return location;
+      return documentId;
     }
     else {
-      // ERROR!
+      int status = response.getStatus();
+      String reason = response.getStatusInfo().getReasonPhrase();
+      logger.severe(String.format("Onnistuu response %d: %s", status, reason));
+      throw new OnnistuuClientException(String.format("Onnistuu-dokumentin luonti epäonnistui (%d: %s)", status, reason));
     }
-    // TODO RuntimeException
-    return null;
   }
   
-  public void addPdf(String document, byte[] pdf) {
+  public void addPdf(String document, byte[] pdf) throws OnnistuuClientException {
     Entity<byte[]> entity = Entity.entity(pdf, "application/pdf");
     String contentMd5 = getMd5(pdf);
     Response response = doPost(String.format("/api/v1/document/%s/files", document), contentMd5, "application/pdf", entity);
-    if (response.getStatus() == 201) {
-      
-    }
-    // ERROR
-    // TODO RuntimeException
-    
-    System.out.println("Response status code: " + response.getStatus());
-    if (response.getStatusInfo() != null) {
-      System.out.println("Response status reason: " + response.getStatusInfo().getReasonPhrase());
-    }
-    MultivaluedMap<String, Object> headers = response.getHeaders();
-    System.out.println(headers.size() + " headers");
-    Set<String> keys = headers.keySet();
-    for (String key : keys) {
-      System.out.println(key + " = " + headers.get(key));
+    if (response.getStatus() != 201) {
+      int status = response.getStatus();
+      String reason = response.getStatusInfo().getReasonPhrase();
+      logger.severe(String.format("Onnistuu response %d: %s", status, reason));
+      throw new OnnistuuClientException(String.format("PDF-dokumentin lähettäminen epäonnistui (%d: %s)", status, reason));
     }
   }
   
-  private Response doGet(String path) {
+  public byte[] getPdf(String document) throws OnnistuuClientException {
+    Response response = doGet(String.format("/api/v1/document/%s/files/0", document));
+    if (response.getStatus() != 200) {
+      int status = response.getStatus();
+      String reason = response.getStatusInfo().getReasonPhrase();
+      logger.severe(String.format("Onnistuu response %d: %s", status, reason));
+      throw new OnnistuuClientException(String.format("PDF-dokumentin hakeminen epäonnistui (%d: %s)", status, reason));
+    }
+    try {
+      InputStream input = response.readEntity(InputStream.class);
+      return IOUtils.toByteArray(input);
+    }
+    catch (IOException e) {
+      logger.log(Level.SEVERE, e.getMessage(), e);
+      throw new OnnistuuClientException(String.format("PDF-dokumentin hakeminen epäonnistui (%s)", e.getMessage()));
+    }
+  }
+  
+  private Response doGet(String path) throws OnnistuuClientException {
     String contentMd5 = getMd5("");
     String date = dateToRFC2822(new Date());
     String auth = getAuthorizationHeader("GET", contentMd5, MediaType.APPLICATION_JSON, date, path);
@@ -112,18 +123,12 @@ public class OnnistuuClient {
     return request.get();
   }
 
-  private Response doPost(String path, String contentMd5, String contentType, Entity entity) {
+  @SuppressWarnings("rawtypes")
+  private Response doPost(String path, String contentMd5, String contentType, Entity entity) throws OnnistuuClientException {
     String date = dateToRFC2822(new Date());
     String auth = getAuthorizationHeader("POST", contentMd5, contentType, date, path);
     Client client = ClientBuilder.newClient();
     WebTarget target = client.target(String.format("https://www.onnistuu.fi%s", path));
-    
-    System.out.println("POST URI: " + target.getUri().toString());
-    System.out.println("POST CONTENT-TYPE: " + contentType);
-    System.out.println("POST CONTENT-MD5: " + contentMd5);
-    System.out.println("POST DATE: " + date);
-    System.out.println("POST AUTH: " + auth);
-    
     Builder request = target
       .request()
       .header("Content-Type", contentType)
@@ -133,30 +138,35 @@ public class OnnistuuClient {
     return request.post(entity);
   }
   
-  private String getMd5(String s) {
-    if (s == null) {
-      s = "";
+  private String getMd5(String s) throws OnnistuuClientException {
+    try {
+      if (s == null) {
+        s = "";
+      }
+      return getMd5(s.getBytes("UTF-8"));
     }
-    return getMd5(s.getBytes());
+    catch (Exception e) {
+      throw new OnnistuuClientException(e.getMessage(), e);
+    }
   }
 
-  private String getMd5(byte[] bytes) {
+  private String getMd5(byte[] bytes) throws OnnistuuClientException {
     try {
       return new String(Base64.getEncoder().encode(MessageDigest.getInstance("MD5").digest(bytes)));
     }
     catch (Exception e) {
-      throw new IllegalStateException("MD5 not available");
+      throw new OnnistuuClientException(e.getMessage(), e);
     }
   }
   
-  private String getAuthorizationHeader(String method, String contentMd5, String contentType, String date, String path) {
+  private String getAuthorizationHeader(String method, String contentMd5, String contentType, String date, String path) throws OnnistuuClientException {
     String clientIdentifier = getClientIdentifier();
     if (clientIdentifier == null) {
-      throw new IllegalStateException(String.format("%s not set", SETTINGKEY_CLIENTIDENTIFIER));
+      throw new OnnistuuClientException(String.format("Asetus %s puuttuu", SETTINGKEY_CLIENTIDENTIFIER));
     }
     String secretKey = getSecretKey();
     if (secretKey == null) {
-      throw new IllegalStateException(String.format("%s not set", SETTINGKEY_SECRETKEY));
+      throw new OnnistuuClientException(String.format("Asetus %s puuttuu", SETTINGKEY_SECRETKEY));
     }
     String requestParts = String.format("%s\n%s\n%s\n%s\n%s", method, contentMd5, contentType, date, path);
     SecretKeySpec secretKeySpec = new SecretKeySpec(Base64.getDecoder().decode(secretKey.getBytes()), HMAC_SHA512);
@@ -172,7 +182,7 @@ public class OnnistuuClient {
       return sb.toString();
     }
     catch (Exception e) {
-      throw new IllegalStateException(String.format("%s not available", HMAC_SHA512));
+      throw new OnnistuuClientException(e.getMessage(), e);
     }
   }
 
@@ -219,7 +229,7 @@ public class OnnistuuClient {
     return new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH).format(date);
   }
   
-  public byte[] generateStaffSignatureDocument(RequestContext requestContext, String applicant, String line, StaffMember signer) {
+  public byte[] generateStaffSignatureDocument(RequestContext requestContext, String applicant, String line, StaffMember signer) throws OnnistuuClientException {
     try {
       HttpServletRequest httpRequest = requestContext.getRequest();
       StringBuilder baseUrl = new StringBuilder();
@@ -276,8 +286,8 @@ public class OnnistuuClient {
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Unable to create staff document", e);
+      throw new OnnistuuClientException(e.getMessage(), e);
     }
-    return null;
   }
   
   private String getSignature(StaffMember staffMember) {

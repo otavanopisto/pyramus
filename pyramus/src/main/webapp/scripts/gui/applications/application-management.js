@@ -434,6 +434,55 @@
         $(this).toggle(optionState != currentState && (applicableStates.length == 0 || $.inArray(currentState, applicableStates) >= 0));
       });
     }
+    
+    // Signatures
+    
+    if ($('.signatures-container').length) {
+      var docId = $('.signatures-container').attr('data-document-id');
+      var docState = $('.signatures-container').attr('data-document-state');
+      if (docState == 'PDF_UPLOADED' || docState == 'SIGNED') {
+        $('.signatures-document-link').append(
+            $('<a>')
+              .attr('href', '/applications/onnistuudocument.binary?documentId=' + docId)
+              .attr('target', '_blank')
+              .text('Hyväksymisasiakirja')
+          );
+        $('.signatures-document-link').show();
+      }
+      else {
+        $('#signatures-generate-document-button').show();
+        $('#signatures-generate-document-button').on('click', function(event) {
+          event.stopPropagation();
+          $.ajax({
+            url: '/applications/generateacceptancedocument.json',
+            type: 'GET',
+            data: {
+              id: $('body').attr('data-application-entity-id')
+            },
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function(response) {
+              if (response.status == 'OK') {
+                $('.signatures-document-link').append(
+                  $('<a>')
+                    .attr('href', response.documentUrl)
+                    .attr('target', '_blank')
+                    .text('Hyväksymisasiakirja')
+                );
+                $('#signatures-generate-document-button').hide();
+                $('.signatures-document-link').show();
+              }
+              else {
+                $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+              }
+            },
+            error: function(err) {
+              $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+            }
+          });
+        });
+      }
+    }
   });
   
 }).call(this);

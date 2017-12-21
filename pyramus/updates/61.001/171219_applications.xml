@@ -12,4 +12,22 @@
   <sql>insert into SettingKey (id,name) select coalesce(max(id),0) + 1, 'applications.defaultSignerId' from SettingKey;</sql>
   <sql>update hibernate_sequences set sequence_next_hi_value = (select max(id) + 1 from SettingKey) where sequence_name = 'SettingKey';</sql>
   
+  <sql>
+    create table ApplicationSignatures (
+      id bigint not null,
+      application bigint,
+      applicantDocumentId varchar(255),
+      applicantDocumentModified datetime,
+      applicantDocumentState varchar(255),
+      applicantInvitationId varchar(255),
+      applicantInvitationToken varchar(255),
+      staffDocumentId varchar(255),
+      staffDocumentModified datetime,
+      staffDocumentState varchar(255),
+      primary key (id)
+    );
+  </sql>
+  
+  <sql>alter table ApplicationSignatures add constraint FKhaly5cm30610fke6fb8vkpar7 foreign key (application) references Application (id);</sql>
+  
 </update>

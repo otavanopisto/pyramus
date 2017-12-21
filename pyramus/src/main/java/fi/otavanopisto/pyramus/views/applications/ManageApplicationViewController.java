@@ -11,7 +11,9 @@ import org.apache.commons.lang.math.NumberUtils;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
@@ -33,6 +35,8 @@ public class ManageApplicationViewController extends PyramusViewController {
         pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
+      ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
+      ApplicationSignatures signatures = applicationSignaturesDAO.findByApplication(application);
       
       // Hakemuksen tilatiedot
 
@@ -48,6 +52,7 @@ public class ManageApplicationViewController extends PyramusViewController {
           application.getLastModified(),
           application.getApplicantLastModified(),
           application.getCreated()));
+      pageRequestContext.getRequest().setAttribute("infoSignatures", signatures);
       
       pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());      
       pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());

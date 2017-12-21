@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <section class="application-section application-meta">      
+  
   <div class="user-exists-container" style="display:none;">
     <div class="user-exists-description-title">Hakija löytyy jo Pyramuksesta.</div> 
     <div class="user-exists-description">
@@ -43,4 +44,18 @@
       </div>
     </div>
   </div>
+  
+  <c:if test="${infoState eq 'WAITING_STAFF_SIGNATURE'}">
+    <div class="signatures-container" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}">
+      <div class="signatures-document-container">
+        <div id="signatures-generate-document-button" style="display:none;">Luo hyväksymisasiakirja</div>
+        <div class="signatures-document-link" style="display:none;"></div>
+      </div>
+      <div class="signatures-auth-container" style="display:none;">
+        <p>Allekirjoita</p>
+        <div class="signatures-auth-sources"></div>
+      </div>
+    </div>
+  </c:if>
+  
 </section>
