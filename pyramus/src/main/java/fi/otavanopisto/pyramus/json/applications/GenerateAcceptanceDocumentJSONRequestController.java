@@ -89,7 +89,7 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
 
       byte[] pdf = onnistuuClient.generateStaffSignatureDocument(requestContext, applicantName, line, staffMember);
       String documentId = null;
-      
+
       // Generate Onnistuu document
       if (signatures.getStaffDocumentId() == null) {
         documentId = onnistuuClient.createDocument(documentName);
@@ -104,17 +104,18 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
 
       if (signatures.getStaffDocumentState() == ApplicationSignatureState.DOCUMENT_CREATED) {
         onnistuuClient.addPdf(documentId, pdf);
-        signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId,
-            null, null, ApplicationSignatureState.PDF_UPLOADED);
+        signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId, null, null,
+            ApplicationSignatureState.PDF_UPLOADED);
       }
-      
+
       // Create invitation
 
-//      if (signatures.getStaffDocumentState() == ApplicationSignatureState.PDF_UPLOADED) {
-//        onnistuuClient.createInvitation(documentId);
-//        signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId,
-//            null, null, ApplicationSignatureState.PDF_UPLOADED);
-//      }
+      if (signatures.getStaffDocumentState() == ApplicationSignatureState.PDF_UPLOADED) {
+        OnnistuuClient.Invitation invitation = onnistuuClient.createInvitation(documentId,
+            staffMember.getPrimaryEmail().getAddress());
+        signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId, invitation.getUuid(),
+            invitation.getPassphrase(), ApplicationSignatureState.INVITATION_CREATED);
+      }
 
       // Respond with URL to view the PDF
 
