@@ -24,6 +24,8 @@
       staffDocumentId varchar(255),
       staffDocumentModified datetime,
       staffDocumentState varchar(255),
+      staffInvitationId varchar(255),
+      staffInvitationToken varchar(255),
       primary key (id)
     );
   </sql>

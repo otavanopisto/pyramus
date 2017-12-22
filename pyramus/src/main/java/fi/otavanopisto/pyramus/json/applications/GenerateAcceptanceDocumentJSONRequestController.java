@@ -21,12 +21,13 @@ import net.sf.json.JSONObject;
 
 public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequestController {
 
-  private static final Logger logger = Logger.getLogger(GenerateAcceptanceDocumentJSONRequestController.class.getName());
+  private static final Logger logger = Logger
+      .getLogger(GenerateAcceptanceDocumentJSONRequestController.class.getName());
 
   public void process(JSONRequestContext requestContext) {
-    
+
     // Ensure user has SSN to be able to eventually sign the generated document
-    
+
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StaffMember staffMember = staffMemberDAO.findById(requestContext.getLoggedUserId());
     if (staffMember == null) {
@@ -39,9 +40,9 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
       fail(requestContext, "Allekirjoittamiseen vaadittua henkilötunnusta ei ole asetettu");
       return;
     }
-    
+
     // Find application and ensure its state
-    
+
     Long id = requestContext.getLong("id");
     if (id == null) {
       logger.warning("Missing application id");
@@ -62,7 +63,7 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
     }
 
     // Signatures tracking
-    
+
     ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
     ApplicationSignatures signatures = applicationSignaturesDAO.findByApplication(application);
     if (signatures == null) {
@@ -76,39 +77,50 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
     // Gather required dynamic data for the PDF document
 
     JSONObject formData = JSONObject.fromObject(application.getFormData());
-    String applicantName = String.format("%s %s",
-        getFormValue(formData, "field-first-names"),
+    String applicantName = String.format("%s %s", getFormValue(formData, "field-first-names"),
         getFormValue(formData, "field-last-name"));
     String line = application.getLine();
     String documentName = String.format("Hyväksyntä: %s", applicantName);
-        
+
     OnnistuuClient onnistuuClient = OnnistuuClient.getInstance();
     try {
-      
+
       // Generate PDF
-      
+
       byte[] pdf = onnistuuClient.generateStaffSignatureDocument(requestContext, applicantName, line, staffMember);
       String documentId = null;
-      // Generate Onnistuu document (if it doesn't yet exist)
-      if (signatures.getApplicantDocumentId() == null) {
+      
+      // Generate Onnistuu document
+      if (signatures.getStaffDocumentId() == null) {
         documentId = onnistuuClient.createDocument(documentName);
-        signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId, ApplicationSignatureState.DOCUMENT_CREATED);
+        signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId, null, null,
+            ApplicationSignatureState.DOCUMENT_CREATED);
       }
       else {
         documentId = signatures.getStaffDocumentId();
       }
-      
-      // Attach PDF to Onnistuu document (if not done already)
-      
-      if (signatures.getStaffDocumentState() != ApplicationSignatureState.PDF_UPLOADED) {
+
+      // Attach PDF to Onnistuu document
+
+      if (signatures.getStaffDocumentState() == ApplicationSignatureState.DOCUMENT_CREATED) {
         onnistuuClient.addPdf(documentId, pdf);
-        signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId, ApplicationSignatureState.PDF_UPLOADED);
+        signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId,
+            null, null, ApplicationSignatureState.PDF_UPLOADED);
       }
       
+      // Create invitation
+
+//      if (signatures.getStaffDocumentState() == ApplicationSignatureState.PDF_UPLOADED) {
+//        onnistuuClient.createInvitation(documentId);
+//        signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId,
+//            null, null, ApplicationSignatureState.PDF_UPLOADED);
+//      }
+
       // Respond with URL to view the PDF
-      
+
       requestContext.addResponseParameter("status", "OK");
-      requestContext.addResponseParameter("documentUrl", String.format("/applications/onnistuudocument.binary?documentId=%s", documentId));
+      requestContext.addResponseParameter("documentUrl",
+          String.format("/applications/onnistuudocument.binary?documentId=%s", documentId));
     }
     catch (OnnistuuClientException e) {
       logger.log(Level.SEVERE, e.getMessage(), e);

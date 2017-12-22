@@ -25,7 +25,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.util.ajax.JSON;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import fi.internetix.smvc.controllers.RequestContext;
@@ -36,32 +35,33 @@ import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class OnnistuuClient {
-  
+
   public static OnnistuuClient getInstance() {
     return INSTANCE;
   }
-  
+
   public String createDocument(String name) throws OnnistuuClientException {
 
     // Payload
-    
+
     JSONObject document = new JSONObject();
     document.put("name", name);
     JSONObject payload = new JSONObject();
     payload.put("document", document);
-    String json = payload.toString(); 
-    
+    String json = payload.toString();
+
     // Call
-    
+
     Entity<String> entity = Entity.entity(json, MediaType.APPLICATION_JSON);
     String contentMd5 = getMd5(json);
     Response response = doPost("/api/v1/document/", contentMd5, MediaType.APPLICATION_JSON, entity);
-    
+
     // Validation
-    
+
     if (response.getStatus() == 201) {
       String location = response.getHeaderString("Location");
       String documentId = StringUtils.substringAfterLast(location, "/");
@@ -75,22 +75,64 @@ public class OnnistuuClient {
       int status = response.getStatus();
       String reason = response.getStatusInfo().getReasonPhrase();
       logger.severe(String.format("Onnistuu response %d: %s", status, reason));
-      throw new OnnistuuClientException(String.format("Onnistuu-dokumentin luonti epäonnistui (%d: %s)", status, reason));
+      throw new OnnistuuClientException(
+          String.format("Dokumentin luonti epäonnistui (%d: %s)", status, reason));
     }
   }
-  
+
   public void addPdf(String document, byte[] pdf) throws OnnistuuClientException {
     Entity<byte[]> entity = Entity.entity(pdf, "application/pdf");
     String contentMd5 = getMd5(pdf);
-    Response response = doPost(String.format("/api/v1/document/%s/files", document), contentMd5, "application/pdf", entity);
+    Response response = doPost(String.format("/api/v1/document/%s/files", document), contentMd5, "application/pdf",
+        entity);
     if (response.getStatus() != 201) {
       int status = response.getStatus();
       String reason = response.getStatusInfo().getReasonPhrase();
       logger.severe(String.format("Onnistuu response %d: %s", status, reason));
-      throw new OnnistuuClientException(String.format("PDF-dokumentin lähettäminen epäonnistui (%d: %s)", status, reason));
+      throw new OnnistuuClientException(
+          String.format("PDF-dokumentin lähettäminen epäonnistui (%d: %s)", status, reason));
     }
   }
-  
+
+  public OnnistuuClient.Invitation createInvitation(String document, String email) throws OnnistuuClientException {
+    
+    // Payload
+    
+    JSONArray payload = new JSONArray();
+    JSONObject invitation = new JSONObject();
+    invitation.put("email",  email);
+    JSONObject messages = new JSONObject();
+    messages.put("send_invitation_email", false);
+    invitation.put("messages", messages);
+    payload.add(invitation);
+    String json = payload.toString();
+
+    // Call
+    
+    Entity<String> entity = Entity.entity(json, MediaType.APPLICATION_JSON);
+    String contentMd5 = getMd5(json);
+    Response response = doPost(String.format("/api/v1/document/%s/invitations", document), contentMd5,
+        MediaType.APPLICATION_JSON, entity);
+    
+    // Response
+    
+    if (response.getStatus() == 201) {
+      String jsonData = response.readEntity(String.class);
+      JSONArray jsonArray = JSONArray.fromObject(jsonData);
+      JSONObject createdInvitation = jsonArray.getJSONObject(0);
+      String uuid = createdInvitation.getString("uuid");
+      String passphrase = createdInvitation.getString("passphrase");
+      return new OnnistuuClient.Invitation(uuid, passphrase);
+    }
+    else {
+      int status = response.getStatus();
+      String reason = response.getStatusInfo().getReasonPhrase();
+      logger.severe(String.format("Onnistuu response %d: %s", status, reason));
+      throw new OnnistuuClientException(
+          String.format("Dokumenttikutsun luonti epäonnistui (%d: %s)", status, reason));
+    }
+  }
+
   public byte[] getPdf(String document) throws OnnistuuClientException {
     Response response = doGet(String.format("/api/v1/document/%s/files/0", document));
     if (response.getStatus() != 200) {
@@ -108,43 +150,36 @@ public class OnnistuuClient {
       throw new OnnistuuClientException(String.format("PDF-dokumentin hakeminen epäonnistui (%s)", e.getMessage()));
     }
   }
-  
+
   public JSONObject listSignatureSources() throws OnnistuuClientException {
     Response response = doGet("/api/v1/auth/methods");
     String jsonData = response.readEntity(String.class);
     return response.getStatus() == 200 ? JSONObject.fromObject(jsonData) : null;
   }
-  
+
   private Response doGet(String path) throws OnnistuuClientException {
     String contentMd5 = getMd5("");
     String date = dateToRFC2822(new Date());
     String auth = getAuthorizationHeader("GET", contentMd5, MediaType.APPLICATION_JSON, date, path);
     Client client = ClientBuilder.newClient();
     WebTarget target = client.target(String.format("https://www.onnistuu.fi%s", path));
-    Builder request = target
-      .request()
-      .header("Content-Type", MediaType.APPLICATION_JSON)
-      .header("Content-MD5", contentMd5)
-      .header("Date", date)
-      .header("Authorization", auth);
+    Builder request = target.request().header("Content-Type", MediaType.APPLICATION_JSON)
+        .header("Content-MD5", contentMd5).header("Date", date).header("Authorization", auth);
     return request.get();
   }
 
   @SuppressWarnings("rawtypes")
-  private Response doPost(String path, String contentMd5, String contentType, Entity entity) throws OnnistuuClientException {
+  private Response doPost(String path, String contentMd5, String contentType, Entity entity)
+      throws OnnistuuClientException {
     String date = dateToRFC2822(new Date());
     String auth = getAuthorizationHeader("POST", contentMd5, contentType, date, path);
     Client client = ClientBuilder.newClient();
     WebTarget target = client.target(String.format("https://www.onnistuu.fi%s", path));
-    Builder request = target
-      .request()
-      .header("Content-Type", contentType)
-      .header("Content-MD5", contentMd5)
-      .header("Date", date)
-      .header("Authorization", auth);
+    Builder request = target.request().header("Content-Type", contentType).header("Content-MD5", contentMd5)
+        .header("Date", date).header("Authorization", auth);
     return request.post(entity);
   }
-  
+
   private String getMd5(String s) throws OnnistuuClientException {
     try {
       if (s == null) {
@@ -165,8 +200,9 @@ public class OnnistuuClient {
       throw new OnnistuuClientException(e.getMessage(), e);
     }
   }
-  
-  private String getAuthorizationHeader(String method, String contentMd5, String contentType, String date, String path) throws OnnistuuClientException {
+
+  private String getAuthorizationHeader(String method, String contentMd5, String contentType, String date, String path)
+      throws OnnistuuClientException {
     String clientIdentifier = getClientIdentifier();
     if (clientIdentifier == null) {
       throw new OnnistuuClientException(String.format("Asetus %s puuttuu", SETTINGKEY_CLIENTIDENTIFIER));
@@ -218,7 +254,7 @@ public class OnnistuuClient {
     }
     return null;
   }
-  
+
   private Long getPrimarySignerId() {
     SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
     SettingKey settingKey = settingKeyDAO.findByName(SETTINGKEY_SIGNERID);
@@ -231,12 +267,13 @@ public class OnnistuuClient {
     }
     return null;
   }
-  
+
   private String dateToRFC2822(Date date) {
     return new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH).format(date);
   }
-  
-  public byte[] generateStaffSignatureDocument(RequestContext requestContext, String applicant, String line, StaffMember signer) throws OnnistuuClientException {
+
+  public byte[] generateStaffSignatureDocument(RequestContext requestContext, String applicant, String line,
+      StaffMember signer) throws OnnistuuClientException {
     try {
       HttpServletRequest httpRequest = requestContext.getRequest();
       StringBuilder baseUrl = new StringBuilder();
@@ -245,28 +282,29 @@ public class OnnistuuClient {
       baseUrl.append(httpRequest.getServerName());
       baseUrl.append(":");
       baseUrl.append(httpRequest.getServerPort());
-      
+
       // Staff signed document skeleton
-      
-      String document = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-          "/templates/applications/document-staff-signed.html"), "UTF-8");
-      
+
+      String document = IOUtils.toString(
+          requestContext.getServletContext().getResourceAsStream("/templates/applications/document-staff-signed.html"),
+          "UTF-8");
+
       // Replace document date
-      
+
       document = StringUtils.replace(document, "[DOCUMENT-DATE]", new SimpleDateFormat("d.M.yyyy").format(new Date()));
-      
+
       // Replace applicant name
-      
+
       document = StringUtils.replace(document, "[DOCUMENT-APPLICANT]", applicant);
-      
+
       // Replace line specific welcome text
-      
-      String welcomeText = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-          String.format("/templates/applications/document-acceptance-%s.html", line)), "UTF-8");
+
+      String welcomeText = IOUtils.toString(requestContext.getServletContext()
+          .getResourceAsStream(String.format("/templates/applications/document-acceptance-%s.html", line)), "UTF-8");
       document = StringUtils.replace(document, "[DOCUMENT-TEXT]", welcomeText);
-      
+
       // Replace primary and (optional) secondary signers
-      
+
       Long primarySignerId = getPrimarySignerId();
       if (primarySignerId == null) {
         primarySignerId = signer.getId();
@@ -279,11 +317,12 @@ public class OnnistuuClient {
         StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
         StaffMember primarySigner = staffMemberDAO.findById(primarySignerId);
         document = StringUtils.replace(document, "[DOCUMENT-PRIMARY-SIGNER]", getSignature(primarySigner));
-        document = StringUtils.replace(document, "[DOCUMENT-SECONDARY-SIGNER]", "<p>Puolesta</p>" + getSignature(signer));
+        document = StringUtils.replace(document, "[DOCUMENT-SECONDARY-SIGNER]",
+            "<p>Puolesta</p>" + getSignature(signer));
       }
-      
+
       // Convert to PDF
-      
+
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       ITextRenderer renderer = new ITextRenderer();
       renderer.setDocumentFromString(document, baseUrl.toString());
@@ -296,7 +335,7 @@ public class OnnistuuClient {
       throw new OnnistuuClientException(e.getMessage(), e);
     }
   }
-  
+
   private String getSignature(StaffMember staffMember) {
     StringBuffer sb = new StringBuffer();
     sb.append(String.format("<p>%s</p>", staffMember.getFullName()));
@@ -308,11 +347,28 @@ public class OnnistuuClient {
   }
 
   private static final OnnistuuClient INSTANCE = new OnnistuuClient();
-  private static final String APPLICATION_JSON = "application/json";
   private static final String SETTINGKEY_CLIENTIDENTIFIER = "applications.onnistuuClientIdentifier";
   private static final String SETTINGKEY_SECRETKEY = "applications.onnistuuSecretKey";
   private static final String SETTINGKEY_SIGNERID = "applications.defaultSignerId";
   private static final String HMAC_SHA512 = "HmacSHA512";
   private static final Logger logger = Logger.getLogger(OnnistuuClient.class.getName());
+
+  public class Invitation {
+    public Invitation(String uuid, String passphrase) {
+      this.uuid = uuid;
+      this.passphrase = passphrase;
+    }
+
+    public String getUuid() {
+      return uuid;
+    }
+
+    public String getPassphrase() {
+      return passphrase;
+    }
+
+    String uuid;
+    String passphrase;
+  }
 
 }

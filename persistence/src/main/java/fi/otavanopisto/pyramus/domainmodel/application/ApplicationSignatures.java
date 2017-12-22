@@ -97,6 +97,22 @@ public class ApplicationSignatures {
     this.applicantDocumentModified = applicantDocumentModified;
   }
 
+  public String getStaffInvitationId() {
+    return staffInvitationId;
+  }
+
+  public void setStaffInvitationId(String staffInvitationId) {
+    this.staffInvitationId = staffInvitationId;
+  }
+
+  public String getStaffInvitationToken() {
+    return staffInvitationToken;
+  }
+
+  public void setStaffInvitationToken(String staffInvitationToken) {
+    this.staffInvitationToken = staffInvitationToken;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="ApplicationSignatures")
   @TableGenerator(name="ApplicationSignatures", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -107,6 +123,10 @@ public class ApplicationSignatures {
   private Application application;
 
   private String staffDocumentId;
+
+  private String staffInvitationId;
+
+  private String staffInvitationToken;
   
   @Enumerated (EnumType.STRING)
   private ApplicationSignatureState staffDocumentState;
