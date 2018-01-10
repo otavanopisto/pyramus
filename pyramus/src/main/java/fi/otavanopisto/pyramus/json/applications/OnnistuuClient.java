@@ -75,8 +75,36 @@ public class OnnistuuClient {
       int status = response.getStatus();
       String reason = response.getStatusInfo().getReasonPhrase();
       logger.severe(String.format("Onnistuu response %d: %s", status, reason));
-      throw new OnnistuuClientException(
-          String.format("Dokumentin luonti epäonnistui (%d: %s)", status, reason));
+      throw new OnnistuuClientException(String.format("Dokumentin luonti epäonnistui (%d: %s)", status, reason));
+    }
+  }
+  
+  public String getSignatureUrl(String invitationId, String returnUrl, String ssn, String authService) throws OnnistuuClientException {
+
+    // Payload
+
+    JSONObject payload = new JSONObject();
+    payload.put("returnUrl", returnUrl);
+    payload.put("ssn", ssn);
+    payload.put("authService", authService);
+    String json = payload.toString();
+
+    // Call
+
+    Entity<String> entity = Entity.entity(json, MediaType.APPLICATION_JSON);
+    String contentMd5 = getMd5(json);
+    Response response = doPost(String.format("/api/v1/invitation/%s/signature", invitationId), contentMd5, MediaType.APPLICATION_JSON, entity);
+    
+    // Validation
+    
+    if (response.getStatus() == 201) {
+      return response.getHeaderString("Location");
+    }
+    else {
+      int status = response.getStatus();
+      String reason = response.getStatusInfo().getReasonPhrase();
+      logger.severe(String.format("Onnistuu response %d: %s", status, reason));
+      throw new OnnistuuClientException(String.format("Dokumentin allekirjoittaminen epäonnistui (%d: %s)", status, reason));
     }
   }
 
@@ -142,8 +170,7 @@ public class OnnistuuClient {
       throw new OnnistuuClientException(String.format("PDF-dokumentin hakeminen epäonnistui (%d: %s)", status, reason));
     }
     try {
-      InputStream input = response.readEntity(InputStream.class);
-      return IOUtils.toByteArray(input);
+      return IOUtils.toByteArray(response.readEntity(InputStream.class));
     }
     catch (IOException e) {
       logger.log(Level.SEVERE, e.getMessage(), e);
