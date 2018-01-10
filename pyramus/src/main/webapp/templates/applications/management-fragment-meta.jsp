@@ -43,6 +43,14 @@
         </span>
       </div>
     </div>
+    
+    <div class="application-handling-container">
+      <div class="application-handling-option" data-state="PENDING" data-show="PROCESSING"><span class="application-handling-text cancel-handling">Peruuta k‰sittely</span></div>
+      <div class="application-handling-option" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED"><span class="application-handling-text">Palauta k‰sittelyyn</span></div>
+      <div class="application-handling-option" data-state="PROCESSING" data-show="PENDING"><span class="application-handling-text">Ota k‰sittelyyn</span></div>
+      <div class="application-handling-option" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirr‰ hyv‰ksytt‰v‰ksi</span></div>
+      <div class="application-handling-option" data-state="REJECTED"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
+    </div>
   </div>
   
   <c:if test="${infoState eq 'WAITING_STAFF_SIGNATURE'}">
