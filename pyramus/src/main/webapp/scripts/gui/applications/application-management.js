@@ -464,7 +464,9 @@
         }
       });
     });
-    if (docState == '')
+    if (docState == 'INVITATION_CREATED') {
+      showSignatures();
+    }
 
     function showSignatures() {
       $.getJSON('/applications/listsignaturesources.json', function(data) {

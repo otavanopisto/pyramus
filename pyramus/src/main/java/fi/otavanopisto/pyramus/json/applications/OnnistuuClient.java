@@ -89,13 +89,10 @@ public class OnnistuuClient {
     payload.put("authService", authService);
     String json = payload.toString();
     
-    System.out.println("payload " + json);
-
     // Call
 
     Entity<String> entity = Entity.entity(json, MediaType.APPLICATION_JSON);
     String contentMd5 = getMd5(json);
-    System.out.println("Doing POST to " + String.format("/api/v1/invitation/%s/signature", invitationId));
     Response response = doPost(String.format("/api/v1/invitation/%s/signature", invitationId), contentMd5, MediaType.APPLICATION_JSON, entity);
     
     // Validation
@@ -165,6 +162,16 @@ public class OnnistuuClient {
       throw new OnnistuuClientException(
           String.format("Dokumenttikutsun luonti epäonnistui (%d: %s)", status, reason));
     }
+  }
+  
+  public boolean isSigned(String invitationId) throws OnnistuuClientException {
+    Response response = doGet(String.format("/api/v1/invitation/%s", invitationId));
+    if (response.getStatus() == 200) {
+      String jsonData = response.readEntity(String.class);
+      JSONObject jsonObject = JSONObject.fromObject(jsonData);
+      return StringUtils.equals(jsonObject.getString("status"), "signed");
+    }
+    return false;
   }
 
   public byte[] getPdf(String document) throws OnnistuuClientException {

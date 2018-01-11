@@ -20,6 +20,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.json.applications.OnnistuuClient;
 
 public class SignedAcceptanceDocumentViewController extends PyramusViewController {
 
@@ -78,22 +79,26 @@ public class SignedAcceptanceDocumentViewController extends PyramusViewControlle
         return;
       }
       
-      // Update signature state
-      
-      applicationSignatures = applicationSignaturesDAO.updateStaffDocumentState(applicationSignatures, ApplicationSignatureState.SIGNED);
-      
-      // Update application state
-      
-      ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
-      application = applicationDAO.updateApplicationState(application, ApplicationState.STAFF_SIGNED, staffMember);
-      
-      // Send email and add notification about application state having changed
-      
-      String documentUrl = String.format("https://www.onnistuu.fi/api/v1/invitation/%s/%s/files/0",
-          applicationSignatures.getStaffInvitationId(),
-          applicationSignatures.getStaffInvitationToken());
-      String notificationPostfix = String.format("<a href=\"%s\" target=\"_blank\">Hyväksymisasiakirja</a>", documentUrl); 
-      ApplicationUtils.sendNotifications(application, pageRequestContext.getRequest(), staffMember, false, notificationPostfix);
+      OnnistuuClient onnistuuClient = OnnistuuClient.getInstance();
+      if (onnistuuClient.isSigned(invitationId)) {
+        
+        // Update signature state
+        
+        applicationSignatures = applicationSignaturesDAO.updateStaffDocumentState(applicationSignatures, ApplicationSignatureState.SIGNED);
+        
+        // Update application state
+        
+        ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+        application = applicationDAO.updateApplicationState(application, ApplicationState.STAFF_SIGNED, staffMember);
+        
+        // Send email and add notification about application state having changed
+        
+        String documentUrl = String.format("https://www.onnistuu.fi/api/v1/invitation/%s/%s/files/0",
+            applicationSignatures.getStaffInvitationId(),
+            applicationSignatures.getStaffInvitationToken());
+        String notificationPostfix = String.format("<a href=\"%s\" target=\"_blank\">Hyväksymisasiakirja</a>", documentUrl); 
+        ApplicationUtils.sendNotifications(application, pageRequestContext.getRequest(), staffMember, false, notificationPostfix);
+      }
       
       // Redirect to application management (view or edit)
       
@@ -105,7 +110,7 @@ public class SignedAcceptanceDocumentViewController extends PyramusViewControlle
         pageRequestContext.setRedirectURL(String.format("%s/applications/view.page?application=%d", contextPath, application.getId()));
       }
     }
-    catch (IOException e) {
+    catch (Exception e) {
       logger.log(Level.SEVERE, "Unable to serve error response", e);
     }
   }
