@@ -51,7 +51,7 @@
     <c:if test="${infoState eq 'WAITING_STAFF_SIGNATURE'}">
       <div class="signatures-container" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}">
         <div class="signatures-document-container">
-          <div id="signatures-generate-document-button" style="display:none;">Allekirjoita hyväksyntä</div>
+          <div id="signatures-generate-document-button" style="display:none;"><span class="application-handling-text start-processing">Allekirjoita hyväksyntä</span></div>
           <div class="signatures-document-link" style="display:none;"></div>
         </div>
         <div class="signatures-auth-container" style="display:none;">
