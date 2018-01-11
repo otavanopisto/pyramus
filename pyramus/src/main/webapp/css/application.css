@@ -911,10 +911,7 @@ span.email {
 }
 
 .signatures-auth-container {
-  align-items: center;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-evenly;
+
 }
 
 .signatures-auth-container img {
@@ -922,9 +919,6 @@ span.email {
   border: 2px solid #fff;
   border-radius: 4px;
   box-shadow: 0 3px 5px rgba(0,0,0,0.15);
-  flex-basis: auto;
-  flex-grow: 0;
-  flex-shrink: 1;
   height: 55px;
   padding: 5px;
   margin: 5px;
