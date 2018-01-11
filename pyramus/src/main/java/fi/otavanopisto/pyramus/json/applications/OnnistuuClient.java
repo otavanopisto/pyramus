@@ -1,8 +1,6 @@
 package fi.otavanopisto.pyramus.json.applications;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
@@ -172,23 +170,6 @@ public class OnnistuuClient {
       return StringUtils.equals(jsonObject.getString("status"), "signed");
     }
     return false;
-  }
-
-  public byte[] getPdf(String document) throws OnnistuuClientException {
-    Response response = doGet(String.format("/api/v1/document/%s/files/0", document));
-    if (response.getStatus() != 200) {
-      int status = response.getStatus();
-      String reason = response.getStatusInfo().getReasonPhrase();
-      logger.severe(String.format("Onnistuu response %d: %s", status, reason));
-      throw new OnnistuuClientException(String.format("PDF-dokumentin hakeminen epäonnistui (%d: %s)", status, reason));
-    }
-    try {
-      return IOUtils.toByteArray(response.readEntity(InputStream.class));
-    }
-    catch (IOException e) {
-      logger.log(Level.SEVERE, e.getMessage(), e);
-      throw new OnnistuuClientException(String.format("PDF-dokumentin hakeminen epäonnistui (%s)", e.getMessage()));
-    }
   }
 
   public JSONObject listSignatureSources() throws OnnistuuClientException {
