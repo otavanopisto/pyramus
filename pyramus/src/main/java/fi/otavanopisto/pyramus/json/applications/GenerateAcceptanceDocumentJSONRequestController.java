@@ -85,12 +85,9 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
     OnnistuuClient onnistuuClient = OnnistuuClient.getInstance();
     try {
 
-      // Generate PDF
+      // Generate Onnistuu document (if not done before)
 
-      byte[] pdf = onnistuuClient.generateStaffSignatureDocument(requestContext, applicantName, line, staffMember);
       String documentId = null;
-
-      // Generate Onnistuu document
       if (signatures.getStaffDocumentId() == null) {
         documentId = onnistuuClient.createDocument(documentName);
         signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId, null, null,
@@ -100,15 +97,16 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
         documentId = signatures.getStaffDocumentId();
       }
 
-      // Attach PDF to Onnistuu document
+      // Create and attach PDF to Onnistuu document (if not done before)
 
       if (signatures.getStaffDocumentState() == ApplicationSignatureState.DOCUMENT_CREATED) {
+        byte[] pdf = onnistuuClient.generateStaffSignatureDocument(requestContext, applicantName, line, staffMember);
         onnistuuClient.addPdf(documentId, pdf);
         signatures = applicationSignaturesDAO.updateStaffDocument(signatures, documentId, null, null,
             ApplicationSignatureState.PDF_UPLOADED);
       }
 
-      // Create invitation
+      // Create invitation (if not done before)
 
       if (signatures.getStaffDocumentState() == ApplicationSignatureState.PDF_UPLOADED) {
         OnnistuuClient.Invitation invitation = onnistuuClient.createInvitation(documentId,
@@ -121,7 +119,9 @@ public class GenerateAcceptanceDocumentJSONRequestController extends JSONRequest
 
       requestContext.addResponseParameter("status", "OK");
       requestContext.addResponseParameter("documentUrl",
-          String.format("/applications/onnistuudocument.binary?documentId=%s", documentId));
+          String.format("https://www.onnistuu.fi/api/v1/invitation/%s/%s/files/0",
+              signatures.getStaffInvitationId(),
+              signatures.getStaffInvitationToken()));
     }
     catch (OnnistuuClientException e) {
       logger.log(Level.SEVERE, e.getMessage(), e);

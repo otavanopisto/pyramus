@@ -41,6 +41,16 @@
         <fmt:formatDate pattern="d.M.yyyy H:mm" value="${infoLastModified}"/>
       </span>
     </div>
+    <div class="meta-container">
+      <span class="meta-name">Asiakirjat</span>
+      <span id="info-application-documents-value" class="meta-value">
+        <span id="staff-acceptance-document">
+          <c:if test="${not empty infoSignatures.staffInvitationId}">
+            <a href="https://www.onnistuu.fi/api/v1/invitation/${infoSignatures.staffInvitationId}/${infoSignatures.staffInvitationToken}/files/0" target="_blank">Oppilaitos</a>
+          </c:if>
+        </span>
+      </span>
+    </div>
   </div>
   
   <div class="application-handling-container">
@@ -50,13 +60,8 @@
     <div class="application-handling-option" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirr‰ hyv‰ksytt‰v‰ksi</span></div>
     <c:if test="${infoState eq 'WAITING_STAFF_SIGNATURE'}">
       <div class="signatures-container" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}">
-        <div class="signatures-document-container">
-          <div id="signatures-generate-document-button" style="display:none;">Allekirjoita hyv‰ksynt‰</div>
-          <div class="signatures-document-link" style="display:none;"></div>
-        </div>
-        <div class="signatures-auth-container" style="display:none;">
-          <div class="signatures-auth-sources"></div>
-        </div>
+        <span class="application-handling-text">Allekirjoita hyv‰ksynt‰</span>
+        <div class="signatures-auth-sources"></div>
       </div>
     </c:if>
     <div class="application-handling-option" data-state="REJECTED"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
