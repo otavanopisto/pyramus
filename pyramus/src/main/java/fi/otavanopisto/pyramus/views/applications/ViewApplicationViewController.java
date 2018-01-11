@@ -18,11 +18,13 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import net.sf.json.JSONArray;
@@ -38,6 +40,9 @@ public class ViewApplicationViewController extends PyramusViewController {
   
   public void process(PageRequestContext pageRequestContext) {
     try {
+
+      StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+      StaffMember staffMember = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
 
       Long applicationId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("application"));
       if (applicationId == null) {
@@ -185,6 +190,7 @@ public class ViewApplicationViewController extends PyramusViewController {
           application.getApplicantLastModified(),
           application.getCreated()));
       pageRequestContext.getRequest().setAttribute("infoSignatures", signatures);
+      pageRequestContext.getRequest().setAttribute("infoSsn", staffMember == null ? null : staffMember.getPerson().getSocialSecurityNumber());
       
       pageRequestContext.getRequest().setAttribute("mode", "view");
       pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());      

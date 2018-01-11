@@ -496,9 +496,37 @@
               .attr('src', method.image)
               .attr('data-identifier', method.identifier)
               .attr('title', method.name)
+              .on('click', function(event) {
+                event.stopPropagation();
+                sign($(this).attr('data-identifier'));
+              })
           );
         });
         $('.signatures-auth-container').show();          
+      });
+    }
+    function sign(authService) {
+      $.ajax({
+        url: '/applications/signacceptancedocument.json',
+        type: 'GET',
+        data: {
+          id: $('body').attr('data-application-entity-id'),
+          mode: $('body').attr('data-mode'),
+          authService: authService
+        },
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+          if (response.status == 'OK') {
+            window.open(response.completionUrl, "_self");
+          }
+          else {
+            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+          }
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+        }
       });
     }
   });

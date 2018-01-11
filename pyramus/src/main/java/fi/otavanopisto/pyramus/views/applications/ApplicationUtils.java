@@ -73,7 +73,7 @@ public class ApplicationUtils {
     }
   }
   
-  public static void sendNotifications(Application application, HttpServletRequest request, StaffMember staffMember, boolean newApplication) {
+  public static void sendNotifications(Application application, HttpServletRequest request, StaffMember staffMember, boolean newApplication, String notificationPostfix) {
     ApplicationNotificationDAO applicationNotificationDAO = DAOFactory.getInstance().getApplicationNotificationDAO();
     List<ApplicationNotification> notifications = applicationNotificationDAO.listByNullOrLineAndState(
         application.getLine(), application.getState());
@@ -133,11 +133,15 @@ public class ApplicationUtils {
     // Log entry
     
     if (!newApplication) {
+      String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState()));
+      if (notificationPostfix != null) {
+        notification = String.format("%s<br/>%s", notification, notificationPostfix);
+      }
       ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
       applicationLogDAO.create(
         application,
         ApplicationLogType.HTML,
-        String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState())),
+        notification,
         staffMember);
     }
   }

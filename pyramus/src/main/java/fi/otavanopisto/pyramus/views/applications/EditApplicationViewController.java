@@ -115,7 +115,6 @@ public class EditApplicationViewController extends PyramusViewController {
     }
     catch (IOException e) {
       logger.log(Level.SEVERE, "Unable to serve error response", e);
-      return;
     }
   }
 

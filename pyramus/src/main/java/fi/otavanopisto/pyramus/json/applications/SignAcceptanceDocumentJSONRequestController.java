@@ -39,7 +39,7 @@ public class SignAcceptanceDocumentJSONRequestController extends JSONRequestCont
       return;
     }
 
-    // Find application and ensure its state
+    // Validate request parameters
 
     Long id = requestContext.getLong("id");
     if (id == null) {
@@ -47,6 +47,21 @@ public class SignAcceptanceDocumentJSONRequestController extends JSONRequestCont
       fail(requestContext, "Puuttuva hakemustunnus");
       return;
     }
+    String mode = requestContext.getString("mode");
+    if (StringUtils.isBlank(mode)) {
+      logger.warning("Missing mode");
+      fail(requestContext, "Puuttuva hakemusnäkymä");
+      return;
+    }
+    String authService = requestContext.getString("authService");
+    if (StringUtils.isBlank(mode)) {
+      logger.warning("Missing authService");
+      fail(requestContext, "Puuttuva tunnistustapa");
+      return;
+    }
+    
+    // Ensure application state
+    
     ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
     Application application = applicationDAO.findById(id);
     if (application == null) {
@@ -69,15 +84,26 @@ public class SignAcceptanceDocumentJSONRequestController extends JSONRequestCont
       return;
     }
 
-    // TODO return URL to mark application signed, authService used, jsonmappings
+    // TODO return URL to mark application signed, authService used
+    
+    StringBuilder returnUrl = new StringBuilder();
+    returnUrl.append(requestContext.getRequest().getScheme());
+    returnUrl.append("://");
+    returnUrl.append(requestContext.getRequest().getServerName());
+    returnUrl.append(":");
+    returnUrl.append(requestContext.getRequest().getServerPort());
+    returnUrl.append("/applications/signedacceptancedocument.page?invitationId=");
+    returnUrl.append(signatures.getStaffInvitationId());
+    returnUrl.append("&mode=");
+    returnUrl.append(mode);
 
     OnnistuuClient onnistuuClient = OnnistuuClient.getInstance();
     try {
       String completionUrl = onnistuuClient.getSignatureUrl(
           signatures.getStaffInvitationId(),
-          null, // returnUrl
+          returnUrl.toString(),
           staffMember.getPerson().getSocialSecurityNumber(),
-          null); // authService
+          authService);
 
       // Respond with URL to complete the signature
 

@@ -85,14 +85,17 @@ public class OnnistuuClient {
 
     JSONObject payload = new JSONObject();
     payload.put("returnUrl", returnUrl);
-    payload.put("ssn", ssn);
+    payload.put("identifier", ssn);
     payload.put("authService", authService);
     String json = payload.toString();
+    
+    System.out.println("payload " + json);
 
     // Call
 
     Entity<String> entity = Entity.entity(json, MediaType.APPLICATION_JSON);
     String contentMd5 = getMd5(json);
+    System.out.println("Doing POST to " + String.format("/api/v1/invitation/%s/signature", invitationId));
     Response response = doPost(String.format("/api/v1/invitation/%s/signature", invitationId), contentMd5, MediaType.APPLICATION_JSON, entity);
     
     // Validation
