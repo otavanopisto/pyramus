@@ -48,19 +48,18 @@
     <div class="application-handling-option" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED"><span class="application-handling-text">Palauta k‰sittelyyn</span></div>
     <div class="application-handling-option" data-state="PROCESSING" data-show="PENDING"><span class="application-handling-text">Ota k‰sittelyyn</span></div>
     <div class="application-handling-option" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirr‰ hyv‰ksytt‰v‰ksi</span></div>
+    <c:if test="${infoState eq 'WAITING_STAFF_SIGNATURE'}">
+      <div class="signatures-container" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}">
+        <div class="signatures-document-container">
+          <div id="signatures-generate-document-button" style="display:none;">Allekirjoita hyv‰ksynt‰</div>
+          <div class="signatures-document-link" style="display:none;"></div>
+        </div>
+        <div class="signatures-auth-container" style="display:none;">
+          <div class="signatures-auth-sources"></div>
+        </div>
+      </div>
+    </c:if>
     <div class="application-handling-option" data-state="REJECTED"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
   </div>
-  
-  <c:if test="${infoState eq 'WAITING_STAFF_SIGNATURE'}">
-    <div class="signatures-container" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}">
-      <div class="signatures-document-container">
-        <div id="signatures-generate-document-button" style="display:none;">Luo hyv‰ksymisasiakirja</div>
-        <div class="signatures-document-link" style="display:none;"></div>
-      </div>
-      <div class="signatures-auth-container" style="display:none;">
-        <div class="signatures-auth-sources"></div>
-      </div>
-    </div>
-  </c:if>
   
 </section>

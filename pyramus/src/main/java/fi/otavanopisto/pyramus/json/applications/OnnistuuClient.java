@@ -134,6 +134,9 @@ public class OnnistuuClient {
     invitation.put("email",  email);
     JSONObject messages = new JSONObject();
     messages.put("send_invitation_email", false);
+    messages.put("send_invitation_sms", false);
+    messages.put("send_invitee_all_collected_email", false);
+    messages.put("send_inviter_one_collected_emails", false);
     invitation.put("messages", messages);
     payload.add(invitation);
     String json = payload.toString();
