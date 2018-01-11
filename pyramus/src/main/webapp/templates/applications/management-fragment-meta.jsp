@@ -15,42 +15,40 @@
     </div>
   </div>
   
-  <div class="additional-info-wrapper">
-    <div class="additional-info-container">
-      <div class="meta-container">
-        <span class="meta-name">Hakemuksen tila</span>
-        <span id="info-application-state-value" data-state="${infoState}" class="meta-value">${infoStateUi}</span>
-      </div>
-      <div class="meta-container">
-        <span class="meta-name">K‰sittelij‰</span>
-        <span id="info-application-handler-value" data-handler-id="${infoHandlerId}" class="meta-value">
-          <c:choose>
-            <c:when test="${empty infoHandler}">-</c:when>
-            <c:otherwise>${infoHandler}</c:otherwise>
-          </c:choose>
-        </span>
-      </div>
-      <div class="meta-container">
-        <span class="meta-name">J‰tetty</span>
-        <span id="info-application-created-value" class="meta-value">
-          <fmt:formatDate pattern="d.M.yyyy H:mm" value="${infoCreated}"/>
-        </span>
-      </div>
-      <div class="meta-container">
-        <span class="meta-name">Muokattu viimeksi</span>
-        <span id="info-application-last-modified-value" class="meta-value">
-          <fmt:formatDate pattern="d.M.yyyy H:mm" value="${infoLastModified}"/>
-        </span>
-      </div>
+  <div class="additional-info-container">
+    <div class="meta-container">
+      <span class="meta-name">Hakemuksen tila</span>
+      <span id="info-application-state-value" data-state="${infoState}" class="meta-value">${infoStateUi}</span>
     </div>
-    
-    <div class="application-handling-container">
-      <div class="application-handling-option" data-state="PENDING" data-show="PROCESSING"><span class="application-handling-text cancel-handling">Peruuta k‰sittely</span></div>
-      <div class="application-handling-option" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED"><span class="application-handling-text">Palauta k‰sittelyyn</span></div>
-      <div class="application-handling-option" data-state="PROCESSING" data-show="PENDING"><span class="application-handling-text">Ota k‰sittelyyn</span></div>
-      <div class="application-handling-option" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirr‰ hyv‰ksytt‰v‰ksi</span></div>
-      <div class="application-handling-option" data-state="REJECTED"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
+    <div class="meta-container">
+      <span class="meta-name">K‰sittelij‰</span>
+      <span id="info-application-handler-value" data-handler-id="${infoHandlerId}" class="meta-value">
+        <c:choose>
+          <c:when test="${empty infoHandler}">-</c:when>
+          <c:otherwise>${infoHandler}</c:otherwise>
+        </c:choose>
+      </span>
     </div>
+    <div class="meta-container">
+      <span class="meta-name">J‰tetty</span>
+      <span id="info-application-created-value" class="meta-value">
+        <fmt:formatDate pattern="d.M.yyyy H:mm" value="${infoCreated}"/>
+      </span>
+    </div>
+    <div class="meta-container">
+      <span class="meta-name">Muokattu viimeksi</span>
+      <span id="info-application-last-modified-value" class="meta-value">
+        <fmt:formatDate pattern="d.M.yyyy H:mm" value="${infoLastModified}"/>
+      </span>
+    </div>
+  </div>
+  
+  <div class="application-handling-container">
+    <div class="application-handling-option" data-state="PENDING" data-show="PROCESSING"><span class="application-handling-text cancel-handling">Peruuta k‰sittely</span></div>
+    <div class="application-handling-option" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED"><span class="application-handling-text">Palauta k‰sittelyyn</span></div>
+    <div class="application-handling-option" data-state="PROCESSING" data-show="PENDING"><span class="application-handling-text">Ota k‰sittelyyn</span></div>
+    <div class="application-handling-option" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirr‰ hyv‰ksytt‰v‰ksi</span></div>
+    <div class="application-handling-option" data-state="REJECTED"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
   </div>
   
   <c:if test="${infoState eq 'WAITING_STAFF_SIGNATURE'}">

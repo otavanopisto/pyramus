@@ -857,7 +857,7 @@ span.email {
   font-weight: 400;
 }
 
-.additional-info-wrapper {
+.additional-info-container {
   background: #d4f6ff;
   border: 2px solid #fff;
   border-radius: 10px;
@@ -869,23 +869,20 @@ span.email {
   width: 100%;
 }
 
-.additional-info-container {
-  border-bottom: 1px solid #fff;
-  margin: 0 0 10px;
-}
-
 .application-handling-container {
-  margin: 10px 0 0;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+  padding: 10px 15px;
 }
 
 .application-handling-option {
-  margin: 10px 0;
+  padding: 5px 0;
 }
 
 .application-handling-text {
   color: #009fe3;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .application-handling-text:hover {
@@ -988,8 +985,8 @@ span.email {
 
 .log-entry-archive {
   background-image: url('../gfx/icons/48x48/actions/close.png');
-  background-color: #b11717;
-  border: 4px solid #b11717;
+  background-color: #d31111;
+  border: 4px solid #d31111;
   right: 10px;
 }
 
@@ -1170,7 +1167,7 @@ span.email {
 }
 
 .ui-dialog .ui-dialog-buttonset button.ui-button.remove-button {
-  background: #b11717; 
+  background: #d31111; 
 }
 
 .ui-dialog .ui-dialog-buttonset button.ui-button.cancel-button {
