@@ -45,9 +45,12 @@
       <span class="meta-name">Asiakirjat</span>
       <span id="info-application-documents-value" class="meta-value">
         <span id="staff-acceptance-document">
-          <c:if test="${not empty infoSignatures.staffInvitationId}">
-            <a href="https://www.onnistuu.fi/api/v1/invitation/${infoSignatures.staffInvitationId}/${infoSignatures.staffInvitationToken}/files/0" target="_blank">Oppilaitos</a>
-          </c:if>
+          <c:choose>
+            <c:when test="${not empty infoSignatures.staffInvitationId}">
+              <a href="https://www.onnistuu.fi/api/v1/invitation/${infoSignatures.staffInvitationId}/${infoSignatures.staffInvitationToken}/files/0" target="_blank">Oppilaitos</a>
+            </c:when>
+            <c:otherwise>-</c:otherwise>
+          </c:choose>
         </span>
       </span>
     </div>
@@ -58,12 +61,10 @@
     <div class="application-handling-option" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED"><span class="application-handling-text">Palauta k‰sittelyyn</span></div>
     <div class="application-handling-option" data-state="PROCESSING" data-show="PENDING"><span class="application-handling-text">Ota k‰sittelyyn</span></div>
     <div class="application-handling-option" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirr‰ hyv‰ksytt‰v‰ksi</span></div>
-    <c:if test="${infoState eq 'WAITING_STAFF_SIGNATURE'}">
-      <div class="signatures-container" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}">
-        <span class="application-handling-text">Allekirjoita hyv‰ksynt‰</span>
-        <div class="signatures-auth-sources"></div>
-      </div>
-    </c:if>
+    <div class="signatures-container" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}" style="display:none;">
+      <span class="application-handling-text start-processing">Allekirjoita hyv‰ksynt‰</span>
+      <div class="signatures-auth-sources"></div>
+    </div>
     <div class="application-handling-option" data-state="REJECTED"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
   </div>
   

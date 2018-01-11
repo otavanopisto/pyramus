@@ -433,38 +433,39 @@
         }
         $(this).toggle(optionState != currentState && (applicableStates.length == 0 || $.inArray(currentState, applicableStates) >= 0));
       });
+      $('.signatures-container').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
     }
     
     // Signatures
     
-    if ($('.signatures-container').length) {
-      var docId = $('.signatures-container').attr('data-document-id');
-      var docState = $('.signatures-container').attr('data-document-state');
-      $('.signatures-container').on('click', function(event) {
-        event.stopPropagation();
-        $.ajax({
-          url: '/applications/generateacceptancedocument.json',
-          type: 'GET',
-          data: {
-            id: $('body').attr('data-application-entity-id')
-          },
-          dataType: "json",
-          contentType: "application/json; charset=utf-8",
-          success: function(response) {
-            if (response.status == 'OK') {
-              $('#staff-acceptance-document').html('<a href="' + response.documentUrl + '" target="_blank">Oppilaitos</a>');
-              showSignatures();
-            }
-            else {
-              $('.notification-queue').notificationQueue('notification', 'error', response.reason);
-            }
-          },
-          error: function(err) {
-            $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+    var docId = $('.signatures-container').attr('data-document-id');
+    var docState = $('.signatures-container').attr('data-document-state');
+    $('.signatures-container').on('click', function(event) {
+      event.stopPropagation();
+      $.ajax({
+        url: '/applications/generateacceptancedocument.json',
+        type: 'GET',
+        data: {
+          id: $('body').attr('data-application-entity-id')
+        },
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+          if (response.status == 'OK') {
+            $('#staff-acceptance-document').html('<a href="' + response.documentUrl + '" target="_blank">Oppilaitos</a>');
+            showSignatures();
           }
-        });
+          else {
+            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+          }
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+        }
       });
-    }
+    });
+    if (docState == '')
+
     function showSignatures() {
       $.getJSON('/applications/listsignaturesources.json', function(data) {
         $.each(data.sources.methods, function(index, method) {

@@ -875,7 +875,8 @@ span.email {
   padding: 10px 15px;
 }
 
-.application-handling-option {
+.application-handling-option,
+.signatures-container {
   padding: 5px 0;
 }
 
@@ -893,10 +894,6 @@ span.email {
   color: #009fe3; 
 }
 
-.return-to-handling {
-  color: #7391a7; 
-}
-
 .cancel-handling {
   color: #7391a7; 
 }
@@ -911,6 +908,30 @@ span.email {
 
 .accept-application {
   color: #24c118; 
+}
+
+.signatures-auth-sources {
+  align-items: center;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+}
+
+.signatures-auth-sources img {
+  background: #fff;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  box-shadow: 0 3px 5px rgba(0,0,0,0.15);
+  flex-basis: auto;
+  flex-grow: 0;
+  flex-shrink: 1;
+  height: 55px;
+  padding: 5px;
+  margin: 5px;
+}
+
+.signatures-auth-sources img:hover {
+  border: 2px solid #83f8f3;
 }
 
 /* Mail <section> */
