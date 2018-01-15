@@ -35,7 +35,7 @@ public class ViewApplicationViewController extends PyramusViewController {
   private static final Logger logger = Logger.getLogger(EditApplicationViewController.class.getName());
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER };
+    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
   }
   
   public void process(PageRequestContext pageRequestContext) {

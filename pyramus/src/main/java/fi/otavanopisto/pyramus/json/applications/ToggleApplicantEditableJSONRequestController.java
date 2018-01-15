@@ -24,7 +24,7 @@ public class ToggleApplicantEditableJSONRequestController extends JSONRequestCon
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER };
+    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
   }
 
 }

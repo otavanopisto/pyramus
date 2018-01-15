@@ -75,7 +75,7 @@ public class ListMailRecipientsJSONRequestController extends JSONRequestControll
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER };
+    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
   }
 
 }
