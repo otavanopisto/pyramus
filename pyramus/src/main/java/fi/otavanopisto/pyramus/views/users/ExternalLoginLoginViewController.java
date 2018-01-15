@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
+import fi.internetix.smvc.AlreadyLoggedInException;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
@@ -38,7 +39,7 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
     HttpSession session = requestContext.getRequest().getSession(true);
     if (!session.isNew() && session.getAttribute("loggedUserId") != null) {
       String msg = Messages.getInstance().getText(locale, "users.login.alreadyLoggedIn");
-      throw new SmvcRuntimeException(PyramusStatusCode.ALREADY_LOGGED_IN, msg);
+      throw new AlreadyLoggedInException(PyramusStatusCode.ALREADY_LOGGED_IN, msg);
     }
 
     AuthenticationProviderVault authenticationProviders = AuthenticationProviderVault.getInstance();

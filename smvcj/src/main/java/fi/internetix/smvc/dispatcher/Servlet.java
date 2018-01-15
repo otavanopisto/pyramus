@@ -15,6 +15,8 @@ import javax.transaction.UserTransaction;
 import org.apache.commons.lang.StringUtils;
 
 import fi.internetix.smvc.AccessDeniedException;
+import fi.internetix.smvc.AlreadyLoggedInException;
+import fi.internetix.smvc.InvalidLoginException;
 import fi.internetix.smvc.LoginRequiredException;
 import fi.internetix.smvc.PageNotFoundException;
 import fi.internetix.smvc.Severity;
@@ -223,6 +225,16 @@ public class Servlet extends HttpServlet {
       statusCode = ade.getStatusCode();
       requestContext.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
       requestContext.addMessage(Severity.WARNING, ade.getMessage());
+    }
+    catch (InvalidLoginException ile) {
+      Logging.logInfo("Invalid login credentials");
+      statusCode = ile.getStatusCode();
+      requestContext.addMessage(Severity.ERROR, ile.getMessage());
+    }
+    catch (AlreadyLoggedInException ile) {
+      Logging.logInfo("Already logged in");
+      statusCode = ile.getStatusCode();
+      requestContext.addMessage(Severity.ERROR, ile.getMessage());
     }
     catch (SmvcRuntimeException pre) {
       if (platformErrorListener != null)
