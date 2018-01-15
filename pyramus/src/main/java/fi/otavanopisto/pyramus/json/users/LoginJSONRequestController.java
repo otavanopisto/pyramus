@@ -5,6 +5,8 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
+import fi.internetix.smvc.AlreadyLoggedInException;
+import fi.internetix.smvc.InvalidLoginException;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
@@ -53,7 +55,7 @@ public class LoginJSONRequestController extends JSONRequestController {
     HttpSession session = jsonRequestContext.getRequest().getSession(true);
     if (!session.isNew() && session.getAttribute("loggedUserId") != null) {
       String msg = Messages.getInstance().getText(locale, "users.login.alreadyLoggedIn");
-      throw new SmvcRuntimeException(PyramusStatusCode.ALREADY_LOGGED_IN, msg);
+      throw new AlreadyLoggedInException(PyramusStatusCode.ALREADY_LOGGED_IN, msg);
     }
     
     // Go through all authentication providers and see if one authorizes the given credentials
@@ -98,9 +100,9 @@ public class LoginJSONRequestController extends JSONRequestController {
     }
     
     // Reaching this point means no authentication provider authorized the user, so throw a login exception 
-    
+
     String msg = Messages.getInstance().getText(jsonRequestContext.getRequest().getLocale(), "users.login.loginFailed");
-    throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, msg);
+    throw new InvalidLoginException(msg);
   }
 
   public UserRole[] getAllowedRoles() {
