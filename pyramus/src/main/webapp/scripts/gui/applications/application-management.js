@@ -470,19 +470,24 @@
 
     function showSignatures() {
       $.getJSON('/applications/listsignaturesources.json', function(data) {
-        $.each(data.sources.methods, function(index, method) {
-          $('.signatures-auth-sources').append(
-            $('<img>')
-              .addClass('auth-source')
-              .attr('src', method.image)
-              .attr('data-identifier', method.identifier)
-              .attr('title', method.name)
-              .on('click', function(event) {
-                event.stopPropagation();
-                sign($(this).attr('data-identifier'));
-              })
-          );
-        });
+        if (data.sources) {
+          $.each(data.sources.methods, function(index, method) {
+            $('.signatures-auth-sources').append(
+              $('<img>')
+                .addClass('auth-source')
+                .attr('src', method.image)
+                .attr('data-identifier', method.identifier)
+                .attr('title', method.name)
+                .on('click', function(event) {
+                  event.stopPropagation();
+                  sign($(this).attr('data-identifier'));
+                })
+            );
+          });
+        }
+        else {
+          $('.notification-queue').notificationQueue('notification', 'error', 'Tunnistuslähteiden lataaminen epäonnistui');
+        }
       });
     }
     function sign(authService) {

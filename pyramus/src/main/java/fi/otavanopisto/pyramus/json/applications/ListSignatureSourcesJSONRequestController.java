@@ -19,7 +19,7 @@ public class ListSignatureSourcesJSONRequestController extends JSONRequestContro
       requestContext.addResponseParameter("sources", jsonObject);
     }
     catch (Exception e) {
-      logger.log(Level.SEVERE, "Error loading signature soruces", e);
+      logger.log(Level.SEVERE, "Error loading signature sources", e);
     }
   }
 
