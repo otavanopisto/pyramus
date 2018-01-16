@@ -104,7 +104,7 @@ public class ApplicationMailerUtils {
 
         // Handle notification mails and log entries
 
-        ApplicationUtils.sendNotifications(application, httpRequest, null, true);
+        ApplicationUtils.sendNotifications(application, httpRequest, null, true, null);
       }
       catch (IOException e) {
         logger.log(Level.SEVERE, "Unable to retrieve confirmation mail template", e);

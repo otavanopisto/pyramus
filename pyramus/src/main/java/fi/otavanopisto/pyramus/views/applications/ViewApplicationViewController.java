@@ -14,13 +14,17 @@ import org.apache.commons.lang3.StringUtils;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import net.sf.json.JSONArray;
@@ -31,11 +35,14 @@ public class ViewApplicationViewController extends PyramusViewController {
   private static final Logger logger = Logger.getLogger(EditApplicationViewController.class.getName());
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER };
+    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
   }
   
   public void process(PageRequestContext pageRequestContext) {
     try {
+
+      StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+      StaffMember staffMember = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
 
       Long applicationId = NumberUtils.createLong(pageRequestContext.getRequest().getParameter("application"));
       if (applicationId == null) {
@@ -48,6 +55,8 @@ public class ViewApplicationViewController extends PyramusViewController {
         pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
+      ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
+      ApplicationSignatures signatures = applicationSignaturesDAO.findByApplication(application);
       
       JSONObject formData = JSONObject.fromObject(application.getFormData());
 
@@ -180,6 +189,8 @@ public class ViewApplicationViewController extends PyramusViewController {
           application.getLastModified(),
           application.getApplicantLastModified(),
           application.getCreated()));
+      pageRequestContext.getRequest().setAttribute("infoSignatures", signatures);
+      pageRequestContext.getRequest().setAttribute("infoSsn", staffMember == null ? null : staffMember.getPerson().getSocialSecurityNumber());
       
       pageRequestContext.getRequest().setAttribute("mode", "view");
       pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());      

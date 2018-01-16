@@ -3,7 +3,7 @@
 
 /* 
   FONTS: 
-  - Open Sans = Body font used i every paragraph etc.
+  - Open Sans = Body font used in every paragraph etc.
   - Exo 2 = Title font used in section titles and headers 
 */
 
@@ -689,31 +689,6 @@ span.email {
   }
 }
 
-.application-action.icon-handling {
-  background-image: url(../gfx/icons/48x48/actions/handling.png);
-  float: left;
-}
-
-@media screen and (min-width: 600px) {
-  
-  .application-action.icon-handling {
-    background-image: url(../gfx/icons/48x48/actions/handling-slim.png);
-    background-size: 16px 16px;
-    background-position: 10px center;
-    border-radius: 3px;
-    width: auto;
-    padding: 0px 10px 0px 35px;
-    text-transform: uppercase;
-    height: 36px;
-    margin: 8px 12px;
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    box-shadow: none;
-    position: relative;
-  }
-}
-
 .application-action.icon-logs {
   background-image: url(../gfx/icons/48x48/actions/logs.png);
   float: right;
@@ -723,57 +698,6 @@ span.email {
   background-image: url(../gfx/icons/48x48/actions/mail.png);
   float: right;
   margin-right: 0;
-}
-
-.application-handling-text {
-  display: none;
-}
-
-@media screen and (min-width: 600px) {
-
-  .application-handling-text {
-    display: inline-block;
-    font-size: 14px;
-    color: #fff;
-    cursor: pointer;
-    text-transform: uppercase;
-    line-height: 1;
-  }
- 
-}
-
-.application-handling-options-container {
-  display: none;
-  position: absolute;
-  top: 46px;
-  left: 0;
-  right: 0;
-  background: #4fbedb;
-  color: #fff;
-  padding: 5px;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-}
-
-@media screen and (min-width: 600px) {
-
-  .application-handling-options-container {
-    top: 44px;
-    left: 0;
-    min-width: 400px;
-  }
-}
-
-.application-handling-option {
-  padding: 6px 12px;
-  text-align: left;
-  text-transform: uppercase;
-  font-weight: 400;
-  border-radius: 3px;
-  transition: background 0.2s ease-in;
-}
-
-.application-handling-option:hover {
-  background: #30abcc;
 }
 
 .application-wrapper {
@@ -927,33 +851,87 @@ span.email {
   color: #fff;
   background: #f563a6;
   border-radius: 4px;
-  padding: 2px 8px;
   display: inline-block;
+  padding: 2px 8px;
   text-decoration: none;
   font-weight: 400;
 }
 
-.additional-info-wrapper {
+.additional-info-container {
   background: #d4f6ff;
-  width: 100%;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  font-size: 14px;
+  margin: 20px 0 20px;
   min-height: 100px;
   padding: 5px 15px;
-  border-radius: 10px;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  margin: 20px 0 20px;
-  font-size: 14px;
+  width: 100%;
 }
 
-.additional-info-container {
-  flex: 1 1 auto;
+.application-handling-container {
+  border-top: 1px solid #eee;
+  font-size: 14px;
+  padding: 10px 15px;
+}
+
+.application-handling-option,
+.signatures-container {
+  padding: 5px 0;
+}
+
+.application-handling-text {
+  color: #009fe3;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+.application-handling-text:hover {
+  text-decoration: underline;
+}
+
+.start-handling {
+  color: #009fe3; 
+}
+
+.cancel-handling {
+  color: #7391a7; 
+}
+
+.decline-application {
+  color: #d31111; 
+}
+
+.start-processing {
+  color: #24c118; 
+}
+
+.accept-application {
+  color: #24c118; 
+}
+
+.signatures-auth-sources {
+  align-items: center;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+}
+
+.signatures-auth-sources img {
+  background: #fff;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  box-shadow: 0 3px 5px rgba(0,0,0,0.15);
+  height: 55px;
+  padding: 5px;
+  margin: 5px;
+}
+
+.signatures-auth-sources img:hover {
+  border: 2px solid #83f8f3;
 }
 
 /* Mail <section> */
-
 .application-mail {
   width: 100%;
   display: none;
@@ -1025,8 +1003,8 @@ span.email {
 
 .log-entry-archive {
   background-image: url('../gfx/icons/48x48/actions/close.png');
-  background-color: #b11717;
-  border: 4px solid #b11717;
+  background-color: #d31111;
+  border: 4px solid #d31111;
   right: 10px;
 }
 
@@ -1207,7 +1185,7 @@ span.email {
 }
 
 .ui-dialog .ui-dialog-buttonset button.ui-button.remove-button {
-  background: #b11717; 
+  background: #d31111; 
 }
 
 .ui-dialog .ui-dialog-buttonset button.ui-button.cancel-button {

@@ -399,6 +399,14 @@
       <version>1.6.0</version>
       <scope>provided</scope>
     </dependency>
+    
+    <!-- PDF (applications) -->
+
+    <dependency>
+      <groupId>org.xhtmlrenderer</groupId>
+      <artifactId>flying-saucer-pdf</artifactId>
+      <version>9.1.9</version>
+    </dependency>
   </dependencies>
 
   <build>

@@ -60,7 +60,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
         
         // Email notifications and log entries
         
-        ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, false);
+        ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, false, null);
       }
 
       // Response parameters
@@ -79,7 +79,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER };
+    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
   }
 
 }

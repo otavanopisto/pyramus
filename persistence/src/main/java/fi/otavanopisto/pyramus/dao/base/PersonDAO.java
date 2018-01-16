@@ -87,6 +87,13 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     personUpdatedEvent.fire(new PersonUpdatedEvent(person.getId()));
   }
   
+  public void updateSocialSecurityNumber(Person person, String socialSecurityNumber) {
+    EntityManager entityManager = getEntityManager();
+    person.setSocialSecurityNumber(socialSecurityNumber);
+    entityManager.persist(person);
+    personUpdatedEvent.fire(new PersonUpdatedEvent(person.getId()));
+  }
+  
   public Person findByUniqueEmail(String email){
     EntityManager entityManager = getEntityManager(); 
     

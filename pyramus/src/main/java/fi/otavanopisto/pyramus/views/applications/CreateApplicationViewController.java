@@ -28,28 +28,28 @@ public class CreateApplicationViewController extends PyramusViewController {
     
     try {
       SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
-      SettingKey settingKey = settingKeyDAO.findByName("application.storagePath");
+      SettingKey settingKey = settingKeyDAO.findByName("applications.storagePath");
       if (settingKey == null) {
-        logger.log(Level.SEVERE, "SettingKey for application.storagePath not found");
+        logger.log(Level.SEVERE, "SettingKey for applications.storagePath not found");
         pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
       SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
       Setting setting = settingDAO.findByKey(settingKey);
       if (setting == null || setting.getValue() == null) {
-        logger.log(Level.SEVERE, "Setting application.storagePath not defined");
+        logger.log(Level.SEVERE, "Setting applications.storagePath not defined");
         pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
       File attachmentsFolder = Paths.get(setting.getValue()).toFile();
       if (!attachmentsFolder.exists() || !attachmentsFolder.isDirectory() || !attachmentsFolder.canWrite()) {
-        logger.log(Level.SEVERE, "Setting application.storagePath refers to a non-existing or non-writable folder");
+        logger.log(Level.SEVERE, "Setting applications.storagePath refers to a non-existing or non-writable folder");
         pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
     }
     catch (IOException e) {
-      logger.log(Level.SEVERE, "Unable to serve 404 for application.storagePath", e);
+      logger.log(Level.SEVERE, "Unable to serve 404 for applications.storagePath", e);
       return;
     }
     

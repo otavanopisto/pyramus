@@ -387,7 +387,7 @@
     $('.application-handling-option').on('click', function(event) {
       $('.application-handling-options-container').hide();
       var id = $('body').attr('data-application-entity-id');
-      var state = $(event.target).attr('data-state');
+      var state = $(this).attr('data-state');
       $.ajax({
         url: '/applications/updateapplicationstate.json',
         type: "POST",
@@ -432,6 +432,86 @@
           applicableStates = $(this).attr('data-show').split(',');
         }
         $(this).toggle(optionState != currentState && (applicableStates.length == 0 || $.inArray(currentState, applicableStates) >= 0));
+      });
+      $('.signatures-container').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
+    }
+    
+    // Signatures
+    
+    var docId = $('.signatures-container').attr('data-document-id');
+    var docState = $('.signatures-container').attr('data-document-state');
+    $('.signatures-container').on('click', function(event) {
+      event.stopPropagation();
+      $.ajax({
+        url: '/applications/generateacceptancedocument.json',
+        type: 'GET',
+        data: {
+          id: $('body').attr('data-application-entity-id')
+        },
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+          if (response.status == 'OK') {
+            $('#staff-acceptance-document').html('<a href="' + response.documentUrl + '" target="_blank">Oppilaitos</a>');
+            showSignatures();
+          }
+          else {
+            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+          }
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+        }
+      });
+    });
+    if (docState == 'INVITATION_CREATED') {
+      showSignatures();
+    }
+
+    function showSignatures() {
+      $.getJSON('/applications/listsignaturesources.json', function(data) {
+        if (data.sources) {
+          $.each(data.sources.methods, function(index, method) {
+            $('.signatures-auth-sources').append(
+              $('<img>')
+                .addClass('auth-source')
+                .attr('src', method.image)
+                .attr('data-identifier', method.identifier)
+                .attr('title', method.name)
+                .on('click', function(event) {
+                  event.stopPropagation();
+                  sign($(this).attr('data-identifier'));
+                })
+            );
+          });
+        }
+        else {
+          $('.notification-queue').notificationQueue('notification', 'error', 'Tunnistuslähteiden lataaminen epäonnistui');
+        }
+      });
+    }
+    function sign(authService) {
+      $.ajax({
+        url: '/applications/signacceptancedocument.json',
+        type: 'GET',
+        data: {
+          id: $('body').attr('data-application-entity-id'),
+          mode: $('body').attr('data-mode'),
+          authService: authService
+        },
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+          if (response.status == 'OK') {
+            window.open(response.completionUrl, "_self");
+          }
+          else {
+            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+          }
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+        }
       });
     }
   });

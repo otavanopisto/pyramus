@@ -9,7 +9,7 @@
   <head>
     <jsp:include page="/templates/applications/management-fragment-head.jsp"></jsp:include>
   </head>
-  <body data-application-entity-id="${applicationEntityId}" data-application-id="${applicationId}">
+  <body data-application-entity-id="${applicationEntityId}" data-application-id="${applicationId}" data-mode="view">
     <div class="notification-queue">
       <div class="notification-queue-items">
       </div>

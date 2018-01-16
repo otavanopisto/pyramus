@@ -464,6 +464,14 @@
               <input type="text" name="title" value="${fn:escapeXml(user.title)}" size="30">
             </div>
 
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="users.editUser.ssnTitle"/>
+                <jsp:param name="helpLocale" value="users.editUser.ssnHelp"/>
+              </jsp:include>
+              <input type="text" name="ssn" value="${fn:escapeXml(user.person.socialSecurityNumber)}" size="11">
+            </div>
+
             <c:if test="${hasInternalAuthenticationStrategies}">
               <div id="editUserCredentialsContainer">
                 <div class="genericFormSection">  

@@ -44,7 +44,7 @@
     </div>
 
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="kasvatustieteet">
-      <p><!-- TODO Kasvatustieteen linjan esittelyteksti --></p>
+      <p>Otavan Opiston Kasvatustieteen linjalla tutustut kasvatustieteen viimeisimpiin suuntauksiin ja saat tukea tuleviin yliopisto-opintoihin. Opetus toteutetaan sekä verkossa että lähiopetuksena Otavan Opistolla Mikkelissä. Koulutuksen sisältöjä ovat sulautuva oppiminen, oppimisen tulevaisuus ja VAKAVA-valmennus, jotka on mahdollisuus opiskella myös erillisinä kokonaisuuksina. Opintojen yhteydessä voi suorittaa kasvatustieteen perusopinnot.</p>
     </div>
 
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="laakislinja">

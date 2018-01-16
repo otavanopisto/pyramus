@@ -21,17 +21,6 @@
         <div class="application-action icon-locked" id="action-application-toggle-lock"></div>
       </c:otherwise>
     </c:choose>
-    <div class="application-action icon-handling">
-      <div class="application-handling-text">Hakemuksen k‰sittely</div>
-      <div class="application-handling-options-container">
-        <div class="application-handling-option" data-state="PENDING" data-show="PROCESSING">Peruuta k‰sittely</div>
-        <div class="application-handling-option" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED">Palauta k‰sittelyyn</div>
-        <div class="application-handling-option" data-state="PROCESSING" data-show="PENDING">Ota k‰sittelyyn</div>
-        <div class="application-handling-option" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING">Siirr‰ hyv‰ksytt‰v‰ksi</div>
-        <div class="application-handling-option" data-state="STAFF_SIGNED" data-show="WAITING_STAFF_SIGNATURE">Allekirjoita hyv‰ksynt‰</div>
-        <div class="application-handling-option" data-state="REJECTED">Hylk‰‰ hakemus</div>
-      </div>
-    </div>
     <div class="application-action icon-mail" id="action-application-mail"></div>
     <div class="application-action icon-logs" id="action-application-log"></div>
   </div>
