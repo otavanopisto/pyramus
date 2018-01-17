@@ -33,7 +33,6 @@ import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.views.applications.ApplicationUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
