@@ -16,10 +16,16 @@ import org.apache.commons.lang3.StringUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationNotificationDAO;
+import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
+import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
+import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationNotification;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
+import fi.otavanopisto.pyramus.domainmodel.base.Language;
+import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
+import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.util.Mailer;
@@ -68,6 +74,52 @@ public class ApplicationUtils {
       return "Lääkislinja";
     case "mk":
       return "Maahanmuuttajakoulutukset";
+    default:
+      return null;
+    }
+  }
+
+  public static String municipalityUiValue(String value) {
+    if (StringUtils.isBlank(value)) {
+      return null;
+    }
+    else if (value.equals("none")) {
+      return "Ei kotikuntaa Suomessa";
+    }
+    Long municipalityId = Long.valueOf(value);
+    MunicipalityDAO municipalityDAO = DAOFactory.getInstance().getMunicipalityDAO();
+    Municipality municipality = municipalityDAO.findById(municipalityId);
+    return municipality == null ? null : municipality.getName();
+  }
+
+  public static String nationalityUiValue(String value) {
+    if (StringUtils.isBlank(value)) {
+      return null;
+    }
+    Long nationalityId = Long.valueOf(value);
+    NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
+    Nationality nationality = nationalityDAO.findById(nationalityId);
+    return nationality == null ? null : nationality.getName();
+  }
+
+  public static String languageUiValue(String value) {
+    if (StringUtils.isBlank(value)) {
+      return null;
+    }
+    Long languageId = Long.valueOf(value);
+    LanguageDAO languageDAO = DAOFactory.getInstance().getLanguageDAO();
+    Language language = languageDAO.findById(languageId);
+    return language == null ? null : language.getName();
+  }
+  
+  public static String genderUiValue(String value) {
+    switch (value) {
+    case "mies":
+      return "Mies";
+    case "nainen":
+      return "Nainen";
+    case "muu":
+      return "Muu";
     default:
       return null;
     }
@@ -147,6 +199,9 @@ public class ApplicationUtils {
   }
 
   public static String constructSSN(String birthday, String ssnEnd) {
+    if (StringUtils.isBlank(birthday) || StringUtils.isBlank(ssnEnd)) {
+      return null;
+    }
     try {
       StringBuffer ssn = new StringBuffer();
       Date d = new SimpleDateFormat("d.M.yyyy").parse(birthday);

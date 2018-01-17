@@ -45,14 +45,26 @@ public class ApplicationSignaturesDAO extends PyramusEntityDAO<ApplicationSignat
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
-  public ApplicationSignatures updateStaffDocument(ApplicationSignatures signatures, String staffDocumentId,
-      String staffInvitationId, String staffInvitationToken, ApplicationSignatureState state) {
+  public ApplicationSignatures updateStaffDocument(ApplicationSignatures signatures, String documentId,
+      String invitationId, String invitationToken, ApplicationSignatureState state) {
     EntityManager entityManager = getEntityManager();
-    signatures.setStaffDocumentId(staffDocumentId);
+    signatures.setStaffDocumentId(documentId);
     signatures.setStaffDocumentState(state);
-    signatures.setStaffInvitationId(staffInvitationId);
-    signatures.setStaffInvitationToken(staffInvitationToken);
+    signatures.setStaffInvitationId(invitationId);
+    signatures.setStaffInvitationToken(invitationToken);
     signatures.setStaffDocumentModified(new Date());
+    entityManager.persist(signatures);
+    return signatures;
+  }
+
+  public ApplicationSignatures updateApplicantDocument(ApplicationSignatures signatures, String documentId,
+      String invitationId, String invitationToken, ApplicationSignatureState state) {
+    EntityManager entityManager = getEntityManager();
+    signatures.setApplicantDocumentId(documentId);
+    signatures.setApplicantDocumentState(state);
+    signatures.setApplicantInvitationId(invitationId);
+    signatures.setApplicantInvitationToken(invitationToken);
+    signatures.setApplicantDocumentModified(new Date());
     entityManager.persist(signatures);
     return signatures;
   }

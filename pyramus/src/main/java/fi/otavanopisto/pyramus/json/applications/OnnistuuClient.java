@@ -33,6 +33,7 @@ import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.views.applications.ApplicationUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -353,6 +354,57 @@ public class OnnistuuClient {
     }
     catch (Exception e) {
       logger.log(Level.SEVERE, "Unable to create staff document", e);
+      throw new OnnistuuClientException(e.getMessage(), e);
+    }
+  }
+  
+  public byte[] generateApplicantSignatureDocument(
+      RequestContext requestContext,
+      String line,
+      String applicantName,
+      String ssn,
+      String address,
+      String municipality,
+      String nationality,
+      String phone,
+      String email) throws OnnistuuClientException {
+    try {
+      HttpServletRequest httpRequest = requestContext.getRequest();
+      StringBuilder baseUrl = new StringBuilder();
+      baseUrl.append(httpRequest.getScheme());
+      baseUrl.append("://");
+      baseUrl.append(httpRequest.getServerName());
+      baseUrl.append(":");
+      baseUrl.append(httpRequest.getServerPort());
+
+      // Applicant signed document skeleton
+
+      String document = IOUtils.toString(
+          requestContext.getServletContext().getResourceAsStream("/templates/applications/document-student-signed.html"),
+          "UTF-8");
+
+      // Replace applicant information
+
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-LINE]", line);
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-NAME]", applicantName);
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-SSN]", ssn == null ? "-" : ssn);
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-ADDRESS]", address);
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-MUNICIPALITY]", municipality);
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-NATIONALITY]", nationality);
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-PHONE]", phone);
+      document = StringUtils.replace(document, "[DOCUMENT-APPLICANT-EMAIL]", email);
+
+      // Convert to PDF
+
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      ITextRenderer renderer = new ITextRenderer();
+      renderer.setDocumentFromString(document, baseUrl.toString());
+      renderer.layout();
+      renderer.createPDF(out);
+      return out.toByteArray();
+    }
+    catch (Exception e) {
+      logger.log(Level.SEVERE, "Unable to create applicant document", e);
       throw new OnnistuuClientException(e.getMessage(), e);
     }
   }

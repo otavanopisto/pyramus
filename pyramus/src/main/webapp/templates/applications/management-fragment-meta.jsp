@@ -65,6 +65,7 @@
       <span class="application-handling-text start-processing">Allekirjoita hyv‰ksynt‰</span>
       <div class="signatures-auth-sources"></div>
     </div>
+    <div class="application-handling-option" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyv‰ksymisest‰</span></div>
     <div class="application-handling-option" data-state="REJECTED"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
   </div>
   
