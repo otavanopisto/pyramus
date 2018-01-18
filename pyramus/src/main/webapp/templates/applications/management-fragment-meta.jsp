@@ -67,6 +67,7 @@
     </div>
     <div class="application-handling-option" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyv‰ksymisest‰</span></div>
     <div class="application-handling-option" data-state="REJECTED"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
+    <a href="/applications/accept.page?debug=1">Opiskelija-PDF (debug)</a>
   </div>
   
 </section>

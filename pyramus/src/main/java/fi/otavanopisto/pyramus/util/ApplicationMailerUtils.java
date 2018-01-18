@@ -74,13 +74,13 @@ public class ApplicationMailerUtils {
         
         String subject = "Hakemus opiskelemaan Otavan Opistoon vastaanotettu";
         String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-            "/templates/applications/mail-confirmation.html"));
+            "/templates/applications/mail-confirmation.html"), "UTF-8");
         
         // #577: Contact information depends on the line selected; append suitable footer to mail content
         
         try {
           String contentFooter = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-              String.format("/templates/applications/mail-confirmation-footer-%s.html", line)));
+              String.format("/templates/applications/mail-confirmation-footer-%s.html", line)), "UTF-8");
           if (contentFooter != null) {
             content += contentFooter;
           }

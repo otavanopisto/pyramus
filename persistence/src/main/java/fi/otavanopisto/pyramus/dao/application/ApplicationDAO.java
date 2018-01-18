@@ -202,6 +202,23 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
   
+  public Application findByApplicationIdAndArchived(String applicationId, Boolean archived) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Application> criteria = criteriaBuilder.createQuery(Application.class);
+    Root<Application> root = criteria.from(Application.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Application_.applicationId), applicationId),
+        criteriaBuilder.equal(root.get(Application_.archived), archived)
+      )
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+  
   public Application findByLastNameAndReferenceCode(String lastName, String referenceCode) {
     EntityManager entityManager = getEntityManager(); 
     

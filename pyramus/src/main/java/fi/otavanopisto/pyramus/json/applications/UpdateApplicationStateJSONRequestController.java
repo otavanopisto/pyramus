@@ -5,18 +5,24 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatureState;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.util.Mailer;
 import fi.otavanopisto.pyramus.views.applications.ApplicationUtils;
 import net.sf.json.JSONObject;
 
@@ -74,6 +80,8 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String nationality = ApplicationUtils.nationalityUiValue(getFormValue(formData, "field-nationality"));
           String phone = getFormValue(formData, "field-phone");
           String email = getFormValue(formData, "field-email");
+          String nickname = getFormValue(formData, "field-nickname");
+          String guardianMail = formData.getString("field-underage-email");
 
           // Make sure we have application signatures and school approval
           
@@ -116,6 +124,52 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
             applicationSignatures = applicationSignaturesDAO.updateApplicantDocument(applicationSignatures, documentId, invitation.getUuid(),
                 invitation.getPassphrase(), ApplicationSignatureState.INVITATION_CREATED);
           }
+          
+          // Construct accepted mail template
+          
+          String staffDocUrl = String.format("https://www.onnistuu.fi/api/v1/invitation/%s/%s/files/0",
+              applicationSignatures.getStaffInvitationId(),
+              applicationSignatures.getStaffInvitationToken());
+
+          StringBuilder signUpUrl = new StringBuilder();
+          signUpUrl.append(requestContext.getRequest().getScheme());
+          signUpUrl.append("://");
+          signUpUrl.append(requestContext.getRequest().getServerName());
+          signUpUrl.append(":");
+          signUpUrl.append(requestContext.getRequest().getServerPort());
+          signUpUrl.append("/applications/accept.page?application=");
+          signUpUrl.append(application.getApplicationId());
+          
+          String subject = "Hyväksyminen Otavan Opiston opiskelijaksi";
+          String content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
+              "/templates/applications/mail-accept-study-place.html"), "UTF-8");
+          content = String.format(content,
+              nickname,
+              line.toLowerCase(),
+              staffDocUrl,
+              staffDocUrl,
+              signUpUrl.toString(),
+              signUpUrl.toString(),
+              staffMember.getFullName());
+          
+          // Send mail to applicant (and possible guardian)
+          
+          if (StringUtils.isBlank(guardianMail)) {
+            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, subject, content);
+          }
+          else {
+            Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, email, guardianMail, subject, content);
+          }
+          
+          // Add notification about sent mail
+          
+          ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+          applicationLogDAO.create(
+            application,
+            ApplicationLogType.HTML,
+            String.format("<p>%s</p><p><b>%s</b></p>%s", "Hakijalle lähetetty ilmoitus opiskelijaksi hyväksymisestä", subject, content),
+            staffMember);
+
         } // end of application has been approved logic
         
         // Update the actual application state
