@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
-import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 
 public class CreditStub {
   
@@ -23,11 +22,11 @@ public class CreditStub {
     return courseName;
   }
 
-  public void addCredit(Credit credit) {
+  public void addCredit(CreditStubCredit credit) {
     credits.add(credit);
   }
   
-  public Set<Credit> getCredits() {
+  public Set<CreditStubCredit> getCredits() {
     return credits;
   }
 
@@ -43,7 +42,7 @@ public class CreditStub {
     this.courseNumber = courseNumber;
   }
 
-  private final Set<Credit> credits = new HashSet<>();
+  private final Set<CreditStubCredit> credits = new HashSet<>();
   private final String courseCode;
   private final String courseName;
   private final Subject subject;

@@ -30,6 +30,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kunta;
@@ -214,7 +215,7 @@ public class KoskiStudentHandler {
           stub = stubs.get(courseCode);
         }
         
-        stub.addCredit(ca);
+        stub.addCredit(new CreditStubCredit(ca, Type.CREDIT));
       }
     }
     
@@ -229,7 +230,7 @@ public class KoskiStudentHandler {
           stub = stubs.get(courseCode);
         }
         
-        stub.addCredit(tc);
+        stub.addCredit(new CreditStubCredit(tc, Type.RECOGNIZED));
       }
     }
     
@@ -276,7 +277,7 @@ public class KoskiStudentHandler {
           stub = stubs.get(courseCode);
         }
         
-        stub.addCredit(cl.getCredit());
+        stub.addCredit(new CreditStubCredit(cl.getCredit(), Type.RECOGNIZED));
       }
     }
     
