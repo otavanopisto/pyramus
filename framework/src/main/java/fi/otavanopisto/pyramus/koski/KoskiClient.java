@@ -112,6 +112,10 @@ public class KoskiClient {
   }
   
   public void updatePerson(Person person) throws KoskiException {
+    asdPerson(person, null);
+  }
+  
+  public void asdPerson(Person person, String invalidatedOid) throws KoskiException {
     try {
       if (!settings.isEnabled())
         return;
@@ -307,6 +311,22 @@ public class KoskiClient {
             student.getId(), student.getStudyProgramme().getName()));
         return null;
     }
+  }
+
+  public OppijaReturnVal findPersonByOid(String personOid) throws Exception {
+    String uri = String.format("%s/oppija/%s", getBaseUrl(), personOid);
+    
+    Client client = ClientBuilder.newClient();
+    WebTarget target = client.target(uri);
+    Builder request = target
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .header("Authorization", "Basic " + getAuth());
+
+    return request.get(OppijaReturnVal.class);
+  }
+
+  public void invalidateStudyOid(Person person, String oid) {
+    
   }
   
 }
