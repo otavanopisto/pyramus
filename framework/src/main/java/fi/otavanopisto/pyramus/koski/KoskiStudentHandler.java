@@ -30,6 +30,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kunta;
@@ -193,10 +194,8 @@ public class KoskiStudentHandler {
     return studentSubjects;
   }
  
-  protected List<CreditStub> listCredits(Student student) {
+  protected List<CreditStub> listCredits(Student student, boolean listTransferCredits, boolean listCreditLinks) {
     List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
-    List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
-    List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
     
     Map<String, CreditStub> stubs = new HashMap<>();
     
@@ -214,69 +213,76 @@ public class KoskiStudentHandler {
           stub = stubs.get(courseCode);
         }
         
-        stub.addCredit(ca);
+        stub.addCredit(new CreditStubCredit(ca, Type.CREDIT));
       }
     }
     
-    for (TransferCredit tc : transferCredits) {
-      if (matchingCurriculum(student, tc)) {
-        String courseCode = courseCode(tc.getSubject(), tc.getCourseNumber(), tc.getId());
-        CreditStub stub;
-        if (!stubs.containsKey(courseCode)) {
-          stub = new CreditStub(courseCode, tc.getCourseNumber(), tc.getCourseName(), tc.getSubject());
-          stubs.put(courseCode, stub);
-        } else {
-          stub = stubs.get(courseCode);
+    if (listTransferCredits) {
+      List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
+      for (TransferCredit tc : transferCredits) {
+        if (matchingCurriculum(student, tc)) {
+          String courseCode = courseCode(tc.getSubject(), tc.getCourseNumber(), tc.getId());
+          CreditStub stub;
+          if (!stubs.containsKey(courseCode)) {
+            stub = new CreditStub(courseCode, tc.getCourseNumber(), tc.getCourseName(), tc.getSubject());
+            stubs.put(courseCode, stub);
+          } else {
+            stub = stubs.get(courseCode);
+          }
+          
+          stub.addCredit(new CreditStubCredit(tc, Type.RECOGNIZED));
         }
-        
-        stub.addCredit(tc);
       }
     }
-    
-    for (CreditLink cl : creditLinks) {
-      Subject subject = null;
-      Integer courseNumber = null;
-      String courseName = null;
-      
-      switch (cl.getCredit().getCreditType()) {
-        case CourseAssessment:
-          CourseAssessment ca = (CourseAssessment) cl.getCredit();
-          Course course = ca.getCourseStudent() != null ? ca.getCourseStudent().getCourse() : null;
 
-          if (!matchingCurriculum(student, course)) {
-            continue;
-          }
-          
-          subject = course != null ? course.getSubject() : null;
-          courseNumber = course.getCourseNumber();
-          courseName = course.getName();
-        break;
-        case TransferCredit:
-          TransferCredit tc = (TransferCredit) cl.getCredit();
-          
-          if (!matchingCurriculum(student, tc)) {
-            continue;
-          }
-          
-          subject = tc.getSubject();
-          courseNumber = tc.getCourseNumber();
-          courseName = tc.getCourseName();
-        break;
-        case ProjectAssessment:
-          continue;
-      }
+    if (listCreditLinks) {
+      List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
       
-      if (allNotNull(subject, courseNumber, courseName)) {
-        String courseCode = courseCode(subject, courseNumber, cl.getCredit().getId());
-        CreditStub stub;
-        if (!stubs.containsKey(courseCode)) {
-          stub = new CreditStub(courseCode, courseNumber, courseName, subject);
-          stubs.put(courseCode, stub);
-        } else {
-          stub = stubs.get(courseCode);
+      for (CreditLink cl : creditLinks) {
+        Subject subject = null;
+        Integer courseNumber = null;
+        String courseName = null;
+        
+        switch (cl.getCredit().getCreditType()) {
+          case CourseAssessment:
+            CourseAssessment ca = (CourseAssessment) cl.getCredit();
+            Course course = ca.getCourseStudent() != null ? ca.getCourseStudent().getCourse() : null;
+  
+            if (!matchingCurriculum(student, course)) {
+              continue;
+            }
+            
+            subject = course != null ? course.getSubject() : null;
+            courseNumber = course.getCourseNumber();
+            courseName = course.getName();
+          break;
+          case TransferCredit:
+            TransferCredit tc = (TransferCredit) cl.getCredit();
+            
+            if (!matchingCurriculum(student, tc)) {
+              continue;
+            }
+            
+            subject = tc.getSubject();
+            courseNumber = tc.getCourseNumber();
+            courseName = tc.getCourseName();
+          break;
+          case ProjectAssessment:
+            continue;
         }
         
-        stub.addCredit(cl.getCredit());
+        if (allNotNull(subject, courseNumber, courseName)) {
+          String courseCode = courseCode(subject, courseNumber, cl.getCredit().getId());
+          CreditStub stub;
+          if (!stubs.containsKey(courseCode)) {
+            stub = new CreditStub(courseCode, courseNumber, courseName, subject);
+            stubs.put(courseCode, stub);
+          } else {
+            stub = stubs.get(courseCode);
+          }
+          
+          stub.addCredit(new CreditStubCredit(cl.getCredit(), Type.RECOGNIZED));
+        }
       }
     }
     
