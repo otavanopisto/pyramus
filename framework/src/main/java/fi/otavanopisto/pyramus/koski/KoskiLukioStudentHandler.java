@@ -186,7 +186,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
   }
 
   private Set<LukionOppiaineenSuoritus> assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades) {
-    Collection<CreditStub> credits = listCredits(student);
+    Collection<CreditStub> credits = listCredits(student, true, true);
     Set<LukionOppiaineenSuoritus> results = new HashSet<>();
     
     Map<String, LukionOppiaineenSuoritus> map = new HashMap<>();

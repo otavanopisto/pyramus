@@ -148,7 +148,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
 
   private void assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects,
       APASuoritus oppimaaranSuoritus) {
-    Collection<CreditStub> credits = listCredits(student);
+    Collection<CreditStub> credits = listCredits(student, false, false);
     
     Map<String, APAOppiaineenSuoritus> map = new HashMap<>();
     

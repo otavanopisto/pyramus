@@ -179,7 +179,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
   }
   
   private Set<AikuistenPerusopetuksenOppiaineenSuoritus> assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades) {
-    Collection<CreditStub> credits = listCredits(student);
+    Collection<CreditStub> credits = listCredits(student, false, false);
     Set<AikuistenPerusopetuksenOppiaineenSuoritus> results = new HashSet<>();
     
     Map<String, AikuistenPerusopetuksenOppiaineenSuoritus> map = new HashMap<>();
