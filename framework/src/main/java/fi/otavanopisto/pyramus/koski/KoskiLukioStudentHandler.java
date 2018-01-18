@@ -24,12 +24,11 @@ import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
-import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
-import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
+import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
@@ -187,7 +186,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
   }
 
   private Set<LukionOppiaineenSuoritus> assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades) {
-    Collection<CreditStub> credits = listCredits(student);
+    Collection<CreditStub> credits = listCredits(student, true, true);
     Set<LukionOppiaineenSuoritus> results = new HashSet<>();
     
     Map<String, LukionOppiaineenSuoritus> map = new HashMap<>();
@@ -376,12 +375,12 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
     // Hyväksilukutieto on hölmössä paikassa; jos kaikki arvosanat ovat hyväksilukuja, tallennetaan 
     // tieto hyväksilukuna - ongelmallista, jos hyväksiluettua kurssia on korotettu 
-    if (courseCredit.getCredits().stream().allMatch(credit -> credit.getCreditType() == CreditType.TransferCredit)) {
+    if (courseCredit.getCredits().stream().allMatch(credit -> credit.getType() == Type.RECOGNIZED)) {
       OsaamisenTunnustaminen tunnustettu = new OsaamisenTunnustaminen(kuvaus("Hyväksiluku"));
       suoritus.setTunnustettu(tunnustettu);
     }
 
-    for (Credit credit : courseCredit.getCredits()) {
+    for (CreditStubCredit credit : courseCredit.getCredits()) {
       ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());
   
       KurssinArviointi arviointi = null;
@@ -407,9 +406,9 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
   private LukionKurssinTyyppi findCourseType(CreditStub courseCredit, boolean national, LukionKurssinTyyppi ... allowedValues) {
     Set<LukionKurssinTyyppi> resolvedTypes = new HashSet<>();
     
-    for (Credit credit : courseCredit.getCredits()) {
-      if (credit instanceof CourseAssessment) {
-        CourseAssessment courseAssessment = (CourseAssessment) credit;
+    for (CreditStubCredit credit : courseCredit.getCredits()) {
+      if (credit.getCredit() instanceof CourseAssessment) {
+        CourseAssessment courseAssessment = (CourseAssessment) credit.getCredit();
         if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
           Course course = courseAssessment.getCourseStudent().getCourse();
           Set<Long> educationSubTypeIds = course.getCourseEducationTypes().stream().flatMap(
@@ -422,8 +421,8 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
           }
         } else
           logger.warning(String.format("CourseAssessment %d has no courseStudent or Course", courseAssessment.getId()));
-      } else if (credit instanceof TransferCredit) {
-        TransferCredit transferCredit = (TransferCredit) credit;
+      } else if (credit.getCredit() instanceof TransferCredit) {
+        TransferCredit transferCredit = (TransferCredit) credit.getCredit();
         if (national && transferCredit.getOptionality() == CourseOptionality.MANDATORY) {
           resolvedTypes.add(LukionKurssinTyyppi.pakollinen);
         } else {
