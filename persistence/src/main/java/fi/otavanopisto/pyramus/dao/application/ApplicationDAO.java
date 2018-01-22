@@ -124,6 +124,14 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     }
   }
   
+  public Application updateApplicationStateAsApplicant(Application application, ApplicationState applicationState) {
+    EntityManager entityManager = getEntityManager();
+    application.setState(applicationState);
+    application.setApplicantLastModified(new Date());
+    entityManager.persist(application);
+    return application;
+  }
+
   public Application updateApplicationState(Application application, ApplicationState applicationState, User user) {
     EntityManager entityManager = getEntityManager();
     application.setState(applicationState);

@@ -34,6 +34,10 @@
       });
     }
     
+    // Document urls
+    
+    updateDocumentUrls();
+    
     // Header buttons
     
     $('#action-application-view').on('click', function() {
@@ -409,6 +413,9 @@
           $('#action-application-toggle-lock').addClass(response.applicantEditable ? 'icon-unlocked' : 'icon-locked');
           loadLogEntries();
           refreshActions();
+          if (state == 'APPROVED_BY_SCHOOL') {
+            updateDocumentUrls();
+          }
           $('.notification-queue').notificationQueue('notification', 'info', 'Hakemuksen tila vaihdettu');
         }
       });
@@ -452,7 +459,7 @@
         contentType: "application/json; charset=utf-8",
         success: function(response) {
           if (response.status == 'OK') {
-            $('#staff-acceptance-document').html('<a href="' + response.documentUrl + '" target="_blank">Oppilaitos</a>');
+            updateDocumentUrls();
             showSignatures();
           }
           else {
@@ -466,6 +473,21 @@
     });
     if (docState == 'INVITATION_CREATED') {
       showSignatures();
+    }
+    
+    function updateDocumentUrls() {
+      $.getJSON('/applications/getdocumenturls.json', {
+        id: $('body').attr('data-application-entity-id')
+      }, function(response) {
+        var html = '-';
+        if (response.staffDocumentUrl) {
+          html = '<a href="' + response.staffDocumentUrl + '" target="_blank">Oppilaitos</a>';
+        }
+        if (response.applicantDocumentUrl) {
+          html += '<br/><a href="' + response.applicantDocumentUrl + '" target="_blank">Hakija</a>';
+        }
+        $('#info-application-documents-value').html(html);
+      });
     }
 
     function showSignatures() {
@@ -490,6 +512,7 @@
         }
       });
     }
+    
     function sign(authService) {
       $.ajax({
         url: '/applications/signacceptancedocument.json',

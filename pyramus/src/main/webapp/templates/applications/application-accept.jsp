@@ -15,13 +15,11 @@
 
     <script defer="defer" type="text/javascript" src="//code.jquery.com/jquery-1.12.4.min.js"></script>
     <script defer="defer" type="text/javascript" src="//code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/applications/application.js"></script>
-    
-    <style>
-    </style>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/applications/application-signatures.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/notificationqueue/notificationqueue.js"></script>
 
   </head>
-  <body>
+  <body data-application-entity-id="${applicationEntityId}" data-applicant-ssn="${applicantSsn}">
     <main class="application">
       
       <header class="application-logo-header"></header>
@@ -38,7 +36,7 @@
           <div>Linja: <c:out value="${applicantLine}"/></div>
           <p></p>
           <p>Vastaanota opiskelupaikka sähköisen tunnistautumisen tai mobiilivarmenteen avulla:</p>
-          <div class="application-signature-sources">
+          <div class="signatures-auth-sources">
           </div>
           <p></p>
           <p>Mikäli Sinulla ei ole pankkitunnuksia tai mobiilivarmennetta, voit ottaa opiskelupaikan vastaan lähettämällä <a href="${applicantDocumentUrl}">tulostamasi ilmoittautumislomakkeen</a> meille.</p> 

@@ -176,7 +176,7 @@ public class ApplicationUtils {
 
       Mailer.sendMail(Mailer.JNDI_APPLICATION,
           Mailer.HTML,
-          staffMember.getPrimaryEmail().getAddress(),
+          staffMember == null ? null : staffMember.getPrimaryEmail().getAddress(),
           emails,
           mailSubject,
           mailContent);
