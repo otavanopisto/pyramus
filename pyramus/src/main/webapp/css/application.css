@@ -931,6 +931,16 @@ span.email {
   border: 2px solid #83f8f3;
 }
 
+.attachments-container {
+  padding: 10px 0;
+}
+
+.application-attachment {
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  padding: 10px 12px;
+}
+
 /* Mail <section> */
 .application-mail {
   width: 100%;

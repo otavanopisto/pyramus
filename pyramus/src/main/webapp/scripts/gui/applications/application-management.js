@@ -21,7 +21,7 @@
         contentType: "application/json; charset=utf-8",
         success: function(files) {
           for (var i = 0; i < files.length; i++) {
-            attachmentsContainer.append($('<div>').append(
+            attachmentsContainer.append($('<div>').addClass('application-attachment').append(
               $('<a>')
                 .attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + files[i].name)
                 .attr('target', '_blank')
