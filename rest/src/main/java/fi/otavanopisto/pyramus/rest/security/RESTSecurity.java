@@ -12,7 +12,6 @@ import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.security.ContextReference;
 import fi.otavanopisto.security.Identity;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 /**
  * RESTSecurity is essentially a copy of PermitInterceptor in muikku.security. But as CDI Interceptor
@@ -95,12 +94,6 @@ public class RESTSecurity {
           }
         }
       break;
-    }
-    
-    if (!permitted) {
-      User user = sessionController.getUser();
-      String userId = user == null ? "not logged in" : user.getId() == null ? "null user id" : user.getId().toString();
-      logger.warning(String.format("Permission check failed for %s for user %s", String.join(",", permissions), userId));
     }
 
     return permitted;
