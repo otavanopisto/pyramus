@@ -18,7 +18,28 @@
       }
     });
     function sign(authService) {
-      alert('sign with ' + authService);
+      $.ajax({
+        url: '/applications/signstudentdocument.json',
+        type: 'GET',
+        data: {
+          id: $('body').attr('data-application-entity-id'),
+          ssn: $('body').attr('data-applicant-ssn'),
+          authService: authService
+        },
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+          if (response.status == 'OK') {
+            window.open(response.completionUrl, "_self");
+          }
+          else {
+            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+          }
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+        }
+      });
     }
   });
   

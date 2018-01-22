@@ -78,16 +78,21 @@ public class CompleteApplicationViewController extends PyramusViewController {
         String documentUrl = String.format("https://www.onnistuu.fi/api/v1/invitation/%s/%s/files/0",
             applicationSignatures.getApplicantInvitationId(),
             applicationSignatures.getApplicantInvitationToken());
-        String notificationPostfix = String.format("<a href=\"%s\" target=\"_blank\">Opiskelupaikan hyväksymisasiakirja</a>", documentUrl); 
+        String notificationPostfix = String.format("<a href=\"%s\" target=\"_blank\">Opiskelupaikan vastaanottoasiakirja</a>", documentUrl); 
         ApplicationUtils.sendNotifications(application, pageRequestContext.getRequest(), null, false, notificationPostfix);
       }
       else {
         logger.severe(String.format("Applicant signature for application %d was not completed successfully", application.getId()));
-        // TODO Redirect to completion page (failure)
+        pageRequestContext.getRequest().setAttribute("invalidState", Boolean.TRUE);
+        pageRequestContext.getRequest().setAttribute("invalidStateReason", "Sähköinen allekirjoitus peruutettiin tai epäonnistui");
+        return;
       }
       
       // TODO Redirect to completion page (success)
-      
+
+      String contextPath = pageRequestContext.getRequest().getContextPath();
+      pageRequestContext.setRedirectURL(String.format("%s/applications/manage.page?application=%d", contextPath, application.getId()));
+
     }
     catch (Exception e) { 
       logger.log(Level.SEVERE, "Unable to serve error response", e);

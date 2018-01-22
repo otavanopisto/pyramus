@@ -16,9 +16,10 @@
     <script defer="defer" type="text/javascript" src="//code.jquery.com/jquery-1.12.4.min.js"></script>
     <script defer="defer" type="text/javascript" src="//code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/applications/application-signatures.js"></script>
+    <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/notificationqueue/notificationqueue.js"></script>
 
   </head>
-  <body>
+  <body data-application-entity-id="${applicationEntityId}" data-applicant-ssn="${applicantSsn}">
     <main class="application">
       
       <header class="application-logo-header"></header>
