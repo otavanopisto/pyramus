@@ -912,6 +912,8 @@ span.email {
 
 .signatures-auth-sources {
   align-items: center;
+  background: #f2f2f2;
+  border-radius: 10px;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-evenly;
@@ -919,9 +921,8 @@ span.email {
 
 .signatures-auth-sources img {
   background: #fff;
-  border: 2px solid #fff;
+  border: 2px solid #eee;
   border-radius: 4px;
-  box-shadow: 0 3px 5px rgba(0,0,0,0.15);
   height: 55px;
   padding: 5px;
   margin: 5px;
