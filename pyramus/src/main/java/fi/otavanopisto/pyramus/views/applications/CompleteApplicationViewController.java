@@ -85,7 +85,6 @@ public class CompleteApplicationViewController extends PyramusViewController {
         logger.severe(String.format("Applicant signature for application %d was not completed successfully", application.getId()));
         pageRequestContext.getRequest().setAttribute("invalidState", Boolean.TRUE);
         pageRequestContext.getRequest().setAttribute("invalidStateReason", "Sähköinen allekirjoitus peruutettiin tai epäonnistui");
-        return;
       }
       
       // TODO Redirect to completion page (success)
