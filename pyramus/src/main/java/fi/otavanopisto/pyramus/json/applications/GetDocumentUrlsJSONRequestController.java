@@ -1,7 +1,5 @@
 package fi.otavanopisto.pyramus.json.applications;
 
-import java.util.logging.Logger;
-
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
