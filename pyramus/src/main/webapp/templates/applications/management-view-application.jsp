@@ -32,7 +32,7 @@
               </c:forEach>
             </div>
           </c:forEach>
-          <h4 class="application-data-title">Liitteet</h4>
+          <h4 id="attachments-title" class="application-data-title">Liitteet</h4>
           <div id="attachments-readonly-container" class="attachments-container">
           </div>
         </section>

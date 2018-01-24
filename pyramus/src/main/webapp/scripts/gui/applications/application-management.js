@@ -20,6 +20,7 @@
         type: 'GET',
         contentType: "application/json; charset=utf-8",
         success: function(files) {
+          $('#attachments-title').toggle(files.length > 0);
           for (var i = 0; i < files.length; i++) {
             attachmentsContainer.append($('<div>').addClass('application-attachment').append(
               $('<a>')
