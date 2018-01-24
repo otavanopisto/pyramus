@@ -917,6 +917,7 @@ span.email {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-evenly;
+  padding: 2px;
 }
 
 .signatures-auth-sources img {
@@ -925,7 +926,7 @@ span.email {
   border-radius: 4px;
   height: 55px;
   padding: 5px;
-  margin: 5px;
+  margin: 2px;
 }
 
 .signatures-auth-sources img:hover {
