@@ -56,9 +56,30 @@ body {
   margin: 0 0 10px;
 }
 
+.document__information-row {
+  border-bottom: 1px solid #eee;
+  clear: both;
+  display: table;
+  padding: 12px 0;
+  width: 100%;
+}
+.document__information-label {
+  display: table-cell;
+  width: 140px;
+}
+
+.document__information-data {
+  display: table-cell;
+  width: auto;
+}
+
 .document__signature-primary,
 .document__signature-secondary {
   margin: 80px 0;
+}
+
+.document__student-signature {
+  margin: 150px 0 0;
 }
 
 .document__signature-primary p,
@@ -66,4 +87,17 @@ body {
   margin: 0 0 5px;
 }
 
+.document__signature-row {
+  padding: 12px 0;
+}
 
+.document__signature-label {
+  display: inline-block;
+  width: 170px;
+}
+
+.document__signature-data {
+  border-bottom: 1px solid #000;
+  display: inline-block;
+  width: 300px;
+}
