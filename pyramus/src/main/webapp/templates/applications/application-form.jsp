@@ -48,7 +48,7 @@
     </div>
 
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="laakislinja">
-      <p>L‰‰kislinjalla kerrataan ja syvennet‰‰n lukion biologian, fysiikan, kemian ja matematiikan oppim‰‰ri‰, valmistaudutaan l‰‰ketieteellisen p‰‰sykokeisiin harjoittelemalla eri teht‰v‰tyyppien vastaustekniikoita ja tehd‰‰n lopuksi simuloitu p‰‰sykoe.</p>
+      <p>L‰‰kislinjalla kerrataan ja syvennet‰‰n lukion biologian, fysiikan ja kemian oppim‰‰r‰‰, kerrataan lukion matematiikkaa, valmistaudutaan l‰‰ketieteellisen p‰‰sykokeisiin harjoittelemalla eri teht‰v‰tyyppien vastaustekniikoita ja tehd‰‰ simuloitu p‰‰sykoe.</p>
     </div>
     
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="mk">
