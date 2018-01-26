@@ -46,7 +46,7 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   public static final String FIND_STUDENT = "FIND_STUDENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   @PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
   public static final String UPDATE_STUDENT = "UPDATE_STUDENT";
   

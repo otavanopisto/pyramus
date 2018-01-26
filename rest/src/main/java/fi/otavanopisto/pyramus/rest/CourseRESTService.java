@@ -850,13 +850,6 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    // #689 Study guiders should only be able to update their own students. Since the UPDATE_STUDENT
-    // permission already checks that, let's validate the student of this course student against it
-    
-    if (!restSecurity.hasPermission(new String[] { StudentPermissions.UPDATE_STUDENT, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
-      return Response.status(Status.FORBIDDEN).build();
-    }
-
     if (!courseStudent.getCourse().getId().equals(course.getId())) {
       return Response.status(Status.NOT_FOUND).build();
     }
