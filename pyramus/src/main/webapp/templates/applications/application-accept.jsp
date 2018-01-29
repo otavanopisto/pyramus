@@ -19,7 +19,7 @@
     <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/notificationqueue/notificationqueue.js"></script>
 
   </head>
-  <body data-application-entity-id="${applicationEntityId}" data-applicant-ssn="${applicantSsn}">
+  <body data-application-id="${applicationId}" data-applicant-ssn="${applicantSsn}">
     <main class="application">
       
       <header class="application-logo-header"></header>

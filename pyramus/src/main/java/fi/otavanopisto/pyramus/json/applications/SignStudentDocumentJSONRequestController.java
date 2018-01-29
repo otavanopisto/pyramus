@@ -15,17 +15,18 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.views.applications.ApplicationUtils;
 
 public class SignStudentDocumentJSONRequestController extends JSONRequestController {
 
   private static final Logger logger = Logger.getLogger(SignStudentDocumentJSONRequestController.class.getName());
 
   public void process(JSONRequestContext requestContext) {
-
+    
     // Validate request parameters
 
-    Long id = requestContext.getLong("id");
-    if (id == null) {
+    String applicationId = requestContext.getString("id");
+    if (StringUtils.isBlank(applicationId)) {
       logger.warning("Missing application id");
       fail(requestContext, "Puuttuva hakemustunnus");
       return;
@@ -46,15 +47,20 @@ public class SignStudentDocumentJSONRequestController extends JSONRequestControl
     // Ensure application state
     
     ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
-    Application application = applicationDAO.findById(id);
+    Application application = applicationDAO.findByApplicationIdAndArchived(applicationId, Boolean.FALSE);
     if (application == null) {
-      logger.warning(String.format("Application with id %d not found", id));
-      fail(requestContext, String.format("Hakemusta tunnuksella %d ei löytynyt", id));
+      logger.warning(String.format("Application with id %s not found", applicationId));
+      fail(requestContext, String.format("Hakemusta tunnuksella %s ei löytynyt", applicationId));
       return;
     }
     if (application.getState() != ApplicationState.APPROVED_BY_SCHOOL) {
-      logger.warning(String.format("Application with id %d in incorrect state (%s)", id, application.getState()));
+      logger.warning(String.format("Application with id %s in incorrect state (%s)", applicationId, application.getState()));
       fail(requestContext, "Hakemus ei ole allekirjoitettavassa tilassa");
+      return;
+    }
+    if (!StringUtils.equals(ssn, ApplicationUtils.extractSSN(application))) {
+      logger.warning("Social security number mismatch");
+      fail(requestContext, "Virheellinen henkilötunnus");
       return;
     }
 

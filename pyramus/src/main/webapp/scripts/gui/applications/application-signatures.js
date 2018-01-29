@@ -22,7 +22,7 @@
         url: '/applications/signstudentdocument.json',
         type: 'GET',
         data: {
-          id: $('body').attr('data-application-entity-id'),
+          id: $('body').attr('data-application-id'),
           ssn: $('body').attr('data-applicant-ssn'),
           authService: authService
         },

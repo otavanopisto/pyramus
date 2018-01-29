@@ -76,7 +76,7 @@ public class AcceptApplicationViewController extends PyramusViewController {
         applicationSignatures.getApplicantInvitationId(),
         applicationSignatures.getApplicantInvitationToken());
     
-    pageRequestContext.getRequest().setAttribute("applicationEntityId", application.getId());
+    pageRequestContext.getRequest().setAttribute("applicationId", application.getApplicationId());
     pageRequestContext.getRequest().setAttribute("applicantName", applicantName);
     pageRequestContext.getRequest().setAttribute("applicantSsn", ssn);
     pageRequestContext.getRequest().setAttribute("applicantLine", line);

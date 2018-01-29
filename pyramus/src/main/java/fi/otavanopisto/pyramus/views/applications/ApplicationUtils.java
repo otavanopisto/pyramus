@@ -29,6 +29,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.util.Mailer;
+import net.sf.json.JSONObject;
 
 public class ApplicationUtils {
 
@@ -198,6 +199,14 @@ public class ApplicationUtils {
     }
   }
 
+  public static String extractSSN(Application application) {
+    if (application == null) {
+      return null;
+    }
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    return constructSSN(getFormValue(formData, "field-birthday"), getFormValue(formData, "field-ssn-end"));
+  }
+
   public static String constructSSN(String birthday, String ssnEnd) {
     if (StringUtils.isBlank(birthday) || StringUtils.isBlank(ssnEnd)) {
       return null;
@@ -227,5 +236,8 @@ public class ApplicationUtils {
     return result;
   }
   
+  private static String getFormValue(JSONObject object, String key) {
+    return object.has(key) ? object.getString(key) : null;
+  }
 
 }
