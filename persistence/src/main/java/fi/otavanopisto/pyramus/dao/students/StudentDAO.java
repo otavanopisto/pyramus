@@ -48,6 +48,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent_;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser_;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup_;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.students.Student_;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -486,11 +487,21 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     
     Root<StudentGroupUser> groupUser1 = groupQuery1.from(StudentGroupUser.class);
     groupQuery1.select(groupUser1.get(StudentGroupUser_.studentGroup));
-    groupQuery1.where(criteriaBuilder.equal(groupUser1.get(StudentGroupUser_.staffMember), staffMember));
+    groupQuery1.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(groupUser1.get(StudentGroupUser_.staffMember), staffMember),
+        criteriaBuilder.equal(root.get(StudentGroup_.archived), Boolean.FALSE)
+      )
+    );
     
     Root<StudentGroupStudent> groupStudent2 = groupQuery2.from(StudentGroupStudent.class);
     groupQuery2.select(groupStudent2.get(StudentGroupStudent_.studentGroup));
-    groupQuery2.where(criteriaBuilder.equal(groupStudent2.get(StudentGroupStudent_.student), student));
+    groupQuery2.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(groupStudent2.get(StudentGroupStudent_.student), student),
+        criteriaBuilder.equal(root.get(StudentGroup_.archived), Boolean.FALSE)
+      )
+    );
     
     criteria.select(criteriaBuilder.count(root));
     
