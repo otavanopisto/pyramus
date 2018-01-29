@@ -1,6 +1,9 @@
 package fi.otavanopisto.pyramus.views.help;
 
+import java.io.IOException;
 import java.util.Locale;
+
+import javax.servlet.http.HttpServletResponse;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
@@ -19,17 +22,26 @@ public class ViewHelpPageViewController extends PyramusViewController implements
     HelpPageDAO helpPageDAO = DAOFactory.getInstance().getHelpPageDAO();
 
     Long pageId = requestContext.getLong("page");
+    if (pageId == null) { 
+      sendError(requestContext, HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
     
     HelpPage helpPage = helpPageDAO.findById(pageId);
+    if (helpPage == null) {
+      sendError(requestContext, HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
     
     HelpItemTitle itemTitle = helpPage.getTitleByLocale(requestContext.getRequest().getLocale());
-    if (itemTitle == null)
+    if (itemTitle == null) {
       itemTitle = helpPage.getTitles().get(0);
+    }
     
     HelpPageContent pageContent = helpPage.getContentByLocale(requestContext.getRequest().getLocale());
-    if (pageContent == null)
+    if (pageContent == null) {
       pageContent = helpPage.getContents().get(0);
-    
+    }
 
     requestContext.getRequest().setAttribute("title", itemTitle.getTitle());
     requestContext.getRequest().setAttribute("content", pageContent.getContent());
