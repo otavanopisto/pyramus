@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.views.help;
 
-import java.io.IOException;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
