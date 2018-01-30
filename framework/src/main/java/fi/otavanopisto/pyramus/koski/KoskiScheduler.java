@@ -23,14 +23,17 @@ import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 @TransactionManagement(value=TransactionManagementType.BEAN)
 public class KoskiScheduler {
  
-  private static final long INITIAL_DELAY_SECONDS = 60;
-  private static final long DELAY_SECONDS = 20;
+  private static final long INITIAL_DELAY_SECONDS = 180;
+  private static final long DELAY_SECONDS = 60;
 
   @Inject
   private Logger logger;
   
   @Inject
   private KoskiClient koskiClient;
+
+  @Inject
+  private KoskiSettings settings;
   
   @Inject
   private KoskiPersonLogDAO koskiPersonLogDAO;
@@ -50,10 +53,12 @@ public class KoskiScheduler {
     try {
       userTransaction.begin();
       
-      KoskiPersonLog pending = koskiPersonLogDAO.findOldestByState(KoskiPersonState.PENDING);
-      
-      if (pending != null) {
-        koskiClient.updatePerson(pending.getPerson());
+      if (settings.isEnabled()) {
+        KoskiPersonLog pending = koskiPersonLogDAO.findOldestByState(KoskiPersonState.PENDING);
+        
+        if (pending != null) {
+          koskiClient.updatePerson(pending.getPerson());
+        }
       }
       
       userTransaction.commit();
