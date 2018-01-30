@@ -2,22 +2,13 @@ package fi.otavanopisto.pyramus.koski;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.transaction.Status;
 import javax.transaction.TransactionScoped;
-import javax.transaction.TransactionSynchronizationRegistry;
-
-import org.apache.commons.collections.CollectionUtils;
 
 import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
@@ -38,12 +29,6 @@ public class KoskiEventListeners implements Serializable {
   @Inject
   private Logger logger;
   
-  @Resource
-  private TransactionSynchronizationRegistry transactionRegistry;
-
-  @Inject
-  private KoskiUpdater koskiUpdater;
-
   @Inject
   private KoskiSettings settings;
   
@@ -53,23 +38,6 @@ public class KoskiEventListeners implements Serializable {
   @Inject
   private StudentDAO studentDAO;
   
-  private Set<Long> personIds = new HashSet<>();
-  
-  @PreDestroy
-  private void preDestroy() {
-    if (transactionRegistry.getTransactionStatus() == Status.STATUS_COMMITTED) {
-      for (Long personId : personIds) {
-        koskiUpdater.updatePerson(personId);
-      }
-    } else {
-      if (CollectionUtils.isNotEmpty(personIds)) {
-        String list = personIds.stream().map(personId -> personId != null ? personId.toString() : "null").collect(Collectors.joining(", "));
-        
-        logger.log(Level.WARNING, String.format("Koski was not updated for students %s as transaction was closed with status %d.", list, transactionRegistry.getTransactionStatus()));
-      }
-    }
-  }
-
   public void onStudentUpdated(@Observes StudentUpdatedEvent event) {
     studentChanged(event.getStudentId());
   }
@@ -89,7 +57,6 @@ public class KoskiEventListeners implements Serializable {
   private void studentChanged(Long studentId) {
     Student student = studentDAO.findById(studentId);
     if (student != null && student.getPerson() != null) {
-      personIds.add(student.getPerson().getId());
       clearPersonLog(student.getPerson());
     } else {
       logger.severe(String.format("Student was not found with id %d", studentId));

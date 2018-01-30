@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
@@ -49,7 +49,7 @@ import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
 /**
  * https://dev.koski.opintopolku.fi/koski/documentation
  */
-@RequestScoped
+@ApplicationScoped
 public class KoskiClient {
 
   private static final String KOSKI_STUDYPERMISSION_ID = "koski.studypermission-id";
@@ -120,14 +120,14 @@ public class KoskiClient {
         logger.log(Level.WARNING, "updateStudent called with null person.");
         return;
       }
+
+      clearPersonLog(person);
       
       // Does the person have any reported study programmes
       if (!settings.hasReportedStudents(person)) {
         return;
       }
 
-      clearPersonLog(person);
-      
       String personOid = personVariableDAO.findByPersonAndKey(person, KOSKI_HENKILO_OID);
       
       if (StringUtils.isBlank(person.getSocialSecurityNumber()) && StringUtils.isBlank(personOid)) {
