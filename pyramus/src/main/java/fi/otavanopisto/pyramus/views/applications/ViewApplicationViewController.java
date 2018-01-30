@@ -15,15 +15,9 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
-import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
-import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
-import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
-import fi.otavanopisto.pyramus.domainmodel.base.Language;
-import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
-import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -76,15 +70,15 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-ssn-end"))) {
         fields.put("Henkilötunnuksen loppuosa", StringUtils.upperCase(getFormValue(formData, "field-ssn-end"))); 
       }
-      fields.put("Sukupuoli", genderUiValue(getFormValue(formData, "field-sex")));
+      fields.put("Sukupuoli", ApplicationUtils.genderUiValue(getFormValue(formData, "field-sex")));
       fields.put("Osoite", String.format("%s\n%s %s\n%s",
           getFormValue(formData, "field-street-address"),
           getFormValue(formData, "field-zip-code"),
           getFormValue(formData, "field-city"),
           getFormValue(formData, "field-country")));
-      fields.put("Kotikunta", municipalityUiValue(getFormValue(formData, "field-municipality")));
-      fields.put("Kansallisuus", nationalityUiValue(getFormValue(formData, "field-nationality")));
-      fields.put("Äidinkieli", languageUiValue(getFormValue(formData, "field-language")));
+      fields.put("Kotikunta", ApplicationUtils.municipalityUiValue(getFormValue(formData, "field-municipality")));
+      fields.put("Kansallisuus", ApplicationUtils.nationalityUiValue(getFormValue(formData, "field-nationality")));
+      fields.put("Äidinkieli", ApplicationUtils.languageUiValue(getFormValue(formData, "field-language")));
       fields.put("Puhelinnumero", getFormValue(formData, "field-phone"));
       fields.put("Sähköposti", getFormValue(formData, "field-email"));
 
@@ -115,7 +109,9 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies"))) {
         fields.put("Aiemmat opinnot", getFormValue(formData, "field-previous-studies"));
       }
-      fields.put("Opiskelee toisessa oppilaitoksessa", simpleBooleanUiValue(getFormValue(formData, "field-other-school")));
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-other-school"))) {
+        fields.put("Opiskelee toisessa oppilaitoksessa", simpleBooleanUiValue(getFormValue(formData, "field-other-school")));
+      }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-other-school-name"))) {
         fields.put("Oppilaitos", getFormValue(formData, "field-other-school-name"));
       }
@@ -146,7 +142,10 @@ public class ViewApplicationViewController extends PyramusViewController {
         fields.put("Vapaamuotoinen esittely", getFormValue(formData, "field-info"));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-lodging"))) {
-        fields.put("Tarvitsee asunnon kampukselta", "Kyllä");
+        fields.put("Asunto kampukselta", "Kyllä");
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-lodging-partial"))) {
+        fields.put("Asunto kampukselta lähijaksojen ajaksi", "Kyllä");
       }
       
       // Hakulähde
@@ -208,52 +207,6 @@ public class ViewApplicationViewController extends PyramusViewController {
   
   private String getFormValue(JSONObject object, String key) {
     return object.has(key) ? object.getString(key) : null;
-  }
-  
-  private String municipalityUiValue(String value) {
-    if (StringUtils.isBlank(value)) {
-      return null;
-    }
-    else if (value.equals("none")) {
-      return "Ei kotikuntaa Suomessa";
-    }
-    Long municipalityId = Long.valueOf(value);
-    MunicipalityDAO municipalityDAO = DAOFactory.getInstance().getMunicipalityDAO();
-    Municipality municipality = municipalityDAO.findById(municipalityId);
-    return municipality == null ? null : municipality.getName();
-  }
-
-  private String nationalityUiValue(String value) {
-    if (StringUtils.isBlank(value)) {
-      return null;
-    }
-    Long nationalityId = Long.valueOf(value);
-    NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
-    Nationality nationality = nationalityDAO.findById(nationalityId);
-    return nationality == null ? null : nationality.getName();
-  }
-
-  private String languageUiValue(String value) {
-    if (StringUtils.isBlank(value)) {
-      return null;
-    }
-    Long languageId = Long.valueOf(value);
-    LanguageDAO languageDAO = DAOFactory.getInstance().getLanguageDAO();
-    Language language = languageDAO.findById(languageId);
-    return language == null ? null : language.getName();
-  }
-  
-  private String genderUiValue(String value) {
-    switch (value) {
-    case "mies":
-      return "Mies";
-    case "nainen":
-      return "Nainen";
-    case "muu":
-      return "Muu";
-    default:
-      return null;
-    }
   }
 
   private String sourceUiValue(String value) {

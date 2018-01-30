@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.views.applications;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -98,6 +97,9 @@ public class SignedAcceptanceDocumentViewController extends PyramusViewControlle
             applicationSignatures.getStaffInvitationToken());
         String notificationPostfix = String.format("<a href=\"%s\" target=\"_blank\">Hyväksymisasiakirja</a>", documentUrl); 
         ApplicationUtils.sendNotifications(application, pageRequestContext.getRequest(), staffMember, false, notificationPostfix);
+      }
+      else {
+        logger.severe(String.format("Staff signature for application %d was not completed successfully", application.getId()));
       }
       
       // Redirect to application management (view or edit)

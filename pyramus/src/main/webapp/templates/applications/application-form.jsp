@@ -17,9 +17,9 @@
       <option value="nettilukio" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
       <option value="nettipk" data-underage-support="true" data-attachment-support="true">Nettiperuskoulu</option>
       <option value="aikuislukio" data-underage-support="true" data-attachment-support="true">Aikuislukio</option>
-      <option value="bandilinja" data-underage-support="true" data-attachment-support="true">B‰ndilinja</option>
-      <option value="kasvatustieteet" data-underage-support="true" data-attachment-support="false">Kasvatustieteen linja</option>
-      <option value="laakislinja" data-underage-support="true" data-attachment-support="false">L‰‰kislinja</option>
+      <!--<option value="bandilinja" data-underage-support="true" data-attachment-support="true">B‰ndilinja</option>-->
+      <option value="kasvatustieteet" data-underage-support="false" data-attachment-support="false">Kasvatustieteen linja</option>
+      <option value="laakislinja" data-underage-support="false" data-attachment-support="false">L‰‰kislinja</option>
       <option value="mk" data-underage-support="false" data-attachment-support="true">Maahanmuuttajakoulutukset</option>
     </select>
 
@@ -48,7 +48,7 @@
     </div>
 
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="laakislinja">
-      <p>L‰‰kislinjalla kerrataan ja syvennet‰‰n lukion biologian, fysiikan ja kemian oppim‰‰ri‰, tehd‰‰n harjoitusp‰‰sykokeita ja valmistaudutaan l‰‰ketieteellisen p‰‰sykokeisiin.</p>
+      <p>L‰‰kislinjalla kerrataan ja syvennet‰‰n lukion biologian, fysiikan ja kemian oppim‰‰r‰‰, kerrataan lukion matematiikkaa, valmistaudutaan l‰‰ketieteellisen p‰‰sykokeisiin harjoittelemalla eri teht‰v‰tyyppien vastaustekniikoita ja tehd‰‰ simuloitu p‰‰sykoe.</p>
     </div>
     
     <div class="field-container dependent" data-dependent-field="field-line" data-dependent-values="mk">
@@ -265,7 +265,7 @@
 
     <h3 class="application-form-section-header">Hakemiseen tarvittavat lis‰tiedot</h3>
 
-    <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,laakislinja">
+    <div class="field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,laakislinja,kasvatustieteet">
       <label for="field-previous-studies" class="required">Aiemmat opinnot (listaa myˆs keskeytyneet)</label>
       <textarea name="field-previous-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
     </div>
@@ -361,13 +361,24 @@
       <textarea name="field-info" rows="5" cols="40"></textarea>
     </div>
 
-    <div class="field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio,bandilinja,laakislinja,mk">
+    <div class="field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio,bandilinja,mk">
       <div class="field-row-flex">
         <div class="field-row-element">
           <input type="checkbox" id="field-lodging" name="field-lodging" value="kylla">
         </div>
         <div class="field-row-label">
           <label for="field-lodging">Tarvitsen asunnon opiston kampukselta</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-container field-lodging-partial dependent" data-dependent-field="field-line" data-dependent-values="laakislinja,kasvatustieteet">
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-lodging-partial" name="field-lodging-partial" value="kylla">
+        </div>
+        <div class="field-row-label">
+          <label for="field-lodging-partial">Tarvitsen asunnon opiston kampukselta l‰hijaksojen ajaksi</label>
         </div>
       </div>
     </div>

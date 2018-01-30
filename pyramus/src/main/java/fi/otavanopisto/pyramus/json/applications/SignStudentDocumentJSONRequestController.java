@@ -9,48 +9,32 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
-import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatureState;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
-import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.views.applications.ApplicationUtils;
 
-public class SignAcceptanceDocumentJSONRequestController extends JSONRequestController {
+public class SignStudentDocumentJSONRequestController extends JSONRequestController {
 
-  private static final Logger logger = Logger.getLogger(SignAcceptanceDocumentJSONRequestController.class.getName());
+  private static final Logger logger = Logger.getLogger(SignStudentDocumentJSONRequestController.class.getName());
 
   public void process(JSONRequestContext requestContext) {
-
-    // Ensure user has SSN to be able to sign the document
-
-    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-    StaffMember staffMember = staffMemberDAO.findById(requestContext.getLoggedUserId());
-    if (staffMember == null) {
-      logger.warning("Current user cannot be resolved");
-      fail(requestContext, "Et ole kirjautunut sisään");
-      return;
-    }
-    if (StringUtils.isBlank(staffMember.getPerson().getSocialSecurityNumber())) {
-      logger.warning("Current user lacks social security number");
-      fail(requestContext, "Allekirjoittamiseen vaadittua henkilötunnusta ei ole asetettu");
-      return;
-    }
-
+    
     // Validate request parameters
 
-    Long id = requestContext.getLong("id");
-    if (id == null) {
+    String applicationId = requestContext.getString("id");
+    if (StringUtils.isBlank(applicationId)) {
       logger.warning("Missing application id");
       fail(requestContext, "Puuttuva hakemustunnus");
       return;
     }
-    String mode = requestContext.getString("mode");
-    if (StringUtils.isBlank(mode)) {
-      logger.warning("Missing mode");
-      fail(requestContext, "Puuttuva hakemusnäkymä");
+    String ssn = requestContext.getString("ssn");
+    if (StringUtils.isBlank(ssn)) {
+      logger.warning("Missing social security number");
+      fail(requestContext, "Puuttuva henkilötunnus");
       return;
     }
     String authService = requestContext.getString("authService");
@@ -63,15 +47,20 @@ public class SignAcceptanceDocumentJSONRequestController extends JSONRequestCont
     // Ensure application state
     
     ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
-    Application application = applicationDAO.findById(id);
+    Application application = applicationDAO.findByApplicationIdAndArchived(applicationId, Boolean.FALSE);
     if (application == null) {
-      logger.warning(String.format("Application with id %d not found", id));
-      fail(requestContext, String.format("Hakemusta tunnuksella %d ei löytynyt", id));
+      logger.warning(String.format("Application with id %s not found", applicationId));
+      fail(requestContext, String.format("Hakemusta tunnuksella %s ei löytynyt", applicationId));
       return;
     }
-    if (application.getState() != ApplicationState.WAITING_STAFF_SIGNATURE) {
-      logger.warning(String.format("Application with id %d in incorrect state (%s)", id, application.getState()));
+    if (application.getState() != ApplicationState.APPROVED_BY_SCHOOL) {
+      logger.warning(String.format("Application with id %s in incorrect state (%s)", applicationId, application.getState()));
       fail(requestContext, "Hakemus ei ole allekirjoitettavassa tilassa");
+      return;
+    }
+    if (!StringUtils.equals(ssn, ApplicationUtils.extractSSN(application))) {
+      logger.warning("Social security number mismatch");
+      fail(requestContext, "Virheellinen henkilötunnus");
       return;
     }
 
@@ -79,8 +68,8 @@ public class SignAcceptanceDocumentJSONRequestController extends JSONRequestCont
 
     ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
     ApplicationSignatures signatures = applicationSignaturesDAO.findByApplication(application);
-    if (signatures == null || signatures.getStaffDocumentState() != ApplicationSignatureState.INVITATION_CREATED) {
-      fail(requestContext, "Hyväksymisasiakirja ei ole allekirjoitettavassa tilassa");
+    if (signatures == null || signatures.getApplicantDocumentState() != ApplicationSignatureState.INVITATION_CREATED) {
+      fail(requestContext, "Opiskelupaikan vastaanottoasiakirja ei ole allekirjoitettavassa tilassa");
       return;
     }
 
@@ -92,20 +81,15 @@ public class SignAcceptanceDocumentJSONRequestController extends JSONRequestCont
     returnUrl.append(requestContext.getRequest().getServerName());
     returnUrl.append(":");
     returnUrl.append(requestContext.getRequest().getServerPort());
-    returnUrl.append("/applications/signedacceptancedocument.page?invitationId=");
-    returnUrl.append(signatures.getStaffInvitationId());
-    returnUrl.append("&mode=");
-    returnUrl.append(mode);
+    returnUrl.append("/applications/done.page?invitationId=");
+    returnUrl.append(signatures.getApplicantInvitationId());
     
     // Signing
 
     OnnistuuClient onnistuuClient = OnnistuuClient.getInstance();
     try {
       String completionUrl = onnistuuClient.getSignatureUrl(
-          signatures.getStaffInvitationId(),
-          returnUrl.toString(),
-          staffMember.getPerson().getSocialSecurityNumber(),
-          authService);
+          signatures.getApplicantInvitationId(), returnUrl.toString(), ssn, authService);
 
       // Respond with URL to complete the signature
 
@@ -119,7 +103,7 @@ public class SignAcceptanceDocumentJSONRequestController extends JSONRequestCont
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
+    return new UserRole[] { UserRole.EVERYONE };
   }
 
   private void fail(JSONRequestContext requestContext, String reason) {

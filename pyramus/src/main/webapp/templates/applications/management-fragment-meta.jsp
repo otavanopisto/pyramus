@@ -43,16 +43,7 @@
     </div>
     <div class="meta-container">
       <span class="meta-name">Asiakirjat</span>
-      <span id="info-application-documents-value" class="meta-value">
-        <span id="staff-acceptance-document">
-          <c:choose>
-            <c:when test="${not empty infoSignatures.staffInvitationId}">
-              <a href="https://www.onnistuu.fi/api/v1/invitation/${infoSignatures.staffInvitationId}/${infoSignatures.staffInvitationToken}/files/0" target="_blank">Oppilaitos</a>
-            </c:when>
-            <c:otherwise>-</c:otherwise>
-          </c:choose>
-        </span>
-      </span>
+      <span id="info-application-documents-value" class="meta-value"></span>
     </div>
   </div>
   
@@ -65,7 +56,9 @@
       <span class="application-handling-text start-processing">Allekirjoita hyv‰ksynt‰</span>
       <div class="signatures-auth-sources"></div>
     </div>
+    <div class="application-handling-option" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyv‰ksymisest‰</span></div>
     <div class="application-handling-option" data-state="REJECTED"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
+    <!-- <a href="/applications/accept.page?debug=1">Opiskelija-PDF (debug)</a>  -->
   </div>
   
 </section>
