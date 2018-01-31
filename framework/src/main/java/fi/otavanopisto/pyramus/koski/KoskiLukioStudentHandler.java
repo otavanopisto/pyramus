@@ -131,6 +131,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       LukionOppimaaranSuoritus suoritus = new LukionOppimaaranSuoritus(
           LukionOppimaara.aikuistenops, Kieli.FI, toimipiste, suorituksenTila);
       suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
+      suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
       if (suorituksenTila == SuorituksenTila.VALMIS)
         suoritus.setVahvistus(getVahvistus(student, academyIdentifier));
       opiskeluoikeus.addSuoritus(suoritus);
@@ -142,6 +143,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       for (LukionOppiaineenSuoritus oppiaine : oppiaineet) {
         LukionOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = new LukionOppiaineenOppimaaranSuoritus(Kieli.FI, toimipiste, suorituksenTila, oppiaine);
         oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
+        oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
         if (suorituksenTila == SuorituksenTila.VALMIS)
           oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, academyIdentifier));
         opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);

@@ -21,6 +21,7 @@ import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -30,6 +31,8 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
@@ -56,6 +59,9 @@ public class KoskiStudentHandler {
   
   @Inject 
   protected UserVariableDAO userVariableDAO;
+
+  @Inject 
+  protected UserVariableKeyDAO userVariableKeyDAO;
 
   @Inject
   protected StudentLodgingPeriodDAO lodgingPeriodDAO;
@@ -395,5 +401,28 @@ public class KoskiStudentHandler {
       }
     }
   }
-  
+
+  protected Kuvaus getTodistuksellaNakyvatLisatiedot(Student student) {
+    StringBuilder sb = new StringBuilder();
+    
+    for (int i = 1; i <= 5; i++) {
+      UserVariableKey key = userVariableKeyDAO.findByVariableKey("todistus.lisatiedot" + i);
+      if (key != null) {
+        UserVariable variable = userVariableDAO.findByUserAndVariableKey(student, key);
+        
+        if (variable != null) {
+          if (StringUtils.isNotBlank(variable.getValue())) {
+            if (sb.length() > 0) {
+              sb.append(" ");
+            }
+            
+            sb.append(variable.getValue().trim());
+          }
+        }
+      }
+    }
+    
+    return sb.length() > 0 ? kuvaus(sb.toString()) : null;
+  }
+
 }
