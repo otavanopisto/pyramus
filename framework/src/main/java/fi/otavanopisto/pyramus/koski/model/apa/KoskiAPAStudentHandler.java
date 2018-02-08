@@ -103,6 +103,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
     APASuoritus suoritus = new APASuoritus(
         PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila);
+    suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
     if (suorituksenTila == SuorituksenTila.VALMIS)
       suoritus.setVahvistus(getVahvistus(student, academyIdentifier));

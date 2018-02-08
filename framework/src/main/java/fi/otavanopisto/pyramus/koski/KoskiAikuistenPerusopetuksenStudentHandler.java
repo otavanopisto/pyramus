@@ -119,6 +119,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       
       AikuistenPerusopetuksenOppimaaranSuoritus suoritus = new AikuistenPerusopetuksenOppimaaranSuoritus(
           PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila);
+      suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
       suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
       if (suorituksenTila == SuorituksenTila.VALMIS)
         suoritus.setVahvistus(getVahvistus(student, academyIdentifier));
@@ -131,6 +132,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       for (AikuistenPerusopetuksenOppiaineenSuoritus oppiaine : oppiaineet) {
         PerusopetuksenOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = new PerusopetuksenOppiaineenOppimaaranSuoritus(
             PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila, oppiaine);
+        oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
         oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
         if (suorituksenTila == SuorituksenTila.VALMIS)
           oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, academyIdentifier));
