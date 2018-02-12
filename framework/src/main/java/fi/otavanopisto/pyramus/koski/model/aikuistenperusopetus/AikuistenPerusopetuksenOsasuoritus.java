@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus;
 
-public abstract class AikuistenPerusopetuksenOsasuoritus {
+import fi.otavanopisto.pyramus.koski.model.OppiaineenSuoritus;
+
+public abstract class AikuistenPerusopetuksenOsasuoritus extends OppiaineenSuoritus {
 
 }
