@@ -1,13 +1,14 @@
-package fi.otavanopisto.pyramus.koski;
+package fi.otavanopisto.pyramus.koski.model.internetix;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -24,11 +25,20 @@ import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
+import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
+import fi.otavanopisto.pyramus.koski.CreditStub;
+import fi.otavanopisto.pyramus.koski.CreditStubCredit;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
+import fi.otavanopisto.pyramus.koski.KoodistoViite;
+import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
+import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
+import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
+import fi.otavanopisto.pyramus.koski.OppiaineenSuoritusWithCurriculum;
+import fi.otavanopisto.pyramus.koski.StudentSubjectSelections;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
@@ -36,12 +46,12 @@ import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssinTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssit;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssitOPS2004Aikuiset;
-import fi.otavanopisto.pyramus.koski.koodisto.LukionOppimaara;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
+import fi.otavanopisto.pyramus.koski.model.KoskiSplitStudyProgramme;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
@@ -60,6 +70,7 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunna
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeudenLisatiedot;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenArviointi;
+import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenOppimaaranSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusAidinkieli;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMatematiikka;
@@ -67,38 +78,31 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMuuValt
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusPaikallinen;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusVierasKieli;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenTunniste;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppimaaranSuoritus;
+import fi.otavanopisto.pyramus.koski.settings.KoskiStudyProgrammeHandlerParams;
 
-public class KoskiLukioStudentHandler extends KoskiStudentHandler {
+public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
 
   public static final String USERVARIABLE_EXTENDEDSTUDYTIME = "extendedStudyTime";
   public static final String USERVARIABLE_UNDER18STARTREASON = "under18studyStartReason";
-  private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.lukio;
+  private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.aineopiskelulukio;
 
   @Inject
   private Logger logger;
-
-  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier, KoskiStudyProgrammeHandler handler) {
-    if (handler != HANDLER_TYPE) {
-      logger.log(Level.SEVERE, String.format("Wrong handler type %s, expected %s w/person %d.", handler, HANDLER_TYPE, student.getPerson().getId()));
-      return null;
-    }
-    
+  
+  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
-    String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
-    OpiskelijanOPS ops = resolveOPS(student);
-    if (ops == null) {
-      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_CURRICULUM, new Date());
-      return null;
-    }
+    String studyOid = resolveStudyOid(student);
     
     // Skip student if it is archived and the studyoid is blank
     if (Boolean.TRUE.equals(student.getArchived()) && StringUtils.isBlank(studyOid)) {
       return null;
     }
-    
+
+    boolean defaultStudyProgramme = 
+        settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId()) == HANDLER_TYPE;
+
     LukionOpiskeluoikeus opiskeluoikeus = new LukionOpiskeluoikeus();
-    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(handler, student.getId()));
+    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(HANDLER_TYPE, student.getId()));
     opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
     opiskeluoikeus.setPaattymispaiva(student.getStudyEndDate());
     if (StringUtils.isNotBlank(studyOid)) {
@@ -128,21 +132,33 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
-    Set<LukionOppiaineenSuoritus> oppiaineet = assessmentsToModel(handler, ops, student, studentEducationType, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS);
+    Set<OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> oppiaineet = assessmentsToModel(student, studentEducationType, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS, defaultStudyProgramme);
 
-    LukionOppimaaranSuoritus suoritus = new LukionOppimaaranSuoritus(
-        LukionOppimaara.aikuistenops, Kieli.FI, toimipiste, suorituksenTila);
-    suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
-    suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
-    if (suorituksenTila == SuorituksenTila.VALMIS)
-      suoritus.setVahvistus(getVahvistus(student, academyIdentifier));
-    opiskeluoikeus.addSuoritus(suoritus);
+    // Aineopiskelija
     
-    oppiaineet.forEach(oppiaine -> suoritus.addOsasuoritus(oppiaine));
+    for (OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus> oppiaine : oppiaineet) {
+      LukionOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = new LukionOppiaineenOppimaaranSuoritus(Kieli.FI, toimipiste, suorituksenTila, oppiaine.getOppiaineenSuoritus());
+      oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(HANDLER_TYPE, oppiaine.getOps()));
+      oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
+      if (suorituksenTila == SuorituksenTila.VALMIS)
+        oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, academyIdentifier));
+      opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
+    }
+    
+    if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
+      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
+      return null;
+    }
     
     return opiskeluoikeus;
   }
   
+  private String resolveStudyOid(Student student) {
+    Map<String, KoskiSplitStudyProgramme> oids = loadInternetixOids(student);
+    String studentIdentifier = getStudentIdentifier(HANDLER_TYPE, student.getId());
+    return oids.get(studentIdentifier) != null ? oids.get(studentIdentifier).getOid() : null;
+  }
+
   private StudentSubjectSelections getDefaultSubjectSelections() {
     StudentSubjectSelections studentSubjects = new StudentSubjectSelections();
     studentSubjects.setMath("MAB");
@@ -172,38 +188,52 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     return lisatiedot;
   }
 
-  private Set<LukionOppiaineenSuoritus> assessmentsToModel(KoskiStudyProgrammeHandler handler, OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades) {
-    Collection<CreditStub> credits = listCredits(student, true, true, ops, credit -> matchingCurriculumFilter(student, credit));
-    Set<LukionOppiaineenSuoritus> results = new HashSet<>();
-    
-    Map<String, LukionOppiaineenSuoritus> map = new HashMap<>();
-    
-    for (CreditStub credit : credits) {
-      LukionOppiaineenSuoritus oppiaineenSuoritus = getSubject(student, studentEducationType, credit.getSubject(), studentSubjects, map);
+  private Set<OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> assessmentsToModel(Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades, boolean defaultStudyProgramme) {
+    List<OpiskelijanOPS> opsList = new ArrayList<>();
+    opsList.add(OpiskelijanOPS.ops2016);
+    opsList.add(OpiskelijanOPS.ops2005);
 
-      if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
-        LukionKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(ops, credit);
-        if (kurssiSuoritus != null) {
-          oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
-        } else {
-          logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
+    KoskiStudyProgrammeHandlerParams handlerParams = settings.getSettings().getKoski().getHandlerParams().get(HANDLER_TYPE);
+    // If this is default study programme of the student, we exclude the incompatible education type (ie list all other edutypes)
+    // Otherwise, only list credits from one education type
+    Predicate<Credit> predicate = defaultStudyProgramme ?
+        credit -> !matchingEducationTypeFilter(credit, handlerParams.getExcludedEducationTypes()) :
+        credit -> matchingEducationTypeFilter(credit, handlerParams.getEducationTypes());
+    Map<OpiskelijanOPS, List<CreditStub>> opsCredits = listCredits(student, true, true, opsList, predicate);
+    
+    Set<OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> results = new HashSet<>();
+    Map<String, OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> map = new HashMap<>();
+
+    for (OpiskelijanOPS ops : opsCredits.keySet()) {
+      List<CreditStub> credits = opsCredits.get(ops);
+      
+      for (CreditStub credit : credits) {
+        OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus> oppiaineenSuoritus = getSubject(ops, student, studentEducationType, credit.getSubject(), studentSubjects, map);
+  
+        if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
+          LukionKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(ops, credit);
+          if (kurssiSuoritus != null) {
+            oppiaineenSuoritus.getOppiaineenSuoritus().addOsasuoritus(kurssiSuoritus);
+          } else {
+            logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
+          }
         }
       }
     }
     
-    for (LukionOppiaineenSuoritus lukionOppiaineenSuoritus : map.values()) {
-      if (CollectionUtils.isEmpty(lukionOppiaineenSuoritus.getOsasuoritukset())) {
+    for (OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus> lukionOppiaineenSuoritus : map.values()) {
+      if (CollectionUtils.isEmpty(lukionOppiaineenSuoritus.getOppiaineenSuoritus().getOsasuoritukset())) {
         // Skip empty subjects
         continue;
       }
       
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
       if (calculateMeanGrades) {
-        ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(lukionOppiaineenSuoritus);
+        ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(lukionOppiaineenSuoritus.getOppiaineenSuoritus());
         
         if (aineKeskiarvo != null) {
           LukionOppiaineenArviointi arviointi = new LukionOppiaineenArviointi(aineKeskiarvo, student.getStudyEndDate());
-          lukionOppiaineenSuoritus.addArviointi(arviointi);
+          lukionOppiaineenSuoritus.getOppiaineenSuoritus().addArviointi(arviointi);
         } else {
           logger.warning(String.format("Unresolved mean grade for person %d.", student.getPerson().getId()));
         }
@@ -227,12 +257,13 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     return meanGrade(kurssiarvosanat);
   }
   
-  private LukionOppiaineenSuoritus getSubject(Student student, EducationType studentEducationType,
-      Subject subject, StudentSubjectSelections studentSubjects, Map<String, LukionOppiaineenSuoritus> map) {
+  private OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus> getSubject(
+      OpiskelijanOPS creditOPS, Student student, EducationType studentEducationType, Subject subject, 
+      StudentSubjectSelections studentSubjects, Map<String, OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> map) {
     String subjectCode = subjectCode(subject);
-
-    if (map.containsKey(subjectCode))
-      return map.get(subjectCode);
+    String mapKey = String.valueOf(creditOPS) + subjectCode;
+    if (map.containsKey(mapKey))
+      return map.get(mapKey);
     
     boolean matchingEducationType = studentEducationType != null && subject.getEducationType() != null && 
         studentEducationType.getId().equals(subject.getEducationType().getId());
@@ -241,18 +272,14 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       if (StringUtils.equals(subjectCode, studentSubjects.getMath())) {
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMatematiikka(
             OppiaineMatematiikka.valueOf(subjectCode), isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.MA));
-        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-        map.put(subjectCode, os);
-        return os;
+        return map(map, mapKey, creditOPS, tunniste);
       } else
         return null;
     }
     if (matchingEducationType && StringUtils.equals(subjectCode, "MAY")) {
       LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMatematiikka(
           OppiaineMatematiikka.MAY, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.MA));
-      LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-      map.put(subjectCode, os);
-      return os;
+      return map(map, mapKey, creditOPS, tunniste);
     }
     
     
@@ -260,9 +287,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusAidinkieli(
             OppiaineAidinkieliJaKirjallisuus.AI1, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
-        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-        map.put(subjectCode, os);
-        return os;
+        return map(map, mapKey, creditOPS, tunniste);
       } else
         return null;
     }
@@ -270,9 +295,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusAidinkieli(
             OppiaineAidinkieliJaKirjallisuus.AI7, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
-        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-        map.put(subjectCode, os);
-        return os;
+        return map(map, mapKey, creditOPS, tunniste);
       } else
         return null;
     }
@@ -293,9 +316,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
           
           LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusVierasKieli(valinta, kieli, 
               isPakollinenOppiaine(student, valinta));
-          LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-          map.put(subjectCode, os);
-          return os;
+          return map(map, mapKey, creditOPS, tunniste);
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
           return null;
@@ -308,14 +329,13 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     if (matchingEducationType && ArrayUtils.contains(religionSubjects, subjectCode)) {
       // Only the religion that student has selected is reported
       if (StringUtils.equals(subjectCode, studentSubjects.getReligion())) {
-        if (map.containsKey("KT"))
-          return map.get("KT");
+        mapKey = String.valueOf(creditOPS) + "KT";
+        if (map.containsKey(mapKey))
+          return map.get(mapKey);
         
         KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-        map.put("KT", os);
-        return os;
+        return map(map, mapKey, creditOPS, tunniste);
       } else
         return null;
     }
@@ -325,18 +345,23 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       
       KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.valueOf(StringUtils.upperCase(subjectCode));
       LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-      LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-      map.put(subjectCode, os);
-      return os;
+      return map(map, mapKey, creditOPS, tunniste);
     } else {
       // Other local subject
       
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(subjectCode, kuvaus(subject.getName()));
       LukionOppiaineenSuoritusPaikallinen tunniste = new LukionOppiaineenSuoritusPaikallinen(paikallinenKoodi, false, kuvaus(subject.getName()));
-      LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-      map.put(subjectCode, os);
-      return os;
+      return map(map, mapKey, creditOPS, tunniste);
     }
+  }
+
+  private OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus> map(
+      Map<String, OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> map, String mapKey,
+      OpiskelijanOPS creditOPS, LukionOppiaineenTunniste tunniste) {
+    OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus> oswc = 
+        new OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>(creditOPS, new LukionOppiaineenSuoritus(tunniste));
+    map.put(mapKey, oswc);
+    return oswc;
   }
 
   protected LukionKurssinSuoritus createKurssiSuoritus(OpiskelijanOPS ops, CreditStub courseCredit) {
@@ -443,11 +468,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
   @Override
   public void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
-    if (handler == HANDLER_TYPE) {
-      saveOrValidateOid(student, oid);
-    } else {
-      logger.severe(String.format("saveOrValidateOid called with wrong handler %s, expected %s ", handler, HANDLER_TYPE));
-    }
+    saveOrValidateInternetixOid(handler, student, oid);
   }
   
 }

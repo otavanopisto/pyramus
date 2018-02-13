@@ -4,15 +4,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.otavanopisto.pyramus.dao.base.SchoolVariableDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
@@ -26,6 +34,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
+import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
@@ -39,6 +48,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kunta;
 import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
 import fi.otavanopisto.pyramus.koski.model.HenkilovahvistusPaikkakunnalla;
+import fi.otavanopisto.pyramus.koski.model.KoskiSplitStudyProgramme;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.LahdeJarjestelmaID;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
@@ -48,11 +58,15 @@ import fi.otavanopisto.pyramus.koski.model.OrganisaatioHenkilo;
 import fi.otavanopisto.pyramus.koski.model.OrganisaatioOID;
 import fi.otavanopisto.pyramus.koski.model.SisaltavaOpiskeluoikeus;
 
-public class KoskiStudentHandler {
+public abstract class KoskiStudentHandler {
 
   public static final String KOSKI_STUDYPERMISSION_ID = "koski.studypermission-id";
+  public static final String KOSKI_INTERNETIX_STUDYPERMISSION_ID = "koski.internetix-studypermission-id";
   public static final String KOSKI_LINKED_STUDYPERMISSION_ID = "koski.linked-to-studypermission-id";
   public static final String KOSKI_SCHOOL_OID = "koski.schooloid";
+
+  @Inject
+  private Logger logger;
   
   @Inject
   protected KoskiSettings settings;
@@ -81,6 +95,64 @@ public class KoskiStudentHandler {
   @Inject
   protected SchoolVariableDAO schoolVariableDAO;
   
+  public abstract void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid);
+  
+  protected void saveOrValidateOid(Student student, String oid) {
+    String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
+
+    if (StringUtils.isBlank(studyOid)) {
+      userVariableDAO.setUserVariable(student, KOSKI_STUDYPERMISSION_ID, oid);
+    } else {
+      // Validate the oid is the same
+      if (!StringUtils.equals(studyOid, oid))
+        throw new RuntimeException(String.format("Returned study permit oid %s doesn't match the saved oid %s.", oid, studyOid));
+    }
+  }
+
+  protected void saveOrValidateInternetixOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
+    Map<String, KoskiSplitStudyProgramme> oids = loadInternetixOids(student);
+
+    String studentIdentifier = getStudentIdentifier(handler, student.getId());
+    String studyOid = oids.get(studentIdentifier) != null ? oids.get(studentIdentifier).getOid() : null;
+
+    if (StringUtils.isBlank(studyOid)) {
+      KoskiSplitStudyProgramme kssp = new KoskiSplitStudyProgramme();
+      kssp.setOid(oid);
+      oids.put(studentIdentifier, kssp);
+      
+      ObjectMapper mapper = new ObjectMapper();
+      try {
+        userVariableDAO.setUserVariable(student, KOSKI_INTERNETIX_STUDYPERMISSION_ID, mapper.writeValueAsString(oids));
+      } catch (Exception ex) {
+        logger.severe(String.format("Serialization failed for student %s", student.getId()));
+      }
+    } else {
+      // Validate the oid is the same
+      if (!StringUtils.equals(studyOid, oid))
+        throw new RuntimeException(String.format("Returned study permit oid %s doesn't match the saved oid %s.", oid, studyOid));
+    }
+  }
+
+  protected Map<String, KoskiSplitStudyProgramme> loadInternetixOids(Student student) {
+    UserVariableKey userVariableKey = userVariableKeyDAO.findByVariableKey(KOSKI_INTERNETIX_STUDYPERMISSION_ID);
+    
+    if (userVariableKey != null) {
+      UserVariable userVariable = userVariableDAO.findByUserAndVariableKey(student, userVariableKey);
+      if (userVariable != null && StringUtils.isNotBlank(userVariable.getValue())) {
+        ObjectMapper mapper = new ObjectMapper();
+        
+        TypeReference<HashMap<String, KoskiSplitStudyProgramme>> typeRef = new TypeReference<HashMap<String, KoskiSplitStudyProgramme>>() {};
+        try {
+          return mapper.readValue(userVariable.getValue(), typeRef);
+        } catch (Exception ex) {
+          logger.log(Level.SEVERE, String.format("Couldn't parse internetix Oids for student %d", student.getId()), ex);
+        }
+      }
+    }
+    
+    return new HashMap<>();
+  }
+  
   protected Kuvaus kuvaus(String fiKuvaus) {
     Kuvaus kuvaus = new Kuvaus();
     kuvaus.setFi(fiKuvaus);
@@ -100,10 +172,18 @@ public class KoskiStudentHandler {
     return vahvistus;
   }
 
-  protected LahdeJarjestelmaID getLahdeJarjestelmaID(Long id) {
-    return new LahdeJarjestelmaID(String.valueOf(id), Lahdejarjestelma.pyramus);
+  protected String getStudentIdentifier(KoskiStudyProgrammeHandler handler, Long studentId) {
+    return handler.name() + ":" + String.valueOf(studentId);
+  }
+  
+  protected LahdeJarjestelmaID getLahdeJarjestelmaID(KoskiStudyProgrammeHandler handler, Long studentId) {
+    return new LahdeJarjestelmaID(getStudentIdentifier(handler, studentId), Lahdejarjestelma.pyramus);
   }
 
+  protected String getDiaarinumero(KoskiStudyProgrammeHandler handler, OpiskelijanOPS ops) {
+    return settings.getSettings().getKoski().getHandlerParams(handler).getDiaariNumero(ops);
+  }
+  
   protected String getDiaarinumero(Student student) {
     Long studyProgrammeId = student.getStudyProgramme() != null ? student.getStudyProgramme().getId() : null;
     Long curriculumId = student.getCurriculum() != null ? student.getCurriculum().getId() : null;
@@ -202,16 +282,36 @@ public class KoskiStudentHandler {
     return studentSubjects;
   }
  
-  protected List<CreditStub> listCredits(Student student, boolean listTransferCredits, boolean listCreditLinks) {
+  /**
+   * Returns credits for one ops
+   */
+  protected List<CreditStub> listCredits(Student student, boolean listTransferCredits, boolean listCreditLinks,
+      OpiskelijanOPS ops, Predicate<Credit> filter) {
+    List<OpiskelijanOPS> opsList = new ArrayList<>();
+    opsList.add(ops);
+    Map<OpiskelijanOPS, List<CreditStub>> credits = listCredits(student, listTransferCredits, listCreditLinks, opsList, filter);
+    return credits.get(ops);
+  }
+  
+  protected Map<OpiskelijanOPS, List<CreditStub>> listCredits(Student student, boolean listTransferCredits, boolean listCreditLinks,
+      List<OpiskelijanOPS> orderedOPSs, Predicate<Credit> filter) {
+
+    Map<OpiskelijanOPS, Map<String, CreditStub>> map = new HashMap<>();
+    
     List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
-    
-    Map<String, CreditStub> stubs = new HashMap<>();
-    
-    for (CourseAssessment ca : courseAssessments) {
+    courseAssessments.stream().filter(filter).forEach(ca -> {
       Course course = ca.getCourseStudent() != null ? ca.getCourseStudent().getCourse() : null;
       Subject subject = course != null ? course.getSubject() : null;
       
-      if (matchingCurriculum(student, course)) {
+      Set<OpiskelijanOPS> creditOPSs = resolveOPSFromCredit(ca);
+      OpiskelijanOPS creditOPS = resolveSingleOPS(creditOPSs, orderedOPSs);
+      
+      if (creditOPS != null) {
+        Map<String, CreditStub> stubs = map.get(creditOPS);
+        if (stubs == null) {
+          map.put(creditOPS, stubs = new HashMap<>());
+        }
+        
         String courseCode = courseCode(subject, course.getCourseNumber(), ca.getId());
         CreditStub stub;
         if (!stubs.containsKey(courseCode)) {
@@ -222,13 +322,23 @@ public class KoskiStudentHandler {
         }
         
         stub.addCredit(new CreditStubCredit(ca, Type.CREDIT));
+      } else {
+        logger.log(Level.WARNING, String.format("Couldn't resolve OPS for CourseAssessment %d", ca.getId()));
       }
-    }
+    });
     
     if (listTransferCredits) {
       List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
-      for (TransferCredit tc : transferCredits) {
-        if (matchingCurriculum(student, tc)) {
+      transferCredits.stream().filter(filter).forEach(tc -> {
+        Set<OpiskelijanOPS> creditOPSs = resolveOPSFromCredit(tc);
+        OpiskelijanOPS creditOPS = resolveSingleOPS(creditOPSs, orderedOPSs);
+        
+        if (creditOPS != null) {
+          Map<String, CreditStub> stubs = map.get(creditOPS);
+          if (stubs == null) {
+            map.put(creditOPS, stubs = new HashMap<>());
+          }
+          
           String courseCode = courseCode(tc.getSubject(), tc.getCourseNumber(), tc.getId());
           CreditStub stub;
           if (!stubs.containsKey(courseCode)) {
@@ -239,49 +349,55 @@ public class KoskiStudentHandler {
           }
           
           stub.addCredit(new CreditStubCredit(tc, Type.RECOGNIZED));
+        } else {
+          logger.log(Level.WARNING, String.format("Couldn't resolve OPS for TransferCredit %d", tc.getId()));
         }
-      }
+      });
     }
 
     if (listCreditLinks) {
       List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
       
-      for (CreditLink cl : creditLinks) {
+      creditLinks.stream().map(creditLink -> creditLink.getCredit()).filter(filter).forEach(credit -> {
         Subject subject = null;
         Integer courseNumber = null;
         String courseName = null;
+        OpiskelijanOPS creditOPS = null;
         
-        switch (cl.getCredit().getCreditType()) {
+        switch (credit.getCreditType()) {
           case CourseAssessment:
-            CourseAssessment ca = (CourseAssessment) cl.getCredit();
+            CourseAssessment ca = (CourseAssessment) credit;
             Course course = ca.getCourseStudent() != null ? ca.getCourseStudent().getCourse() : null;
   
-            if (!matchingCurriculum(student, course)) {
-              continue;
-            }
-            
             subject = course != null ? course.getSubject() : null;
             courseNumber = course.getCourseNumber();
             courseName = course.getName();
+
+            Set<OpiskelijanOPS> caCreditOPSs = resolveOPSFromCredit(ca);
+            creditOPS = resolveSingleOPS(caCreditOPSs, orderedOPSs);
           break;
           case TransferCredit:
-            TransferCredit tc = (TransferCredit) cl.getCredit();
-            
-            if (!matchingCurriculum(student, tc)) {
-              continue;
-            }
+            TransferCredit tc = (TransferCredit) credit;
             
             subject = tc.getSubject();
             courseNumber = tc.getCourseNumber();
             courseName = tc.getCourseName();
+
+            Set<OpiskelijanOPS> tcCreditOPSs = resolveOPSFromCredit(tc);
+            creditOPS = resolveSingleOPS(tcCreditOPSs, orderedOPSs);
           break;
           case ProjectAssessment:
-            continue;
+          break;
         }
         
-        if (allNotNull(subject, courseNumber, courseName)) {
-          String courseCode = courseCode(subject, courseNumber, cl.getCredit().getId());
+        if (allNotNull(subject, courseNumber, courseName, creditOPS)) {
+          String courseCode = courseCode(subject, courseNumber, credit.getId());
           CreditStub stub;
+          Map<String, CreditStub> stubs = map.get(creditOPS);
+          if (stubs == null) {
+            map.put(creditOPS, stubs = new HashMap<>());
+          }
+
           if (!stubs.containsKey(courseCode)) {
             stub = new CreditStub(courseCode, courseNumber, courseName, subject);
             stubs.put(courseCode, stub);
@@ -289,14 +405,53 @@ public class KoskiStudentHandler {
             stub = stubs.get(courseCode);
           }
           
-          stub.addCredit(new CreditStubCredit(cl.getCredit(), Type.RECOGNIZED));
+          stub.addCredit(new CreditStubCredit(credit, Type.RECOGNIZED));
         }
+      });
+    }
+
+    Map<OpiskelijanOPS, List<CreditStub>> result = new HashMap<>();
+    for (OpiskelijanOPS ops : map.keySet()) {
+      Map<String, CreditStub> stubs = map.get(ops);
+      
+      List<CreditStub> stubList = new ArrayList<>(stubs.values());
+      stubList.sort((a, b) -> ObjectUtils.compare(a.getCourseNumber(), b.getCourseNumber()));
+      
+      result.put(ops, stubList);
+    }
+    
+    return result ;
+  }
+
+  private OpiskelijanOPS resolveSingleOPS(Set<OpiskelijanOPS> creditOPSs, List<OpiskelijanOPS> orderedOPSs) {
+    for (OpiskelijanOPS ops : orderedOPSs) {
+      if (creditOPSs.contains(ops)) {
+        return ops;
       }
     }
     
-    List<CreditStub> stubList = new ArrayList<>(stubs.values());
-    stubList.sort((a, b) -> ObjectUtils.compare(a.getCourseNumber(), b.getCourseNumber()));
-    return stubList;
+    return null;
+    
+//    if (creditOPSs.size() == 1) {
+//      // Only one OPS
+//      return creditOPSs.iterator().next();
+//    } else if (creditOPSs.size() == 0) {
+//      // No OPSs, return default
+//      return defaultOPS;
+//    } else {
+//      if (creditOPSs.contains(defaultOPS)) {
+//        // Multiple OPSs, default exists, use that
+//        return defaultOPS;
+//      } else {
+//        // Multiple OPSs, no defafult so return one of the secondary TODO
+////        if (secondaryOPSOrder != null) {
+////          for (OpiskelijanOPS ops : secondaryOPSOrder) {
+////            
+////          }
+////        }
+//        return null;
+//      }
+//    }
   }
 
   protected String courseCode(Subject subject, Integer courseNumber, Long creditId) {
@@ -317,6 +472,52 @@ public class KoskiStudentHandler {
     } else {
       return null;
     }
+  }
+  
+  
+  /**
+   * Returns true if credits' education type matches the given education type 
+   */
+  protected boolean matchingEducationTypeFilter(Credit credit, List<Long> educationTypes) {
+    if (credit instanceof CourseAssessment) {
+      CourseAssessment courseAssessment = (CourseAssessment) credit;
+      if (courseAssessment.getCourseStudent() != null && 
+          courseAssessment.getCourseStudent().getCourse() != null && 
+          courseAssessment.getCourseStudent().getCourse().getSubject() != null &&
+          courseAssessment.getCourseStudent().getCourse().getSubject().getEducationType() != null) {
+        return educationTypes.contains(courseAssessment.getCourseStudent().getCourse().getSubject().getEducationType().getId());
+      }
+    } else if (credit instanceof TransferCredit) {
+      TransferCredit transferCredit = (TransferCredit) credit;
+      if (transferCredit.getSubject() != null &&
+          transferCredit.getSubject().getEducationType() != null) {
+        return educationTypes.contains(transferCredit.getSubject().getEducationType().getId());
+      }
+    }
+    
+    return false;
+  }
+  
+  protected boolean matchingCurriculumFilter(Student student, Credit credit) {
+    if (credit instanceof CourseAssessment) {
+      return matchingCurriculum(student, ((CourseAssessment) credit).getCourseStudent().getCourse());
+    } else if (credit instanceof TransferCredit) {
+      return matchingCurriculum(student, (TransferCredit) credit);
+//    } else if (credit instanceof CreditLink) {
+//      Credit linkedCredit = ((CreditLink) credit).getCredit();
+//      
+//      if (linkedCredit instanceof CourseAssessment) {
+//        return matchingCurriculum(student, ((CourseAssessment) linkedCredit).getCourseStudent().getCourse());
+//      } else if (linkedCredit instanceof TransferCredit) {
+//        return matchingCurriculum(student, (TransferCredit) linkedCredit);
+//      } else {
+//        logger.severe(String.format("CreditLink %d linking to Creditlink", credit.getId()));
+//      }
+    } else {
+      logger.severe(String.format("Credit %d instance not recognized.", credit.getId()));
+    }
+    
+    return false;
   }
   
   protected boolean matchingCurriculum(Student student, Course course) {
@@ -379,15 +580,25 @@ public class KoskiStudentHandler {
   protected OpiskelijanOPS resolveOPS(Student student) {
     Curriculum curriculum = student.getCurriculum();
     if (curriculum != null) {
-      switch (curriculum.getId().intValue()) {
-        case 1:
-          return OpiskelijanOPS.ops2016;
-        case 2:
-          return OpiskelijanOPS.ops2005;
-        case 3:
-          return OpiskelijanOPS.ops2018;
-      }
+      return resolveOPS(curriculum.getId().intValue());
     }
+    return null;
+  }
+  
+  protected OpiskelijanOPS resolveOPS(Long curriculumId) {
+    return resolveOPS(curriculumId.intValue());
+  }
+  
+  protected OpiskelijanOPS resolveOPS(int curriculumId) {
+    switch (curriculumId) {
+      case 1:
+        return OpiskelijanOPS.ops2016;
+      case 2:
+        return OpiskelijanOPS.ops2005;
+      case 3:
+        return OpiskelijanOPS.ops2018;
+    }
+    
     return null;
   }
 
@@ -426,5 +637,46 @@ public class KoskiStudentHandler {
     
     return sb.length() > 0 ? kuvaus(sb.toString()) : null;
   }
+
+  protected Set<OpiskelijanOPS> resolveOPSFromCredit(CourseAssessment courseAssessment) {
+    if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null && courseAssessment.getCourseStudent().getCourse().getCurriculums() != null) {
+      return courseAssessment.getCourseStudent().getCourse().getCurriculums().stream()
+          .map(curriculum -> resolveOPS(curriculum.getId()))
+          .filter(Objects::nonNull)
+          .collect(Collectors.toSet());
+    }
+    
+    return null;
+  }
+
+  protected Set<OpiskelijanOPS> resolveOPSFromCredit(TransferCredit transferCredit) {
+    if (transferCredit.getCurriculum() != null) {
+      Set<OpiskelijanOPS> ret = new HashSet<>();
+      OpiskelijanOPS ops = resolveOPS(transferCredit.getCurriculum().getId());
+      if (ops != null) {
+        ret.add(ops);
+      }
+      return ret;
+    }
+    
+    return null;
+  }
+
+//  protected Set<OpiskelijanOPS> resolveOPSFromCredit(CreditStub creditStub) {
+//    for (CreditStubCredit csc : creditStub.getCredits()) {
+//      Credit credit = csc.getCredit();
+//      if (credit instanceof CourseAssessment) {
+//        CourseAssessment courseAssessment = (CourseAssessment) credit;
+//        return resolveOPSFromCredit(courseAssessment);
+//      } else if (credit instanceof TransferCredit) {
+//        TransferCredit transferCredit = (TransferCredit) credit;
+//        return resolveOPSFromCredit(transferCredit);
+//      } else {
+//        logger.log(Level.WARNING, String.format("Couldn't cast credit type %s to CourseAssessment/TransferCredit", credit.getClass().getSimpleName()));
+//      }
+//    }
+//
+//    return null;
+//  }
 
 }

@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class KoskiStudyProgrammeHandlerParams {
 
   public List<Long> getEducationTypes() {
