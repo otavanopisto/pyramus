@@ -59,7 +59,6 @@ import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusop
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenTunniste;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppimaaranSuoritus;
-import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.PerusopetuksenOppiaineenOppimaaranSuoritus;
 
 public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHandler {
 
@@ -119,38 +118,17 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
-    Set<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineet = assessmentsToModel(handler, ops, student, studentEducationType, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS);
+    Set<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineet = assessmentsToModel(ops, student, studentEducationType, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS);
 
-    if (handler == KoskiStudyProgrammeHandler.aikuistenperusopetus) {
-      // Oppimäärän opiskelija
-      
-      AikuistenPerusopetuksenOppimaaranSuoritus suoritus = new AikuistenPerusopetuksenOppimaaranSuoritus(
-          PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila);
-      suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
-      suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
-      if (suorituksenTila == SuorituksenTila.VALMIS)
-        suoritus.setVahvistus(getVahvistus(student, academyIdentifier));
-      opiskeluoikeus.addSuoritus(suoritus);
-      
-      oppiaineet.forEach(oppiaine -> suoritus.addOsasuoritus(oppiaine));
-    } else {
-      // Aineopiskelija
-
-      for (AikuistenPerusopetuksenOppiaineenSuoritus oppiaine : oppiaineet) {
-        PerusopetuksenOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = new PerusopetuksenOppiaineenOppimaaranSuoritus(
-            PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila, oppiaine);
-        oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
-        oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
-        if (suorituksenTila == SuorituksenTila.VALMIS)
-          oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, academyIdentifier));
-        opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
-      }
-      
-      if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
-        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
-        return null;
-      }
-    }
+    AikuistenPerusopetuksenOppimaaranSuoritus suoritus = new AikuistenPerusopetuksenOppimaaranSuoritus(
+        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila);
+    suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
+    suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
+    if (suorituksenTila == SuorituksenTila.VALMIS)
+      suoritus.setVahvistus(getVahvistus(student, academyIdentifier));
+    opiskeluoikeus.addSuoritus(suoritus);
+    
+    oppiaineet.forEach(oppiaine -> suoritus.addOsasuoritus(oppiaine));
     
     return opiskeluoikeus;
   }
@@ -187,7 +165,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     return studentSubjects;
   }
   
-  private Set<AikuistenPerusopetuksenOppiaineenSuoritus> assessmentsToModel(KoskiStudyProgrammeHandler handler, OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades) {
+  private Set<AikuistenPerusopetuksenOppiaineenSuoritus> assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades) {
     Collection<CreditStub> credits = listCredits(student, false, false, ops, credit -> matchingCurriculumFilter(student, credit));
     Set<AikuistenPerusopetuksenOppiaineenSuoritus> results = new HashSet<>();
     
