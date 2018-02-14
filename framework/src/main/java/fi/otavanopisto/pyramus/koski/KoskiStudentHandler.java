@@ -423,6 +423,9 @@ public abstract class KoskiStudentHandler {
     return result ;
   }
 
+  /**
+   * Returns first OPS from orderedOPSs which is in creditOPSs.
+   */
   private OpiskelijanOPS resolveSingleOPS(Set<OpiskelijanOPS> creditOPSs, List<OpiskelijanOPS> orderedOPSs) {
     for (OpiskelijanOPS ops : orderedOPSs) {
       if (creditOPSs.contains(ops)) {
@@ -431,27 +434,6 @@ public abstract class KoskiStudentHandler {
     }
     
     return null;
-    
-//    if (creditOPSs.size() == 1) {
-//      // Only one OPS
-//      return creditOPSs.iterator().next();
-//    } else if (creditOPSs.size() == 0) {
-//      // No OPSs, return default
-//      return defaultOPS;
-//    } else {
-//      if (creditOPSs.contains(defaultOPS)) {
-//        // Multiple OPSs, default exists, use that
-//        return defaultOPS;
-//      } else {
-//        // Multiple OPSs, no defafult so return one of the secondary TODO
-////        if (secondaryOPSOrder != null) {
-////          for (OpiskelijanOPS ops : secondaryOPSOrder) {
-////            
-////          }
-////        }
-//        return null;
-//      }
-//    }
   }
 
   protected String courseCode(Subject subject, Integer courseNumber, Long creditId) {
@@ -503,16 +485,6 @@ public abstract class KoskiStudentHandler {
       return matchingCurriculum(student, ((CourseAssessment) credit).getCourseStudent().getCourse());
     } else if (credit instanceof TransferCredit) {
       return matchingCurriculum(student, (TransferCredit) credit);
-//    } else if (credit instanceof CreditLink) {
-//      Credit linkedCredit = ((CreditLink) credit).getCredit();
-//      
-//      if (linkedCredit instanceof CourseAssessment) {
-//        return matchingCurriculum(student, ((CourseAssessment) linkedCredit).getCourseStudent().getCourse());
-//      } else if (linkedCredit instanceof TransferCredit) {
-//        return matchingCurriculum(student, (TransferCredit) linkedCredit);
-//      } else {
-//        logger.severe(String.format("CreditLink %d linking to Creditlink", credit.getId()));
-//      }
     } else {
       logger.severe(String.format("Credit %d instance not recognized.", credit.getId()));
     }
@@ -661,22 +633,5 @@ public abstract class KoskiStudentHandler {
     
     return null;
   }
-
-//  protected Set<OpiskelijanOPS> resolveOPSFromCredit(CreditStub creditStub) {
-//    for (CreditStubCredit csc : creditStub.getCredits()) {
-//      Credit credit = csc.getCredit();
-//      if (credit instanceof CourseAssessment) {
-//        CourseAssessment courseAssessment = (CourseAssessment) credit;
-//        return resolveOPSFromCredit(courseAssessment);
-//      } else if (credit instanceof TransferCredit) {
-//        TransferCredit transferCredit = (TransferCredit) credit;
-//        return resolveOPSFromCredit(transferCredit);
-//      } else {
-//        logger.log(Level.WARNING, String.format("Couldn't cast credit type %s to CourseAssessment/TransferCredit", credit.getClass().getSimpleName()));
-//      }
-//    }
-//
-//    return null;
-//  }
 
 }
