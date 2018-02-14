@@ -1,8 +1,6 @@
 package fi.otavanopisto.pyramus.koski;
 
-import fi.otavanopisto.pyramus.koski.model.OppiaineenSuoritus;
-
-public class OppiaineenSuoritusWithCurriculum<T extends OppiaineenSuoritus> {
+public class OppiaineenSuoritusWithCurriculum<T> {
 
   public OppiaineenSuoritusWithCurriculum(OpiskelijanOPS ops, T oppiaineenSuoritus) {
     this.ops = ops;
