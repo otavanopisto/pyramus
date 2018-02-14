@@ -72,6 +72,9 @@ import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusop
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.PerusopetuksenOppiaineenOppimaaranSuoritus;
 import fi.otavanopisto.pyramus.koski.settings.KoskiStudyProgrammeHandlerParams;
 
+/**
+ * Käsittelee Internetix-/aineopiskelijan peruskoulukurssien osuuden.
+ */
 public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
 
   private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.aineopiskeluperusopetus;
@@ -260,10 +263,6 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       StudentSubjectSelections studentSubjects, Subject subject, 
       Map<String, OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> map) {
     String subjectCode = subjectCode(subject);
-
-//    // SubjectCode for religious subjects is different
-//    if (StringUtils.equals(subjectCode, "ue") || StringUtils.equals(subjectCode, "uo") || StringUtils.equals(subjectCode, "et"))
-//      subjectCode = "KT";
 
     String mapKey = String.valueOf(creditOPS) + subjectCode;
     if (map.containsKey(mapKey))
