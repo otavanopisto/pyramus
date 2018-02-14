@@ -308,8 +308,8 @@ public class KoskiClient {
     String id = lahdejarjestelmaIdReturnVal.getId();
     
     if (StringUtils.isNotBlank(id) && id.contains(":")) {
-      KoskiStudyProgrammeHandler handler = KoskiStudyProgrammeHandler.valueOf(id.substring(0, id.indexOf(':')));
-      Long studentId = Long.valueOf(id.substring(id.indexOf(':') + 1));
+      KoskiStudyProgrammeHandler handler = KoskiStudyProgrammeHandler.valueOf(StringUtils.substringBefore(id, ":"));
+      Long studentId = Long.valueOf(StringUtils.substringAfter(id, ":"));
       return new SourceSystemId(handler, studentId);
     }
     
