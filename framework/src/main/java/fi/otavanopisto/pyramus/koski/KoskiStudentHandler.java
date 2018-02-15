@@ -2,7 +2,6 @@ package fi.otavanopisto.pyramus.koski;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,6 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
-import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
@@ -566,17 +564,23 @@ public abstract class KoskiStudentHandler {
     return null;
   }
 
-  protected void handleLinkedStudyOID(Student student, Opiskeluoikeus opiskeluoikeus) {
+  /**
+   * Handles the situation when Student's studies are linked to other studies in another
+   * school. Returns false if some of the needed variables for linking is missing, true otherwise.
+   */
+  protected boolean handleLinkedStudyOID(Student student, Opiskeluoikeus opiskeluoikeus) {
     if (student.getSchool() != null) {
       String linkedStudyOID = userVariableDAO.findByUserAndKey(student, KOSKI_LINKED_STUDYPERMISSION_ID);
       String schoolOID = schoolVariableDAO.findValueBySchoolAndKey(student.getSchool(), KOSKI_SCHOOL_OID);
       if (StringUtils.isNotBlank(linkedStudyOID) && StringUtils.isNotBlank(schoolOID)) {
         Oppilaitos oppilaitos = new Oppilaitos(schoolOID);
         opiskeluoikeus.setSisaltyyOpiskeluoikeuteen(new SisaltavaOpiskeluoikeus(oppilaitos, linkedStudyOID));
+        return true;
       } else {
-        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.LINKED_MISSING_VALUES, new Date());
+        return false;
       }
     }
+    return true;
   }
 
   protected Kuvaus getTodistuksellaNakyvatLisatiedot(Student student) {
