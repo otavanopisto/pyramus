@@ -21,7 +21,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
@@ -123,9 +122,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     }
 
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
-    EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
-        student.getStudyProgramme().getCategory().getEducationType() : null;
-    Set<OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> oppiaineet = assessmentsToModel(student, studentEducationType, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS, defaultStudyProgramme);
+    Set<OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> oppiaineet = assessmentsToModel(student, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS, defaultStudyProgramme);
 
     // Aineopiskelija
 
@@ -186,7 +183,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
   }
   
   private Set<OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> assessmentsToModel(
-      Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects, 
+      Student student, StudentSubjectSelections studentSubjects, 
       boolean calculateMeanGrades, boolean defaultStudyProgramme) {
     List<OpiskelijanOPS> opsList = new ArrayList<>();
     opsList.add(OpiskelijanOPS.ops2018);
@@ -195,12 +192,16 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     
     KoskiStudyProgrammeHandlerParams handlerParams = settings.getSettings().getKoski().getHandlerParams().get(HANDLER_TYPE);
     
+    if (handlerParams == null) {
+      throw new RuntimeException("HandlerParams not set for InternetixPk");
+    }
+    
     // If this is default study programme of the student, we exclude the incompatible education type (ie list all other edutypes)
     // Otherwise, only list credits from one education type
     Predicate<Credit> predicate = defaultStudyProgramme ?
         credit -> !matchingEducationTypeFilter(credit, handlerParams.getExcludedEducationTypes()) :
         credit -> matchingEducationTypeFilter(credit, handlerParams.getEducationTypes());
-    Map<OpiskelijanOPS, List<CreditStub>> opsCredits = listCredits(student, true, true, opsList, predicate);
+    Map<OpiskelijanOPS, List<CreditStub>> opsCredits = listCredits(student, true, true, opsList, OpiskelijanOPS.ops2018, predicate);
 
     Map<String, OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> map = new HashMap<>();
     
@@ -209,7 +210,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       
       for (CreditStub credit : credits) {
         OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineenSuoritus = getSubject(
-            ops, student, studentEducationType, studentSubjects, credit.getSubject(), map);
+            ops, student, handlerParams.getEducationTypes(), studentSubjects, credit.getSubject(), map);
   
         if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
           AikuistenPerusopetuksenKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(ops, credit);
@@ -259,7 +260,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
   }
   
   private OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> getSubject(
-      OpiskelijanOPS creditOPS, Student student, EducationType studentEducationType, 
+      OpiskelijanOPS creditOPS, Student student, List<Long> educationTypes, 
       StudentSubjectSelections studentSubjects, Subject subject, 
       Map<String, OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> map) {
     String subjectCode = subjectCode(subject);
@@ -268,8 +269,8 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     if (map.containsKey(mapKey))
       return map.get(mapKey);
     
-    boolean matchingEducationType = studentEducationType != null && subject.getEducationType() != null && 
-        studentEducationType.getId().equals(subject.getEducationType().getId());
+    boolean matchingEducationType = educationTypes != null && subject.getEducationType() != null && 
+        educationTypes.contains(subject.getEducationType().getId());
     
     if (matchingEducationType && (StringUtils.equals(subjectCode, "äi") || StringUtils.equals(subjectCode, "s2"))) {
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
