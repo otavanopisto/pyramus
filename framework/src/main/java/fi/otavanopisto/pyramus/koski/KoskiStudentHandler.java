@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -16,6 +15,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -289,22 +289,22 @@ public abstract class KoskiStudentHandler {
       OpiskelijanOPS ops, Predicate<Credit> filter) {
     List<OpiskelijanOPS> opsList = new ArrayList<>();
     opsList.add(ops);
-    Map<OpiskelijanOPS, List<CreditStub>> credits = listCredits(student, listTransferCredits, listCreditLinks, opsList, filter);
+    
+    Map<OpiskelijanOPS, List<CreditStub>> credits = listCredits(student, listTransferCredits, listCreditLinks, opsList, ops, filter);
     return credits.get(ops);
   }
   
   protected Map<OpiskelijanOPS, List<CreditStub>> listCredits(Student student, boolean listTransferCredits, boolean listCreditLinks,
-      List<OpiskelijanOPS> orderedOPSs, Predicate<Credit> filter) {
+      List<OpiskelijanOPS> orderedOPSs, OpiskelijanOPS defaultOPS, Predicate<Credit> filter) {
 
+    // Map of OPS -> CourseCode -> CreditStub
     Map<OpiskelijanOPS, Map<String, CreditStub>> map = new HashMap<>();
     
     List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
     courseAssessments.stream().filter(filter).forEach(ca -> {
       Course course = ca.getCourseStudent() != null ? ca.getCourseStudent().getCourse() : null;
       Subject subject = course != null ? course.getSubject() : null;
-      
-      Set<OpiskelijanOPS> creditOPSs = resolveOPSFromCredit(ca);
-      OpiskelijanOPS creditOPS = resolveSingleOPS(creditOPSs, orderedOPSs);
+      OpiskelijanOPS creditOPS = resolveSingleOPSFromCredit(ca, orderedOPSs, defaultOPS);
       
       if (creditOPS != null) {
         Map<String, CreditStub> stubs = map.get(creditOPS);
@@ -330,8 +330,7 @@ public abstract class KoskiStudentHandler {
     if (listTransferCredits) {
       List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
       transferCredits.stream().filter(filter).forEach(tc -> {
-        Set<OpiskelijanOPS> creditOPSs = resolveOPSFromCredit(tc);
-        OpiskelijanOPS creditOPS = resolveSingleOPS(creditOPSs, orderedOPSs);
+        OpiskelijanOPS creditOPS = resolveSingleOPSFromCredit(tc, orderedOPSs, defaultOPS);
         
         if (creditOPS != null) {
           Map<String, CreditStub> stubs = map.get(creditOPS);
@@ -373,8 +372,7 @@ public abstract class KoskiStudentHandler {
             courseNumber = course.getCourseNumber();
             courseName = course.getName();
 
-            Set<OpiskelijanOPS> caCreditOPSs = resolveOPSFromCredit(ca);
-            creditOPS = resolveSingleOPS(caCreditOPSs, orderedOPSs);
+            creditOPS = resolveSingleOPSFromCredit(ca, orderedOPSs, defaultOPS);
           break;
           case TransferCredit:
             TransferCredit tc = (TransferCredit) credit;
@@ -383,8 +381,7 @@ public abstract class KoskiStudentHandler {
             courseNumber = tc.getCourseNumber();
             courseName = tc.getCourseName();
 
-            Set<OpiskelijanOPS> tcCreditOPSs = resolveOPSFromCredit(tc);
-            creditOPS = resolveSingleOPS(tcCreditOPSs, orderedOPSs);
+            creditOPS = resolveSingleOPSFromCredit(tc, orderedOPSs, defaultOPS);
           break;
           case ProjectAssessment:
           break;
@@ -420,20 +417,7 @@ public abstract class KoskiStudentHandler {
       result.put(ops, stubList);
     }
     
-    return result ;
-  }
-
-  /**
-   * Returns first OPS from orderedOPSs which is in creditOPSs.
-   */
-  private OpiskelijanOPS resolveSingleOPS(Set<OpiskelijanOPS> creditOPSs, List<OpiskelijanOPS> orderedOPSs) {
-    for (OpiskelijanOPS ops : orderedOPSs) {
-      if (creditOPSs.contains(ops)) {
-        return ops;
-      }
-    }
-    
-    return null;
+    return result;
   }
 
   protected String courseCode(Subject subject, Integer courseNumber, Long creditId) {
@@ -561,6 +545,14 @@ public abstract class KoskiStudentHandler {
     return resolveOPS(curriculumId.intValue());
   }
   
+  protected OpiskelijanOPS resolveOPS(Curriculum curriculum) {
+    if (curriculum != null) {
+      return resolveOPS(curriculum.getId().intValue());
+    } else {
+      return null;
+    }
+  }
+  
   protected OpiskelijanOPS resolveOPS(int curriculumId) {
     switch (curriculumId) {
       case 1:
@@ -610,28 +602,58 @@ public abstract class KoskiStudentHandler {
     return sb.length() > 0 ? kuvaus(sb.toString()) : null;
   }
 
-  protected Set<OpiskelijanOPS> resolveOPSFromCredit(CourseAssessment courseAssessment) {
+  /**
+   * Returns preferred OPS for CourseAssessment.
+   * If CourseAssessments' Course has Curriculums
+   *  - returns first matching curriculum from orderedOPSs
+   *  - if no matching curriculums are found returns null
+   * If CourseAssessments' Course has no Curriculums
+   *  - returns defaultOPS
+   * If anything is null from CourseAssessment to Course:Curriculums, returns null
+   */
+  protected OpiskelijanOPS resolveSingleOPSFromCredit(CourseAssessment courseAssessment, List<OpiskelijanOPS> orderedOPSs, OpiskelijanOPS defaultOPS) {
     if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null && courseAssessment.getCourseStudent().getCourse().getCurriculums() != null) {
-      return courseAssessment.getCourseStudent().getCourse().getCurriculums().stream()
-          .map(curriculum -> resolveOPS(curriculum.getId()))
+      Set<OpiskelijanOPS> creditOPSs = courseAssessment.getCourseStudent().getCourse().getCurriculums().stream()
+          .map(curriculum -> resolveOPS(curriculum))
           .filter(Objects::nonNull)
           .collect(Collectors.toSet());
+
+      // No curriculums set in the credit -> return default
+      if (CollectionUtils.isEmpty(creditOPSs)) {
+        return defaultOPS;
+      }
+
+      // Find the first common curriculum
+      for (OpiskelijanOPS ops : orderedOPSs) {
+        if (creditOPSs.contains(ops)) {
+          return ops;
+        }
+      }
     }
     
     return null;
   }
 
-  protected Set<OpiskelijanOPS> resolveOPSFromCredit(TransferCredit transferCredit) {
+  /**
+   * Returns preferred OPS for TransferCredit.
+   * - If TransferCredit has curriculum
+   *   - and it exists in orderedOPSs, returns TransferCredit:Curriculum
+   *   - and it doesn't exist in orderedOPSs, returns null (mismatch)
+   * - If TransferCredit doesn't have curriculum, returns defaultOPS 
+   */
+  protected OpiskelijanOPS resolveSingleOPSFromCredit(TransferCredit transferCredit, List<OpiskelijanOPS> orderedOPSs, OpiskelijanOPS defaultOPS) {
     if (transferCredit.getCurriculum() != null) {
-      Set<OpiskelijanOPS> ret = new HashSet<>();
-      OpiskelijanOPS ops = resolveOPS(transferCredit.getCurriculum().getId());
-      if (ops != null) {
-        ret.add(ops);
+      OpiskelijanOPS ops = resolveOPS(transferCredit.getCurriculum());
+      
+      // If the curriculum is in the list, return it
+      if (orderedOPSs.contains(ops)) {
+        return ops;
+      } else {
+        return null;
       }
-      return ret;
+    } else {
+      return defaultOPS;
     }
-    
-    return null;
   }
 
 }
