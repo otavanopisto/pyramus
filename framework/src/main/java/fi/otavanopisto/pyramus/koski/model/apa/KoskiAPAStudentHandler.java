@@ -30,6 +30,7 @@ import fi.otavanopisto.pyramus.koski.CreditStubCredit;
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.KoskiException;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
+import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.StudentSubjectSelections;
 import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenAlkuvaiheenKurssit2017;
@@ -73,7 +74,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     }
     
     AikuistenPerusopetuksenOpiskeluoikeus opiskeluoikeus = new AikuistenPerusopetuksenOpiskeluoikeus();
-    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(student.getId()));
+    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(KoskiStudyProgrammeHandler.aikuistenperusopetuksenalkuvaihe, student.getId()));
     opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
     opiskeluoikeus.setPaattymispaiva(student.getStudyEndDate());
     if (StringUtils.isNotBlank(studyOid)) {
@@ -149,7 +150,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
 
   private void assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects,
       APASuoritus oppimaaranSuoritus) {
-    Collection<CreditStub> credits = listCredits(student, false, false);
+    Collection<CreditStub> credits = listCredits(student, false, false, ops, credit -> matchingCurriculumFilter(student, credit));
     
     Map<String, APAOppiaineenSuoritus> map = new HashMap<>();
     
@@ -308,6 +309,11 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     }
     
     return meanGrade(kurssiarvosanat);
+  }
+
+  @Override
+  public void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
+    saveOrValidateOid(student, oid);
   }
   
 }
