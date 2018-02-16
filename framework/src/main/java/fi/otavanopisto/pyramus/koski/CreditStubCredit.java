@@ -12,7 +12,7 @@ public class CreditStubCredit {
     this.credit = credit;
   }
   
-  enum Type {
+  public enum Type {
     CREDIT,
     RECOGNIZED
   }

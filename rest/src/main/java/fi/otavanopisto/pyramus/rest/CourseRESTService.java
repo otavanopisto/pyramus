@@ -75,6 +75,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CourseAssessmentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.PersonPermissions;
+import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
@@ -741,6 +742,15 @@ public class CourseRESTService extends AbstractRESTService {
       }
     }
     
+    // #689 Study guiders should only be able to access their own students. Since the FIND_STUDENT
+    // permission already checks that, let's validate the student of each course student against it
+    
+    for (int i = students.size() - 1; i >= 0; i--) {
+      if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, students.get(i).getStudent(), Style.OR)) {
+        students.remove(i);
+      }
+    }
+    
     return Response.status(Status.OK).entity(objectFactory.createModel(students)).build();
   }
   
@@ -784,6 +794,13 @@ public class CourseRESTService extends AbstractRESTService {
     }
     
     if (!restSecurity.hasPermission(new String[] { CoursePermissions.FIND_COURSESTUDENT, PersonPermissions.PERSON_OWNER }, courseStudent.getStudent().getPerson(), Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    // #689 Study guiders should only be able to access their own students. Since the FIND_STUDENT
+    // permission already checks that, let's validate the student of this course student against it
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, PersonPermissions.PERSON_OWNER }, courseStudent.getStudent().getPerson(), Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 

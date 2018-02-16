@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -40,6 +41,25 @@ public class KoskiPersonLogDAO extends PyramusEntityDAO<KoskiPersonLog> {
     );
     
     return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public KoskiPersonLog findOldestByState(KoskiPersonState state) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<KoskiPersonLog> criteria = criteriaBuilder.createQuery(KoskiPersonLog.class);
+    Root<KoskiPersonLog> root = criteria.from(KoskiPersonLog.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.equal(root.get(KoskiPersonLog_.state), state)
+    );
+    criteria.orderBy(criteriaBuilder.asc(root.get(KoskiPersonLog_.date)));
+    
+    TypedQuery<KoskiPersonLog> query = entityManager.createQuery(criteria);
+    
+    query.setMaxResults(1);
+    
+    return getSingleResult(query);
   }
   
 }

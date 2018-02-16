@@ -45,14 +45,36 @@ public class ApplicationSignaturesDAO extends PyramusEntityDAO<ApplicationSignat
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
-  public ApplicationSignatures updateStaffDocument(ApplicationSignatures signatures, String staffDocumentId,
-      String staffInvitationId, String staffInvitationToken, ApplicationSignatureState state) {
+  public ApplicationSignatures findByApplicantInvitationId(String invitationId) {
     EntityManager entityManager = getEntityManager();
-    signatures.setStaffDocumentId(staffDocumentId);
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ApplicationSignatures> criteria = criteriaBuilder.createQuery(ApplicationSignatures.class);
+    Root<ApplicationSignatures> root = criteria.from(ApplicationSignatures.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(ApplicationSignatures_.applicantInvitationId), invitationId));
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+
+  public ApplicationSignatures updateStaffDocument(ApplicationSignatures signatures, String documentId,
+      String invitationId, String invitationToken, ApplicationSignatureState state) {
+    EntityManager entityManager = getEntityManager();
+    signatures.setStaffDocumentId(documentId);
     signatures.setStaffDocumentState(state);
-    signatures.setStaffInvitationId(staffInvitationId);
-    signatures.setStaffInvitationToken(staffInvitationToken);
+    signatures.setStaffInvitationId(invitationId);
+    signatures.setStaffInvitationToken(invitationToken);
     signatures.setStaffDocumentModified(new Date());
+    entityManager.persist(signatures);
+    return signatures;
+  }
+
+  public ApplicationSignatures updateApplicantDocument(ApplicationSignatures signatures, String documentId,
+      String invitationId, String invitationToken, ApplicationSignatureState state) {
+    EntityManager entityManager = getEntityManager();
+    signatures.setApplicantDocumentId(documentId);
+    signatures.setApplicantDocumentState(state);
+    signatures.setApplicantInvitationId(invitationId);
+    signatures.setApplicantInvitationToken(invitationToken);
+    signatures.setApplicantDocumentModified(new Date());
     entityManager.persist(signatures);
     return signatures;
   }
@@ -61,6 +83,14 @@ public class ApplicationSignaturesDAO extends PyramusEntityDAO<ApplicationSignat
     EntityManager entityManager = getEntityManager();
     signatures.setStaffDocumentState(state);
     signatures.setStaffDocumentModified(new Date());
+    entityManager.persist(signatures);
+    return signatures;
+  }
+
+  public ApplicationSignatures updateApplicantDocumentState(ApplicationSignatures signatures, ApplicationSignatureState state) {
+    EntityManager entityManager = getEntityManager();
+    signatures.setApplicantDocumentState(state);
+    signatures.setApplicantDocumentModified(new Date());
     entityManager.persist(signatures);
     return signatures;
   }

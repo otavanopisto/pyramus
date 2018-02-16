@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
@@ -21,7 +21,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -43,13 +42,15 @@ import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.Oppija;
 import fi.otavanopisto.pyramus.koski.model.apa.KoskiAPAStudentHandler;
+import fi.otavanopisto.pyramus.koski.model.internetix.KoskiInternetixStudentHandler;
+import fi.otavanopisto.pyramus.koski.model.result.LahdejarjestelmaIdReturnVal;
 import fi.otavanopisto.pyramus.koski.model.result.OpiskeluoikeusReturnVal;
 import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
 
 /**
  * https://dev.koski.opintopolku.fi/koski/documentation
  */
-@RequestScoped
+@ApplicationScoped
 public class KoskiClient {
 
   private static final String KOSKI_STUDYPERMISSION_ID = "koski.studypermission-id";
@@ -87,6 +88,9 @@ public class KoskiClient {
 
   @Inject
   private KoskiLukioStudentHandler lukioHandler;
+  
+  @Inject
+  private KoskiInternetixStudentHandler internetixHandler;
 
   @Inject
   private KoskiAikuistenPerusopetuksenStudentHandler aikuistenPerusopetuksenHandler;
@@ -124,14 +128,14 @@ public class KoskiClient {
         logger.log(Level.WARNING, "updateStudent called with null person.");
         return;
       }
+
+      clearPersonLog(person);
       
       // Does the person have any reported study programmes
       if (!settings.hasReportedStudents(person)) {
         return;
       }
 
-      clearPersonLog(person);
-      
       String personOid = personVariableDAO.findByPersonAndKey(person, KOSKI_HENKILO_OID);
       
       if (StringUtils.isBlank(person.getSocialSecurityNumber()) && StringUtils.isBlank(personOid)) {
@@ -161,10 +165,12 @@ public class KoskiClient {
       
       for (Student s : person.getStudents()) {
         if (settings.isReportedStudent(s)) {
-          Opiskeluoikeus o = studentToOpiskeluoikeus(s);
-          if (o != null) {
-            oppija.addOpiskeluoikeus(o);
-            reportedStudents.add(s);
+          List<Opiskeluoikeus> opiskeluoikeudet = studentToOpiskeluoikeus(s);
+          for (Opiskeluoikeus o : opiskeluoikeudet) {
+            if (o != null) {
+              oppija.addOpiskeluoikeus(o);
+              reportedStudents.add(s);
+            }
           }
         }
       }
@@ -212,27 +218,20 @@ public class KoskiClient {
             if (opiskeluoikeus.getLahdejarjestelmanId() != null && 
                 opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma() != null &&
                 StringUtils.equals(opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma().getKoodiarvo(), "pyramus")) {
-              long servedStudentId = NumberUtils.toLong(opiskeluoikeus.getLahdejarjestelmanId().getId(), -1);
-              if (servedStudentId != -1) {
-                Student reportedStudent = studentDAO.findById(servedStudentId);
+              SourceSystemId sourceSystemId = parseSource(opiskeluoikeus.getLahdejarjestelmanId());
+              if (sourceSystemId != null) {
+                Student reportedStudent = studentDAO.findById(sourceSystemId.getStudentId());
                 
                 if (!reportedStudent.getArchived()) {
-                  String studyOid = userVariableDAO.findByUserAndKey(reportedStudent, KOSKI_STUDYPERMISSION_ID);
-                  String servedStudyOid = opiskeluoikeus.getOid();
-
-                  if (StringUtils.isBlank(studyOid)) {
-                    userVariableDAO.setUserVariable(reportedStudent, KOSKI_STUDYPERMISSION_ID, servedStudyOid);
-                  } else {
-                    // Validate the oid is the same
-                    if (!StringUtils.equals(studyOid, servedStudyOid))
-                      throw new RuntimeException(String.format("Returned study permit oid %s doesn't match the saved oid %s.", servedStudyOid, studyOid));
-                  }
+                  KoskiStudentHandler handler = getHandlerType(sourceSystemId.getHandler());
+                  
+                  handler.saveOrValidateOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
                 } else {
                   // For archived student the studypermission oid is cleared as Koski doesn't want to receive this id ever again
                   userVariableDAO.setUserVariable(reportedStudent, KOSKI_STUDYPERMISSION_ID, null);
                 }
               } else {
-                logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id was -1 (Person %d).", person.getId()));
+                logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id couldn't be parsed (Person %d).", person.getId()));
               }
             } else {
               logger.log(Level.WARNING, String.format("Could not update student oid because returned source system was not defined or isn't this system."));
@@ -273,6 +272,54 @@ public class KoskiClient {
     }
   }
 
+  private KoskiStudentHandler getHandlerType(KoskiStudyProgrammeHandler handler) {
+    switch (handler) {
+      case aikuistenperusopetus:
+        return aikuistenPerusopetuksenHandler;
+      case lukio:
+        return lukioHandler;
+      case aineopiskeluperusopetus:
+      case aineopiskelulukio:
+        return internetixHandler;
+      case aikuistenperusopetuksenalkuvaihe:
+        return apaHandler;
+
+      default:
+        logger.severe(String.format("Handler for type %s couldn't be determined.", handler));
+        return null;
+    }
+  }
+
+  class SourceSystemId {
+    public SourceSystemId(KoskiStudyProgrammeHandler handler, Long studentId) {
+      this.handler = handler;
+      this.studentId = studentId;
+    }
+    
+    public Long getStudentId() {
+      return studentId;
+    }
+
+    public KoskiStudyProgrammeHandler getHandler() {
+      return handler;
+    }
+
+    private final KoskiStudyProgrammeHandler handler;
+    private final Long studentId;
+  }
+  
+  private SourceSystemId parseSource(LahdejarjestelmaIdReturnVal lahdejarjestelmaIdReturnVal) {
+    String id = lahdejarjestelmaIdReturnVal.getId();
+    
+    if (StringUtils.isNotBlank(id) && id.contains(":")) {
+      KoskiStudyProgrammeHandler handler = KoskiStudyProgrammeHandler.valueOf(StringUtils.substringBefore(id, ":"));
+      Long studentId = Long.valueOf(StringUtils.substringAfter(id, ":"));
+      return new SourceSystemId(handler, studentId);
+    }
+    
+    return null;
+  }
+
   private void clearPersonLog(Person person) {
     List<KoskiPersonLog> entries = koskiPersonLogDAO.listByPerson(person);
     entries.forEach(entry -> koskiPersonLogDAO.delete(entry));
@@ -292,19 +339,18 @@ public class KoskiClient {
     return null;
   }
 
-  private Opiskeluoikeus studentToOpiskeluoikeus(Student student) throws KoskiException {
+  private List<Opiskeluoikeus> studentToOpiskeluoikeus(Student student) throws KoskiException {
     KoskiStudyProgrammeHandler handler = settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
     switch (handler) {
       case aikuistenperusopetus:
-        return aikuistenPerusopetuksenHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.aikuistenperusopetus);
-      case aineopiskeluperusopetus:
-        return aikuistenPerusopetuksenHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.aineopiskeluperusopetus);
+        return asList(aikuistenPerusopetuksenHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.aikuistenperusopetus));
       case lukio:
-        return lukioHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.lukio);
+        return asList(lukioHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.lukio));
+      case aineopiskeluperusopetus:
       case aineopiskelulukio:
-        return lukioHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.aineopiskelulukio);
+        return internetixHandler.studentToModel(student, settings.getAcademyIdentifier());
       case aikuistenperusopetuksenalkuvaihe:
-        return apaHandler.studentToModel(student, settings.getAcademyIdentifier());
+        return asList(apaHandler.studentToModel(student, settings.getAcademyIdentifier()));
 
       default:
         logger.log(Level.WARNING, String.format("Student %d with studyprogramme %s was not reported to Koski because no handler was specified.", 
@@ -329,4 +375,9 @@ public class KoskiClient {
     
   }
   
+  private <T> List<T> asList(T o) {
+    List<T> list = new ArrayList<T>();
+    list.add(o);
+    return list ;
+  }
 }

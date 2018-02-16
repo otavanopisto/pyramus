@@ -8,6 +8,7 @@ public class AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen extends Aikuis
   public AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen(PaikallinenKoodi tunniste, boolean pakollinen, Kuvaus kuvaus) {
     super();
     this.tunniste = tunniste;
+    this.pakollinen = pakollinen;
     this.kuvaus = kuvaus;
   }
   
@@ -19,6 +20,11 @@ public class AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen extends Aikuis
     return kuvaus;
   }
 
+  public boolean getPakollinen() {
+    return pakollinen;
+  }
+
   private final PaikallinenKoodi tunniste;
   private final Kuvaus kuvaus;
+  private final boolean pakollinen;
 }
