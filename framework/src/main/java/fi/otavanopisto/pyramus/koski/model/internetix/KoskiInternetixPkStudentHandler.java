@@ -103,7 +103,10 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
 
     opiskeluoikeus.setLisatiedot(getLisatiedot(student));
     
-    handleLinkedStudyOID(student, opiskeluoikeus);
+    if (!handleLinkedStudyOID(student, opiskeluoikeus)) {
+      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.LINKED_MISSING_VALUES, new Date());
+      return null;
+    }
     
     OpiskeluoikeudenTila jaksonTila = !Boolean.TRUE.equals(student.getArchived()) ? OpiskeluoikeudenTila.lasna : OpiskeluoikeudenTila.mitatoity;
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), jaksonTila);
