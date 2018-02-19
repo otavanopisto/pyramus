@@ -180,6 +180,15 @@ public class KoskiClient {
         return;
       }
       
+      updatePersonToKoski(oppija, person, personOid);
+      
+    } catch (Exception ex) {
+      
+    }
+  }
+  
+  private void updatePersonToKoski(Oppija oppija, Person person, String personOid) {
+    try {
       String uri = String.format("%s/oppija", getBaseUrl());
       
       Client client = ClientBuilder.newClient();
