@@ -217,7 +217,7 @@ public class ApplicationUtils {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case "aineopiskelu":
-      return null;
+      return studyProgrammeDAO.findById(13L); // Internetix/lukio
     case "nettilukio":
       return studyProgrammeDAO.findById(6L); // Nettilukio
     case "nettipk":
@@ -237,7 +237,7 @@ public class ApplicationUtils {
       case "pk":
         return studyProgrammeDAO.findById(15L); // Monikulttuurinen peruskoululinja
       case "luva":
-        return null;
+        return studyProgrammeDAO.findById(19L); // Lukioon valmistava peruskoululinja maahanmuuttajille
       default:
         return null;
       }
