@@ -1,7 +1,11 @@
 package fi.otavanopisto.pyramus.koski;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.otavanopisto.pyramus.koski.model.deserializers.KoodistoViiteDeserializer;
+
+@JsonDeserialize(using = KoodistoViiteDeserializer.class)
 public class KoodistoViite<T extends Enum<T>> {
 
   public KoodistoViite() {

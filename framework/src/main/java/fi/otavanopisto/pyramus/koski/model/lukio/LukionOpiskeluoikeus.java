@@ -5,12 +5,15 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusTila;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonDeserialize(using = JsonDeserializer.None.class)
 public class LukionOpiskeluoikeus extends Opiskeluoikeus {
 
   public LukionOpiskeluoikeus() {
