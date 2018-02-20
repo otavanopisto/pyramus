@@ -405,19 +405,24 @@
         },
         dataType: 'json',
         success: function(response) {
-          $('#info-application-handler-value').text(response.handler||'-');
-          $('#info-application-handler-value').attr('data-handler-id', response.handlerId);
-          $('#info-application-last-modified-value').text(moment(response.lastModified).format('D.M.YYYY h:mm'));
-          $('#info-application-state-value').text(response.stateUi);
-          $('#info-application-state-value').attr('data-state', response.state);
-          $('#action-application-toggle-lock').removeClass('icon-locked icon-unlocked');
-          $('#action-application-toggle-lock').addClass(response.applicantEditable ? 'icon-unlocked' : 'icon-locked');
-          loadLogEntries();
-          refreshActions();
-          if (state == 'APPROVED_BY_SCHOOL') {
-            updateDocumentUrls();
+          if (response.status == 'OK') {
+            $('#info-application-handler-value').text(response.handler||'-');
+            $('#info-application-handler-value').attr('data-handler-id', response.handlerId);
+            $('#info-application-last-modified-value').text(moment(response.lastModified).format('D.M.YYYY h:mm'));
+            $('#info-application-state-value').text(response.stateUi);
+            $('#info-application-state-value').attr('data-state', response.state);
+            $('#action-application-toggle-lock').removeClass('icon-locked icon-unlocked');
+            $('#action-application-toggle-lock').addClass(response.applicantEditable ? 'icon-unlocked' : 'icon-locked');
+            loadLogEntries();
+            refreshActions();
+            if (state == 'APPROVED_BY_SCHOOL') {
+              updateDocumentUrls();
+            }
+            $('.notification-queue').notificationQueue('notification', 'info', 'Hakemuksen tila vaihdettu');
           }
-          $('.notification-queue').notificationQueue('notification', 'info', 'Hakemuksen tila vaihdettu');
+          else {
+            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+          }
         }
       });
     });
