@@ -107,32 +107,35 @@
       });
     });
     
-    // Existing students
+    // Existing students (unless student already created)
     
-    $.ajax({
-      url: '/applications/listexistingpersons.json',
-      type: "GET",
-      data: {
-        applicationEntityId: $('body').attr('data-application-entity-id')
-      },
-      dataType: "json",
-      contentType: "application/json; charset=utf-8",
-      success: function(response) {
-        if (response.persons.length == 0) {
-          $('div.user-exists-container').hide();
-        }
-        else {
-          for (var i = 0; i < response.persons.length; i++) {
-            var personElement = $('<span>').addClass('user-exists-user-link-container').appendTo($('div.user-exists-description-actions'));
-            var hrefElement = $('<a>').appendTo(personElement);
-            hrefElement.attr('href', '/students/viewstudent.page?person=' + response.persons[i].id);
-            hrefElement.attr('target', '_blank');
-            hrefElement.text(response.persons[i].name);
+    var currentState = $('#info-application-state-value').attr('data-state');
+    if (currentState != 'TRANSFERRED_AS_STUDENT' && currentState != 'REGISTERED_AS_STUDENT') {
+      $.ajax({
+        url: '/applications/listexistingpersons.json',
+        type: "GET",
+        data: {
+          applicationEntityId: $('body').attr('data-application-entity-id')
+        },
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+          if (response.persons.length == 0) {
+            $('div.user-exists-container').hide();
           }
-          $('div.user-exists-container').show();
+          else {
+            for (var i = 0; i < response.persons.length; i++) {
+              var personElement = $('<span>').addClass('user-exists-user-link-container').appendTo($('div.user-exists-description-actions'));
+              var hrefElement = $('<a>').appendTo(personElement);
+              hrefElement.attr('href', '/students/viewstudent.page?person=' + response.persons[i].id);
+              hrefElement.attr('target', '_blank');
+              hrefElement.text(response.persons[i].name);
+            }
+            $('div.user-exists-container').show();
+          }
         }
-      }
-    });
+      });
+    }
     
     // Helper functions
     
@@ -406,19 +409,7 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 'OK') {
-            $('#info-application-handler-value').text(response.handler||'-');
-            $('#info-application-handler-value').attr('data-handler-id', response.handlerId);
-            $('#info-application-last-modified-value').text(moment(response.lastModified).format('D.M.YYYY h:mm'));
-            $('#info-application-state-value').text(response.stateUi);
-            $('#info-application-state-value').attr('data-state', response.state);
-            $('#action-application-toggle-lock').removeClass('icon-locked icon-unlocked');
-            $('#action-application-toggle-lock').addClass(response.applicantEditable ? 'icon-unlocked' : 'icon-locked');
-            loadLogEntries();
-            refreshActions();
-            if (state == 'APPROVED_BY_SCHOOL') {
-              updateDocumentUrls();
-            }
-            $('.notification-queue').notificationQueue('notification', 'info', 'Hakemuksen tila vaihdettu');
+            window.location.reload();
           }
           else {
             $('.notification-queue').notificationQueue('notification', 'error', response.reason);

@@ -45,6 +45,12 @@
       <span class="meta-name">Asiakirjat</span>
       <span id="info-application-documents-value" class="meta-value"></span>
     </div>
+    <c:if test="${infoStudentUrl ne null}">
+      <div class="meta-container">
+        <span class="meta-name">Pyramus-profiili</span>
+        <span class="meta-value"><a href="${infoStudentUrl}" target="_blank">Muokkaa opiskelijaa</a></span>
+      </div>
+    </c:if>
   </div>
   
   <div class="application-handling-container">
@@ -57,8 +63,8 @@
       <div class="signatures-auth-sources"></div>
     </div>
     <div class="application-handling-option" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyv‰ksymisest‰</span></div>
+    <div class="application-handling-option" data-state="TRANSFERRED_AS_STUDENT" data-show="APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirr‰ opiskelijaksi</span></div>
     <div class="application-handling-option" data-state="REJECTED"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
-    <!-- <a href="/applications/accept.page?debug=1">Opiskelija-PDF (debug)</a>  -->
   </div>
   
 </section>

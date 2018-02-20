@@ -12,13 +12,12 @@ import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.Iterables;
-
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
+import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
@@ -30,6 +29,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatureState;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
+import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
@@ -243,6 +243,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
   
   private Student createPyramusStudent(Application application) throws DuplicatePersonException {
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
+    ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
@@ -303,6 +304,16 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
         null, // study end reason
         null, // study end text
         Boolean.FALSE); // archived
+    
+    // Attach email
+    
+    String email = getFormValue(formData, "field-email");
+    if (!StringUtils.isBlank(email)) {
+      ContactType contactType = contactTypeDAO.findById(1L); // Koti (unique)
+      emailDAO.create(student.getContactInfo(), contactType, Boolean.TRUE, email.toLowerCase());
+    }
+    
+    // TODO Attach phone numbers, addresses, guardian info, etc.
     
     return student;
   }
@@ -366,7 +377,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
       throw new DuplicatePersonException();
     }
     else {
-      return Iterables.getFirst(existingPersons.values(), null);
+      return existingPersons.values().iterator().next();
     }
   }
 
