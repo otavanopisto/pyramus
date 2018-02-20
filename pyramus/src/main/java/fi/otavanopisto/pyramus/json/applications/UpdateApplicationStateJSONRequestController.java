@@ -17,10 +17,11 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
+import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
-import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
+import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
@@ -242,12 +243,12 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
   }
   
   private Student createPyramusStudent(Application application) throws DuplicatePersonException {
+    PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
+    AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-    NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     
@@ -305,15 +306,65 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
         null, // study end text
         Boolean.FALSE); // archived
     
+    // Main contact type
+    
+    ContactType contactType = contactTypeDAO.findById(1L); // Koti (unique)
+
     // Attach email
     
     String email = getFormValue(formData, "field-email");
-    if (!StringUtils.isBlank(email)) {
-      ContactType contactType = contactTypeDAO.findById(1L); // Koti (unique)
-      emailDAO.create(student.getContactInfo(), contactType, Boolean.TRUE, email.toLowerCase());
-    }
+    emailDAO.create(student.getContactInfo(), contactType, Boolean.TRUE, email.toLowerCase());
     
-    // TODO Attach phone numbers, addresses, guardian info, etc.
+    // Attach address
+    
+    addressDAO.create(
+        student.getContactInfo(),
+        contactType,
+        String.format("%s %s", getFormValue(formData, "field-nickname"), getFormValue(formData, "field-last-name")),
+        getFormValue(formData, "field-street-address"),
+        getFormValue(formData, "field-zip-code"),
+        getFormValue(formData, "field-city"),
+        getFormValue(formData, "field-country"),
+        Boolean.TRUE);
+
+    // Attach phone
+    
+    phoneNumberDAO.create(
+        student.getContactInfo(),
+        contactType,
+        Boolean.TRUE,
+        getFormValue(formData, "field-phone"));
+    
+    // Guardian info
+    
+    email = getFormValue(formData, "field-underage-email");
+    if (!StringUtils.isBlank(email)) {
+      
+      // Attach email
+      
+      contactType = contactTypeDAO.findById(5L); // Yhteyshenkilö (non-unique)
+      emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email.toLowerCase());
+
+      // Attach address
+      
+      addressDAO.create(
+          student.getContactInfo(),
+          contactType,
+          String.format("%s %s", getFormValue(formData, "field-underage-first-name"), getFormValue(formData, "field-underage-last-name")),
+          getFormValue(formData, "field-underage-street-address"),
+          getFormValue(formData, "field-underage-zip-code"),
+          getFormValue(formData, "field-underage-city"),
+          getFormValue(formData, "field-underage-country"),
+          Boolean.FALSE);
+
+      // Attach phone
+      
+      phoneNumberDAO.create(
+          student.getContactInfo(),
+          contactType,
+          Boolean.FALSE,
+          getFormValue(formData, "field-underage-phone"));
+    }
     
     return student;
   }
