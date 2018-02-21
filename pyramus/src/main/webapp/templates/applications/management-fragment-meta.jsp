@@ -64,7 +64,7 @@
     </div>
     <div class="application-handling-option" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyv‰ksymisest‰</span></div>
     <div class="application-handling-option" data-state="TRANSFERRED_AS_STUDENT" data-show="APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirr‰ opiskelijaksi</span></div>
-    <div class="application-handling-option" data-state="REJECTED"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
+    <div class="application-handling-option" data-state="REJECTED" data-show="PENDING,PROCESSING"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
   </div>
   
 </section>
