@@ -130,8 +130,8 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     // Aineopiskelija
 
     for (OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaine : oppiaineet) {
-      PerusopetuksenOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = new PerusopetuksenOppiaineenOppimaaranSuoritus(
-          PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila, oppiaine.getOppiaineenSuoritus());
+      PerusopetuksenOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = PerusopetuksenOppiaineenOppimaaranSuoritus.from(
+          oppiaine.getOppiaineenSuoritus(), PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
       oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
       oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(HANDLER_TYPE, oppiaine.getOps()));
       if (suorituksenTila == SuorituksenTila.VALMIS)
@@ -362,7 +362,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       tunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(paikallinenKoodi);
     }
       
-    AikuistenPerusopetuksenKurssinSuoritus suoritus = new AikuistenPerusopetuksenKurssinSuoritus(tunniste, SuorituksenTila.VALMIS);
+    AikuistenPerusopetuksenKurssinSuoritus suoritus = new AikuistenPerusopetuksenKurssinSuoritus(tunniste);
 
     for (CreditStubCredit credit : courseCredit.getCredits()) {
       ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());

@@ -11,7 +11,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
-import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
@@ -44,7 +43,7 @@ public class APOOppimaaraData extends AbstractKoskiData {
     
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(ACADEMYOID);
     AikuistenPerusopetuksenOppimaaranSuoritus suoritus = new AikuistenPerusopetuksenOppimaaranSuoritus(
-        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, SuorituksenTila.KESKEN);
+        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
     opiskeluoikeus.addSuoritus(suoritus);
     
     return oppija;
@@ -68,7 +67,7 @@ public class APOOppimaaraData extends AbstractKoskiData {
     
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(ACADEMYOID);
     AikuistenPerusopetuksenOppimaaranSuoritus suoritus = new AikuistenPerusopetuksenOppimaaranSuoritus(
-        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, SuorituksenTila.KESKEN);
+        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
     opiskeluoikeus.addSuoritus(suoritus);
 
     // Oppiaine
@@ -82,13 +81,13 @@ public class APOOppimaaraData extends AbstractKoskiData {
     
     // Kurssi 1
     AikuistenPerusopetuksenKurssinTunniste kurssinTunniste = new AikuistenPerusopetuksenKurssinTunnisteOPS2015(AikuistenPerusopetuksenKurssit2015.ÄI1);
-    AikuistenPerusopetuksenKurssinSuoritus kurssi = new AikuistenPerusopetuksenKurssinSuoritus(kurssinTunniste, SuorituksenTila.VALMIS);
+    AikuistenPerusopetuksenKurssinSuoritus kurssi = new AikuistenPerusopetuksenKurssinSuoritus(kurssinTunniste);
     kurssi.addArviointi(new KurssinArviointiNumeerinen(ArviointiasteikkoYleissivistava.GRADE_9, paattymispaiva));
     oppiaine.addOsasuoritus(kurssi);
     
     // Kurssi 2
     kurssinTunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(new PaikallinenKoodi("ÄI123", kuvaus("ABC")));
-    kurssi = new AikuistenPerusopetuksenKurssinSuoritus(kurssinTunniste, SuorituksenTila.VALMIS);
+    kurssi = new AikuistenPerusopetuksenKurssinSuoritus(kurssinTunniste);
     kurssi.addArviointi(new KurssinArviointiSanallinen(ArviointiasteikkoYleissivistava.GRADE_S, paattymispaiva, kuvaus("S")));
     oppiaine.addOsasuoritus(kurssi);
     

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
-import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
@@ -15,9 +14,11 @@ import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LukionKurssinSuoritus {
 
-  public LukionKurssinSuoritus(LukionKurssinTunniste tunniste, SuorituksenTila tila) {
+  public LukionKurssinSuoritus() {
+  }
+  
+  public LukionKurssinSuoritus(LukionKurssinTunniste tunniste) {
     koulutusmoduuli = tunniste;
-    this.tila.setValue(tila);
   }
   
   public boolean isSuoritettuLukiodiplomina() {
@@ -34,10 +35,6 @@ public class LukionKurssinSuoritus {
   
   public void setSuoritettuSuullisenaKielikokeena(boolean suoritettuSuullisenaKielikokeena) {
     this.suoritettuSuullisenaKielikokeena = suoritettuSuullisenaKielikokeena;
-  }
-  
-  public KoodistoViite<SuorituksenTila> getTila() {
-    return tila;
   }
   
   public void addArviointi(KurssinArviointi arviointi) {
@@ -72,8 +69,11 @@ public class LukionKurssinSuoritus {
     this.suorituskieli = suorituskieli;
   }
 
-  private final LukionKurssinTunniste koulutusmoduuli;
-  private final KoodistoViite<SuorituksenTila> tila = new KoodistoViite<>();
+  public void setKoulutusmoduuli(LukionKurssinTunniste koulutusmoduuli) {
+    this.koulutusmoduuli = koulutusmoduuli;
+  }
+
+  private LukionKurssinTunniste koulutusmoduuli;
   private final Set<KurssinArviointi> arviointi = new HashSet<>();
   private OsaamisenTunnustaminen tunnustettu;
   private KoodistoViite<Kieli> suorituskieli;

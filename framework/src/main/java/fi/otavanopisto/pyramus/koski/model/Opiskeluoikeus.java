@@ -2,13 +2,18 @@ package fi.otavanopisto.pyramus.koski.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
+import fi.otavanopisto.pyramus.koski.model.deserializers.OpiskeluoikeusDeserializer;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonDeserialize(using = OpiskeluoikeusDeserializer.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Opiskeluoikeus {
 
   public Opiskeluoikeus(OpiskeluoikeudenTyyppi tyyppi) {

@@ -129,7 +129,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     Set<LukionOppiaineenSuoritus> oppiaineet = assessmentsToModel(handler, ops, student, studentEducationType, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS);
 
     LukionOppimaaranSuoritus suoritus = new LukionOppimaaranSuoritus(
-        LukionOppimaara.aikuistenops, Kieli.FI, toimipiste, suorituksenTila);
+        LukionOppimaara.aikuistenops, Kieli.FI, toimipiste);
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     if (suorituksenTila == SuorituksenTila.VALMIS)
@@ -357,7 +357,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       tunniste = new LukionKurssinTunnistePaikallinen(paikallinenKoodi , kurssinTyyppi, kuvaus(courseCredit.getCourseName()));
     }
       
-    LukionKurssinSuoritus suoritus = new LukionKurssinSuoritus(tunniste, SuorituksenTila.VALMIS);
+    LukionKurssinSuoritus suoritus = new LukionKurssinSuoritus(tunniste);
 
     // Hyväksilukutieto on hölmössä paikassa; jos kaikki arvosanat ovat hyväksilukuja, tallennetaan 
     // tieto hyväksilukuna - ongelmallista, jos hyväksiluettua kurssia on korotettu 

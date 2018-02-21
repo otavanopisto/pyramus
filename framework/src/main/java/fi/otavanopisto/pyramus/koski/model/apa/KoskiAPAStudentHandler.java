@@ -101,7 +101,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
     APASuoritus suoritus = new APASuoritus(
-        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila);
+        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
     if (suorituksenTila == SuorituksenTila.VALMIS)
@@ -110,7 +110,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
-    assessmentsToModel(ops, student, studentEducationType, studentSubjects, suoritus);
+    assessmentsToModel(ops, student, studentEducationType, studentSubjects, suoritus, suorituksenTila == SuorituksenTila.VALMIS);
     
     return opiskeluoikeus;
   }
@@ -147,7 +147,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
   }
 
   private void assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects,
-      APASuoritus oppimaaranSuoritus) {
+      APASuoritus oppimaaranSuoritus, boolean calculateMeanGrades) {
     Collection<CreditStub> credits = listCredits(student, false, false, ops, credit -> matchingCurriculumFilter(student, credit));
     
     Map<String, APAOppiaineenSuoritus> map = new HashMap<>();
@@ -172,7 +172,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
       }
       
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
-      if (oppimaaranSuoritus.getTila().getValue() == SuorituksenTila.VALMIS) {
+      if (calculateMeanGrades) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(oppiaineenSuoritus);
         
         if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {

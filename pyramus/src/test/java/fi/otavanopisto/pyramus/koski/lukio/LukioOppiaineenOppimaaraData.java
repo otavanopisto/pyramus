@@ -11,7 +11,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssinTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssit;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
-import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
@@ -26,7 +25,6 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnistePaikalline
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinenOPS2015;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenOppimaaranSuoritus;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMuuValtakunnallinen;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenTunniste;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionSuoritus;
@@ -46,8 +44,7 @@ public class LukioOppiaineenOppimaaraData extends AbstractKoskiData {
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(ACADEMYOID);
     LukionOppiaineenTunniste koulutusmoduuli = new LukionOppiaineenSuoritusMuuValtakunnallinen(
         KoskiOppiaineetYleissivistava.HI, false);
-    LukionOppiaineenSuoritus oppiaine = new LukionOppiaineenSuoritus(koulutusmoduuli);
-    LukionSuoritus suoritus = new LukionOppiaineenOppimaaranSuoritus(Kieli.FI, toimipiste, SuorituksenTila.KESKEN, oppiaine);
+    LukionSuoritus suoritus = new LukionOppiaineenOppimaaranSuoritus(koulutusmoduuli, Kieli.FI, toimipiste);
     opiskeluoikeus.addSuoritus(suoritus);
     
     return oppija;
@@ -72,21 +69,20 @@ public class LukioOppiaineenOppimaaraData extends AbstractKoskiData {
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(ACADEMYOID);
     LukionOppiaineenTunniste koulutusmoduuli = new LukionOppiaineenSuoritusMuuValtakunnallinen(
         KoskiOppiaineetYleissivistava.HI, false);
-    LukionOppiaineenSuoritus oppiaine = new LukionOppiaineenSuoritus(koulutusmoduuli);
-    LukionSuoritus suoritus = new LukionOppiaineenOppimaaranSuoritus(Kieli.FI, toimipiste, SuorituksenTila.KESKEN, oppiaine);
+    LukionOppiaineenOppimaaranSuoritus suoritus = new LukionOppiaineenOppimaaranSuoritus(koulutusmoduuli, Kieli.FI, toimipiste);
     opiskeluoikeus.addSuoritus(suoritus);
     
     // Kurssi 1
     LukionKurssinTunniste kurssinTunniste = new LukionKurssinTunnisteValtakunnallinenOPS2015(LukionKurssit.ÄI1, LukionKurssinTyyppi.pakollinen);
-    LukionKurssinSuoritus kurssi = new LukionKurssinSuoritus(kurssinTunniste, SuorituksenTila.VALMIS);
+    LukionKurssinSuoritus kurssi = new LukionKurssinSuoritus(kurssinTunniste);
     kurssi.addArviointi(new KurssinArviointiNumeerinen(ArviointiasteikkoYleissivistava.GRADE_9, paattymispaiva));
-    oppiaine.addOsasuoritus(kurssi);
+    suoritus.addOsasuoritus(kurssi);
     
     // Kurssi 2
     kurssinTunniste = new LukionKurssinTunnistePaikallinen(new PaikallinenKoodi("ÄI123", kuvaus("ABC")), LukionKurssinTyyppi.syventava, kuvaus("ABC"));
-    kurssi = new LukionKurssinSuoritus(kurssinTunniste, SuorituksenTila.VALMIS);
+    kurssi = new LukionKurssinSuoritus(kurssinTunniste);
     kurssi.addArviointi(new KurssinArviointiSanallinen(ArviointiasteikkoYleissivistava.GRADE_S, paattymispaiva, kuvaus("S")));
-    oppiaine.addOsasuoritus(kurssi);
+    suoritus.addOsasuoritus(kurssi);
     
     return oppija;
   }

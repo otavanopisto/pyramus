@@ -119,7 +119,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     Set<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineet = assessmentsToModel(ops, student, studentEducationType, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS);
 
     AikuistenPerusopetuksenOppimaaranSuoritus suoritus = new AikuistenPerusopetuksenOppimaaranSuoritus(
-        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila);
+        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
     if (suorituksenTila == SuorituksenTila.VALMIS)
@@ -317,7 +317,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       tunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(paikallinenKoodi);
     }
       
-    AikuistenPerusopetuksenKurssinSuoritus suoritus = new AikuistenPerusopetuksenKurssinSuoritus(tunniste, SuorituksenTila.VALMIS);
+    AikuistenPerusopetuksenKurssinSuoritus suoritus = new AikuistenPerusopetuksenKurssinSuoritus(tunniste);
 
     for (CreditStubCredit credit : courseCredit.getCredits()) {
       ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());

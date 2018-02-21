@@ -1,14 +1,20 @@
 package fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus;
 
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 
+@JsonDeserialize(using = JsonDeserializer.None.class)
 public class AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen extends AikuistenPerusopetuksenOppiaineenTunniste {
 
+  public AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen() {
+  }
+  
   public AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen(PaikallinenKoodi tunniste, boolean pakollinen, Kuvaus kuvaus) {
-    super();
+    super(pakollinen);
     this.tunniste = tunniste;
-    this.pakollinen = pakollinen;
     this.kuvaus = kuvaus;
   }
   
@@ -20,11 +26,14 @@ public class AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen extends Aikuis
     return kuvaus;
   }
 
-  public boolean getPakollinen() {
-    return pakollinen;
+  public void setTunniste(PaikallinenKoodi tunniste) {
+    this.tunniste = tunniste;
   }
 
-  private final PaikallinenKoodi tunniste;
-  private final Kuvaus kuvaus;
-  private final boolean pakollinen;
+  public void setKuvaus(Kuvaus kuvaus) {
+    this.kuvaus = kuvaus;
+  }
+
+  private PaikallinenKoodi tunniste;
+  private Kuvaus kuvaus;
 }

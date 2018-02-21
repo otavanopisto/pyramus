@@ -10,7 +10,8 @@ import fi.otavanopisto.pyramus.koski.ArviointiasteikkoYleissivistavaComparator;
 import fi.otavanopisto.pyramus.koski.KoodistoEnum;
 
 @KoodistoEnum("arviointiasteikkoyleissivistava")
-public enum ArviointiasteikkoYleissivistava implements Comparable<ArviointiasteikkoYleissivistava> {
+public enum ArviointiasteikkoYleissivistava implements 
+  Comparable<ArviointiasteikkoYleissivistava> {
   
   GRADE_4 ("4"),   // hylätty
   GRADE_5 ("5"),   // välttävä
@@ -31,6 +32,10 @@ public enum ArviointiasteikkoYleissivistava implements Comparable<Arviointiastei
 
   public static ArviointiasteikkoYleissivistava get(String value) {
     return lookup.get(value);
+  }
+  
+  public static ArviointiasteikkoYleissivistava reverseLookup(String value) {
+    return get(value);
   }
   
   @Override

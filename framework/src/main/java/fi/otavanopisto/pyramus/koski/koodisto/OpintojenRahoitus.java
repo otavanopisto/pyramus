@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.koski.koodisto;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import fi.otavanopisto.pyramus.koski.KoodistoEnum;
 
 @KoodistoEnum("opintojenrahoitus")
@@ -24,5 +27,24 @@ public enum OpintojenRahoitus {
     return String.valueOf(value);
   }
   
+  public int getValue() {
+    return value;
+  }
+  
+  public static OpintojenRahoitus reverseLookup(String value) {
+    try {
+      return lookup.get(Integer.valueOf(value));
+    } catch (Exception ex) {
+    }
+    return null;
+  }
+  
   private int value;
+  private static Map<Integer, OpintojenRahoitus> lookup = new HashMap<>();
+
+  static {
+    for (OpintojenRahoitus v : values()) {
+      lookup.put(v.getValue(), v);
+    }
+  }
 }

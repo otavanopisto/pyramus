@@ -1,9 +1,15 @@
 package fi.otavanopisto.pyramus.koski.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+@JsonDeserialize(using = JsonDeserializer.None.class)
 public class HenkiloTiedotJaOID extends Henkilo {
 
+  public HenkiloTiedotJaOID() {
+  }
+  
   public HenkiloTiedotJaOID(String oid, String etunimet, String sukunimi, String kutsumanimi) {
     this.oid = oid;
     this.hetu = null;
@@ -41,9 +47,29 @@ public class HenkiloTiedotJaOID extends Henkilo {
     return oid;
   }
 
-  private final String oid;
-  private final String hetu;
-  private final String etunimet;
-  private final String sukunimi;
-  private final String kutsumanimi;
+  public void setOid(String oid) {
+    this.oid = oid;
+  }
+
+  public void setHetu(String hetu) {
+    this.hetu = hetu;
+  }
+
+  public void setEtunimet(String etunimet) {
+    this.etunimet = etunimet;
+  }
+
+  public void setSukunimi(String sukunimi) {
+    this.sukunimi = sukunimi;
+  }
+
+  public void setKutsumanimi(String kutsumanimi) {
+    this.kutsumanimi = kutsumanimi;
+  }
+
+  private String oid;
+  private String hetu;
+  private String etunimet;
+  private String sukunimi;
+  private String kutsumanimi;
 }
