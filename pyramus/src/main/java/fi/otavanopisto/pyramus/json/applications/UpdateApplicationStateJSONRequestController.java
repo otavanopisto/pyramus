@@ -1,5 +1,9 @@
 package fi.otavanopisto.pyramus.json.applications;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,11 +13,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
@@ -22,10 +28,14 @@ import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
+import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.dao.system.SettingDAO;
+import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatureState;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
@@ -36,6 +46,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.system.Setting;
+import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
@@ -193,7 +205,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           
           // Separate logic for transferring the applicant as student
           
-          Student student = createPyramusStudent(application);
+          Student student = createPyramusStudent(application, staffMember);
           application = applicationDAO.updateApplicationStudent(application, student);
         }
         
@@ -242,13 +254,14 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
     requestContext.addResponseParameter("reason", reason);
   }
   
-  private Student createPyramusStudent(Application application) throws DuplicatePersonException {
+  private Student createPyramusStudent(Application application, StaffMember staffMember) throws DuplicatePersonException {
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     
@@ -335,7 +348,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
         Boolean.TRUE,
         getFormValue(formData, "field-phone"));
     
-    // Guardian info
+    // Guardian info (if email is present, all other fields are required and present, too)
     
     email = getFormValue(formData, "field-underage-email");
     if (!StringUtils.isBlank(email)) {
@@ -364,6 +377,33 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           contactType,
           Boolean.FALSE,
           getFormValue(formData, "field-underage-phone"));
+    }
+    
+    // Attachments
+    
+    List<ApplicationAttachment> attachments = applicationAttachmentDAO.listByApplicationId(application.getApplicationId());
+    if (!attachments.isEmpty()) {
+      String attachmentsFolder = getSettingValue("applications.storagePath");
+      if (StringUtils.isNotEmpty(attachmentsFolder)) {
+        StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
+        String applicationId = sanitizeFilename(application.getApplicationId());
+        for (ApplicationAttachment attachment : attachments) {
+          String attachmentFileName = sanitizeFilename(attachment.getName());
+          try {
+            java.nio.file.Path path = Paths.get(attachmentsFolder, applicationId, attachmentFileName);
+            File file = path.toFile();
+            if (file.exists()) {
+              String contentType = Files.probeContentType(path);
+              byte[] data = FileUtils.readFileToByteArray(file);
+              studentFileDAO.create(student, attachmentFileName, attachmentFileName, null, contentType, data, staffMember);
+            }
+          }
+          catch (IOException e) {
+            logger.log(Level.WARNING, String.format("Exception processing attachment %s of application %d",
+                attachment.getName(), application.getId()), e);
+          }
+        }
+      }
     }
     
     return student;
@@ -434,6 +474,32 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
 
   private String getFormValue(JSONObject object, String key) {
     return object.has(key) ? object.getString(key) : null;
+  }
+
+  private String getSettingValue(String key) {
+    SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
+    SettingKey settingKey = settingKeyDAO.findByName(key);
+    if (settingKey != null) {
+      SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
+      Setting setting = settingDAO.findByKey(settingKey);
+      if (setting != null && setting.getValue() != null) {
+        return setting.getValue();
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Sanitizes the given filename so that it can be safely used as part of a file path. The filename
+   * is first stripped of traditional invalid filename characters (\ / : * ? " < > |) and then of all
+   * leading and trailing periods.
+   * 
+   * @param filename Filename to be sanitized
+   * 
+   * @return Sanitized filename
+   */
+  private String sanitizeFilename(String filename) {
+    return StringUtils.stripEnd(StringUtils.stripStart(StringUtils.strip(filename, "\\/:*?\"<>|"), "."), ".");
   }
   
   private class DuplicatePersonException extends Exception {

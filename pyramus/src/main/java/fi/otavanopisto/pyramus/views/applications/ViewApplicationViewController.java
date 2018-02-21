@@ -185,7 +185,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       }
       if (application.getStudent() != null) {
         pageRequestContext.getRequest().setAttribute("infoStudentUrl",
-            String.format("/students/editstudent.page?person=%d#at-student.%d",
+            String.format("/students/viewstudent.page?person=%d#at-student.%d",
                 application.getStudent().getPerson().getId(),
                 application.getStudent().getId()));
       }

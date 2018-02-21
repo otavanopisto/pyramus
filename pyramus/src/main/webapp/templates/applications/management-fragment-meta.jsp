@@ -48,7 +48,7 @@
     <c:if test="${infoStudentUrl ne null}">
       <div class="meta-container">
         <span class="meta-name">Pyramus-profiili</span>
-        <span class="meta-value"><a href="${infoStudentUrl}" target="_blank">Muokkaa opiskelijaa</a></span>
+        <span class="meta-value"><a href="${infoStudentUrl}" target="_blank">Näytä opiskelija</a></span>
       </div>
     </c:if>
   </div>
