@@ -423,7 +423,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
       
       // Given SSN
       
-      String ssn = hasSsn ? ApplicationUtils.constructSSN(applicationData.getString("field-birthday"), applicationData.getString("field-ssn-end")) : null;
+      String ssn = ApplicationUtils.constructSSN(applicationData.getString("field-birthday"), applicationData.getString("field-ssn-end"));
       List<Person> persons = personDAO.listBySSNUppercase(ssn);
       for (Person person : persons) {
         existingPersons.put(person.getId(), person);
