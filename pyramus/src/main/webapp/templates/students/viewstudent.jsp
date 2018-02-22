@@ -1472,11 +1472,10 @@
           cancelLabel : '<fmt:message key="students.editStudentKoskiDialog.closeLabel"/>' 
         });
         
-        dialog.setSize("600px", "450px");
+        dialog.setSize("640px", "450px");
         dialog.addDialogListener(function(event) {
           switch (event.name) {
             case 'cancelClick':
-//               reloadStudentImage(studentId);
             break;
           }
         });

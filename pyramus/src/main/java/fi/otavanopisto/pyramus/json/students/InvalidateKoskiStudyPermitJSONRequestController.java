@@ -10,7 +10,7 @@ import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.koski.KoskiClient;
 
-public class InvalidateKoskiOIDJSONRequestController extends JSONRequestController {
+public class InvalidateKoskiStudyPermitJSONRequestController extends JSONRequestController {
   
   public void process(JSONRequestContext requestContext) {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
@@ -22,7 +22,12 @@ public class InvalidateKoskiOIDJSONRequestController extends JSONRequestControll
 
     KoskiClient client = CDI.current().select(KoskiClient.class).get();
     
-    client.invalidateStudyOid(person, oid);
+    try {
+      client.invalidateStudyOid(person, oid);
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   public UserRole[] getAllowedRoles() {
