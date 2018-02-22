@@ -16,9 +16,12 @@ import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.Koulutusmoduuli;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LukionOppimaaranSuoritus extends LukionSuoritus {
+  
+  public LukionOppimaaranSuoritus() {
+  }
   
   public LukionOppimaaranSuoritus(LukionOppimaara oppimaara, Kieli suorituskieli, 
       OrganisaationToimipiste toimipiste) {

@@ -2,14 +2,11 @@ package fi.otavanopisto.pyramus.koski.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
-import fi.otavanopisto.pyramus.koski.model.deserializers.SuoritusDeserializer;
 
-@JsonDeserialize(using = SuoritusDeserializer.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class Suoritus {
 

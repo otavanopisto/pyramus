@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
-import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusTila;
 
 @JsonDeserialize(using = JsonDeserializer.None.class)
 public class AikuistenPerusopetuksenOpiskeluoikeus extends Opiskeluoikeus {
@@ -18,10 +17,6 @@ public class AikuistenPerusopetuksenOpiskeluoikeus extends Opiskeluoikeus {
     super(OpiskeluoikeudenTyyppi.aikuistenperusopetus);
   }
 
-  public OpiskeluoikeusTila getTila() {
-    return tila;
-  }
-  
   public void addSuoritus(AikuistenPerusopetuksenSuoritus suoritus) {
     suoritukset.add(suoritus);
   }
@@ -39,7 +34,6 @@ public class AikuistenPerusopetuksenOpiskeluoikeus extends Opiskeluoikeus {
     this.lisatiedot = lisatiedot;
   }
 
-  private final OpiskeluoikeusTila tila = new OpiskeluoikeusTila();
   private final Set<AikuistenPerusopetuksenSuoritus> suoritukset = new HashSet<>();
   private AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot lisatiedot;
 }

@@ -76,6 +76,10 @@ public abstract class Opiskeluoikeus {
     this.oppilaitos = oppilaitos;
   }
 
+  public OpiskeluoikeusTila getTila() {
+    return tila;
+  }
+  
   private String oid;
   private Date alkamispaiva;
   private Date paattymispaiva;
@@ -83,4 +87,5 @@ public abstract class Opiskeluoikeus {
   private LahdeJarjestelmaID lahdejarjestelmanId;
   private SisaltavaOpiskeluoikeus sisaltyyOpiskeluoikeuteen;
   private Oppilaitos oppilaitos;
+  private final OpiskeluoikeusTila tila = new OpiskeluoikeusTila();
 }
