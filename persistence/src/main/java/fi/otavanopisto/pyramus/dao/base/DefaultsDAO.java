@@ -26,6 +26,12 @@ public class DefaultsDAO extends PyramusEntityDAO<Defaults> {
     EntityManager entityManager = getEntityManager();
 
     Defaults defaults = getDefaults();
+    
+    if(defaults == null) {
+      defaults = new Defaults();
+      defaults.setId(1l);
+    }
+    
     defaults.setBaseTimeUnit(defaultEducationalTimeUnit);
 
     entityManager.persist(defaults);
