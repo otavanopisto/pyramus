@@ -2,6 +2,9 @@ package fi.otavanopisto.pyramus.koski.model;
 
 public class OrganisaatioHenkilo {
 
+  public OrganisaatioHenkilo() {
+  }
+  
   public OrganisaatioHenkilo(String nimi, Kuvaus titteli, Organisaatio organisaatio) {
     this.nimi = nimi;
     this.titteli = titteli;
@@ -20,7 +23,19 @@ public class OrganisaatioHenkilo {
     return organisaatio;
   }
 
-  private final String nimi;
-  private final Kuvaus titteli;
-  private final Organisaatio organisaatio;
+  public void setNimi(String nimi) {
+    this.nimi = nimi;
+  }
+
+  public void setTitteli(Kuvaus titteli) {
+    this.titteli = titteli;
+  }
+
+  public void setOrganisaatio(Organisaatio organisaatio) {
+    this.organisaatio = organisaatio;
+  }
+
+  private String nimi;
+  private Kuvaus titteli;
+  private Organisaatio organisaatio;
 }

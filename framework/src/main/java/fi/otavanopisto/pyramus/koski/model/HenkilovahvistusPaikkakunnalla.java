@@ -11,6 +11,9 @@ import fi.otavanopisto.pyramus.koski.koodisto.Kunta;
 
 public class HenkilovahvistusPaikkakunnalla {
   
+  public HenkilovahvistusPaikkakunnalla() {
+  }
+  
   public HenkilovahvistusPaikkakunnalla(Date paiva, Kunta paikkakunta, Organisaatio myontajaOrganisaatio) {
     this.paiva = paiva;
     this.paikkakunta.setValue(paikkakunta);
@@ -40,8 +43,16 @@ public class HenkilovahvistusPaikkakunnalla {
     return myontajaHenkilot;
   }
 
-  private final Date paiva;
+  public void setPaiva(Date paiva) {
+    this.paiva = paiva;
+  }
+
+  public void setMyontajaOrganisaatio(Organisaatio myontajaOrganisaatio) {
+    this.myontajaOrganisaatio = myontajaOrganisaatio;
+  }
+
+  private Date paiva;
   private final KoodistoViite<Kunta> paikkakunta = new KoodistoViite<>();
-  private final Organisaatio myontajaOrganisaatio;
+  private Organisaatio myontajaOrganisaatio;
   private final List<OrganisaatioHenkilo> myontajaHenkilot = new ArrayList<>();
 }
