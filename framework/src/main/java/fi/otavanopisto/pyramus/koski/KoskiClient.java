@@ -36,14 +36,16 @@ import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
+import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
+import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.model.Henkilo;
 import fi.otavanopisto.pyramus.koski.model.HenkiloTiedotJaOID;
 import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
+import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.Oppija;
 import fi.otavanopisto.pyramus.koski.model.apa.KoskiAPAStudentHandler;
 import fi.otavanopisto.pyramus.koski.model.internetix.KoskiInternetixStudentHandler;
-import fi.otavanopisto.pyramus.koski.model.result.LahdejarjestelmaIdReturnVal;
 import fi.otavanopisto.pyramus.koski.model.result.OpiskeluoikeusReturnVal;
 import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
 
@@ -114,12 +116,75 @@ public class KoskiClient {
     
     return null;
   }
-  
-  public void updatePerson(Person person) throws KoskiException {
-    asdPerson(person, null);
+
+  /**
+   * 
+   */
+  public OppijaReturnVal findPersonByOid(String personOid) throws Exception {
+    String uri = String.format("%s/oppija/%s", getBaseUrl(), personOid);
+    
+    Client client = ClientBuilder.newClient();
+    WebTarget target = client.target(uri);
+    Builder request = target
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .header("Authorization", "Basic " + getAuth());
+
+    return request.get(OppijaReturnVal.class);
   }
-  
-  public void asdPerson(Person person, String invalidatedOid) throws KoskiException {
+
+  /**
+   * Loads and parses the whole person object from Koski.
+   */
+  public Oppija findOppijaByOid(String oppijaOid) throws Exception {
+    String uri = String.format("%s/oppija/%s", getBaseUrl(), oppijaOid);
+    
+    Client client = ClientBuilder.newClient();
+    WebTarget target = client.target(uri);
+    Builder request = target
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .header("Authorization", "Basic " + getAuth());
+
+    return request.get(Oppija.class);
+  }
+
+  /**
+   * Invalidates a study permit in Koski.
+   */
+  public void invalidateStudyOid(Person person, String studyPermitOid) throws Exception {
+    String oppijaOid = personVariableDAO.findByPersonAndKey(person, KOSKI_HENKILO_OID);
+    Oppija oppija = findOppijaByOid(oppijaOid);
+    
+    // Remove study permits that don't have matching oid
+    oppija.getOpiskeluoikeudet().removeIf(opiskeluoikeus -> !StringUtils.equals(opiskeluoikeus.getOid(), studyPermitOid));
+    
+    // There should be the one study permit left to be invalidated
+    if (oppija.getOpiskeluoikeudet().size() == 1) {
+      Opiskeluoikeus opiskeluoikeus = oppija.getOpiskeluoikeudet().get(0);
+      
+      if (opiskeluoikeus.getLahdejarjestelmanId() != null &&
+          opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma() != null &&
+          opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma().getValue() == Lahdejarjestelma.pyramus) {
+        SourceSystemId sourceSystemId = parseSource(opiskeluoikeus.getLahdejarjestelmanId().getId());
+        if (sourceSystemId != null) {
+          oppija.getOpiskeluoikeudet().get(0).getTila().addOpiskeluoikeusJakso(
+              new OpiskeluoikeusJakso(new Date(), OpiskeluoikeudenTila.mitatoity));
+        
+          if (updatePersonToKoski(oppija, person, oppijaOid)) {
+            Student reportedStudent = studentDAO.findById(sourceSystemId.getStudentId());
+            KoskiStudentHandler handler = getHandlerType(sourceSystemId.getHandler());
+            handler.saveOrValidateOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
+          }
+        } else {
+          logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id couldn't be parsed (Person %d).", person.getId()));
+        }
+      }
+    }
+  }
+
+  /**
+   * Updates Person to Koski.
+   */
+  public void updatePerson(Person person) throws KoskiException {
     try {
       if (!settings.isEnabled())
         return;
@@ -181,13 +246,11 @@ public class KoskiClient {
       }
       
       updatePersonToKoski(oppija, person, personOid);
-      
     } catch (Exception ex) {
-      
     }
   }
   
-  private void updatePersonToKoski(Oppija oppija, Person person, String personOid) {
+  private boolean updatePersonToKoski(Oppija oppija, Person person, String personOid) {
     try {
       String uri = String.format("%s/oppija", getBaseUrl());
       
@@ -227,7 +290,7 @@ public class KoskiClient {
             if (opiskeluoikeus.getLahdejarjestelmanId() != null && 
                 opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma() != null &&
                 StringUtils.equals(opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma().getKoodiarvo(), "pyramus")) {
-              SourceSystemId sourceSystemId = parseSource(opiskeluoikeus.getLahdejarjestelmanId());
+              SourceSystemId sourceSystemId = parseSource(opiskeluoikeus.getLahdejarjestelmanId().getId());
               if (sourceSystemId != null) {
                 Student reportedStudent = studentDAO.findById(sourceSystemId.getStudentId());
                 
@@ -251,11 +314,13 @@ public class KoskiClient {
         // Log successful event
         koskiPersonLogDAO.create(person, KoskiPersonState.SUCCESS, new Date());
         logger.info(String.format("KoskiClient: successfully updated person %d.", person.getId()));
+        return true;
       } else {
         String ret = response.readEntity(String.class);
         // Log failed event
         koskiPersonLogDAO.create(person, KoskiPersonState.SERVER_FAILURE, new Date());
         logger.log(Level.SEVERE, String.format("Koski server returned %d when trying to create person %d. Content %s", response.getStatus(), person.getId(), ret));
+        return false;
       }
     } catch (Exception ex) {
       try {
@@ -278,6 +343,7 @@ public class KoskiClient {
       }
       
       logger.log(Level.SEVERE, String.format("Unknown failure while updating person %d", person.getId()), ex);
+      return false;
     }
   }
 
@@ -317,12 +383,10 @@ public class KoskiClient {
     private final Long studentId;
   }
   
-  private SourceSystemId parseSource(LahdejarjestelmaIdReturnVal lahdejarjestelmaIdReturnVal) {
-    String id = lahdejarjestelmaIdReturnVal.getId();
-    
-    if (StringUtils.isNotBlank(id) && id.contains(":")) {
-      KoskiStudyProgrammeHandler handler = KoskiStudyProgrammeHandler.valueOf(StringUtils.substringBefore(id, ":"));
-      Long studentId = Long.valueOf(StringUtils.substringAfter(id, ":"));
+  private SourceSystemId parseSource(String lahdeJarjestelmaId) {
+    if (StringUtils.isNotBlank(lahdeJarjestelmaId) && lahdeJarjestelmaId.contains(":")) {
+      KoskiStudyProgrammeHandler handler = KoskiStudyProgrammeHandler.valueOf(StringUtils.substringBefore(lahdeJarjestelmaId, ":"));
+      Long studentId = Long.valueOf(StringUtils.substringAfter(lahdeJarjestelmaId, ":"));
       return new SourceSystemId(handler, studentId);
     }
     
@@ -368,25 +432,9 @@ public class KoskiClient {
     }
   }
 
-  public OppijaReturnVal findPersonByOid(String personOid) throws Exception {
-    String uri = String.format("%s/oppija/%s", getBaseUrl(), personOid);
-    
-    Client client = ClientBuilder.newClient();
-    WebTarget target = client.target(uri);
-    Builder request = target
-        .request(MediaType.APPLICATION_JSON_TYPE)
-        .header("Authorization", "Basic " + getAuth());
-
-    return request.get(OppijaReturnVal.class);
-  }
-
-  public void invalidateStudyOid(Person person, String oid) {
-    
-  }
-  
   private <T> List<T> asList(T o) {
     List<T> list = new ArrayList<T>();
     list.add(o);
-    return list ;
+    return list;
   }
 }
