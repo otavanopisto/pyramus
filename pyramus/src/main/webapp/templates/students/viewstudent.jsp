@@ -2512,6 +2512,11 @@
                               <fmt:message
                                 key="students.viewStudent.contactEntry.types.absence" />
                             </c:when>
+                            <c:when
+                              test="${contactEntry.type eq 'MUIKKU'}">
+                              <fmt:message
+                                key="students.viewStudent.contactEntry.types.muikku" />
+                            </c:when>
                           </c:choose>
                         </span> <span class="studentContactEntryCreator">${contactEntry.creatorName}</span>
                       </div>
