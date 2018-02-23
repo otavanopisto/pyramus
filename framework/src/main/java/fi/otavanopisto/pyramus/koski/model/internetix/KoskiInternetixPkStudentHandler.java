@@ -45,7 +45,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
-import fi.otavanopisto.pyramus.koski.model.KoskiSplitStudyProgramme;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
@@ -83,7 +82,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
 
   public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
-    String studyOid = resolveStudyOid(student);
+    String studyOid = resolveInternetixOid(student, HANDLER_TYPE);
 
     // Skip student if it is archived and the studyoid is blank
     if (Boolean.TRUE.equals(student.getArchived()) && StringUtils.isBlank(studyOid)) {
@@ -147,12 +146,6 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     return opiskeluoikeus;
   }
   
-  private String resolveStudyOid(Student student) {
-    Map<String, KoskiSplitStudyProgramme> oids = loadInternetixOids(student);
-    String studentIdentifier = getStudentIdentifier(HANDLER_TYPE, student.getId());
-    return oids.get(studentIdentifier) != null ? oids.get(studentIdentifier).getOid() : null;
-  }
-
   private AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
     AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot lisatiedot = new AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot();
     
