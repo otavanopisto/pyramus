@@ -300,7 +300,7 @@ public abstract class KoskiStudentHandler {
     opsList.add(ops);
     
     Map<OpiskelijanOPS, List<CreditStub>> credits = listCredits(student, listTransferCredits, listCreditLinks, opsList, ops, filter);
-    return credits.get(ops);
+    return credits.get(ops) != null ? credits.get(ops) : new ArrayList<>();
   }
   
   protected Map<OpiskelijanOPS, List<CreditStub>> listCredits(Student student, boolean listTransferCredits, boolean listCreditLinks,
