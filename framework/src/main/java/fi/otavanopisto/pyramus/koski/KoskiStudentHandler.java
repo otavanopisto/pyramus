@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.koski;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +39,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
@@ -331,6 +333,7 @@ public abstract class KoskiStudentHandler {
         stub.addCredit(new CreditStubCredit(ca, Type.CREDIT));
       } else {
         logger.log(Level.WARNING, String.format("Couldn't resolve OPS for CourseAssessment %d", ca.getId()));
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNRESOLVED_CREDIT_CURRICULUM, new Date());
       }
     });
     
@@ -357,6 +360,7 @@ public abstract class KoskiStudentHandler {
           stub.addCredit(new CreditStubCredit(tc, Type.RECOGNIZED));
         } else {
           logger.log(Level.WARNING, String.format("Couldn't resolve OPS for TransferCredit %d", tc.getId()));
+          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNRESOLVED_CREDIT_CURRICULUM, new Date());
         }
       });
     }
