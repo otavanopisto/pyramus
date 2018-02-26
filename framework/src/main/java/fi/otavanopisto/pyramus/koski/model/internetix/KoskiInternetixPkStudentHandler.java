@@ -45,6 +45,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
+import fi.otavanopisto.pyramus.koski.model.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
@@ -396,4 +397,10 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
   public void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
     saveOrValidateInternetixOid(handler, student, oid);
   }
+  
+  @Override
+  public Set<KoskiStudentId> listOids(Student student) {
+    return loadInternetixOids(student);
+  }
+
 }

@@ -47,6 +47,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kunta;
 import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
 import fi.otavanopisto.pyramus.koski.model.HenkilovahvistusPaikkakunnalla;
+import fi.otavanopisto.pyramus.koski.model.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.LahdeJarjestelmaID;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
@@ -94,6 +95,7 @@ public abstract class KoskiStudentHandler {
   protected SchoolVariableDAO schoolVariableDAO;
   
   public abstract void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid);
+  public abstract Set<KoskiStudentId> listOids(Student student);
   
   protected void saveOrValidateOid(Student student, String oid) {
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
@@ -180,7 +182,7 @@ public abstract class KoskiStudentHandler {
   }
 
   protected String getStudentIdentifier(KoskiStudyProgrammeHandler handler, Long studentId) {
-    return handler.name() + ":" + String.valueOf(studentId);
+    return KoskiConsts.getStudentIdentifier(handler, studentId);
   }
   
   protected LahdeJarjestelmaID getLahdeJarjestelmaID(KoskiStudyProgrammeHandler handler, Long studentId) {

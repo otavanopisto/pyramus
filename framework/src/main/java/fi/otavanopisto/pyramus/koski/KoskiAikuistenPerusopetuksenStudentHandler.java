@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.koski;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
@@ -36,6 +37,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
+import fi.otavanopisto.pyramus.koski.model.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
@@ -360,6 +362,16 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       saveOrValidateOid(student, oid);
     } else {
       logger.severe(String.format("saveOrValidateOid called with wrong handler %s, expected %s ", handler, HANDLER_TYPE));
+    }
+  }
+
+  @Override
+  public Set<KoskiStudentId> listOids(Student student) {
+    String oid = userVariableDAO.findByUserAndKey(student, KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID);
+    if (StringUtils.isNotBlank(oid)) {
+      return new HashSet<>(Arrays.asList(new KoskiStudentId(getStudentIdentifier(HANDLER_TYPE, student.getId()), oid)));
+    } else {
+      return new HashSet<>();
     }
   }
   

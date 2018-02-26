@@ -42,6 +42,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
+import fi.otavanopisto.pyramus.koski.model.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
@@ -445,6 +446,16 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       saveOrValidateOid(student, oid);
     } else {
       logger.severe(String.format("saveOrValidateOid called with wrong handler %s, expected %s ", handler, HANDLER_TYPE));
+    }
+  }
+  
+  @Override
+  public Set<KoskiStudentId> listOids(Student student) {
+    String oid = userVariableDAO.findByUserAndKey(student, KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID);
+    if (StringUtils.isNotBlank(oid)) {
+      return new HashSet<>(Arrays.asList(new KoskiStudentId(getStudentIdentifier(HANDLER_TYPE, student.getId()), oid)));
+    } else {
+      return new HashSet<>();
     }
   }
   
