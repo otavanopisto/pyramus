@@ -19,7 +19,6 @@ public class InvalidateKoskiStudyPermitJSONRequestController extends JSONRequest
     Person person = personDAO.findById(personId);
     String oid = requestContext.getString("oid");
     
-
     KoskiClient client = CDI.current().select(KoskiClient.class).get();
     
     try {
@@ -31,7 +30,7 @@ public class InvalidateKoskiStudyPermitJSONRequestController extends JSONRequest
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.ADMINISTRATOR };
   }
 
 }

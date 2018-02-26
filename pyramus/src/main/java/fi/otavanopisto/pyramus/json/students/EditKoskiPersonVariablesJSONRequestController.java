@@ -1,7 +1,5 @@
 package fi.otavanopisto.pyramus.json.students;
 
-import java.util.Objects;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -35,22 +33,15 @@ public class EditKoskiPersonVariablesJSONRequestController extends JSONRequestCo
     if (personVariableCount != null) {
       for (int i = 0; i < personVariableCount; i++) {
         String colPrefix = "studentKoskiIDsTable." + i;
-        Long edited = requestContext.getLong(colPrefix + ".edited");
-        if (Objects.equals(new Long(1), edited)) {
-          String oid = requestContext.getString(colPrefix + ".oid");
-          String linkedOid = requestContext.getString(colPrefix + ".linkedOid");
-          Long studentId = requestContext.getLong(colPrefix + ".studentId");
-          Student student = studentDAO.findById(studentId);
-          
-          if (person.getId().equals(student.getPerson().getId())) {
-            userVariableDAO.setUserVariable(student, KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID, StringUtils.trim(oid));
-            userVariableDAO.setUserVariable(student, KoskiConsts.VariableNames.KOSKI_LINKED_STUDYPERMISSION_ID, StringUtils.trim(linkedOid));
-          }
+        String linkedOid = requestContext.getString(colPrefix + ".linkedOid");
+        Long studentId = requestContext.getLong(colPrefix + ".studentId");
+        Student student = studentDAO.findById(studentId);
+        
+        if (person.getId().equals(student.getPerson().getId())) {
+          userVariableDAO.setUserVariable(student, KoskiConsts.VariableNames.KOSKI_LINKED_STUDYPERMISSION_ID, StringUtils.trim(linkedOid));
         }
       }
     }
-        
-//    requestContext.setRedirectURL(requestContext.getReferer(true));
   }
 
   public UserRole[] getAllowedRoles() {

@@ -16,6 +16,7 @@
     <jsp:include page="/templates/generic/searchnavigation_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/studentinfopopup_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/locale_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/glasspane_support.jsp"></jsp:include>
     
     <script type="text/javascript">
       /**
@@ -26,12 +27,19 @@
       function onLoad(event) {
         var tabControl2 = new IxProtoTabs($('studentKoskiDialogTabs'));
         var personId = '${person.id}';
+        var loggedUserRole = '${loggedUserRole}';
         
         initIDsTable(personId);
-        initInvalidationTable(personId);
+        initInvalidationTable(personId, loggedUserRole);
 
         loadIDsTable(personId);
         loadInvalidationTable(personId);
+
+        var form = $('editKoskiPersonVariablesForm');
+        Event.observe(form, "submit", function (event) {
+          Event.stop(event);
+          formSubmit(Event.element(event));
+        });
       }
 
       function initIDsTable(personId) {
@@ -49,7 +57,7 @@
             left : 140 + 8,
             width : 200,
             dataType: 'text',
-            editable: true,
+            editable: false,
             paramName: 'oid'
           }, {
             header : '<fmt:message key="students.editStudentKoskiDialog.studentOIDTable.studyPermitLinkedTitle"/>',
@@ -100,7 +108,7 @@
         });
       }
       
-      function initInvalidationTable(personId) {
+      function initInvalidationTable(personId, loggedUserRole) {
         var table = new IxTable($('studentKoskiInvalidateTableContainer'), {
           id : "studentKoskiInvalidateTable",
           columns : [{
@@ -120,6 +128,7 @@
           }, {
             width: 22,
             right: 8,
+            hidden: loggedUserRole != 'ADMINISTRATOR',
             dataType: 'button',
             paramName: 'archiveButton',
             imgsrc: GLOBAL_contextPath + '/gfx/edit-delete.png',
@@ -152,7 +161,7 @@
                         oid: oid
                       },
                       onSuccess: function (jsonResponse) {
-                        var table = getIxTableById('studentsTable');
+                        var table = getIxTableById('studentKoskiInvalidateTable');
                         table.deleteRow(archivedStudentRowIndex);
                       }
                     });   
@@ -199,6 +208,28 @@
         });
       }
 
+      function formSubmit(formElement) {
+        var formData = formElement.serialize(true);
+
+        formElement._globalGlassPane = new IxGlassPane(document.body, { });
+        formElement._globalGlassPane.show();
+        
+        JSONRequest.request('students/editkoskipersonvariables.json', {
+          parameters: formData,
+          onSuccess: function (jsonResponse) {
+            formElement._globalGlassPane.hide();
+            delete formElement._globalGlassPane;
+            formElement._globalGlassPane = undefined;
+          },
+          onFailure: function (errorMessage, errorCode, isHttpError, jsonResponse) {
+            alert(errorMessage);
+            formElement._globalGlassPane.hide();
+            delete formElement._globalGlassPane;
+            formElement._globalGlassPane = undefined;
+          }
+        });
+      }
+
     </script>
 
   </head>
@@ -211,7 +242,7 @@
       </div>
 
       <div id="ids" class="tabContent">
-        <form action="editkoskipersonvariables.json" method="post" ix:jsonform="true" ix:useglasspane="true">
+        <form id="editKoskiPersonVariablesForm">
           <input type="hidden" name="personId" value="${person.id}"/>
 	        <div class="genericFormSection">
 	          <jsp:include page="/templates/generic/fragments/formtitle.jsp">

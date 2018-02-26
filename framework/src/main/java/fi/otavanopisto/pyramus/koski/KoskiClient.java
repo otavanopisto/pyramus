@@ -347,7 +347,7 @@ public class KoskiClient {
     }
   }
 
-  private KoskiStudentHandler getHandlerType(KoskiStudyProgrammeHandler handler) {
+  public KoskiStudentHandler getHandlerType(KoskiStudyProgrammeHandler handler) {
     switch (handler) {
       case aikuistenperusopetus:
         return aikuistenPerusopetuksenHandler;

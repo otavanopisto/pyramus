@@ -7,4 +7,9 @@ public class KoskiConsts {
     public static final String KOSKI_STUDYPERMISSION_ID = "koski.studypermission-id";
     public static final String KOSKI_LINKED_STUDYPERMISSION_ID = "koski.linked-to-studypermission-id";
   }
+  
+  public static String getStudentIdentifier(KoskiStudyProgrammeHandler handler, Long studentId) {
+    return handler.name() + ":" + String.valueOf(studentId);
+  }
+
 }

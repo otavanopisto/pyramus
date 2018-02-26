@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,13 +18,16 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
-import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.koski.KoskiClient;
 import fi.otavanopisto.pyramus.koski.KoskiConsts;
+import fi.otavanopisto.pyramus.koski.KoskiSettings;
+import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
+import fi.otavanopisto.pyramus.koski.KoskiStudentId;
+import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.model.result.OpiskeluoikeusReturnVal;
 import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
 
@@ -36,7 +40,6 @@ public class ListKoskiPersonStudiesJSONRequestController extends JSONRequestCont
       PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
       StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
       PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
-      UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
       
       Long personId = requestContext.getLong("personId");
       
@@ -54,32 +57,40 @@ public class ListKoskiPersonStudiesJSONRequestController extends JSONRequestCont
       }
       
       KoskiClient koskiClient = CDI.current().select(KoskiClient.class).get();
+      KoskiSettings koskiSettings = CDI.current().select(KoskiSettings.class).get();
       
+      // Find student info from Koski
       OppijaReturnVal koskiStudent = koskiClient.findPersonByOid(personOid);
 
-      Map<String, Student> oidMap = new HashMap<>();
-      List<Student> students = studentDAO.listByPerson(person);
-      for (Student student : students) {
-        String oid = userVariableDAO.findByUserAndKey(student, KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID);
-        if (StringUtils.isNotBlank(oid)) {
-          oidMap.put(oid, student);
-        }
-      }
-      
       List<Map<String, Object>> studyPermitIds = new ArrayList<>();
-      for (OpiskeluoikeusReturnVal studyPermit : koskiStudent.getOpiskeluoikeudet()) {
-        String oid = studyPermit.getOid();
-        Student student = oidMap.get(oid);
-        
-        Map<String, Object> studyPermitInfo = new HashMap<>();
-        studyPermitInfo.put("oid", oid);
-        studyPermitInfo.put("linkedStudyProgrammeName", student != null ? student.getStudyProgramme().getName() : null);
-        studyPermitInfo.put("linkedStudyProgrammeStartDate", student != null ? student.getStudyStartDate().getTime() : null);
-        studyPermitInfo.put("linkedStudentId", student != null ? student.getId() : null);
-        studyPermitIds.add(studyPermitInfo);
-      }
       
-//      requestContext.addResponseParameter("personOID", personOid);
+      if (koskiStudent != null) {
+        Map<String, Student> oidMap = new HashMap<>();
+        List<Student> students = studentDAO.listByPerson(person);
+        for (Student student : students) {
+          if (student.getStudyProgramme() != null) {
+            KoskiStudyProgrammeHandler handlerType = koskiSettings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
+            KoskiStudentHandler handler = koskiClient.getHandlerType(handlerType);
+            Set<KoskiStudentId> ids = handler.listOids(student);
+            
+            ids.forEach(id -> oidMap.put(id.getOid(), student));
+          }
+        }
+        
+        for (OpiskeluoikeusReturnVal studyPermit : koskiStudent.getOpiskeluoikeudet()) {
+          String oid = studyPermit.getOid();
+          Student student = oidMap.get(oid);
+          
+          Map<String, Object> studyPermitInfo = new HashMap<>();
+          studyPermitInfo.put("oid", oid);
+          studyPermitInfo.put("linkedStudyProgrammeName", student != null ? student.getStudyProgramme().getName() : null);
+          studyPermitInfo.put("linkedStudyProgrammeStartDate", student != null ? student.getStudyStartDate().getTime() : null);
+          studyPermitInfo.put("linkedStudentId", student != null ? student.getId() : null);
+          studyPermitIds.add(studyPermitInfo);
+        }
+        
+      }
+
       requestContext.addResponseParameter("studyPermitIDs", studyPermitIds);
     }
     catch (Exception e) {
