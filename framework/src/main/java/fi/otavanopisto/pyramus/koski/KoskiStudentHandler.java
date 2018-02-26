@@ -47,7 +47,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kunta;
 import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
 import fi.otavanopisto.pyramus.koski.model.HenkilovahvistusPaikkakunnalla;
-import fi.otavanopisto.pyramus.koski.model.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.LahdeJarjestelmaID;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;

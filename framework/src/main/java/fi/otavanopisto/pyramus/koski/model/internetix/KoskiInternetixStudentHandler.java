@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.koski.model.internetix;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.koski.KoskiException;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
+import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 
@@ -55,6 +57,11 @@ public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
         logger.warning("Unknown handler type.");
       break;
     }
+  }
+
+  @Override
+  public Set<KoskiStudentId> listOids(Student student) {
+    return loadInternetixOids(student);
   }
 
 }
