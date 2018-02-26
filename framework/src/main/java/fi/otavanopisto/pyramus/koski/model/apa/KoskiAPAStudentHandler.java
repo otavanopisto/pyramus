@@ -166,6 +166,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
           oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
         } else {
           logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
+          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNREPORTED_CREDIT, new Date());
         }
       }
     }
@@ -228,6 +229,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
           return os;
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
+          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNKNOWN_LANGUAGE, new Date());
           return null;
         }
       }
