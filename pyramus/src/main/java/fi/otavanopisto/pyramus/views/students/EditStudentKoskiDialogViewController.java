@@ -12,12 +12,11 @@ import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
-import fi.otavanopisto.pyramus.json.students.ListKoskiPersonVariablesJSONRequestController;
 import fi.otavanopisto.pyramus.koski.KoskiConsts;
 
 public class EditStudentKoskiDialogViewController extends PyramusViewController {
 
-  private static final Logger logger = Logger.getLogger(ListKoskiPersonVariablesJSONRequestController.class.getName());
+  private static final Logger logger = Logger.getLogger(EditStudentKoskiDialogViewController.class.getName());
 
   public void process(PageRequestContext requestContext) {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
