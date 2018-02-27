@@ -27,7 +27,20 @@ public interface InternalAuthenticationProvider extends AuthenticationProvider {
    * @return The username of the user corresponding to the given identifier, or <code>null</code> if
    * not found
    */
+  
   public String getUsername(String externalId);
+  
+  /**
+   * Returns the username corresponding to the given credentials. If no user cannot be found, returns
+   * <code>null</code>.
+   * 
+   * @param username The username
+   * 
+   * @return The username corresponding to the given credentials, or <code>null</code> if not found
+   */
+  
+  public User getUserByName(String username);
+  
 
   /**
    * Returns whether this authentication provider is capable of updating the credentials of a user.
