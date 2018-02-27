@@ -12,6 +12,7 @@ import org.junit.runners.Parameterized.Parameters;
 import io.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.rest.controller.permissions.CoursePermissions;
+import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.CourseOptionality;
 import fi.otavanopisto.pyramus.rest.model.CourseStudent;
 
@@ -21,6 +22,7 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
   private static final long COURSE_ID = 1000;
   private static final long STUDENT_ID = 13;
   private CoursePermissions coursePermissions = new CoursePermissions();
+  private StudentPermissions studentPermissions = new StudentPermissions();
   
   @Parameters
   public static List<Object[]> generateData() {
@@ -85,11 +87,49 @@ public class CourseStudentsPermissionsTestsIT extends AbstractRESTPermissionsTes
     assertOk(response, coursePermissions, CoursePermissions.LIST_COURSESTUDENTS, 200);
   }
   
+  /**
+   * Test case where study guider cannot find (is not in the same groups) the student
+   */
   @Test
   public void testPermissionsFindCourseStudent() throws NoSuchFieldException  {
     Response response = given().headers(getAuthHeaders())
-    .get("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, 5l);
-    assertOk(response, coursePermissions, CoursePermissions.FIND_COURSESTUDENT, 200);
+        .get("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, 5l);
+
+    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+      // Accessible students restricted to groups of the logged user
+      assertOk(response, coursePermissions, CoursePermissions.FIND_COURSESTUDENT, 403);
+    } else {
+      assertOk(response, coursePermissions, CoursePermissions.FIND_COURSESTUDENT, 200);
+    }
+  }
+  
+  /**
+   * Positive test case for study guider where study guider can find the coursestudent
+   */
+  @Test
+  public void testPermissionsFindCourseStudentStudyGuider() throws NoSuchFieldException  {
+    // Student 13 is in the same group as the test study guider
+    CourseStudent entity = new CourseStudent(null, COURSE_ID, STUDENT_ID, getDate(2014, 5, 6), false, 1l, 1l, false, CourseOptionality.MANDATORY, null);
+    
+    Response createResponse = given().headers(getAdminAuthHeaders())
+        .contentType("application/json")
+        .body(entity)
+        .post("/courses/courses/{COURSEID}/students", COURSE_ID);
+      
+    Long id = new Long(createResponse.body().jsonPath().getInt("id"));
+    if (createResponse.getStatusCode() == 200) {
+      try {
+        Response response = given().headers(getAuthHeaders())
+            .get("/courses/courses/{COURSEID}/students/{ID}", COURSE_ID, id);
+    
+        assertOk(response, coursePermissions, CoursePermissions.FIND_COURSESTUDENT, 200);
+      } finally {
+        given().headers(getAdminAuthHeaders())
+          .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", COURSE_ID, id)
+          .then()
+          .statusCode(204);
+      }
+    }
   }
   
   @Test
