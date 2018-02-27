@@ -142,9 +142,10 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     return application;
   }
   
-  public Application updateApplicationStudent(Application application, Student student) {
+  public Application updateApplicationStudentAndCredentialToken(Application application, Student student, String credentialToken) {
     EntityManager entityManager = getEntityManager();
     application.setStudent(student);
+    application.setCredentialToken(credentialToken);
     entityManager.persist(application);
     return application;
   }
