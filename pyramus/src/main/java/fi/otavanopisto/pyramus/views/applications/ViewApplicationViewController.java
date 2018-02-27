@@ -183,6 +183,12 @@ public class ViewApplicationViewController extends PyramusViewController {
         pageRequestContext.getRequest().setAttribute("infoHandler", application.getHandler().getFullName());
         pageRequestContext.getRequest().setAttribute("infoHandlerId", application.getHandler().getId());
       }
+      if (application.getStudent() != null) {
+        pageRequestContext.getRequest().setAttribute("infoStudentUrl",
+            String.format("/students/viewstudent.page?person=%d#at-student.%d",
+                application.getStudent().getPerson().getId(),
+                application.getStudent().getId()));
+      }
       pageRequestContext.getRequest().setAttribute("infoCreated", application.getCreated());
       pageRequestContext.getRequest().setAttribute("infoLastModified", ApplicationUtils.getLatest(
           application.getLastModified(),
