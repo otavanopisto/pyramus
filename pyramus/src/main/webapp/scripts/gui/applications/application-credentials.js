@@ -1,6 +1,6 @@
 (function() {
   $(document).ready(function() {
-    $('#save').on('click', function() {
+    $('#button-create-credentials').on('click', function() {
       $('.error-container').hide();
       var usr = $('#u').val();
       var pwd1 = $('#p1').val();
