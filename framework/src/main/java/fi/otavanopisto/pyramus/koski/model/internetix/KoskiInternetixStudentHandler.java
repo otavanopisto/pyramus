@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
-import fi.otavanopisto.pyramus.koski.KoskiException;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
@@ -25,7 +24,7 @@ public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
   @Inject
   private KoskiInternetixLukioStudentHandler lukioHandler;
   
-  public List<Opiskeluoikeus> studentToModel(Student student, String academyIdentifier) throws KoskiException {
+  public List<Opiskeluoikeus> studentToModel(Student student, String academyIdentifier) {
     List<Opiskeluoikeus> oos = new ArrayList<>();
     
     Opiskeluoikeus pk = pkHandler.studentToModel(student, academyIdentifier);

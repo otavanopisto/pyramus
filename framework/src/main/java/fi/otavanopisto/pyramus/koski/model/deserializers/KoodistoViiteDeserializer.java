@@ -51,11 +51,8 @@ public class KoodistoViiteDeserializer extends JsonDeserializer<KoodistoViite<?>
   private Enum reverseLookup(Class enumClass, String enumValue) {
     try {
       Method reverseLookupMethod = enumClass.getMethod("reverseLookup", String.class);
-
-      if (reverseLookupMethod != null) {
-        Enum e = (Enum) reverseLookupMethod.invoke(null, enumValue);
-        return e;
-      }
+      Enum e = (Enum) reverseLookupMethod.invoke(null, enumValue);
+      return e;
     } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
     }
     

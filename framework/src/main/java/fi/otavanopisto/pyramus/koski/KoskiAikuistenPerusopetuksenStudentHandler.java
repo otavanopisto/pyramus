@@ -68,7 +68,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
   @Inject
   private Logger logger;
 
-  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier, KoskiStudyProgrammeHandler handler) throws KoskiException {
+  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier, KoskiStudyProgrammeHandler handler) {
     if (handler != HANDLER_TYPE) {
       logger.log(Level.SEVERE, String.format("Wrong handler type %s expected %s w/person %d.", handler, HANDLER_TYPE, student.getPerson().getId()));
       return null;

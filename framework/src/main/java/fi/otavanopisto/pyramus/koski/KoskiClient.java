@@ -184,7 +184,7 @@ public class KoskiClient {
   /**
    * Updates Person to Koski.
    */
-  public void updatePerson(Person person) throws KoskiException {
+  public void updatePerson(Person person) {
     try {
       if (!settings.isEnabled())
         return;
@@ -193,14 +193,14 @@ public class KoskiClient {
         logger.log(Level.WARNING, "updateStudent called with null person.");
         return;
       }
-
+  
       clearPersonLog(person);
       
       // Does the person have any reported study programmes
       if (!settings.hasReportedStudents(person)) {
         return;
       }
-
+  
       String personOid = personVariableDAO.findByPersonAndKey(person, KOSKI_HENKILO_OID);
       
       if (StringUtils.isBlank(person.getSocialSecurityNumber()) && StringUtils.isBlank(personOid)) {
@@ -222,7 +222,7 @@ public class KoskiClient {
         henkilo = new HenkiloTiedotJaOID(personOid, person.getSocialSecurityNumber(), latestStudent.getFirstName(), latestStudent.getLastName(), getCallname(latestStudent));
       else
         henkilo = new HenkiloUusi(person.getSocialSecurityNumber(), latestStudent.getFirstName(), latestStudent.getLastName(), getCallname(latestStudent));
-
+  
       Oppija oppija = new Oppija();
       oppija.setHenkilo(henkilo);
       
@@ -247,6 +247,8 @@ public class KoskiClient {
       
       updatePersonToKoski(oppija, person, personOid);
     } catch (Exception ex) {
+      logger.log(Level.SEVERE, String.format("Unknown error while processing person %d", person != null ? person.getId() : null), ex);
+      koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date());
     }
   }
   
@@ -384,7 +386,7 @@ public class KoskiClient {
   }
   
   private SourceSystemId parseSource(String lahdeJarjestelmaId) {
-    if (StringUtils.isNotBlank(lahdeJarjestelmaId) && lahdeJarjestelmaId.contains(":")) {
+    if (StringUtils.contains(lahdeJarjestelmaId, ":")) {
       KoskiStudyProgrammeHandler handler = KoskiStudyProgrammeHandler.valueOf(StringUtils.substringBefore(lahdeJarjestelmaId, ":"));
       Long studentId = Long.valueOf(StringUtils.substringAfter(lahdeJarjestelmaId, ":"));
       return new SourceSystemId(handler, studentId);
@@ -412,7 +414,7 @@ public class KoskiClient {
     return null;
   }
 
-  private List<Opiskeluoikeus> studentToOpiskeluoikeus(Student student) throws KoskiException {
+  private List<Opiskeluoikeus> studentToOpiskeluoikeus(Student student) {
     KoskiStudyProgrammeHandler handler = settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
     switch (handler) {
       case aikuistenperusopetus:

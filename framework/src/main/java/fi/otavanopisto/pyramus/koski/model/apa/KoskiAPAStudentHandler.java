@@ -30,7 +30,6 @@ import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit;
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.KoskiConsts;
-import fi.otavanopisto.pyramus.koski.KoskiException;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
@@ -65,10 +64,12 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
   @Inject
   private Logger logger;
 
-  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) throws KoskiException {
+  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
     OpiskelijanOPS ops = resolveOPS(student);
-    if (ops == null)
-      throw new KoskiException(String.format("Cannot report student %d without curriculum.", student.getId()), KoskiPersonState.NO_CURRICULUM);
+    if (ops == null) {
+      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_CURRICULUM, new Date());
+      return null;
+    }
     
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultStudentSubjectSelections());
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);

@@ -1,7 +1,6 @@
 package fi.otavanopisto.pyramus.json.students;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -23,7 +22,7 @@ public class EditKoskiPersonVariablesJSONRequestController extends JSONRequestCo
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
 
-    Long personId = NumberUtils.createLong(requestContext.getRequest().getParameter("personId"));
+    Long personId = requestContext.getLong("personId");
     Person person = personDAO.findById(personId);
 
     String personOid = requestContext.getString("personOid");
