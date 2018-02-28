@@ -17,6 +17,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
@@ -28,6 +30,7 @@ import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
+import fi.otavanopisto.pyramus.koski.settings.KoskiIntegrationSettingsWrapper;
 import net.sf.json.JSONObject;
 
 @ApplicationScoped
@@ -62,6 +65,10 @@ public class KoskiSettings {
     if (file.exists()) {
       try {
         String json = FileUtils.readFileToString(file);
+        
+        ObjectMapper mapper = new ObjectMapper();
+        this.settings = mapper.readValue(json, KoskiIntegrationSettingsWrapper.class);
+        
         JSONObject settings = JSONObject.fromObject(json);
         readSettings(settings);
       } catch (IOException e) {
@@ -74,7 +81,6 @@ public class KoskiSettings {
   
   private void readSettings(JSONObject settings) {
     JSONObject koskiSettings = settings.getJSONObject("koski");
-    this.academyIdentifier = koskiSettings.getString("academyIdentifier");
     JSONObject studyEndReasonMapping = koskiSettings.getJSONObject("studyEndReasonMapping");
     for (Object studyEndReasonKey : studyEndReasonMapping.keySet()) {
       Long studyEndReasonId = Long.parseLong(studyEndReasonKey.toString());
@@ -235,7 +241,7 @@ public class KoskiSettings {
   }
   
   public String getAcademyIdentifier() {
-    return academyIdentifier;
+    return settings.getKoski().getAcademyIdentifier();
   }
 
   public String getCourseTypeMapping(Long educationSubTypeId) {
@@ -249,9 +255,13 @@ public class KoskiSettings {
   public KoskiStudyProgrammeHandler getStudyProgrammeHandlerType(Long studyProgrammeId) {
     return handlerTypes.get(studyProgrammeId);
   }
+
+  public KoskiIntegrationSettingsWrapper getSettings() {
+    return settings;
+  }
   
+  private KoskiIntegrationSettingsWrapper settings;
   private boolean testEnvironment;
-  private String academyIdentifier;
   private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
   private Set<Long> freeLodgingStudyProgrammes = new HashSet<Long>();
   private Map<Long, OpiskeluoikeudenTila> studentStateMap = new HashMap<>();

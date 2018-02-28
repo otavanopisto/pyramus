@@ -30,6 +30,7 @@ import fi.otavanopisto.pyramus.koski.CreditStubCredit;
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.KoskiException;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
+import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.StudentSubjectSelections;
 import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenAlkuvaiheenKurssit2017;
@@ -73,7 +74,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     }
     
     AikuistenPerusopetuksenOpiskeluoikeus opiskeluoikeus = new AikuistenPerusopetuksenOpiskeluoikeus();
-    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(student.getId()));
+    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(KoskiStudyProgrammeHandler.aikuistenperusopetuksenalkuvaihe, student.getId()));
     opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
     opiskeluoikeus.setPaattymispaiva(student.getStudyEndDate());
     if (StringUtils.isNotBlank(studyOid)) {
@@ -81,8 +82,6 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     }
     
     opiskeluoikeus.setLisatiedot(getLisatiedot(student));
-    
-    handleLinkedStudyOID(student, opiskeluoikeus);
     
     OpiskeluoikeudenTila jaksonTila = !Boolean.TRUE.equals(student.getArchived()) ? OpiskeluoikeudenTila.lasna : OpiskeluoikeudenTila.mitatoity;
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), jaksonTila);
@@ -103,6 +102,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
     APASuoritus suoritus = new APASuoritus(
         PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila);
+    suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
     if (suorituksenTila == SuorituksenTila.VALMIS)
       suoritus.setVahvistus(getVahvistus(student, academyIdentifier));
@@ -148,7 +148,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
 
   private void assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects,
       APASuoritus oppimaaranSuoritus) {
-    Collection<CreditStub> credits = listCredits(student, false, false);
+    Collection<CreditStub> credits = listCredits(student, false, false, ops, credit -> matchingCurriculumFilter(student, credit));
     
     Map<String, APAOppiaineenSuoritus> map = new HashMap<>();
     
@@ -161,6 +161,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
           oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
         } else {
           logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
+          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNREPORTED_CREDIT, new Date());
         }
       }
     }
@@ -223,6 +224,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
           return os;
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
+          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNKNOWN_LANGUAGE, new Date());
           return null;
         }
       }
@@ -307,6 +309,11 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     }
     
     return meanGrade(kurssiarvosanat);
+  }
+
+  @Override
+  public void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
+    saveOrValidateOid(student, oid);
   }
   
 }
