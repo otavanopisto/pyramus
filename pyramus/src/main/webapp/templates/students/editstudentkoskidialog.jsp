@@ -163,6 +163,9 @@
                       onSuccess: function (jsonResponse) {
                         var table = getIxTableById('studentKoskiInvalidateTable');
                         table.deleteRow(archivedStudentRowIndex);
+                      },
+                      onFailure: function(errorMessage, errorCode, isHttpError, jsonResponse) {
+                        alert(errorMessage);
                       }
                     });   
                   break;

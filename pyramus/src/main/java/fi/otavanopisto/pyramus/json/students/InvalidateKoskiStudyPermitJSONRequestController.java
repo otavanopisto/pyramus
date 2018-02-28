@@ -2,7 +2,9 @@ package fi.otavanopisto.pyramus.json.students;
 
 import javax.enterprise.inject.spi.CDI;
 
+import fi.internetix.smvc.Severity;
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
@@ -24,8 +26,9 @@ public class InvalidateKoskiStudyPermitJSONRequestController extends JSONRequest
     try {
       client.invalidateStudyOid(person, oid);
     } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      requestContext.addMessage(
+          Severity.ERROR, 
+          Messages.getInstance().getText(requestContext.getRequest().getLocale(), "students.invalidateKoskiOID.errorMessage", new String[] { e.getMessage() }));
     }
   }
 
