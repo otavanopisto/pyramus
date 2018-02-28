@@ -53,8 +53,10 @@ public class OnlyGroupStudentsPermissionFeature implements PermissionFeatureHand
         return studentDAO.isStudyGuider((StaffMember) user, (Student) maybeStudent);
       else
         return allowed;
-    } else
-      logger.log(Level.WARNING, "ContextReference was not student, ignoring and returning default permission.");
+    } else {
+      String contextStr = contextReference == null ? "null" : contextReference.getClass().getSimpleName();
+      logger.log(Level.WARNING, String.format("ContextReference %s was not student, ignoring and returning default permission", contextStr));
+    }
     
     return allowed;
   }
