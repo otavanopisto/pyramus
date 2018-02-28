@@ -70,7 +70,7 @@ public class CreateCredentialsViewController extends PyramusViewController {
         List<InternalAuthenticationProvider> providers = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
         InternalAuthenticationProvider provider = providers.size() == 1 ? providers.get(0) : null;
         if (provider == null || !provider.canUpdateCredentials()) {
-          logger.log(Level.WARNING, "Unable to resolve InternalAuthenticationProvid");
+          logger.log(Level.WARNING, "Unable to resolve InternalAuthenticationProvider");
           pageRequestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
           return;
         }
