@@ -28,8 +28,7 @@
             window.location.search = '?status=ok'; 
           }
           else {
-            $('.error-container').text(response.reason);
-            $('.error-container').show();
+            $('.error-container').text(response.reason).show();
           }
         },
         error: function(err) {
