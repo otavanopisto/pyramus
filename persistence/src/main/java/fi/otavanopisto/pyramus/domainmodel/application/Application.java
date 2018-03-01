@@ -172,6 +172,14 @@ public class Application implements ArchivableEntity {
     this.student = student;
   }
 
+  public String getCredentialToken() {
+    return credentialToken;
+  }
+
+  public void setCredentialToken(String credentialToken) {
+    this.credentialToken = credentialToken;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Application")
   @TableGenerator(name="Application", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -250,6 +258,9 @@ public class Application implements ArchivableEntity {
   @OneToOne
   @JoinColumn(name="student")
   private Student student;
+
+  @Field
+  private String credentialToken;
 
   @NotNull
   @Column (nullable = false)

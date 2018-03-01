@@ -40,6 +40,20 @@ public class InternalAuthDAO extends PyramusEntityDAO<InternalAuth> {
     
     return getSingleResult(entityManager.createQuery(criteria));
   }
+
+  public InternalAuth findByUsername(String username) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<InternalAuth> criteria = criteriaBuilder.createQuery(InternalAuth.class);
+    Root<InternalAuth> root = criteria.from(InternalAuth.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(InternalAuth_.username), username)
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
   
   public InternalAuth update(InternalAuth internalAuth, String username) {
     EntityManager entityManager = getEntityManager();

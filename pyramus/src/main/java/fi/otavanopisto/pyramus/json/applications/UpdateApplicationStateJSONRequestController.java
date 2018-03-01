@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
@@ -32,8 +33,10 @@ import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
+import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
+import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
@@ -50,8 +53,11 @@ import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
+import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.util.Mailer;
 import fi.otavanopisto.pyramus.views.applications.ApplicationUtils;
 import net.sf.json.JSONObject;
@@ -111,7 +117,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String phone = getFormValue(formData, "field-phone");
           String email = getFormValue(formData, "field-email");
           String nickname = getFormValue(formData, "field-nickname");
-          String guardianMail = formData.getString("field-underage-email");
+          String guardianMail = getFormValue(formData, "field-underage-email");
 
           // Make sure we have application signatures and school approval
           
@@ -206,7 +212,9 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           // Separate logic for transferring the applicant as student
           
           Student student = createPyramusStudent(application, staffMember);
-          application = applicationDAO.updateApplicationStudent(application, student);
+          String credentialToken = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
+          application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
+          mailCredentialsInfo(requestContext, student, staffMember, application);
         }
         
         // Update the actual application state
@@ -418,12 +426,12 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
     // Person by social security number
     
     Map<Long, Person> existingPersons = new HashMap<Long, Person>();
-    boolean hasSsn = applicationData.getString("field-ssn-end") != null;
+    boolean hasSsn = getFormValue(applicationData, "field-ssn-end") != null;
     if (hasSsn) {
       
       // Given SSN
       
-      String ssn = ApplicationUtils.constructSSN(applicationData.getString("field-birthday"), applicationData.getString("field-ssn-end"));
+      String ssn = ApplicationUtils.constructSSN(getFormValue(applicationData, "field-birthday"), getFormValue(applicationData, "field-ssn-end"));
       List<Person> persons = personDAO.listBySSNUppercase(ssn);
       for (Person person : persons) {
         existingPersons.put(person.getId(), person);
@@ -442,7 +450,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
     
     // Person by email address
     
-    String emailAddress = StringUtils.lowerCase(StringUtils.trim(applicationData.getString("field-email")));
+    String emailAddress = StringUtils.lowerCase(StringUtils.trim(application.getEmail()));
     List<Email> emails = emailDAO.listByAddressLowercase(emailAddress);
     for (Email email : emails) {
       if (email.getContactType() != null && Boolean.FALSE.equals(email.getContactType().getNonUnique())) {
@@ -470,6 +478,89 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
     else {
       return existingPersons.values().iterator().next();
     }
+  }
+  
+  private void mailCredentialsInfo(JSONRequestContext requestContext, Student student, StaffMember staffMember,
+      Application application) throws Exception {
+    
+    // Application form 
+    
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    
+    // Determine the need for credentials
+    
+    List<InternalAuthenticationProvider> providers = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
+    InternalAuthenticationProvider provider = providers.size() == 1 ? providers.get(0) : null;
+    if (provider == null) {
+      throw new InternalError("Unable to resolve InternalAuthenticationProvider");
+    }
+    UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(provider.getName(), student.getPerson());
+    
+    // Choose mail template depending on whether student already has credentials or not
+    
+    String subject = "Muikku-oppimisympäristön tunnukset";
+    String content;
+    if (userIdentification == null) {
+      StringBuilder createCredentialsUrl = new StringBuilder();
+      createCredentialsUrl.append(requestContext.getRequest().getScheme());
+      createCredentialsUrl.append("://");
+      createCredentialsUrl.append(requestContext.getRequest().getServerName());
+      createCredentialsUrl.append(":");
+      createCredentialsUrl.append(requestContext.getRequest().getServerPort());
+      createCredentialsUrl.append("/applications/createcredentials.page?a=");
+      createCredentialsUrl.append(application.getApplicationId());
+      createCredentialsUrl.append("&t=");
+      createCredentialsUrl.append(application.getCredentialToken());
+      
+      content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
+          "/templates/applications/mail-credentials-create.html"), "UTF-8");
+      content = String.format(
+          content,
+          getFormValue(formData, "field-nickname"),
+          createCredentialsUrl,
+          createCredentialsUrl,
+          staffMember.getFullName());
+    }
+    else {
+      content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
+          "/templates/applications/mail-credentials-exist.html"), "UTF-8");
+      content = String.format(
+          content,
+          getFormValue(formData, "field-nickname"),
+          staffMember.getFullName());
+    }
+      
+    // Send mail to applicant (and possible guardian)
+    
+    if (StringUtils.isBlank(getFormValue(formData, "field-underage-email"))) {
+      Mailer.sendMail(
+          Mailer.JNDI_APPLICATION,
+          Mailer.HTML,
+          null,
+          application.getEmail(),
+          subject,
+          content);
+    }
+    else {
+      Mailer.sendMail(
+          Mailer.JNDI_APPLICATION,
+          Mailer.HTML,
+          null,
+          application.getEmail(),
+          getFormValue(formData, "field-underage-email"),
+          subject,
+          content);
+    }
+    
+    // Add notification about sent mail
+    
+    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+    applicationLogDAO.create(
+      application,
+      ApplicationLogType.HTML,
+      String.format("<p>%s</p><p><b>%s</b></p>%s", "Hakijalle lähetetty ohjeet Muikku-tunnuksista", subject, content),
+      staffMember);
   }
 
   private String getFormValue(JSONObject object, String key) {
