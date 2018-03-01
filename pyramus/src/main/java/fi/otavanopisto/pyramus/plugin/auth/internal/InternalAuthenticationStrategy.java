@@ -142,7 +142,6 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
         
         return userIdentification.getPerson().getDefaultUser();
       }
-      logger.warning("UserIdentification is null");
       return null;
     }
     else {
