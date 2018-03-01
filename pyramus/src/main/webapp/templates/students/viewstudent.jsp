@@ -55,6 +55,14 @@
 
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+          text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsEditStudentKoskiLabel"/>',
+          onclick: function (event) {
+            openEditStudentKoskiDialog(personId);
+          }
+        }));
+        
+        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
+          iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsEditStudentImageLabel"/>',
           onclick: function (event) {
             openEditStudentImageDialog(studentId);
@@ -1452,6 +1460,27 @@
         var studentProjectId = element.down(".viewStudentProjectHeaderEditButtonProjectId").value;
         
         redirectTo(GLOBAL_contextPath + "/projects/editstudentproject.page?studentproject=" + studentProjectId);        
+      }
+      
+      function openEditStudentKoskiDialog(personId) {
+        var dialog = new IxDialog({
+          id : 'editStudentKoskiDialog',
+          contentURL : GLOBAL_contextPath + '/students/editstudentkoskidialog.page?personId=' + personId,
+          centered : true,
+          showCancel : true,
+          title : '<fmt:message key="students.editStudentKoskiDialog.dialogTitle"/>',
+          cancelLabel : '<fmt:message key="students.editStudentKoskiDialog.closeLabel"/>' 
+        });
+        
+        dialog.setSize("640px", "450px");
+        dialog.addDialogListener(function(event) {
+          switch (event.name) {
+            case 'cancelClick':
+            break;
+          }
+        });
+        
+        dialog.open();
       }
       
       function openEditStudentImageDialog(studentId) {

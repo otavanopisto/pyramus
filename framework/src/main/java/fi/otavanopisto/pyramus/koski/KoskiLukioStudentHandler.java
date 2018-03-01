@@ -129,7 +129,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     Set<LukionOppiaineenSuoritus> oppiaineet = assessmentsToModel(handler, ops, student, studentEducationType, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS);
 
     LukionOppimaaranSuoritus suoritus = new LukionOppimaaranSuoritus(
-        LukionOppimaara.aikuistenops, Kieli.FI, toimipiste, suorituksenTila);
+        LukionOppimaara.aikuistenops, Kieli.FI, toimipiste);
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     if (suorituksenTila == SuorituksenTila.VALMIS)
@@ -359,7 +359,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       tunniste = new LukionKurssinTunnistePaikallinen(paikallinenKoodi , kurssinTyyppi, kuvaus(courseCredit.getCourseName()));
     }
       
-    LukionKurssinSuoritus suoritus = new LukionKurssinSuoritus(tunniste, SuorituksenTila.VALMIS);
+    LukionKurssinSuoritus suoritus = new LukionKurssinSuoritus(tunniste);
 
     // Hyväksilukutieto on hölmössä paikassa; jos kaikki arvosanat ovat hyväksilukuja, tallennetaan 
     // tieto hyväksilukuna - ongelmallista, jos hyväksiluettua kurssia on korotettu 
@@ -449,6 +449,16 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       saveOrValidateOid(student, oid);
     } else {
       logger.severe(String.format("saveOrValidateOid called with wrong handler %s, expected %s ", handler, HANDLER_TYPE));
+    }
+  }
+  
+  @Override
+  public Set<KoskiStudentId> listOids(Student student) {
+    String oid = userVariableDAO.findByUserAndKey(student, KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID);
+    if (StringUtils.isNotBlank(oid)) {
+      return new HashSet<>(Arrays.asList(new KoskiStudentId(getStudentIdentifier(HANDLER_TYPE, student.getId()), oid)));
+    } else {
+      return new HashSet<>();
     }
   }
   

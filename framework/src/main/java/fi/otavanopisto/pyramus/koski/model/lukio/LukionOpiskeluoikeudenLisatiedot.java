@@ -12,6 +12,9 @@ import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class LukionOpiskeluoikeudenLisatiedot {
 
+  public LukionOpiskeluoikeudenLisatiedot() {
+  }
+  
   public LukionOpiskeluoikeudenLisatiedot(boolean pidennettyPaattymispaiva, boolean ulkomainenVaihtoopiskelija, boolean yksityisopiskelija, boolean oikeusMaksuttomaanAsuntolapaikkaan) {
     this.pidennettyPaattymispaiva = pidennettyPaattymispaiva;
     this.ulkomainenVaihtoopiskelija = ulkomainenVaihtoopiskelija;
@@ -54,10 +57,30 @@ public class LukionOpiskeluoikeudenLisatiedot {
     return sisaoppilaitosmainenMajoitus;
   }
 
-  private final boolean pidennettyPaattymispaiva;
-  private final boolean ulkomainenVaihtoopiskelija;
+  public void setPidennettyPaattymispaiva(boolean pidennettyPaattymispaiva) {
+    this.pidennettyPaattymispaiva = pidennettyPaattymispaiva;
+  }
+
+  public void setUlkomainenVaihtoopiskelija(boolean ulkomainenVaihtoopiskelija) {
+    this.ulkomainenVaihtoopiskelija = ulkomainenVaihtoopiskelija;
+  }
+
+  public void setYksityisopiskelija(boolean yksityisopiskelija) {
+    this.yksityisopiskelija = yksityisopiskelija;
+  }
+
+  public void setOikeusMaksuttomaanAsuntolapaikkaan(boolean oikeusMaksuttomaanAsuntolapaikkaan) {
+    this.oikeusMaksuttomaanAsuntolapaikkaan = oikeusMaksuttomaanAsuntolapaikkaan;
+  }
+
+  public void setSisaoppilaitosmainenMajoitus(List<Majoitusjakso> sisaoppilaitosmainenMajoitus) {
+    this.sisaoppilaitosmainenMajoitus = sisaoppilaitosmainenMajoitus;
+  }
+
+  private boolean pidennettyPaattymispaiva;
+  private boolean ulkomainenVaihtoopiskelija;
   private Kuvaus alle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy;
-  private final boolean yksityisopiskelija;
-  private final boolean oikeusMaksuttomaanAsuntolapaikkaan;
-  private final List<Majoitusjakso> sisaoppilaitosmainenMajoitus = new ArrayList<>();
+  private boolean yksityisopiskelija;
+  private boolean oikeusMaksuttomaanAsuntolapaikkaan;
+  private List<Majoitusjakso> sisaoppilaitosmainenMajoitus = new ArrayList<>();
 }

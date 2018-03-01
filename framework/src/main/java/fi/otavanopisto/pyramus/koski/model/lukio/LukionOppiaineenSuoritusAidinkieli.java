@@ -1,11 +1,18 @@
 package fi.otavanopisto.pyramus.koski.model.lukio;
 
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 
+@JsonDeserialize(using = JsonDeserializer.None.class)
 public class LukionOppiaineenSuoritusAidinkieli extends LukionOppiaineenTunniste {
 
+  public LukionOppiaineenSuoritusAidinkieli() {
+  }
+  
   public LukionOppiaineenSuoritusAidinkieli(OppiaineAidinkieliJaKirjallisuus kieli, boolean pakollinen) {
     super(pakollinen);
     this.kieli.setValue(kieli);

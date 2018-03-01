@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.koski;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
@@ -67,7 +68,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
   @Inject
   private Logger logger;
 
-  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier, KoskiStudyProgrammeHandler handler) throws KoskiException {
+  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier, KoskiStudyProgrammeHandler handler) {
     if (handler != HANDLER_TYPE) {
       logger.log(Level.SEVERE, String.format("Wrong handler type %s expected %s w/person %d.", handler, HANDLER_TYPE, student.getPerson().getId()));
       return null;
@@ -119,7 +120,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     Set<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineet = assessmentsToModel(ops, student, studentEducationType, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS);
 
     AikuistenPerusopetuksenOppimaaranSuoritus suoritus = new AikuistenPerusopetuksenOppimaaranSuoritus(
-        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila);
+        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
     if (suorituksenTila == SuorituksenTila.VALMIS)
@@ -319,7 +320,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       tunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(paikallinenKoodi);
     }
       
-    AikuistenPerusopetuksenKurssinSuoritus suoritus = new AikuistenPerusopetuksenKurssinSuoritus(tunniste, SuorituksenTila.VALMIS);
+    AikuistenPerusopetuksenKurssinSuoritus suoritus = new AikuistenPerusopetuksenKurssinSuoritus(tunniste);
 
     for (CreditStubCredit credit : courseCredit.getCredits()) {
       ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());
@@ -362,6 +363,16 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       saveOrValidateOid(student, oid);
     } else {
       logger.severe(String.format("saveOrValidateOid called with wrong handler %s, expected %s ", handler, HANDLER_TYPE));
+    }
+  }
+
+  @Override
+  public Set<KoskiStudentId> listOids(Student student) {
+    String oid = userVariableDAO.findByUserAndKey(student, KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID);
+    if (StringUtils.isNotBlank(oid)) {
+      return new HashSet<>(Arrays.asList(new KoskiStudentId(getStudentIdentifier(HANDLER_TYPE, student.getId()), oid)));
+    } else {
+      return new HashSet<>();
     }
   }
   

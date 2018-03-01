@@ -96,6 +96,7 @@ public abstract class KoskiStudentHandler {
   protected SchoolVariableDAO schoolVariableDAO;
   
   public abstract void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid);
+  public abstract Set<KoskiStudentId> listOids(Student student);
   
   protected void saveOrValidateOid(Student student, String oid) {
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
@@ -182,7 +183,7 @@ public abstract class KoskiStudentHandler {
   }
 
   protected String getStudentIdentifier(KoskiStudyProgrammeHandler handler, Long studentId) {
-    return handler.name() + ":" + String.valueOf(studentId);
+    return KoskiConsts.getStudentIdentifier(handler, studentId);
   }
   
   protected LahdeJarjestelmaID getLahdeJarjestelmaID(KoskiStudyProgrammeHandler handler, Long studentId) {

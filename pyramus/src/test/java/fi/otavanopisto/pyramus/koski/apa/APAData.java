@@ -11,7 +11,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
-import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
@@ -43,7 +42,7 @@ public class APAData extends AbstractKoskiData {
     opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
     
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(ACADEMYOID);
-    APASuoritus suoritus = new APASuoritus(PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, SuorituksenTila.KESKEN);
+    APASuoritus suoritus = new APASuoritus(PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
     opiskeluoikeus.addSuoritus(suoritus);
     
     return oppija;
@@ -66,7 +65,7 @@ public class APAData extends AbstractKoskiData {
     opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(1l));
     
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(ACADEMYOID);
-    APASuoritus suoritus = new APASuoritus(PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, SuorituksenTila.KESKEN);
+    APASuoritus suoritus = new APASuoritus(PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
     opiskeluoikeus.addSuoritus(suoritus);
     
     APAOppiaineenTunniste koulutusmoduuli = new APAOppiaineenTunnisteAidinkieli(OppiaineAidinkieliJaKirjallisuus.AI1);

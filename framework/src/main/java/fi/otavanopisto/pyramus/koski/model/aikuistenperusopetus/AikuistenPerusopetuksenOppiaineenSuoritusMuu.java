@@ -1,10 +1,17 @@
 package fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus;
 
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 
-public class AikuistenPerusopetuksenOppiaineenSuoritusMuu extends AikuistenPerusopetuksenValtakunnallinenOppiaineenTunniste {
+@JsonDeserialize(using = JsonDeserializer.None.class)
+public class AikuistenPerusopetuksenOppiaineenSuoritusMuu extends AikuistenPerusopetuksenOppiaineenTunniste {
 
+  public AikuistenPerusopetuksenOppiaineenSuoritusMuu() {
+  }
+  
   public AikuistenPerusopetuksenOppiaineenSuoritusMuu(KoskiOppiaineetYleissivistava tunniste, boolean pakollinen) {
     super(pakollinen);
     this.tunniste.setValue(tunniste);

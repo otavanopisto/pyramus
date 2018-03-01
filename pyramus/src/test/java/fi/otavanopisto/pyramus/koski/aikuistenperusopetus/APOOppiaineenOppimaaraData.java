@@ -11,7 +11,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
-import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
@@ -25,7 +24,6 @@ import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusop
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnisteOPS2015;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnistePaikallinen;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOpiskeluoikeus;
-import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenTunniste;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.PerusopetuksenOppiaineenOppimaaranSuoritus;
@@ -45,9 +43,8 @@ public class APOOppiaineenOppimaaraData extends AbstractKoskiData {
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(ACADEMYOID);
     AikuistenPerusopetuksenOppiaineenTunniste koulutusmoduuli = new AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli(
         OppiaineAidinkieliJaKirjallisuus.AI1, false);
-    AikuistenPerusopetuksenOppiaineenSuoritus oppiaine = new AikuistenPerusopetuksenOppiaineenSuoritus(koulutusmoduuli);
     PerusopetuksenOppiaineenOppimaaranSuoritus suoritus = new PerusopetuksenOppiaineenOppimaaranSuoritus(
-        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, SuorituksenTila.KESKEN, oppiaine);
+        koulutusmoduuli, PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
     opiskeluoikeus.addSuoritus(suoritus);
     
     return oppija;
@@ -71,22 +68,21 @@ public class APOOppiaineenOppimaaraData extends AbstractKoskiData {
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(ACADEMYOID);
     AikuistenPerusopetuksenOppiaineenTunniste koulutusmoduuli = new AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli(
         OppiaineAidinkieliJaKirjallisuus.AI1, false);
-    AikuistenPerusopetuksenOppiaineenSuoritus oppiaine = new AikuistenPerusopetuksenOppiaineenSuoritus(koulutusmoduuli);
     PerusopetuksenOppiaineenOppimaaranSuoritus suoritus = new PerusopetuksenOppiaineenOppimaaranSuoritus(
-        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, SuorituksenTila.KESKEN, oppiaine);
+        koulutusmoduuli, PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
     opiskeluoikeus.addSuoritus(suoritus);
     
     // Kurssi 1
     AikuistenPerusopetuksenKurssinTunniste kurssinTunniste = new AikuistenPerusopetuksenKurssinTunnisteOPS2015(AikuistenPerusopetuksenKurssit2015.ÄI1);
-    AikuistenPerusopetuksenKurssinSuoritus kurssi = new AikuistenPerusopetuksenKurssinSuoritus(kurssinTunniste, SuorituksenTila.VALMIS);
+    AikuistenPerusopetuksenKurssinSuoritus kurssi = new AikuistenPerusopetuksenKurssinSuoritus(kurssinTunniste);
     kurssi.addArviointi(new KurssinArviointiNumeerinen(ArviointiasteikkoYleissivistava.GRADE_9, paattymispaiva));
-    oppiaine.addOsasuoritus(kurssi);
+    suoritus.addOsasuoritus(kurssi);
     
     // Kurssi 2
     kurssinTunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(new PaikallinenKoodi("ÄI123", kuvaus("ABC")));
-    kurssi = new AikuistenPerusopetuksenKurssinSuoritus(kurssinTunniste, SuorituksenTila.VALMIS);
+    kurssi = new AikuistenPerusopetuksenKurssinSuoritus(kurssinTunniste);
     kurssi.addArviointi(new KurssinArviointiSanallinen(ArviointiasteikkoYleissivistava.GRADE_S, paattymispaiva, kuvaus("S")));
-    oppiaine.addOsasuoritus(kurssi);
+    suoritus.addOsasuoritus(kurssi);
     
     return oppija;
   }

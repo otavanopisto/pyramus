@@ -34,6 +34,7 @@ import fi.otavanopisto.pyramus.koski.CreditStubCredit;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
+import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.OppiaineenSuoritusWithCurriculum;
@@ -136,7 +137,8 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     // Aineopiskelija
     
     for (OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus> oppiaine : oppiaineet) {
-      LukionOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = new LukionOppiaineenOppimaaranSuoritus(Kieli.FI, toimipiste, suorituksenTila, oppiaine.getOppiaineenSuoritus());
+      LukionOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = LukionOppiaineenOppimaaranSuoritus.from(
+          oppiaine.getOppiaineenSuoritus(), Kieli.FI, toimipiste);
       oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(HANDLER_TYPE, oppiaine.getOps()));
       oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
       if (suorituksenTila == SuorituksenTila.VALMIS)
@@ -384,7 +386,7 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
       tunniste = new LukionKurssinTunnistePaikallinen(paikallinenKoodi , kurssinTyyppi, kuvaus(courseCredit.getCourseName()));
     }
       
-    LukionKurssinSuoritus suoritus = new LukionKurssinSuoritus(tunniste, SuorituksenTila.VALMIS);
+    LukionKurssinSuoritus suoritus = new LukionKurssinSuoritus(tunniste);
 
     // Hyväksilukutieto on hölmössä paikassa; jos kaikki arvosanat ovat hyväksilukuja, tallennetaan 
     // tieto hyväksilukuna - ongelmallista, jos hyväksiluettua kurssia on korotettu 
@@ -471,6 +473,11 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
   @Override
   public void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
     saveOrValidateInternetixOid(handler, student, oid);
+  }
+  
+  @Override
+  public Set<KoskiStudentId> listOids(Student student) {
+    return loadInternetixOids(student);
   }
   
 }

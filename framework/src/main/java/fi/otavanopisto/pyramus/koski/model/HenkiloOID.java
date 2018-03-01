@@ -1,9 +1,15 @@
 package fi.otavanopisto.pyramus.koski.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+@JsonDeserialize(using = JsonDeserializer.None.class)
 public class HenkiloOID extends Henkilo {
 
+  public HenkiloOID() {
+  }
+  
   public HenkiloOID(String oid) {
     this.oid = oid;
   }
