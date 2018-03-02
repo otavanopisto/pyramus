@@ -13,6 +13,9 @@ import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class APAKurssinSuoritus {
 
+  public APAKurssinSuoritus() {
+  }
+  
   public APAKurssinSuoritus(APAKurssinTunniste tunniste) {
     koulutusmoduuli = tunniste;
   }
@@ -33,6 +36,10 @@ public class APAKurssinSuoritus {
     return koulutusmoduuli;
   }
 
+  public void setKoulutusmoduuli(APAKurssinTunniste koulutusmoduuli) {
+    this.koulutusmoduuli = koulutusmoduuli;
+  }
+
   public KoodistoViite<Kieli> getSuorituskieli() {
     return suorituskieli;
   }
@@ -41,7 +48,7 @@ public class APAKurssinSuoritus {
     this.suorituskieli = suorituskieli;
   }
 
-  private final APAKurssinTunniste koulutusmoduuli;
+  private APAKurssinTunniste koulutusmoduuli;
   private final Set<KurssinArviointi> arviointi = new HashSet<>();
   private KoodistoViite<Kieli> suorituskieli;
   private final KoodistoViite<SuorituksenTyyppi> tyyppi = new KoodistoViite<>(SuorituksenTyyppi.aikuistenperusopetuksenalkuvaiheenkurssi);

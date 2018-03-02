@@ -7,6 +7,9 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
 
 public class Laajuus {
 
+  public Laajuus() {
+  }
+  
   public Laajuus(int arvo, OpintojenLaajuusYksikko yksikko) {
     this.arvo = arvo;
     this.yksikko.setValue(yksikko);
@@ -21,7 +24,6 @@ public class Laajuus {
     return yksikko;
   }
   
-  private final int arvo;
-
+  private int arvo;
   private final KoodistoViite<OpintojenLaajuusYksikko> yksikko = new KoodistoViite<>();
 }

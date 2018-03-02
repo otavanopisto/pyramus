@@ -29,8 +29,8 @@ public class Oppilaitos {
     return kotipaikka;
   }
 
-  public void setKotipaikka(Kunta kotipaikka) {
-    this.kotipaikka.setValue(kotipaikka);
+  public void setKotipaikka(KoodistoViite<Kunta> kotipaikka) {
+    this.kotipaikka = kotipaikka;
   }
 
   private String oid;

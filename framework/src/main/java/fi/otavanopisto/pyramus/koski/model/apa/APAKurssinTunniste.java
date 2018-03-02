@@ -1,9 +1,12 @@
 package fi.otavanopisto.pyramus.koski.model.apa;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.otavanopisto.pyramus.koski.model.Laajuus;
+import fi.otavanopisto.pyramus.koski.model.deserializers.APAKurssinTunnisteDeserializer;
 
+@JsonDeserialize(using = APAKurssinTunnisteDeserializer.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class APAKurssinTunniste {
 
