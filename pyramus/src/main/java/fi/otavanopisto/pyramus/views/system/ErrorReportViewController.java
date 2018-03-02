@@ -1,23 +1,11 @@
 package fi.otavanopisto.pyramus.views.system;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-
-import fi.internetix.smvc.controllers.PageRequestContext;
-import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.system.SettingDAO;
-import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
-import fi.otavanopisto.pyramus.domainmodel.system.Setting;
-import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
-import fi.otavanopisto.pyramus.framework.PyramusFormViewController;
-import fi.otavanopisto.pyramus.framework.UserRole;
-import fi.otavanopisto.pyramus.json.applications.ArchiveLogEntryJSONRequestController;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.otavanopisto.pyramus.framework.PyramusFormViewController;
+import fi.otavanopisto.pyramus.framework.UserRole;
 
 /**
  * The controller responsible of the system settings view of the application.
