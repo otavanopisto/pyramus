@@ -11,9 +11,9 @@ import fi.otavanopisto.security.User;
 public class PersonOwnerPermissionResolver extends AbstractPermissionResolver implements PermissionResolver {
 
   @Override
-  public boolean handlesPermission(Permission perm) {
-    if (perm != null)
-      return (PermissionScope.PERSON_OWNER.equals(perm.getScope()));
+  public boolean handlesPermission(Permission permission) {
+    if (permission != null)
+      return (PermissionScope.PERSON_OWNER.equals(permission.getScope()));
     else
       return false;
   }
