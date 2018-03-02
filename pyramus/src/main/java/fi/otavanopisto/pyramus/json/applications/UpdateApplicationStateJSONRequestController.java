@@ -33,7 +33,6 @@ import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
-import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
@@ -212,6 +211,8 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           // Separate logic for transferring the applicant as student
           
           Student student = createPyramusStudent(application, staffMember);
+          PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+          personDAO.updateDefaultUser(student.getPerson(), student);
           String credentialToken = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
           application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
           mailCredentialsInfo(requestContext, student, staffMember, application);
