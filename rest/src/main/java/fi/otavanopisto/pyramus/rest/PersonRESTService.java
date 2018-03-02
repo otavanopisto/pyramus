@@ -331,17 +331,11 @@ public class PersonRESTService extends AbstractRESTService {
                 userIdentificationDAO.updateExternalId(userIdentification, externalId);
               } else {
                 // Check that old password matches
-                User userByName = internalAuthenticationProvider.getUserByName(newUserName);
-                boolean usernameExists;
                 
-                if (userByName != null) {
-                  usernameExists = true;
-                } else {
-                  usernameExists = false;
-                }
-
-                if (usernameExists && !StringUtils.isBlank(newUserName)) {
-                  return Response.status(Status.CONFLICT).entity("Username already exists").build();
+                User userByName = internalAuthenticationProvider.getUserByName(newUserName);
+                boolean usernameAvailable = userByName == null || userByName.getId().equals(user.getId());
+                if (!usernameAvailable) {
+                  return Response.status(Status.CONFLICT).entity("Duplicate username").build();
                 }
                 
                 if (internalAuthenticationProvider.validatePassword(userIdentification.getExternalId(), oldPassword)) {
