@@ -520,7 +520,6 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           content,
           getFormValue(formData, "field-nickname"),
           createCredentialsUrl,
-          createCredentialsUrl,
           staffMember.getFullName());
     }
     else {
