@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PaikallinenKoodi {
 
+  public PaikallinenKoodi() {
+  }
+  
   public PaikallinenKoodi(String koodiarvo, Kuvaus nimi) {
     this.koodiarvo = koodiarvo;
     this.nimi = nimi;
@@ -26,7 +29,15 @@ public class PaikallinenKoodi {
     return nimi;
   }
   
-  private final String koodiarvo;
-  private final Kuvaus nimi;
+  public void setKoodiarvo(String koodiarvo) {
+    this.koodiarvo = koodiarvo;
+  }
+
+  public void setNimi(Kuvaus nimi) {
+    this.nimi = nimi;
+  }
+
+  private String koodiarvo;
+  private Kuvaus nimi;
   private String koodistoUri;
 }

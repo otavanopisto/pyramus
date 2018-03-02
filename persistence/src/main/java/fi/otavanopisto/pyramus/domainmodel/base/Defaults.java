@@ -18,6 +18,10 @@ public class Defaults {
     return id;
   }
 
+  public void setId(Long id) {
+    this.id = id;
+  }
+
   public void setInitialCourseState(CourseState initialCourseState) {
     this.initialCourseState = initialCourseState;
   }

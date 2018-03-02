@@ -25,6 +25,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.application.Application_;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.events.ApplicationCreatedEvent;
@@ -137,6 +138,14 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     application.setState(applicationState);
     application.setLastModifier(user);
     application.setLastModified(new Date());
+    entityManager.persist(application);
+    return application;
+  }
+  
+  public Application updateApplicationStudentAndCredentialToken(Application application, Student student, String credentialToken) {
+    EntityManager entityManager = getEntityManager();
+    application.setStudent(student);
+    application.setCredentialToken(credentialToken);
     entityManager.persist(application);
     return application;
   }

@@ -7,6 +7,9 @@ import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
 
 public class LahdeJarjestelmaID {
 
+  public LahdeJarjestelmaID() {
+  }
+  
   public LahdeJarjestelmaID(String id, Lahdejarjestelma lahdejarjestelma) {
     this.id = id;
     this.lahdejarjestelma.setValue(lahdejarjestelma);
@@ -17,10 +20,18 @@ public class LahdeJarjestelmaID {
     return lahdejarjestelma;
   }
   
+  public void setLahdejarjestelma(KoodistoViite<Lahdejarjestelma> lahdejarjestelma) {
+    this.lahdejarjestelma = lahdejarjestelma;
+  }
+
   public String getId() {
     return id;
   }
 
-  private final String id;
-  private final KoodistoViite<Lahdejarjestelma> lahdejarjestelma = new KoodistoViite<>();
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  private String id;
+  private KoodistoViite<Lahdejarjestelma> lahdejarjestelma = new KoodistoViite<>();
 }

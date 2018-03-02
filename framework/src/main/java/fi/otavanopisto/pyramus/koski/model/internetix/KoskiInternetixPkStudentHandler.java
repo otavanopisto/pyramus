@@ -30,6 +30,7 @@ import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit;
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
+import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.OppiaineenSuoritusWithCurriculum;
@@ -45,7 +46,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
-import fi.otavanopisto.pyramus.koski.model.KoskiSplitStudyProgramme;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
@@ -83,7 +83,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
 
   public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
-    String studyOid = resolveStudyOid(student);
+    String studyOid = resolveInternetixOid(student, HANDLER_TYPE);
 
     // Skip student if it is archived and the studyoid is blank
     if (Boolean.TRUE.equals(student.getArchived()) && StringUtils.isBlank(studyOid)) {
@@ -130,8 +130,8 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     // Aineopiskelija
 
     for (OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaine : oppiaineet) {
-      PerusopetuksenOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = new PerusopetuksenOppiaineenOppimaaranSuoritus(
-          PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila, oppiaine.getOppiaineenSuoritus());
+      PerusopetuksenOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = PerusopetuksenOppiaineenOppimaaranSuoritus.from(
+          oppiaine.getOppiaineenSuoritus(), PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
       oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
       oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(HANDLER_TYPE, oppiaine.getOps()));
       if (suorituksenTila == SuorituksenTila.VALMIS)
@@ -147,12 +147,6 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     return opiskeluoikeus;
   }
   
-  private String resolveStudyOid(Student student) {
-    Map<String, KoskiSplitStudyProgramme> oids = loadInternetixOids(student);
-    String studentIdentifier = getStudentIdentifier(HANDLER_TYPE, student.getId());
-    return oids.get(studentIdentifier) != null ? oids.get(studentIdentifier).getOid() : null;
-  }
-
   private AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
     AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot lisatiedot = new AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot();
     
@@ -221,6 +215,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
             oppiaineenSuoritus.getOppiaineenSuoritus().addOsasuoritus(kurssiSuoritus);
           } else {
             logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
+            koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNREPORTED_CREDIT, new Date());
           }
         }
       }
@@ -307,6 +302,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
           return map(map, mapKey, creditOPS, tunniste);
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
+          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNKNOWN_LANGUAGE, new Date());
           return null;
         }
       }
@@ -362,7 +358,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       tunniste = new AikuistenPerusopetuksenKurssinTunnistePaikallinen(paikallinenKoodi);
     }
       
-    AikuistenPerusopetuksenKurssinSuoritus suoritus = new AikuistenPerusopetuksenKurssinSuoritus(tunniste, SuorituksenTila.VALMIS);
+    AikuistenPerusopetuksenKurssinSuoritus suoritus = new AikuistenPerusopetuksenKurssinSuoritus(tunniste);
 
     for (CreditStubCredit credit : courseCredit.getCredits()) {
       ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());
@@ -403,4 +399,10 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
   public void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
     saveOrValidateInternetixOid(handler, student, oid);
   }
+  
+  @Override
+  public Set<KoskiStudentId> listOids(Student student) {
+    return loadInternetixOids(student);
+  }
+
 }

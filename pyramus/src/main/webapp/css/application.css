@@ -326,7 +326,8 @@ button {
 }
 
 .button-save-application, 
-.button-edit-application {
+.button-edit-application,
+.button-create-credentials {
   background: #27b91c;
 }
 
@@ -1208,3 +1209,13 @@ span.email {
   background: #243a42 !important;
   opacity: 0.6 !important;
 }
+
+/* Credential creation errors */
+.error-container {
+  color: #b94a48;
+  font-size: 0.9em;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 0.9em;
+}
+

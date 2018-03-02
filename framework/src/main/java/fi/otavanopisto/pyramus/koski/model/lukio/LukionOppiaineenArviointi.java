@@ -9,6 +9,9 @@ import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 
 public class LukionOppiaineenArviointi {
 
+  public LukionOppiaineenArviointi() {
+  }
+  
   public LukionOppiaineenArviointi(ArviointiasteikkoYleissivistava arvosana, Date paiva) {
     this.arvosana.setValue(arvosana);
     this.paiva = paiva;
@@ -23,6 +26,10 @@ public class LukionOppiaineenArviointi {
     return paiva;
   }
   
-  private final Date paiva;
+  public void setPaiva(Date paiva) {
+    this.paiva = paiva;
+  }
+
+  private Date paiva;
   private final KoodistoViite<ArviointiasteikkoYleissivistava> arvosana = new KoodistoViite<>();
 }

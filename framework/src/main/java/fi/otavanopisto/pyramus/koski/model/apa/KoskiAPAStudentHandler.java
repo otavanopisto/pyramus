@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.koski.model.apa;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
@@ -28,8 +29,9 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit;
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
-import fi.otavanopisto.pyramus.koski.KoskiException;
+import fi.otavanopisto.pyramus.koski.KoskiConsts;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
+import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.StudentSubjectSelections;
@@ -57,13 +59,17 @@ import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusop
 
 public class KoskiAPAStudentHandler extends KoskiStudentHandler {
 
+  private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.aikuistenperusopetuksenalkuvaihe;
+  
   @Inject
   private Logger logger;
 
-  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) throws KoskiException {
+  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
     OpiskelijanOPS ops = resolveOPS(student);
-    if (ops == null)
-      throw new KoskiException(String.format("Cannot report student %d without curriculum.", student.getId()), KoskiPersonState.NO_CURRICULUM);
+    if (ops == null) {
+      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_CURRICULUM, new Date());
+      return null;
+    }
     
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultStudentSubjectSelections());
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
@@ -74,7 +80,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     }
     
     AikuistenPerusopetuksenOpiskeluoikeus opiskeluoikeus = new AikuistenPerusopetuksenOpiskeluoikeus();
-    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(KoskiStudyProgrammeHandler.aikuistenperusopetuksenalkuvaihe, student.getId()));
+    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(HANDLER_TYPE, student.getId()));
     opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
     opiskeluoikeus.setPaattymispaiva(student.getStudyEndDate());
     if (StringUtils.isNotBlank(studyOid)) {
@@ -101,7 +107,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
     APASuoritus suoritus = new APASuoritus(
-        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste, suorituksenTila);
+        PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
     if (suorituksenTila == SuorituksenTila.VALMIS)
@@ -110,7 +116,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
-    assessmentsToModel(ops, student, studentEducationType, studentSubjects, suoritus);
+    assessmentsToModel(ops, student, studentEducationType, studentSubjects, suoritus, suorituksenTila == SuorituksenTila.VALMIS);
     
     return opiskeluoikeus;
   }
@@ -147,7 +153,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
   }
 
   private void assessmentsToModel(OpiskelijanOPS ops, Student student, EducationType studentEducationType, StudentSubjectSelections studentSubjects,
-      APASuoritus oppimaaranSuoritus) {
+      APASuoritus oppimaaranSuoritus, boolean calculateMeanGrades) {
     Collection<CreditStub> credits = listCredits(student, false, false, ops, credit -> matchingCurriculumFilter(student, credit));
     
     Map<String, APAOppiaineenSuoritus> map = new HashMap<>();
@@ -161,6 +167,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
           oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
         } else {
           logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
+          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNREPORTED_CREDIT, new Date());
         }
       }
     }
@@ -172,7 +179,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
       }
       
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
-      if (oppimaaranSuoritus.getTila().getValue() == SuorituksenTila.VALMIS) {
+      if (calculateMeanGrades) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(oppiaineenSuoritus);
         
         if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
@@ -223,6 +230,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
           return os;
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
+          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNKNOWN_LANGUAGE, new Date());
           return null;
         }
       }
@@ -314,4 +322,13 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     saveOrValidateOid(student, oid);
   }
   
+  @Override
+  public Set<KoskiStudentId> listOids(Student student) {
+    String oid = userVariableDAO.findByUserAndKey(student, KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID);
+    if (StringUtils.isNotBlank(oid)) {
+      return new HashSet<>(Arrays.asList(new KoskiStudentId(getStudentIdentifier(HANDLER_TYPE, student.getId()), oid)));
+    } else {
+      return new HashSet<>();
+    }
+  }
 }

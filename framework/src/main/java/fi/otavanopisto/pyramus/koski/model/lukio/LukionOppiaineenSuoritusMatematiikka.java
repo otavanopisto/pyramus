@@ -1,13 +1,19 @@
 package fi.otavanopisto.pyramus.koski.model.lukio;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
 
+@JsonDeserialize(using = JsonDeserializer.None.class)
 public class LukionOppiaineenSuoritusMatematiikka extends LukionOppiaineenTunniste {
 
+  public LukionOppiaineenSuoritusMatematiikka() {
+  }
+  
   public LukionOppiaineenSuoritusMatematiikka(OppiaineMatematiikka oppimaara, boolean pakollinen) {
     super(pakollinen);
     this.oppimaara.setValue(oppimaara);

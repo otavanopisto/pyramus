@@ -138,6 +138,7 @@ function onLoad(event) {
                     },
                     onSuccess : function(jsonResponse) {
                       getIxTableById('studyEndReasonsTable').deleteRow(deletedRowIndex);
+                      updateParentDropdownBoxesAndDeleteButtons();
                     }
                   });
                 break;

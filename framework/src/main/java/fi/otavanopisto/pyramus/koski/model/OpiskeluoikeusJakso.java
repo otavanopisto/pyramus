@@ -11,6 +11,9 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OpiskeluoikeusJakso {
 
+  public OpiskeluoikeusJakso() {
+  }
+  
   public OpiskeluoikeusJakso(Date alku, OpiskeluoikeudenTila tila) {
     this.alku = alku;
     this.tila.setValue(tila);
@@ -20,10 +23,18 @@ public class OpiskeluoikeusJakso {
     return alku;
   }
   
+  public void setAlku(Date alku) {
+    this.alku = alku;
+  }
+
   public KoodistoViite<OpiskeluoikeudenTila> getTila() {
     return tila;
   }
   
+  public void setTila(KoodistoViite<OpiskeluoikeudenTila> tila) {
+    this.tila = tila;
+  }
+
   public KoodistoViite<OpintojenRahoitus> getOpintojenRahoitus() {
     return opintojenRahoitus;
   }
@@ -32,7 +43,7 @@ public class OpiskeluoikeusJakso {
     this.opintojenRahoitus = opintojenRahoitus;
   }
 
-  private final Date alku;
-  private final KoodistoViite<OpiskeluoikeudenTila> tila = new KoodistoViite<>();
+  private Date alku;
+  private KoodistoViite<OpiskeluoikeudenTila> tila = new KoodistoViite<>();
   private KoodistoViite<OpintojenRahoitus> opintojenRahoitus;
 }

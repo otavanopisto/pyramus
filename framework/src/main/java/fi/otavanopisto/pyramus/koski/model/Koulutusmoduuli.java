@@ -8,6 +8,9 @@ import fi.otavanopisto.pyramus.koski.koodisto.Koulutus;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Koulutusmoduuli {
 
+  public Koulutusmoduuli() {
+  }
+  
   public Koulutusmoduuli(Koulutus koulutus) {
     this.tunniste.setValue(koulutus);
   }

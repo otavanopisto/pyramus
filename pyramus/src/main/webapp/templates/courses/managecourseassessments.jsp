@@ -27,35 +27,43 @@
     <script type="text/javascript">
       var MAX_EDITALLROWS = 30;
 
-      function setRowEditable(table, rowIndex) {
+      function toggleRowEditable(table, rowIndex) {
         var modifiedCol = table.getNamedColumnIndex('modified');
-        
-        if (table.getCellValue(rowIndex, modifiedCol) == 0) {
-          var gradeCol = table.getNamedColumnIndex('gradeId');
-          var participationCol = table.getNamedColumnIndex('participationType');
-          var assessingUserCol = table.getNamedColumnIndex('assessingUserId');
-          var assessmentDateCol = table.getNamedColumnIndex('assessmentDate');
-          var editVerbalAssessmentButtonCol = table.getNamedColumnIndex('editVerbalAssessmentButton');
+        var modified = table.getCellValue(rowIndex, modifiedCol) == 1;
+        setRowEditable(table, rowIndex, !modified);
+      }
+      
+      function setRowEditable(table, rowIndex, editable) {
+        var modifiedCol = table.getNamedColumnIndex('modified');
+        var gradeCol = table.getNamedColumnIndex('gradeId');
+        var participationCol = table.getNamedColumnIndex('participationType');
+        var assessingUserCol = table.getNamedColumnIndex('assessingUserId');
+        var assessmentDateCol = table.getNamedColumnIndex('assessmentDate');
+        var editVerbalAssessmentButtonCol = table.getNamedColumnIndex('editVerbalAssessmentButton');
 
-          table.setCellEditable(rowIndex, gradeCol, table.isCellEditable(rowIndex, gradeCol) == false);
-          table.setCellEditable(rowIndex, participationCol, table.isCellEditable(rowIndex, participationCol) == false);
-          table.setCellEditable(rowIndex, assessingUserCol, table.isCellEditable(rowIndex, assessingUserCol) == false);
-          table.setCellEditable(rowIndex, assessmentDateCol, table.isCellEditable(rowIndex, assessmentDateCol) == false);
+        table.setCellEditable(rowIndex, gradeCol, editable);
+        table.setCellEditable(rowIndex, participationCol, editable);
+        table.setCellEditable(rowIndex, assessingUserCol, editable);
+        table.setCellEditable(rowIndex, assessmentDateCol, editable);
 
+        if (editable) {
           table.showCell(rowIndex, editVerbalAssessmentButtonCol);
-          
+
           var value = table.getCellValue(rowIndex, assessmentDateCol);
-          if (!(value && value !== ''))
+          if (!(value && value !== '')) {
             table.setCellValue(rowIndex, assessmentDateCol, new Date().getTime());
+          }
 
           value = table.getCellValue(rowIndex, assessingUserCol);
           if (!(value && value !== '')) {
             table.setCellValue(rowIndex, assessingUserCol, '${loggedUserId}');
             IxTableControllers.getController('autoCompleteSelect').setDisplayValue(table.getCellEditor(rowIndex, assessingUserCol), '${fn:escapeXml(loggedUserName)}');
           }
-
-          table.setCellValue(rowIndex, modifiedCol, 1);
+        } else {
+          table.hideCell(rowIndex, editVerbalAssessmentButtonCol);
         }
+
+        table.setCellValue(rowIndex, modifiedCol, editable ? 1 : 0);
       } 
 
       function checkEditAllBtnStatus(table) {
@@ -142,7 +150,7 @@
                   setTimeout(function () {
                     for (var i = 0, len = table.getRowCount(); i < len; i++) {
                       if (table.isRowVisible(i))
-                        setRowEditable(table, i);
+                        toggleRowEditable(table, i);
                     }
                     table.reattachToDom();
   
@@ -161,7 +169,7 @@
             onclick: function (event) {
               var table = event.tableComponent;
 
-              setRowEditable(table, event.row);
+              toggleRowEditable(table, event.row);
             }
           }, {
             header : '<fmt:message key="courses.manageCourseAssessments.studentsTableNameHeader"/>',
@@ -202,6 +210,7 @@
             width: 80,
             right : 8 + 22 + 8 + 100 + 8 + 145 + 8 + 150 + 8 + 130 + 8,
             dataType : 'select',
+            required: true,
             editable: false,
             paramName: 'gradeId',
             options: [

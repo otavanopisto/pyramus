@@ -4,21 +4,26 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.Koulutus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
-import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.Koulutusmoduuli;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 
+@JsonDeserialize(using = JsonDeserializer.None.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AikuistenPerusopetuksenOppimaaranSuoritus extends AikuistenPerusopetuksenSuoritus {
   
+  public AikuistenPerusopetuksenOppimaaranSuoritus() {
+  }
+  
   public AikuistenPerusopetuksenOppimaaranSuoritus(PerusopetuksenSuoritusTapa suoritustapa, 
-      Kieli suorituskieli, OrganisaationToimipiste toimipiste, SuorituksenTila tila) {
-    super(suoritustapa, tila, SuorituksenTyyppi.aikuistenperusopetuksenoppimaara, suorituskieli, toimipiste);
+      Kieli suorituskieli, OrganisaationToimipiste toimipiste) {
+    super(suoritustapa, SuorituksenTyyppi.aikuistenperusopetuksenoppimaara, suorituskieli, toimipiste);
   }
   
   public void addOsasuoritus(AikuistenPerusopetuksenOsasuoritus osasuoritus) {

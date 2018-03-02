@@ -1,16 +1,25 @@
 package fi.otavanopisto.pyramus.koski.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class OsaamisenTunnustaminen {
 
+  public OsaamisenTunnustaminen() {
+  }
+  
   public OsaamisenTunnustaminen(Kuvaus selite) {
     this.selite = selite;
   }
   
   public Kuvaus getSelite() {
     return selite;
+  }
+
+  public void setSelite(Kuvaus selite) {
+    this.selite = selite;
   }
 
   public Object getOsaaminen() {
@@ -22,5 +31,5 @@ public class OsaamisenTunnustaminen {
   }
 
   private Object osaaminen;
-  private final Kuvaus selite;
+  private Kuvaus selite;
 }

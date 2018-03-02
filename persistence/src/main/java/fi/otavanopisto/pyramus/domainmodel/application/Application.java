@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,6 +25,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
@@ -162,6 +164,22 @@ public class Application implements ArchivableEntity {
     this.handler = handler;
   }
 
+  public Student getStudent() {
+    return student;
+  }
+
+  public void setStudent(Student student) {
+    this.student = student;
+  }
+
+  public String getCredentialToken() {
+    return credentialToken;
+  }
+
+  public void setCredentialToken(String credentialToken) {
+    this.credentialToken = credentialToken;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="Application")
   @TableGenerator(name="Application", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -236,6 +254,13 @@ public class Application implements ArchivableEntity {
   @ManyToOne  
   @JoinColumn(name="handler")
   private StaffMember handler;
+  
+  @OneToOne
+  @JoinColumn(name="student")
+  private Student student;
+
+  @Field
+  private String credentialToken;
 
   @NotNull
   @Column (nullable = false)

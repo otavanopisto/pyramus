@@ -2,7 +2,9 @@ package fi.otavanopisto.pyramus.koski;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,6 +39,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
@@ -46,7 +49,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kunta;
 import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
 import fi.otavanopisto.pyramus.koski.model.HenkilovahvistusPaikkakunnalla;
-import fi.otavanopisto.pyramus.koski.model.KoskiSplitStudyProgramme;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.LahdeJarjestelmaID;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
@@ -94,6 +96,7 @@ public abstract class KoskiStudentHandler {
   protected SchoolVariableDAO schoolVariableDAO;
   
   public abstract void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid);
+  public abstract Set<KoskiStudentId> listOids(Student student);
   
   protected void saveOrValidateOid(Student student, String oid) {
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
@@ -108,15 +111,17 @@ public abstract class KoskiStudentHandler {
   }
 
   protected void saveOrValidateInternetixOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
-    Map<String, KoskiSplitStudyProgramme> oids = loadInternetixOids(student);
+    Set<KoskiStudentId> oids = loadInternetixOids(student);
 
     String studentIdentifier = getStudentIdentifier(handler, student.getId());
-    String studyOid = oids.get(studentIdentifier) != null ? oids.get(studentIdentifier).getOid() : null;
-
-    if (StringUtils.isBlank(studyOid)) {
-      KoskiSplitStudyProgramme kssp = new KoskiSplitStudyProgramme();
-      kssp.setOid(oid);
-      oids.put(studentIdentifier, kssp);
+    KoskiStudentId koskiStudentId = oids.stream().filter(koskiId -> StringUtils.equals(koskiId.getStudentIdentifier(), studentIdentifier)).findFirst().orElse(null);
+    
+    if (koskiStudentId == null || StringUtils.isBlank(koskiStudentId.getOid())) {
+      if (koskiStudentId != null) {
+        koskiStudentId.setOid(oid);
+      } else {
+        oids.add(new KoskiStudentId(studentIdentifier, oid));
+      }
       
       ObjectMapper mapper = new ObjectMapper();
       try {
@@ -126,12 +131,12 @@ public abstract class KoskiStudentHandler {
       }
     } else {
       // Validate the oid is the same
-      if (!StringUtils.equals(studyOid, oid))
-        throw new RuntimeException(String.format("Returned study permit oid %s doesn't match the saved oid %s.", oid, studyOid));
+      if (!StringUtils.equals(koskiStudentId.getOid(), oid))
+        throw new RuntimeException(String.format("Returned study permit oid %s doesn't match the saved oid %s.", oid, koskiStudentId.getOid()));
     }
   }
 
-  protected Map<String, KoskiSplitStudyProgramme> loadInternetixOids(Student student) {
+  protected Set<KoskiStudentId> loadInternetixOids(Student student) {
     UserVariableKey userVariableKey = userVariableKeyDAO.findByVariableKey(KOSKI_INTERNETIX_STUDYPERMISSION_ID);
     
     if (userVariableKey != null) {
@@ -139,7 +144,7 @@ public abstract class KoskiStudentHandler {
       if (userVariable != null && StringUtils.isNotBlank(userVariable.getValue())) {
         ObjectMapper mapper = new ObjectMapper();
         
-        TypeReference<HashMap<String, KoskiSplitStudyProgramme>> typeRef = new TypeReference<HashMap<String, KoskiSplitStudyProgramme>>() {};
+        TypeReference<Set<KoskiStudentId>> typeRef = new TypeReference<Set<KoskiStudentId>>() {};
         try {
           return mapper.readValue(userVariable.getValue(), typeRef);
         } catch (Exception ex) {
@@ -148,9 +153,16 @@ public abstract class KoskiStudentHandler {
       }
     }
     
-    return new HashMap<>();
+    return new HashSet<>();
   }
   
+  protected String resolveInternetixOid(Student student, KoskiStudyProgrammeHandler handlerType) {
+    Set<KoskiStudentId> oids = loadInternetixOids(student);
+    String studentIdentifier = getStudentIdentifier(handlerType, student.getId());
+    KoskiStudentId koskiStudentId = oids.stream().filter(koskiId -> StringUtils.equals(koskiId.getStudentIdentifier(), studentIdentifier)).findFirst().orElse(null);
+    return koskiStudentId != null ? koskiStudentId.getOid() : null;
+  }
+
   protected Kuvaus kuvaus(String fiKuvaus) {
     Kuvaus kuvaus = new Kuvaus();
     kuvaus.setFi(fiKuvaus);
@@ -171,7 +183,7 @@ public abstract class KoskiStudentHandler {
   }
 
   protected String getStudentIdentifier(KoskiStudyProgrammeHandler handler, Long studentId) {
-    return handler.name() + ":" + String.valueOf(studentId);
+    return KoskiConsts.getStudentIdentifier(handler, studentId);
   }
   
   protected LahdeJarjestelmaID getLahdeJarjestelmaID(KoskiStudyProgrammeHandler handler, Long studentId) {
@@ -289,7 +301,7 @@ public abstract class KoskiStudentHandler {
     opsList.add(ops);
     
     Map<OpiskelijanOPS, List<CreditStub>> credits = listCredits(student, listTransferCredits, listCreditLinks, opsList, ops, filter);
-    return credits.get(ops);
+    return credits.get(ops) != null ? credits.get(ops) : new ArrayList<>();
   }
   
   protected Map<OpiskelijanOPS, List<CreditStub>> listCredits(Student student, boolean listTransferCredits, boolean listCreditLinks,
@@ -322,6 +334,7 @@ public abstract class KoskiStudentHandler {
         stub.addCredit(new CreditStubCredit(ca, Type.CREDIT));
       } else {
         logger.log(Level.WARNING, String.format("Couldn't resolve OPS for CourseAssessment %d", ca.getId()));
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNRESOLVED_CREDIT_CURRICULUM, new Date());
       }
     });
     
@@ -348,6 +361,7 @@ public abstract class KoskiStudentHandler {
           stub.addCredit(new CreditStubCredit(tc, Type.RECOGNIZED));
         } else {
           logger.log(Level.WARNING, String.format("Couldn't resolve OPS for TransferCredit %d", tc.getId()));
+          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNRESOLVED_CREDIT_CURRICULUM, new Date());
         }
       });
     }

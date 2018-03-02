@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>alter table Application add column student bigint;</sql>
+  <sql>alter table Application add constraint FKg51n4jp76of7xi3y3gq97a4be foreign key (student) references Student (id);</sql>
+  
+</update>
