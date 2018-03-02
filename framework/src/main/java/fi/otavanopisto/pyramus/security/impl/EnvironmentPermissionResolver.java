@@ -9,14 +9,12 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.security.EnvironmentRolePermissionDAO;
-import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.security.ContextReference;
 import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.PermissionFeatureHandler;
 import fi.otavanopisto.security.PermissionFeatureLiteral;
-import fi.otavanopisto.security.PermissionResolver;
 import fi.otavanopisto.security.User;
 
 @Stateless
@@ -26,9 +24,6 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
   private Logger logger; 
   
   @Inject
-  private PermissionDAO permissionDAO;
-  
-  @Inject
   private EnvironmentRolePermissionDAO environmentUserRolePermissionDAO;
 
   @Inject
@@ -36,33 +31,30 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
   private Instance<PermissionFeatureHandler> featureHandlers;
   
   @Override
-  public boolean handlesPermission(String permission) {
-    Permission perm = permissionDAO.findByName(permission);
-    
-    if (perm != null)
-      return (PermissionScope.ENVIRONMENT.equals(perm.getScope()));
+  public boolean handlesPermission(Permission permission) {
+    if (permission != null)
+      return (PermissionScope.ENVIRONMENT.equals(permission.getScope()));
     else
       return false;
   }
 
   @Override
-  public boolean hasPermission(String permission, ContextReference contextReference, User user) {
-    Permission perm = permissionDAO.findByName(permission);
+  public boolean hasPermission(Permission permission, ContextReference contextReference, User user) {
     fi.otavanopisto.pyramus.domainmodel.users.User userEntity = getUser(user);
-    boolean allowed = environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(userEntity.getRole(), perm);
+    boolean allowed = environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(userEntity.getRole(), permission);
     if (!allowed) {
       allowed = hasEveryonePermission(permission, contextReference);
     }
     
-    PyramusPermissionCollection collection = findCollection(permission);
+    PyramusPermissionCollection collection = findCollection(permission.getName());
     try {
-      PermissionFeature[] features = collection.listPermissionFeatures(permission);
+      PermissionFeature[] features = collection.listPermissionFeatures(permission.getName());
       if (features != null) {
         for (PermissionFeature feature : features) {
           Instance<PermissionFeatureHandler> instance = featureHandlers.select(new PermissionFeatureLiteral(feature.value()));
           if (!instance.isUnsatisfied()) {
             PermissionFeatureHandler permissionFeatureHandler = instance.get();
-            allowed = permissionFeatureHandler.hasPermission(permission, userEntity, contextReference, allowed);
+            allowed = permissionFeatureHandler.hasPermission(permission.getName(), userEntity, contextReference, allowed);
           } else
             logger.log(Level.SEVERE, String.format("Unsatisfied permission feature %s", feature.value()));
         }
@@ -75,10 +67,9 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
   }
 
   @Override
-  public boolean hasEveryonePermission(String permission, ContextReference contextReference) {
+  public boolean hasEveryonePermission(Permission permission, ContextReference contextReference) {
     Role everyoneRole = getEveryoneRole();
-    Permission perm = permissionDAO.findByName(permission);
-    return environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(everyoneRole, perm);
+    return environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(everyoneRole, permission);
   }
 
 }

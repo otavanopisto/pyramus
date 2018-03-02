@@ -10,23 +10,17 @@ import javax.enterprise.inject.Instance;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
+import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.security.ContextReference;
-import fi.otavanopisto.security.PermissionResolver;
 
 @Stateful
 @SessionScoped
 public abstract class AbstractSessionControllerImpl implements SessionController {
   
-//  @Override
-//  public void login(Long userId) {
-//  	this.loggedUserId = userId;
-//  }
-
-//  @Override
-//  public void logout() {
-//    loggedUserId = null;
-//  }
-
+  @Inject
+  private PermissionDAO permissionDAO;
+  
   @Override
   public Locale getLocale() {
     if (locale != null)
@@ -40,17 +34,13 @@ public abstract class AbstractSessionControllerImpl implements SessionController
     this.locale = locale;
   }
 
-//  public boolean isLoggedIn() {
-//    return loggedUserId != null;
-//  }
-
   @PostConstruct
   private void init() {
-//    loggedUserId = null;
   }
 
   @Override
-  public boolean hasPermission(String permission, ContextReference contextReference) {
+  public boolean hasPermission(String permissionName, ContextReference contextReference) {
+    Permission permission = permissionDAO.findByName(permissionName);
     PermissionResolver permissionResolver = getPermissionResolver(permission);
     
     if (isLoggedIn()) {
@@ -64,7 +54,7 @@ public abstract class AbstractSessionControllerImpl implements SessionController
   @Any
   private Instance<PermissionResolver> permissionResolvers;
   
-  private PermissionResolver getPermissionResolver(String permission) {
+  private PermissionResolver getPermissionResolver(Permission permission) {
     for (PermissionResolver resolver : permissionResolvers) {
       if (resolver.handlesPermission(permission))
         return resolver;
@@ -75,21 +65,8 @@ public abstract class AbstractSessionControllerImpl implements SessionController
   
   private Locale locale;
 
-//  private Long loggedUserId;
-
-//  @Override
-//  public User getUser() {
-//    if (isLoggedIn()) {
-//      StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
-//      
-//      return userDAO.findById(loggedUserId);
-//    } else
-//      return null;
-//  }
-
   @Override
   public boolean isSuperuser() {
-    // TODO: Admin?
     return false;
   }
 

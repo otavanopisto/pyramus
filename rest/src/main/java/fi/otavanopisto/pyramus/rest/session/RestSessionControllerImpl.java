@@ -15,13 +15,15 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 
+import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
+import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.rest.controller.OauthController;
 import fi.otavanopisto.pyramus.security.impl.AbstractSessionControllerImpl;
+import fi.otavanopisto.pyramus.security.impl.PermissionResolver;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.security.ContextReference;
-import fi.otavanopisto.security.PermissionResolver;
 
 @RestSession
 @RequestScoped
@@ -36,6 +38,9 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
   @Inject
   private OauthController oauthController;
 
+  @Inject
+  private PermissionDAO permissionDAO;
+  
   @Override
   public void logout() {
   }
@@ -55,7 +60,8 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
   }
   
   @Override
-  public boolean hasPermission(String permission, ContextReference contextReference) {
+  public boolean hasPermission(String permissionName, ContextReference contextReference) {
+    Permission permission = permissionDAO.findByName(permissionName);
     PermissionResolver permissionResolver = getPermissionResolver(permission);
     if (permissionResolver == null) {
       logger.severe(String.format("Could not find permissionResolver for permission %s", permission));
@@ -73,7 +79,7 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
   @Any
   private Instance<PermissionResolver> permissionResolvers;
   
-  private PermissionResolver getPermissionResolver(String permission) {
+  private PermissionResolver getPermissionResolver(Permission permission) {
     for (PermissionResolver resolver : permissionResolvers) {
       if (resolver.handlesPermission(permission))
         return resolver;

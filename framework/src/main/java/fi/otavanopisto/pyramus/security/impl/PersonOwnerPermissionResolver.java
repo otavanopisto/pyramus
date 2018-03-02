@@ -1,25 +1,17 @@
 package fi.otavanopisto.pyramus.security.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
-import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.security.ContextReference;
-import fi.otavanopisto.security.PermissionResolver;
 import fi.otavanopisto.security.User;
 
 @Stateless
 public class PersonOwnerPermissionResolver extends AbstractPermissionResolver implements PermissionResolver {
 
-  @Inject
-  private PermissionDAO permissionDAO;
-  
   @Override
-  public boolean handlesPermission(String permission) {
-    Permission perm = permissionDAO.findByName(permission);
-    
+  public boolean handlesPermission(Permission perm) {
     if (perm != null)
       return (PermissionScope.PERSON_OWNER.equals(perm.getScope()));
     else
@@ -27,7 +19,7 @@ public class PersonOwnerPermissionResolver extends AbstractPermissionResolver im
   }
 
   @Override
-  public boolean hasPermission(String permission, ContextReference contextReference, User user) {
+  public boolean hasPermission(Permission permission, ContextReference contextReference, User user) {
     if (!(contextReference instanceof Person)) {
       return false;
     }
@@ -43,7 +35,7 @@ public class PersonOwnerPermissionResolver extends AbstractPermissionResolver im
   }
 
   @Override
-  public boolean hasEveryonePermission(String permission, ContextReference contextReference) {
+  public boolean hasEveryonePermission(Permission permission, ContextReference contextReference) {
     return false;
   }
 
