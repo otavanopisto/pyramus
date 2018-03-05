@@ -393,9 +393,9 @@
     // Application handling options
     
     $('.application-handling-option').on('click', function(event) {
-      $('.application-handling-options-container').hide();
       var id = $('body').attr('data-application-entity-id');
       var state = $(this).attr('data-state');
+      processingOn();
       $.ajax({
         url: '/applications/updateapplicationstate.json',
         type: "POST",
@@ -414,18 +414,13 @@
           else {
             $('.notification-queue').notificationQueue('notification', 'error', response.reason);
           }
+          processingOff();
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+          processingOff();
         }
       });
-    });
-    $('.application-handling-options-container').on('click', function(event) {
-      event.stopPropagation();
-    });
-    $('.application-action.icon-handling').on('click', function(event) {
-      event.stopPropagation();
-      $('.application-handling-options-container').toggle();
-    });
-    $(document).on("click", function () {
-      $('.application-handling-options-container').hide();
     });
     function refreshActions() {
       var currentState = $('#info-application-state-value').attr('data-state');
@@ -446,27 +441,32 @@
     var docState = $('.signatures-container').attr('data-document-state');
     $('.signatures-container').on('click', function(event) {
       event.stopPropagation();
-      $.ajax({
-        url: '/applications/generateacceptancedocument.json',
-        type: 'GET',
-        data: {
-          id: $('body').attr('data-application-entity-id')
-        },
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-          if (response.status == 'OK') {
-            updateDocumentUrls();
-            showSignatures();
+      if ($('.signatures-auth-sources').is(':empty')) {
+        processingOn();
+        $.ajax({
+          url: '/applications/generateacceptancedocument.json',
+          type: 'GET',
+          data: {
+            id: $('body').attr('data-application-entity-id')
+          },
+          dataType: "json",
+          contentType: "application/json; charset=utf-8",
+          success: function(response) {
+            if (response.status == 'OK') {
+              updateDocumentUrls();
+              showSignatures();
+            }
+            else {
+              $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+            }
+            processingOff();
+          },
+          error: function(err) {
+            $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+            processingOff();
           }
-          else {
-            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
-          }
-        },
-        error: function(err) {
-          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
-        }
-      });
+        });
+      }
     });
     if (docState == 'INVITATION_CREATED') {
       showSignatures();
@@ -485,6 +485,21 @@
         }
         $('#info-application-documents-value').html(html);
       });
+    }
+
+    function processingOn() {
+      $('.application-handling-container')
+        .addClass('processing')
+        .append($('<div>')
+          .addClass('processing-overlay'))
+        .append($('<div>')
+          .addClass('processing-icon'));
+    }
+
+    function processingOff() {
+      $('.application-handling-container').removeClass("processing");
+      $('.processing-overlay').remove();
+      $('.processing-icon').remove();
     }
 
     function showSignatures() {
