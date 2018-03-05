@@ -442,27 +442,29 @@
     var docState = $('.signatures-container').attr('data-document-state');
     $('.signatures-container').on('click', function(event) {
       event.stopPropagation();
-      $.ajax({
-        url: '/applications/generateacceptancedocument.json',
-        type: 'GET',
-        data: {
-          id: $('body').attr('data-application-entity-id')
-        },
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-          if (response.status == 'OK') {
-            updateDocumentUrls();
-            showSignatures();
+      if ($('.signatures-auth-sources').is(':empty')) {
+        $.ajax({
+          url: '/applications/generateacceptancedocument.json',
+          type: 'GET',
+          data: {
+            id: $('body').attr('data-application-entity-id')
+          },
+          dataType: "json",
+          contentType: "application/json; charset=utf-8",
+          success: function(response) {
+            if (response.status == 'OK') {
+              updateDocumentUrls();
+              showSignatures();
+            }
+            else {
+              $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+            }
+          },
+          error: function(err) {
+            $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
           }
-          else {
-            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
-          }
-        },
-        error: function(err) {
-          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
-        }
-      });
+        });
+      }
     });
     if (docState == 'INVITATION_CREATED') {
       showSignatures();
