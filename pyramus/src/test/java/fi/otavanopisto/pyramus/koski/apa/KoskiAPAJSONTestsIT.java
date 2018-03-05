@@ -91,7 +91,7 @@ public class KoskiAPAJSONTestsIT extends AbstractKoskiTest {
   }
   
   private String getTestStudentJSON() throws IOException {
-    URL testFile = this.getClass().getResource("test-student.json");
+    URL testFile = this.getClass().getResource("test-student-apa.json");
     return IOUtils.toString(testFile, "UTF-8");
   }
 
