@@ -393,9 +393,15 @@
     // Application handling options
     
     $('.application-handling-option').on('click', function(event) {
-      $('.application-handling-options-container').hide();
       var id = $('body').attr('data-application-entity-id');
       var state = $(this).attr('data-state');
+      if (state == 'DELAY-TEST') {
+        alert('progress on');
+        setTimeout(function() {
+          alert('progress off');
+        }, 5000);
+        return;
+      }
       $.ajax({
         url: '/applications/updateapplicationstate.json',
         type: "POST",
@@ -416,16 +422,6 @@
           }
         }
       });
-    });
-    $('.application-handling-options-container').on('click', function(event) {
-      event.stopPropagation();
-    });
-    $('.application-action.icon-handling').on('click', function(event) {
-      event.stopPropagation();
-      $('.application-handling-options-container').toggle();
-    });
-    $(document).on("click", function () {
-      $('.application-handling-options-container').hide();
     });
     function refreshActions() {
       var currentState = $('#info-application-state-value').attr('data-state');
