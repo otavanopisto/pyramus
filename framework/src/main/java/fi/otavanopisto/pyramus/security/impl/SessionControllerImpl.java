@@ -11,21 +11,20 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.security.ContextReference;
-import fi.otavanopisto.security.PermissionResolver;
 
 @Stateful
 @LocalSession
 @SessionScoped
 public class SessionControllerImpl implements SessionController {
   
-//  @Override
-//  public void login(Long userId) {
-//  	this.loggedUserId = userId;
-//  }
-
+  @Inject
+  private PermissionDAO permissionDAO;
+  
   @Override
   public void logout() {
     loggedUserId = null;
@@ -54,7 +53,8 @@ public class SessionControllerImpl implements SessionController {
   }
 
   @Override
-  public boolean hasPermission(String permission, ContextReference contextReference) {
+  public boolean hasPermission(String permissionName, ContextReference contextReference) {
+    Permission permission = permissionDAO.findByName(permissionName);
     PermissionResolver permissionResolver = getPermissionResolver(permission);
     
     if (isLoggedIn()) {
@@ -68,7 +68,7 @@ public class SessionControllerImpl implements SessionController {
   @Any
   private Instance<PermissionResolver> permissionResolvers;
   
-  private PermissionResolver getPermissionResolver(String permission) {
+  private PermissionResolver getPermissionResolver(Permission permission) {
     for (PermissionResolver resolver : permissionResolvers) {
       if (resolver.handlesPermission(permission))
         return resolver;
@@ -93,7 +93,6 @@ public class SessionControllerImpl implements SessionController {
 
   @Override
   public boolean isSuperuser() {
-    // TODO: Admin?
     return false;
   }
 
