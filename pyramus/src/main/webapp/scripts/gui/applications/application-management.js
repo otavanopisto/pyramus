@@ -395,18 +395,7 @@
     $('.application-handling-option').on('click', function(event) {
       var id = $('body').attr('data-application-entity-id');
       var state = $(this).attr('data-state');
-      if (state == 'DELAY-TEST') {
-        
-        $(".application-handling-container")
-          .addClass("processing")
-          .append($('<div>')
-            .addClass('processing-overlay'))
-          .append($('<div>')
-            .addClass('processing-icon'));
-        
-
-        return;
-      }
+      processingOn();
       $.ajax({
         url: '/applications/updateapplicationstate.json',
         type: "POST",
@@ -420,13 +409,16 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 'OK') {
-            $(".application-handling-container").removeClass('processing');
-            $(".application-handling-container").find('processing-overlay').remove();
             window.location.reload();
           }
           else {
             $('.notification-queue').notificationQueue('notification', 'error', response.reason);
           }
+          processingOff();
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+          processingOff();
         }
       });
     });
@@ -450,6 +442,7 @@
     $('.signatures-container').on('click', function(event) {
       event.stopPropagation();
       if ($('.signatures-auth-sources').is(':empty')) {
+        processingOn();
         $.ajax({
           url: '/applications/generateacceptancedocument.json',
           type: 'GET',
@@ -466,9 +459,11 @@
             else {
               $('.notification-queue').notificationQueue('notification', 'error', response.reason);
             }
+            processingOff();
           },
           error: function(err) {
             $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+            processingOff();
           }
         });
       }
@@ -490,6 +485,21 @@
         }
         $('#info-application-documents-value').html(html);
       });
+    }
+
+    function processingOn() {
+      $('.application-handling-container')
+        .addClass('processing')
+        .append($('<div>')
+          .addClass('processing-overlay'))
+        .append($('<div>')
+          .addClass('processing-icon'));
+    }
+
+    function processingOff() {
+      $('.application-handling-container').removeClass("processing");
+      $('.processing-overlay').remove();
+      $('.processing-icon').remove();
     }
 
     function showSignatures() {
