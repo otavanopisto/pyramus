@@ -69,8 +69,6 @@ public class KoskiAPAJSONTestsIT extends AbstractKoskiTest {
       assertEquals(2, opiskeluoikeus.getTila().getOpiskeluoikeusjaksot().size());
       assertEquals(2, opiskeluoikeus.getSuoritukset().size());
       
-      opiskeluoikeus.getSuoritukset().forEach(x -> System.out.println(x.getClass().getSimpleName()));
-      
       /**
        * APA
        */
