@@ -2,11 +2,13 @@ package fi.otavanopisto.pyramus.koski.model.lukio;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LukionOppiaineenArviointi {
 
   public LukionOppiaineenArviointi() {
