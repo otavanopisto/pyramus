@@ -396,10 +396,15 @@
       var id = $('body').attr('data-application-entity-id');
       var state = $(this).attr('data-state');
       if (state == 'DELAY-TEST') {
-        alert('progress on');
-        setTimeout(function() {
-          alert('progress off');
-        }, 5000);
+        
+        $(".application-handling-container")
+          .addClass("processing")
+          .append($('<div>')
+            .addClass('processing-overlay'))
+          .append($('<div>')
+            .addClass('processing-icon'));
+        
+
         return;
       }
       $.ajax({
@@ -415,6 +420,8 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 'OK') {
+            $(".application-handling-container").removeClass('processing');
+            $(".application-handling-container").find('processing-overlay').remove();
             window.location.reload();
           }
           else {

@@ -292,6 +292,7 @@ option {
 .nicknames-container .nickname.selected {
   background: #29b0c4;
   color: #fff;
+  font-weight: 400;
 }
 
 /* FORM NAVIGATION */
@@ -418,13 +419,15 @@ button {
 .application-file-name a {
   color: #fff;
   font-size: 14px;
+  font-weight: 400;
 }
 
 .application-file-size {
-  font-size: 13px;
-  padding: 0 10px;
-  font-style: italic;
   color: #bef7fe;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 400;
+  padding: 0 10px;
 }
 
 .application-file-delete {
@@ -874,6 +877,36 @@ span.email {
   border-top: 1px solid #eee;
   font-size: 14px;
   padding: 10px 15px;
+}
+
+.application-handling-container.processing {
+  position: relative;
+}
+
+.processing-overlay {
+  background-color: #fff;
+  background-image: url("../gfx/gui/processing.gif");
+  background-repeat: no-repeat;
+  background-position: center;
+  bottom: 0;
+  left: 0;
+  opacity: 0.9;
+  right: 0;
+  top: 0;
+  position: absolute;
+  z-index: 9;
+}
+
+.processing-icon {
+  background-image: url("../gfx/gui/processing.gif");
+  background-repeat: no-repeat;
+  background-position: center;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  position: absolute;
+  z-index: 11;
 }
 
 .application-handling-option,
