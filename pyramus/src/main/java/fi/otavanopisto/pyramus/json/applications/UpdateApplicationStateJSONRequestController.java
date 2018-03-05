@@ -211,6 +211,8 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           // Separate logic for transferring the applicant as student
           
           Student student = createPyramusStudent(application, staffMember);
+          PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+          personDAO.updateDefaultUser(student.getPerson(), student);
           String credentialToken = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
           application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
           mailCredentialsInfo(requestContext, student, staffMember, application);
@@ -517,7 +519,6 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
       content = String.format(
           content,
           getFormValue(formData, "field-nickname"),
-          createCredentialsUrl,
           createCredentialsUrl,
           staffMember.getFullName());
     }
