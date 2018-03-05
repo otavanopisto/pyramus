@@ -117,7 +117,7 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
       throw new SmvcRuntimeException(e);
     }
 
-    InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, passwordEncoded);
+InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, passwordEncoded);
     if (internalAuth != null) {
       UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId(getName(), String.valueOf(internalAuth.getId()));
       if(userIdentification != null){
@@ -129,6 +129,25 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
     else {
       return null;
     }
+  }
+  
+  public User getUserByName(String username) {
+    UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO(); 
+    
+    InternalAuth internalAuth = internalAuthDAO.findByUsername(username);
+    if (internalAuth != null) {
+      UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId(getName(), String.valueOf(internalAuth.getId()));
+      if(userIdentification != null){
+        
+        return userIdentification.getPerson().getDefaultUser();
+      }
+      return null;
+    }
+    else {
+      return null;
+    }
+    
   }
   
   @Override
