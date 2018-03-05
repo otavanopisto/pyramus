@@ -3,14 +3,23 @@ package fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 
+@JsonDeserialize(using = JsonDeserializer.None.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AikuistenPerusopetuksenOppiaineenSuoritus extends AikuistenPerusopetuksenOsasuoritus {
 
+  public AikuistenPerusopetuksenOppiaineenSuoritus() {
+  }
+  
   public AikuistenPerusopetuksenOppiaineenSuoritus(AikuistenPerusopetuksenOppiaineenTunniste koulutusmoduuli) {
     this.koulutusmoduuli = koulutusmoduuli;
   }
@@ -19,6 +28,10 @@ public class AikuistenPerusopetuksenOppiaineenSuoritus extends AikuistenPerusope
     return koulutusmoduuli;
   }
   
+  public void setKoulutusmoduuli(AikuistenPerusopetuksenOppiaineenTunniste koulutusmoduuli) {
+    this.koulutusmoduuli = koulutusmoduuli;
+  }
+
   public KoodistoViite<SuorituksenTyyppi> getTyyppi() {
     return tyyppi;
   }
@@ -40,7 +53,7 @@ public class AikuistenPerusopetuksenOppiaineenSuoritus extends AikuistenPerusope
     return arviointi;
   }
 
-  private final AikuistenPerusopetuksenOppiaineenTunniste koulutusmoduuli;
+  private AikuistenPerusopetuksenOppiaineenTunniste koulutusmoduuli;
   private final List<KurssinArviointi> arviointi = new ArrayList<>();
   private final KoodistoViite<SuorituksenTyyppi> tyyppi = new KoodistoViite<>(SuorituksenTyyppi.aikuistenperusopetuksenoppiaine);
   private final List<AikuistenPerusopetuksenKurssinSuoritus> osasuoritukset = new ArrayList<>();
