@@ -409,7 +409,7 @@
               event.tableComponent.deleteRow(event.row);
               
               if (event.tableComponent.getRowCount() == 0) {
-                $('noLodgingPeriodsAddedMessageContainer').setStyle({
+                $('noLodgingPeriodsAddedMessageContainer.' + studentId).setStyle({
                   display : ''
                 });
               }
@@ -423,7 +423,7 @@
           lodgingPeriodsTable.showCell(event.row, table.getNamedColumnIndex(enabledButton));
 
           if (table.getRowCount() > 0) {
-       	    $('noLodgingPeriodsAddedMessageContainer').setStyle({
+       	    $('noLodgingPeriodsAddedMessageContainer.' + studentId).setStyle({
        	      display : 'none'
        	    });
        	  }
@@ -1261,8 +1261,8 @@
                   <jsp:param name="helpLocale" value="students.editStudent.lodgingHelp"/>
                 </jsp:include>
 
-                <div id="noLodgingPeriodsAddedMessageContainer" class="genericTableNotAddedMessageContainer">
-                  <span><fmt:message key="students.editStudent.noLodgingPeriodsAddedPreFix"/> <span onclick="addLodgingPeriodTableRow(getIxTableById('lodgingPeriodsTable.${student.id}'));" class="genericTableAddRowLink"><fmt:message key="students.editStudent.noLodgingPeriodsAddedClickHereLink"/></span>.</span>
+                <div id="noLodgingPeriodsAddedMessageContainer.${student.id}" class="genericTableNotAddedMessageContainer">
+                  <span><fmt:message key="students.editStudent.noLodgingPeriodsAddedPreFix"/> <span onclick="addLodgingPeriodTableRow(getIxTableById('lodgingPeriodsTable.${student.id}'));" class="genericTableAddRowLink"><fmt:message key="students.editStudent.noLodgingPeriodsAddedClickHereLink"/></span></span>
                 </div>
                 
                 <div id="lodgingPeriodsTableContainer.${student.id}"></div>
