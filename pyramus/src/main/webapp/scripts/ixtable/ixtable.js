@@ -1440,7 +1440,6 @@ IxSelectTableEditorController = Class.create(IxTableEditorController, {
         this._updateDisabledHiddenElement(handlerInstance, value);
       
       handlerInstance.value = value;
-      this._fireValueChange(handlerInstance, handlerInstance.value);
     }
   },
   destroyEditor: function ($super, handlerInstance) {
@@ -1508,6 +1507,7 @@ IxSelectTableEditorController = Class.create(IxTableEditorController, {
   copyCellValue: function($super, target, source) {
     if (!this.isDynamicOptions(source)) {
       $super(target, source);
+      this._fireValueChange(target, target.value);
     } else {
       var value = this.getEditorValue(source);
       var options;
