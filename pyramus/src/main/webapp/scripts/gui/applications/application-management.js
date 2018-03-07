@@ -390,51 +390,6 @@
       }
     });
     
-    // Application handling options
-    
-    $('.application-handling-option').on('click', function(event) {
-      var id = $('body').attr('data-application-entity-id');
-      var state = $(this).attr('data-state');
-      processingOn();
-      $.ajax({
-        url: '/applications/updateapplicationstate.json',
-        type: "POST",
-        data: {
-          id: id,
-          state: state,
-          lockApplication: state == 'PROCESSING',
-          setHandler: !$('#info-application-handler-value').attr('data-handler-id'),
-          removeHandler: state == 'PENDING'
-        },
-        dataType: 'json',
-        success: function(response) {
-          if (response.status == 'OK') {
-            window.location.reload();
-          }
-          else {
-            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
-          }
-          processingOff();
-        },
-        error: function(err) {
-          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
-          processingOff();
-        }
-      });
-    });
-    function refreshActions() {
-      var currentState = $('#info-application-state-value').attr('data-state');
-      $('div.application-handling-option').each(function() {
-        var optionState = $(this).attr('data-state');
-        var applicableStates = [];
-        if ($(this).attr('data-show')) {
-          applicableStates = $(this).attr('data-show').split(',');
-        }
-        $(this).toggle(optionState != currentState && (applicableStates.length == 0 || $.inArray(currentState, applicableStates) >= 0));
-      });
-      $('.signatures-container').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
-    }
-    
     // Signatures
     
     var docId = $('.signatures-container').attr('data-document-id');
@@ -470,6 +425,53 @@
     });
     if (docState == 'INVITATION_CREATED') {
       showSignatures();
+    }
+    
+    // Application handling options
+    
+    $('.application-handling-option').on('click', function(event) {
+      var id = $('body').attr('data-application-entity-id');
+      var state = $(this).attr('data-state');
+      processingOn();
+      $.ajax({
+        url: '/applications/updateapplicationstate.json',
+        type: "POST",
+        data: {
+          id: id,
+          state: state,
+          lockApplication: state == 'PROCESSING',
+          setHandler: !$('#info-application-handler-value').attr('data-handler-id'),
+          removeHandler: state == 'PENDING'
+        },
+        dataType: 'json',
+        success: function(response) {
+          if (response.status == 'OK') {
+            window.location.reload();
+          }
+          else {
+            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+          }
+          processingOff();
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+          processingOff();
+        }
+      });
+    });
+    $('.application-handling-container').show();
+    
+    function refreshActions() {
+      var currentState = $('#info-application-state-value').attr('data-state');
+      $('div.application-handling-option').each(function() {
+        var optionState = $(this).attr('data-state');
+        var applicableStates = [];
+        if ($(this).attr('data-show')) {
+          applicableStates = $(this).attr('data-show').split(',');
+        }
+        $(this).toggle(optionState != currentState && (applicableStates.length == 0 || $.inArray(currentState, applicableStates) >= 0));
+      });
+      $('.signatures-container').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
     }
     
     function updateDocumentUrls() {

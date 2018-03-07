@@ -53,7 +53,7 @@
     </c:if>
   </div>
   
-  <div class="application-handling-container">
+  <div class="application-handling-container" style="display:none;">
     <div class="application-handling-option" data-state="PENDING" data-show="PROCESSING"><span class="application-handling-text cancel-handling">Peruuta käsittely</span></div>
     <div class="application-handling-option" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED"><span class="application-handling-text">Palauta käsittelyyn</span></div>
     <div class="application-handling-option" data-state="PROCESSING" data-show="PENDING"><span class="application-handling-text">Ota käsittelyyn</span></div>
