@@ -210,9 +210,10 @@ public class KoskiSettings {
   }
   
   public boolean isReportedStudent(Student student) {
-    return 
-        isEnabledStudyProgramme(student.getStudyProgramme()) &&
-        !Boolean.valueOf(userVariableDAO.findByUserAndKey(student, KOSKI_SKIPPED_STUDENT));
+    String skippedStudentVariable = userVariableDAO.findByUserAndKey(student, KOSKI_SKIPPED_STUDENT);
+    boolean skippedStudent = Boolean.valueOf(skippedStudentVariable) || StringUtils.equals(skippedStudentVariable, "1");
+    
+    return isEnabledStudyProgramme(student.getStudyProgramme()) && !skippedStudent;
   }
   
   public SuorituksenTyyppi getSuorituksenTyyppi(Long studyProgrammeId) {
