@@ -182,7 +182,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           personDAO.updateDefaultUser(student.getPerson(), student);
           String credentialToken = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
           application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
-          ApplicationUtils.mailCredentialsInfo(requestContext, student, staffMember, application);
+          ApplicationUtils.mailCredentialsInfo(requestContext.getRequest(), student, application);
         }
         
         // Update the actual application state

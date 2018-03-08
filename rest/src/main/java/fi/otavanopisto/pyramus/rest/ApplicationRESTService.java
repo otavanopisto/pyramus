@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,6 +18,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -39,12 +41,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
+import fi.otavanopisto.pyramus.applications.DuplicatePersonException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
+import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
@@ -54,9 +59,12 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
+import fi.otavanopisto.pyramus.mailer.Mailer;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -72,6 +80,9 @@ public class ApplicationRESTService extends AbstractRESTService {
 
   @Context
   private UriInfo uri;
+
+  @Inject
+  private HttpServletRequest httpRequest;
   
   @Inject
   private SchoolDAO schoolDAO;
@@ -401,6 +412,41 @@ public class ApplicationRESTService extends AbstractRESTService {
             Boolean.TRUE,
             ApplicationState.PENDING);
         logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
+        
+        // Automatic registration of new Internetix students
+        
+        boolean autoRegistration = StringUtils.equals("aineopiskelu", line);
+        if (autoRegistration) {
+          Person person = null;
+          try {
+            person = ApplicationUtils.resolvePerson(application);
+          }
+          catch (DuplicatePersonException dpe) {
+            autoRegistration = false;
+          }
+          autoRegistration = autoRegistration && person == null;
+        }
+        if (autoRegistration) {
+          Student student = ApplicationUtils.createPyramusStudent(application, null, null);
+          if (student != null) {
+            PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+            personDAO.updateDefaultUser(student.getPerson(), student);
+            String credentialToken = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
+            application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
+            application = applicationDAO.updateApplicationState(application, ApplicationState.REGISTERED_AS_STUDENT, null);
+            ApplicationUtils.mailCredentialsInfo(httpRequest, student, application);
+            response.put("autoRegistered", "true");
+          }
+          else {
+            logger.log(Level.SEVERE, "Creating student for application %s failed. Falling back to manual processing");
+            newApplicationPostProcessing(application);
+          }
+        }
+        else {
+          // If the application doesn't lead to auto-registration, send out the
+          // usual confirmation and notification e-mails about a new application
+          newApplicationPostProcessing(application);
+        }
       }
       else {
         if (!StringUtils.equals(application.getLastName(), lastName)) {
@@ -421,6 +467,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             application.getApplicantEditable(),
             null);
         logger.log(Level.INFO, String.format("Updated %s application with id %s", line, application.getApplicationId()));
+        modifiedApplicationPostProcessing(application);
       }
       
       response.put("referenceCode", referenceCode);
@@ -432,7 +479,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
   }
-
+  
   @Path("/municipalities")
   @GET
   @Unsecure
@@ -604,6 +651,97 @@ public class ApplicationRESTService extends AbstractRESTService {
       referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
     }
     return referenceCode;
+  }
+
+  /**
+   * Handles post-processing related to a new application. Sends a confirmation e-mail to the
+   * applicant, a notification e-mail to application handlers, and adds an application log entry.  
+   * 
+   * @param application The new application
+   */
+  private void newApplicationPostProcessing(Application application) {
+
+    // Mail to the applicant
+
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    String line = formData.getString("field-line");
+    String lineUi = ApplicationUtils.applicationLineUiValue(line);
+    String surname = application.getLastName();
+    String referenceCode = application.getReferenceCode();
+    String applicantMail = application.getEmail();
+    String guardianMail = formData.getString("field-underage-email");
+    try {
+      
+      // Confirmation mail subject and content
+      
+      String subject = "Hakemus opiskelemaan Otavan Opistoon vastaanotettu";
+      String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+          "/templates/applications/mail-confirmation.html"), "UTF-8");
+      
+      // #577: Contact information depends on the line selected; append suitable footer to mail content
+      
+      try {
+        String contentFooter = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+            String.format("/templates/applications/mail-confirmation-footer-%s.html", line)), "UTF-8");
+        if (contentFooter != null) {
+          content += contentFooter;
+        }
+      }
+      catch (Exception e) {
+        logger.log(Level.WARNING, String.format("No mail confirmation footer for line %s", line), e);
+      }
+      
+      // Replace the dynamic parts of the mail content
+      
+      content = String.format(content, lineUi, surname, referenceCode);
+      
+      // Send mail to applicant or, for minors, applicant and guardian
+      
+      if (StringUtils.isEmpty(guardianMail)) {
+        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content);
+      }
+      else {
+        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content);
+      }
+
+      // Handle notification mails and log entries
+
+      ApplicationUtils.sendNotifications(application, httpRequest, null, true, null);
+    }
+    catch (IOException e) {
+      logger.log(Level.SEVERE, "Unable to retrieve confirmation mail template", e);
+    }
+  }
+  
+  /**
+   * Handles post-processing of existing applications modified by the applicant. If the
+   * application already has an assigned handler with a valid e-mail address, send them
+   * mail about the application having been modified by the applicant.
+   */
+  private void modifiedApplicationPostProcessing(Application application) {
+    if (application.getHandler() != null && application.getHandler().getPrimaryEmail() != null) {
+
+      StringBuilder viewUrl = new StringBuilder();
+      viewUrl.append(httpRequest.getScheme());
+      viewUrl.append("://");
+      viewUrl.append(httpRequest.getServerName());
+      viewUrl.append(":");
+      viewUrl.append(httpRequest.getServerPort());
+      viewUrl.append("/applications/view.page?application=");
+      viewUrl.append(application.getId());
+
+      String subject = "Hakija on muokannut hakemustaan";
+      String content = String.format(
+          "<p>Hakija <b>%s %s</b> (%s) on muokannut hakemustaan linjalle <b>%s</b>.</p>" +
+          "<p>Pääset hakemustietoihin <b><a href=\"%s\">tästä linkistä</a></b>.</p>",
+          application.getFirstName(),
+          application.getLastName(),
+          application.getEmail(),
+          ApplicationUtils.applicationLineUiValue(application.getLine()),
+          viewUrl);
+      Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, application.getEmail(),
+          application.getHandler().getPrimaryEmail().getAddress(), subject, content);
+    }
   }
 
 }

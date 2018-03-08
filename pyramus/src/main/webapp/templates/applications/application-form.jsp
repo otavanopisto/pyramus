@@ -656,13 +656,18 @@
     </div>
   </section>
   
-  <section class="form-section section-done" data-skip="true">
-    <h3>Hakemuksesi on vastaanotettu.</h3>
+  <section class="form-section section-done submitted" data-skip="true">
+    <h3>Hakemuksesi on vastaanotettu</h3>
     <p>Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa <a href="/applications/edit.page">https://pyramus.otavanopisto.fi/applications/edit.page</a></p>
     <p>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen:</p>
     <p class="important">Sukunimi <span class="name" id="edit-info-last-name"></span></p>
     <p class="important">Hakemustunnus <span class="code" id="edit-info-reference-code"></span></p>
     <p>Uusien hakemuksien tapauksessa nämä ohjeet on lähetetty myös antamaasi sähköpostiosoitteeseen <span class="email" id="edit-info-email"></span></p>
+  </section>
+
+  <section class="form-section section-done registered" data-skip="true">
+    <h3>Hakemuksesi on tallennettu</h3>
+    <p>Lähetimme antamaasi sähköpostiosoitteeseen ohjeet, joilla voit luoda haluamasi tunnukset Otavan Opiston Muikku-oppimisympäristöön.</p>
   </section>
 
   <nav class="form-navigation" style="display:none;">

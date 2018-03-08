@@ -23,7 +23,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
@@ -392,6 +391,11 @@ public class ApplicationUtils {
   }
 
   public static Student createPyramusStudent(Application application, StaffMember staffMember) throws DuplicatePersonException {
+    Person person = resolvePerson(application);
+    return createPyramusStudent(application, person, staffMember);
+  }
+
+  public static Student createPyramusStudent(Application application, Person person, StaffMember staffMember) {
     PhoneNumberDAO phoneNumberDAO = DAOFactory.getInstance().getPhoneNumberDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
@@ -404,7 +408,6 @@ public class ApplicationUtils {
     
     // Create person (if needed)
     
-    Person person = resolvePerson(application);
     if (person == null) {
       String birthdayStr = getFormValue(formData, "field-birthday");
       String ssnEnd = getFormValue(formData, "field-ssn-end");
@@ -546,86 +549,95 @@ public class ApplicationUtils {
     return student;
   }
   
-  public static void mailCredentialsInfo(JSONRequestContext requestContext, Student student, StaffMember staffMember,
-      Application application) throws Exception {
-    
-    // Application form 
-    
-    JSONObject formData = JSONObject.fromObject(application.getFormData());
-    
-    // Determine the need for credentials
-    
-    List<InternalAuthenticationProvider> providers = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
-    InternalAuthenticationProvider provider = providers.size() == 1 ? providers.get(0) : null;
-    if (provider == null) {
-      throw new InternalError("Unable to resolve InternalAuthenticationProvider");
-    }
-    UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
-    UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(provider.getName(), student.getPerson());
-    
-    // Choose mail template depending on whether student already has credentials or not
-    
-    String subject = "Muikku-oppimisympäristön tunnukset";
-    String content;
-    if (userIdentification == null) {
-      StringBuilder createCredentialsUrl = new StringBuilder();
-      createCredentialsUrl.append(requestContext.getRequest().getScheme());
-      createCredentialsUrl.append("://");
-      createCredentialsUrl.append(requestContext.getRequest().getServerName());
-      createCredentialsUrl.append(":");
-      createCredentialsUrl.append(requestContext.getRequest().getServerPort());
-      createCredentialsUrl.append("/applications/createcredentials.page?a=");
-      createCredentialsUrl.append(application.getApplicationId());
-      createCredentialsUrl.append("&t=");
-      createCredentialsUrl.append(application.getCredentialToken());
+  public static void mailCredentialsInfo(HttpServletRequest request, Student student,  Application application) {
+    try {
+      // Application form 
       
-      content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-          "/templates/applications/mail-credentials-create.html"), "UTF-8");
-      content = String.format(
-          content,
-          getFormValue(formData, "field-nickname"),
-          createCredentialsUrl,
-          staffMember.getFullName());
-    }
-    else {
-      content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-          "/templates/applications/mail-credentials-exist.html"), "UTF-8");
-      content = String.format(
-          content,
-          getFormValue(formData, "field-nickname"),
-          staffMember.getFullName());
-    }
+      JSONObject formData = JSONObject.fromObject(application.getFormData());
       
-    // Send mail to applicant (and possible guardian)
-    
-    if (StringUtils.isBlank(getFormValue(formData, "field-underage-email"))) {
-      Mailer.sendMail(
-          Mailer.JNDI_APPLICATION,
-          Mailer.HTML,
-          null,
-          application.getEmail(),
-          subject,
-          content);
+      // Determine the need for credentials
+      
+      List<InternalAuthenticationProvider> providers = AuthenticationProviderVault.getInstance().getInternalAuthenticationProviders();
+      InternalAuthenticationProvider provider = providers.size() == 1 ? providers.get(0) : null;
+      if (provider == null) {
+        throw new InternalError("Unable to resolve InternalAuthenticationProvider");
+      }
+      UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+      UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(provider.getName(), student.getPerson());
+      
+      // Choose mail template depending on whether student already has credentials or not
+      
+      String subject = "Muikku-oppimisympäristön tunnukset";
+      String content;
+      if (userIdentification == null) {
+        StringBuilder createCredentialsUrl = new StringBuilder();
+        createCredentialsUrl.append(request.getScheme());
+        createCredentialsUrl.append("://");
+        createCredentialsUrl.append(request.getServerName());
+        createCredentialsUrl.append(":");
+        createCredentialsUrl.append(request.getServerPort());
+        createCredentialsUrl.append("/applications/createcredentials.page?a=");
+        createCredentialsUrl.append(application.getApplicationId());
+        createCredentialsUrl.append("&t=");
+        createCredentialsUrl.append(application.getCredentialToken());
+        
+        content = IOUtils.toString(request.getServletContext().getResourceAsStream(
+            "/templates/applications/mail-credentials-create.html"), "UTF-8");
+        content = String.format(
+            content,
+            getFormValue(formData, "field-nickname"),
+            createCredentialsUrl);
+      }
+      else {
+        content = IOUtils.toString(request.getServletContext().getResourceAsStream(
+            "/templates/applications/mail-credentials-exist.html"), "UTF-8");
+        content = String.format(
+            content,
+            getFormValue(formData, "field-nickname"));
+      }
+      
+      // Footer text tells this message is automated and contains line specific contact information
+      
+      String contentFooter = IOUtils.toString(request.getServletContext().getResourceAsStream(
+          String.format("/templates/applications/mail-confirmation-footer-%s.html", application.getLine())), "UTF-8");
+      if (contentFooter != null) {
+        content += contentFooter;
+      }
+        
+      // Send mail to applicant (and possible guardian)
+      
+      if (StringUtils.isBlank(getFormValue(formData, "field-underage-email"))) {
+        Mailer.sendMail(
+            Mailer.JNDI_APPLICATION,
+            Mailer.HTML,
+            null,
+            application.getEmail(),
+            subject,
+            content);
+      }
+      else {
+        Mailer.sendMail(
+            Mailer.JNDI_APPLICATION,
+            Mailer.HTML,
+            null,
+            application.getEmail(),
+            getFormValue(formData, "field-underage-email"),
+            subject,
+            content);
+      }
+      
+      // Add notification about sent mail
+      
+      ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+      applicationLogDAO.create(
+        application,
+        ApplicationLogType.HTML,
+        String.format("<p>%s</p><p><b>%s</b></p>%s", "Hakijalle lähetetty ohjeet Muikku-tunnuksista", subject, content),
+        null);
     }
-    else {
-      Mailer.sendMail(
-          Mailer.JNDI_APPLICATION,
-          Mailer.HTML,
-          null,
-          application.getEmail(),
-          getFormValue(formData, "field-underage-email"),
-          subject,
-          content);
+    catch (IOException ioe) {
+      logger.log(Level.SEVERE, "Error retrieving mail templates", ioe);
     }
-    
-    // Add notification about sent mail
-    
-    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-    applicationLogDAO.create(
-      application,
-      ApplicationLogType.HTML,
-      String.format("<p>%s</p><p><b>%s</b></p>%s", "Hakijalle lähetetty ohjeet Muikku-tunnuksista", subject, content),
-      staffMember);
   }
 
   public static Person resolvePerson(Application application) throws DuplicatePersonException {
