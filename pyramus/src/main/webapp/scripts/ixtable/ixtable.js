@@ -1507,6 +1507,7 @@ IxSelectTableEditorController = Class.create(IxTableEditorController, {
   copyCellValue: function($super, target, source) {
     if (!this.isDynamicOptions(source)) {
       $super(target, source);
+      this._fireValueChange(target, target.value);
     } else {
       var value = this.getEditorValue(source);
       var options;
