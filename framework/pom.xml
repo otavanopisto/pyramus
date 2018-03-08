@@ -17,7 +17,10 @@
       <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>smvcj</artifactId>
     </dependency>
-    
+    <dependency>
+      <groupId>fi.otavanopisto.pyramus</groupId>
+      <artifactId>plugin-core</artifactId>
+    </dependency>
     <dependency>
       <groupId>fi.otavanopisto.pyramus</groupId>
       <artifactId>persistence</artifactId>
@@ -58,6 +61,24 @@
       <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
+    
+    <!-- Commons -->
+
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!--  Mail -->
+
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>javax.mail-api</artifactId>
+      <version>1.6.0</version>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
   
 </project>

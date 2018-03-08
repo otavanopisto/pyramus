@@ -382,6 +382,8 @@ public class ApplicationRESTService extends AbstractRESTService {
       }
       
       // Store application
+
+      Map<String, String> response = new HashMap<String, String>();
       
       ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
       
@@ -421,7 +423,6 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.INFO, String.format("Updated %s application with id %s", line, application.getApplicationId()));
       }
       
-      Map<String, String> response = new HashMap<String, String>();
       response.put("referenceCode", referenceCode);
 
       return Response.ok(response).build();

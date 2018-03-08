@@ -11,12 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.events.ApplicationCreatedEvent;
 import fi.otavanopisto.pyramus.events.ApplicationModifiedByApplicantEvent;
-import fi.otavanopisto.pyramus.views.applications.ApplicationUtils;
+import fi.otavanopisto.pyramus.mailer.Mailer;
 import net.sf.json.JSONObject;
 
 public class ApplicationMailerUtils {

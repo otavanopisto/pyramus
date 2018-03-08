@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.lang.math.NumberUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
@@ -18,7 +19,6 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
-import fi.otavanopisto.pyramus.views.applications.ApplicationUtils;
 
 public class SearchApplicationsJSONRequestController extends JSONRequestController {
 
