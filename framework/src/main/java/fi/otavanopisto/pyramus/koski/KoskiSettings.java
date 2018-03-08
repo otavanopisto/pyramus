@@ -22,11 +22,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
@@ -55,6 +58,9 @@ public class KoskiSettings {
 
   @Inject
   private UserVariableDAO userVariableDAO;
+  
+  @Inject
+  private UserVariableKeyDAO userVariableKeyDAO;
   
   @PostConstruct
   private void postConstruct() {
@@ -210,12 +216,24 @@ public class KoskiSettings {
   }
   
   public boolean isReportedStudent(Student student) {
-    String skippedStudentVariable = userVariableDAO.findByUserAndKey(student, KOSKI_SKIPPED_STUDENT);
-    boolean skippedStudent = Boolean.valueOf(skippedStudentVariable) || StringUtils.equals(skippedStudentVariable, "1");
-    
-    return isEnabledStudyProgramme(student.getStudyProgramme()) && !skippedStudent;
+    return isEnabledStudyProgramme(student.getStudyProgramme()) && !isSkippedStudent(student);
   }
   
+  public boolean isSkippedStudent(Student student) {
+    UserVariableKey variableKey = userVariableKeyDAO.findByVariableKey(KOSKI_SKIPPED_STUDENT);
+    if (variableKey != null) {
+      UserVariable userVariable = userVariableDAO.findByUserAndVariableKey(student, variableKey);
+      if (userVariable != null) {
+        String skippedStudentVariable = userVariable.getValue();
+        return Boolean.valueOf(skippedStudentVariable) || StringUtils.equals(skippedStudentVariable, "1");
+      } else {
+        return false;
+      }
+    }
+    
+    return false;
+  }
+
   public SuorituksenTyyppi getSuorituksenTyyppi(Long studyProgrammeId) {
     return suoritustyypit.get(studyProgrammeId);
   }
