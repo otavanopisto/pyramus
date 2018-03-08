@@ -476,6 +476,9 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
       logger.severe(String.format("Persons with duplicate SSN or unique email: %s", sb));
       throw new DuplicatePersonException();
     }
+    else if (existingPersons.isEmpty()) {
+      return null;
+    }
     else {
       return existingPersons.values().iterator().next();
     }
