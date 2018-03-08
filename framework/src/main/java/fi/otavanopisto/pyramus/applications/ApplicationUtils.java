@@ -339,18 +339,16 @@ public class ApplicationUtils {
     
     // Log entry
     
-    if (!newApplication) {
-      String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState()));
-      if (notificationPostfix != null) {
-        notification = String.format("%s<br/>%s", notification, notificationPostfix);
-      }
-      ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-      applicationLogDAO.create(
-        application,
-        ApplicationLogType.HTML,
-        notification,
-        staffMember);
+    String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState()));
+    if (notificationPostfix != null) {
+      notification = String.format("%s<br/>%s", notification, notificationPostfix);
     }
+    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+    applicationLogDAO.create(
+      application,
+      ApplicationLogType.HTML,
+      notification,
+      staffMember);
   }
 
   public static String extractSSN(Application application) {
