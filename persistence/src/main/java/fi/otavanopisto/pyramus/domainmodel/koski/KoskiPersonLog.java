@@ -10,12 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
 @Entity
 public class KoskiPersonLog {
@@ -48,6 +50,22 @@ public class KoskiPersonLog {
     this.date = date;
   }
 
+  public Student getStudent() {
+    return student;
+  }
+
+  public void setStudent(Student student) {
+    this.student = student;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
   @Id
   @GeneratedValue (strategy = GenerationType.IDENTITY)
   private Long id; 
@@ -56,6 +74,10 @@ public class KoskiPersonLog {
   @JoinColumn (name = "person")
   private Person person;
   
+  @ManyToOne
+  @JoinColumn (name = "student")
+  private Student student;
+  
   @NotNull
   @Column (nullable=false)
   @Temporal (value=TemporalType.TIMESTAMP)
@@ -63,4 +85,9 @@ public class KoskiPersonLog {
   
   @Enumerated (EnumType.STRING)
   private KoskiPersonState state;
+  
+  @Lob
+  @Column
+  private String message;
+  
 }

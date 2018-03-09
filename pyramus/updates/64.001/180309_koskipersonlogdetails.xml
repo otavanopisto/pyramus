@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>alter table KoskiPersonLog add column student bigint;</sql>
+  <sql>alter table KoskiPersonLog add constraint FKkd2g0nn8pfy22m5kfvcjmmlyh foreign key (student) references Student (id);</sql>
+
+  <sql>alter table KoskiPersonLog add column message longtext;</sql>
+  
+</update>

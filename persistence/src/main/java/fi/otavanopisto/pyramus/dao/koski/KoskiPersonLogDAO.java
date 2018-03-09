@@ -15,20 +15,35 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonLog;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonLog_;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
 @Stateless
 public class KoskiPersonLogDAO extends PyramusEntityDAO<KoskiPersonLog> {
 
-  public KoskiPersonLog create(Person person, KoskiPersonState state, Date date) {
+  public KoskiPersonLog create(Person person, Student student, KoskiPersonState state, Date date, String message) {
     KoskiPersonLog koskiPersonLog = new KoskiPersonLog();
     
     koskiPersonLog.setPerson(person);
+    koskiPersonLog.setStudent(student);
     koskiPersonLog.setState(state);
     koskiPersonLog.setDate(date);
+    koskiPersonLog.setMessage(message);
 
     return persist(koskiPersonLog);
   }
 
+  public KoskiPersonLog create(Person person, KoskiPersonState state, Date date) {
+    return create(person, null, state, date, null);
+  }
+  
+  public KoskiPersonLog create(Person person, KoskiPersonState state, Date date, String message) {
+    return create(person, null, state, date, message);
+  }
+  
+  public KoskiPersonLog create(Person person, Student student, KoskiPersonState state, Date date) {
+    return create(person, student, state, date, null);
+  }
+  
   public List<KoskiPersonLog> listByPerson(Person person) {
     EntityManager entityManager = getEntityManager(); 
     
