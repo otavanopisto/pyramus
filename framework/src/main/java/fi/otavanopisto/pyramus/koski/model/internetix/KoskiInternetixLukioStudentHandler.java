@@ -111,7 +111,7 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     opiskeluoikeus.setLisatiedot(getLisatiedot(student));
 
     if (!handleLinkedStudyOID(student, opiskeluoikeus)) {
-      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.LINKED_MISSING_VALUES, new Date());
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.LINKED_MISSING_VALUES, new Date());
       return null;
     }
     
@@ -147,7 +147,7 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     }
     
     if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
-      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
       return null;
     }
     
@@ -216,7 +216,7 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
             oppiaineenSuoritus.getOppiaineenSuoritus().addOsasuoritus(kurssiSuoritus);
           } else {
             logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
-            koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNREPORTED_CREDIT, new Date());
+            koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNREPORTED_CREDIT, new Date(), credit.getCourseCode());
           }
         }
       }
@@ -320,7 +320,7 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
           return map(map, mapKey, creditOPS, tunniste);
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
-          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNKNOWN_LANGUAGE, new Date());
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
           return null;
         }
       }
@@ -453,7 +453,7 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     
     if (allowedSet.size() == 0) {
       logger.warning(String.format("Course %s has no feasible subtypes.", courseCredit.getCourseCode()));
-      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNRESOLVABLE_SUBTYPES, new Date());
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNRESOLVABLE_SUBTYPES, new Date(), courseCredit.getCourseCode());
       return allowedValues[0];
     } else if (allowedSet.size() == 1) {
       return allowedSet.iterator().next();
@@ -461,7 +461,7 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
       for (LukionKurssinTyyppi type : allowedValues) {
         if (allowedSet.contains(type)) {
           logger.warning(String.format("Course %s has several matching subtypes.", courseCredit.getCourseCode()));
-          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNRESOLVABLE_SUBTYPES, new Date());
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNRESOLVABLE_SUBTYPES, new Date(), courseCredit.getCourseCode());
           return type;
         }
       }
