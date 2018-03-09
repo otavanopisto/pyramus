@@ -433,7 +433,8 @@ public class ApplicationRESTService extends AbstractRESTService {
             personDAO.updateDefaultUser(student.getPerson(), student);
             String credentialToken = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
             application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
-            application = applicationDAO.updateApplicationState(application, ApplicationState.REGISTERED_AS_STUDENT, null);
+            application = applicationDAO.updateApplicationStateAsApplicant(application, ApplicationState.REGISTERED_AS_STUDENT);
+            application = applicationDAO.updateApplicantEditable(application, Boolean.FALSE);
             ApplicationUtils.sendNotifications(application, httpRequest, null, true, null);
             ApplicationUtils.mailCredentialsInfo(httpRequest, student, application);
             response.put("autoRegistered", "true");

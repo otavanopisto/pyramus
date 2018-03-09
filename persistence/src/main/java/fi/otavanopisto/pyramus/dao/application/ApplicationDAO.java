@@ -147,6 +147,13 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     return application;
   }
   
+  public Application updateApplicantEditable(Application application, Boolean applicantEditable) {
+    EntityManager entityManager = getEntityManager();
+    application.setApplicantEditable(applicantEditable);
+    entityManager.persist(application);
+    return application;
+  }
+
   public Application updateApplicantEditable(Application application, Boolean applicantEditable, User user) {
     EntityManager entityManager = getEntityManager();
     application.setApplicantEditable(applicantEditable);
