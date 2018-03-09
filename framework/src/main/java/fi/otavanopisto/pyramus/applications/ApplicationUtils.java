@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -400,6 +401,7 @@ public class ApplicationUtils {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
     ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
@@ -515,6 +517,16 @@ public class ApplicationUtils {
           contactType,
           Boolean.FALSE,
           getFormValue(formData, "field-underage-phone"));
+    }
+    
+    // School (Internetix students)
+    
+    String schoolId = getFormValue(formData, "field-internetix-school");
+    if (NumberUtils.isNumber(schoolId)) {
+      School school = schoolDAO.findById(Long.parseLong(schoolId));
+      if (school != null) {
+        studentDAO.updateSchool(student, school);
+      }
     }
     
     // Attachments
