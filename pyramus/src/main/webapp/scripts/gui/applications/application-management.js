@@ -171,7 +171,7 @@
       logElement.attr('data-applicationlog-id', entry.id);
       logElement.attr('data-owner', entry.owner);
       logElement.find('.log-entry-text').html(entry.type == 'HTML' ? entry.text : entry.text.replace(/\n/g,"<br/>"));
-      logElement.find('.log-entry-author').text(entry.user);
+      logElement.find('.log-entry-author').text(entry.user||'Automaattinen tapahtuma');
       logElement.find('.log-entry-date').text(moment(entry.date).format('D.M.YYYY h:mm'));
       if (entry.owner === true) {
         // Edit log entry

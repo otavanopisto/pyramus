@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.util;
+package fi.otavanopisto.pyramus.mailer;
 
 import org.apache.commons.codec.binary.Hex;
 

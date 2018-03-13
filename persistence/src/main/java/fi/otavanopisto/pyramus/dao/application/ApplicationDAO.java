@@ -3,8 +3,6 @@ package fi.otavanopisto.pyramus.dao.application;
 import java.util.Date;
 
 import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -28,18 +26,10 @@ import fi.otavanopisto.pyramus.domainmodel.application.Application_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.events.ApplicationCreatedEvent;
-import fi.otavanopisto.pyramus.events.ApplicationModifiedByApplicantEvent;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
 @Stateless
 public class ApplicationDAO extends PyramusEntityDAO<Application> {
-
-  @Inject
-  private Event<ApplicationCreatedEvent> applicationCreatedEvent;
-
-  @Inject
-  private Event<ApplicationModifiedByApplicantEvent> applicationModifiedByApplicantEvent;
 
   public Application create(
       String applicationId,
@@ -70,8 +60,6 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     application.setArchived(Boolean.FALSE);
    
     entityManager.persist(application);
-    
-    applicationCreatedEvent.fire(new ApplicationCreatedEvent(application.getId()));
 
     return application;
   }
@@ -159,6 +147,13 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     return application;
   }
   
+  public Application updateApplicantEditable(Application application, Boolean applicantEditable) {
+    EntityManager entityManager = getEntityManager();
+    application.setApplicantEditable(applicantEditable);
+    entityManager.persist(application);
+    return application;
+  }
+
   public Application updateApplicantEditable(Application application, Boolean applicantEditable, User user) {
     EntityManager entityManager = getEntityManager();
     application.setApplicantEditable(applicantEditable);
@@ -197,10 +192,6 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
       application.setLastModified(new Date());
     }
     entityManager.persist(application);
-    
-    if (updatingUser == null) {
-      applicationModifiedByApplicantEvent.fire(new ApplicationModifiedByApplicantEvent(application.getId()));
-    }
 
     return application;
   }

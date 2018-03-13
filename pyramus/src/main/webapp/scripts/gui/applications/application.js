@@ -260,10 +260,15 @@
           contentType: "application/json; charset=utf-8",
           success: function(response) {
             if ($('#application-form').attr('data-done-page') == 'true') {
-              $('#edit-info-last-name').text($('#field-last-name').val());
-              $('#edit-info-reference-code').text(response.referenceCode);
-              $('#edit-info-email').text($('#field-email').val());
-              navigateTo('.section-done');
+              if (response.autoRegistered == 'true') {
+                navigateTo('.section-done.registered');
+              }
+              else {
+                $('#edit-info-last-name').text($('#field-last-name').val());
+                $('#edit-info-reference-code').text(response.referenceCode);
+                $('#edit-info-email').text($('#field-email').val());
+                navigateTo('.section-done.submitted');
+              }
             }
             else if (response.redirectURL) {
               window.location.href = response.redirectURL;

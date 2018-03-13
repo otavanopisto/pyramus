@@ -22,7 +22,7 @@ import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
-import fi.otavanopisto.pyramus.util.Mailer;
+import fi.otavanopisto.pyramus.mailer.Mailer;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
