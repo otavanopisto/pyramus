@@ -6,8 +6,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -22,6 +25,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
@@ -46,6 +50,7 @@ import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.Oppija;
 import fi.otavanopisto.pyramus.koski.model.apa.KoskiAPAStudentHandler;
 import fi.otavanopisto.pyramus.koski.model.internetix.KoskiInternetixStudentHandler;
+import fi.otavanopisto.pyramus.koski.model.result.KoskiErrorMessageBody;
 import fi.otavanopisto.pyramus.koski.model.result.OpiskeluoikeusReturnVal;
 import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
 
@@ -248,7 +253,7 @@ public class KoskiClient {
       updatePersonToKoski(oppija, person, personOid);
     } catch (Exception ex) {
       logger.log(Level.SEVERE, String.format("Unknown error while processing person %d", person != null ? person.getId() : null), ex);
-      koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date());
+      koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date(), ex.getMessage());
     }
   }
   
@@ -319,8 +324,10 @@ public class KoskiClient {
         return true;
       } else {
         String ret = response.readEntity(String.class);
+        String errorMessage = errorResponseMessage(ret);
+        
         // Log failed event
-        koskiPersonLogDAO.create(person, KoskiPersonState.SERVER_FAILURE, new Date());
+        koskiPersonLogDAO.create(person, KoskiPersonState.SERVER_FAILURE, new Date(), errorMessage);
         logger.log(Level.SEVERE, String.format("Koski server returned %d when trying to create person %d. Content %s", response.getStatus(), person.getId(), ret));
         return false;
       }
@@ -340,13 +347,27 @@ public class KoskiClient {
         }
         
         // Log failed event
-        koskiPersonLogDAO.create(person, reason, new Date());
+        koskiPersonLogDAO.create(person, reason, new Date(), ex.getMessage());
       } catch (Exception e) {
       }
       
       logger.log(Level.SEVERE, String.format("Unknown failure while updating person %d", person.getId()), ex);
       return false;
     }
+  }
+
+  private String errorResponseMessage(String errorJSON) {
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      TypeReference<List<KoskiErrorMessageBody>> typeRef = new TypeReference<List<KoskiErrorMessageBody>>() {};
+      List<KoskiErrorMessageBody> messageBodies = mapper.readValue(errorJSON, typeRef);
+      Set<String> messages = messageBodies.stream().map(messageBody -> messageBody.getMessage()).filter(Objects::nonNull).collect(Collectors.toSet());
+      return String.join(", ", messages);
+    } catch (Exception e) {
+      logger.log(Level.SEVERE, String.format("Couldn't parse error message %s", errorJSON), e);
+    }
+    
+    return null;
   }
 
   public KoskiStudentHandler getHandlerType(KoskiStudyProgrammeHandler handler) {

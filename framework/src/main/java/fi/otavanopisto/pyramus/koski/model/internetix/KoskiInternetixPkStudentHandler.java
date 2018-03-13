@@ -104,7 +104,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     opiskeluoikeus.setLisatiedot(getLisatiedot(student));
     
     if (!handleLinkedStudyOID(student, opiskeluoikeus)) {
-      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.LINKED_MISSING_VALUES, new Date());
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.LINKED_MISSING_VALUES, new Date());
       return null;
     }
     
@@ -140,7 +140,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     }
     
     if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
-      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
       return null;
     }
     
@@ -215,7 +215,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
             oppiaineenSuoritus.getOppiaineenSuoritus().addOsasuoritus(kurssiSuoritus);
           } else {
             logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
-            koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNREPORTED_CREDIT, new Date());
+            koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNREPORTED_CREDIT, new Date(), credit.getCourseCode());
           }
         }
       }
@@ -302,7 +302,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
           return map(map, mapKey, creditOPS, tunniste);
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
-          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNKNOWN_LANGUAGE, new Date());
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
           return null;
         }
       }

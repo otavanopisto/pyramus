@@ -88,7 +88,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
     OpiskelijanOPS ops = resolveOPS(student);
     if (ops == null) {
-      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_CURRICULUM, new Date());
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_CURRICULUM, new Date());
       return null;
     }
     
@@ -185,7 +185,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
           oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
         } else {
           logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
-          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNREPORTED_CREDIT, new Date());
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNREPORTED_CREDIT, new Date(), credit.getCourseCode());
         }
       }
     }
@@ -297,7 +297,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
           return os;
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
-          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNKNOWN_LANGUAGE, new Date());
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
           return null;
         }
       }
@@ -426,7 +426,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     
     if (allowedSet.size() == 0) {
       logger.warning(String.format("Course %s has no feasible subtypes.", courseCredit.getCourseCode()));
-      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNRESOLVABLE_SUBTYPES, new Date());
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNRESOLVABLE_SUBTYPES, new Date(), courseCredit.getCourseCode());
       return allowedValues[0];
     } else if (allowedSet.size() == 1) {
       return allowedSet.iterator().next();
@@ -434,7 +434,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       for (LukionKurssinTyyppi type : allowedValues) {
         if (allowedSet.contains(type)) {
           logger.warning(String.format("Course %s has several matching subtypes.", courseCredit.getCourseCode()));
-          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNRESOLVABLE_SUBTYPES, new Date());
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNRESOLVABLE_SUBTYPES, new Date(), courseCredit.getCourseCode());
           return type;
         }
       }

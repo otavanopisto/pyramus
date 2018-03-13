@@ -13,7 +13,9 @@ function loadLogEntries(personId) {
           var m = moment(logEntries[i].date);
           var dateStr = getLocale().getDate(logEntries[i].date, false);
           var timeStr = m.format("H:mm");
-          var text = dateStr + " " + timeStr + " " + logEntries[i].text;
+          var studyProgrammeName = logEntries[i].studyProgrammeName ? " (" + logEntries[i].studyProgrammeName + ")" : "";
+          var message = logEntries[i].message ? " (" + logEntries[i].message + ")" : "";
+          var text = dateStr + " " + timeStr + " " + logEntries[i].text + message + studyProgrammeName;
           var detailclass = "koski-details-"
               + logEntries[i].stateType.toLowerCase();
           var e = new Element("div", {
