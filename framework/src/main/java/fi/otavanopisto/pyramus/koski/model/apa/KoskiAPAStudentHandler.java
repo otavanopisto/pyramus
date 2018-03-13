@@ -67,7 +67,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
   public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
     OpiskelijanOPS ops = resolveOPS(student);
     if (ops == null) {
-      koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.NO_CURRICULUM, new Date());
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_CURRICULUM, new Date());
       return null;
     }
     
@@ -167,7 +167,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
           oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
         } else {
           logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
-          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNREPORTED_CREDIT, new Date());
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNREPORTED_CREDIT, new Date(), credit.getCourseCode());
         }
       }
     }
@@ -230,7 +230,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
           return os;
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
-          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNKNOWN_LANGUAGE, new Date());
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
           return null;
         }
       }

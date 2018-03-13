@@ -334,7 +334,7 @@ public abstract class KoskiStudentHandler {
         stub.addCredit(new CreditStubCredit(ca, Type.CREDIT));
       } else {
         logger.log(Level.WARNING, String.format("Couldn't resolve OPS for CourseAssessment %d", ca.getId()));
-        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNRESOLVED_CREDIT_CURRICULUM, new Date());
+        koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNRESOLVED_CREDIT_CURRICULUM, new Date(), course.getName());
       }
     });
     
@@ -361,7 +361,7 @@ public abstract class KoskiStudentHandler {
           stub.addCredit(new CreditStubCredit(tc, Type.RECOGNIZED));
         } else {
           logger.log(Level.WARNING, String.format("Couldn't resolve OPS for TransferCredit %d", tc.getId()));
-          koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.UNRESOLVED_CREDIT_CURRICULUM, new Date());
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNRESOLVED_CREDIT_CURRICULUM, new Date(), tc.getCourseName());
         }
       });
     }

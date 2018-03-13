@@ -53,6 +53,9 @@ public class ListKoskiPersonLogEntriesJSONRequestController extends JSONRequestC
       
       List<Map<String, Object>> results = new ArrayList<>();
       for (KoskiPersonLog logEntry : logEntries) {
+        String studyProgrammeName = logEntry.getStudent() != null && logEntry.getStudent().getStudyProgramme() != null ?
+            logEntry.getStudent().getStudyProgramme().getName() : null;
+        
         Map<String, Object> logEntryInfo = new HashMap<>();
         logEntryInfo.put("id", logEntry.getId());
         logEntryInfo.put("date", logEntry.getDate().getTime());
@@ -60,6 +63,9 @@ public class ListKoskiPersonLogEntriesJSONRequestController extends JSONRequestC
         logEntryInfo.put("stateType", getStateType(logEntry));
         logEntryInfo.put("text", getStateDisplayText(logEntry, locale));
         logEntryInfo.put("personId", logEntry.getPerson().getId());
+        logEntryInfo.put("studentId", logEntry.getStudent() != null ? logEntry.getStudent().getId() : null);
+        logEntryInfo.put("studyProgrammeName", studyProgrammeName);
+        logEntryInfo.put("message", logEntry.getMessage());
         results.add(logEntryInfo);
       }
       
