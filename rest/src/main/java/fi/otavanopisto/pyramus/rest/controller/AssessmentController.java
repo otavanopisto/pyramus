@@ -81,8 +81,8 @@ public class AssessmentController {
     return courseAssessmentRequestDAO.create(courseStudent, created, requestText);
   }
   
-  public CourseAssessmentRequest updateCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText, Boolean handled) {
-    return courseAssessmentRequestDAO.update(courseAssessmentRequest, created, requestText, handled);
+  public CourseAssessmentRequest updateCourseAssessmentRequest(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText, Boolean archived, Boolean handled) {
+    return courseAssessmentRequestDAO.update(courseAssessmentRequest, created, requestText, archived, handled);
   }
   
   public CourseAssessmentRequest findCourseAssessmentRequestById(Long id){

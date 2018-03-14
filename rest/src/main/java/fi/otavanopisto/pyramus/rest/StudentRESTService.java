@@ -2194,6 +2194,7 @@ public class StudentRESTService extends AbstractRESTService {
       courseAssessmentRequest,
       Date.from(entity.getCreated().toInstant()),
       entity.getRequestText(),
+      entity.getArchived(),
       entity.getHandled());
         
     return Response.ok(objectFactory.createModel(updatedCourseAssessmentRequest)).build();
