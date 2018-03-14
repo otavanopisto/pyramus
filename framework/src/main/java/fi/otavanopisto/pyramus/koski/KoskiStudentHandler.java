@@ -310,8 +310,10 @@ public abstract class KoskiStudentHandler {
     // Map of OPS -> CourseCode -> CreditStub
     Map<OpiskelijanOPS, Map<String, CreditStub>> map = new HashMap<>();
     
+    Set<Long> filteredGrades = settings.getSettings().getKoski().getFilteredGrades();
+
     List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudent(student);
-    courseAssessments.stream().filter(filter).forEach(ca -> {
+    courseAssessments.stream().filter(filter).filter(credit -> !isFilteredGrade(credit, filteredGrades)).forEach(ca -> {
       Course course = ca.getCourseStudent() != null ? ca.getCourseStudent().getCourse() : null;
       Subject subject = course != null ? course.getSubject() : null;
       OpiskelijanOPS creditOPS = resolveSingleOPSFromCredit(ca, orderedOPSs, defaultOPS);
@@ -340,7 +342,7 @@ public abstract class KoskiStudentHandler {
     
     if (listTransferCredits) {
       List<TransferCredit> transferCredits = transferCreditDAO.listByStudent(student);
-      transferCredits.stream().filter(filter).forEach(tc -> {
+      transferCredits.stream().filter(filter).filter(credit -> !isFilteredGrade(credit, filteredGrades)).forEach(tc -> {
         OpiskelijanOPS creditOPS = resolveSingleOPSFromCredit(tc, orderedOPSs, defaultOPS);
         
         if (creditOPS != null) {
@@ -369,7 +371,7 @@ public abstract class KoskiStudentHandler {
     if (listCreditLinks) {
       List<CreditLink> creditLinks = creditLinkDAO.listByStudent(student);
       
-      creditLinks.stream().map(creditLink -> creditLink.getCredit()).filter(filter).forEach(credit -> {
+      creditLinks.stream().map(creditLink -> creditLink.getCredit()).filter(filter).filter(credit -> !isFilteredGrade(credit, filteredGrades)).forEach(credit -> {
         Subject subject = null;
         Integer courseNumber = null;
         String courseName = null;
@@ -432,6 +434,16 @@ public abstract class KoskiStudentHandler {
     return result;
   }
 
+  private boolean isFilteredGrade(Credit credit, Set<Long> filteredGrades) {
+    if (credit != null && credit.getGrade() != null) {
+      Grade grade = credit.getGrade();
+      
+      return filteredGrades.contains(grade.getId());
+    }
+    
+    return false;
+  }
+  
   protected String courseCode(Subject subject, Integer courseNumber, Long creditId) {
     if (subject != null && StringUtils.isNotBlank(subject.getCode()) && courseNumber != null) {
       return subject.getCode() + courseNumber;

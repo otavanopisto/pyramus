@@ -1,7 +1,9 @@
 package fi.otavanopisto.pyramus.koski.settings;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -32,6 +34,15 @@ public class KoskiIntegrationSettings {
     this.academyIdentifier = academyIdentifier;
   }
 
+  public Set<Long> getFilteredGrades() {
+    return filteredGrades;
+  }
+
+  public void setFilteredGrades(Set<Long> filteredGrades) {
+    this.filteredGrades = filteredGrades;
+  }
+
   private String academyIdentifier;
   private Map<KoskiStudyProgrammeHandler, KoskiStudyProgrammeHandlerParams> handlerParams = new HashMap<>();
+  private Set<Long> filteredGrades = new HashSet<>();
 }
