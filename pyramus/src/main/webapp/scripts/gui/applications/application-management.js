@@ -432,6 +432,10 @@
     $('.application-handling-option').on('click', function(event) {
       var id = $('body').attr('data-application-entity-id');
       var state = $(this).attr('data-state');
+      if (state == 'ARCHIVE') {
+        archiveApplication();
+        return;
+      }
       processingOn();
       $.ajax({
         url: '/applications/updateapplicationstate.json',
@@ -472,6 +476,45 @@
         $(this).toggle(optionState != currentState && (applicableStates.length == 0 || $.inArray(currentState, applicableStates) >= 0));
       });
       $('.signatures-container').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
+    }
+    
+    function archiveApplication() {
+      var dialog = $('#delete-application-dialog');
+      $(dialog).dialog({
+        resizable: false,
+        height: 'auto',
+        width: 'auto',
+        modal: true,
+        position: {
+          my: 'center',
+          at: 'center',
+          of: window
+        },
+        buttons: [{
+          text: 'Poista',
+          class: 'remove-button',
+          click: function() {
+            $.ajax({
+              url: '/applications/archiveapplication.json',
+              type: "POST",
+              data: {
+                id: $('body').attr('data-application-entity-id') 
+              },
+              dataType: 'json',
+              success: function(response) {
+                window.location.href = '/applications/browse.page';
+              }
+            });
+            $(dialog).dialog("close");
+          }
+        }, {
+          text: "Peruuta",
+          class: 'cancel-button',
+          click: function() {
+            $(dialog).dialog("close");
+          }
+        }]
+      });
     }
     
     function updateDocumentUrls() {

@@ -65,6 +65,11 @@
     <div class="application-handling-option" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyv‰ksymisest‰</span></div>
     <div class="application-handling-option" data-state="TRANSFERRED_AS_STUDENT" data-show="APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirr‰ opiskelijaksi</span></div>
     <div class="application-handling-option" data-state="REJECTED" data-show="PENDING,PROCESSING"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
+    <div class="application-handling-option" data-state="ARCHIVE" data-show="PENDING,PROCESSING"><span class="application-handling-text archive-application">Poista hakemus</span></div>
   </div>
+
+  <div id="delete-application-dialog" title="Hakemuksen poistaminen" style="display:none;">
+    <p>Haluatko varmasti poistaa t‰m‰n hakemuksen?</p>
+  </div>  
   
 </section>
