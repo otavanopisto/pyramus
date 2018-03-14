@@ -10,7 +10,7 @@ import javax.jws.WebService;
 import javax.persistence.EnumType;
 import javax.xml.ws.BindingType;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
@@ -372,16 +372,18 @@ public class StudentsService extends PyramusService {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     Student student = studentDAO.findById(studentId);
     
-    address = address != null ? address.trim() : null;
+    address = StringUtils.trim(address);
     
-    // TODO contactType
-    ContactType contactType = contactTypeDAO.findById(new Long(1));
-
-    if (!UserUtils.isAllowedEmail(address, contactType, student.getPerson().getId()))
-      throw new RuntimeException("Email address is in use");
-
-    Email email = emailDAO.create(student.getContactInfo(), contactType, defaultAddress, address);
-    validateEntity(email);
+    if (StringUtils.isNotBlank(address)) {
+      // TODO contactType
+      ContactType contactType = contactTypeDAO.findById(new Long(1));
+  
+      if (!UserUtils.isAllowedEmail(address, contactType, student.getPerson().getId()))
+        throw new RuntimeException("Email address is in use");
+  
+      Email email = emailDAO.create(student.getContactInfo(), contactType, defaultAddress, address);
+      validateEntity(email);
+    }
   }
 
   public void archiveStudent(@WebParam (name="studentId") Long studentId) {

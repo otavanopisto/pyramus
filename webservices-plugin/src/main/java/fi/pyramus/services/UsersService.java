@@ -7,6 +7,8 @@ import javax.jws.WebService;
 import javax.persistence.EnumType;
 import javax.xml.ws.BindingType;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
@@ -94,16 +96,18 @@ public class UsersService extends PyramusService {
     StaffMember user = userDAO.findById(userId);
     
     // Trim the email address
-    address = address != null ? address.trim() : null;
+    address = StringUtils.trim(address);
 
-    // TODO contact type, default address
-    ContactType contactType = contactTypeDAO.findById(new Long(1));
-
-    if (!UserUtils.isAllowedEmail(address, contactType, user.getPerson().getId()))
-      throw new RuntimeException("Email address is in use");
-
-    Email email = emailDAO.create(user.getContactInfo(), contactType, Boolean.TRUE, address);
-    validateEntity(email);
+    if (StringUtils.isNotBlank(address)) {
+      // TODO contact type, default address
+      ContactType contactType = contactTypeDAO.findById(new Long(1));
+  
+      if (!UserUtils.isAllowedEmail(address, contactType, user.getPerson().getId()))
+        throw new RuntimeException("Email address is in use");
+  
+      Email email = emailDAO.create(user.getContactInfo(), contactType, Boolean.TRUE, address);
+      validateEntity(email);
+    }
   }
 
   public void removeUserEmail(@WebParam(name = "userId") Long userId, @WebParam(name = "address") String address) {

@@ -6,6 +6,8 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.BillingDetailsDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
@@ -350,8 +352,12 @@ public class CommonController {
   // TODO: allowed email check is better handled when email is created through staffmember or student, maybe it should be always context-aware creation
   public Email createEmail(ContactInfo contactInfo, ContactType contactType, Boolean defaultAddress, String address) {
     // Trim the email address
-    address = address != null ? address.trim() : null;
+    address = StringUtils.trim(address);
 
+    if (StringUtils.isBlank(address)) {
+      throw new IllegalArgumentException("Address cannot be blank");
+    }
+    
     if (!UserUtils.isAllowedEmail(address, contactType))
       throw new RuntimeException("Email address is in use.");
 
