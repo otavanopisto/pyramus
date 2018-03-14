@@ -174,7 +174,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
       int rowCount = requestContext.getInteger("emailTable." + student.getId() + ".rowCount");
       for (int i = 0; i < rowCount; i++) {
         String colPrefix = "emailTable." + student.getId() + "." + i;
-        String email = requestContext.getString(colPrefix + ".email");
+        String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
         if (StringUtils.isNotBlank(email)) {
           ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
           
