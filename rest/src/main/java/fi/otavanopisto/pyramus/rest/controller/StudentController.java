@@ -9,6 +9,8 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactURLDAO;
@@ -241,8 +243,12 @@ public class StudentController {
 
   public Email addStudentEmail(Student student, ContactType contactType, String address, Boolean defaultAddress) throws UserEmailInUseException {
     // Trim the email address
-    address = address != null ? address.trim() : null;
+    address = StringUtils.trim(address);
 
+    if (StringUtils.isBlank(address)) {
+      throw new IllegalArgumentException("Email cannot be blank.");
+    }
+    
     if (!UserUtils.isAllowedEmail(address, contactType, student.getPerson().getId()))
       throw new UserEmailInUseException();
     

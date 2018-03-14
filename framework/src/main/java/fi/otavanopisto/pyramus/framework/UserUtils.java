@@ -3,6 +3,8 @@ package fi.otavanopisto.pyramus.framework;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -37,14 +39,19 @@ public class UserUtils {
    * @param contactType contacttype for emailAddress, if contacttype is non-unique, this methods returns always true
    * @param personId id of person receiving this address
    * @return true if email may be used by the provided person
+   * @throws IllegalArgumentException if the given email is blank 
    */
   public static boolean isAllowedEmail(String emailAddress, ContactType contactType, Long personId) {
+    if (StringUtils.isBlank(emailAddress)) {
+      throw new IllegalArgumentException("Email address cannot be blank.");
+    }
+    
     // if Email is being put into non-unique field, it is always allowed    
     if (contactType.getNonUnique())
       return true;
     
-    emailAddress = emailAddress != null ? emailAddress.trim() : null;
-    
+    emailAddress = StringUtils.trim(emailAddress);
+
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
 

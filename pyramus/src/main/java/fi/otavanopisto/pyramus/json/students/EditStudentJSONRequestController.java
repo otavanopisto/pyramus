@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.StaleObjectStateException;
 
@@ -175,9 +175,12 @@ public class EditStudentJSONRequestController extends JSONRequestController {
       for (int i = 0; i < rowCount; i++) {
         String colPrefix = "emailTable." + student.getId() + "." + i;
         String email = requestContext.getString(colPrefix + ".email");
-        ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
-        if (StringUtils.isNotBlank(email) && !UserUtils.isAllowedEmail(email, contactType, person.getId()))
-          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+        if (StringUtils.isNotBlank(email)) {
+          ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
+          
+          if (!UserUtils.isAllowedEmail(email, contactType, person.getId()))
+            throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
+        }
       }
     }
     

@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
@@ -79,9 +79,10 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     int emailCount2 = requestContext.getInteger("emailTable.rowCount");
     for (int i = 0; i < emailCount2; i++) {
       String colPrefix = "emailTable." + i;
-      String email = requestContext.getString(colPrefix + ".email");
-      ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
-      if (email != null) {
+      String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
+      if (StringUtils.isNotBlank(email)) {
+        ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
+        
         if (!UserUtils.isAllowedEmail(email, contactType, personId)) {
           throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.emailInUse"));
         }
@@ -222,12 +223,9 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
       String colPrefix = "emailTable." + i;
       Boolean defaultAddress = requestContext.getBoolean(colPrefix + ".defaultAddress");
       ContactType contactType = contactTypeDAO.findById(requestContext.getLong(colPrefix + ".contactTypeId"));
-      String email = requestContext.getString(colPrefix + ".email");
+      String email = StringUtils.trim(requestContext.getString(colPrefix + ".email"));
       
-      // Trim the email address
-      email = email != null ? email.trim() : null;
-
-      if (email != null) {
+      if (StringUtils.isNotBlank(email)) {
         emailDAO.create(student.getContactInfo(), contactType, defaultAddress, email);
       }
     }
