@@ -54,16 +54,17 @@
   </div>
   
   <div class="application-handling-container" style="display:none;">
-    <div class="application-handling-option" data-state="PENDING" data-show="PROCESSING"><span class="application-handling-text cancel-handling">Peruuta k‰sittely</span></div>
-    <div class="application-handling-option" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED"><span class="application-handling-text">Palauta k‰sittelyyn</span></div>
-    <div class="application-handling-option" data-state="PROCESSING" data-show="PENDING"><span class="application-handling-text">Ota k‰sittelyyn</span></div>
-    <div class="application-handling-option" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirr‰ hyv‰ksytt‰v‰ksi</span></div>
+    <div class="application-handling-option" data-line="!aineopiskelu" data-state="PENDING" data-show="PROCESSING"><span class="application-handling-text cancel-handling">Peruuta k‰sittely</span></div>
+    <div class="application-handling-option" data-line="!aineopiskelu" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED"><span class="application-handling-text">Palauta k‰sittelyyn</span></div>
+    <div class="application-handling-option" data-line="!aineopiskelu" data-state="PROCESSING" data-show="PENDING"><span class="application-handling-text">Ota k‰sittelyyn</span></div>
+    <div class="application-handling-option" data-line="!aineopiskelu" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirr‰ hyv‰ksytt‰v‰ksi</span></div>
     <div class="signatures-container" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}" style="display:none;">
       <span class="application-handling-text start-processing">Allekirjoita hyv‰ksynt‰</span>
       <div class="signatures-auth-sources"></div>
     </div>
-    <div class="application-handling-option" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyv‰ksymisest‰</span></div>
-    <div class="application-handling-option" data-state="TRANSFERRED_AS_STUDENT" data-show="APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirr‰ opiskelijaksi</span></div>
+    <div class="application-handling-option" data-line="!aineopiskelu" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyv‰ksymisest‰</span></div>
+    <div class="application-handling-option" data-line="!aineopiskelu" data-state="TRANSFERRED_AS_STUDENT" data-show="APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirr‰ opiskelijaksi</span></div>
+    <div class="application-handling-option" data-line="aineopiskelu" data-state="TRANSFERRED_AS_STUDENT" data-show="PENDING"><span class="application-handling-text">Siirr‰ opiskelijaksi</span></div>
     <div class="application-handling-option" data-state="REJECTED" data-show="PENDING,PROCESSING"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
     <div class="application-handling-option" data-state="ARCHIVE" data-show="PENDING,PROCESSING"><span class="application-handling-text archive-application">Poista hakemus</span></div>
   </div>
