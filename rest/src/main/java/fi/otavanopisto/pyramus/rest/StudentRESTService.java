@@ -1397,6 +1397,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
+    if (!userController.checkUserVariableKeysExist(entity.getVariables().keySet())) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
     StudentActivityType activityType = entity.getActivityTypeId() != null ? studentActivityTypeController.findStudentActivityTypeById(entity
         .getActivityTypeId()) : null;
     StudentExaminationType examinationType = entity.getExaminationTypeId() != null ? studentExaminationTypeController.findStudentExaminationTypeById(entity
@@ -1517,6 +1521,10 @@ public class StudentRESTService extends AbstractRESTService {
 
     StudyProgramme studyProgramme = studyProgrammeController.findStudyProgrammeById(studyProgrammeId);
     if (studyProgramme == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    if (!userController.checkUserVariableKeysExist(entity.getVariables().keySet())) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
