@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -123,7 +124,23 @@ public class UserController {
     return user;
   }
   
+  public boolean checkUserVariableKeysExist(Collection<String> variableKeys) {
+    if (variableKeys != null) {
+      for (String variableKeyName : variableKeys) {
+        if (userVariableKeyDAO.findByVariableKey(variableKeyName) == null) {
+          return false;
+        }
+      }
+    }
+    
+    return true;
+  }
+  
   public UserVariable createUserVariable(User user, UserVariableKey key, String value) {
+    if (key == null) {
+      throw new IllegalArgumentException("UserVariableKey cannot be null");
+    }
+    
     return userVariableDAO.create(user, key, value);
   }
 
