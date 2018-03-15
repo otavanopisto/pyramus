@@ -466,14 +466,27 @@
     $('.application-handling-container').show();
     
     function refreshActions() {
+      var applicationLine = $('#field-line').val();
       var currentState = $('#info-application-state-value').attr('data-state');
       $('div.application-handling-option').each(function() {
-        var optionState = $(this).attr('data-state');
-        var applicableStates = [];
-        if ($(this).attr('data-show')) {
-          applicableStates = $(this).attr('data-show').split(',');
+        // see if option is valid for the application line 
+        var line = $(this).attr('data-line');
+        var available = !line || applicationLine == line || (line.startsWith('!') && applicationLine != line.substring(1));
+        // see if option is valid for the application state
+        if (available) {
+          var optionState = $(this).attr('data-state');
+          if (optionState == currentState) {
+            available = false;
+          }
+          else {
+            var applicableStates = [];
+            if ($(this).attr('data-show')) {
+              applicableStates = $(this).attr('data-show').split(',');
+              available = $.inArray(currentState, applicableStates) >= 0;
+            }
+          }
         }
-        $(this).toggle(optionState != currentState && (applicableStates.length == 0 || $.inArray(currentState, applicableStates) >= 0));
+        $(this).toggle(available);
       });
       $('.signatures-container').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
     }
