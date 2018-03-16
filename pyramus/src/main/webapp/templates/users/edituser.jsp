@@ -105,7 +105,7 @@
         
         setupTags();
         setupRelatedCommandsBasic();
-		        
+            
         var addressTable = new IxTable($('addressTable'), {
           id : "addressTable",
           columns : [{
@@ -502,12 +502,12 @@
 
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-		            <jsp:param name="titleLocale" value="users.editUser.tagsTitle"/>
-		            <jsp:param name="helpLocale" value="users.editUser.tagsHelp"/>
-		          </jsp:include>
-		          <input type="text" id="tags" name="tags" size="40" value="${fn:escapeXml(tags)}"/>
-		          <div id="tags_choices" class="autocomplete_choices"></div>
-		        </div> 
+                <jsp:param name="titleLocale" value="users.editUser.tagsTitle"/>
+                <jsp:param name="helpLocale" value="users.editUser.tagsHelp"/>
+              </jsp:include>
+              <input type="text" id="tags" name="tags" size="40" value="${fn:escapeXml(tags)}"/>
+              <div id="tags_choices" class="autocomplete_choices"></div>
+            </div> 
   
             <div class="genericFormSection">                
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
@@ -537,9 +537,9 @@
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="users.editUser.roleTitle"/>
                 <jsp:param name="helpLocale" value="users.editUser.roleHelp"/>
-              </jsp:include>                                  
-	            <c:choose>
-	              <c:when test="${loggedUserRole == 'ADMINISTRATOR'}">
+              </jsp:include>
+              <c:choose>
+                <c:when test="${loggedUserRole == 'ADMINISTRATOR'}">
                   <select name="role">
                     <option value="10" <c:if test="${user.role == 'CLOSED'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleClosedTitle"/></option>
                     <option value="1" <c:if test="${user.role == 'GUEST'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleGuestTitle"/></option>
@@ -550,11 +550,11 @@
                     <option value="3" <c:if test="${user.role == 'MANAGER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleManagerTitle"/></option>
                     <option value="4" <c:if test="${user.role == 'ADMINISTRATOR'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleAdministratorTitle"/></option>
                   </select>
-	              </c:when>
-	              <c:otherwise>
-	                <input type="hidden" name="role" value="${user.role.value}"/>
-	                <c:choose>
-	                  <c:when test="${user.role == 'CLOSED'}"><div><fmt:message key="users.editUser.roleClosedTitle"/></div></c:when>
+                </c:when>
+                <c:otherwise>
+                  <input type="hidden" name="role" value="${user.role.value}"/>
+                  <c:choose>
+                    <c:when test="${user.role == 'CLOSED'}"><div><fmt:message key="users.editUser.roleClosedTitle"/></div></c:when>
                     <c:when test="${user.role == 'GUEST'}"><div><fmt:message key="users.editUser.roleGuestTitle"/></div></c:when>
                     <c:when test="${user.role == 'USER'}"><div><fmt:message key="users.editUser.roleUserTitle"/></div></c:when>
                     <c:when test="${user.role == 'TEACHER'}"><div><fmt:message key="users.editUser.roleTeacherTitle"/></div></c:when>
@@ -562,9 +562,9 @@
                     <c:when test="${user.role == 'STUDY_PROGRAMME_LEADER'}"><div><fmt:message key="users.editUser.roleStudyProgrammeLeaderTitle"/></div></c:when>
                     <c:when test="${user.role == 'MANAGER'}"><div><fmt:message key="users.editUser.roleManagerTitle"/></div></c:when>
                     <c:when test="${user.role == 'ADMINISTRATOR'}"><div><fmt:message key="users.editUser.roleAdministratorTitle"/></div></c:when>
-	                </c:choose>
-	              </c:otherwise>
-	            </c:choose>
+                  </c:choose>
+                </c:otherwise>
+              </c:choose>
             </div>
                 
             <c:choose>
