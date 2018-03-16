@@ -533,13 +533,13 @@
               <div id="phoneTable"></div>
             </div>
 
-            <c:choose>
-              <c:when test="${loggedUserRole == 'ADMINISTRATOR'}">
-                <div class="genericFormSection">  
-                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                    <jsp:param name="titleLocale" value="users.editUser.roleTitle"/>
-                    <jsp:param name="helpLocale" value="users.editUser.roleHelp"/>
-                  </jsp:include>                                  
+            <div class="genericFormSection">  
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="users.editUser.roleTitle"/>
+                <jsp:param name="helpLocale" value="users.editUser.roleHelp"/>
+              </jsp:include>                                  
+	            <c:choose>
+	              <c:when test="${loggedUserRole == 'ADMINISTRATOR'}">
                   <select name="role">
                     <option value="10" <c:if test="${user.role == 'CLOSED'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleClosedTitle"/></option>
                     <option value="1" <c:if test="${user.role == 'GUEST'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleGuestTitle"/></option>
@@ -550,7 +550,22 @@
                     <option value="3" <c:if test="${user.role == 'MANAGER'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleManagerTitle"/></option>
                     <option value="4" <c:if test="${user.role == 'ADMINISTRATOR'}">selected="selected"</c:if>><fmt:message key="users.editUser.roleAdministratorTitle"/></option>
                   </select>
-                </div>
+	              </c:when>
+	              <c:otherwise>
+	                <input type="hidden" name="role" value="${user.role.value}"/>
+	                <c:choose>
+	                  <c:when test="${user.role == 'CLOSED'}"><div><fmt:message key="users.editUser.roleClosedTitle"/></div></c:when>
+                    <c:when test="${user.role == 'GUEST'}"><div><fmt:message key="users.editUser.roleGuestTitle"/></div></c:when>
+                    <c:when test="${user.role == 'USER'}"><div><fmt:message key="users.editUser.roleUserTitle"/></div></c:when>
+                    <c:when test="${user.role == 'TEACHER'}"><div><fmt:message key="users.editUser.roleTeacherTitle"/></div></c:when>
+                    <c:when test="${user.role == 'STUDY_GUIDER'}"><div><fmt:message key="users.editUser.roleStudyGuiderTitle"/></div></c:when>
+                    <c:when test="${user.role == 'STUDY_PROGRAMME_LEADER'}"><div><fmt:message key="users.editUser.roleStudyProgrammeLeaderTitle"/></div></c:when>
+                    <c:when test="${user.role == 'MANAGER'}"><div><fmt:message key="users.editUser.roleManagerTitle"/></div></c:when>
+                    <c:when test="${user.role == 'ADMINISTRATOR'}"><div><fmt:message key="users.editUser.roleAdministratorTitle"/></div></c:when>
+	                </c:choose>
+	              </c:otherwise>
+	            </c:choose>
+            </div>
                 
             <c:choose>
               <c:when test="${(loggedUserRole == 'ADMINISTRATOR')}">
@@ -562,11 +577,6 @@
                   <div id="variablesTableContainer"></div>
                 </div>
               </c:when>
-            </c:choose>
-              </c:when>
-              <c:otherwise>
-                <input type="hidden" name="role" value="${user.role.value}"/>
-              </c:otherwise>
             </c:choose>
           </div>
 
