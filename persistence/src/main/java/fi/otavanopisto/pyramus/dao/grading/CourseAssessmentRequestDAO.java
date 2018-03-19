@@ -82,13 +82,14 @@ public class CourseAssessmentRequestDAO extends PyramusEntityDAO<CourseAssessmen
     return entityManager.createQuery(criteria).getResultList();
   }  
   
-  public CourseAssessmentRequest update(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText, Boolean handled) {
+  public CourseAssessmentRequest update(CourseAssessmentRequest courseAssessmentRequest, Date created, String requestText, Boolean archived, Boolean handled) {
     EntityManager entityManager = getEntityManager();
 
     courseAssessmentRequest.setCreated(created);
     courseAssessmentRequest.setRequestText(requestText);
+    courseAssessmentRequest.setArchived(archived);
     courseAssessmentRequest.setHandled(handled);
-    
+
     entityManager.persist(courseAssessmentRequest);
     
     return courseAssessmentRequest;
