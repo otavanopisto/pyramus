@@ -11,7 +11,7 @@
 
     <h3 class="application-form-section-header">Valitse hakukohteesi</h3>
 
-    <select id="field-line" name="field-line" data-parsley-required="true" data-dependencies="true">
+    <select id="field-line" name="field-line" data-parsley-required="true" data-dependencies="true" data-preselect="${preselectLine}">
       <option value="">-- Valitse --</option>
       <option value="aineopiskelu" data-underage-support="true" data-attachment-support="false">Aineopiskelu</option>
       <option value="nettilukio" data-underage-support="true" data-attachment-support="true">Nettilukio</option>
