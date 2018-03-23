@@ -72,28 +72,7 @@
     // Section checks
     
     $('#field-line').on('change', function() {
-      var line = $(this).val();
-      var option =  $(this).find('option:selected');
-      var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
-      $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
-      $('.section-internetix-school').attr('data-skip', option.val() != 'aineopiskelu');
-      // section toggle for existing applications
-      var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
-      if (existingApplication) {
-        $('.section-attachments').toggle(hasAttachmentSupport);
-        $('.section-internetix-school').toggle(line == 'aineopiskelu');
-      }
-      // age check when line changes 
-      $('#field-birthday').trigger('change');
-      // semi-required ssn postfix
-      if (line == 'mk') {
-        $('label[for="field-ssn-end"]').removeClass('required');
-      }
-      else {
-        $('label[for="field-ssn-end"]').addClass('required');
-      }
-      // update page count
-      updateProgress();
+      setLine($(this).val());
     });
     $('#field-birthday').on('change', function() {
       var birthday = $(this).val();
@@ -312,7 +291,13 @@
         });
       });
     });
-    navigateTo($(applicationSections).get(0));
+    // #764: Preselected line
+    if ($('#field-line').attr('data-preselect')) {
+      $('#field-line').val($('#field-line').attr('data-preselect'));
+      $('.section-line').attr('data-skip', true);
+      setLine($('#field-line').attr('data-preselect'));
+    }
+    navigateTo($(applicationSections).get(firstIndex()));
 
     // Previously stored data
     
@@ -330,13 +315,53 @@
     }
   });
 
+  function setLine(line) {
+    var option =  $('#field-line').find('option:selected');
+    var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
+    $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
+    $('.section-internetix-school').attr('data-skip', option.val() != 'aineopiskelu');
+    // section toggle for existing applications
+    var existingApplication = $('#field-application-id').attr('data-preload') == 'true';
+    if (existingApplication) {
+      $('.section-attachments').toggle(hasAttachmentSupport);
+      $('.section-internetix-school').toggle(line == 'aineopiskelu');
+    }
+    // age check when line changes 
+    $('#field-birthday').trigger('change');
+    // semi-required ssn postfix
+    if (line == 'mk') {
+      $('label[for="field-ssn-end"]').removeClass('required');
+    }
+    else {
+      $('label[for="field-ssn-end"]').addClass('required');
+    }
+    // update page count
+    updateProgress();
+  };
+  
   function navigateTo(section) {
-    $('.form-section.current').removeClass('current');
     $('.form-section').hide();
+    $('.form-section.current').removeClass('current');
     $(section).addClass('current').show();
     $('.form-navigation').toggle(!$(section).hasClass('section-done'));
-    $('.button-previous-section').toggle(!$(section).hasClass('section-line'));
-    $('.button-next-section').toggle(!$(section).hasClass('section-summary'));
+    // toggle previous section button
+    var canNavigate = false;
+    for (var i = currentIndex() - 1; i >= 0; i--) {
+      if (!$(applicationSections[i]).attr('data-skip')) {
+        canNavigate = true;
+        break;
+      }
+    }
+    $('.button-previous-section').toggle(canNavigate);
+    // toggle next section button
+    canNavigate = false;
+    for (var i = currentIndex() + 1; i < applicationSections.length; i++) {
+      if (!$(applicationSections[i]).attr('data-skip')) {
+        canNavigate = true;
+        break;
+      }
+    }
+    $('.button-next-section').toggle(canNavigate);
     $('.button-save-application').toggle($(section).hasClass('section-summary'));
     if ($(section).hasClass('section-summary')) {
       $('#summary-name').text($('#field-first-names').val() + ' ' + $('#field-last-name').val());
@@ -398,6 +423,15 @@
 
   function currentIndex() {
     return $(applicationSections).index($(applicationSections).filter('.current')); 
+  }
+  
+  function firstIndex() {
+    for (var i = 0; i < applicationSections.length; i++) {
+      if (!$(applicationSections[i]).attr('data-skip')) {
+        return i;
+      }
+    }
+    return 0;
   }
 
   function preloadApplication() {

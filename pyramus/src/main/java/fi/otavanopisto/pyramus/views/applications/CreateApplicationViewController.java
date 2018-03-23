@@ -9,7 +9,10 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
@@ -51,6 +54,11 @@ public class CreateApplicationViewController extends PyramusViewController {
     catch (IOException e) {
       logger.log(Level.SEVERE, "Unable to serve 404 for applications.storagePath", e);
       return;
+    }
+    
+    String line = pageRequestContext.getString("line");
+    if (!StringUtils.isBlank(line) && ApplicationUtils.isValidLine(line)) {
+      pageRequestContext.getRequest().setAttribute("preselectLine", line);
     }
     
     // Create a unique application identifier and include the application form

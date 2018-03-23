@@ -123,6 +123,10 @@ public class ApplicationUtils {
       return null;
     }
   }
+  
+  public static boolean isValidLine(String line) {
+    return applicationLineUiValue(line) != null;
+  }
 
   public static String municipalityUiValue(String value) {
     if (StringUtils.isBlank(value)) {
