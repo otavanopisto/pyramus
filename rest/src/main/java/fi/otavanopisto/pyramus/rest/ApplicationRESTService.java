@@ -409,7 +409,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             email,
             referenceCode,
             formData.toString(),
-            Boolean.TRUE,
+            !StringUtils.equals(line, "aineopiskelu"), // applicantEditable (#769: Internetix applicants may not edit submitted data)
             ApplicationState.PENDING);
         logger.log(Level.INFO, String.format("Created new %s application with id %s", line, application.getApplicationId()));
         
