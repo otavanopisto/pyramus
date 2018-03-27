@@ -673,37 +673,40 @@ public class ApplicationRESTService extends AbstractRESTService {
     String applicantMail = application.getEmail();
     String guardianMail = formData.getString("field-underage-email");
     try {
-      
-      // Confirmation mail subject and content
-      
-      String subject = "Hakemus opiskelemaan Otavan Opistoon vastaanotettu";
-      String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-          "/templates/applications/mail-confirmation.html"), "UTF-8");
-      
-      // #577: Contact information depends on the line selected; append suitable footer to mail content
-      
-      try {
-        String contentFooter = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-            String.format("/templates/applications/mail-confirmation-footer-%s.html", line)), "UTF-8");
-        if (contentFooter != null) {
-          content += contentFooter;
+      // #769: Do not mail application edit instructions to Internetix applicants 
+      if (!StringUtils.equals(application.getLine(), "aineopiskelu")) {
+
+        // Confirmation mail subject and content
+
+        String subject = "Hakemus opiskelemaan Otavan Opistoon vastaanotettu";
+        String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+            "/templates/applications/mail-confirmation.html"), "UTF-8");
+
+        // #577: Contact information depends on the line selected; append suitable footer to mail content
+
+        try {
+          String contentFooter = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+              String.format("/templates/applications/mail-confirmation-footer-%s.html", line)), "UTF-8");
+          if (contentFooter != null) {
+            content += contentFooter;
+          }
         }
-      }
-      catch (Exception e) {
-        logger.log(Level.WARNING, String.format("No mail confirmation footer for line %s", line), e);
-      }
-      
-      // Replace the dynamic parts of the mail content
-      
-      content = String.format(content, lineUi, surname, referenceCode);
-      
-      // Send mail to applicant or, for minors, applicant and guardian
-      
-      if (StringUtils.isEmpty(guardianMail)) {
-        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content);
-      }
-      else {
-        Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content);
+        catch (Exception e) {
+          logger.log(Level.WARNING, String.format("No mail confirmation footer for line %s", line), e);
+        }
+
+        // Replace the dynamic parts of the mail content
+
+        content = String.format(content, lineUi, surname, referenceCode);
+
+        // Send mail to applicant or, for minors, applicant and guardian
+
+        if (StringUtils.isEmpty(guardianMail)) {
+          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content);
+        }
+        else {
+          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content);
+        }
       }
 
       // Handle notification mails and log entries

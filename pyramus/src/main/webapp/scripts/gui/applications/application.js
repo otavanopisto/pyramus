@@ -242,6 +242,9 @@
               if (response.autoRegistered == 'true') {
                 navigateTo('.section-done.registered');
               }
+              else if ($('#field-line').val() == 'aineopiskelu') {
+                navigateTo('.section-done.internetix-submitted');
+              }
               else {
                 $('#edit-info-last-name').text($('#field-last-name').val());
                 $('#edit-info-reference-code').text(response.referenceCode);
