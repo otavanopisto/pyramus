@@ -400,6 +400,27 @@ public class ApplicationRESTService extends AbstractRESTService {
       
       String referenceCode = generateReferenceCode(lastName);
       Application application = applicationDAO.findByApplicationId(applicationId);
+
+      // #765: Prevent multiple (active) applications with same e-mail
+      
+      List<Application> existingApplications = applicationDAO.listByEmailAndArchived(email, Boolean.FALSE);
+      for (Application existingApplication : existingApplications) {
+        if (application != null && existingApplication.getId().equals(application.getId())) {
+          continue;
+        }
+        switch (existingApplication.getState()) {
+        case PENDING:
+        case PROCESSING:
+        case WAITING_STAFF_SIGNATURE:
+        case STAFF_SIGNED:
+        case APPROVED_BY_SCHOOL:
+        case APPROVED_BY_APPLICANT:
+          return Response.status(Status.CONFLICT).build();
+         default:
+           break;
+        }
+      }
+      
       if (application == null) {
         application = applicationDAO.create(
             applicationId,

@@ -260,7 +260,13 @@
             }
           },
           error: function(err) {
-            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe tallennettaessa hakemusta: ' + err.statusText);
+            if (err.status == 409) {
+              $('.notification-queue').notificationQueue('notification', 'error',
+                  'Annetulla sähköpostiosoitteella on jo jätetty hakemus');
+            }
+            else {
+              $('.notification-queue').notificationQueue('notification', 'error', 'Virhe tallennettaessa hakemusta: ' + err.statusText);
+            }
           }
         });
       }
