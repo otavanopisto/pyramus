@@ -346,6 +346,10 @@
     }
     // update page count
     updateProgress();
+    // #774: selected study program
+    if (!$('#field-application-id').attr('data-preload') != 'true') {
+      $('.application-line').text(option.text());
+    }
   };
   
   function navigateTo(section) {
