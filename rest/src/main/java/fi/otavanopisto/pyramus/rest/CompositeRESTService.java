@@ -93,13 +93,17 @@ public class CompositeRESTService {
     // TODO Security
     Course course = courseController.findCourseById(courseId);
     List<CourseStudent> courseStudents;
-    if (StringUtils.isNotBlank(courseStudentIds)) {
+    if (courseStudentIds != null) {
       courseStudents = new ArrayList<CourseStudent>();
-      String[] courseStudentIdArray = courseStudentIds.split(",");
-      for (int i = 0; i < courseStudentIdArray.length; i++) {
-        CourseStudent courseStudent = courseController.findCourseStudentById(new Long(courseStudentIdArray[i]));
-        if (courseStudent != null) {
-          courseStudents.add(courseStudent);
+      
+      // Empty courseStudentIds can be provided but is interpreted as empty array
+      if (StringUtils.isNotBlank(courseStudentIds)) {
+        String[] courseStudentIdArray = courseStudentIds.split(",");
+        for (int i = 0; i < courseStudentIdArray.length; i++) {
+          CourseStudent courseStudent = courseController.findCourseStudentById(new Long(courseStudentIdArray[i]));
+          if (courseStudent != null) {
+            courseStudents.add(courseStudent);
+          }
         }
       }
     }
