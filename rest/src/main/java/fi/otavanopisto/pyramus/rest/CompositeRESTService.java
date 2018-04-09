@@ -16,6 +16,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
@@ -91,7 +93,7 @@ public class CompositeRESTService {
     // TODO Security
     Course course = courseController.findCourseById(courseId);
     List<CourseStudent> courseStudents;
-    if (courseStudentIds != null) {
+    if (StringUtils.isNotBlank(courseStudentIds)) {
       courseStudents = new ArrayList<CourseStudent>();
       String[] courseStudentIdArray = courseStudentIds.split(",");
       for (int i = 0; i < courseStudentIdArray.length; i++) {
