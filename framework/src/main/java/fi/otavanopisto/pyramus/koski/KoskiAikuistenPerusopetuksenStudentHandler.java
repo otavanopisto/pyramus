@@ -74,17 +74,17 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       return null;
     }
     
-    OpiskelijanOPS ops = resolveOPS(student);
-    if (ops == null) {
-      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_CURRICULUM, new Date());
-      return null;
-    }
-    
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
 
     // Skip student if it is archived and the studyoid is blank
     if (Boolean.TRUE.equals(student.getArchived()) && StringUtils.isBlank(studyOid)) {
+      return null;
+    }
+    
+    OpiskelijanOPS ops = resolveOPS(student);
+    if (ops == null) {
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_CURRICULUM, new Date());
       return null;
     }
     
