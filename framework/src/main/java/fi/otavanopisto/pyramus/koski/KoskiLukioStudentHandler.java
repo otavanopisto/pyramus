@@ -86,14 +86,15 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
-    OpiskelijanOPS ops = resolveOPS(student);
-    if (ops == null) {
-      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_CURRICULUM, new Date());
+
+    // Skip student if it is archived and the studyoid is blank
+    if (Boolean.TRUE.equals(student.getArchived()) && StringUtils.isBlank(studyOid)) {
       return null;
     }
     
-    // Skip student if it is archived and the studyoid is blank
-    if (Boolean.TRUE.equals(student.getArchived()) && StringUtils.isBlank(studyOid)) {
+    OpiskelijanOPS ops = resolveOPS(student);
+    if (ops == null) {
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_CURRICULUM, new Date());
       return null;
     }
     
