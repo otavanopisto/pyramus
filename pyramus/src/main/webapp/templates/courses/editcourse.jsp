@@ -345,6 +345,7 @@
             dataType: 'select',
             editable: true,
             paramName: 'roleId',
+            required: true,
             options: [
               <c:forEach var="role" items="${roles}" varStatus="vs">
                 {text: "${role.name}", value: ${role.id}}
