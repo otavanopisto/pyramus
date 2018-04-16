@@ -242,6 +242,9 @@
               if (response.autoRegistered == 'true') {
                 navigateTo('.section-done.registered');
               }
+              else if ($('#field-line').val() == 'aineopiskelu') {
+                navigateTo('.section-done.internetix-submitted');
+              }
               else {
                 $('#edit-info-last-name').text($('#field-last-name').val());
                 $('#edit-info-reference-code').text(response.referenceCode);
@@ -257,7 +260,13 @@
             }
           },
           error: function(err) {
-            $('.notification-queue').notificationQueue('notification', 'error', 'Virhe tallennettaessa hakemusta: ' + err.statusText);
+            if (err.status == 409) {
+              $('.notification-queue').notificationQueue('notification', 'error',
+                  'Annetulla sähköpostiosoitteella on jo jätetty hakemus');
+            }
+            else {
+              $('.notification-queue').notificationQueue('notification', 'error', 'Virhe tallennettaessa hakemusta: ' + err.statusText);
+            }
           }
         });
       }
@@ -337,6 +346,10 @@
     }
     // update page count
     updateProgress();
+    // #774: selected study program
+    if ($('#field-application-id').attr('data-preload') != 'true') {
+      $('.application-line').text(option.text());
+    }
   };
   
   function navigateTo(section) {

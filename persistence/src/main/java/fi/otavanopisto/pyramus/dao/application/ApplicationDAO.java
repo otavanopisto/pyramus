@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.dao.application;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -242,6 +243,23 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     );
     
     return getSingleResult(entityManager.createQuery(criteria));
+  }
+  
+  public List<Application> listByEmailAndArchived(String email, Boolean archived) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Application> criteria = criteriaBuilder.createQuery(Application.class);
+    Root<Application> root = criteria.from(Application.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(criteriaBuilder.lower(root.get(Application_.email)), email.toLowerCase()),
+        criteriaBuilder.equal(root.get(Application_.archived), archived)
+      )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
 
 }

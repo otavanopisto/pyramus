@@ -58,6 +58,8 @@
   </section>
   
   <section class="form-section section-personal-info">
+  
+    <div class="application-line"></div>
 
     <h3 class="application-form-section-header">Henkilötiedot</h3>
     
@@ -156,6 +158,8 @@
 
   <section class="form-section section-underage" data-skip="true">
 
+    <div class="application-line"></div>
+
     <h3 class="application-form-section-header">Huoltajan tiedot</h3>
 
     <div class="field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,laakislinja">
@@ -206,6 +210,9 @@
   </section>
 
   <section class="form-section section-internetix-school" data-skip="true">
+
+    <div class="application-line"></div>
+
     <h3 class="application-form-section-header">Oppilaitostiedot</h3>
     <p>Kurssimateriaalien käyttäminen itseopiskelussa on ilmaista. Voit siis rekisteröityä Muikun käyttäjäksi ja ilmoittautua kursseille, vaikka et haluaisikaan niistä arviointia tai kurssisuoritusta. Jos haluat, että opettaja arvioi kurssisuorituksesi, se on joissakin tapauksissa maksullista. <a href="http://opinnot.internetix.fi/fi/structure/kansio/ohje_arviointimaksuista" target="_blank">Lue lisää.</a></p>
     <p><b>Huom!</b> Oppilaitostieto tarkistetaan vielä jälkikäteen ja lähetämme laskun kurssin suorittamisesta, mikäli olet opiskelijana jossain toisen asteen oppilaitoksessa.</p>
@@ -262,6 +269,8 @@
   </section>
 
   <section class="form-section section-additional">
+
+    <div class="application-line"></div>
 
     <h3 class="application-form-section-header">Hakemiseen tarvittavat lisätiedot</h3>
 
@@ -386,6 +395,8 @@
   </section>
 
   <section class="form-section section-attachments" data-skip="true">
+
+    <div class="application-line"></div>
     
     <h3>Hakemuksen liitteet</h3>
 
@@ -422,6 +433,8 @@
   </section>
 
   <section class="form-section section-source">
+
+    <div class="application-line"></div>
 
     <h3>Mistä sait tiedon koulutuksesta</h3>
   
@@ -556,6 +569,9 @@
   </section>
 
   <section class="form-section section-summary">
+
+    <div class="application-line"></div>
+
     <h3>Tarkista vielä yhteystietosi mahdollisia yhteydenottoja varten</h3>
 
     <div class="summary-container">
@@ -663,6 +679,11 @@
     <p class="important">Sukunimi <span class="name" id="edit-info-last-name"></span></p>
     <p class="important">Hakemustunnus <span class="code" id="edit-info-reference-code"></span></p>
     <p>Uusien hakemuksien tapauksessa nämä ohjeet on lähetetty myös antamaasi sähköpostiosoitteeseen <span class="email" id="edit-info-email"></span></p>
+  </section>
+
+  <section class="form-section section-done internetix-submitted" data-skip="true">
+    <h3>Hakemuksesi on tallennettu</h3>
+    <p>Koska olet tietojemme mukaan opiskellut Otavan Opistossa aiemminkin, käsittelemme hakemuksesi manuaalisesti. Lähetämme sinulla sähköpostia antamaasi osoitteeseen, kun hakemus on käsitelty.</p>
   </section>
 
   <section class="form-section section-done registered" data-skip="true">
