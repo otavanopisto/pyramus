@@ -16,6 +16,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
@@ -93,11 +96,15 @@ public class CompositeRESTService {
     List<CourseStudent> courseStudents;
     if (courseStudentIds != null) {
       courseStudents = new ArrayList<CourseStudent>();
-      String[] courseStudentIdArray = courseStudentIds.split(",");
-      for (int i = 0; i < courseStudentIdArray.length; i++) {
-        CourseStudent courseStudent = courseController.findCourseStudentById(new Long(courseStudentIdArray[i]));
-        if (courseStudent != null) {
-          courseStudents.add(courseStudent);
+      
+      // Empty courseStudentIds can be provided but is interpreted as empty array
+      if (StringUtils.isNotBlank(courseStudentIds)) {
+        String[] courseStudentIdArray = courseStudentIds.split(",");
+        for (int i = 0; i < courseStudentIdArray.length; i++) {
+          CourseStudent courseStudent = courseController.findCourseStudentById(new Long(courseStudentIdArray[i]));
+          if (courseStudent != null) {
+            courseStudents.add(courseStudent);
+          }
         }
       }
     }
@@ -105,34 +112,37 @@ public class CompositeRESTService {
       courseStudents = courseController.listCourseStudentsByCourse(course);
     }
     
-    boolean isStudyGuider = sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION);
     List<CompositeAssessmentRequest> assessmentRequests = new ArrayList<CompositeAssessmentRequest>();
-    for (CourseStudent courseStudent : courseStudents) {
-      if (isStudyGuider) {
-        StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
-        if (staffMember == null || !studentController.isStudentGuider(staffMember, courseStudent.getStudent()))
-        continue;
+    
+    if (CollectionUtils.isNotEmpty(courseStudents)) {
+      boolean isStudyGuider = sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION);
+      for (CourseStudent courseStudent : courseStudents) {
+        if (isStudyGuider) {
+          StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+          if (staffMember == null || !studentController.isStudentGuider(staffMember, courseStudent.getStudent()))
+          continue;
+        }
+        CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestByCourseStudent(courseStudent);
+        CourseAssessment courseAssessment = assessmentController.findCourseAssessmentByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
+        CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
+        assessmentRequest.setCourseStudentId(courseStudent.getId());
+        assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest == null ? null : courseAssessmentRequest.getCreated());
+        assessmentRequest.setCourseEnrollmentDate(courseStudent.getEnrolmentTime());
+        assessmentRequest.setEvaluationDate(courseAssessment == null ? null : courseAssessment.getDate());
+        assessmentRequest.setPassing(courseAssessment != null && courseAssessment.getGrade() != null && courseAssessment.getGrade().getPassingGrade());
+        assessmentRequest.setCourseId(course.getId());
+        assessmentRequest.setCourseName(course.getName());
+        assessmentRequest.setCourseNameExtension(course.getNameExtension());
+        String firstName = courseStudent.getStudent().getFirstName();
+        if (courseStudent.getStudent().getNickname() != null) {
+          firstName = String.format("%s \"%s\"", firstName, courseStudent.getStudent().getNickname());
+        }
+        assessmentRequest.setFirstName(firstName);
+        assessmentRequest.setLastName(courseStudent.getStudent().getLastName());
+        assessmentRequest.setStudyProgramme(courseStudent.getStudent().getStudyProgramme().getName());
+        assessmentRequest.setUserId(courseStudent.getStudent().getId());
+        assessmentRequests.add(assessmentRequest);
       }
-      CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestByCourseStudent(courseStudent);
-      CourseAssessment courseAssessment = assessmentController.findCourseAssessmentByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
-      CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
-      assessmentRequest.setCourseStudentId(courseStudent.getId());
-      assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest == null ? null : courseAssessmentRequest.getCreated());
-      assessmentRequest.setCourseEnrollmentDate(courseStudent.getEnrolmentTime());
-      assessmentRequest.setEvaluationDate(courseAssessment == null ? null : courseAssessment.getDate());
-      assessmentRequest.setPassing(courseAssessment != null && courseAssessment.getGrade() != null && courseAssessment.getGrade().getPassingGrade());
-      assessmentRequest.setCourseId(course.getId());
-      assessmentRequest.setCourseName(course.getName());
-      assessmentRequest.setCourseNameExtension(course.getNameExtension());
-      String firstName = courseStudent.getStudent().getFirstName();
-      if (courseStudent.getStudent().getNickname() != null) {
-        firstName = String.format("%s \"%s\"", firstName, courseStudent.getStudent().getNickname());
-      }
-      assessmentRequest.setFirstName(firstName);
-      assessmentRequest.setLastName(courseStudent.getStudent().getLastName());
-      assessmentRequest.setStudyProgramme(courseStudent.getStudent().getStudyProgramme().getName());
-      assessmentRequest.setUserId(courseStudent.getStudent().getId());
-      assessmentRequests.add(assessmentRequest);
     }
     
     return Response.ok(assessmentRequests).build();
