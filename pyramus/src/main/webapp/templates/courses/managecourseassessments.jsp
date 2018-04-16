@@ -149,11 +149,12 @@
                   
                   setTimeout(function () {
                     for (var i = 0, len = table.getRowCount(); i < len; i++) {
-                      if (table.isRowVisible(i))
+                      if (table.isRowVisible(i)) {
                         toggleRowEditable(table, i);
+                      }
                     }
                     table.reattachToDom();
-  
+
                     glassPane.hide();
                     delete glassPane;
                   }, 0);
@@ -170,6 +171,7 @@
               var table = event.tableComponent;
 
               toggleRowEditable(table, event.row);
+              forceRevalidateAll(true);
             }
           }, {
             header : '<fmt:message key="courses.manageCourseAssessments.studentsTableNameHeader"/>',
