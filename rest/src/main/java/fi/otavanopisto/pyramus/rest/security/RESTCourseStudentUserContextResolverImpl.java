@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.security;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
@@ -7,6 +8,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.security.impl.UserContextResolver;
 import fi.otavanopisto.security.ContextReference;
 
+@RequestScoped
 public class RESTCourseStudentUserContextResolverImpl implements UserContextResolver {
 
   @Inject
