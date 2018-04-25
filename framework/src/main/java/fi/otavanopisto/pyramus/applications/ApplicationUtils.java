@@ -266,7 +266,7 @@ public class ApplicationUtils {
     case "bandilinja":
       return studyProgrammeDAO.findById(8L); // Bändilinja/vapaa
     case "kasvatustieteet":
-      return null;
+      return null; // TODO Does not yet have a study programme in Pyramus 
     case "laakislinja":
       return studyProgrammeDAO.findById(31L); // Lääketieteen opintoihin valmentava koulutus
     case "mk":
@@ -274,9 +274,9 @@ public class ApplicationUtils {
       case "apa":
         return studyProgrammeDAO.findById(29L); // Aikuisten perusopetuksen alkuvaiheen opetus
       case "pk":
-        return studyProgrammeDAO.findById(15L); // Monikulttuurinen peruskoululinja
+        return studyProgrammeDAO.findById(11L); // Peruskoululinja
       case "luva":
-        return studyProgrammeDAO.findById(19L); // Lukioon valmistava peruskoululinja maahanmuuttajille
+        return studyProgrammeDAO.findById(27L); // LUVA
       default:
         return null;
       }
