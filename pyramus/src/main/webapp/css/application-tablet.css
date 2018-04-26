@@ -1,0 +1,83 @@
+/*
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+////////////////////                                 ////////////////////////
+////////////////////       TABLET (PORTRAIT)         ////////////////////////
+////////////////////                                 ////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+*/
+
+body {
+  background-color: #f5f5f5;
+  font-size: 1rem;
+}
+
+.application-header {
+  background-image: url("/gfx/applications/header-background.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  height: 75px;
+} 
+
+.application-header__logo {
+  background: #000;
+  border-radius: 100%;
+  font-size: 1.125rem;
+  height: 100px;
+  justify-content: center;
+  line-height: 1.05;
+  position: absolute;
+  top: -16px;
+  width: 100px;
+}
+
+.application-header__logo-branding {
+  color: #0080bb;
+}
+
+.application-content {
+  border: 1px solid #e2e2e2;
+  margin: 40px 20px;
+} 
+
+h3 {
+  margin: 0 0 20px;
+  padding: 0;
+  font-family: "Exo 2";
+  font-weight: 300;
+  font-size: 26px;
+}
+
+input,
+textarea,
+select,
+option {
+  font-size: 1rem;
+}
+
+button {
+  font-size: 18px;
+  padding: 10px 16px;
+}
+
+.application-footer__contact {
+  padding: 20px;  
+}
+
+.application-footer__contact-title {
+  font-size: 26px;
+}
+
+.application-footer__contact-row {
+  padding: 10px 0;
+}
+
+.application-footer__links {
+  padding: 20px;
+}
+
+.application-footer__external-link {
+  padding: 10px;
+}

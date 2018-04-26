@@ -1,0 +1,48 @@
+/*
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+////////////////////                                 ////////////////////////
+////////////////////       TABLET (LANDSCAPE)        ////////////////////////
+////////////////////            DESKTOP              ////////////////////////
+////////////////////                                 ////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+*/
+ 
+.application-header {
+  height: 85px;
+} 
+
+.application-header__content {
+  padding: 0 30px;
+} 
+
+.application-header__logo {
+  background: #000;
+  border-radius: 100%;
+  font-size: 1.125rem;
+  height: 115px;
+  justify-content: center;
+  line-height: 1.1;
+  position: absolute;
+  top: -20px;
+  width: 115px;
+}
+
+.application-content {
+  margin: 50px 30px;
+  padding: 30px;
+} 
+
+.application-footer__contact {
+  padding: 30px;  
+}
+
+.application-footer__links {
+  padding: 30px;
+}
+
+.application-footer__external-link:hover {
+  background: #0f94d2;
+  border-radius: 3px;
+}
