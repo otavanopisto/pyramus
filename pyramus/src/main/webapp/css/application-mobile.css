@@ -161,14 +161,21 @@ label.required::after {
   font-style: italic;
 }
 
+input, 
+select, 
+option, 
+select,
+button {
+  background: #fff;
+  font-family: "Open Sans", arial, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 300;
+}
+
 input,
 textarea {
   margin: 0;
-  padding: 8px;
-  background: #fff;
-  font-family: "Open Sans";
-  font-weight: 300;
-  font-size: 14px;
+  padding: 6px;
   border-radius: 3px;
   border: 1px solid #5db5c5;
   max-width: 100%;
@@ -181,9 +188,6 @@ input[type="radio"] {
 }
 
 select {
-  background: #fff;
-  font-family: "Open Sans";
-  font-weight: 300;
   font-size: 14px;
   border-radius: 3px;
   border: 1px solid #5db5c5;
@@ -193,10 +197,6 @@ select {
 }
 
 option {
-  background: #fff;
-  font-family: "Open Sans";
-  font-weight: 300;
-  font-size: 14px;
   word-wrap: break-word;
   overflow: hidden;
 }
@@ -224,9 +224,6 @@ option {
 }
 
 button {
-  font-family: "Open Sans";
-  font-weight: 300;
-  font-size: 14px;
   padding: 6px 12px;
   border-radius: 5px;
   border: 1px solid #fff;

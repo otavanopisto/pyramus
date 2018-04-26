@@ -34,6 +34,19 @@
   padding: 30px;
 } 
 
+input, 
+textarea {
+  padding: 12px;
+}
+
+select {
+  padding: 11px 8px;
+}
+
+button {
+  padding: 10px 16px;
+}
+
 .application-footer__contact {
   padding: 30px;  
 }

@@ -50,16 +50,24 @@ h3 {
   font-size: 26px;
 }
 
-input,
-textarea,
-select,
-option {
-  font-size: 1rem;
+input, 
+textarea {
+  padding: 8px;
 }
 
+select {
+  padding: 6px 4px;
+}
+
+input, 
+select, 
+option, 
+select,
 button {
-  font-size: 18px;
-  padding: 10px 16px;
+  background: #fff;
+  font-family: "Open Sans", arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
 }
 
 .application-footer__contact {
