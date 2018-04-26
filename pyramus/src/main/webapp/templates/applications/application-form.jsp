@@ -601,8 +601,8 @@
     
     <div class="privacy-policy-overlay" style="display: none;">
     </div>
-    <div class="privacy-policy-container" style="display: none;">
-      <div class="privacy-policy-close"></div>
+    <div class="privacy-policy" style="display: none;">
+      <div class="privacy-policy__close"></div>
       <h3>1. Rekisterin pitäjä</h3>
       <p>
         Otavan Opisto<br> Mikkelin kaupunki
@@ -677,8 +677,8 @@
     <h3 class="form-section__header form-section__header--nettilukio">Hakemuksesi on vastaanotettu</h3>
     <p>Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa <a href="/applications/edit.page">https://pyramus.otavanopisto.fi/applications/edit.page</a></p>
     <p>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen:</p>
-    <p class="important">Sukunimi <span class="name" id="edit-info-last-name"></span></p>
-    <p class="important">Hakemustunnus <span class="code" id="edit-info-reference-code"></span></p>
+    <p class="important"><span class="important__label">Sukunimi</span><span class="important__data" id="edit-info-last-name"></span></p>
+    <p class="important"><span class="important__label">Hakemustunnus</span><span class="important__data" id="edit-info-reference-code"></span></p>
     <p>Uusien hakemuksien tapauksessa nämä ohjeet on lähetetty myös antamaasi sähköpostiosoitteeseen <span class="email" id="edit-info-email"></span></p>
   </section>
 

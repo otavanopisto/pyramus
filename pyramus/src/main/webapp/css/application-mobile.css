@@ -429,6 +429,81 @@ button {
   background-size: contain;
 }
 
+/* PRIVACY POLICY */
+.privacy-policy-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: #000;
+  opacity: 0.8;
+  z-index: 99;
+  width: 100%;
+}
+
+.privacy-policy {
+  background: #fff;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  max-width: 100%;
+  overflow: scroll;
+  padding: 20px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 100;
+}
+
+.privacy-policy__close {
+  background-color: #009fe3;
+  background-image: url('../gfx/icons/48x48/actions/close.png');
+  background-size: contain;
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  border-radius: 100%;
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  border: 5px solid #009fe3;
+  cursor: pointer;
+}
+
+/* EDITING CODE */
+.important {
+  align-items: flex-start;
+  display: flex;
+  flex-flow: column wrap;
+}
+
+.important__label {
+  flex-basis: auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-weight: 400;
+  font-size: 16px;
+  margin: 0 10px 0 0;
+}
+
+.important__data {
+  border-radius: 3px;
+  padding: 6px;
+  background: #e1ffff;
+  flex-basis: auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-size: 20px;
+  margin: 5px 0;
+  display: inline-block;
+  font-weight: 300;
+}
+
+span.email {
+  font-weight: 400;
+  display: inline-block;
+}
+
 /* FOOTER */
 .application-footer {
   background-color: #5db5c5;

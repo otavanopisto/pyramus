@@ -76,6 +76,38 @@ input[type="checkbox"] {
   width: 25px;
 }
 
+.privacy-policy {
+  border-radius: 5px;
+  bottom: 20px0;
+  left: 50%;
+  margin: 0 0 0 -300px;
+  max-width: 600px;
+  overflow: scroll;
+  padding: 20px;
+  position: fixed;
+  top: 20px;
+  z-index: 100;
+}
+
+.privacy-policy__close {
+  background-color: transparent;
+  background-image: url('../gfx/icons/48x48/actions/close.png');
+  border: 0;
+  height: 35px;
+  right: 20px;
+  top: 20px;
+  width: 35px;
+}
+
+.important__label {
+  font-size: 20px;
+}
+
+.important__data {
+  padding: 8px;
+  font-size: 26px;
+}
+
 .application-footer__contact {
   padding: 20px;  
 }

@@ -191,12 +191,12 @@
     
     $('.summary-privacy-link').on('click', function() {
       $('.privacy-policy-overlay').toggle();
-      $('.privacy-policy-container').toggle();
+      $('.privacy-policy').toggle();
     });
     
-    $('.privacy-policy-close').on('click', function() {
+    $('.privacy-policy__close, .privacy-policy-overlay').on('click', function() {
       $('.privacy-policy-overlay').toggle();
-      $('.privacy-policy-container').toggle();
+      $('.privacy-policy').toggle();
     });
     
     // Form navigation

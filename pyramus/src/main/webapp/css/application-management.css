@@ -482,7 +482,7 @@ button {
   width: 100%;
 }
 
-.privacy-policy-container {
+.privacy-policy {
  max-width: 600px;
  margin: 0;
  background: #fff;
@@ -495,7 +495,7 @@ button {
 
 @media screen and (min-width: 600px) {
   
-  .privacy-policy-container {
+  .privacy-policy {
     max-width: 600px;
     margin: 0 0 0 -300px;
     background: #fff;
@@ -508,7 +508,7 @@ button {
   }
 }
 
-.privacy-policy-close {
+.privacy-policy__close {
   background: url('../gfx/icons/48x48/actions/close.png') #009fe3;
   background-size: contain;
   width: 32px;

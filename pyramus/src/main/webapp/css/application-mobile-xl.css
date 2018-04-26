@@ -20,4 +20,10 @@
 .application-footer__contact {
   align-items: flex-start;
 }
-  
+
+.important {
+  align-items: center;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+}  
