@@ -339,8 +339,9 @@
       <select name="field-foreign-line" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
         <option value="">-- Valitse --</option>
         <option value="apa">Aikuisten perusopetuksen alkuvaiheen koulutus</option>
-        <option value="pk">Monikulttuurinen peruskoululinja (Aikuisten perusopetuksen päättövaihe)</option>
+        <option value="pk">Monikulttuurinen peruskoululinja (aikuisten perusopetuksen päättövaihe)</option>
         <option value="luva">LUVA eli lukioon valmentava koulutus maahanmuuttajille</option>
+        <option value="lisaopetus">Lisäopetus</option>
       </select>
     </div>
 

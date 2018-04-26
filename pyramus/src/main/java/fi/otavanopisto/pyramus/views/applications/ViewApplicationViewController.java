@@ -259,9 +259,11 @@ public class ViewApplicationViewController extends PyramusViewController {
     case "apa":
       return "Aikuisten perusopetuksen alkuvaiheen koulutus";
     case "pk":
-      return "Monikulttuurinen peruskoululinja (Aikuisten perusopetuksen päättövaihe)";
+      return "Monikulttuurinen peruskoululinja (aikuisten perusopetuksen päättövaihe)";
     case "luva":
       return "LUVA eli lukioon valmentava koulutus maahanmuuttajille";
+    case "lisaopetus":
+      return "Lisäopetus";
     default:
       return null;
     }
