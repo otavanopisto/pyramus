@@ -277,6 +277,8 @@ public class ApplicationUtils {
         return studyProgrammeDAO.findById(11L); // Peruskoululinja
       case "luva":
         return studyProgrammeDAO.findById(27L); // LUVA
+      case "lisaopetus":
+        return studyProgrammeDAO.findById(15L); // Monikulttuurinen peruskoululinja
       default:
         return null;
       }
