@@ -40,6 +40,7 @@ body {
 .application-content {
   border: 1px solid #e2e2e2;
   margin: 40px 20px;
+  padding: 30px;
 } 
 
 h3 {
@@ -68,6 +69,11 @@ button {
   font-family: "Open Sans", arial, sans-serif;
   font-size: 1rem;
   font-weight: 300;
+}
+
+input[type="checkbox"] {
+  height: 25px;
+  width: 25px;
 }
 
 .application-footer__contact {

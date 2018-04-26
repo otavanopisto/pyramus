@@ -15,7 +15,7 @@ body {
   font-weight: 300;
   font-size: 0.875rem;
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column nowrap;
   justify-content: center;
   line-height: 1.5;
   min-width: 320px;
@@ -59,15 +59,60 @@ body {
 }
 
 /* CONTENT */
+.application-description {
+  display: flex;
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
 .application-content {
   background-color: #fff;
+  display: flex;
   flex-basis: auto;
   flex-grow: 1;
+  flex-flow: column nowrap;
   flex-shrink: 1;
   margin: 0 0 20px;
   max-width: 100%;
   padding: 15px;
   position: relative;
+}
+
+.application-content__information {
+  background-color: #f4f4f4;
+  border-radius: 5px;
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 0 20px;
+  order: 1;
+  padding: 20px;
+}
+
+.application-content__information-page-specific {
+  margin: 0 0 10px;
+}
+
+.application-content__information-line-specific {
+  margin: 10px 0 0;
+}
+
+.application-content__information-page-specific p:first-child,
+.application-content__information-line-specific p:first-child {
+  margin: 0 0 10px;
+}
+
+.application-content__information-page-specific p:last-child,
+.application-content__information-line-specific p:last-child {
+  margin: 10px 0 0;
+}
+
+.application-content__form {
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  order: 2;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -78,8 +123,12 @@ h1, h2, h3, h4, h5, h6 {
 h3 {
   margin: 0 0 20px;
   padding: 0;
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1;
+}
+
+a {
+  color: #009fe3;
 }
 
 /* FORM STRUCTURE */
@@ -91,7 +140,7 @@ h3 {
   display: inherit;
 }
 
-.field-container {
+.form-section__field-container {
   margin: 10px 0;
 } 
 
@@ -152,8 +201,8 @@ label.required::after {
 }
 
 .field-row-element input[type="checkbox"],
-.field-row-element input[type="checkbox"] {
-  margin: 10px;
+.field-row-element input[type="radio"] {
+  margin: 6px 10px 6px 0;
 }
 
 .field-help {
@@ -161,7 +210,8 @@ label.required::after {
   font-style: italic;
 }
 
-input, 
+input,
+textarea, 
 select, 
 option, 
 select,
@@ -184,7 +234,27 @@ textarea {
 
 input[type="checkbox"],
 input[type="radio"] {
-  width: auto;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  align-items: center;
+  appearance: none;
+  border: 1px solid #5db5c5;
+  border-radius: 3px;
+  display: flex;
+  height: 21px;
+  justify-content: center;
+  width: 21px;
+}
+
+input[type="radio"] {
+  border-radius: 100%;
+}
+
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+  background-color: #5db5c5;
+  border: solid 1px #5db5c5;
+  position: relative;
 }
 
 select {
@@ -234,7 +304,7 @@ button {
 
 .previous,
 .next {
-  background: #009fe3;
+  background: #000;
 }
 
 .button-save-application, 
@@ -260,6 +330,103 @@ button {
 .application-page-indicator {
   display: inline-block;
   padding: 0 10px;
+}
+
+/* UPLOAD PROGRESSBAR */
+.ui-progressbar {
+  width: 100%;
+  height: 20px;
+}
+
+.ui-progressbar-value {
+  background: #87d7e6;
+  width: 100%;
+  height: 20px;
+  border-radius: 3px;  
+}
+
+.application-file-upload-progress-text {
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* FILE UPLOADER */
+.field-attachments {
+  margin: 40px 0;
+}
+
+.field-attachments__selector-container {
+  position: relative;
+  background: #fff;
+  border: 1px solid #5db5c5;
+  cursor: pointer;
+  border-radius:3px;
+}
+
+.field-attachments__selector {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.field-attachments__description {
+  padding: 20px;
+  color: #5db5c5;
+  text-align: center;
+}
+
+.field-attachments__files {
+   margin: 20px 0 0;
+}
+
+.application-file {
+  padding: 6px;
+  background: #5db5c5;
+  margin: 8px 0;
+  border-radius: 3px;
+  color: #fff;
+  position: relative;
+}
+
+.application-file__details {
+  margin: 0 30px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.application-file__name a {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.application-file__size {
+  color: #bef7fe;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 400;
+  padding: 0 10px;
+}
+
+.application-file__delete {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  bottom: 0;
+  margin: -8px 0 0;
+  width: 16px;
+  height: 16px;
+  font-size: 13px;
+  cursor: pointer;
+  background: url('../gfx/icons/48x48/actions/close.png') center center no-repeat;
+  background-size: contain;
 }
 
 /* FOOTER */

@@ -30,9 +30,27 @@
 }
 
 .application-content {
+  align-items: flex-start;
+  flex-flow: row nowrap;
   margin: 50px 30px;
-  padding: 30px;
 } 
+
+.application-content__information {
+  flex-basis: calc(40% - 20px);
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 0 0 20px;
+  order: 2;
+  padding: 20px;
+}
+
+.application-content__form {
+  flex-basis: calc(60% - 20px);
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 20px 0 0;
+  order: 1;
+}
 
 input, 
 textarea {
@@ -45,6 +63,11 @@ select {
 
 button {
   padding: 10px 16px;
+}
+
+input[type="checkbox"] {
+  height: 26px;
+  width: 26px;
 }
 
 .application-footer__contact {

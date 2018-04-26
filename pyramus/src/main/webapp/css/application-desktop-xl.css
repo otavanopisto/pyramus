@@ -24,6 +24,23 @@
   padding: 45px;
 } 
 
+.application-content__information {
+  flex-basis: calc(45% - 25px);
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 0 0 25px;
+  order: 2;
+  padding: 20px;
+}
+
+.application-content__form {
+  flex-basis: calc(55% - 25px);
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 25px 0 0;
+  order: 1;
+}
+
 .application-footer {
 
 } 

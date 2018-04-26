@@ -170,7 +170,7 @@
     $('[data-dependencies]').change(function() {
       var name = $(this).attr('name');
       var value = $(this).is(':visible') ? $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val() : '';
-      $('.field-container[data-dependent-field="' + name + '"]').each(function() {
+      $('.form-section__field-container[data-dependent-field="' + name + '"]').each(function() {
         var show = false;
         var values = $(this).attr('data-dependent-values').split(',');
         for (var i = 0; i < values.length; i++) {
@@ -528,10 +528,10 @@
     fileElement.attr('data-file-size', size);
     fileElement.removeClass('template');
     fileContainer.append(fileElement);
-    fileElement.find('.application-file-link').attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + name);
-    fileElement.find('.application-file-size').text((size / 1024 + 1).toFixed(0) + ' KB');
-    fileElement.find('.application-file-link').text(name);
-    fileElement.find('.application-file-delete').on('click', function() {
+    fileElement.find('.application-file__link').attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + name);
+    fileElement.find('.application-file__size').text((size / 1024 + 1).toFixed(0) + ' KB');
+    fileElement.find('.application-file__link').text(name);
+    fileElement.find('.application-file__delete').on('click', function() {
       $.ajax({
         url: '/1/applications/removeattachment/' + applicationId + '?attachment=' + name,
         type: 'DELETE',
@@ -552,10 +552,10 @@
       var firstNames = $('#field-first-names').val().trim();
       var names = firstNames == '' ? [] : firstNames.split(/\ +/);
       if (names.length == 0) {
-        $('div.field-container.field-nickname').hide();
+        $('div.form-section__field-container.field-nickname').hide();
       }
       else {
-        $('div.field-container.field-nickname').show();
+        $('div.form-section__field-container.field-nickname').show();
       }
       var nicknamesContainer = $('div.nicknames-container');
       $(nicknamesContainer).empty();
@@ -588,7 +588,7 @@
   
   function uploadAttachment(file) {
     var applicationId = $('#field-application-id').val();
-    var fileContainer = $('.field-attachments-files'); 
+    var fileContainer = $('.field-attachments__files'); 
     var fileName = decodeURIComponent(file.name);
     var formData = new FormData();
     formData.append('file', file);

@@ -36,9 +36,18 @@
         </div>
       </div>
     </header>
-    <main class="application-content">
-      <section class="application-content__description">
+    <section class="application-description">
       
+    </section>
+    <main class="application-content">
+      <section class="application-content__information">
+        <div class="application-content__information-page-specific">
+          <p>Klikkaa seuraava painiketta lomakkeen alapujolella kun olet täyttänyt pyydetyt tiedot.</p>
+          <p><b>Huom!</b> Punaisella tähdellä merkityt kentät ovat pakollisia.</p>
+        </div>
+        <div class="application-content__information-line-specific">
+          <p><b>Onko lomakeen täyttämisessä ongelmia?</b><br/>Voit ottaa yhteyttä hakemuksen suhteen <b>Aku Ankkaan</b> sähköpostilla <a href="mailto:aku.ankka@otavanopisto.fi">aku.ankka@otavanopisto.fi</a> tai soitamalla <b>040 1337 7007</b>.</p>
+        </div>
       </section>
       <section class="application-content__form">
         <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
