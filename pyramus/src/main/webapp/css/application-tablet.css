@@ -82,7 +82,7 @@ input[type="checkbox"]:checked::after {
 
 .privacy-policy {
   border-radius: 5px;
-  bottom: 20px0;
+  bottom: 20px;
   left: 50%;
   margin: 0 0 0 -300px;
   max-width: 600px;
