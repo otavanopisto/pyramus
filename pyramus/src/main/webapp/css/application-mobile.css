@@ -152,6 +152,26 @@ h3 {
   line-height: 1;
 }
 
+.form-section__header--Nettilukio {
+  color: #5dbdc5;
+}
+
+.form-section__header--Nettiperuskoulu {
+  color: #ef7d00;
+}
+
+.form-section__header--Aineopiskelu {
+  color: #c04080;
+}
+
+.form-section__header--Aikuislukio {
+  color: #0080bb;
+}
+
+.form-section__header--Maahanmuuttajakoulutukset {
+  color: #5dbdc5;
+}
+
 a {
   color: #009fe3;
 }

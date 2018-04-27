@@ -354,7 +354,8 @@
     updateProgress();
     // #774: selected study program
     if ($('#field-application-id').attr('data-preload') != 'true') {
-      $('.application-line').text(option.text());
+      // $('.application-line').text(option.text());
+      $('.form-section__header').removeClass().addClass('form-section__header form-section__header--' + option.text());
     }
   };
   

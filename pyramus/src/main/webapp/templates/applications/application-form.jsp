@@ -61,7 +61,7 @@
   
     <div class="application-line"></div>
 
-    <h3 class="form-section__header form-section__header--nettilukio">Henkilötiedot</h3>
+    <h3 class="form-section__header">Henkilötiedot</h3>
     
     <div class="form-section__field-container field-last-name">
       <label for="field-last-name" class="required">Sukunimi</label>
@@ -160,7 +160,7 @@
 
     <div class="application-line"></div>
 
-    <h3 class="form-section__header form-section__header--nettilukio">Huoltajan tiedot</h3>
+    <h3 class="form-section__header">Huoltajan tiedot</h3>
 
     <div class="form-section__field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,laakislinja">
       <label for="field-underage-grounds">Alaikäisen hakemusperusteet</label>
@@ -213,7 +213,7 @@
 
     <div class="application-line"></div>
 
-    <h3 class="form-section__header form-section__header--nettilukio">Oppilaitostiedot</h3>
+    <h3 class="form-section__header">Oppilaitostiedot</h3>
     <p>Kurssimateriaalien käyttäminen itseopiskelussa on ilmaista. Voit siis rekisteröityä Muikun käyttäjäksi ja ilmoittautua kursseille, vaikka et haluaisikaan niistä arviointia tai kurssisuoritusta. Jos haluat, että opettaja arvioi kurssisuorituksesi, se on joissakin tapauksissa maksullista. <a href="http://opinnot.internetix.fi/fi/structure/kansio/ohje_arviointimaksuista" target="_blank">Lue lisää.</a></p>
     <p><b>Huom!</b> Oppilaitostieto tarkistetaan vielä jälkikäteen ja lähetämme laskun kurssin suorittamisesta, mikäli olet opiskelijana jossain toisen asteen oppilaitoksessa.</p>
 
@@ -272,7 +272,7 @@
 
     <div class="application-line"></div>
 
-    <h3 class="form-section__header form-section__header--nettilukio">Hakemiseen tarvittavat lisätiedot</h3>
+    <h3 class="form-section__header">Hakemiseen tarvittavat lisätiedot</h3>
 
     <div class="form-section__field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,laakislinja,kasvatustieteet">
       <label for="field-previous-studies" class="required">Aiemmat opinnot (listaa myös keskeytyneet)</label>
@@ -399,7 +399,7 @@
 
     <div class="application-line"></div>
     
-    <h3 class="form-section__header form-section__header--nettilukio">Hakemuksen liitteet</h3>
+    <h3 class="form-section__header">Hakemuksen liitteet</h3>
 
     <div class="form-section__field-container field-nettilukio-liiteohje dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
       <div>Voit liittää tähän todistusjäljennökset sähköisesti. Voit toimittaa todistusjäljennökset myös sähköpostin liitetiedostoina eeva.lehikoinen@otavanopisto.fi tai postitse (Otavan Opisto / nettilukio, Otavantie 2 B, 50670 Otava)</div>
@@ -437,7 +437,7 @@
 
     <div class="application-line"></div>
 
-    <h3 class="form-section__header form-section__header--nettilukio">Mistä sait tiedon koulutuksesta</h3>
+    <h3 class="form-section__header">Mistä sait tiedon koulutuksesta</h3>
   
     <div class="form-section__field-container field-source">
       <div class="field-row-flex">
@@ -573,7 +573,7 @@
 
     <div class="application-line"></div>
 
-    <h3 class="form-section__header form-section__header--nettilukio">Tarkista vielä yhteystietosi mahdollisia yhteydenottoja varten</h3>
+    <h3 class="form-section__header">Tarkista vielä yhteystietosi mahdollisia yhteydenottoja varten</h3>
 
     <div class="summary-container">
       <label for="summary-name">Nimi</label>
@@ -674,7 +674,7 @@
   </section>
   
   <section class="form-section section-done submitted" data-skip="true">
-    <h3 class="form-section__header form-section__header--nettilukio">Hakemuksesi on vastaanotettu</h3>
+    <h3 class="form-section__header">Hakemuksesi on vastaanotettu</h3>
     <p>Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa <a href="/applications/edit.page">https://pyramus.otavanopisto.fi/applications/edit.page</a></p>
     <p>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen:</p>
     <p class="important"><span class="important__label">Sukunimi</span><span class="important__data" id="edit-info-last-name"></span></p>
@@ -683,12 +683,12 @@
   </section>
 
   <section class="form-section section-done internetix-submitted" data-skip="true">
-    <h class="form-section__header form-section__header--nettilukio"3>Hakemuksesi on tallennettu</h3>
+    <h3 class="form-section__header">Hakemuksesi on tallennettu</h3>
     <p>Koska olet tietojemme mukaan opiskellut Otavan Opistossa aiemminkin, käsittelemme hakemuksesi manuaalisesti. Lähetämme sinulla sähköpostia antamaasi osoitteeseen, kun hakemus on käsitelty.</p>
   </section>
 
   <section class="form-section section-done registered" data-skip="true">
-    <h3 class="form-section__header form-section__header--nettilukio">Hakemuksesi on tallennettu</h3>
+    <h3 class="form-section__header">Hakemuksesi on tallennettu</h3>
     <p>Lähetimme antamaasi sähköpostiosoitteeseen ohjeet, joilla voit luoda haluamasi tunnukset Otavan Opiston Muikku-oppimisympäristöön.</p>
   </section>
 
