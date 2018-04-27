@@ -246,15 +246,20 @@ input[type="radio"] {
   width: 21px;
 }
 
-input[type="radio"] {
-  border-radius: 100%;
-}
-
-input[type="checkbox"]:checked,
-input[type="radio"]:checked {
+input[type="checkbox"]:checked {
   background-color: #5db5c5;
   border: solid 1px #5db5c5;
   position: relative;
+}
+
+input[type="checkbox"]:checked::after {
+  color: #fff;
+  content: "\2713"; /* Checkmark */
+  font-family: "Exo 2";
+  font-size: 16px;
+  font-weight: 900;
+  position: relative;
+  top: -1px;
 }
 
 select {

@@ -76,6 +76,10 @@ input[type="checkbox"] {
   width: 25px;
 }
 
+input[type="checkbox"]:checked::after {
+  font-size: 19px;
+}
+
 .privacy-policy {
   border-radius: 5px;
   bottom: 20px0;

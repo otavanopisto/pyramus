@@ -70,6 +70,10 @@ input[type="checkbox"] {
   width: 26px;
 }
 
+input[type="checkbox"]:checked::after {
+  font-size: 20px;
+}
+
 .application-footer__contact {
   padding: 30px;  
 }
