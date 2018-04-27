@@ -35,7 +35,12 @@
   margin: 50px 30px;
 } 
 
+.application-header__show-content-information {
+  display: none;  
+}
+
 .application-content__information {
+  display: block;
   flex-basis: calc(40% - 20px);
   flex-grow: 1;
   flex-shrink: 1;

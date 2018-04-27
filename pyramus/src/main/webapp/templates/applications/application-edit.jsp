@@ -34,6 +34,7 @@
         <div class="application-header__logo">
           <div class="application-header__logo-text">Otavan<br/>Opist<span class="application-header__logo-branding">o...</span></div>
         </div>
+        <nav class="application-header__show-content-information">?</nav>
       </div>
     </header>
     <section class="application-description">
@@ -42,7 +43,7 @@
     <main class="application-content">
       <section class="application-content__information">
         <div class="application-content__information-page-specific">
-          <p>Klikkaa seuraava painiketta lomakkeen alapujolella kun olet täyttänyt pyydetyt tiedot.</p>
+          <p>Klikkaa seuraava painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>
           <p><b>Huom!</b> Punaisella tähdellä merkityt kentät ovat pakollisia.</p>
         </div>
         <div class="application-content__information-line-specific">

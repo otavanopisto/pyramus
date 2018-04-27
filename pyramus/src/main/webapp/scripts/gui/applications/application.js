@@ -199,6 +199,12 @@
       $('.privacy-policy').toggle();
     });
     
+    // Page information
+    
+    $('.application-header__show-content-information').on('click', function() {
+      $('.application-content__information').fadeToggle();
+    });
+    
     // Form navigation
 
     $('.button-previous-section').click(function() {

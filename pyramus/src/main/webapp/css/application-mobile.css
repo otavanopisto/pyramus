@@ -9,24 +9,28 @@
 */
 
 body {
-  padding: 0;
   background-color: #fff;
-  font-family: "Open Sans", arial, sans-serif;
-  font-weight: 300;
-  font-size: 0.875rem;
+  color: #000;
   display: flex;
   flex-flow: column nowrap;
+  font-family: "Open Sans", arial, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 300;
   justify-content: center;
   line-height: 1.5;
-  min-width: 320px;
   margin: 0;
-  color: #000;
+  min-height: 100vh;
+  min-width: 320px;
+  padding: 0;
 }
 
 /* HEADER */
 .application-header {
   background-color: #0080bb;
   display: flex;
+  flex-basis: auto;
+  flex-grow: 0;
+  flex-shrink: 0;
   font-family: "Exo 2", arial, sans-serif;
   height: 50px;
   width: 100%;
@@ -61,15 +65,15 @@ body {
 /* CONTENT */
 .application-description {
   display: flex;
-  flex-basis: 100%;
-  flex-grow: 1;
+  flex-basis: auto;
+  flex-grow: 0;
   flex-shrink: 1;
 }
 
 .application-content {
   background-color: #fff;
   display: flex;
-  flex-basis: auto;
+  flex-basis: 100%;
   flex-grow: 1;
   flex-flow: column nowrap;
   flex-shrink: 1;
@@ -82,12 +86,33 @@ body {
 .application-content__information {
   background-color: #f4f4f4;
   border-radius: 5px;
-  flex-basis: 100%;
+  display: none;
+  flex-basis: auto;
   flex-grow: 1;
   flex-shrink: 1;
   margin: 0 0 20px;
   order: 1;
   padding: 20px;
+}
+
+.application-header__show-content-information {
+  align-items: center;
+  border: 1px solid #b2e4ed;
+  border-radius: 5px;
+  color: #b2e4ed;
+  cursor: pointer;
+  display: flex;
+  font-size: 17px;
+  font-family: "Exo 2";
+  font-weight: 600;
+  height: 28px;
+  justify-content: center;
+  line-height: 1;
+  margin: -14px 0 0 0;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  width: 28px;
 }
 
 .application-content__information-page-specific {
@@ -512,6 +537,9 @@ span.email {
 /* FOOTER */
 .application-footer {
   background-color: #5db5c5;
+  flex-basis: auto;
+  flex-grow: 0;
+  flex-shrink: 0;
   font-family: "Exo 2", arial, sans-serif;
   font-size: 0.875rem;
   width: 100%;
