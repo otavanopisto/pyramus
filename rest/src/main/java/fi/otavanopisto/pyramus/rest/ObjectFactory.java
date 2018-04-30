@@ -36,6 +36,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
@@ -744,6 +745,13 @@ public class ObjectFactory {
         @Override
         public Object map(fi.otavanopisto.pyramus.domainmodel.base.Curriculum entity) {
           return new Curriculum(entity.getId(), entity.getName(), entity.getArchived());
+        }
+      },
+      
+      new Mapper<fi.otavanopisto.pyramus.domainmodel.base.Organization>() {
+        @Override
+        public Object map(Organization entity) {
+          return new fi.otavanopisto.pyramus.rest.model.Organization(entity.getId(), entity.getName(), entity.getArchived());
         }
       }
     );
