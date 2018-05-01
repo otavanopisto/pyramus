@@ -19,10 +19,16 @@
 }
 
 .application-content {
-  margin: 80px auto;
+  margin: 40px auto 80px;
   max-width: 1180px;
   padding: 45px;
 } 
+
+.application-description {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 30px 0 0;
+}
 
 .application-content__information {
   flex-basis: calc(45% - 25px);

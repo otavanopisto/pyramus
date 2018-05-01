@@ -38,7 +38,12 @@
       </div>
     </header>
     <section class="application-description">
-      
+      <div class="application-description__line-header">
+        Olet hakemassa <span class="application-description__line-label--nettiperuskoulu">nettiperuskouluun</span>
+      </div>
+      <div class="application-description__line-content">
+        Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.
+      </div>
     </section>
     <main class="application-content">
       <section class="application-content__information">

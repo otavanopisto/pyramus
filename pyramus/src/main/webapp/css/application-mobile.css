@@ -14,7 +14,7 @@ body {
   display: flex;
   flex-flow: column nowrap;
   font-family: "Open Sans", arial, sans-serif;
-  font-size: 0.875rem;
+  font-size: 14px;
   font-weight: 300;
   justify-content: center;
   line-height: 1.5;
@@ -67,7 +67,41 @@ body {
   display: flex;
   flex-basis: auto;
   flex-grow: 0;
+  flex-flow: column nowrap;
   flex-shrink: 1;
+  max-width: 100%;
+  padding: 15px;
+}
+
+.application-description__line-header {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 10px 0;
+}
+
+.application-description__line-label--nettilukio {
+  color: #5dbdc5;
+}
+
+.application-description__line-label--nettiperuskoulu {
+  color: #ef7d00;
+}
+
+.application-description__line-label--aikuislukio {
+  color: #0080bb;
+}
+
+.application-description__line-label--aineopiskelu {
+  color: #c04080;
+}
+
+.application-description__line-label--maahanmuuttajakoulutus {
+  color: #5dbdc5;
+}
+
+.application-description__line-content {
+  font-size: 15px;
+  font-style: italic;
 }
 
 .application-content {
@@ -148,7 +182,8 @@ h1, h2, h3, h4, h5, h6 {
 h3 {
   margin: 0 0 20px;
   padding: 0;
-  font-size: 22px;
+  font-size: 20px;
+  font-weight: 400;
   line-height: 1;
 }
 
@@ -263,7 +298,7 @@ select,
 button {
   background: #fff;
   font-family: "Open Sans", arial, sans-serif;
-  font-size: 0.875rem;
+  font-size: 14px;
   font-weight: 300;
 }
 
@@ -561,7 +596,7 @@ span.email {
   flex-grow: 0;
   flex-shrink: 0;
   font-family: "Exo 2", arial, sans-serif;
-  font-size: 0.875rem;
+  font-size: 14px;
   width: 100%;
 }
 

@@ -32,8 +32,16 @@
 .application-content {
   align-items: flex-start;
   flex-flow: row nowrap;
-  margin: 50px 30px;
+  margin: 10px 30px 50px;
 } 
+
+.application-description {
+  padding: 30px;
+}
+
+.application-description__line-header {
+  font-size: 28px;
+}
 
 .application-header__show-content-information {
   display: none;  
