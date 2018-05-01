@@ -9,6 +9,8 @@
   
   <jsp:include page="/templates/applications/form-sections/application-form-section-selection.jsp"></jsp:include>
   
+  <jsp:include page="/templates/applications/form-sections/application-form-section-personal-info.jsp"></jsp:include>
+  
   <jsp:include page="/templates/applications/form-sections/application-form-section-underage.jsp"></jsp:include>
   
   <jsp:include page="/templates/applications/form-sections/application-form-section-internetix-school.jsp"></jsp:include>  
@@ -16,6 +18,8 @@
   <jsp:include page="/templates/applications/form-sections/application-form-section-additional.jsp"></jsp:include>
   
   <jsp:include page="/templates/applications/form-sections/application-form-section-attachments.jsp"></jsp:include>
+  
+  <jsp:include page="/templates/applications/form-sections/application-form-section-source.jsp"></jsp:include>
   
   <jsp:include page="/templates/applications/form-sections/application-form-section-summary.jsp"></jsp:include>
   
