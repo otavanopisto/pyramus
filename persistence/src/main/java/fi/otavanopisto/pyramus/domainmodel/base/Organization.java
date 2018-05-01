@@ -43,5 +43,5 @@ public class Organization implements ArchivableEntity {
   
   @NotNull
   @Column (nullable = false)
-  private Boolean archived = Boolean.FALSE;
+  private Boolean archived;
 }
