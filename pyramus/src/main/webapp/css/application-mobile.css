@@ -64,39 +64,61 @@ body {
 
 /* CONTENT */
 .application-description {
-  display: flex;
+  padding: 15px;
+}
+
+.application-description__line {
+  display: none;
   flex-basis: auto;
   flex-grow: 0;
   flex-flow: column nowrap;
   flex-shrink: 1;
   max-width: 100%;
-  padding: 15px;
+}
+
+.application-description__line--selection,
+.application-description__line--nettiperuskoulu,
+.application-description__line--nettilukio,
+.application-description__line--aikuislukio,
+.application-description__line--aineopiskelu,
+.application-description__line--maahanmuuttajakoulutus {
+  display: flex;
 }
 
 .application-description__line-header {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 400;
   margin: 10px 0;
+}
+
+.application-description__line-label {
+  color: #000;
+  font-weight: 600;
 }
 
 .application-description__line-label--nettilukio {
   color: #5dbdc5;
+  font-weight: 600;
 }
 
 .application-description__line-label--nettiperuskoulu {
   color: #ef7d00;
+  font-weight: 600;
 }
 
 .application-description__line-label--aikuislukio {
   color: #0080bb;
+  font-weight: 600;
 }
 
 .application-description__line-label--aineopiskelu {
   color: #c04080;
+  font-weight: 600;
 }
 
 .application-description__line-label--maahanmuuttajakoulutus {
   color: #5dbdc5;
+  font-weight: 600;
 }
 
 .application-description__line-content {
