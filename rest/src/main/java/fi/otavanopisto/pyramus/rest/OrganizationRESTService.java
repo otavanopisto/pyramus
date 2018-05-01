@@ -60,13 +60,13 @@ public class OrganizationRESTService extends AbstractRESTService {
   @Path("/")
   @GET
   @RESTPermit (OrganizationPermissions.LIST_ORGANIZATIONS)
-  public Response listOrganizations(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
+  public Response listOrganizations(@DefaultValue("false") @QueryParam("showArchived") boolean showArchived) {
     List<Organization> organizations;
     
-    if (filterArchived) {
-      organizations = organizationDAO.listUnarchived();
-    } else {
+    if (showArchived) {
       organizations = organizationDAO.listAll();
+    } else {
+      organizations = organizationDAO.listUnarchived();
     }
     
     return Response.ok(objectFactory.createModel(organizations)).build();
