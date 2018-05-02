@@ -118,7 +118,7 @@ public class StudyProgramme implements ArchivableEntity {
   private Long id;
 
   @ManyToOne
-  @JoinColumn (name = "category")
+  @JoinColumn (name = "organization")
   private Organization organization;
 
   @NotNull
