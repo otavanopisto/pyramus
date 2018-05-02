@@ -169,7 +169,7 @@
     
     $('[data-dependencies]').change(function() {
       var name = $(this).attr('name');
-      var value = $(this).is(':visible') ? $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val() : '';
+      var value = $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val();
       $('.form-section__field-container[data-dependent-field="' + name + '"]').each(function() {
         var show = false;
         var values = $(this).attr('data-dependent-values').split(',');
@@ -310,8 +310,8 @@
     if ($('#field-line').attr('data-preselect')) {
       $('#field-line').val($('#field-line').attr('data-preselect'));
       $('.section-line').attr('data-skip', true);
-      setLine($('#field-line').attr('data-preselect'));
     }
+    $('#field-line').trigger('change');
     navigateTo($(applicationSections).get(firstIndex()));
 
     // Previously stored data

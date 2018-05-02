@@ -37,18 +37,53 @@
         <nav class="application-header__show-content-information">?</nav>
       </div>
     </header>
-    <section class="application-description">
     
-      <div class="application-description__line application-description__line--selection">
+    <section class="application-description">
+
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
         <div class="application-description__line-header">
           Hae opiskelijaksi <span class="application-description__line-label">Otavan Opistoon</span>
         </div>
-        <div class="application-description__line-content">
-          Valitse haluamasi koulutusohjelma ja siirry täyttämään opiskelijahakemus.
-        </div>
+        <div class="application-description__line-content">Valitse haluamasi koulutusohjelma ja siirry täyttämään opiskelijahakemus.</div>
       </div>
-      
+
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
+        <div class="application-description__line-header">
+          Olet hakemassa <span class="application-description__line-label--nettiperuskoulu">nettiperuskouluun</span>
+        </div>
+        <div class="application-description__line-content">Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.</div>
+      </div>
+
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
+        <div class="application-description__line-header">
+          Olet hakemassa <span class="application-description__line-label--nettilukio">nettilukioon</span>
+        </div>
+        <div class="application-description__line-content">Nettilukiossa opiskelet koko aikuislukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Nettilukiossa voit myös tehdä loppuun aiemmin kesken jääneet lukio-opinnot. Nettilukio on tarkoitettu yli 18-vuotiaille opiskelijoille. Toisessa oppilaitoksessa opiskelevat ja yksittäisiä lukiokursseja suorittavat voivat ilmoittautua aineopiskelijaksi.</div>
+      </div>
+
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu">
+        <div class="application-description__line-header">
+          Olet hakemassa <span class="application-description__line-label--aineopiskelu">aineopiskelijaksi</span>
+        </div>
+        <div class="application-description__line-content">Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.</div>
+      </div>
+
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio">
+        <div class="application-description__line-header">
+          Olet hakemassa <span class="application-description__line-label--aikuislukio">aikuislukioon</span>
+        </div>
+        <div class="application-description__line-content">Aikuislukiossa opiskelet koko lukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Aikuislukiossa voit myös tehdä loppuun aiemmin kesken jääneet toisessa päivä- tai aikuislukiossa aloittamasi lukio-opinnot.</div>
+      </div>
+
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="mk">
+        <div class="application-description__line-header">
+          Olet hakemassa <span class="application-description__line-label--maahanmuuttajakoulutus">maahanmuuttajakoulutukseen</span>
+        </div>
+        <div class="application-description__line-content">Maahanmuuttajakoulutukset ovat sellaisia opiskelijoita varten, joiden äidinkieli ei ole suomi ja jotka tarvitsevat peruskoulun päättötodistuksen jatko-opintoja varten.</div>
+      </div>
+
     </section>
+    
     <main class="application-content">
       <section class="application-content__information">
         <div class="application-content__information-page-specific">
