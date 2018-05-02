@@ -504,7 +504,8 @@ public class ObjectFactory {
           @Override
           public Object map(StudyProgramme entity) {
             Long categoryId = entity.getCategory() != null ? entity.getCategory().getId() : null;
-            return new fi.otavanopisto.pyramus.rest.model.StudyProgramme(entity.getId(), entity.getCode(), entity.getName(), categoryId, entity.getArchived());
+            Long organizationId = entity.getOrganization() != null ? entity.getOrganization().getId() : null;
+            return new fi.otavanopisto.pyramus.rest.model.StudyProgramme(entity.getId(), organizationId, entity.getCode(), entity.getName(), categoryId, entity.getArchived());
           }
         },
         

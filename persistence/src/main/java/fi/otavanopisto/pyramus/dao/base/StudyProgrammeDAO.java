@@ -7,6 +7,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme_;
@@ -14,10 +15,11 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme_;
 @Stateless
 public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
 
-  public StudyProgramme create(String name, StudyProgrammeCategory category, String code) {
+  public StudyProgramme create(Organization organization, String name, StudyProgrammeCategory category, String code) {
     EntityManager entityManager = getEntityManager();
 
     StudyProgramme studyProgramme = new StudyProgramme();
+    studyProgramme.setOrganization(organization);
     studyProgramme.setName(name);
     studyProgramme.setCategory(category);
     studyProgramme.setCode(code);
@@ -54,7 +56,9 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
-  public StudyProgramme update(StudyProgramme studyProgramme, String name, StudyProgrammeCategory category, String code) {
+  public StudyProgramme update(StudyProgramme studyProgramme, Organization organization, String name, 
+      StudyProgrammeCategory category, String code) {
+    studyProgramme.setOrganization(organization);
     studyProgramme.setName(name);
     studyProgramme.setCategory(category);
     studyProgramme.setCode(code);

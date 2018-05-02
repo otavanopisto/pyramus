@@ -7,6 +7,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -18,8 +19,8 @@ public class StudyProgrammeController {
   @Inject
   private StudyProgrammeDAO studyProgrammeDAO;
   
-  public StudyProgramme createStudyProgramme(String name, String code, StudyProgrammeCategory category) {
-    StudyProgramme activityType = studyProgrammeDAO.create(name, category, code);
+  public StudyProgramme createStudyProgramme(Organization organization, String name, String code, StudyProgrammeCategory category) {
+    StudyProgramme activityType = studyProgrammeDAO.create(organization, name, category, code);
     return activityType;
   }
   
@@ -38,8 +39,8 @@ public class StudyProgrammeController {
     return activityTypes;
   }
   
-  public StudyProgramme updateStudyProgramme(StudyProgramme studyProgramme, String name, String code, StudyProgrammeCategory category) {
-    return studyProgrammeDAO.update(studyProgramme, name, category, code);
+  public StudyProgramme updateStudyProgramme(StudyProgramme studyProgramme, Organization organization, String name, String code, StudyProgrammeCategory category) {
+    return studyProgrammeDAO.update(studyProgramme, organization, name, category, code);
   }
 
   public StudyProgramme archiveStudyProgramme(StudyProgramme studyProgramme, User user) {
