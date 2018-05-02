@@ -15,7 +15,7 @@ body {
   flex-flow: column nowrap;
   font-family: "Open Sans", arial, sans-serif;
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 400;
   justify-content: center;
   line-height: 1.5;
   margin: 0;
@@ -62,6 +62,145 @@ body {
   color: #000;
 }
 
+/* SELECTION LAYOUT */
+.application-selection {
+  display: flex;
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-flow: row wrap;
+  padding: 0 0 20px;
+}
+
+.selection-box {
+  align-items: flex-start;
+  background-color: #fff;
+  border: 1px solid #e2e2e2;
+  box-shadow: 0 3px 3px rgba(0,0,0,0.1);
+  display: flex;
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-flow: column nowrap;
+  flex-shrink: 1;
+  justify-content: space-between;
+  margin: 0 0 20px;
+}
+
+.selection-box__header-image {
+  min-height: 146px;
+  position: relative;
+  width: 100%;
+}
+
+.selection-box--nettilukio .selection-box__header-image {
+  background-image: url("/gfx/applications/header-nettilukio.png");
+  background-position: center center;
+  background-size: cover;
+}
+
+.selection-box--nettiperuskoulu .selection-box__header-image {
+  background-image: url("/gfx/applications/header-nettiperuskoulu.png");
+  background-position: center center;
+  background-size: cover;
+}
+
+.selection-box--aineopiskelu .selection-box__header-image {
+  background-image: url("/gfx/applications/header-aineopiskelu.png");
+  background-position: center center;
+  background-size: cover;
+}
+
+.selection-box--aikuislukio .selection-box__header-image {
+  background-image: url("/gfx/applications/header-aikuislukio.png");
+  background-position: center center;
+  background-size: cover;
+}
+
+.selection-box--maahanmuuttajakoulutus .selection-box__header-image {
+  background-image: url("/gfx/applications/header-maahanmuuttajakoulutus.png");
+  background-position: center center;
+  background-size: cover;
+}
+
+.selection-box__header-text {
+  background: #000;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  bottom: 30px;
+  color: #fff;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1;
+  padding: 10px 15px;
+  position: absolute;
+  text-transform: uppercase;
+}
+
+.selection-box--nettilukio .selection-box__header-text-indicator {
+  color: #5dbdc5;
+}
+
+.selection-box--nettiperuskoulu .selection-box__header-text-indicator {
+  color: #ef7d00;
+}
+
+.selection-box--aineopiskelu .selection-box__header-text-indicator {
+  color: #0080bb;
+}
+
+.selection-box--aikuislukio .selection-box__header-text-indicator {
+  color: #c04080;
+}
+
+.selection-box--maahanmuuttajakoulutus .selection-box__header-text-indicator {
+  color: #5dbdc5;
+}
+
+.selection-box__description {
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  font-size: 14px;
+  padding: 15px;
+}
+
+.selection-box__link-container {
+  padding: 15px;
+}
+
+.selection-box__link {
+  border-radius: 2px;
+  color: #fff;
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1;
+  padding: 8px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.selection-box--nettilukio .selection-box__link {
+  background-color: #5dbdc5;
+}
+
+.selection-box--nettiperuskoulu .selection-box__link {
+  background-color: #ef7d00;
+}
+
+.selection-box--aineopiskelu .selection-box__link {
+  background-color: #0080bb;
+}
+
+.selection-box--aikuislukio .selection-box__link {
+  background-color: #c04080;
+}
+
+.selection-box--maahanmuuttajakoulutus .selection-box__link {
+  background-color: #5dbdc5;
+}
+
+
 /* CONTENT */
 .application-description {
   padding: 15px;
@@ -69,20 +208,12 @@ body {
 
 .application-description__line {
   display: none;
-  flex-basis: auto;
-  flex-grow: 0;
-  flex-flow: column nowrap;
-  flex-shrink: 1;
   max-width: 100%;
 }
 
-.application-description__line--selection,
-.application-description__line--nettiperuskoulu,
-.application-description__line--nettilukio,
-.application-description__line--aikuislukio,
-.application-description__line--aineopiskelu,
-.application-description__line--maahanmuuttajakoulutus {
-  display: flex;
+.application-description__line--selection {
+  display: block;
+  max-width: 100%;
 }
 
 .application-description__line-header {
@@ -126,6 +257,7 @@ body {
   font-style: italic;
 }
 
+/* APPLICATION LAYOUT */
 .application-content {
   background-color: #fff;
   display: flex;

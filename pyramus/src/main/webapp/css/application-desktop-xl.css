@@ -8,26 +8,37 @@
 /////////////////////////////////////////////////////////////////////////////
 */
 
-.application-header {
-  
-} 
-
 .application-header__content {
   margin: 0 auto;
   max-width: 1180px;
   padding: 0;
 }
 
+.application-selection {
+  margin: 0 auto 40px;
+  max-width: 1200px; /* we need to add additional 10px (1180 + 10 + 10) for each side to layout "cards" better and avoid any other hacks */
+  padding: 0;
+}
+
 .application-content {
-  margin: 40px auto 80px;
+  margin: 0 auto 80px;
   max-width: 1180px;
   padding: 45px;
 } 
 
+.selection-box {
+  box-shadow: none;
+  flex-basis: calc(33% - 20px);
+  flex-grow: 1;
+  margin: 0 10px 20px;
+  max-width: calc(33% - 20px);
+}
+
 .application-description {
   margin: 0 auto;
   max-width: 1180px;
-  padding: 30px 0 0;
+  padding: 30px 0;
+  width: 100%;
 }
 
 .application-content__information {

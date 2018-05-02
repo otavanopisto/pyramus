@@ -29,10 +29,18 @@
   width: 115px;
 }
 
+.application-selection {
+  padding: 0 20px 30px;
+}
+
+.selection-box__description {
+  font-size: 16px;
+}
+
 .application-content {
   align-items: flex-start;
   flex-flow: row nowrap;
-  margin: 10px 30px 50px;
+  margin: 0 30px 50px;
 } 
 
 .application-description {
@@ -41,6 +49,10 @@
 
 .application-description__line-header {
   font-size: 28px;
+}
+
+.application-description__line-content {
+  font-size: 18px;
 }
 
 .application-header__show-content-information {

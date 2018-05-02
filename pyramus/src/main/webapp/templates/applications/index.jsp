@@ -13,12 +13,108 @@
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/application.css"/>
   </head>
   <body>
-    <main class="application">
-      <div><a href="/applications/create.page?line=aineopiskelu">Aineopiskelu</a></div>
-      <div><a href="/applications/create.page?line=nettilukio">Nettilukio</a></div>
-      <div><a href="/applications/create.page?line=nettipk">Nettiperuskoulu</a></div>
-      <div><a href="/applications/create.page?line=aikuislukio">Aikuislukio</a></div>
-      <div><a href="/applications/create.page?line=mk">Maahanmuuttajakoulutukset</a></div>
+    <header class="application-header">
+      <div class="application-header__content">
+        <div class="application-header__logo">
+          <div class="application-header__logo-text">Otavan<br/>Opist<span class="application-header__logo-branding">o...</span></div>
+        </div>
+      </div>
+    </header>
+  
+    <section class="application-description">
+      <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
+        <div class="application-description__line-header">
+          Hae opiskelijaksi <span class="application-description__line-label">Otavan Opistoon</span>
+        </div>
+        <div class="application-description__line-content">Valitse haluamasi koulutusohjelma ja siirry täyttämään opiskelijahakemus.</div>
+      </div>
+    </section>
+    
+    <main class="application-selection">
+      <div class="selection-box selection-box--nettilukio">
+        <div class="selection-box__header-image">
+          <div class="selection-box__header-text">
+            Nettiluki<span class="selection-box__header-text-indicator">o...</span>
+          </div>
+        </div>
+        <div class="selection-box__description">
+          Nettilukiossa opiskelet koko aikuislukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Nettilukiossa voit myös tehdä loppuun aiemmin kesken jääneet lukio-opinnot. Nettilukio on tarkoitettu yli 18-vuotiaille opiskelijoille. Toisessa oppilaitoksessa opiskelevat ja yksittäisiä lukiokursseja suorittavat voivat ilmoittautua aineopiskelijaksi.
+        </div>
+        <div class="selection-box__link-container">
+          <a class="selection-box__link" href="/applications/create.page?line=nettilukio">Hae Nettilukioon</a>
+        </div>
+      </div>
+      
+      <div class="selection-box selection-box--nettiperuskoulu">
+        <div class="selection-box__header-image">
+          <div class="selection-box__header-text">
+            Nettiperuskoul<span class="selection-box__header-text-indicator">u...</span>
+          </div>
+        </div>
+        <div class="selection-box__description">
+          Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.
+        </div>
+        <div class="selection-box__link-container">
+          <a class="selection-box__link" href="/applications/create.page?line=nettipk">Hae Nettiperuskouluun</a>
+        </div>
+      </div>
+      
+      <div class="selection-box selection-box--aineopiskelu">
+        <div class="selection-box__header-image">
+          <div class="selection-box__header-text">
+            Aineopiskel<span class="selection-box__header-text-indicator">u...</span>
+          </div>
+        </div>
+        <div class="selection-box__description">
+          Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.
+        </div>
+        <div class="selection-box__link-container">
+          <a class="selection-box__link" href="/applications/create.page?line=aineopiskelu">Hae Aineopiskelijaksi</a>
+        </div>
+      </div>
+      
+      <div class="selection-box selection-box--aikuislukio">
+        <div class="selection-box__header-image">
+          <div class="selection-box__header-text">
+            Aikuisluki<span class="selection-box__header-text-indicator">o...</span>
+          </div>
+        </div>
+        <div class="selection-box__description">
+          Aikuislukiossa opiskelet koko lukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Aikuislukiossa voit myös tehdä loppuun aiemmin kesken jääneet toisessa päivä- tai aikuislukiossa aloittamasi lukio-opinnot.
+        </div>
+        <div class="selection-box__link-container">
+          <a class="selection-box__link" href="/applications/create.page?line=aikuislukio">Hae Aikuislukioon</a>
+        </div>
+      </div>
+      
+      <div class="selection-box selection-box--maahanmuuttajakoulutus">
+        <div class="selection-box__header-image">
+          <div class="selection-box__header-text">
+            Maahanmuuttajaoulutukse<span class="selection-box__header-text-indicator">t...</span>
+          </div>
+        </div>
+        <div class="selection-box__description">
+          Maahanmuuttajakoulutukset ovat sellaisia opiskelijoita varten, joiden äidinkieli ei ole suomi ja jotka tarvitsevat peruskoulun päättötodistuksen jatko-opintoja varten.
+        </div>
+        <div class="selection-box__link-container">
+          <a class="selection-box__link" href="/applications/create.page?line=mk">Hae Maahanmuuttajakoulutukseen</a>
+        </div>
+      </div>
     </main>
+    <footer class="application-footer">
+      <div class="application-footer__contact">
+        <div class="application-footer__contact-title">Ota yhteyttä</div>
+        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Osoite:</span> Otavantie 2 B, 50670 Otava</div>
+        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Puhelin:</span> 044 794 3552</div>
+        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Sähköposti:</span> info@otavanopisto.fi</div>
+      </div>
+      <div class="application-footer__links">
+        <a href="https://www.otavanopisto.fi" target="top" class="application-footer__external-link">www.otavanopisto.fi</a>
+        <a href="https://www.nettilukio.fi" target="top" class="application-footer__external-link">www.nettilukio.fi</a>
+        <a href="https://www.nettiperuskoulu.fi" target="top" class="application-footer__external-link">www.nettiperuskoulu.fi</a>
+        <a href="https://otavanopisto.muikkuverkko.fi" target="top" class="application-footer__external-link">otavanopisto.muikkuverkko.fi</a>
+        <a href="#" target="top" class="application-footer__external-link">Tietosuojaseloste</a>
+      </div>
+    </footer>
   </body>
 </html>

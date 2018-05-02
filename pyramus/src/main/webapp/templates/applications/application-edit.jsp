@@ -47,18 +47,18 @@
         <div class="application-description__line-content">Valitse haluamasi koulutusohjelma ja siirry täyttämään opiskelijahakemus.</div>
       </div>
 
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
-        <div class="application-description__line-header">
-          Olet hakemassa <span class="application-description__line-label--nettiperuskoulu">nettiperuskouluun</span>
-        </div>
-        <div class="application-description__line-content">Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.</div>
-      </div>
-
       <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
         <div class="application-description__line-header">
           Olet hakemassa <span class="application-description__line-label--nettilukio">nettilukioon</span>
         </div>
         <div class="application-description__line-content">Nettilukiossa opiskelet koko aikuislukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Nettilukiossa voit myös tehdä loppuun aiemmin kesken jääneet lukio-opinnot. Nettilukio on tarkoitettu yli 18-vuotiaille opiskelijoille. Toisessa oppilaitoksessa opiskelevat ja yksittäisiä lukiokursseja suorittavat voivat ilmoittautua aineopiskelijaksi.</div>
+      </div>
+
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
+        <div class="application-description__line-header">
+          Olet hakemassa <span class="application-description__line-label--nettiperuskoulu">nettiperuskouluun</span>
+        </div>
+        <div class="application-description__line-content">Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.</div>
       </div>
 
       <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu">
