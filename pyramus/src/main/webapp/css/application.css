@@ -1,20 +1,25 @@
 @charset "UTF-8";
 @import url('https://fonts.googleapis.com/css?family=Exo+2:200,300,400,600,900|Open+Sans:300,400');
 
+/* Based on min-width (mobile-first) so these breakpoints fires when resolution exceeds given value.
+ Em values are calculated as 1em = 16px by default. If user has increased browser's font size 
+ break points will scale properly (threshold to fire break point increases as well) without breaking the
+ amazing and magnificent layout :) */
+
 /* MOBILE FIRST */
 @import url("application-mobile.css");
 
 /* MOBILE XL */
-@import url("application-mobile-xl.css") screen and (min-width: 640px);
+@import url("application-mobile-xl.css") screen and (min-width: 40em);
 
 /* TABLE PORTRAIT */
-@import url("application-tablet.css") screen and (min-width: 768px);
+@import url("application-tablet.css") screen and (min-width: 48em);
 
 /* TABLET LANDSCAPE and DESKTOP */
-@import url("application-desktop.css") screen and (min-width: 1024px);
+@import url("application-desktop.css") screen and (min-width: 64em);
 
 /* DESKTOP XL */
-@import url("application-desktop-xl.css") screen and (min-width: 1280px);
+@import url("application-desktop-xl.css") screen and (min-width: 80em);
 
 /* GENERIC STYLES */
 

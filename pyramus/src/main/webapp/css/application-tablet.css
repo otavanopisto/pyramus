@@ -50,8 +50,16 @@ body {
   max-width: calc(50% - 20px);
 }
 
+.selection-box__header-text {
+  font-size: 17px;
+}
+
 .selection-box__description {
   font-size: 15px;
+}
+
+.selection-box__link {
+  font-size: 14px;
 }
 
 .application-content {
