@@ -43,6 +43,7 @@ body {
 }
 
 .selection-box {
+  border: 1px solid #e2e2e2;
   box-shadow: none;
   flex-basis: calc(50% - 20px);
   flex-grow: 1;
@@ -64,6 +65,7 @@ body {
 
 .application-content {
   border: 1px solid #e2e2e2;
+  box-shadow: none;
   margin: 0 20px 40px;
   padding: 30px;
 } 
@@ -88,15 +90,6 @@ h3 {
   font-family: "Exo 2";
   font-weight: 300;
   font-size: 26px;
-}
-
-input, 
-textarea {
-  padding: 8px;
-}
-
-select {
-  padding: 6px 4px;
 }
 
 input, 

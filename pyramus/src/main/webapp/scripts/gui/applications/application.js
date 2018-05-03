@@ -216,13 +216,13 @@
     });
     
     $('.button-next-section').click(function() {
-      if ($('.application-form').parsley().validate({group: 'block-' + currentIndex()})) {
+      //if ($('.application-form').parsley().validate({group: 'block-' + currentIndex()})) {
         var newIndex = currentIndex() + 1;  
         while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
           newIndex++;
         }
         navigateTo($(applicationSections[newIndex]));
-      }
+      //}
     });
 
     $('.button-save-application').click(function() {

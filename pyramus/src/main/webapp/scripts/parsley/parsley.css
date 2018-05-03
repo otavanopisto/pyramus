@@ -3,7 +3,7 @@ select.parsley-success,
 textarea.parsley-success {
   color: #468847;
   background-color: #dff0d8;
-  border: 1px solid #d6e9c6;
+  border: 2px solid #d6e9c6;
 }
 
 input.parsley-error,
@@ -11,7 +11,7 @@ select.parsley-error,
 textarea.parsley-error {
   color: #b94a48;
   background-color: #f2dede;
-  border: 1px solid #eed3d7;
+  border: 2px solid #eed3d7;
 }
 
 .parsley-errors-list {

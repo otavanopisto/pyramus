@@ -9,11 +9,11 @@
 */
 
 body {
-  background-color: #fff;
+  background-color: #f5f5f5;
   color: #000;
   display: flex;
   flex-flow: column nowrap;
-  font-family: "Open Sans", arial, sans-serif;
+  font-family: "Exo 2", arial, sans-serif;
   font-size: 14px;
   font-weight: 400;
   justify-content: center;
@@ -74,8 +74,7 @@ body {
 .selection-box {
   align-items: flex-start;
   background-color: #fff;
-  border: 1px solid #e2e2e2;
-  box-shadow: 0 3px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   display: flex;
   flex-basis: 100%;
   flex-grow: 1;
@@ -145,11 +144,11 @@ body {
 }
 
 .selection-box--aineopiskelu .selection-box__header-text-indicator {
-  color: #0080bb;
+  color: #c04080;
 }
 
 .selection-box--aikuislukio .selection-box__header-text-indicator {
-  color: #c04080;
+  color: #0080bb;
 }
 
 .selection-box--maahanmuuttajakoulutus .selection-box__header-text-indicator {
@@ -189,11 +188,11 @@ body {
 }
 
 .selection-box--aineopiskelu .selection-box__link {
-  background-color: #0080bb;
+  background-color: #c04080;
 }
 
 .selection-box--aikuislukio .selection-box__link {
-  background-color: #c04080;
+  background-color: #0080bb;
 }
 
 .selection-box--maahanmuuttajakoulutus .selection-box__link {
@@ -260,12 +259,13 @@ body {
 /* APPLICATION LAYOUT */
 .application-content {
   background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   display: flex;
   flex-basis: 100%;
   flex-grow: 1;
   flex-flow: column nowrap;
   flex-shrink: 1;
-  margin: 0 0 20px;
+  margin: 0 0 40px;
   max-width: 100%;
   padding: 15px;
   position: relative;
@@ -281,6 +281,10 @@ body {
   margin: 0 0 20px;
   order: 1;
   padding: 20px;
+}
+
+.application-content__information b {
+  font-weight: 600;
 }
 
 .application-header__show-content-information {
@@ -459,9 +463,9 @@ button {
 input,
 textarea {
   margin: 0;
-  padding: 6px;
+  padding: 8px;
   border-radius: 3px;
-  border: 1px solid #5db5c5;
+  border: 2px solid #a9e4ef;
   max-width: 100%;
   width: 100%;
 }
@@ -472,7 +476,7 @@ input[type="radio"] {
   -moz-appearance: none;
   align-items: center;
   appearance: none;
-  border: 1px solid #5db5c5;
+  border: 2px solid #a9e4ef;
   border-radius: 3px;
   display: flex;
   height: 21px;
@@ -482,7 +486,7 @@ input[type="radio"] {
 
 input[type="checkbox"]:checked {
   background-color: #5db5c5;
-  border: solid 1px #5db5c5;
+  border: solid 2px #5db5c5;
   position: relative;
 }
 
@@ -499,9 +503,9 @@ input[type="checkbox"]:checked::after {
 select {
   font-size: 14px;
   border-radius: 3px;
-  border: 1px solid #5db5c5;
+  border: 2px solid #a9e4ef;
   width: 100%;
-  padding: 4px;
+  padding: 6px 4px;
   text-overflow: ellipsis;
 }
 
@@ -591,13 +595,13 @@ button {
 
 /* FILE UPLOADER */
 .field-attachments {
-  margin: 40px 0;
+  margin: 30px 0;
 }
 
 .field-attachments__selector-container {
   position: relative;
   background: #fff;
-  border: 1px solid #5db5c5;
+  border: 2px solid #a9e4ef;
   cursor: pointer;
   border-radius:3px;
 }
