@@ -22,6 +22,17 @@
   flex-flow: row wrap;
 }
 
+.application-description.application-description--credentials {
+  text-align: center;
+}
+
+.application-content.application-content--credentials {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 480px;
+  width: 100%;
+}
+
 .application-footer__contact {
   align-items: flex-start;
 }

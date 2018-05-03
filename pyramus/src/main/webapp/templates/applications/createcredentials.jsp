@@ -26,7 +26,7 @@
 
     <c:choose>
       <c:when test="${credentialsCreated eq true}">
-        <section class="application-description">
+        <section class="application-description application-description--credentials">
           <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
             <div class="application-description__line-header">
               Tunnuksesi on luotu onnistuneesti
@@ -43,7 +43,7 @@
       </c:when>
       <c:when test="${credentialsAlreadyExist eq true}">
       
-        <section class="application-description">
+        <section class="application-description application-description--credentials">
           <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
             <div class="application-description__line-header">
               Käyttäjätiliisi on jo liitetty Muikku-tunnukset
@@ -60,7 +60,7 @@
         
       </c:when>
       <c:otherwise>
-        <section class="application-description">
+        <section class="application-description application-description--credentials">
           <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
             <div class="application-description__line-header">
               Muikku-tunnuksien luonti

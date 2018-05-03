@@ -51,6 +51,11 @@
   margin: 0 30px 50px;
 }
 
+.application-content.application-content--credentials {
+  max-width: 520px;
+}
+
+
 .application-content--edit .application-editing-information-row {
   flex-basis: calc(33% - 40px);
   max-width: calc(33% - 40px);
