@@ -24,7 +24,22 @@
   margin: 0 auto 80px;
   max-width: 1180px;
   padding: 45px;
-} 
+  width: 100%;
+}
+
+.application-content--edit {
+  padding: 20px;
+}
+
+.application-content--edit .application-editing-information-row {
+  flex-basis: calc(33% - 50px);
+  margin: 25px;
+  max-width: calc(33% - 50px);
+}
+
+.application-content--edit .application-editing-information-link {
+  margin: 25px;
+}
 
 .selection-box {
   box-shadow: none;

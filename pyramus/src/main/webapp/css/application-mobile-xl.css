@@ -17,6 +17,11 @@
   height: 65px;
 }
 
+.application-content--edit {
+  align-content: flex-start;
+  flex-flow: row wrap;
+}
+
 .application-footer__contact {
   align-items: flex-start;
 }

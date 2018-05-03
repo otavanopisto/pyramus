@@ -39,7 +39,6 @@
     </header>
     
     <section class="application-description">
-
       <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
         <div class="application-description__line-header">
           Hae opiskelijaksi <span class="application-description__line-label">Otavan Opistoon</span>
@@ -81,10 +80,10 @@
         </div>
         <div class="application-description__line-content">Maahanmuuttajakoulutukset ovat sellaisia opiskelijoita varten, joiden äidinkieli ei ole suomi ja jotka tarvitsevat peruskoulun päättötodistuksen jatko-opintoja varten.</div>
       </div>
-
     </section>
-    
+
     <main class="application-content">
+
       <section class="application-content__information">
         <div class="application-content__information-page-specific">
           <p>Klikkaa seuraava painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>

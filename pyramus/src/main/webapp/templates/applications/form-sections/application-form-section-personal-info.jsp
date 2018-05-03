@@ -4,8 +4,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
   <section class="form-section section-personal-info">
-  
-    <div class="application-line"></div>
 
     <h3 class="form-section__header">Henkilötiedot</h3>
     

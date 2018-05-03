@@ -70,6 +70,47 @@ body {
   padding: 30px;
 } 
 
+.application-content--edit {
+  align-content: flex-start;
+  flex-flow: row wrap;
+  padding: 10px;
+}
+
+.application-content--edit .application-content__form  {
+  margin: 0;
+  padding: 20px;
+} 
+
+.application-content--edit .application-editing-information-row {
+  flex-basis: calc(50% - 40px);
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 20px;
+  max-width: calc(50% - 40px);
+}
+
+.application-content--edit .application-editing-information-link {
+  margin: 20px;
+}
+
+.section-edit-info {
+  white-space: nowrap;
+}
+
+.section-edit-info .form-section__field-container {
+  display: inline-block;
+  vertical-align: top;
+  width: calc(50% - 20px);
+}
+
+.section-edit-info .form-section__field-container:nth-child(odd) {
+  margin: 0 20px 0 0;
+}
+
+.section-edit-info .form-section__field-container:nth-child(even) {
+  margin: 0 0 0 20px;
+}
+
 .application-description {
   padding: 20px;
 }

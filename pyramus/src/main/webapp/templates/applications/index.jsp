@@ -29,8 +29,9 @@
         <div class="application-description__line-content">Valitse haluamasi koulutusohjelma ja siirry täyttämään opiskelijahakemus.</div>
       </div>
     </section>
-    
+  
     <main class="application-selection">
+    
       <div class="selection-box selection-box--nettilukio">
         <div class="selection-box__header-image">
           <div class="selection-box__header-text">
@@ -100,6 +101,7 @@
           <a class="selection-box__link" href="/applications/create.page?line=mk">Hae Maahanmuuttajakoulutukseen</a>
         </div>
       </div>
+      
     </main>
     <footer class="application-footer">
       <div class="application-footer__contact">
