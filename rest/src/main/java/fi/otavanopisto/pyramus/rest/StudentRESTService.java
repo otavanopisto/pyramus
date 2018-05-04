@@ -32,6 +32,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
@@ -42,6 +43,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
@@ -183,6 +185,9 @@ public class StudentRESTService extends AbstractRESTService {
   @Inject
   private AssessmentController assessmentController;
 
+  @Inject
+  private OrganizationDAO organizationDAO;
+  
   @Path("/languages")
   @POST
   @RESTPermit(LanguagePermissions.CREATE_LANGUAGE)
@@ -825,17 +830,23 @@ public class StudentRESTService extends AbstractRESTService {
     String name = entity.getName();
     String code = entity.getCode();
     Long categoryId = entity.getCategoryId();
+    Long organizationId = entity.getOrganizationId();
 
-    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null) {
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null || organizationId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
     StudyProgrammeCategory programmeCategory = studyProgrammeCategoryController.findStudyProgrammeCategoryById(categoryId);
-    if (programmeCategory == null) {
+    Organization organization = organizationDAO.findById(organizationId);
+
+    // TODO check that user has permission to the organization
+    
+    if (programmeCategory == null || organization == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
-
-    return Response.ok(objectFactory.createModel(studyProgrammeController.createStudyProgramme(name, code, programmeCategory))).build();
+    
+    StudyProgramme studyProgramme = studyProgrammeController.createStudyProgramme(organization, name, code, programmeCategory);
+    return Response.ok(objectFactory.createModel(studyProgramme)).build();
   }
 
   @Path("/studyProgrammes")
@@ -848,6 +859,8 @@ public class StudentRESTService extends AbstractRESTService {
     } else {
       studyProgrammes = studyProgrammeController.listStudyProgrammes();
     }
+    
+    // TODO list only studyprogrammes the user can view
 
     if (studyProgrammes.isEmpty()) {
       return Response.noContent().build();
@@ -864,6 +877,8 @@ public class StudentRESTService extends AbstractRESTService {
     if (studyProgramme == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
+
+    // TODO find only studyprogrammes the user can view
 
     if (studyProgramme.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
@@ -897,7 +912,10 @@ public class StudentRESTService extends AbstractRESTService {
     String name = entity.getName();
     String code = entity.getCode();
     Long categoryId = entity.getCategoryId();
+    Long organizationId = entity.getOrganizationId();
 
+    // TODO: Check the user is part of the organization or has permission to update
+    
     if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
@@ -907,7 +925,14 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    return Response.ok().entity(objectFactory.createModel(studyProgrammeController.updateStudyProgramme(studyProgramme, name, code, programmeCategory)))
+    Organization organization = organizationDAO.findById(organizationId);
+    if (organization == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    
+    studyProgramme = studyProgrammeController.updateStudyProgramme(studyProgramme, organization, name, code, programmeCategory);
+    
+    return Response.ok().entity(objectFactory.createModel(studyProgramme))
         .build();
   }
 
