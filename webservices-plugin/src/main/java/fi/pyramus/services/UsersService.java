@@ -65,7 +65,7 @@ public class UsersService extends PyramusService {
     StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StaffMember user = staffDAO.findById(userId);
     Role userRole = EnumType.valueOf(Role.class, role);
-    Organization organization = null;
+    Organization organization = user.getOrganization();
     staffDAO.update(user, organization, firstName, lastName, userRole);
     validateEntity(user);
   }
