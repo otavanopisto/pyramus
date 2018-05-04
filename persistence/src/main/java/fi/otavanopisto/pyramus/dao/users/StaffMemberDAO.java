@@ -34,6 +34,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType_;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Email_;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -61,11 +62,12 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
   @Inject
   private Event<StaffMemberDeletedEvent> staffMemberDeletedEvent;
   
-  public StaffMember create(String firstName, String lastName, Role role, Person person, Boolean archived) {
+  public StaffMember create(Organization organization, String firstName, String lastName, Role role, Person person, Boolean archived) {
     ContactInfo contactInfo = new ContactInfo();
     
     StaffMember staffMember = new StaffMember();
 
+    staffMember.setOrganization(organization);
     staffMember.setFirstName(firstName);
     staffMember.setLastName(lastName);
     staffMember.setRole(role);
@@ -316,7 +318,8 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     }
   }
   
-  public StaffMember update(StaffMember staffMember, String firstName, String lastName, Role role) {
+  public StaffMember update(StaffMember staffMember, Organization organization, String firstName, String lastName, Role role) {
+    staffMember.setOrganization(organization);
     staffMember.setFirstName(firstName);
     staffMember.setLastName(lastName);
     staffMember.setRole(role);

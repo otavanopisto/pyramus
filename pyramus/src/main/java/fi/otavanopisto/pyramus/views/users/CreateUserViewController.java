@@ -10,9 +10,11 @@ import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactURLTypeDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
@@ -37,6 +39,7 @@ public class CreateUserViewController extends PyramusViewController implements B
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     ContactURLTypeDAO contactURLTypeDAO = DAOFactory.getInstance().getContactURLTypeDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     
     Long studentId = pageRequestContext.getLong("studentId");
     boolean hasInternalAuthenticationStrategies = AuthenticationProviderVault.getInstance().hasInternalStrategies();
@@ -62,10 +65,14 @@ public class CreateUserViewController extends PyramusViewController implements B
     List<ContactType> contactTypes = contactTypeDAO.listUnarchived();
     Collections.sort(contactTypes, new StringAttributeComparator("getName"));
 
+    List<Organization> organizations = organizationDAO.listUnarchived();
+    Collections.sort(organizations, new StringAttributeComparator("getName"));
+
     pageRequestContext.getRequest().setAttribute("contactTypes", contactTypes);
     pageRequestContext.getRequest().setAttribute("contactURLTypes", contactURLTypes);
     pageRequestContext.getRequest().setAttribute("hasInternalAuthenticationStrategies", hasInternalAuthenticationStrategies);
-    
+    pageRequestContext.getRequest().setAttribute("organizations", organizations);
+
     pageRequestContext.setIncludeJSP("/templates/users/createuser.jsp");
   }
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.otavanopisto.pyramus.util.dataimport.scripting.InvalidScriptException;
@@ -24,7 +25,10 @@ public class StudyProgrammeAPI {
       }
     }
     
-    return (DAOFactory.getInstance().getStudyProgrammeDAO().create(name, category, code).getId());
+    // TODO organization
+    Organization organization = null;
+    
+    return (DAOFactory.getInstance().getStudyProgrammeDAO().create(organization, name, category, code).getId());
   }
   
   public Long findIdByCode(String code) {

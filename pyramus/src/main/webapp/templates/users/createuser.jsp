@@ -340,6 +340,19 @@
 
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="users.createUser.organizationTitle"/>
+                <jsp:param name="helpLocale" value="users.createUser.organizationHelp"/>
+              </jsp:include>                  
+              <select name="organizationId">
+                <option value=""></option>
+                <c:forEach items="${organizations}" var="organization">
+                  <option value="${organization.id}">${organization.name}</option>
+                </c:forEach>
+              </select>
+            </div>
+
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="users.createUser.firstNameTitle"/>
                 <jsp:param name="helpLocale" value="users.createUser.firstNameHelp"/>
               </jsp:include>                  

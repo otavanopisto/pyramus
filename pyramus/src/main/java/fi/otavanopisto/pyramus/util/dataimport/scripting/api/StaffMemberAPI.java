@@ -6,6 +6,7 @@ import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -22,8 +23,10 @@ public class StaffMemberAPI {
     if (person == null) {
       throw new InvalidScriptException("Person not found");
     }
-    
-    StaffMember staffMember = staffMemberDAO.create(firstName, lastName, Role.valueOf(role), person, false);
+
+    // TODO organization
+    Organization organization = null;
+    StaffMember staffMember = staffMemberDAO.create(organization, firstName, lastName, Role.valueOf(role), person, false);
     if (staffMember == null) {
       throw new InvalidScriptException("Failed to create new staff member");
     } else {

@@ -18,6 +18,7 @@ import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
@@ -59,8 +60,8 @@ public class UserController {
 
   /* StaffMember */
 
-  public StaffMember createStaffMember(String firstName, String lastName, Role role, Person person) {
-    return staffMemberDAO.create(firstName, lastName, role, person, false);
+  public StaffMember createStaffMember(Organization organization, String firstName, String lastName, Role role, Person person) {
+    return staffMemberDAO.create(organization, firstName, lastName, role, person, false);
   }
   
   public StaffMember findStaffMemberById(Long userId) {
