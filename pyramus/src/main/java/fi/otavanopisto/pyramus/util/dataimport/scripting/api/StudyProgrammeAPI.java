@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
@@ -16,7 +17,9 @@ public class StudyProgrammeAPI {
     this.loggedUserId = loggedUserId;
   }
 
-  public Long create(String name, Long categoryId, String code) throws InvalidScriptException {
+  public Long create(String name, Long categoryId, String code, Long organizationId) throws InvalidScriptException {
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
+    
     StudyProgrammeCategory category = null;
     if (categoryId != null) {
       category = DAOFactory.getInstance().getStudyProgrammeCategoryDAO().findById(categoryId);
@@ -24,9 +27,11 @@ public class StudyProgrammeAPI {
         throw new InvalidScriptException("StudyProgrammeCategory #" + categoryId + " not found.");
       }
     }
-    
-    // TODO organization
-    Organization organization = null;
+
+    Organization organization = organizationId != null ? organizationDAO.findById(organizationId) : null;
+    if (organization == null) {
+      throw new InvalidScriptException("Organization not found.");
+    }
     
     return (DAOFactory.getInstance().getStudyProgrammeDAO().create(organization, name, category, code).getId());
   }

@@ -26,7 +26,7 @@ public class StaffMemberAPI {
       throw new InvalidScriptException("Person not found");
     }
 
-    Organization organization = organizationDAO.findById(organizationId);
+    Organization organization = organizationId != null ? organizationDAO.findById(organizationId) : null;
     if (organization == null) {
       throw new InvalidScriptException("Organization not found");
     }
