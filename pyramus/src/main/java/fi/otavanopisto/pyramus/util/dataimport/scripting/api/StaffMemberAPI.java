@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.util.dataimport.scripting.api;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
@@ -14,18 +15,22 @@ import fi.otavanopisto.pyramus.util.dataimport.scripting.InvalidScriptException;
 
 public class StaffMemberAPI {
   
-  public Long create(String firstName, String lastName, String role, Long personId)
+  public Long create(String firstName, String lastName, String role, Long personId, Long organizationId)
                          throws InvalidScriptException {
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
 
     Person person = personDAO.findById(personId);
     if (person == null) {
       throw new InvalidScriptException("Person not found");
     }
 
-    // TODO organization
-    Organization organization = null;
+    Organization organization = organizationDAO.findById(organizationId);
+    if (organization == null) {
+      throw new InvalidScriptException("Organization not found");
+    }
+    
     StaffMember staffMember = staffMemberDAO.create(organization, firstName, lastName, Role.valueOf(role), person, false);
     if (staffMember == null) {
       throw new InvalidScriptException("Failed to create new staff member");
