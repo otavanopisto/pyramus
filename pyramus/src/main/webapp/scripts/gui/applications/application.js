@@ -199,6 +199,18 @@
       $('.privacy-policy').toggle();
     });
     
+    // Course fees
+
+    $('.internetix-course-fees-link').on('click', function() {
+      $('.course-fees-overlay').toggle();
+      $('.course-fees').toggle();
+    });
+    
+    $('.course-fees__close, .course-fees-overlay').on('click', function() {
+      $('.course-fees-overlay').toggle();
+      $('.course-fees').toggle();
+    });
+    
     // Page information
     
     $('.application-header__show-content-information').on('click', function() {
