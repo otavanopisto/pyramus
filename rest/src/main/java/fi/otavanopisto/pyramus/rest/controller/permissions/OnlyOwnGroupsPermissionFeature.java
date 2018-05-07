@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.rest.controller.permissions;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
@@ -16,6 +17,7 @@ import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.PermissionFeatureHandler;
 
 @PermissionFeature(PyramusPermissionFeatures.ONLY_OWN_GROUPS)
+@RequestScoped
 public class OnlyOwnGroupsPermissionFeature implements PermissionFeatureHandler {
 
   @Inject

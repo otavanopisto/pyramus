@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fi.otavanopisto.pyramus</groupId>
 	<artifactId>bom</artifactId>
-	<version>0.7.90-SNAPSHOT</version>
+	<version>0.7.91-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Pyramus BOM</name>
 	<url>https://github.com/otavanopisto/pyramus/</url>
@@ -86,7 +86,7 @@
 
 		<!-- Pyramus -->
 
-		<pyramus.version>0.7.90-SNAPSHOT</pyramus.version>
+		<pyramus.version>0.7.91-SNAPSHOT</pyramus.version>
 
 		<!-- Webapp-permission -->
 

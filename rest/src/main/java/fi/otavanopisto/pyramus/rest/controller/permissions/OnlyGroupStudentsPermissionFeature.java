@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.rest.controller.permissions;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -23,6 +24,7 @@ import fi.otavanopisto.security.PermissionFeatureHandler;
  * user doesn't have the feature, returns the default permission.
  */
 @PermissionFeature(PyramusPermissionFeatures.ONLY_GROUP_STUDENTS)
+@RequestScoped
 public class OnlyGroupStudentsPermissionFeature implements PermissionFeatureHandler {
 
   @Inject
