@@ -117,6 +117,12 @@ input[type="checkbox"]:checked::after {
   font-size: 20px;
 }
 
+.privacy-policy,
+.course-fees {
+  margin: 0 0 0 -350px;
+  max-width: 700px;
+}
+
 .application-footer__contact {
   padding: 30px;  
 }

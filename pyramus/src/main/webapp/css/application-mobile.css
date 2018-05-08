@@ -704,19 +704,22 @@ button {
 }
 
 /* PRIVACY POLICY */
-.privacy-policy-overlay {
+.privacy-policy-overlay,
+.course-fees-overlay {
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  background: #000;
+  background: #fff;
   opacity: 0.8;
   z-index: 99;
   width: 100%;
 }
 
-.privacy-policy {
+.privacy-policy,
+.course-fees {
   background: #fff;
+  border: 3px solid #8ed2de;
   bottom: 0;
   left: 0;
   margin: 0;
@@ -729,7 +732,8 @@ button {
   z-index: 100;
 }
 
-.privacy-policy__close {
+.privacy-policy__close,
+.course-fees__close {
   background-color: #009fe3;
   background-image: url('../gfx/icons/48x48/actions/close.png');
   background-size: contain;
