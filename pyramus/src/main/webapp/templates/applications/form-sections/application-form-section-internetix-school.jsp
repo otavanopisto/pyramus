@@ -66,19 +66,19 @@
       <div class="course-fees__close"></div>
       <h3>Internetix-linjan kurssisuoritusten maksuista</h3>
       <p>Internetix-linjalla voit opiskella samoja kursseja kuin Otavan Opiston nettilukiossa ja nettiperuskoulussa. Lisäksi tarjolla on jonkin verran myös muita kursseja.</p>
-      <h4>Milloin opiskelu maksaa?</h4>
+      <p><b>Milloin opiskelu maksaa?</b></p>
       <p>Oppimateriaalien itsenäinen opiskeleminen Internetix-linjalla on maksutonta. Jos haluat, että kurssisuorituksesi arvioidaan, se on joissakin tapauksissa maksullista. Kurssiarvioinnin maksullisuuteen vaikuttaa kaksi asiaa: suoritettu kurssi sekä se, opiskeletko suoritushetkellä toisessa oppilaitoksessa. Jos et opiskele missään oppilaitoksessa tai opiskelet oppilaitoksessa, jonka kanssa Otavan Opisto on tehnyt sopimuksen, arviointimaksua ei peritä:</p>
       <ul>
         <li>lukion pakollisten tai valtakunnallisten syventävien kurssien suorituksista</li>
         <li>peruskoulun pakollisten tai valinnaisten kurssien suorituksista</li>
       </ul>
       <p>Muissa tapauksissa kurssisuorituksen arviointi maksaa 120 euroa.</p>
-      <h4>Mistä tiedän, onko oppilaitokseni tehnyt sopimuksen Otavan Opiston kanssa?</h4>
+      <p><b>Mistä tiedän, onko oppilaitokseni tehnyt sopimuksen Otavan Opiston kanssa?</b></p>
       <ul>
         <li>Rekisteröitymislomakkeen Oppilaitostiedot-kohdassa kysytään oppilaitostasi. Jos sitä ei löydy alaspudotusvalikosta, oppilaitoksesi ei ole tehnyt sopimusta Otavan Opiston kanssa. Voit silti rekisteröityä Internetix-linjan opiskelijaksi, mutta joudut maksamaan itse kurssin arvioinnista.</li>
         <li>Jos olet jo rekisteröitynyt, voit tiedustella asiaa Internetixin Tutorilta: opinnot@internetix.fi</li>
       </ul>
-      <h4>Jos opiskelet toisessa oppilaitoksessa</h4>
+      <p><b>Jos opiskelet toisessa oppilaitoksessa</b></p>
       <p>Voit kysyä oppilaitoksesi kiinnostusta tehdä oppilaitossopimus Otavan Opiston kanssa, jolloin oppilaitos maksaa opiskelustasi eikä sinulta peritä arviointimaksua:</p>
       <ul>
         <li>lukion pakollisten tai valtakunnallisten syventävien kurssien suorituksista</li>
