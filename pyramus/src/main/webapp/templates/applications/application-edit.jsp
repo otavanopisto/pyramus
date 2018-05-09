@@ -90,7 +90,7 @@
           <p><b>Huom!</b> Punaisella tähdellä merkityt kentät ovat pakollisia.</p>
         </div>
         <div class="application-content__information-line-specific">
-          <!-- <p><b>Onko lomakeen täyttämisessä ongelmia?</b><br/>Voit ottaa yhteyttä hakemuksen suhteen <b>Aku Ankkaan</b> sähköpostilla <a href="mailto:aku.ankka@otavanopisto.fi">aku.ankka@otavanopisto.fi</a> tai soitamalla <b>040 1337 7007</b>.</p> -->
+          
         </div>
       </section>
       <section class="application-content__form">
