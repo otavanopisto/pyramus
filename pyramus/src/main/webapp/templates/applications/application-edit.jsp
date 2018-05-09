@@ -12,7 +12,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/scripts/parsley/parsley.css"/>
-    <link type="text/css" rel="stylesheet" href="/css/application.css"/>
+    <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/application.css"/>
 
     <script defer="defer" type="text/javascript" src="//code.jquery.com/jquery-1.12.4.min.js"></script>
     <script defer="defer" type="text/javascript" src="//code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -90,7 +90,7 @@
           <p><b>Huom!</b> Punaisella tähdellä merkityt kentät ovat pakollisia.</p>
         </div>
         <div class="application-content__information-line-specific">
-          <p><b>Onko lomakeen täyttämisessä ongelmia?</b><br/>Voit ottaa yhteyttä hakemuksen suhteen <b>Aku Ankkaan</b> sähköpostilla <a href="mailto:aku.ankka@otavanopisto.fi">aku.ankka@otavanopisto.fi</a> tai soitamalla <b>040 1337 7007</b>.</p>
+          <!-- <p><b>Onko lomakeen täyttämisessä ongelmia?</b><br/>Voit ottaa yhteyttä hakemuksen suhteen <b>Aku Ankkaan</b> sähköpostilla <a href="mailto:aku.ankka@otavanopisto.fi">aku.ankka@otavanopisto.fi</a> tai soitamalla <b>040 1337 7007</b>.</p> -->
         </div>
       </section>
       <section class="application-content__form">
