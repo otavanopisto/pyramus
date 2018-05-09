@@ -523,15 +523,15 @@ button {
 }
 
 .important {
-	font-weight: 400;
-	font-size: 20px;
+  font-weight: 400;
+  font-size: 20px;
 }	
 
 .important	span {
-	border-radius: 3px;
-	padding: 8px;
-	background: #e1ffff;
-	font-size: 26px;
+  border-radius: 3px;
+  padding: 8px;
+  background: #e1ffff;
+  font-size: 26px;
   margin: 0 10px;
   display: inline-block;
   font-weight: 300;
