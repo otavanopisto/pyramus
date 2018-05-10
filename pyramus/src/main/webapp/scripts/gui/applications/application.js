@@ -169,8 +169,8 @@
     
     $('[data-dependencies]').change(function() {
       var name = $(this).attr('name');
-      var value = $(this).is(':visible') ? $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val() : '';
-      $('.field-container[data-dependent-field="' + name + '"]').each(function() {
+      var value = $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val();
+      $('.form-section__field-container[data-dependent-field="' + name + '"]').each(function() {
         var show = false;
         var values = $(this).attr('data-dependent-values').split(',');
         for (var i = 0; i < values.length; i++) {
@@ -191,12 +191,30 @@
     
     $('.summary-privacy-link').on('click', function() {
       $('.privacy-policy-overlay').toggle();
-      $('.privacy-policy-container').toggle();
+      $('.privacy-policy').toggle();
     });
     
-    $('.privacy-policy-close').on('click', function() {
+    $('.privacy-policy__close, .privacy-policy-overlay').on('click', function() {
       $('.privacy-policy-overlay').toggle();
-      $('.privacy-policy-container').toggle();
+      $('.privacy-policy').toggle();
+    });
+    
+    // Course fees
+
+    $('.internetix-course-fees-link').on('click', function() {
+      $('.course-fees-overlay').toggle();
+      $('.course-fees').toggle();
+    });
+    
+    $('.course-fees__close, .course-fees-overlay').on('click', function() {
+      $('.course-fees-overlay').toggle();
+      $('.course-fees').toggle();
+    });
+    
+    // Page information
+    
+    $('.application-header__show-content-information').on('click', function() {
+      $('.application-content__information').fadeToggle();
     });
     
     // Form navigation
@@ -304,8 +322,8 @@
     if ($('#field-line').attr('data-preselect')) {
       $('#field-line').val($('#field-line').attr('data-preselect'));
       $('.section-line').attr('data-skip', true);
-      setLine($('#field-line').attr('data-preselect'));
     }
+    $('#field-line').trigger('change');
     navigateTo($(applicationSections).get(firstIndex()));
 
     // Previously stored data
@@ -348,7 +366,7 @@
     updateProgress();
     // #774: selected study program
     if ($('#field-application-id').attr('data-preload') != 'true') {
-      $('.application-line').text(option.text());
+      $('.form-section__header').removeClass().addClass('form-section__header form-section__header--' + option.text());
     }
   };
   
@@ -528,10 +546,10 @@
     fileElement.attr('data-file-size', size);
     fileElement.removeClass('template');
     fileContainer.append(fileElement);
-    fileElement.find('.application-file-link').attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + name);
-    fileElement.find('.application-file-size').text((size / 1024 + 1).toFixed(0) + ' KB');
-    fileElement.find('.application-file-link').text(name);
-    fileElement.find('.application-file-delete').on('click', function() {
+    fileElement.find('.application-file__link').attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + name);
+    fileElement.find('.application-file__size').text((size / 1024 + 1).toFixed(0) + ' KB');
+    fileElement.find('.application-file__link').text(name);
+    fileElement.find('.application-file__delete').on('click', function() {
       $.ajax({
         url: '/1/applications/removeattachment/' + applicationId + '?attachment=' + name,
         type: 'DELETE',
@@ -552,10 +570,10 @@
       var firstNames = $('#field-first-names').val().trim();
       var names = firstNames == '' ? [] : firstNames.split(/\ +/);
       if (names.length == 0) {
-        $('div.field-container.field-nickname').hide();
+        $('div.form-section__field-container.field-nickname').hide();
       }
       else {
-        $('div.field-container.field-nickname').show();
+        $('div.form-section__field-container.field-nickname').show();
       }
       var nicknamesContainer = $('div.nicknames-container');
       $(nicknamesContainer).empty();
@@ -588,7 +606,7 @@
   
   function uploadAttachment(file) {
     var applicationId = $('#field-application-id').val();
-    var fileContainer = $('.field-attachments-files'); 
+    var fileContainer = $('.field-attachments__files'); 
     var fileName = decodeURIComponent(file.name);
     var formData = new FormData();
     formData.append('file', file);

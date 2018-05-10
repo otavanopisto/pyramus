@@ -1,0 +1,45 @@
+/*
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+////////////////////                                 ////////////////////////
+////////////////////          MOBILE XL              ////////////////////////
+////////////////////                                 ////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+*/
+
+.application-header {
+  height: 65px;
+} 
+
+.application-header__logo {
+  font-size: 1.125rem;
+  height: 65px;
+}
+
+.application-content--edit {
+  align-content: flex-start;
+  flex-flow: row wrap;
+}
+
+.application-description.application-description--credentials {
+  text-align: center;
+}
+
+.application-content.application-content--credentials {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 480px;
+  width: 100%;
+}
+
+.application-footer__contact {
+  align-items: flex-start;
+}
+
+.important {
+  align-items: center;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+}  

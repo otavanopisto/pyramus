@@ -59,15 +59,15 @@ public class CreateApplicationViewController extends PyramusViewController {
     String line = pageRequestContext.getString("line");
     if (!StringUtils.isBlank(line) && ApplicationUtils.isValidLine(line)) {
       pageRequestContext.getRequest().setAttribute("preselectLine", line);
+      pageRequestContext.getRequest().setAttribute("applicationId", UUID.randomUUID().toString()); 
+      pageRequestContext.getRequest().setAttribute("preload", Boolean.FALSE);
+      pageRequestContext.getRequest().setAttribute("donePage", Boolean.TRUE);
+      pageRequestContext.getRequest().setAttribute("saveUrl", "/1/applications/saveapplication");
+      pageRequestContext.setIncludeJSP("/templates/applications/application-edit.jsp");
     }
-    
-    // Create a unique application identifier and include the application form
-    
-    pageRequestContext.getRequest().setAttribute("applicationId", UUID.randomUUID().toString()); 
-    pageRequestContext.getRequest().setAttribute("preload", Boolean.FALSE);
-    pageRequestContext.getRequest().setAttribute("donePage", Boolean.TRUE);
-    pageRequestContext.getRequest().setAttribute("saveUrl", "/1/applications/saveapplication");
-    pageRequestContext.setIncludeJSP("/templates/applications/application-edit.jsp");
+    else {
+      pageRequestContext.setRedirectURL(pageRequestContext.getRequest().getContextPath() + "/applications/index.page");
+    }
   }
 
   public UserRole[] getAllowedRoles() {

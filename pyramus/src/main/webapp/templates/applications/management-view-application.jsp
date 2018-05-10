@@ -14,7 +14,7 @@
       <div class="notification-queue-items">
       </div>
     </div>
-    <main class="application-management">
+    <main class="application-content--management">
       <jsp:include page="/templates/applications/management-fragment-header.jsp"></jsp:include>
       <section class="application-wrapper">
       
