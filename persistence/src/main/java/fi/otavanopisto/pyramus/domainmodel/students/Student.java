@@ -27,6 +27,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -253,6 +254,14 @@ public class Student extends User implements ArchivableEntity {
   @Override
   public Role getRole() {
     return Role.STUDENT;
+  }
+  
+  @Transient
+  @Override
+  public Organization getOrganization() {
+    StudyProgramme studyProgramme2 = getStudyProgramme();
+    
+    return studyProgramme2 != null ? studyProgramme2.getOrganization() : null;
   }
 
   public Curriculum getCurriculum() {

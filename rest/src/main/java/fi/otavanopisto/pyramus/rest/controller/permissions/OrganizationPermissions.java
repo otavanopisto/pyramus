@@ -13,6 +13,10 @@ public class OrganizationPermissions extends AbstractPyramusPermissionCollection
 
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String ACCESS_ALL_ORGANIZATIONS = "ACCESS_ALL_ORGANIZATIONS";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
   public static final String CREATE_ORGANIZATION = "CREATE_ORGANIZATION";
   
   @Scope (PermissionScope.ENVIRONMENT)

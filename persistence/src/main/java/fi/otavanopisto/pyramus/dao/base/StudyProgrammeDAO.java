@@ -1,9 +1,13 @@
 package fi.otavanopisto.pyramus.dao.base;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -54,6 +58,28 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
     );
     
     return getSingleResult(entityManager.createQuery(criteria));
+  }
+  
+  public List<StudyProgramme> listByOrganization(Organization organization, Boolean archived) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StudyProgramme> criteria = criteriaBuilder.createQuery(StudyProgramme.class);
+    Root<StudyProgramme> root = criteria.from(StudyProgramme.class);
+    criteria.select(root);
+    
+    List<Predicate> predicates = new ArrayList<>();
+    predicates.add(criteriaBuilder.equal(root.get(StudyProgramme_.organization), organization));
+    
+    if (archived != null) {
+      predicates.add(criteriaBuilder.equal(root.get(StudyProgramme_.archived), archived));
+    }
+    
+    criteria.where(
+        predicates.toArray(new Predicate[0])
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
 
   public StudyProgramme update(StudyProgramme studyProgramme, Organization organization, String name, 

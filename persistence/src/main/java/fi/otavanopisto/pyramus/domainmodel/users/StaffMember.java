@@ -40,6 +40,7 @@ public class StaffMember extends User {
     return title;
   }
 
+  @Override
   public Organization getOrganization() {
     return organization;
   }

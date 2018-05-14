@@ -70,7 +70,7 @@ public class StudyProgrammesSetupWizardViewController extends SetupWizardControl
       }
       
       if (studyProgrammeId == -1) {
-        studyProgrammeDAO.create(organization , name, category, code); 
+        studyProgrammeDAO.create(organization, name, category, code); 
       }
     }
   }

@@ -20,23 +20,33 @@ public class StudyProgrammeController {
   private StudyProgrammeDAO studyProgrammeDAO;
   
   public StudyProgramme createStudyProgramme(Organization organization, String name, String code, StudyProgrammeCategory category) {
-    StudyProgramme activityType = studyProgrammeDAO.create(organization, name, category, code);
-    return activityType;
+    StudyProgramme studyProgramme = studyProgrammeDAO.create(organization, name, category, code);
+    return studyProgramme;
   }
   
   public StudyProgramme findStudyProgrammeById(Long id) {
-    StudyProgramme activityType = studyProgrammeDAO.findById(id);
-    return activityType;
+    StudyProgramme studyProgramme = studyProgrammeDAO.findById(id);
+    return studyProgramme;
   }
   
   public List<StudyProgramme> listStudyProgrammes() {
-    List<StudyProgramme> activityTypes = studyProgrammeDAO.listAll();
-    return activityTypes;
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listAll();
+    return studyProgrammes;
   }
 
   public List<StudyProgramme> listUnarchivedStudyProgrammes() {
-    List<StudyProgramme> activityTypes = studyProgrammeDAO.listUnarchived();
-    return activityTypes;
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
+    return studyProgrammes;
+  }
+
+  public List<StudyProgramme> listStudyProgrammesByOrganization(Organization organization) {
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listByOrganization(organization, null);
+    return studyProgrammes;
+  }
+
+  public List<StudyProgramme> listUnarchivedStudyProgrammesByOrganization(Organization organization) {
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listByOrganization(organization, false);
+    return studyProgrammes;
   }
   
   public StudyProgramme updateStudyProgramme(StudyProgramme studyProgramme, Organization organization, String name, String code, StudyProgrammeCategory category) {
