@@ -97,6 +97,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.CourseAssessmentPermi
 import fi.otavanopisto.pyramus.rest.controller.permissions.LanguagePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MunicipalityPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.NationalityPermissions;
+import fi.otavanopisto.pyramus.rest.controller.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentActivityTypePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentContactLogEntryPermissions;
@@ -837,12 +838,23 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     StudyProgrammeCategory programmeCategory = studyProgrammeCategoryController.findStudyProgrammeCategoryById(categoryId);
+    
     Organization organization = organizationDAO.findById(organizationId);
 
-    // TODO check that user has permission to the organization
-    
     if (programmeCategory == null || organization == null) {
       return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      Organization loggedUserOrganization = null;
+      User loggedUser = sessionController.getUser();
+      if (loggedUser != null) {
+        loggedUserOrganization = loggedUser.getOrganization();
+      }
+      
+      if (organization == null || loggedUserOrganization == null || !organization.getId().equals(loggedUserOrganization.getId())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
     
     StudyProgramme studyProgramme = studyProgrammeController.createStudyProgramme(organization, name, code, programmeCategory);
@@ -854,13 +866,27 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(StudyProgrammePermissions.LIST_STUDYPROGRAMMES)
   public Response listStudyProgrammes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<StudyProgramme> studyProgrammes;
-    if (filterArchived) {
-      studyProgrammes = studyProgrammeController.listUnarchivedStudyProgrammes();
+
+    if (sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (filterArchived) {
+        studyProgrammes = studyProgrammeController.listUnarchivedStudyProgrammes();
+      } else {
+        studyProgrammes = studyProgrammeController.listStudyProgrammes();
+      }
     } else {
-      studyProgrammes = studyProgrammeController.listStudyProgrammes();
+      User loggedUser = sessionController.getUser();
+      if (loggedUser != null && loggedUser.getOrganization() != null) {
+        Organization organization = loggedUser.getOrganization();
+        
+        if (filterArchived) {
+          studyProgrammes = studyProgrammeController.listUnarchivedStudyProgrammesByOrganization(organization);
+        } else {
+          studyProgrammes = studyProgrammeController.listStudyProgrammesByOrganization(organization);
+        }
+      } else {
+        studyProgrammes = new ArrayList<>();
+      }
     }
-    
-    // TODO list only studyprogrammes the user can view
 
     if (studyProgrammes.isEmpty()) {
       return Response.noContent().build();
@@ -874,14 +900,24 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(StudyProgrammePermissions.FIND_STUDYPROGRAMME)
   public Response findStudyProgrammeById(@PathParam("ID") Long id, @Context Request request) {
     StudyProgramme studyProgramme = studyProgrammeController.findStudyProgrammeById(id);
-    if (studyProgramme == null) {
+    if (studyProgramme == null || studyProgramme.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    // TODO find only studyprogrammes the user can view
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      Organization o1 = studyProgramme.getOrganization();
+      Organization o2 = null;
 
-    if (studyProgramme.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
+      User loggedUser = sessionController.getUser();
+      if (loggedUser != null) {
+        o2 = loggedUser.getOrganization();
+      }
+      
+      if (o1 == null || o2 == null || !o1.getId().equals(o2.getId())) {
+        // If either of the organizations is null the user needs ACCESS_ALL_ORGANIZATIONS for access
+        // Otherwise the organizations must match
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
 
     EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(studyProgramme.getVersion())));
@@ -916,7 +952,7 @@ public class StudentRESTService extends AbstractRESTService {
 
     // TODO: Check the user is part of the organization or has permission to update
     
-    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null) {
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null || organizationId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -928,6 +964,21 @@ public class StudentRESTService extends AbstractRESTService {
     Organization organization = organizationDAO.findById(organizationId);
     if (organization == null) {
       return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      Organization loggedUserOrganization = null;
+
+      User loggedUser = sessionController.getUser();
+      if (loggedUser != null) {
+        loggedUserOrganization = loggedUser.getOrganization();
+      }
+      
+      if (organization == null || loggedUserOrganization == null || !organization.getId().equals(loggedUserOrganization.getId())) {
+        // If either of the organizations is null the user needs ACCESS_ALL_ORGANIZATIONS for access
+        // Otherwise the organizations must match
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
     
     studyProgramme = studyProgrammeController.updateStudyProgramme(studyProgramme, organization, name, code, programmeCategory);
