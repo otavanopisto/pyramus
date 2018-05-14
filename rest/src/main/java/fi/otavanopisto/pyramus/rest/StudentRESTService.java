@@ -71,6 +71,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
@@ -846,13 +847,7 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
-      Organization loggedUserOrganization = null;
-      User loggedUser = sessionController.getUser();
-      if (loggedUser != null) {
-        loggedUserOrganization = loggedUser.getOrganization();
-      }
-      
-      if (organization == null || loggedUserOrganization == null || !organization.getId().equals(loggedUserOrganization.getId())) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), organization)) {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
@@ -905,17 +900,7 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
-      Organization o1 = studyProgramme.getOrganization();
-      Organization o2 = null;
-
-      User loggedUser = sessionController.getUser();
-      if (loggedUser != null) {
-        o2 = loggedUser.getOrganization();
-      }
-      
-      if (o1 == null || o2 == null || !o1.getId().equals(o2.getId())) {
-        // If either of the organizations is null the user needs ACCESS_ALL_ORGANIZATIONS for access
-        // Otherwise the organizations must match
+      if (!UserUtils.isMemberOf(sessionController.getUser(), studyProgramme.getOrganization())) {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
@@ -950,8 +935,6 @@ public class StudentRESTService extends AbstractRESTService {
     Long categoryId = entity.getCategoryId();
     Long organizationId = entity.getOrganizationId();
 
-    // TODO: Check the user is part of the organization or has permission to update
-    
     if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null || organizationId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
@@ -967,16 +950,8 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
-      Organization loggedUserOrganization = null;
-
-      User loggedUser = sessionController.getUser();
-      if (loggedUser != null) {
-        loggedUserOrganization = loggedUser.getOrganization();
-      }
-      
-      if (organization == null || loggedUserOrganization == null || !organization.getId().equals(loggedUserOrganization.getId())) {
-        // If either of the organizations is null the user needs ACCESS_ALL_ORGANIZATIONS for access
-        // Otherwise the organizations must match
+      // User needs to be member of both the previous organization and the new one
+      if (!(UserUtils.isMemberOf(sessionController.getUser(), studyProgramme.getOrganization()) && UserUtils.isMemberOf(sessionController.getUser(), organization))) {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
