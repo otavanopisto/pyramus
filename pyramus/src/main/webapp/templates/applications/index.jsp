@@ -91,7 +91,7 @@
       <div class="selection-box selection-box--maahanmuuttajakoulutus">
         <div class="selection-box__header-image">
           <div class="selection-box__header-text">
-            Maahanmuuttajaoulutukse<span class="selection-box__header-text-indicator">t...</span>
+            Maahanmuuttajakoulutukse<span class="selection-box__header-text-indicator">t...</span>
           </div>
         </div>
         <div class="selection-box__description">
