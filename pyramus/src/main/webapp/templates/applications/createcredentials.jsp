@@ -27,15 +27,15 @@
     <c:choose>
       <c:when test="${credentialsCreated eq true}">
         <section class="application-description application-description--credentials">
-          <div class="application-description__line application-description__line--selection form-section__field-container">
-            <div class="application-description__line-header">
+          <div class="application-description__credentials form-section__field-container">
+            <div class="application-description__credentials-header">
               Tunnuksesi on luotu onnistuneesti
             </div>
           </div>
         </section>
         
         <main class="application-content application-content--credentials">
-          <section class="form-section section-create-credentials current">
+          <section class="form-section section-create-credentials">
             <p>Voit nyt kirjautua niillä osoitteessa <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a></p>
           </section>
         </main>
@@ -44,15 +44,15 @@
       <c:when test="${credentialsAlreadyExist eq true}">
       
         <section class="application-description application-description--credentials">
-          <div class="application-description__line application-description__line--selection form-section__field-container">
-            <div class="application-description__line-header">
+          <div class="application-description__credentials form-section__field-container">
+            <div class="application-description__credentials-header">
               Käyttäjätiliisi on jo liitetty Muikku-tunnukset
             </div>
           </div>
         </section>
         
         <main class="application-content application-content--credentials">
-          <section class="form-section section-create-credentials current">
+          <section class="form-section section-create-credentials">
             <p>Voit kirjautua niillä osoitteessa <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a></p>
             <p>Mikäli olet unohtanut tunnuksesi, voit palauttaa ne sähköpostiisi Muikun etusivulta löytyvän <i>Unohtuiko salasana?</i> -linkin kautta.</p>
           </section>
@@ -61,9 +61,9 @@
       </c:when>
       <c:otherwise>
         <section class="application-description application-description--credentials">
-          <div class="application-description__line application-description__line--selection form-section__field-container">
-            <div class="application-description__line-header">
-              Muikku-tunnusten luonti
+          <div class="application-description__credentials form-section__field-container">
+            <div class="application-description__credentials-header">
+              Muikku-tunnuksien luonti
             </div>
           </div>
         </section>

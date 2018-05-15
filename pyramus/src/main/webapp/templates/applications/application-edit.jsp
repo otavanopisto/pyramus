@@ -62,7 +62,7 @@
 
       <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu">
         <div class="application-description__line-header">
-          Olet hakemassa <span class="application-description__line-label--aineopiskelu">aineopiskelijaksi</span>
+          Olet ilmoittautumassa <span class="application-description__line-label--aineopiskelu">aineopiskelijaksi</span>
         </div>
         <div class="application-description__line-content">Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.</div>
       </div>
