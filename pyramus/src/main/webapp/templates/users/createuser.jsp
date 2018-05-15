@@ -340,7 +340,7 @@
 
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="users.createUser.organizationTitle"/>
+                <jsp:param name="titleLocale" value="terms.organization"/>
                 <jsp:param name="helpLocale" value="users.createUser.organizationHelp"/>
               </jsp:include>                  
               <select name="organizationId">
