@@ -46,7 +46,7 @@ function onLoad(event) {
           required : true
         },
         {
-          header : getLocale().getText("settings.studyProgrammes.studyProgrammesTableOrganizationHeader"),
+          header : getLocale().getText("terms.organization"),
           width : 200,
           left : 346,
           dataType : 'select',
