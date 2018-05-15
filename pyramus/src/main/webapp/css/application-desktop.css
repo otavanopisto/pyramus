@@ -65,7 +65,8 @@
   padding: 30px;
 }
 
-.application-description__line-header {
+.application-description__line-header,
+.application-description__credentials-header {
   font-size: 28px;
 }
 

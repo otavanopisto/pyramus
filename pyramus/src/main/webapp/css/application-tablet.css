@@ -115,7 +115,8 @@ body {
   padding: 20px;
 }
 
-.application-description__line-header {
+.application-description__line-header,
+.application-description__credentials-header {
   font-size: 26px;
   font-weight: 400;
   margin: 20px 0;
