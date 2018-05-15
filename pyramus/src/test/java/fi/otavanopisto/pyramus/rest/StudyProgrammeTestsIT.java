@@ -5,17 +5,42 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.rest.model.Organization;
 import fi.otavanopisto.pyramus.rest.model.StudyProgramme;
+import io.restassured.response.Response;
 
 public class StudyProgrammeTestsIT extends AbstractRESTServiceTest {
 
+  private static Long organizationId;
+  
+  @Before
+  public void initialize() {
+    Organization organization = new Organization(null, "Organization.StudyProgrammeTestsIT", false);
+    
+    Response response = given().headers(getAuthHeaders())
+        .contentType("application/json")
+        .body(organization)
+        .post("/organizations");
+    response.then().statusCode(200);
+    
+    organizationId = (long) response.body().jsonPath().getInt("id");
+  }
+  
+  @After
+  public void deinitialize() {
+    given().headers(getAuthHeaders())
+      .delete("/organizations/{ID}?permanent=true", organizationId)
+      .then()
+      .statusCode(204);
+  }
+  
   @Test
   public void testCreateStudyProgramme() {
-    StudyProgramme studyProgramme = new StudyProgramme(null, "TST", "create", 1l, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, "TST", "create", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -71,7 +96,7 @@ public class StudyProgrammeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateStudyProgramme() {
-    StudyProgramme studyProgramme = new StudyProgramme(null, "NOT", "Not Updated", 1l, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, "NOT", "Not Updated", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -87,7 +112,7 @@ public class StudyProgrammeTestsIT extends AbstractRESTServiceTest {
     
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      StudyProgramme updateStudyProgramme = new StudyProgramme(id, "UPD", "Updated", 2l, Boolean.FALSE);
+      StudyProgramme updateStudyProgramme = new StudyProgramme(id, organizationId, "UPD", "Updated", 2l, Boolean.FALSE);
 
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -111,7 +136,7 @@ public class StudyProgrammeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteStudyProgramme() {
-    StudyProgramme studyProgramme = new StudyProgramme(null, "TST", "create type", 1l, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, "TST", "create type", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")

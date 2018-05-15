@@ -9,6 +9,11 @@ insert into
 values 
   (1, 1, 'it'),
   (2, 2, 'TestAuth');
+
+insert into
+  Organization (id, name, archived)
+values
+  (1, 'Common Test Organization', false);
   
 insert into 
   ContactType (id, name, version, nonUnique, archived)
@@ -110,18 +115,18 @@ update Person p
 set p.defaultUser_id = p.id;
   
 insert into
-  StaffMember (id, role, title)
+  StaffMember (id, organization, role, title)
 values 
-  (1, 'GUEST', null),
-  (2, 'GUEST', null),
-  (5, 'USER', null),
-  (6, 'MANAGER', null),
-  (7, 'ADMINISTRATOR', null),
-  (9, 'TRUSTED_SYSTEM', null),
-  (10, 'STUDY_GUIDER', null),
-  (11, 'TEACHER', null),
-  (12, 'STUDY_PROGRAMME_LEADER', null),
-  (14, 'CLOSED', null);
+  (1, 1, 'GUEST', null),
+  (2, 1, 'GUEST', null),
+  (5, 1, 'USER', null),
+  (6, 1, 'MANAGER', null),
+  (7, 1, 'ADMINISTRATOR', null),
+  (9, 1, 'TRUSTED_SYSTEM', null),
+  (10, 1, 'STUDY_GUIDER', null),
+  (11, 1, 'TEACHER', null),
+  (12, 1, 'STUDY_PROGRAMME_LEADER', null),
+  (14, 1, 'CLOSED', null);
   
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
@@ -389,10 +394,10 @@ values
   (2, 'StudyProgrammeCategory #2', 2, 1, false);   
    
 insert into 
-  StudyProgramme (id, code, name, category, version, archived)
+  StudyProgramme (id, organization, code, name, category, version, archived)
 values 
-  (1, 'TST1', 'StudyProgramme #1', 1, 1, false),
-  (2, 'TST2', 'StudyProgramme #2', 2, 1, false);     
+  (1, 1, 'TST1', 'StudyProgramme #1', 1, 1, false),
+  (2, 1, 'TST2', 'StudyProgramme #2', 2, 1, false);     
    
 insert into 
   StudentGroup (id, name, description, creator, lastModifier, beginDate, created, lastModified, version, archived, guidanceGroup)

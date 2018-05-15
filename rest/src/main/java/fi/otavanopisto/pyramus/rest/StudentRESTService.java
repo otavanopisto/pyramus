@@ -862,29 +862,12 @@ public class StudentRESTService extends AbstractRESTService {
   public Response listStudyProgrammes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<StudyProgramme> studyProgrammes;
 
-    if (sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
-      if (filterArchived) {
-        studyProgrammes = studyProgrammeController.listUnarchivedStudyProgrammes();
-      } else {
-        studyProgrammes = studyProgrammeController.listStudyProgrammes();
-      }
-    } else {
-      User loggedUser = sessionController.getUser();
-      if (loggedUser != null && loggedUser.getOrganization() != null) {
-        Organization organization = loggedUser.getOrganization();
-        
-        if (filterArchived) {
-          studyProgrammes = studyProgrammeController.listUnarchivedStudyProgrammesByOrganization(organization);
-        } else {
-          studyProgrammes = studyProgrammeController.listStudyProgrammesByOrganization(organization);
-        }
-      } else {
-        studyProgrammes = new ArrayList<>();
-      }
-    }
+    // TODO: Does this need organization check? LIST_STUDYPROGRAMMES is EVERYONE by default... 
 
-    if (studyProgrammes.isEmpty()) {
-      return Response.noContent().build();
+    if (filterArchived) {
+      studyProgrammes = studyProgrammeController.listUnarchivedStudyProgrammes();
+    } else {
+      studyProgrammes = studyProgrammeController.listStudyProgrammes();
     }
 
     return Response.ok(objectFactory.createModel(studyProgrammes)).build();
@@ -899,11 +882,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
-      if (!UserUtils.isMemberOf(sessionController.getUser(), studyProgramme.getOrganization())) {
-        return Response.status(Status.FORBIDDEN).build();
-      }
-    }
+    // TODO: Does this need organization check? FIND_STUDYPROGRAMME is EVERYONE by default... 
 
     EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(studyProgramme.getVersion())));
     ResponseBuilder builder = request.evaluatePreconditions(tag);
