@@ -216,12 +216,18 @@ body {
   max-width: 100%;
 }
 
+.application-description__credentials {
+  display: block;
+  max-width: 100%;
+}
+
 .application-description__line--selection {
   display: block;
   max-width: 100%;
 }
 
-.application-description__line-header {
+.application-description__line-header,
+.application-description__credentials-header {
   font-size: 20px;
   font-weight: 400;
   margin: 10px 0;
