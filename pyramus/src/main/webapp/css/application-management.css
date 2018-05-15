@@ -135,7 +135,7 @@ a {
   display: inherit;
 }
 
-.field-container {
+.form-section__field-container {
   margin: 10px 0;
 } 
 
@@ -174,7 +174,7 @@ a {
   
 }
 
-.field-container.dependent {
+.form-section__field-container.dependent {
   display: none;
 } 
 
