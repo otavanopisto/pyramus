@@ -32,6 +32,17 @@
         </div>
       </div>
     </div>
+
+    <div class="summary-container field-changes">
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-changes" name="field-changes" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        </div>
+        <div class="field-row-label">
+          <label for="field-changes">Vakuutan että antamani tiedot ovat oikein. Lupaan ilmoittaa, jos antamissani tiedoissa tapahtuu muutoksia.</label>
+        </div>
+      </div>
+    </div>
     
     <div class="privacy-policy-overlay" style="display: none;">
     </div>
