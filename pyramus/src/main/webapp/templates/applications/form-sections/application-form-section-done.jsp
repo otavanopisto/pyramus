@@ -13,11 +13,11 @@
   </section>
 
   <section class="form-section section-done internetix-submitted" data-skip="true">
-    <h3 class="form-section__header">Hakemuksesi on tallennettu</h3>
+    <h3 class="form-section__header">Ilmoittautumisesi on tallennettu</h3>
     <p>Koska olet tietojemme mukaan opiskellut Otavan Opistossa aiemminkin, käsittelemme hakemuksesi manuaalisesti. Lähetämme sinulla sähköpostia antamaasi osoitteeseen, kun hakemus on käsitelty.</p>
   </section>
 
   <section class="form-section section-done registered" data-skip="true">
-    <h3 class="form-section__header">Hakemuksesi on tallennettu</h3>
+    <h3 class="form-section__header">Ilmoittautumisesi on tallennettu</h3>
     <p>Lähetimme antamaasi sähköpostiosoitteeseen ohjeet, joilla voit luoda haluamasi tunnukset Otavan Opiston Muikku-oppimisympäristöön.</p>
   </section>
