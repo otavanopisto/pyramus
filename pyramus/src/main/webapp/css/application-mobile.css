@@ -1,0 +1,844 @@
+/*
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+////////////////////                                 ////////////////////////
+////////////////////           MOBILE                ////////////////////////
+////////////////////                                 ////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+*/
+
+body {
+  background-color: #f5f5f5;
+  color: #000;
+  display: flex;
+  flex-flow: column nowrap;
+  font-family: "Exo 2", arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  justify-content: space-between;
+  line-height: 1.5;
+  margin: 0;
+  min-height: 100vh;
+  min-width: 320px;
+  padding: 0;
+}
+
+/* HEADER */
+.application-header {
+  background-color: #0080bb;
+  display: flex;
+  flex-basis: auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-family: "Exo 2", arial, sans-serif;
+  height: 50px;
+  width: 100%;
+}
+
+.application-header__content {
+  padding: 0 15px;
+  position: relative;
+  width: 100%;
+  z-index: 9;
+}
+
+.application-header__logo {
+  align-items: center;
+  color: #fff;
+  display: flex;
+  font-weight: 900;
+  height: 50px;
+  justify-content: flex-start;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.application-header__logo-text {
+  display: block;
+}
+
+.application-header__logo-branding {
+  color: #000;
+}
+
+/* SELECTION LAYOUT */
+.application-selection {
+  align-content: flex-start;
+  display: flex;
+  flex-basis: 100%;
+  flex-flow: row wrap;
+  flex-grow: 1;
+  flex-shrink: 1;
+  padding: 0 0 20px;
+}
+
+.selection-box {
+  align-items: flex-start;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  display: flex;
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-flow: column nowrap;
+  flex-shrink: 1;
+  justify-content: space-between;
+  margin: 0 0 20px;
+}
+
+.selection-box__header-image {
+  min-height: 146px;
+  position: relative;
+  width: 100%;
+}
+
+.selection-box--nettilukio .selection-box__header-image {
+  background-image: url("/gfx/applications/header-nettilukio.png");
+  background-position: center center;
+  background-size: cover;
+}
+
+.selection-box--nettiperuskoulu .selection-box__header-image {
+  background-image: url("/gfx/applications/header-nettiperuskoulu.png");
+  background-position: center center;
+  background-size: cover;
+}
+
+.selection-box--aineopiskelu .selection-box__header-image {
+  background-image: url("/gfx/applications/header-aineopiskelu.png");
+  background-position: center center;
+  background-size: cover;
+}
+
+.selection-box--aikuislukio .selection-box__header-image {
+  background-image: url("/gfx/applications/header-aikuislukio.png");
+  background-position: center center;
+  background-size: cover;
+}
+
+.selection-box--maahanmuuttajakoulutus .selection-box__header-image {
+  background-image: url("/gfx/applications/header-maahanmuuttajakoulutus.png");
+  background-position: center center;
+  background-size: cover;
+}
+
+.selection-box__header-text {
+  background: #000;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  bottom: 30px;
+  color: #fff;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1;
+  padding: 10px 15px;
+  position: absolute;
+  text-transform: uppercase;
+}
+
+.selection-box--nettilukio .selection-box__header-text-indicator {
+  color: #5dbdc5;
+}
+
+.selection-box--nettiperuskoulu .selection-box__header-text-indicator {
+  color: #ef7d00;
+}
+
+.selection-box--aineopiskelu .selection-box__header-text-indicator {
+  color: #c04080;
+}
+
+.selection-box--aikuislukio .selection-box__header-text-indicator {
+  color: #0080bb;
+}
+
+.selection-box--maahanmuuttajakoulutus .selection-box__header-text-indicator {
+  color: #5dbdc5;
+}
+
+.selection-box__description {
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  font-size: 14px;
+  padding: 15px;
+}
+
+.selection-box__link-container {
+  padding: 15px;
+}
+
+.selection-box__link {
+  border-radius: 2px;
+  color: #fff;
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1;
+  padding: 8px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.selection-box--nettilukio .selection-box__link {
+  background-color: #5dbdc5;
+}
+
+.selection-box--nettiperuskoulu .selection-box__link {
+  background-color: #ef7d00;
+}
+
+.selection-box--aineopiskelu .selection-box__link {
+  background-color: #c04080;
+}
+
+.selection-box--aikuislukio .selection-box__link {
+  background-color: #0080bb;
+}
+
+.selection-box--maahanmuuttajakoulutus .selection-box__link {
+  background-color: #5dbdc5;
+}
+
+
+/* CONTENT */
+.application-description {
+  flex-basis: 100%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  max-width: 100%;
+  padding: 15px;
+}
+
+.application-description__line {
+  display: none;
+  max-width: 100%;
+}
+
+.application-description__line--selection {
+  display: block;
+  max-width: 100%;
+}
+
+.application-description__line-header {
+  font-size: 20px;
+  font-weight: 400;
+  margin: 10px 0;
+}
+
+.application-description__line-label {
+  color: #000;
+  font-weight: 600;
+}
+
+.application-description__line-label--nettilukio {
+  color: #5dbdc5;
+  font-weight: 600;
+}
+
+.application-description__line-label--nettiperuskoulu {
+  color: #ef7d00;
+  font-weight: 600;
+}
+
+.application-description__line-label--aikuislukio {
+  color: #0080bb;
+  font-weight: 600;
+}
+
+.application-description__line-label--aineopiskelu {
+  color: #c04080;
+  font-weight: 600;
+}
+
+.application-description__line-label--maahanmuuttajakoulutus {
+  color: #5dbdc5;
+  font-weight: 600;
+}
+
+.application-description__line-content {
+  font-size: 15px;
+  font-style: italic;
+}
+
+/* APPLICATION LAYOUT */
+.application-content {
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  display: flex;
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-flow: column nowrap;
+  flex-shrink: 1;
+  margin: 0 0 40px;
+  max-width: 100%;
+  padding: 15px;
+  position: relative;
+}
+
+.application-content--edit {
+  
+}
+
+.application-content--credentials .error-container {
+  color: #b94a48;
+}
+
+.application-content__information {
+  background-color: #f4f4f4;
+  border-radius: 5px;
+  display: none;
+  flex-basis: auto;
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 0 20px;
+  order: 1;
+  padding: 20px;
+}
+
+.application-content__information b,
+.application-editing-information-row b {
+  font-weight: 600;
+}
+
+.application-editing-information-row {
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 0 20px;
+}
+
+.application-editing-information-link {
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  max-width: 100%;
+  margin: 0 0 10px;
+}
+
+.application-header__show-content-information {
+  align-items: center;
+  border: 1px solid #b2e4ed;
+  border-radius: 5px;
+  color: #b2e4ed;
+  cursor: pointer;
+  display: flex;
+  font-size: 17px;
+  font-family: "Exo 2";
+  font-weight: 600;
+  height: 28px;
+  justify-content: center;
+  line-height: 1;
+  margin: -14px 0 0 0;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  width: 28px;
+}
+
+.application-content__information-page-specific {
+  margin: 0 0 10px;
+}
+
+.application-content__information-line-specific {
+  margin: 10px 0 0;
+}
+
+.application-content__information-page-specific p:first-child,
+.application-content__information-line-specific p:first-child {
+  margin: 0 0 10px;
+}
+
+.application-content__information-page-specific p:last-child,
+.application-content__information-line-specific p:last-child {
+  margin: 10px 0 0;
+}
+
+.application-content__form {
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  order: 2;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Exo 2", arial, sans-serif;
+  font-weight: 300;
+}
+
+h3 {
+  margin: 0 0 20px;
+  padding: 0;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.form-section__header--Nettilukio {
+  color: #5dbdc5;
+}
+
+.form-section__header--Nettiperuskoulu {
+  color: #ef7d00;
+}
+
+.form-section__header--Aineopiskelu {
+  color: #c04080;
+}
+
+.form-section__header--Aikuislukio {
+  color: #0080bb;
+}
+
+.form-section__header--Maahanmuuttajakoulutukset {
+  color: #5dbdc5;
+}
+
+a {
+  color: #009fe3;
+}
+
+/* FORM STRUCTURE */
+.form-section {
+  display: none;
+  margin: 0 0 20px;
+}
+
+.form-section.current {
+  display: inherit;
+}
+
+.form-section__field-container {
+  margin: 10px 0;
+} 
+
+.field-button-set {
+  
+}
+ 
+.summary-container {
+  margin: 20px 0;
+} 
+
+
+.field-row-flex {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.field-row-flex .field-row-element {
+  flex: 0 1 auto;
+}
+
+.field-row-flex .field-row-label {
+  flex: 1 1 auto;
+}
+
+.field-row {
+  
+}
+
+.field-row .field-row-element {
+  
+}
+
+.field-row .field-row-label {
+  
+}
+
+.field-container.dependent {
+  display: none;
+} 
+
+/* FORM ELEMENTS */
+label {
+  font-weight: 400;
+  display: block;
+}
+
+label.required::after {
+  content: '*';
+  font-size: 14px;
+  color: #d31111;
+  padding: 0 4px;
+}
+
+.field-row label {
+  display: inline-block;
+}
+
+.field-row-element input[type="checkbox"],
+.field-row-element input[type="radio"] {
+  margin: 6px 10px 6px 0;
+}
+
+.field-help {
+  font-size: 13px;
+  font-style: italic;
+}
+
+input,
+textarea, 
+select, 
+option, 
+select,
+button {
+  background: #fff;
+  font-family: "Open Sans", arial, sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+}
+
+input,
+textarea {
+  margin: 0;
+  padding: 8px;
+  border-radius: 3px;
+  border: 2px solid #a9e4ef;
+  max-width: 100%;
+  width: 100%;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  align-items: center;
+  appearance: none;
+  border: 2px solid #a9e4ef;
+  border-radius: 3px;
+  display: flex;
+  height: 21px;
+  justify-content: center;
+  width: 21px;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #5db5c5;
+  border: solid 2px #5db5c5;
+  position: relative;
+}
+
+input[type="checkbox"]:checked::after {
+  color: #fff;
+  content: "\2713"; /* Checkmark */
+  font-family: "Exo 2";
+  font-size: 16px;
+  font-weight: 900;
+  position: relative;
+  top: -1px;
+}
+
+select {
+  font-size: 14px;
+  border-radius: 3px;
+  border: 2px solid #a9e4ef;
+  width: 100%;
+  padding: 6px 4px;
+  text-overflow: ellipsis;
+}
+
+option {
+  word-wrap: break-word;
+  overflow: hidden;
+}
+
+.nicknames-container .nickname {
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: #eee;
+  transition: background 0.2s ease-in;
+  display: inline-block;
+  margin: 2px 5px 2px 0;
+  cursor: pointer;
+}
+
+.nicknames-container .nickname.selected {
+  background: #29b0c4;
+  color: #fff;
+  font-weight: 400;
+}
+
+/* FORM NAVIGATION */
+.form-navigation {
+  text-align: center;
+  margin: 20px 0 0;
+}
+
+button {
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: 1px solid #fff;
+  color: #fff;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.previous,
+.next {
+  background: #000;
+}
+
+.button-save-application, 
+.button-edit-application,
+.button-create-credentials {
+  background: #27b91c;
+}
+
+.button-save-logentry {
+  background: #2dbf90;
+}
+
+.button-send-mail,
+.button-apply-template {
+  background: #2dbf90;
+}
+
+.button-cancel-logentry {
+  background: #95bcc3;
+  margin: 0 0 0 10px;
+}
+
+.application-page-indicator {
+  display: inline-block;
+  padding: 0 10px;
+}
+
+/* UPLOAD PROGRESSBAR */
+.ui-progressbar {
+  width: 100%;
+  height: 20px;
+}
+
+.ui-progressbar-value {
+  background: #87d7e6;
+  width: 100%;
+  height: 20px;
+  border-radius: 3px;  
+}
+
+.application-file-upload-progress-text {
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* FILE UPLOADER */
+.field-attachments {
+  margin: 20px 0;
+}
+
+.field-attachments__selector-container {
+  position: relative;
+  background: #fff;
+  border: 2px solid #a9e4ef;
+  cursor: pointer;
+  border-radius:3px;
+}
+
+.field-attachments__selector {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.field-attachments__description {
+  padding: 20px;
+  color: #5db5c5;
+  text-align: center;
+}
+
+.field-attachments__files {
+   margin: 20px 0 0;
+}
+
+.application-file {
+  padding: 6px;
+  background: #5db5c5;
+  margin: 8px 0;
+  border-radius: 3px;
+  color: #fff;
+  position: relative;
+}
+
+.application-file__details {
+  margin: 0 30px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.application-file__name a {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.application-file__size {
+  color: #bef7fe;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 400;
+  padding: 0 10px;
+}
+
+.application-file__delete {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  bottom: 0;
+  margin: -8px 0 0;
+  width: 16px;
+  height: 16px;
+  font-size: 13px;
+  cursor: pointer;
+  background: url('../gfx/icons/48x48/actions/close.png') center center no-repeat;
+  background-size: contain;
+}
+
+/* PRIVACY POLICY */
+.privacy-policy-overlay,
+.course-fees-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: #fff;
+  opacity: 0.8;
+  z-index: 99;
+  width: 100%;
+}
+
+.privacy-policy,
+.course-fees {
+  background: #fff;
+  border: 3px solid #8ed2de;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  max-width: 100%;
+  overflow: scroll;
+  padding: 20px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 100;
+}
+
+.privacy-policy__close,
+.course-fees__close {
+  background-color: #009fe3;
+  background-image: url('../gfx/icons/48x48/actions/close.png');
+  background-size: contain;
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  border-radius: 100%;
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  border: 5px solid #009fe3;
+  cursor: pointer;
+}
+
+/* EDITING CODE */
+.important {
+  align-items: flex-start;
+  display: flex;
+  flex-flow: column wrap;
+}
+
+.important__label {
+  flex-basis: auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-weight: 400;
+  font-size: 16px;
+  margin: 0 10px 0 0;
+}
+
+.important__data {
+  border-radius: 3px;
+  padding: 6px;
+  background: #e1ffff;
+  flex-basis: auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-size: 20px;
+  margin: 5px 0;
+  display: inline-block;
+  font-weight: 300;
+}
+
+span.email {
+  font-weight: 400;
+  display: inline-block;
+}
+
+/* FOOTER */
+.application-footer {
+  background-color: #5db5c5;
+  flex-basis: auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-family: "Exo 2", arial, sans-serif;
+  font-size: 14px;
+  width: 100%;
+}
+
+.application-footer__contact {
+  align-items: center;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  padding: 15px;  
+  width: 100%;
+}
+
+.application-footer__contact-title {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 300;
+  line-height: 1;
+  padding: 0 0 10px;
+}
+
+.application-footer__contact-row {
+  color: #fff;
+  line-height: 1;
+  padding: 5px 0;
+}
+
+.application-footer__contact-row-label {
+  font-weight: 600;
+}
+
+.application-footer__links {
+  align-items: center;
+  background-color: #0080bb;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  padding: 15px;
+  text-align: center;  
+  width: 100%;
+}
+
+.application-footer__external-link {
+  color: #fff;
+  display: flex;
+  flex-basis: auto;
+  flex-grow: 0;
+  flex-shrink: 1;
+  line-height: 1;
+  padding: 5px 10px;
+  text-decoration: none;
+  transition: background 0.3s ease-in-out;
+}

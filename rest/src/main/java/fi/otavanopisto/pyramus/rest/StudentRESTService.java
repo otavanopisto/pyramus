@@ -2006,7 +2006,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build();
 
-    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENTREQUESTS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENTREQUESTS, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 

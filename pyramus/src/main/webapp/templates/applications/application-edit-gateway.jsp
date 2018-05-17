@@ -27,80 +27,122 @@
 
   </head>
   <body>
-    <main class="application">
-      
-      <header class="application-logo-header"></header>
-      
-      <c:choose>
-        <c:when test="${notFound eq true}">
-          <p class="application-info-paragraph notify">Emme löytäneet hakemusta antamillasi tiedoilla.</p>
-          <p class="application-contact-info-description">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</p>
-          <p><b>Monikulttuuriset koulutukset</b><br/>Anna-Maria Suora<br/>anna-maria.suora@otavanopisto.fi<br/>044 794 3515</p>
-          <p><b>Nettilukio</b><br/>Eeva Lehikoinen<br/>eeva.lehikoinen@otavanopisto.fi<br/>044 794 5107</p>
-          <p><b>Nettiperuskoulu</b><br/>Elise Hokkanen<br/>elise.hokkanen@otavanopisto.fi<br/>044 794 3273</p>
-          <p><b>Aineopiskelu</b><br/>aineopiskelu@otavanopisto.fi</p>
-          <p><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavanopisto.fi<br/>015 194 3552</p>
-          <p><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
-          <p><b>Kasvatustieteen linja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
-          <p><b>Lääkislinja</b><br/>Minna Vähämäki<br/>minna.vahamaki@otavanopisto.fi<br/>040 189 7053</p>
-          <p></p>
-          <p><a href="/applications/edit.page">Takaisin edelliselle sivulle</a></p>
-        </c:when>
-        <c:when test="${locked eq true}">
-          <p class="application-info-paragraph in-progress">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty.</p>
+    <header class="application-header">
+      <div class="application-header__content">
+        <div class="application-header__logo">
+          <div class="application-header__logo-text">Otavan<br/>Opist<span class="application-header__logo-branding">o...</span></div>
+        </div>
+      </div>
+    </header>
+
+    <c:choose>
+      <c:when test="${notFound eq true}">
+        <section class="application-description">
+          <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
+            <div class="application-description__line-header">
+              Emme löytäneet hakemusta antamillasi tiedoilla
+            </div>
+            <div class="application-description__line-content">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</div>
+          </div>
+        </section>
+        
+        <main class="application-content application-content--edit">
+          <p class="application-editing-information-row"><b>Monikulttuuriset koulutukset</b><br/>Anna-Maria Suora<br/>anna-maria.suora@otavanopisto.fi<br/>044 794 3515</p>
+          <p class="application-editing-information-row"><b>Nettilukio</b><br/>Eeva Lehikoinen<br/>eeva.lehikoinen@otavanopisto.fi<br/>044 794 5107</p>
+          <p class="application-editing-information-row"><b>Nettiperuskoulu</b><br/>Elise Hokkanen<br/>elise.hokkanen@otavanopisto.fi<br/>044 794 3273</p>
+          <p class="application-editing-information-row"><b>Aineopiskelu</b><br/>aineopiskelu@otavanopisto.fi</p>
+          <p class="application-editing-information-row"><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavanopisto.fi<br/>015 194 3552</p>
+          <p class="application-editing-information-row"><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
+          <p class="application-editing-information-row"><b>Kasvatustieteen linja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
+          <p class="application-editing-information-row"><b>Lääkislinja</b><br/>Minna Vähämäki<br/>minna.vahamaki@otavanopisto.fi<br/>040 189 7053</p>
+          <p class="application-editing-information-link"><a href="/applications/edit.page">Takaisin edelliselle sivulle</a></p>
+        </main>
+      </c:when>
+      <c:when test="${locked eq true}">
+        <section class="application-description">
+          <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
+            <div class="application-description__line-header">
+              Hakemuksesi on käsittelyssä
+            </div>
+            
+            <c:choose>
+              <c:when test="${!empty handlerName && !empty handlerEmail}">
+                <div class="application-description__line-content">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty. Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä hakemuksesi käsittelijään:</div>
+              </c:when>
+              <c:otherwise>
+                <div class="application-description__line-content">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty. Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</div>
+              </c:otherwise>
+            </c:choose>
+          </div>
+        </section>
+
+        <main class="application-content application-content--edit">
           <c:choose>
             <c:when test="${!empty handlerName && !empty handlerEmail}">
-              <p></p>
-              <p class="application-contact-info-description">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä hakemuksesi käsittelijään:</p>
-              <p>${handlerName}<br/>${handlerEmail}</p>
-              <p></p>
-              <p><a href="/applications/edit.page">Takaisin edelliselle sivulle</a></p>
+              <p class="application-editing-information-row"><b>Hakemuksesi käsittelijä</b><br/>${handlerName}<br/>${handlerEmail}</p>
+              <p class="application-editing-information-link"><a href="/applications/edit.page">Takaisin edelliselle sivulle</a></p>
             </c:when>
             <c:otherwise>
-              <p class="application-contact-info-description">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</p>
-              <p><b>Monikulttuuriset koulutukset</b><br/>Anna-Maria Suora<br/>anna-maria.suora@otavanopisto.fi<br/>044 794 3515</p>
-              <p><b>Nettilukio</b><br/>Eeva Lehikoinen<br/>eeva.lehikoinen@otavanopisto.fi<br/>044 794 5107</p>
-              <p><b>Nettiperuskoulu</b><br/>Elise Hokkanen<br/>elise.hokkanen@otavanopisto.fi<br/>044 794 3273</p>
-              <p><b>Aineopiskelu</b><br/>aineopiskelu@otavanopisto.fi</p>
-              <p><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavanopisto.fi<br/>015 194 3552</p>
-              <p><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
-              <p><b>Kasvatustieteen linja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
-              <p><b>Lääkislinja</b><br/>Minna Vähämäki<br/>minna.vahamaki@otavanopisto.fi<br/>040 189 7053</p>
-              <p></p>
-              <p><a href="/applications/edit.page">Takaisin edelliselle sivule</a></p>
+              <p class="application-editing-information-row"><b>Monikulttuuriset koulutukset</b><br/>Anna-Maria Suora<br/>anna-maria.suora@otavanopisto.fi<br/>044 794 3515</p>
+              <p class="application-editing-information-row"><b>Nettilukio</b><br/>Eeva Lehikoinen<br/>eeva.lehikoinen@otavanopisto.fi<br/>044 794 5107</p>
+              <p class="application-editing-information-row"><b>Nettiperuskoulu</b><br/>Elise Hokkanen<br/>elise.hokkanen@otavanopisto.fi<br/>044 794 3273</p>
+              <p class="application-editing-information-row"><b>Aineopiskelu</b><br/>aineopiskelu@otavanopisto.fi</p>
+              <p class="application-editing-information-row"><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavanopisto.fi<br/>015 194 3552</p>
+              <p class="application-editing-information-row"><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
+              <p class="application-editing-information-row"><b>Kasvatustieteen linja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
+              <p class="application-editing-information-row"><b>Lääkislinja</b><br/>Minna Vähämäki<br/>minna.vahamaki@otavanopisto.fi<br/>040 189 7053</p>
+              <p class="application-editing-information-link"><a href="/applications/edit.page">Takaisin edelliselle sivule</a></p>
             </c:otherwise>
           </c:choose>
-          <p>
-        </c:when>
-        <c:otherwise>
-          <form class="application-form">
-    
-            <section class="form-section section-edit-info">
-            
-              <h3>Tervetuloa hakemuksen muokkaamiseen</h3>
-            
-              <div class="field-container field-last-name">
-                <label for="field-last-name">Sukunimi</label>
-                <input type="text" id="field-last-name" name="field-last-name" data-parsley-required="true">
-              </div> 
-      
-              <div class="field-container field-reference-code">
-                <label for="field-reference-code">Hakemustunnus</label>
-                <input type="text" id="field-reference-code" name="field-reference-code" maxlength="6" style="text-transform:uppercase;" data-parsley-required="true">
-              </div>
-            
-            </section> 
-    
-            <div>
-              <button type="button" class="button-edit-application">Lähetä</button>
+        </main>
+      </c:when>
+      <c:otherwise>
+        <section class="application-description">
+          <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
+            <div class="application-description__line-header">
+              Tervetuloa hakemuksen muokkaukseen
             </div>
-       
-          </form>
-        </c:otherwise>
-      </c:choose>
+            <div class="application-description__line-content">Syötä alla olevaan lomakkeeseen sukunimesi ja sähköpostiisi lähetetty hakemustunnus.</div>
+          </div>
+        </section>
+        
+        <main class="application-content application-content--edit">
+          <section class="application-content__form">
+            <form class="application-form">
+              <section class="form-section section-edit-info">
+                <div class="form-section__field-container field-last-name">
+                  <label for="field-last-name" class="required">Sukunimi</label>
+                  <input type="text" id="field-last-name" name="field-last-name" data-parsley-required="true">
+                </div>
+                <div class="form-section__field-container field-reference-code">
+                  <label for="field-reference-code" class="required">Hakemustunnus</label>
+                  <input type="text" id="field-reference-code" name="field-reference-code" maxlength="6" style="text-transform:uppercase;" data-parsley-required="true">
+                </div>
+              </section> 
+              <nav class="form-navigation">
+                <button type="button" class="button-edit-application">Lähetä</button>
+              </nav>
+            </form>
+          </section>
+        </main>
+      </c:otherwise>
+    </c:choose>
 	
-    </main>
-
+    <footer class="application-footer">
+      <div class="application-footer__contact">
+        <div class="application-footer__contact-title">Ota yhteyttä</div>
+        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Osoite:</span> Otavantie 2 B, 50670 Otava</div>
+        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Puhelin:</span> 044 794 3552</div>
+        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Sähköposti:</span> info@otavanopisto.fi</div>
+      </div>
+      <div class="application-footer__links">
+        <a href="https://www.otavanopisto.fi" target="top" class="application-footer__external-link">www.otavanopisto.fi</a>
+        <a href="https://www.nettilukio.fi" target="top" class="application-footer__external-link">www.nettilukio.fi</a>
+        <a href="https://www.nettiperuskoulu.fi" target="top" class="application-footer__external-link">www.nettiperuskoulu.fi</a>
+        <a href="https://otavanopisto.muikkuverkko.fi" target="top" class="application-footer__external-link">otavanopisto.muikkuverkko.fi</a>
+        <a href="#" target="top" class="application-footer__external-link">Tietosuojaseloste</a>
+      </div>
+    </footer>
   </body>
 </html>
 
