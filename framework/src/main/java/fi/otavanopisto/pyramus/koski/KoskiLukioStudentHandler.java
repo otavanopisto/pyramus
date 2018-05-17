@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.koski;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -216,7 +217,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
   }
 
   private ArviointiasteikkoYleissivistava getSubjectMeanGrade(LukionOppiaineenSuoritus oppiaineenSuoritus) {
-    Set<ArviointiasteikkoYleissivistava> kurssiarvosanat = new HashSet<>();
+    List<ArviointiasteikkoYleissivistava> kurssiarvosanat = new ArrayList<>();
     for (LukionKurssinSuoritus kurssinSuoritus : oppiaineenSuoritus.getOsasuoritukset()) {
       Set<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
       Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
@@ -224,7 +225,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       kurssiarvosanat.add(ArviointiasteikkoYleissivistava.bestGrade(arvosanat));
     }
     
-    return meanGrade(kurssiarvosanat);
+    return ArviointiasteikkoYleissivistava.meanGrade(kurssiarvosanat);
   }
   
   private LukionOppiaineenSuoritus getSubject(Student student, EducationType studentEducationType,
