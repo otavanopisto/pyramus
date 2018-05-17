@@ -9,6 +9,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -16,6 +17,7 @@ import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 
 import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -40,6 +42,9 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
 
   @Inject
   private PermissionDAO permissionDAO;
+  
+  @Inject
+  private UserDAO userDAO;
   
   @Override
   public void logout() {
@@ -90,6 +95,27 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
   
   @Override
   public User getUser() {
+    User user = getOAuthUser();
+    if (user == null) {
+      user = getSessionUser();
+    }
+
+    return user;
+  }
+  
+  private User getSessionUser() {
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+      Long loggedUserId = (Long) session.getAttribute("loggedUserId");
+      if (loggedUserId != null) {
+        return userDAO.findById(loggedUserId);
+      }
+    }
+    
+    return null;
+  }
+
+  private User getOAuthUser() {
     try {
       OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
       String accessToken = oauthRequest.getAccessToken();
@@ -106,14 +132,10 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
           return clientApplicationAccessToken.getClientApplicationAuthorizationCode().getUser();
         }
       }
-
-    } catch (OAuthProblemException e) {
-      throw new RuntimeException(e);
-    } catch (OAuthSystemException e) {
-      throw new RuntimeException(e);
+    } catch (OAuthProblemException | OAuthSystemException e) {
+      return null;
     }
 
-//    System.out.println("RESTSession.getUser NULL");
     return null;
   }
   

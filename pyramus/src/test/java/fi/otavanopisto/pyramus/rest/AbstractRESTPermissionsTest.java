@@ -182,14 +182,11 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   }
 
   public void assertOk(String path, List<String> allowedRoles) {
-    if (!Role.EVERYONE.name().equals(getRole())) {
-      if (roleIsAllowed(getRole(), allowedRoles)) {
-        given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(200);
-      } else {
-        given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(403);
-      }
-    } else
-      given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(400);
+    if (roleIsAllowed(getRole(), allowedRoles)) {
+      given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(200);
+    } else {
+      given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(403);
+    }
   }
 
   public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission)
@@ -199,15 +196,12 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 
   public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission,
       int successStatusCode) throws NoSuchFieldException {
-    if (!Role.EVERYONE.name().equals(getRole())) {
-      int expectedStatusCode = roleIsAllowed(getRole(), permissionCollection, permission) ? successStatusCode : 403;
+    int expectedStatusCode = roleIsAllowed(getRole(), permissionCollection, permission) ? successStatusCode : 403;
 
-      assertThat(
-          String.format("Status code <%d> didn't match expected code <%d> when Role = %s, Permission = %s",
-              response.statusCode(), expectedStatusCode, getRole(), permission),
-          response.statusCode(), is(expectedStatusCode));
-    } else
-      response.then().assertThat().statusCode(400);
+    assertThat(
+        String.format("Status code <%d> didn't match expected code <%d> when Role = %s, Permission = %s",
+            response.statusCode(), expectedStatusCode, getRole(), permission),
+        response.statusCode(), is(expectedStatusCode));
   }
 
   public static List<Object[]> getGeneratedRoleData() {
