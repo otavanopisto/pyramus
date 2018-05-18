@@ -1,7 +1,6 @@
 package fi.otavanopisto.pyramus.koski;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -523,40 +522,6 @@ public abstract class KoskiStudentHandler {
     return true;
   }
   
-  protected ArviointiasteikkoYleissivistava meanGrade(Collection<ArviointiasteikkoYleissivistava> grades) {
-    if (grades.stream().anyMatch(grade -> ArviointiasteikkoYleissivistava.isNumeric(grade))) {
-      // Numeric grade
-      
-      int gradeSum = 0;
-      int gradeCount = 0;
-      
-      for (ArviointiasteikkoYleissivistava grade : grades) {
-        if (ArviointiasteikkoYleissivistava.isNumeric(grade)) {
-          gradeSum += Integer.valueOf(grade.toString());
-          gradeCount++;
-        }
-      }
-      
-      if (gradeCount > 0) {
-        return ArviointiasteikkoYleissivistava.get(String.valueOf(Math.round((double) gradeSum / gradeCount)));
-      } else {
-        return null;
-      }
-    } else {
-      if (grades.stream().anyMatch(grade -> ArviointiasteikkoYleissivistava.isLiteral(grade))) {
-        // Literal grade S/H
-        
-        if (grades.stream().anyMatch(grade -> ArviointiasteikkoYleissivistava.GRADE_S == grade)) {
-          return ArviointiasteikkoYleissivistava.GRADE_S;
-        } else {
-          return ArviointiasteikkoYleissivistava.GRADE_H;
-        }
-      } else {
-        return null;
-      }
-    }
-  }
-
   protected OpiskelijanOPS resolveOPS(Student student) {
     Curriculum curriculum = student.getCurriculum();
     if (curriculum != null) {
