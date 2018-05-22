@@ -359,7 +359,6 @@
   });
 
   function setLine(line) {
-    console.log('set line to ' + line);
     var option =  $('#field-line').find('option:selected');
     var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
     $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
