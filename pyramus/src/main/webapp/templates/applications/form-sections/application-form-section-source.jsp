@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -7,7 +7,7 @@
 
     <div class="application-line"></div>
 
-    <h3 class="form-section__header">Mist‰ sait tiedon koulutuksesta</h3>
+    <h3 class="form-section__header">Mist√§ sait tiedon koulutuksesta?</h3>
   
     <div class="form-section__field-container field-source">
       <div class="field-row-flex">
@@ -15,7 +15,7 @@
           <input id="known" type="checkbox" name="field-source" value="tuttu">
         </div>
         <div class="field-row-label">
-          <label for="known">Ennest‰‰n tuttu</label>
+          <label for="known">Ennest√§√§n tuttu</label>
         </div>
       </div>
       <div class="field-row-flex">
@@ -111,7 +111,7 @@
           <input id="nuorisotyo" type="checkbox" name="field-source" value="nuorisotyo">
         </div>
         <div class="field-row-label">
-          <label for="nuorisotyo">Nuorisotyˆ</label>
+          <label for="nuorisotyo">Nuorisoty√∂</label>
         </div>
       </div>
       <div class="field-row-flex">
@@ -130,11 +130,12 @@
           <label for="muu">Muu</label>
         </div>
       </div>
+      <p id="field-source-mandatory" style="display:none;">Valitse v√§hint√§√§n yksi</p>
     </div>
 
     <div class="form-section__field-container field-source-other">
-      <label for="field-source-other" class="required">Kerro tarkemmin mist‰</label>
-      <input type="text" name="field-source-other" data-parsley-required="true">
+      <label for="field-source-other">Kerro tarkemmin mist√§</label>
+      <input type="text" name="field-source-other">
     </div>
   
   </section>
