@@ -233,10 +233,9 @@
     $('.button-next-section').click(function() {
       var valid = false;
       if ($('.form-section.current').hasClass('section-source')) {
-        var val = $('input[name="field-source"]:checked').val();
-        if (!val) {
+        valid = $('input[name="field-source"]:checked').val();
+        if (!valid) {
           $('#field-source-mandatory').show();
-          valid = false;
         }
       }
       else {
