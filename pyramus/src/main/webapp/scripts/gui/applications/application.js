@@ -81,6 +81,9 @@
         var line = $('select[name="field-line"]').val();
         var hasUnderageSupport = $('#field-line option:selected').attr('data-underage-support') == 'true';
         $('.section-underage').attr('data-skip', !hasUnderageSupport || years >= 18);
+        if ($('#field-ssn-end').val()) {
+          $('#field-ssn-end').parsley().validate();
+        }
       }
       else {
         $('.section-underage').attr('data-skip', 'true');
