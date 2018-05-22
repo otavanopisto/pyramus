@@ -3,17 +3,27 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<section class="application-section application-meta">      
-  
-  <div class="user-exists-container" style="display:none;">
-    <div class="user-exists-description-title">Hakija löytyy jo Pyramuksesta.</div> 
-    <div class="user-exists-description">
-      <div class="user-exists-description-piggy"></div>
-      <div class="user-exists-description-actions">
-        <span>Hakijan Pyramus-profiili:</span> 
-      </div>
+<section class="application-section application-actions">  
+  <div class="application-handling-container" style="display:none;">
+    <div class="application-handling-option backward-action" data-line="!aineopiskelu" data-state="PENDING" data-show="PROCESSING"><span class="application-handling-text">Peruuta käsittely</span></div>
+    <div class="application-handling-option backward-action" data-line="!aineopiskelu" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED"><span class="application-handling-text">Palauta käsittelyyn</span></div>
+    <div class="application-handling-option forward-action" data-line="!aineopiskelu" data-state="PROCESSING" data-show="PENDING"><span class="application-handling-text">Ota käsittelyyn</span></div>
+    <div class="application-handling-option forward-action" data-line="!aineopiskelu" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirrä hyväksyttäväksi</span></div>
+    <div class="application-handling-option accept-action signatures-container" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}" style="display:none;">
+      <span class="application-handling-text">Allekirjoita hyväksyntä</span>
     </div>
+    <div class="application-handling-option accept-action" data-line="!aineopiskelu" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyväksymisestä</span></div>
+    <div class="application-handling-option accept-action" data-line="!aineopiskelu" data-state="TRANSFERRED_AS_STUDENT" data-show="APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirrä opiskelijaksi</span></div>
+    <div class="application-handling-option accept-action" data-line="aineopiskelu" data-state="TRANSFERRED_AS_STUDENT" data-show="PENDING,PROCESSING"><span class="application-handling-text">Siirrä opiskelijaksi</span></div>
+    <div class="application-handling-option decline-action" data-state="REJECTED" data-show="PENDING,PROCESSING"><span class="application-handling-text decline-application">Hylkää hakemus</span></div>
+    <div class="application-handling-option delete-action" data-state="ARCHIVE" data-show="PENDING,PROCESSING"><span class="application-handling-text archive-application">Poista hakemus</span></div>
   </div>
+  
+  <!-- TODO: PLZ be a dialog in the future -->
+  <div class="signatures-auth-sources"></div>
+</section>
+
+<section class="application-section application-meta">      
   
   <div class="additional-info-container">
     <div class="meta-container">
@@ -53,22 +63,6 @@
     </c:if>
   </div>
   
-  <div class="application-handling-container" style="display:none;">
-    <div class="application-handling-option" data-line="!aineopiskelu" data-state="PENDING" data-show="PROCESSING"><span class="application-handling-text cancel-handling">Peruuta käsittely</span></div>
-    <div class="application-handling-option" data-line="!aineopiskelu" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED"><span class="application-handling-text">Palauta käsittelyyn</span></div>
-    <div class="application-handling-option" data-line="!aineopiskelu" data-state="PROCESSING" data-show="PENDING"><span class="application-handling-text">Ota käsittelyyn</span></div>
-    <div class="application-handling-option" data-line="!aineopiskelu" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirrä hyväksyttäväksi</span></div>
-    <div class="signatures-container" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}" style="display:none;">
-      <span class="application-handling-text start-processing">Allekirjoita hyväksyntä</span>
-      <div class="signatures-auth-sources"></div>
-    </div>
-    <div class="application-handling-option" data-line="!aineopiskelu" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyväksymisestä</span></div>
-    <div class="application-handling-option" data-line="!aineopiskelu" data-state="TRANSFERRED_AS_STUDENT" data-show="APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirrä opiskelijaksi</span></div>
-    <div class="application-handling-option" data-line="aineopiskelu" data-state="TRANSFERRED_AS_STUDENT" data-show="PENDING,PROCESSING"><span class="application-handling-text">Siirrä opiskelijaksi</span></div>
-    <div class="application-handling-option" data-state="REJECTED" data-show="PENDING,PROCESSING"><span class="application-handling-text decline-application">Hylkää hakemus</span></div>
-    <div class="application-handling-option" data-state="ARCHIVE" data-show="PENDING,PROCESSING"><span class="application-handling-text archive-application">Poista hakemus</span></div>
-  </div>
-
   <div id="delete-application-dialog" title="Hakemuksen poistaminen" style="display:none;">
     <p>Haluatko varmasti poistaa tämän hakemuksen?</p>
   </div>  

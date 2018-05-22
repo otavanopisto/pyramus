@@ -1,0 +1,94 @@
+/*
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+////////////////////                                 ////////////////////////
+////////////////////           DESKTOP XL            ////////////////////////
+////////////////////                                 ////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+*/
+
+.application-header__content {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 0;
+}
+
+.application-selection {
+  margin: 0 auto 40px;
+  max-width: 1200px; /* we need to add additional 10px (1180 + 10 + 10) for each side to layout "cards" better and avoid any other hacks */
+  padding: 0;
+}
+
+.application-content {
+  margin: 0 auto 80px;
+  max-width: 1180px;
+  padding: 45px;
+  width: 100%;
+}
+
+.application-content--edit {
+  padding: 20px;
+}
+
+.application-content--edit .application-editing-information-row {
+  flex-basis: calc(33% - 50px);
+  margin: 25px;
+  max-width: calc(33% - 50px);
+}
+
+.application-content--edit .application-editing-information-link {
+  margin: 25px;
+}
+
+.selection-box {
+  box-shadow: none;
+  flex-basis: calc(33% - 20px);
+  flex-grow: 1;
+  margin: 0 10px 20px;
+  max-width: calc(33% - 20px);
+}
+
+.application-description {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 30px 0;
+  width: 100%;
+}
+
+.application-content__information {
+  flex-basis: calc(45% - 25px);
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 0 0 25px;
+  order: 2;
+  padding: 20px;
+}
+
+.application-content__form {
+  flex-basis: calc(55% - 25px);
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 25px 0 0;
+  order: 1;
+}
+
+.privacy-policy,
+.course-fees {
+  margin: 0 0 0 -400px;
+  max-width: 800px;
+}
+
+.application-footer {
+
+} 
+
+.application-footer__contact {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 30px 0; 
+}
+
+.application-footer__links {
+
+}

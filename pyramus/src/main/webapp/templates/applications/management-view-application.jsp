@@ -20,7 +20,17 @@
       
         <input type="hidden" id="field-line" name="field-line" value="${applicationLine}"/>
         <section class="application-section application-data">
-          <h3 class="application-data-header">Hakemuksen tiedot</h3>
+        
+          <div class="user-exists-container" style="display:none;">
+            <div class="user-exists-description-title">Hakija löytyy jo Pyramuksesta.</div> 
+            <div class="user-exists-description">
+              <div class="user-exists-description-piggy"></div>
+              <div class="user-exists-description-actions">
+                <span>Hakijan Pyramus-profiili:</span> 
+              </div>
+            </div>
+          </div>
+        
           <c:forEach var="section" items="${sections}">
             <h4 class="application-data-title">${section.key}</h4>
             <div class="application-sub-section">
@@ -38,8 +48,7 @@
         </section>
 
         <jsp:include page="/templates/applications/management-fragment-meta.jsp"></jsp:include>
-        <jsp:include page="/templates/applications/management-fragment-log.jsp"></jsp:include>
-        <jsp:include page="/templates/applications/management-fragment-mail.jsp"></jsp:include>
+        <jsp:include page="/templates/applications/management-fragment-logs.jsp"></jsp:include>
         
       </section>
     </main>
