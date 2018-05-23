@@ -28,6 +28,13 @@ a {
   color: #009fe3;
 }
 
+button,
+input,
+select,
+textarea {
+  font-family: "Exo 2", arial, sans-serif;
+}
+
 .application-actions-header {
   background: #000;
   display: flex;
@@ -295,22 +302,11 @@ a {
   flex-basis: auto;
   flex-grow: 0;
   flex-shrink: 1;
+  font-size: 12px;
   line-height: 1;
   margin: 4px;
-  padding: 6px 8px;
+  padding: 8px 10px;
   text-transform: uppercase;
-}
-
-@media screen and (min-width: 320px) {
-  .application-handling-option {
-    font-size: 11px;
-  }
-}
-
-@media screen and (min-width: 360px) {
-  .application-handling-option {
-    font-size: 12px;
-  }
 }
 
 .application-handling-option.backward-action {
@@ -466,15 +462,21 @@ a {
 
 .button-save-logentry,
 .button-send-mail,
-.button-apply-template {
+.button-apply-template,
+.button-cancel-logentry {
   background-color: #24c118;
   border: 0;
   border-radius: 2px;
   color: #fff;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1;
   padding: 8px 10px;
   text-transform: uppercase;
+}
+
+.button-cancel-logentry {
+  background-color: #7391a7;
+  margin: 0 0 0 5px;
 }
 
 /* Log entries */
@@ -730,8 +732,8 @@ a {
   border: 0;
   border-radius: 2px;
   color: #fff;
-  font-family: "Open Sans", "Arial", sans-serif;
-  font-size: 13px;
+  font-family: "Exo 2", arial, sans-serif;
+  font-size: 12px;
   line-height: 1;
   padding: 8px 10px;
   text-transform: uppercase;
