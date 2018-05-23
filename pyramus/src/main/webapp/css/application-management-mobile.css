@@ -519,21 +519,21 @@ textarea {
   position: absolute;
   cursor: pointer;
   box-shadow: 0 0 0 2px #fff;
-  top: 6px;
+  top: 5px;
 }
 
 .log-entry-archive {
   background-image: url('../gfx/icons/32x32/actions/remove.png');
   background-color: #d31111;
   border: 3px solid #d31111;
-  right: 10px;
+  right: 5px;
 }
 
 .log-entry-edit {
   background-image: url('../gfx/icons/32x32/actions/edit.png');
   background-color: #2dbf90;
   border: 3px solid #2dbf90;
-  right: 38px;
+  right: 33px;
 }
 
 .log-entry textarea,
