@@ -388,9 +388,29 @@ textarea {
 }
 
 .application-attachment {
-  border-bottom: 1px solid #eee;
+  align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
   font-size: 14px;
-  padding: 10px 12px;
+  padding: 10px 0;
+}
+
+.application-attachment .icon-attachment {
+  background-image: url('../gfx/icons/32x32/actions/attachment.png');
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  flex-basis: 16px;
+  flex-grow: 0;
+  flex-shrink: 1;
+  height: 16px;
+  min-width: 16px;
+}
+
+.application-attachment .attachment-link {
+  flex-basis: auto;
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 0 0 5px;
 }
 
 /* Mail <section> */
@@ -760,4 +780,31 @@ textarea {
   font-style: italic;
   font-weight: 400;
   line-height: 0.9em;
+}
+
+/* FORM STRUCTURE */
+.form-section {
+  display: none;
+  margin: 0 0 20px;
+}
+
+.application-form-section-header,
+.form-section__header {
+  font-size: 20px;
+  color: #009fe3;
+  font-weight: 400;
+  line-height: 1;
+  margin: 0 0 20px;
+}
+
+.form-section__field-container {
+  margin: 10px 0;
+} 
+
+.field-row-flex .field-row-element {
+  flex: 0 1 auto;
+}
+
+.field-row-flex .field-row-label {
+  flex: 1 1 auto;
 }

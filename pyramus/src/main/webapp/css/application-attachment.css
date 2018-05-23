@@ -1,0 +1,96 @@
+/* UPLOAD PROGRESSBAR */
+.ui-progressbar {
+  width: 100%;
+  height: 20px;
+}
+
+.ui-progressbar-value {
+  background: #87d7e6;
+  width: 100%;
+  height: 20px;
+  border-radius: 3px;  
+}
+
+.application-file-upload-progress-text {
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* FILE UPLOADER */
+.field-attachments {
+  margin: 20px 0;
+}
+
+.field-attachments__selector-container {
+  position: relative;
+  background: #fff;
+  border: 2px solid #a9e4ef;
+  cursor: pointer;
+  border-radius:3px;
+}
+
+.field-attachments__selector {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.field-attachments__description {
+  padding: 10px;
+  color: #5db5c5;
+  text-align: center;
+}
+
+.field-attachments__files {
+   margin: 20px 0 0;
+}
+
+.application-file {
+  padding: 6px;
+  background: #5db5c5;
+  margin: 8px 0;
+  border-radius: 3px;
+  color: #fff;
+  position: relative;
+}
+
+.application-file__details {
+  margin: 0 30px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.application-file__name a {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.application-file__size {
+  color: #bef7fe;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 400;
+  padding: 0 10px;
+}
+
+.application-file__delete {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  bottom: 0;
+  margin: -8px 0 0;
+  width: 16px;
+  height: 16px;
+  font-size: 13px;
+  cursor: pointer;
+  background: url('../gfx/icons/48x48/actions/close.png') center center no-repeat;
+  background-size: contain;
+}

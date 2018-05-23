@@ -32,7 +32,7 @@
           </div>
         
           <c:forEach var="section" items="${sections}">
-            <h4 class="application-data-title">${section.key}</h4>
+            <h3 class="application-data-title">${section.key}</h3>
             <div class="application-sub-section">
               <c:forEach var="field" items="${section.value}">
                 <div class="data-container">
@@ -42,7 +42,7 @@
               </c:forEach>
             </div>
           </c:forEach>
-          <h4 id="attachments-title" class="application-data-title">Liitteet</h4>
+          <h3 id="attachments-title" class="application-data-title">Liitteet</h3>
           <div id="attachments-readonly-container" class="attachments-container">
           </div>
         </section>

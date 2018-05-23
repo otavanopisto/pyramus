@@ -22,11 +22,15 @@
         success: function(files) {
           $('#attachments-title').toggle(files.length > 0);
           for (var i = 0; i < files.length; i++) {
-            attachmentsContainer.append($('<div>').addClass('application-attachment').append(
-              $('<a>')
-                .attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + files[i].name)
-                .attr('target', '_blank')
-                .text(files[i].name)));
+            attachmentsContainer.append($('<div>').addClass('application-attachment')
+              .append(
+                $('<span>').addClass('icon-attachment'))
+              .append(
+                $('<a>')
+                  .attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + files[i].name)
+                  .attr('target', '_blank')
+                  .addClass('attachment-link')
+                  .text(files[i].name)));
           }
         },
         error: function(err) {

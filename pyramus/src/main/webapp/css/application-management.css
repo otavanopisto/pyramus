@@ -21,6 +21,12 @@
 /* DESKTOP XL */
 @import url("application-management-desktop-xl.css") screen and (min-width: 80em);
 
+/* Generic form styling */
+@import url("application-form.css");
+
+/* Generic attachment styling */
+@import url("application-attachment.css");
+
 /* GENERIC STYLES */
 
 * {
