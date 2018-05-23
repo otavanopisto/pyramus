@@ -31,7 +31,10 @@ public class StudentSubjectSelections {
         isALanguage(languageCode) || isA1Language(languageCode) || isA2Language(languageCode) || 
         isB1Language(languageCode) || isB2Language(languageCode) || isB3Language(languageCode);
   }
-  
+  public boolean isAccomplishment(Long subjectId) {
+    return subjectId != null ? ArrayUtils.contains(split(accomplishments), String.valueOf(subjectId)) : false;
+  }
+    
   public String getMath() {
     return math;
   }
@@ -110,6 +113,14 @@ public class StudentSubjectSelections {
     this.religion = religion;
   }
 
+  public String getAccomplishments() {
+    return accomplishments;
+  }
+
+  public void setAccomplishments(String accomplishments) {
+    this.accomplishments = accomplishments;
+  }
+
   private String math;
   private String primaryLanguage;
   private String aLanguages;
@@ -119,4 +130,5 @@ public class StudentSubjectSelections {
   private String b2Languages;
   private String b3Languages;
   private String religion;
+  private String accomplishments;
 }
