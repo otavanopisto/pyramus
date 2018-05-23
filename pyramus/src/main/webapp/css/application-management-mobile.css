@@ -232,10 +232,10 @@ textarea {
 }
 
 .user-exists-description-title {
-  font-weight: 400;
-  margin: 0 10px 10px;
   color: #6e0303;
   font-size: 16px;
+  font-weight: 400;
+  margin: 0 10px 5px;
 }
 
 .user-exists-description {
@@ -268,9 +268,10 @@ textarea {
   background: #f563a6;
   border-radius: 2px;
   display: inline-block;
-  padding: 2px 8px;
-  text-decoration: none;
   font-weight: 400;
+  line-height: 1;
+  padding: 4px 6px;
+  text-decoration: none;
 }
 
 .additional-info-container {
@@ -436,6 +437,7 @@ textarea {
 .application-logs-tabs__tab.active {
   background: #f5f5f5;
   color: #2dbf90;  
+  font-weight: 600;
 }
 
 .application-log-header {
