@@ -158,9 +158,11 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     Collection<CreditStub> credits = listCredits(student, false, false, ops, credit -> matchingCurriculumFilter(student, credit));
     
     Map<String, APAOppiaineenSuoritus> map = new HashMap<>();
+    Set<APAOppiaineenSuoritus> accomplished = new HashSet<>();
     
     for (CreditStub credit : credits) {
       APAOppiaineenSuoritus oppiaineenSuoritus = getSubject(student, studentEducationType, studentSubjects, credit.getSubject(), map);
+      collectAccomplishedMarks(credit.getSubject(), oppiaineenSuoritus, studentSubjects, accomplished);
 
       if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
         APAKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(ops, credit);
@@ -181,7 +183,8 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
       
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
       if (calculateMeanGrades) {
-        ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(oppiaineenSuoritus);
+        ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(oppiaineenSuoritus) ? 
+            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(oppiaineenSuoritus);
         
         if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
           KurssinArviointi arviointi = new KurssinArviointiNumeerinen(aineKeskiarvo, student.getStudyEndDate());
