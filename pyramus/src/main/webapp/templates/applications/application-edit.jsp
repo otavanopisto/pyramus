@@ -101,6 +101,9 @@
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="mk">
           <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:maahanmuuttajakoulutukset@otavanopisto.fi">maahanmuuttajakoulutukset@otavanopisto.fi</a></p>
         </div>
+        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio">
+          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:aikuislukio@otavanopisto.fi">aikuislukio@otavanopisto.fi</a></p>
+        </div>
       </section>
       <section class="application-content__form">
         <jsp:include page="/templates/applications/application-form.jsp"></jsp:include>
