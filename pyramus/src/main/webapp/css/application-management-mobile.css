@@ -453,7 +453,7 @@ a {
 .application-log-title {
   font-size: 13px;
   font-weight: 600;
-  margin: 20px 0 0;
+  margin: 0;
 }
 
 .application-logs textarea {
@@ -465,13 +465,15 @@ a {
 }
 
 .button-save-logentry,
-.button-send-mail {
+.button-send-mail,
+.button-apply-template {
   background-color: #24c118;
   border: 0;
   border-radius: 2px;
   color: #fff;
+  font-size: 13px;
   line-height: 1;
-  padding: 6px 8px;
+  padding: 8px 10px;
   text-transform: uppercase;
 }
 
@@ -511,7 +513,7 @@ a {
   background-size: contain;
   width: 20px;
   height: 20px;
-  border-radius: 100%;
+  border-radius: 3px;
   position: absolute;
   cursor: pointer;
   box-shadow: 0 0 0 2px #fff;
@@ -519,16 +521,16 @@ a {
 }
 
 .log-entry-archive {
-  background-image: url('../gfx/icons/48x48/actions/close.png');
+  background-image: url('../gfx/icons/32x32/actions/remove.png');
   background-color: #d31111;
-  border: 4px solid #d31111;
+  border: 3px solid #d31111;
   right: 10px;
 }
 
 .log-entry-edit {
-  background-image: url('../gfx/icons/48x48/actions/edit.png');
+  background-image: url('../gfx/icons/32x32/actions/edit.png');
   background-color: #2dbf90;
-  border: 4px solid #2dbf90;
+  border: 3px solid #2dbf90;
   right: 38px;
 }
 
@@ -558,6 +560,14 @@ a {
   color: #2dbf90;
 }
 
+.application-mail .field-container {
+  margin: 0 0 10px;
+}
+
+.application-mail .field-container:last-child {
+  margin: 0;
+}
+
 .application-mail #cke_mail-form-content {
   border: 1px solid #2dbf90;
   border-radius: 3px;
@@ -565,9 +575,46 @@ a {
 }
 
 .application-mail .mail-subject,
-.application-mail input[type="checkbox"] {
+.application-mail select {
   border: 1px solid #2dbf90;
+  border-radius: 3px;
+  padding: 4px 6px;
+  width: 100%;
 }
+
+.application-mail input[type="checkbox"],
+.application-mail input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  align-items: center;
+  appearance: none;
+  border: 1px solid #2dbf90;
+  border-radius: 3px;
+  display: flex;
+  height: 16px;
+  justify-content: center;
+  width: 16px;
+}
+
+.application-mail input[type="checkbox"]:checked {
+  background-color: #2dbf90;
+  position: relative;
+}
+
+.application-mail input[type="checkbox"]:checked::after {
+  color: #fff;
+  content: "\2713"; /* Checkmark */
+  font-family: "Exo 2";
+  font-size: 12px;
+  font-weight: 900;
+  position: relative;
+  top: 0;
+}
+
+.application-mail-templates select {
+  padding: 3px 4px;
+}
+
 .application-mail .button-send-mail {
   transition: padding 0.2s ease-in;
 }
@@ -589,17 +636,26 @@ a {
   text-align: right;
 }
 
-.application-templates-filters {
-  padding: 8px;
+.application-templates-filters,
+.application-mail-recipients {
+  margin: 0 0 5px;
 }
 
-.application-templates-filter {
+.application-templates-filter,
+.application-mail-recipient {
+  align-items: flex-start;
+  display: flex;
+  flex-flow: row nowrap;
   padding: 0 10px 0 0;
 }
 
-.application-templates-filter label {
+.application-templates-filter label,
+.application-mail-recipients label {
   display: inline-block;
-  margin: 0 2px;
+  flex-basis: auto;
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 2px 0 4px;
 }
 
 .application-templates-container {
@@ -609,11 +665,15 @@ a {
 }
 
 .application-templates-container .application-mail-templates {
-  flex: 1 1 100%;
+  flex-basis: auto;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 
 .application-templates-container .button-apply-template {
-  flex: 1 0 100px;
+  flex-basis: 0;
+  flex-grow: 0;
+  flex-shrink: 1;
   margin: 0 0 0 10px;
 }
 
@@ -630,7 +690,7 @@ a {
   font-family: "Open Sans", "Arial", sans-serif;
   font-size: 14px;
   padding: 0;
-  border-radius: 5px;
+  border-radius: 3px;
   overflow: hidden;
 }
 
@@ -640,8 +700,8 @@ a {
   font-weight: 400;
   background: #23bef1;
   border: 0;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   padding: 10px 14px;
@@ -666,11 +726,15 @@ a {
 }
 
 .ui-dialog .ui-dialog-buttonset button.ui-button {
-  font-family: "Open Sans", "Arial", sans-serif;
+  background: #43c7f2;
   border: 0;
   border-radius: 2px;
-  background: #43c7f2;
   color: #fff;
+  font-family: "Open Sans", "Arial", sans-serif;
+  font-size: 13px;
+  line-height: 1;
+  padding: 8px 10px;
+  text-transform: uppercase;
 }
 
 .ui-dialog .ui-dialog-buttonset button.ui-button.remove-button {

@@ -41,6 +41,10 @@
     
     // Header buttons
     
+    $('#action-application-back-pyramus').on('click', function() {
+      window.location.href = '/applications/browse.page';
+    });
+    
     $('#action-application-view').on('click', function() {
       window.location.href = '/applications/view.page?application=' + $('body').attr('data-application-entity-id');
     });
@@ -357,8 +361,7 @@
       contentType: 'application/json; charset=utf-8',
       success: function(response) {
         for (var i = 0; i < response.recipients.length; i++) {
-          var row = $('<div>').addClass('field-row-flex');
-          var rowInputElement = $('<div>').addClass('field-row-element');
+          var row = $('<div>').addClass('application-mail-recipient');
           var rowInput = $('<input>').attr({
             'id': 'mail-form-recipient-' + i,
             'type': 'checkbox',
@@ -367,14 +370,11 @@
           if (response.recipients[i].type == 'to') {
             $(rowInput).attr('checked', 'checked');
           }
-          var rowLabelElement = $('<div>').addClass('field-row-label');
           var rowLabel = $('<label>')
             .attr('for', 'mail-form-recipient-' + i)
             .text(response.recipients[i].name + ' <' + response.recipients[i].mail + '>');
-          $(row).append(rowInputElement).append(rowLabelElement);
-          $(rowInputElement).append(rowInput);
-          $(rowLabelElement).append(rowLabel);
-          $('div.mail-form-recipients').append(row);
+          $(row).append(rowInput).append(rowLabel);
+          $('div.application-mail-recipients').append(row);
         }
       }
     });

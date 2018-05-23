@@ -30,14 +30,16 @@
     <div class="mail-form-container">
       <form id="mail-form" name="mail-form">
         <input type="hidden" name="applicationEntityId" value="${applicationEntityId}"/>
-        <div class="field-container mail-form-recipients">
+        <div class="field-container">
           <h4 class="application-log-title">Vastaanottajat</h4>
+           <div class="application-mail-recipients">
+           </div>
         </div>
         <div class="field-container">
           <h4 class="application-log-title">Viestipohjat</h4>
           <div class="application-templates-filters">
-            <span class="application-templates-filter"><input id="mail-templates-filter-line" type="checkbox"> <label for="mail-templates-filter-line"> Vain linjakohtaiset</label></span> 
-            <span class="application-templates-filter"><input id="mail-templates-filter-owner" type="checkbox"> <label for="mail-templates-filter-owner">Vain omat</label></span>
+            <div class="application-templates-filter"><input id="mail-templates-filter-line" type="checkbox"> <label for="mail-templates-filter-line"> Vain linjakohtaiset</label></div> 
+            <div class="application-templates-filter"><input id="mail-templates-filter-owner" type="checkbox"> <label for="mail-templates-filter-owner">Vain omat</label></div>
           </div>
           <div class="application-templates-container">
             <span id="application-mail-templates" class="application-mail-templates"></span>
