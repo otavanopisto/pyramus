@@ -602,7 +602,7 @@ public class ApplicationUtils {
         createCredentialsUrl.append(application.getCredentialToken());
         
         content = IOUtils.toString(request.getServletContext().getResourceAsStream(
-            "/templates/applications/mail-credentials-create.html"), "UTF-8");
+            "/templates/applications/mails/mail-credentials-create.html"), "UTF-8");
         content = String.format(
             content,
             getFormValue(formData, "field-nickname"),
@@ -610,7 +610,7 @@ public class ApplicationUtils {
       }
       else {
         content = IOUtils.toString(request.getServletContext().getResourceAsStream(
-            "/templates/applications/mail-credentials-exist.html"), "UTF-8");
+            "/templates/applications/mails/mail-credentials-exist.html"), "UTF-8");
         content = String.format(
             content,
             getFormValue(formData, "field-nickname"));
