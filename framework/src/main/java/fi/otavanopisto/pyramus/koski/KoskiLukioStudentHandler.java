@@ -177,10 +177,13 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     Set<LukionOppiaineenSuoritus> results = new HashSet<>();
     
     Map<String, LukionOppiaineenSuoritus> map = new HashMap<>();
+    Set<LukionOppiaineenSuoritus> accomplished = new HashSet<>();
     
     for (CreditStub credit : credits) {
       LukionOppiaineenSuoritus oppiaineenSuoritus = getSubject(student, studentEducationType, credit.getSubject(), studentSubjects, map);
 
+      collectAccomplishedMarks(credit.getSubject(), oppiaineenSuoritus, studentSubjects, accomplished);
+      
       if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
         LukionKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(student, ops, credit);
         if (kurssiSuoritus != null) {
@@ -200,7 +203,8 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
       if (calculateMeanGrades) {
-        ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(lukionOppiaineenSuoritus);
+        ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(lukionOppiaineenSuoritus) ? 
+            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(lukionOppiaineenSuoritus);
         
         if (aineKeskiarvo != null) {
           LukionOppiaineenArviointi arviointi = new LukionOppiaineenArviointi(aineKeskiarvo, student.getStudyEndDate());
