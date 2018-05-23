@@ -257,6 +257,7 @@ public abstract class KoskiStudentHandler {
     String b2Lang = userVariableDAO.findByUserAndKey(student, "lukioKieliB2");
     String b3Lang = userVariableDAO.findByUserAndKey(student, "lukioKieliB3");
     String religion = userVariableDAO.findByUserAndKey(student, "lukioUskonto");
+    String accomplishmentsStr = userVariableDAO.findByUserAndKey(student, "lukioSmerkinta");
 
     if (StringUtils.isNotBlank(math)) {
       studentSubjects.setMath(math);
@@ -288,6 +289,10 @@ public abstract class KoskiStudentHandler {
       studentSubjects.setReligion(religion);
     }
 
+    if (StringUtils.isNotBlank(accomplishmentsStr)) {
+      studentSubjects.setAccomplishments(accomplishmentsStr);
+    }
+    
     return studentSubjects;
   }
  
@@ -648,6 +653,15 @@ public abstract class KoskiStudentHandler {
       }
     } else {
       return defaultOPS;
+    }
+  }
+
+  protected <T> void collectAccomplishedMarks(Subject subject, T subjectCounterpart,
+      StudentSubjectSelections studentSubjects, Set<T> accomplished) {
+    if (subject != null) {
+      if (studentSubjects.isAccomplishment(subject.getId())) {
+        accomplished.add(subjectCounterpart);
+      }
     }
   }
 

@@ -170,9 +170,11 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     Set<AikuistenPerusopetuksenOppiaineenSuoritus> results = new HashSet<>();
     
     Map<String, AikuistenPerusopetuksenOppiaineenSuoritus> map = new HashMap<>();
+    Set<AikuistenPerusopetuksenOppiaineenSuoritus> accomplished = new HashSet<>();
     
     for (CreditStub credit : credits) {
       AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus = getSubject(student, studentEducationType, studentSubjects, credit.getSubject(), map);
+      collectAccomplishedMarks(credit.getSubject(), oppiaineenSuoritus, studentSubjects, accomplished);
 
       if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
         AikuistenPerusopetuksenKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(ops, credit);
@@ -193,7 +195,8 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
       if (calculateMeanGrades) {
-        ArviointiasteikkoYleissivistava aineKeskiarvo = getSubjectMeanGrade(oppiaineenSuoritus);
+        ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(oppiaineenSuoritus) ? 
+            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(oppiaineenSuoritus);
         
         if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
           KurssinArviointi arviointi = new KurssinArviointiNumeerinen(aineKeskiarvo, student.getStudyEndDate());
