@@ -11,3 +11,8 @@
 .application-handling-container {
   justify-content: flex-start;
 }
+
+.data-name,
+.meta-name {
+  min-width: 240px;
+}
