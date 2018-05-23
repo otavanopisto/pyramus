@@ -1,0 +1,138 @@
+/*
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+////////////////////                                 ////////////////////////
+////////////////////       TABLET (LANDSCAPE)        ////////////////////////
+////////////////////            DESKTOP              ////////////////////////
+////////////////////                                 ////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+*/
+ 
+.application-header {
+  height: 85px;
+} 
+
+.application-header__content {
+  padding: 0 30px;
+} 
+
+.application-header__logo {
+  background: #000;
+  border-radius: 100%;
+  font-size: 1.125rem;
+  height: 115px;
+  justify-content: center;
+  line-height: 1.1;
+  position: absolute;
+  top: -20px;
+  width: 115px;
+}
+
+.application-selection {
+  padding: 0 20px 30px;
+}
+
+.selection-box__header-text {
+  font-size: 18px;
+}
+
+.selection-box__description {
+  font-size: 16px;
+}
+
+.selection-box__link {
+  font-size: 15px;
+}
+
+.application-content {
+  align-items: flex-start;
+  flex-flow: row wrap;
+  margin: 0 30px 50px;
+}
+
+.application-content.application-content--credentials {
+  max-width: 520px;
+}
+
+
+.application-content--edit .application-editing-information-row {
+  flex-basis: calc(33% - 40px);
+  max-width: calc(33% - 40px);
+}
+
+.application-description {
+  padding: 30px;
+}
+
+.application-description__line-header,
+.application-description__credentials-header {
+  font-size: 28px;
+}
+
+.application-description__line-content {
+  font-size: 18px;
+}
+
+.application-header__show-content-information {
+  display: none;  
+}
+
+.application-content__information {
+  display: block;
+  flex-basis: calc(40% - 20px);
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 0 0 20px;
+  order: 2;
+  padding: 20px;
+}
+
+.application-content__form {
+  flex-basis: calc(60% - 20px);
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 20px 0 0;
+  order: 1;
+}
+
+input, 
+textarea {
+  padding: 12px;
+}
+
+select {
+  padding: 11px 8px;
+}
+
+button {
+  padding: 10px 16px;
+}
+
+input[type="checkbox"] {
+  height: 26px;
+  width: 26px;
+}
+
+input[type="checkbox"]:checked::after {
+  font-size: 20px;
+}
+
+.privacy-policy,
+.course-fees {
+  margin: 0 0 0 -350px;
+  max-width: 700px;
+}
+
+.application-footer__contact {
+  padding: 30px;  
+}
+
+.application-footer__links {
+  padding: 30px;
+}
+
+.application-footer__external-link:hover {
+  background: #0f94d2;
+  border-radius: 3px;
+}

@@ -72,17 +72,30 @@
       });
     });
     
-    $('#action-application-log').on('click', function() {
-      $('section.application-logs').toggle();
-      if ($('section.application-logs').is(':visible')) {
+    $('#action-application-logs').on('click', function() {
+      $('section.application-logs').slideToggle();
+    });
+    
+    $('#applications-tab-mail').on('click', function() {
+      $('section.application-mail').fadeIn( 100 );
+      $('#applications-tab-mail').addClass('active');
+      $('#applications-tab-comment').removeClass('active');
+      
+      if ($('section.application-mail').is(':visible')) {
+        $('section.application-comment').hide();
+      }
+      
+    });
+    
+    $('#applications-tab-comment').on('click', function() {
+      $('section.application-comment').fadeIn( 100 );
+      $('#applications-tab-comment').addClass('active');
+      $('#applications-tab-mail').removeClass('active');
+      
+      if ($('section.application-comment').is(':visible')) {
         $('section.application-mail').hide();
       }
-    });
-    $('#action-application-mail').on('click', function() {
-      $('section.application-mail').toggle();
-      if ($('section.application-mail').is(':visible')) {
-        $('section.application-logs').hide();
-      }
+      
     });
     
     // Save log entry
