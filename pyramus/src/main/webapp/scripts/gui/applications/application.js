@@ -241,13 +241,13 @@
       else {
         valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
       }
-      if (valid) {
+      //if (valid) {
         var newIndex = currentIndex() + 1;  
         while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
           newIndex++;
         }
         navigateTo($(applicationSections[newIndex]));
-      }
+      //}
     });
     
     $('input[name="field-source"]').click(function() {
