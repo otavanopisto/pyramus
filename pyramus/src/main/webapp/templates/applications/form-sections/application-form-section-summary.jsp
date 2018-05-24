@@ -28,7 +28,7 @@
           <input type="checkbox" id="field-privacy" name="field-privacy" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         </div>
         <div class="field-row-label">
-          <label for="field-privacy" class="required">Olen lukenut <a href="http://otavanopisto.fi/resources/public/tietosuojaselosteet/opiskelijarekisteri_tietosuojaseloste.pdf" class="summary-privacy-link">tietosuojaselosteen</a> ja hyväksyn, että tietoni tallennetaan Otavan Opiston oppilashallintojärjestelmään sekä verkko-oppimisympäristöön. </label>
+          <label for="field-privacy" class="required">Olen lukenut <a href="http://otavanopisto.fi/resources/public/tietosuojaselosteet/opiskelijarekisteri_tietosuojaseloste.pdf" target="top" class="summary-privacy-link">tietosuojaselosteen</a> ja hyväksyn, että tietoni tallennetaan Otavan Opiston oppilashallintojärjestelmään sekä verkko-oppimisympäristöön. </label>
         </div>
       </div>
     </div>
