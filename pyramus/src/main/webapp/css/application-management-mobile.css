@@ -533,29 +533,26 @@ textarea {
 }
 
 .log-entry-action {
-  background-size: auto auto;
+  background-repeat: no-repeat;
   background-size: contain;
   width: 20px;
   height: 20px;
   border-radius: 3px;
   position: absolute;
   cursor: pointer;
-  box-shadow: 0 0 0 2px #fff;
   top: 5px;
 }
 
 .log-entry-archive {
-  background-image: url('../gfx/icons/32x32/actions/remove.png');
-  background-color: #d31111;
-  border: 3px solid #d31111;
+  background-image: url('../gfx/icons/32x32/actions/remove-dark.png');
+  border: 3px solid transparent;
   right: 5px;
 }
 
 .log-entry-edit {
-  background-image: url('../gfx/icons/32x32/actions/edit.png');
-  background-color: #2dbf90;
-  border: 3px solid #2dbf90;
-  right: 33px;
+  background-image: url('../gfx/icons/32x32/actions/edit-dark.png');
+  border: 3px solid transparent;
+  right: 30px;
 }
 
 .log-entry textarea,
