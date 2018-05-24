@@ -506,7 +506,7 @@ textarea {
   margin: 10px 0 0;
   padding: 10px;
   border-radius: 3px;
-  background: #f5f5f5;
+  background: #f9f9f9;
   font-size: 13px;
   position: relative;
 }
@@ -541,13 +541,22 @@ textarea {
 .log-entry-archive {
   background-image: url('../gfx/icons/32x32/actions/remove-dark.png');
   border: 3px solid transparent;
+  opacity: 0.4;
   right: 5px;
+  transition: all 0.3s ease-in-out;
 }
 
 .log-entry-edit {
   background-image: url('../gfx/icons/32x32/actions/edit-dark.png');
   border: 3px solid transparent;
+  opacity: 0.4;
   right: 30px;
+  transition: all 0.3s ease-in-out;
+}
+
+.log-entry-edit:hover,
+.log-entry-archive:hover {
+  opacity: 1;  
 }
 
 .log-entry textarea,
