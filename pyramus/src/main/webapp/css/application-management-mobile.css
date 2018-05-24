@@ -57,6 +57,7 @@ textarea {
 }
 
 .application-action {
+  align-items: center;
   background-color: transparent;
   background-size: contain;
   background-position: center center;
@@ -65,7 +66,8 @@ textarea {
   border-radius: 3px;
   color: #fff;
   cursor: pointer;
-  display: inline-block;
+  display: flex;
+  flex-flow: row nowrap;
   height: 32px;
   margin: 0 10px;
   transition: all 0.2s ease-in-out;
@@ -92,13 +94,15 @@ textarea {
   background-image: url(../gfx/icons/32x32/actions/edit.png);
 }
 
-.application-action.icon-locked {
+.application-action.icon-locked,
+.application-action.icon-locked:hover {
   background-color: #d31111;
   background-image: url(../gfx/icons/32x32/actions/lock.png);
   border-color: #d31111;
 }
 
-.application-action.icon-unlocked {
+.application-action.icon-unlocked,
+.application-action.icon-unlocked:hover {
   background-color: #24c118;
   background-image: url(../gfx/icons/32x32/actions/unlock.png);
   border-color: #24c118;
@@ -112,7 +116,7 @@ textarea {
 .application-wrapper {
   display: flex;
   flex-flow: row wrap;
-  margin: 45px 0 0; /* Height of the navigation bar */
+  margin: 45px 0 0; /* Top margin is Height of the navigation bar */
   width: 100%;
 }
 
@@ -151,6 +155,7 @@ textarea {
   font-size: 20px;
   color: #009fe3;
   font-weight: 400;
+  line-height: 1;
   margin: 0;
 }
 
@@ -224,11 +229,10 @@ textarea {
 .user-exists-container {
   background: #fcdcdb;
   width: 100%;
-  min-height: 100px;
   padding: 5px;
   border-radius: 3px;
   align-items: center;
-  margin: 0 0 10px;
+  margin: 0 0 20px;
 }
 
 .user-exists-description-title {
@@ -275,7 +279,6 @@ textarea {
 }
 
 .additional-info-container {
-  min-height: 100px;
   width: 100%;
 }
 
@@ -347,18 +350,6 @@ textarea {
   top: 0;
   position: fixed;
   z-index: 9;
-}
-
-.processing-icon {
-  background-image: url("../gfx/gui/processing.gif");
-  background-repeat: no-repeat;
-  background-position: center;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  top: 0;
-  position: absolute;
-  z-index: 11;
 }
 
 .signatures-auth-sources {
@@ -437,7 +428,8 @@ textarea {
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  padding: 0 5px 0 0;
+  margin: 10px 0 0;
+  padding: 5px 0 0;
 }
 
 .application-logs-tabs__tab {
@@ -446,7 +438,11 @@ textarea {
   border-top-right-radius: 3px;
   color: #969696;
   cursor: pointer;
+  flex-basis: 50%;
+  flex-grow: 1;
+  flex-shrink: 1;
   padding: 8px 10px;
+  text-align: center;
   transition: background 0.1s ease-in-out;
 }
 
@@ -465,11 +461,10 @@ textarea {
   font-size: 20px;
   font-weight: 400;
   line-height:1;
-  margin: 0 0 15px;
+  margin: 0;
 }
 
 .application-log-title {
-  font-size: 13px;
   font-weight: 600;
   margin: 0;
 }
@@ -486,7 +481,7 @@ textarea {
 .button-send-mail,
 .button-apply-template,
 .button-cancel-logentry {
-  background-color: #24c118;
+  background-color: #27b91c;
   border: 0;
   border-radius: 2px;
   color: #fff;
@@ -498,7 +493,7 @@ textarea {
 
 .button-cancel-logentry {
   background-color: #7391a7;
-  margin: 0 0 0 5px;
+  margin: 0 0 0 10px;
 }
 
 /* Log entries */
@@ -619,6 +614,7 @@ textarea {
 
 .application-mail input[type="checkbox"]:checked {
   background-color: #2dbf90;
+  border: 1px solid #2dbf90;
   position: relative;
 }
 
@@ -667,7 +663,7 @@ textarea {
   align-items: flex-start;
   display: flex;
   flex-flow: row nowrap;
-  padding: 0 10px 0 0;
+  padding: 5px 10px 0 0;
 }
 
 .application-templates-filter label,
@@ -676,7 +672,7 @@ textarea {
   flex-basis: auto;
   flex-grow: 1;
   flex-shrink: 1;
-  margin: 0 2px 0 4px;
+  margin: 0 0 0 6px;
 }
 
 .application-templates-container {
@@ -696,12 +692,6 @@ textarea {
   flex-grow: 0;
   flex-shrink: 1;
   margin: 0 0 0 10px;
-}
-
-/* Unfortunate JQuery dialog theme overrides as ThemeRoller is crappy AF */
-.ui-dialog {
-  max-width: 90% !important;
-  width: 90% !important;
 }
 
 .ui-dialog.ui-widget.ui-widget-content {
@@ -771,37 +761,14 @@ textarea {
   opacity: 0.6 !important;
 }
 
+.ui-dialog .ui-dialog-buttonset button.ui-button {
+  margin: 5px;
+}
+
 .error-container {
   color: #b94a48;
   font-size: 0.9em;
   font-style: italic;
   font-weight: 400;
   line-height: 0.9em;
-}
-
-/* FORM STRUCTURE */
-.form-section {
-  display: none;
-  margin: 0 0 20px;
-}
-
-.application-form-section-header,
-.form-section__header {
-  font-size: 20px;
-  color: #009fe3;
-  font-weight: 400;
-  line-height: 1;
-  margin: 0 0 20px;
-}
-
-.form-section__field-container {
-  margin: 10px 0;
-} 
-
-.field-row-flex .field-row-element {
-  flex: 0 1 auto;
-}
-
-.field-row-flex .field-row-label {
-  flex: 1 1 auto;
 }

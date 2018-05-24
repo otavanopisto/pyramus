@@ -9,130 +9,135 @@
 /////////////////////////////////////////////////////////////////////////////
 */
  
-.application-header {
-  height: 85px;
-} 
-
-.application-header__content {
-  padding: 0 30px;
-} 
-
-.application-header__logo {
-  background: #000;
-  border-radius: 100%;
-  font-size: 1.125rem;
-  height: 115px;
-  justify-content: center;
-  line-height: 1.1;
-  position: absolute;
-  top: -20px;
-  width: 115px;
+.application-actions-header {
+  height: 65px;
 }
 
-.application-selection {
-  padding: 0 20px 30px;
+.application-actions-container {
+  padding: 0 20px;
 }
 
-.selection-box__header-text {
-  font-size: 18px;
+.application-action {
+  background-color: #414141;
+  background-size: 14px 14px;
+  background-position: 2px center;
+  background-repeat: no-repeat;
+  border: 6px solid transparent;
+  border-radius: 2px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  height: 32px;
+  margin: 0 5px;
+  padding: 0 4px 0 24px;
+  transition: all 0.2s ease-in-out;
+  width: auto;
 }
 
-.selection-box__description {
-  font-size: 16px;
+.application-action--logs {
+  display: none;
 }
 
-.selection-box__link {
-  font-size: 15px;
+.application-action__label {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 300;
+  text-transform: uppercase;
 }
 
-.application-content {
-  align-items: flex-start;
+.application-wrapper {
+  margin: 75px 20px 20px; /* Top margin is Height of the navigation bar + 10px extra spacing */
+  width: auto;
+}
+
+.application-section.application-actions {
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 10px 0;
+}
+
+.application-section.application-meta {
+  border-left: 1px solid #e2e2e2;
+  border-right: 1px solid #e2e2e2;
+  border-top: 1px solid #e2e2e2;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  margin: 0;
+  padding: 15px 20px;
+}
+
+.additional-info-container {
+  align-content: flex-start;
+  display: flex;
   flex-flow: row wrap;
-  margin: 0 30px 50px;
+  justify-content: flex-start;
 }
 
-.application-content.application-content--credentials {
-  max-width: 520px;
+.meta-container {
+  display: flex;
+  flex-flow: row nowrap;
+  flex-basis: 0;
+  flex-grow: 0;
+  flex-shrink: 1;
+  line-height: 1;
+  margin: 0;
+  padding: 5px 30px 5px 0
 }
 
-
-.application-content--edit .application-editing-information-row {
-  flex-basis: calc(33% - 40px);
-  max-width: calc(33% - 40px);
+.meta-name {
+  flex-grow: 1;
+  min-width: auto;
+  margin: 0 10px 0 0;
+  white-space: nowrap;
 }
 
-.application-description {
-  padding: 30px;
+.meta-value {
+  flex-grow: 1;
+  min-width: auto;
+  white-space: nowrap;
 }
 
-.application-description__line-header,
-.application-description__credentials-header {
-  font-size: 28px;
-}
-
-.application-description__line-content {
-  font-size: 18px;
-}
-
-.application-header__show-content-information {
-  display: none;  
-}
-
-.application-content__information {
-  display: block;
-  flex-basis: calc(40% - 20px);
+.application-section.application-data {
+  border-left: 1px solid #e2e2e2;
+  flex-basis: calc(55% - 40px);
   flex-grow: 1;
   flex-shrink: 1;
-  margin: 0 0 0 20px;
-  order: 2;
   padding: 20px;
 }
 
-.application-content__form {
-  flex-basis: calc(60% - 20px);
+.application-section.application-logs {
+  align-content: flex-start;
+  border-right: 1px solid #e2e2e2;
+  display: flex;
+  flex-basis: calc(45% - 40px);
+  flex-flow: row wrap;
   flex-grow: 1;
   flex-shrink: 1;
-  margin: 0 20px 0 0;
-  order: 1;
+  order: 4;
+  padding: 20px;
 }
 
-input, 
-textarea {
-  padding: 12px;
+.application-log-header,
+.application-data-title {
+  font-size: 26px;
+  font-weight: 300;
+  margin: 0 0 10px;
 }
 
-select {
-  padding: 11px 8px;
+.application-log-header {
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 
-button {
-  padding: 10px 16px;
+.application-logs-tabs {
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 
-input[type="checkbox"] {
-  height: 26px;
-  width: 26px;
-}
-
-input[type="checkbox"]:checked::after {
-  font-size: 20px;
-}
-
-.privacy-policy,
-.course-fees {
-  margin: 0 0 0 -350px;
-  max-width: 700px;
-}
-
-.application-footer__contact {
-  padding: 30px;  
-}
-
-.application-footer__links {
-  padding: 30px;
-}
-
-.application-footer__external-link:hover {
-  background: #0f94d2;
-  border-radius: 3px;
+.application-mail,
+.application-comment {
+  padding: 15px;
 }

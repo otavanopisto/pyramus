@@ -563,18 +563,13 @@
     }
 
     function processingOn() {
-      $('.application-handling-container')
-        .addClass('processing')
+      $('body')
         .append($('<div>')
-          .addClass('processing-overlay'))
-        .append($('<div>')
-          .addClass('processing-icon'));
+          .addClass('processing-overlay'));
     }
 
     function processingOff() {
-      $('.application-handling-container').removeClass("processing");
       $('.processing-overlay').remove();
-      $('.processing-icon').remove();
     }
 
     function showSignatures() {

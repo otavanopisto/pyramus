@@ -4,6 +4,15 @@
   margin: 0 0 20px;
 }
 
+.application-form-section-header,
+.form-section__header {
+  font-size: 20px;
+  color: #009fe3;
+  font-weight: 400;
+  line-height: 1;
+  margin: 0 0 20px;
+}
+
 .form-section.current {
   display: inherit;
 }
@@ -179,20 +188,6 @@ button {
 .button-edit-application,
 .button-create-credentials {
   background: #27b91c;
-}
-
-.button-save-logentry {
-  background: #2dbf90;
-}
-
-.button-send-mail,
-.button-apply-template {
-  background: #2dbf90;
-}
-
-.button-cancel-logentry {
-  background: #95bcc3;
-  margin: 0 0 0 10px;
 }
 
 .application-page-indicator {

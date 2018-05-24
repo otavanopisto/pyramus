@@ -16,8 +16,10 @@
     </div>
     <main class="application-content--management">
       <jsp:include page="/templates/applications/management-fragment-header.jsp"></jsp:include>
-      <section class="application-wrapper">
       
+      <section class="application-wrapper">
+        <jsp:include page="/templates/applications/management-fragment-actions.jsp"></jsp:include>
+        <jsp:include page="/templates/applications/management-fragment-meta.jsp"></jsp:include>
         <input type="hidden" id="field-line" name="field-line" value="${applicationLine}"/>
         <section class="application-section application-data">
         
@@ -47,7 +49,6 @@
           </div>
         </section>
 
-        <jsp:include page="/templates/applications/management-fragment-meta.jsp"></jsp:include>
         <jsp:include page="/templates/applications/management-fragment-logs.jsp"></jsp:include>
         
       </section>
