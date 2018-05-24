@@ -52,11 +52,12 @@
 }
 
 .application-file {
-  padding: 6px;
   background: #5db5c5;
-  margin: 8px 0;
   border-radius: 3px;
   color: #fff;
+  line-height: 1;
+  margin: 8px 0;
+  padding: 6px;
   position: relative;
 }
 
@@ -83,7 +84,7 @@
 
 .application-file__delete {
   position: absolute;
-  right: 10px;
+  right: 5px;
   top: 50%;
   bottom: 0;
   margin: -8px 0 0;
@@ -91,6 +92,6 @@
   height: 16px;
   font-size: 13px;
   cursor: pointer;
-  background: url('../gfx/icons/48x48/actions/close.png') center center no-repeat;
+  background: url('../gfx/icons/32x32/actions/remove.png') center center no-repeat;
   background-size: contain;
 }

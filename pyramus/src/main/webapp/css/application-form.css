@@ -11,10 +11,6 @@
 .form-section__field-container {
   margin: 10px 0;
 } 
-
-.field-button-set {
-  
-}
  
 .summary-container {
   margin: 20px 0;
@@ -101,13 +97,19 @@ input[type="radio"] {
   width: 21px;
 }
 
-input[type="checkbox"]:checked {
+input[type="radio"] {
+  border-radius: 100%;
+}
+
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
   background-color: #5db5c5;
   border: solid 2px #5db5c5;
   position: relative;
 }
 
-input[type="checkbox"]:checked::after {
+input[type="checkbox"]:checked::after,
+input[type="radio"]:checked::after {
   color: #fff;
   content: "\2713"; /* Checkmark */
   font-family: "Exo 2";
@@ -115,6 +117,12 @@ input[type="checkbox"]:checked::after {
   font-weight: 900;
   position: relative;
   top: -1px;
+}
+
+input[type="radio"]:checked::after {
+  content: "\2022"; /* Bullet */
+  font-size: 28px;
+  top: -4px;
 }
 
 select {
