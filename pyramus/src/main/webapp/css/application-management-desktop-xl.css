@@ -19,10 +19,10 @@
 }
 
 .application-section.application-meta {
-  padding: 15px 25px;
+  padding: 20px 30px;
 }
 
 .application-section.application-data,
 .application-section.application-logs {
-  padding: 25px;
+  padding: 30px;
 }
