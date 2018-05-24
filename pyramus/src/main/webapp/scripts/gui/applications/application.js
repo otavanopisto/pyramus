@@ -190,18 +190,6 @@
       });
     });
     
-    // Privacy policy
-    
-    $('.summary-privacy-link').on('click', function() {
-      $('.privacy-policy-overlay').toggle();
-      $('.privacy-policy').toggle();
-    });
-    
-    $('.privacy-policy__close, .privacy-policy-overlay').on('click', function() {
-      $('.privacy-policy-overlay').toggle();
-      $('.privacy-policy').toggle();
-    });
-    
     // Course fees
 
     $('.internetix-course-fees-link').on('click', function() {

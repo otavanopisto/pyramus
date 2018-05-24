@@ -405,8 +405,7 @@ a {
   color: #009fe3;
 }
 
-/* PRIVACY POLICY */
-.privacy-policy-overlay,
+/* COURSES FEESY */
 .course-fees-overlay {
   position: fixed;
   top: 0;
@@ -418,7 +417,6 @@ a {
   width: 100%;
 }
 
-.privacy-policy,
 .course-fees {
   background: #fff;
   border: 3px solid #8ed2de;
@@ -434,7 +432,6 @@ a {
   z-index: 100;
 }
 
-.privacy-policy__close,
 .course-fees__close {
   background-color: #009fe3;
   background-image: url('../gfx/icons/48x48/actions/close.png');
