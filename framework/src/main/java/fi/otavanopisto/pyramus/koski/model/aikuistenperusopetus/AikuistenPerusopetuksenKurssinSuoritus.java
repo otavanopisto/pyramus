@@ -9,6 +9,7 @@ import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
+import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AikuistenPerusopetuksenKurssinSuoritus {
@@ -48,8 +49,17 @@ public class AikuistenPerusopetuksenKurssinSuoritus {
     this.koulutusmoduuli = koulutusmoduuli;
   }
 
+  public OsaamisenTunnustaminen getTunnustettu() {
+    return tunnustettu;
+  }
+
+  public void setTunnustettu(OsaamisenTunnustaminen tunnustettu) {
+    this.tunnustettu = tunnustettu;
+  }
+
   private AikuistenPerusopetuksenKurssinTunniste koulutusmoduuli;
   private final Set<KurssinArviointi> arviointi = new HashSet<>();
+  private OsaamisenTunnustaminen tunnustettu;
   private KoodistoViite<Kieli> suorituskieli;
   private final KoodistoViite<SuorituksenTyyppi> tyyppi = new KoodistoViite<>(SuorituksenTyyppi.aikuistenperusopetuksenkurssi);
 }
