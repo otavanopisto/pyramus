@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.koski;
+package fi.otavanopisto.pyramus.koski.model.lukio;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +29,16 @@ import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
+import fi.otavanopisto.pyramus.koski.CreditStub;
+import fi.otavanopisto.pyramus.koski.CreditStubCredit;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
+import fi.otavanopisto.pyramus.koski.KoodistoViite;
+import fi.otavanopisto.pyramus.koski.KoskiConsts;
+import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
+import fi.otavanopisto.pyramus.koski.KoskiStudentId;
+import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
+import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
+import fi.otavanopisto.pyramus.koski.StudentSubjectSelections;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
@@ -53,22 +62,6 @@ import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinSuoritus;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunniste;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnistePaikallinen;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinenOPS2004;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinenOPS2015;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeudenLisatiedot;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenArviointi;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritus;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusAidinkieli;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMatematiikka;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMuuValtakunnallinen;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusPaikallinen;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusVierasKieli;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenTunniste;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppimaaranSuoritus;
 
 public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
