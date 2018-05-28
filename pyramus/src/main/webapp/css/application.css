@@ -27,6 +27,9 @@
 /* Generic attachment styling */
 @import url("application-attachment.css");
 
+/* Notificatrion Queue */
+@import url("notif-queue.css");
+
 /* GENERIC STYLES */
 
 * {

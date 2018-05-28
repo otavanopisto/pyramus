@@ -1,0 +1,45 @@
+/* NOTIFICATION QUEUE */
+.notification-queue {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+}
+
+.notification-queue-item {
+  color: #fff;
+  position: relative;
+  background: #000;
+  opacity: 0.95;
+  padding: 0 10px;
+}
+
+.notification-queue-item-error {
+  background: #d31111;
+}
+
+.notification-message-container {
+  margin: 0 auto;
+  padding: 20px 45px 20px 0;
+  position: relative;
+}
+
+@media screen and (min-width: 600px) {
+
+  .notification-message-container {
+    padding: 40px 60px 40px 0;
+    max-width: 1024px;
+  }
+}
+
+.notification-queue-item-close {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  margin: -12px 0 0;
+  height: 24px;
+  width: 24px;
+  background: url('../gfx/icons/48x48/actions/close.png') center center no-repeat;
+  background-size: contain;
+}

@@ -37,12 +37,12 @@
 
     <c:choose>
       <c:when test="${notFound eq true}">
-        <section class="application-description">
-          <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
-            <div class="application-description__line-header">
+        <section class="application-description application-description--edit">
+          <div class="application-description__edit">
+            <div class="application-description__edit-header">
               Emme löytäneet hakemusta antamillasi tiedoilla
             </div>
-            <div class="application-description__line-content">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</div>
+            <div class="application-description__edit-content">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</div>
           </div>
         </section>
         
@@ -59,18 +59,18 @@
         </main>
       </c:when>
       <c:when test="${locked eq true}">
-        <section class="application-description">
-          <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
-            <div class="application-description__line-header">
+        <section class="application-description application-description--edit">
+          <div class="application-description__edit">
+            <div class="application-description__edit-header">
               Hakemuksesi on käsittelyssä
             </div>
             
             <c:choose>
               <c:when test="${!empty handlerName && !empty handlerEmail}">
-                <div class="application-description__line-content">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty. Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä hakemuksesi käsittelijään:</div>
+                <div class="application-description__edit-content">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty. Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä hakemuksesi käsittelijään:</div>
               </c:when>
               <c:otherwise>
-                <div class="application-description__line-content">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty. Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</div>
+                <div class="application-description__edit-content">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty. Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</div>
               </c:otherwise>
             </c:choose>
           </div>
@@ -97,12 +97,12 @@
         </main>
       </c:when>
       <c:otherwise>
-        <section class="application-description">
-          <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
-            <div class="application-description__line-header">
+        <section class="application-description application-description--edit">
+          <div class="application-description__edit">
+            <div class="application-description__edit-header">
               Tervetuloa hakemuksen muokkaukseen
             </div>
-            <div class="application-description__line-content">Syötä alla olevaan lomakkeeseen sukunimesi ja sähköpostiisi lähetetty hakemustunnus.</div>
+            <div class="application-description__edit-content">Syötä alla olevaan lomakkeeseen sukunimesi ja sähköpostiisi lähetetty hakemustunnus.</div>
           </div>
         </section>
         

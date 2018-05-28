@@ -27,7 +27,7 @@
     <c:choose>
       <c:when test="${credentialsCreated eq true}">
         <section class="application-description application-description--credentials">
-          <div class="application-description__credentials form-section__field-container">
+          <div class="application-description__credentials">
             <div class="application-description__credentials-header">
               Tunnuksesi on luotu onnistuneesti
             </div>
@@ -35,16 +35,14 @@
         </section>
         
         <main class="application-content application-content--credentials">
-          <section class="form-section section-create-credentials">
-            <p>Voit nyt kirjautua niillä osoitteessa <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a></p>
-          </section>
+          <p>Voit nyt kirjautua niillä osoitteessa <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a></p>
         </main>
         
       </c:when>
       <c:when test="${credentialsAlreadyExist eq true}">
       
         <section class="application-description application-description--credentials">
-          <div class="application-description__credentials form-section__field-container">
+          <div class="application-description__credentials">
             <div class="application-description__credentials-header">
               Käyttäjätiliisi on jo liitetty Muikku-tunnukset
             </div>
@@ -52,16 +50,14 @@
         </section>
         
         <main class="application-content application-content--credentials">
-          <section class="form-section section-create-credentials">
-            <p>Voit kirjautua niillä osoitteessa <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a></p>
-            <p>Mikäli olet unohtanut tunnuksesi, voit palauttaa ne sähköpostiisi Muikun etusivulta löytyvän <i>Unohtuiko salasana?</i> -linkin kautta.</p>
-          </section>
+          <p>Voit kirjautua niillä osoitteessa <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a></p>
+          <p>Mikäli olet unohtanut tunnuksesi, voit palauttaa ne sähköpostiisi Muikun etusivulta löytyvän <i>Unohtuiko salasana?</i> -linkin kautta.</p>
         </main>
         
       </c:when>
       <c:otherwise>
         <section class="application-description application-description--credentials">
-          <div class="application-description__credentials form-section__field-container">
+          <div class="application-description__credentials">
             <div class="application-description__credentials-header">
               Muikku-tunnuksien luonti
             </div>

@@ -51,14 +51,14 @@
   margin: 0 30px 50px;
 }
 
-.application-content.application-content--credentials {
-  max-width: 520px;
-}
 
 
 .application-content--edit .application-editing-information-row {
-  flex-basis: calc(33% - 40px);
-  max-width: calc(33% - 40px);
+  flex-basis: calc(50% - 30px);
+  font-size: 14px;
+  margin: 15px;
+  max-width: calc(50% - 30px);
+  word-break: break-all;
 }
 
 .application-description {
@@ -66,7 +66,8 @@
 }
 
 .application-description__line-header,
-.application-description__credentials-header {
+.application-description__credentials-header,
+.application-description__edit-header {
   font-size: 28px;
 }
 

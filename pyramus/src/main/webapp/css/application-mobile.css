@@ -216,7 +216,8 @@ body {
   max-width: 100%;
 }
 
-.application-description__credentials {
+.application-description__credentials,
+.application-description__edit {
   display: block;
   max-width: 100%;
 }
@@ -227,7 +228,8 @@ body {
 }
 
 .application-description__line-header,
-.application-description__credentials-header {
+.application-description__credentials-header,
+.application-description__edit-header {
   font-size: 20px;
   font-weight: 400;
   margin: 10px 0;
