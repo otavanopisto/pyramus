@@ -33,6 +33,7 @@ input,
 select,
 textarea {
   font-family: "Exo 2", arial, sans-serif;
+  outline: none;
 }
 
 .application-actions-header {

@@ -80,6 +80,7 @@ button {
   font-family: "Exo 2", arial, sans-serif;
   font-size: 14px;
   font-weight: 300;
+  outline: none;
 }
 
 input,
