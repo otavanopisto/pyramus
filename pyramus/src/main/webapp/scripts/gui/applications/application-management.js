@@ -571,7 +571,7 @@
     }
 
     function showSignatures() {
-      if ($('#signatures-dialog').is(':empty')) {
+      if ($('#signatures-dialog').find('.auth-source').length == 0) {
         $.getJSON('/applications/listsignaturesources.json', function(data) {
           if (data.sources) {
             $.each(data.sources.methods, function(index, method) {
