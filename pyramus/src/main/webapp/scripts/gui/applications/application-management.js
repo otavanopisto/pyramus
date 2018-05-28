@@ -571,45 +571,53 @@
     }
 
     function showSignatures() {
-      $('#signatures-dialog').empty();
-      $.getJSON('/applications/listsignaturesources.json', function(data) {
-        if (data.sources) {
-          $.each(data.sources.methods, function(index, method) {
-            $('#signatures-dialog').append(
-              $('<img>')
-                .addClass('auth-source')
-                .attr('src', method.image)
-                .attr('data-identifier', method.identifier)
-                .attr('title', method.name)
-                .on('click', function(event) {
-                  event.stopPropagation();
-                  sign($(this).attr('data-identifier'));
-                })
-            );
-          });
-          var dialog = $('#signatures-dialog');
-          $(dialog).dialog({
-            resizable: false,
-            height: 'auto',
-            width: 'auto',
-            modal: true,
-            position: {
-              my: 'center',
-              at: 'center',
-              of: window
-            },
-            buttons: [{
-              text: "Peruuta",
-              class: 'cancel-button',
-              click: function() {
-                $(dialog).dialog("close");
-              }
-            }]
-          });
-        }
-        else {
-          $('.notification-queue').notificationQueue('notification', 'error', 'Tunnistuslähteiden lataaminen epäonnistui');
-        }
+      if ($('#signatures-dialog').is(':empty')) {
+        $.getJSON('/applications/listsignaturesources.json', function(data) {
+          if (data.sources) {
+            $.each(data.sources.methods, function(index, method) {
+              $('#signatures-dialog').append(
+                  $('<img>')
+                  .addClass('auth-source')
+                  .attr('src', method.image)
+                  .attr('data-identifier', method.identifier)
+                  .attr('title', method.name)
+                  .on('click', function(event) {
+                    event.stopPropagation();
+                    sign($(this).attr('data-identifier'));
+                  })
+              );
+            });
+            openSignaturesDialog();
+          }
+          else {
+            $('.notification-queue').notificationQueue('notification', 'error', 'Tunnistuslähteiden lataaminen epäonnistui');
+          }
+        });
+      }
+      else {
+        openSignaturesDialog();
+      }
+    }
+    
+    function openSignaturesDialog() {
+      var dialog = $('#signatures-dialog');
+      $(dialog).dialog({
+        resizable: false,
+        height: 'auto',
+        width: 'auto',
+        modal: true,
+        position: {
+          my: 'center',
+          at: 'center',
+          of: window
+        },
+        buttons: [{
+          text: "Peruuta",
+          class: 'cancel-button',
+          click: function() {
+            $(dialog).dialog("close");
+          }
+        }]
       });
     }
     
