@@ -711,11 +711,11 @@ public class ApplicationRESTService extends AbstractRESTService {
         // Replace the dynamic parts of the mail content (edit link, surname and reference code)
 
         StringBuilder viewUrl = new StringBuilder();
-        viewUrl.append(request.getScheme());
+        viewUrl.append(httpRequest.getScheme());
         viewUrl.append("://");
-        viewUrl.append(request.getServerName());
+        viewUrl.append(httpRequest.getServerName());
         viewUrl.append(":");
-        viewUrl.append(request.getServerPort());
+        viewUrl.append(httpRequest.getServerPort());
         viewUrl.append("/applications/edit.page");
 
         content = String.format(content, viewUrl, surname, referenceCode);
