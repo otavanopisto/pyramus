@@ -9,7 +9,7 @@
     <div class="application-handling-option backward-action" data-line="!aineopiskelu" data-state="PROCESSING" data-show="WAITING_STAFF_SIGNATURE,REJECTED"><span class="application-handling-text">Palauta käsittelyyn</span></div>
     <div class="application-handling-option forward-action" data-line="!aineopiskelu" data-state="PROCESSING" data-show="PENDING"><span class="application-handling-text">Ota käsittelyyn</span></div>
     <div class="application-handling-option forward-action" data-line="!aineopiskelu" data-state="WAITING_STAFF_SIGNATURE" data-show="PROCESSING"><span class="application-handling-text">Siirrä hyväksyttäväksi</span></div>
-    <div class="application-handling-option accept-action signatures-container" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}" style="display:none;">
+    <div class="application-handling-option accept-action sign-button" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}" style="display:none;">
       <span class="application-handling-text">Allekirjoita hyväksyntä</span>
     </div>
     <div class="application-handling-option accept-action" data-line="!aineopiskelu" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyväksymisestä</span></div>
@@ -19,8 +19,8 @@
     <div class="application-handling-option delete-action" data-state="ARCHIVE" data-show="PENDING,PROCESSING"><span class="application-handling-text archive-application">Poista hakemus</span></div>
   </div>
   
-  <!-- TODO: PLZ be a dialog in the future -->
-  <div class="signatures-auth-sources"></div>
+  <div id="signatures-dialog" title="Valitse tunnistuslähde" style="display:none;">
+  </div>
   
   <div id="delete-application-dialog" title="Hakemuksen poistaminen" style="display:none;">
     <p>Haluatko varmasti poistaa tämän hakemuksen?</p>

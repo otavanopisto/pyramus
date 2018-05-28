@@ -409,50 +409,48 @@
     
     // Signatures
     
-    var docId = $('.signatures-container').attr('data-document-id');
-    var docState = $('.signatures-container').attr('data-document-state');
-    $('.signatures-container').on('click', function(event) {
+    var docId = $('.sign-button').attr('data-document-id');
+    var docState = $('.sign-button').attr('data-document-state');
+    $('.sign-button').on('click', function(event) {
       event.stopPropagation();
-      if ($('.signatures-auth-sources').is(':empty')) {
-        processingOn();
-        $.ajax({
-          url: '/applications/generateacceptancedocument.json',
-          type: 'GET',
-          data: {
-            id: $('body').attr('data-application-entity-id')
-          },
-          dataType: "json",
-          contentType: "application/json; charset=utf-8",
-          success: function(response) {
-            if (response.status == 'OK') {
-              updateDocumentUrls();
-              showSignatures();
-            }
-            else {
-              $('.notification-queue').notificationQueue('notification', 'error', response.reason);
-            }
-            processingOff();
-          },
-          error: function(err) {
-            $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
-            processingOff();
+      processingOn();
+      $.ajax({
+        url: '/applications/generateacceptancedocument.json',
+        type: 'GET',
+        data: {
+          id: $('body').attr('data-application-entity-id')
+        },
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+          if (response.status == 'OK') {
+            updateDocumentUrls();
+            showSignatures();
           }
-        });
-      }
+          else {
+            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+          }
+          processingOff();
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+          processingOff();
+        }
+      });
     });
-    if (docState == 'INVITATION_CREATED') {
-      showSignatures();
-    }
     
     // Application handling options
     
     $('.application-handling-option').on('click', function(event) {
-      var id = $('body').attr('data-application-entity-id');
       var state = $(this).attr('data-state');
+      if (!state) {
+        return; // handlling option won't change state, ignore
+      }
       if (state == 'ARCHIVE') {
         archiveApplication();
         return;
       }
+      var id = $('body').attr('data-application-entity-id');
       processingOn();
       $.ajax({
         url: '/applications/updateapplicationstate.json',
@@ -505,7 +503,7 @@
         }
         $(this).toggle(available);
       });
-      $('.signatures-container').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
+      $('.sign-button').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
     }
     
     function archiveApplication() {
@@ -573,10 +571,11 @@
     }
 
     function showSignatures() {
+      $('#signatures-dialog').empty();
       $.getJSON('/applications/listsignaturesources.json', function(data) {
         if (data.sources) {
           $.each(data.sources.methods, function(index, method) {
-            $('.signatures-auth-sources').append(
+            $('#signatures-dialog').append(
               $('<img>')
                 .addClass('auth-source')
                 .attr('src', method.image)
@@ -587,6 +586,25 @@
                   sign($(this).attr('data-identifier'));
                 })
             );
+          });
+          var dialog = $('#signatures-dialog');
+          $(dialog).dialog({
+            resizable: false,
+            height: 'auto',
+            width: 'auto',
+            modal: true,
+            position: {
+              my: 'center',
+              at: 'center',
+              of: window
+            },
+            buttons: [{
+              text: "Peruuta",
+              class: 'cancel-button',
+              click: function() {
+                $(dialog).dialog("close");
+              }
+            }]
           });
         }
         else {
