@@ -94,6 +94,7 @@
   flex-grow: 1;
   flex-shrink: 1;
   margin: 0 20px 0 0;
+  max-width: calc(60% - 20px);
   order: 1;
 }
 

@@ -64,6 +64,7 @@
   flex-grow: 1;
   flex-shrink: 1;
   margin: 0 25px 0 0;
+  max-width: calc(55% - 25px);
   order: 1;
 }
 
