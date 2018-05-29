@@ -25,7 +25,7 @@
         <c:when test="${invalidState eq true}">
           <section class="application-description application-description--credentials">
             <div class="application-description__credentials">
-              <div class="application-description__credentials-header">
+              <div class="application-description__credentials-header application-description__credentials-header--error">
                Voi ei! Jokin meni pieleen
               </div>
             </div>
