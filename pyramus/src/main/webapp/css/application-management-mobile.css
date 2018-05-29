@@ -149,7 +149,7 @@ textarea {
 .application-data {
   flex: 1 1 100%;
   max-width: 100%;
-  order: 3;
+  order: 4;
 }
 
 .application-data-title {
@@ -193,7 +193,7 @@ textarea {
 .application-meta {
   flex: 1 1 100%;
   max-width: 100%;
-  order: 2;
+  order: 3;
   padding: 5px 15px;
 }
 
@@ -287,7 +287,7 @@ textarea {
 .application-actions {
   flex: 1 1 100%;
   max-width: 100%;
-  order: 1;
+  order: 2;
   padding: 10px;
 }
 
@@ -423,6 +423,7 @@ textarea {
 /* Logs <section> */
 .application-logs {
   display: none;
+  order: 1;
   width: 100%;
 }
 
