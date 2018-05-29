@@ -604,6 +604,7 @@
       $(dialog).dialog({
         resizable: false,
         height: 'auto',
+        minHeight: 350,
         width: 'auto',
         modal: true,
         position: {

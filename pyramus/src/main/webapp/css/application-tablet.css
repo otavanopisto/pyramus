@@ -77,8 +77,10 @@ body {
 }
 
 .application-content--edit .application-content__form  {
+  flex-basis: 100%;
   margin: 0;
-  padding: 20px;
+  max-width: 100%;
+  padding: 20px;  
 } 
 
 .application-description__credentials,

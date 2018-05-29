@@ -19,7 +19,7 @@
     <div class="application-handling-option delete-action" data-state="ARCHIVE" data-show="PENDING,PROCESSING"><span class="application-handling-text archive-application">Poista hakemus</span></div>
   </div>
   
-  <div id="signatures-dialog" title="Valitse tunnistuslähde" style="display:none;">
+  <div id="signatures-dialog" class="signatures-auth-sources" title="Valitse tunnistuslähde" style="display:none;">
   </div>
   
   <div id="delete-application-dialog" title="Hakemuksen poistaminen" style="display:none;">

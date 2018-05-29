@@ -355,11 +355,19 @@ textarea {
 
 .signatures-auth-sources {
   align-items: center;
-  border-radius: 10px;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-evenly;
-  padding: 2px;
+  min-height: 350px;
+  min-width: 320px;
+  max-width: 320px;
+}
+
+@media screen and (min-width: 360px) {
+  .signatures-auth-sources {
+    min-width: 360px;
+    max-width: 360px;
+  }
 }
 
 .signatures-auth-sources img {
