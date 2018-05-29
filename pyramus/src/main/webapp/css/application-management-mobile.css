@@ -374,6 +374,7 @@ textarea {
   background: #fff;
   border: 2px solid #eee;
   border-radius: 4px;
+  cursor: pointer;
   height: 55px;
   padding: 5px;
   margin: 2px;

@@ -285,8 +285,8 @@ body {
   position: relative;
 }
 
-.application-content--edit {
-  
+.application-content--credentials {
+  display: block;
 }
 
 .application-content--credentials .error-container {
@@ -306,7 +306,8 @@ body {
 }
 
 .application-content__information b,
-.application-editing-information-row b {
+.application-editing-information-row b,
+.application-credentials-information-row b {
   font-weight: 600;
 }
 
@@ -315,6 +316,13 @@ body {
   flex-grow: 1;
   flex-shrink: 1;
   margin: 0 0 20px;
+}
+
+.application-credentials-information-row {
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin: 0 0 10px;
 }
 
 .application-editing-information-link {
@@ -543,3 +551,25 @@ span.email {
   text-decoration: none;
   transition: background 0.3s ease-in-out;
 }
+
+.signatures-auth-sources {
+  align-items: center;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+}
+
+.signatures-auth-sources img {
+  background: #fff;
+  border: 2px solid #eee;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 55px;
+  padding: 5px;
+  margin: 2px;
+}
+
+.signatures-auth-sources img:hover {
+  border: 2px solid #83f8f3;
+}
+

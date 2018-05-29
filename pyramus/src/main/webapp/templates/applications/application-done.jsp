@@ -13,18 +13,58 @@
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/application.css"/>
   </head>
   <body>
-    <main class="application">
-      <header class="application-logo-header"></header>
+    <header class="application-header">
+      <div class="application-header__content">
+        <div class="application-header__logo">
+          <div class="application-header__logo-text">Otavan<br/>Opist<span class="application-header__logo-branding">o...</span></div>
+        </div>
+      </div>
+    </header>
+      
       <c:choose>
         <c:when test="${invalidState eq true}">
-          <p class="application-info-paragraph notify"><c:out value="${invalidStateReason}"/></p> 
+          <section class="application-description application-description--credentials">
+            <div class="application-description__credentials">
+              <div class="application-description__credentials-header">
+               Voi ei! Jokin meni pieleen
+              </div>
+            </div>
+          </section>
+          
+          <main class="application-content application-content--credentials">
+            <p><c:out value="${invalidStateReason}"/></p>
+          </main>
         </c:when>
         <c:otherwise>
-          <h3>Opiskelupaikka vastaanotettu</h3>
-          <p></p>
-          <p>Tervetuloa opiskelemaan Otavan Opistoon! Lähetämme Sinulle piakkoin lisätietoja opintojen aloittamisesta.</p>
+          <section class="application-description application-description--credentials">
+            <div class="application-description__credentials">
+              <div class="application-description__credentials-header">
+               Opiskelupaikka vastaanotettu
+              </div>
+            </div>
+          </section>
+          
+          <main class="application-content application-content--credentials">
+            <p>Tervetuloa opiskelemaan Otavan Opistoon! Lähetämme Sinulle piakkoin lisätietoja opintojen aloittamisesta.</p>
+          </main>
         </c:otherwise>
       </c:choose>
+  
     </main>
+    <footer class="application-footer">
+      <div class="application-footer__contact">
+        <div class="application-footer__contact-title">Ota yhteyttä</div>
+        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Osoite:</span> Otavantie 2 B, 50670 Otava</div>
+        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Puhelin:</span> 044 794 3552</div>
+        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Sähköposti:</span> info@otavanopisto.fi</div>
+      </div>
+      <div class="application-footer__links">
+        <a href="https://www.otavanopisto.fi" target="top" class="application-footer__external-link">www.otavanopisto.fi</a>
+        <a href="https://www.nettilukio.fi" target="top" class="application-footer__external-link">www.nettilukio.fi</a>
+        <a href="https://www.nettiperuskoulu.fi" target="top" class="application-footer__external-link">www.nettiperuskoulu.fi</a>
+        <a href="https://otavanopisto.muikkuverkko.fi" target="top" class="application-footer__external-link">otavanopisto.muikkuverkko.fi</a>
+        <a href="#" target="top" class="application-footer__external-link">Tietosuojaseloste</a>
+      </div>
+    </footer>
   </body>
 </html>
