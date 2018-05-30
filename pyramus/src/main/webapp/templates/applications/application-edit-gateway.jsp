@@ -37,12 +37,12 @@
 
     <c:choose>
       <c:when test="${notFound eq true}">
-        <section class="application-description">
-          <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
-            <div class="application-description__line-header">
+        <section class="application-description application-description--edit">
+          <div class="application-description__edit">
+            <div class="application-description__edit-header">
               Emme löytäneet hakemusta antamillasi tiedoilla
             </div>
-            <div class="application-description__line-content">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</div>
+            <div class="application-description__edit-content">Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</div>
           </div>
         </section>
         
@@ -52,25 +52,25 @@
           <p class="application-editing-information-row"><b>Nettiperuskoulu</b><br/>Elise Hokkanen<br/>elise.hokkanen@otavanopisto.fi<br/>044 794 3273</p>
           <p class="application-editing-information-row"><b>Aineopiskelu</b><br/>aineopiskelu@otavanopisto.fi</p>
           <p class="application-editing-information-row"><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavanopisto.fi<br/>015 194 3552</p>
-          <p class="application-editing-information-row"><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
-          <p class="application-editing-information-row"><b>Kasvatustieteen linja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
-          <p class="application-editing-information-row"><b>Lääkislinja</b><br/>Minna Vähämäki<br/>minna.vahamaki@otavanopisto.fi<br/>040 189 7053</p>
+          <!--<p class="application-editing-information-row"><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p> -->
+          <!--<p class="application-editing-information-row"><b>Kasvatustieteen linja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>-->
+          <!--<p class="application-editing-information-row"><b>Lääkislinja</b><br/>Minna Vähämäki<br/>minna.vahamaki@otavanopisto.fi<br/>040 189 7053</p>-->
           <p class="application-editing-information-link"><a href="/applications/edit.page">Takaisin edelliselle sivulle</a></p>
         </main>
       </c:when>
       <c:when test="${locked eq true}">
-        <section class="application-description">
-          <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
-            <div class="application-description__line-header">
+        <section class="application-description application-description--edit">
+          <div class="application-description__edit">
+            <div class="application-description__edit-header">
               Hakemuksesi on käsittelyssä
             </div>
             
             <c:choose>
               <c:when test="${!empty handlerName && !empty handlerEmail}">
-                <div class="application-description__line-content">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty. Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä hakemuksesi käsittelijään:</div>
+                <div class="application-description__edit-content">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty. Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä hakemuksesi käsittelijään:</div>
               </c:when>
               <c:otherwise>
-                <div class="application-description__line-content">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty. Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</div>
+                <div class="application-description__edit-content">Hakemuksesi on jo otettu käsittelyyn ja sen muokkaaminen on tällä hetkellä estetty. Ongelmatilanteissa, tai jos sinulla on kysyttävää, voit olla yhteydessä seuraaviin tahoihin:</div>
               </c:otherwise>
             </c:choose>
           </div>
@@ -88,21 +88,21 @@
               <p class="application-editing-information-row"><b>Nettiperuskoulu</b><br/>Elise Hokkanen<br/>elise.hokkanen@otavanopisto.fi<br/>044 794 3273</p>
               <p class="application-editing-information-row"><b>Aineopiskelu</b><br/>aineopiskelu@otavanopisto.fi</p>
               <p class="application-editing-information-row"><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavanopisto.fi<br/>015 194 3552</p>
-              <p class="application-editing-information-row"><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
-              <p class="application-editing-information-row"><b>Kasvatustieteen linja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>
-              <p class="application-editing-information-row"><b>Lääkislinja</b><br/>Minna Vähämäki<br/>minna.vahamaki@otavanopisto.fi<br/>040 189 7053</p>
+              <!--<p class="application-editing-information-row"><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>-->
+              <!--<p class="application-editing-information-row"><b>Kasvatustieteen linja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>-->
+              <!--<p class="application-editing-information-row"><b>Lääkislinja</b><br/>Minna Vähämäki<br/>minna.vahamaki@otavanopisto.fi<br/>040 189 7053</p>-->
               <p class="application-editing-information-link"><a href="/applications/edit.page">Takaisin edelliselle sivule</a></p>
             </c:otherwise>
           </c:choose>
         </main>
       </c:when>
       <c:otherwise>
-        <section class="application-description">
-          <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
-            <div class="application-description__line-header">
+        <section class="application-description application-description--edit">
+          <div class="application-description__edit">
+            <div class="application-description__edit-header">
               Tervetuloa hakemuksen muokkaukseen
             </div>
-            <div class="application-description__line-content">Syötä alla olevaan lomakkeeseen sukunimesi ja sähköpostiisi lähetetty hakemustunnus.</div>
+            <div class="application-description__edit-content">Syötä alla olevaan lomakkeeseen sukunimesi ja sähköpostiisi lähetetty hakemustunnus.</div>
           </div>
         </section>
         

@@ -28,13 +28,7 @@
 }
 
 .application-content--edit {
-  padding: 20px;
-}
-
-.application-content--edit .application-editing-information-row {
-  flex-basis: calc(33% - 50px);
-  margin: 25px;
-  max-width: calc(33% - 50px);
+  padding: 10px;
 }
 
 .application-content--edit .application-editing-information-link {
@@ -70,6 +64,7 @@
   flex-grow: 1;
   flex-shrink: 1;
   margin: 0 25px 0 0;
+  max-width: calc(55% - 25px);
   order: 1;
 }
 

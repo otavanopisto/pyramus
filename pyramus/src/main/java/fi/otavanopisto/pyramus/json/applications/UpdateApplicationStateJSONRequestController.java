@@ -144,7 +144,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           
           String subject = "Hyväksyminen Otavan Opiston opiskelijaksi";
           String content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
-              "/templates/applications/mail-accept-study-place.html"), "UTF-8");
+              "/templates/applications/mails/mail-accept-study-place.html"), "UTF-8");
           content = String.format(content,
               nickname,
               line.toLowerCase(),

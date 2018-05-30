@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -10,7 +10,7 @@
     <h3 class="form-section__header">Huoltajan tiedot</h3>
 
     <div class="form-section__field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,laakislinja">
-      <label for="field-underage-grounds">Alaikäisen hakemusperusteet</label>
+      <label for="field-underage-grounds">AlaikÃ¤isen hakemusperusteet</label>
       <textarea name="field-underage-grounds" rows="5" cols="40"></textarea>
     </div>
     
@@ -30,12 +30,12 @@
     </div> 
 
     <div class="form-section__field-container field-underage-email">
-      <label for="field-underage-email" class="required">Sähköpostiosoite</label>
+      <label for="field-underage-email" class="required">SÃ¤hkÃ¶postiosoite</label>
       <input type="text" name="field-underage-email" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div> 
     
     <div class="form-section__field-container field-underage-street-address">
-      <label for="field-underage-street-address" class="required">Lähiosoite</label>
+      <label for="field-underage-street-address" class="required">LÃ¤hiosoite</label>
       <input type="text" name="field-underage-street-address" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div> 
 

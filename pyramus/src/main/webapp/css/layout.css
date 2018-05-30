@@ -332,8 +332,6 @@ li#GUI_MENU_systemLink:hover>ul#GUI_MENU_systemItemContainer{
   left:0px;
 }
 
-
-
 /******************************
  Content 
 ******************************/
@@ -346,3 +344,25 @@ li#GUI_MENU_systemLink:hover>ul#GUI_MENU_systemItemContainer{
  min-height:500px; 
 }
 
+/******************************
+ Footer 
+******************************/
+
+#GUI_footerContainer{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:5px 10px;
+  background:#f5f5f5;
+}
+
+.privacy-policy-link{
+  color:#2e5ec5;
+  text-transform:uppercase;
+  font-size:12px;
+  text-decoration:none;
+  display:inline-block;
+  padding:4px;
+  line-height:1;
+}
