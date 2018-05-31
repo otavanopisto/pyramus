@@ -12,7 +12,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.security.impl.SessionController;
+import fi.otavanopisto.pyramus.security.impl.PermissionController;
 import fi.otavanopisto.pyramus.security.impl.UserContextResolver;
 import fi.otavanopisto.security.ContextReference;
 import fi.otavanopisto.security.PermissionFeature;
@@ -38,7 +38,7 @@ public class OnlyGroupStudentsPermissionFeature implements PermissionFeatureHand
   private StudentDAO studentDAO;
 
   @Inject
-  private SessionController sessionController;
+  private PermissionController permissionController;
   
   @Override
   public boolean hasPermission(String permission, fi.otavanopisto.security.User user, ContextReference contextReference, boolean allowed) {
@@ -48,7 +48,7 @@ public class OnlyGroupStudentsPermissionFeature implements PermissionFeatureHand
     
     User maybeStudent = resolveUser(contextReference);
     
-    boolean hf = sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION);
+    boolean hf = permissionController.hasEnvironmentPermission(user, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION);
     
     if (maybeStudent instanceof Student) {
       if (hf && user instanceof StaffMember)
