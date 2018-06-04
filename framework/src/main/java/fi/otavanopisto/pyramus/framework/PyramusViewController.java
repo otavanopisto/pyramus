@@ -19,7 +19,6 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 public abstract class PyramusViewController implements PageController {
 
-  // TODO: Remove this and UserRole
   public abstract UserRole[] getAllowedRoles();
 
   protected void throwLoginRequiredException(RequestContext requestContext) {
