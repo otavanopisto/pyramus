@@ -2,9 +2,12 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.Stateful;
@@ -1427,6 +1430,12 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!(studyProgramme.getOrganization() != null && UserUtils.isMemberOf(sessionController.getUser(), studyProgramme.getOrganization()))) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
     if (!userController.checkUserVariableKeysExist(entity.getVariables().keySet())) {
       return Response.status(Status.BAD_REQUEST).build();
     }
@@ -1472,12 +1481,18 @@ public class StudentRESTService extends AbstractRESTService {
 
     Boolean archived = filterArchived ? Boolean.FALSE : null;
     email = StringUtils.isNotBlank(email) ? email : null;
+
+    User loggedUser = sessionController.getUser();
+    
+    Collection<Organization> organizations = 
+        sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS) ?
+        null : new HashSet<>(Arrays.asList(loggedUser.getOrganization()));
     
     if (sessionController.hasPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION, null)) {
       List<StudentGroup> groups = studentGroupController.listStudentGroupsByMember(sessionController.getUser());
-      students = studentController.listStudents(email, groups, archived, firstResult, maxResults);
+      students = studentController.listStudents(organizations, email, groups, archived, firstResult, maxResults);
     } else {
-      students = studentController.listStudents(email, null, archived, firstResult, maxResults);
+      students = studentController.listStudents(organizations, email, null, archived, firstResult, maxResults);
     }
 
     if (CollectionUtils.isEmpty(students)) {
@@ -1500,6 +1515,12 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
     EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(student.getVersion())));
 
     ResponseBuilder builder = request.evaluatePreconditions(tag);
@@ -1552,6 +1573,14 @@ public class StudentRESTService extends AbstractRESTService {
     StudyProgramme studyProgramme = studyProgrammeController.findStudyProgrammeById(studyProgrammeId);
     if (studyProgramme == null) {
       return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      // Needs to be member of both organizations
+      if (!(UserUtils.isMemberOf(sessionController.getUser(), studyProgramme.getOrganization()) &&
+          UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization()))) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
     
     if (!userController.checkUserVariableKeysExist(entity.getVariables().keySet())) {

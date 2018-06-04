@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.StaleObjectStateException;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.internetix.smvc.controllers.RequestContext;
+import fi.otavanopisto.pyramus.PyramusUIPermissions;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
@@ -59,15 +61,51 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
-import fi.otavanopisto.pyramus.framework.JSONRequestController;
+import fi.otavanopisto.pyramus.framework.JSONRequestController2;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
-import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.otavanopisto.pyramus.rest.controller.permissions.OrganizationPermissions;
+import fi.otavanopisto.pyramus.security.impl.PermissionController;
 
-public class EditStudentJSONRequestController extends JSONRequestController {
+public class EditStudentJSONRequestController extends JSONRequestController2 {
 
+  public EditStudentJSONRequestController() {
+    super(
+        true // requireLoggedIn
+    );
+  }
+
+  @Override
+  protected boolean checkAccess(RequestContext requestContext) {
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+
+    Long loggedUserId = requestContext.getLoggedUserId();
+    User user = userDAO.findById(loggedUserId);
+
+    if (!PermissionController.instance().hasEnvironmentPermission(user, PyramusUIPermissions.EDIT_STUDENT)) {
+      return false;
+    } else {
+      if (PermissionController.instance().hasEnvironmentPermission(user, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+        return true;
+      } else {
+        Long personId = requestContext.getLong("personId");
+        Person person = personDAO.findById(personId);
+        
+        for (Student student : person.getStudents()) {
+          if (UserUtils.isMemberOf(user, student.getOrganization())) {
+            // Having one common organization is enough - though the view may not allow editing all
+            return true;
+          }
+        }
+
+        return false;
+      }
+    }
+  }
+  
   public void process(JSONRequestContext requestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
@@ -168,7 +206,8 @@ public class EditStudentJSONRequestController extends JSONRequestController {
       }
     }
 
-    List<Student> students = studentDAO.listByPerson(person);
+    List<Student> students = PermissionController.instance().hasEnvironmentPermission(loggedUser, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS) ?
+        studentDAO.listByPerson(person) : studentDAO.listByPersonAndOrganization(person, loggedUser.getOrganization());
 
     for (Student student : students) {
       int rowCount = requestContext.getInteger("emailTable." + student.getId() + ".rowCount");
@@ -238,6 +277,8 @@ public class EditStudentJSONRequestController extends JSONRequestController {
   
       entityId = requestContext.getLong("studyProgramme." + student.getId());
       StudyProgramme studyProgramme = entityId != null && entityId > 0 ? studyProgrammeDAO.findById(entityId) : null;
+      
+      // TODO: check that the user has access to the studyprogramme
   
       entityId = requestContext.getLong("studyEndReason." + student.getId());
       StudentStudyEndReason studyEndReason = entityId == null ? null : studyEndReasonDAO.findById(entityId);
@@ -402,10 +443,6 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     personDAO.forceReindex(person);
         
     requestContext.setRedirectURL(requestContext.getReferer(true));
-  }
-
-  public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
 }

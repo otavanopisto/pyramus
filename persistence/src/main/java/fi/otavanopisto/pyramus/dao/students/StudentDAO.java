@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.dao.students;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -34,9 +36,11 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email_;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme_;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -267,61 +271,6 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getSingleResult();
   }
 
-  public List<Student> listActiveStudents() {
-    EntityManager entityManager = getEntityManager(); 
-    
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
-    Root<Student> root = criteria.from(Student.class);
-    criteria.select(root);
-    criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(Student_.archived), Boolean.FALSE),
-            criteriaBuilder.or(
-                criteriaBuilder.isNull(root.get(Student_.studyEndDate)),
-                criteriaBuilder.greaterThan(root.get(Student_.studyEndDate), new Date())
-            )
-        ));
-    
-    return entityManager.createQuery(criteria).getResultList();
-  }
-
-  public List<Student> listByStudyProgramme(StudyProgramme studyProgramme) {
-    EntityManager entityManager = getEntityManager(); 
-    
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
-    Root<Student> root = criteria.from(Student.class);
-    criteria.select(root);
-    criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(Student_.archived), Boolean.FALSE),
-            criteriaBuilder.equal(root.get(Student_.studyProgramme), studyProgramme)
-        ));
-    
-    return entityManager.createQuery(criteria).getResultList();
-  }
-
-  public List<Student> listActiveStudentsByStudyProgramme(StudyProgramme studyProgramme) {
-    EntityManager entityManager = getEntityManager(); 
-    
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
-    Root<Student> root = criteria.from(Student.class);
-    criteria.select(root);
-    criteria.where(
-        criteriaBuilder.and(
-            criteriaBuilder.equal(root.get(Student_.archived), Boolean.FALSE),
-            criteriaBuilder.equal(root.get(Student_.studyProgramme), studyProgramme),
-            criteriaBuilder.or(
-                criteriaBuilder.isNull(root.get(Student_.studyEndDate)),
-                criteriaBuilder.greaterThan(root.get(Student_.studyEndDate), new Date())
-            )
-        ));
-    
-    return entityManager.createQuery(criteria).getResultList();
-  }
-  
   public List<Student> listByPerson(Person person) {
     EntityManager entityManager = getEntityManager(); 
     
@@ -338,21 +287,20 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public List<Student> listActiveStudentsByPerson(Person person) {
+  public List<Student> listByPersonAndOrganization(Person person, Organization organization) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
     Root<Student> root = criteria.from(Student.class);
+    Join<Student, StudyProgramme> studyProgramme = root.join(Student_.studyProgramme);
+    
     criteria.select(root);
     criteria.where(
         criteriaBuilder.and(
             criteriaBuilder.equal(root.get(Student_.archived), Boolean.FALSE),
             criteriaBuilder.equal(root.get(Student_.person), person),
-            criteriaBuilder.or(
-                criteriaBuilder.isNull(root.get(Student_.studyEndDate)),
-                criteriaBuilder.greaterThan(root.get(Student_.studyEndDate), new Date())
-            )
+            criteriaBuilder.equal(studyProgramme.get(StudyProgramme_.organization), organization)
         ));
     
     return entityManager.createQuery(criteria).getResultList();
@@ -382,16 +330,23 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public List<Student> listBy(String email, List<StudentGroup> groups, Boolean archived, Integer firstResult, Integer maxResults) {
+  public List<Student> listBy(Collection<Organization> organizations, String email, List<StudentGroup> groups, Boolean archived, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Student> criteria = criteriaBuilder.createQuery(Student.class);
     Root<Student> root = criteria.from(Student.class);
     Join<Student, ContactInfo> contactInfoJoin = root.join(Student_.contactInfo);
-
+    
     List<Predicate> predicates = new ArrayList<>();
     
+    if (CollectionUtils.isNotEmpty(organizations)) {
+      Join<Student, StudyProgramme> jStudyProgramme = root.join(Student_.studyProgramme);
+      Join<StudyProgramme, Organization> jOrganization = jStudyProgramme.join(StudyProgramme_.organization);
+
+      predicates.add(jOrganization.in(organizations));
+    }
+
     if (StringUtils.isNotBlank(email)) {
       ListJoin<ContactInfo, Email> emailJoin = contactInfoJoin.join(ContactInfo_.emails);
       predicates.add(criteriaBuilder.equal(emailJoin.get(Email_.address), email));
