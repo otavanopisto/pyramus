@@ -341,6 +341,7 @@ li#GUI_MENU_systemLink:hover>ul#GUI_MENU_systemItemContainer{
  top:125px;
  left:5px;
  right:5px;
+ padding: 0 0 50px;
  min-height:500px; 
 }
 
