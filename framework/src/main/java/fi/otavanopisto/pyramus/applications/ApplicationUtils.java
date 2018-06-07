@@ -78,50 +78,57 @@ public class ApplicationUtils {
   private static final Logger logger = Logger.getLogger(ApplicationUtils.class.getName());
 
   public static String applicationStateUiValue(ApplicationState applicationState) {
-    switch (applicationState) {
-    case PENDING:
-      return "Jätetty";
-    case PROCESSING:
-      return "Käsittelyssä";
-    case WAITING_STAFF_SIGNATURE:
-      return "Odottaa virallista hyväksyntää";
-    case STAFF_SIGNED:
-      return "Hyväksyntä allekirjoitettu";
-    case APPROVED_BY_SCHOOL:
-      return "Hyväksytty";
-    case APPROVED_BY_APPLICANT:
-      return "Opiskelupaikka vastaanotettu";
-    case TRANSFERRED_AS_STUDENT:
-      return "Siirretty opiskelijaksi";
-    case REGISTERED_AS_STUDENT:
-      return "Rekisteröitynyt aineopiskelijaksi";
-    case REJECTED:
-      return "Hylätty";
+    if (applicationState != null) {
+      switch (applicationState) {
+      case PENDING:
+        return "Jätetty";
+      case PROCESSING:
+        return "Käsittelyssä";
+      case WAITING_STAFF_SIGNATURE:
+        return "Odottaa virallista hyväksyntää";
+      case STAFF_SIGNED:
+        return "Hyväksyntä allekirjoitettu";
+      case APPROVED_BY_SCHOOL:
+        return "Hyväksytty";
+      case APPROVED_BY_APPLICANT:
+        return "Opiskelupaikka vastaanotettu";
+      case TRANSFERRED_AS_STUDENT:
+        return "Siirretty opiskelijaksi";
+      case REGISTERED_AS_STUDENT:
+        return "Rekisteröitynyt aineopiskelijaksi";
+      case REJECTED:
+        return "Hylätty";
+       default:
+         return null;
+      }
     }
     return null;
   }
 
   public static String applicationLineUiValue(String value) {
-    switch (value) {
-    case "aineopiskelu":
-      return "Aineopiskelu";
-    case "nettilukio":
-      return "Nettilukio";
-    case "nettipk":
-      return "Nettiperuskoulu";
-    case "aikuislukio":
-      return "Aikuislukio";
-    case "bandilinja":
-      return "Bändilinja";
-    case "kasvatustieteet":
-      return "Kasvatustieteen linja";
-    case "laakislinja":
-      return "Lääkislinja";
-    case "mk":
-      return "Maahanmuuttajakoulutukset";
-    default:
-      return null;
+    if (value != null) {
+      switch (value) {
+      case "aineopiskelu":
+        return "Aineopiskelu";
+      case "nettilukio":
+        return "Nettilukio";
+      case "nettipk":
+        return "Nettiperuskoulu";
+      case "aikuislukio":
+        return "Aikuislukio";
+      case "bandilinja":
+        return "Bändilinja";
+      case "kasvatustieteet":
+        return "Kasvatustieteen linja";
+      case "laakislinja":
+        return "Lääkislinja";
+      case "mk":
+        return "Maahanmuuttajakoulutukset";
+      default:
+        return null;
+      }
     }
+    return null;
   }
   
   public static boolean isValidLine(String line) {
