@@ -1,11 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
   <section class="form-section section-personal-info">
 
-    <h3 class="form-section__header">Henkilötiedot</h3>
+    <h3 class="form-section__header">HenkilÃ¶tiedot</h3>
     
     <div class="form-section__field-container field-last-name">
       <label for="field-last-name" class="required">Sukunimi</label>
@@ -25,15 +25,15 @@
     </div> 
     
     <div class="form-section__field-container field-birthday">
-      <label for="field-birthday" class="required">Syntymäaika</label>
+      <label for="field-birthday" class="required">SyntymÃ¤aika</label>
       <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true" data-parsley-birthday-format="">
       <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
     </div>
 
     <div class="form-section__field-container field-ssn-end">
-      <label for="field-ssn-end">Henkilötunnuksen loppuosa</label>
+      <label for="field-ssn-end">HenkilÃ¶tunnuksen loppuosa</label>
       <input type="text" id="field-ssn-end" name="field-ssn-end" maxlength="4" style="text-transform:uppercase;" data-parsley-validate-if-empty="true" data-parsley-ssn-end-format="">
-      <span class="field-help">Esitysmuoto XXXX (ilman edeltävää välimerkkiä A tai -)</span>
+      <span class="field-help">Esitysmuoto XXXX (ilman edeltÃ¤vÃ¤Ã¤ vÃ¤limerkkiÃ¤ A tai -)</span>
     </div>
 
     <div class="form-section__field-container field-sex">
@@ -46,7 +46,7 @@
     </div>
 
     <div class="form-section__field-container field-street-address">
-      <label for="field-street-address" class="required">Lähiosoite</label>
+      <label for="field-street-address" class="required">LÃ¤hiosoite</label>
       <input type="text" name="field-street-address" data-parsley-required="true">
     </div> 
 
@@ -81,7 +81,7 @@
     </div>
 
     <div class="form-section__field-container field-language">
-      <label for="field-language" class="required">Äidinkieli</label>
+      <label for="field-language" class="required">Ã„idinkieli</label>
       <select name="field-language" data-parsley-required="true" data-source="/1/applications/languages" data-preselect="suomi">
         <option value="">-- Valitse --</option>
       </select>
@@ -90,11 +90,11 @@
     <div class="form-section__field-container field-phone">
       <label for="field-phone" class="required">Puhelinnumero</label>
       <input type="text" id="field-phone" name="field-phone" data-parsley-required="true">
-      <span class="field-help">Laita mukaan myös maakoodi, jos olet ulkomailla</span>
+      <span class="field-help">Laita mukaan myÃ¶s maakoodi, jos olet ulkomailla</span>
     </div>
 
     <div class="form-section__field-container field-email">
-      <label for="field-email" class="required">Sähköpostiosoite</label>
+      <label for="field-email" class="required">SÃ¤hkÃ¶postiosoite</label>
       <input type="email" id="field-email" name="field-email" data-parsley-required="true">
     </div>
   

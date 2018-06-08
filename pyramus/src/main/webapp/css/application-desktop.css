@@ -51,21 +51,23 @@
   margin: 0 30px 50px;
 }
 
-.application-content.application-content--credentials {
-  max-width: 520px;
-}
 
 
 .application-content--edit .application-editing-information-row {
-  flex-basis: calc(33% - 40px);
-  max-width: calc(33% - 40px);
+  flex-basis: calc(50% - 30px);
+  font-size: 14px;
+  margin: 15px;
+  max-width: calc(50% - 30px);
+  word-break: break-all;
 }
 
 .application-description {
   padding: 30px;
 }
 
-.application-description__line-header {
+.application-description__line-header,
+.application-description__credentials-header,
+.application-description__edit-header {
   font-size: 28px;
 }
 
@@ -92,6 +94,7 @@
   flex-grow: 1;
   flex-shrink: 1;
   margin: 0 20px 0 0;
+  max-width: calc(60% - 20px);
   order: 1;
 }
 

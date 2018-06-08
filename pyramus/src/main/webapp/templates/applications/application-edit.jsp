@@ -62,7 +62,7 @@
 
       <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu">
         <div class="application-description__line-header">
-          Olet hakemassa <span class="application-description__line-label--aineopiskelu">aineopiskelijaksi</span>
+          Olet ilmoittautumassa <span class="application-description__line-label--aineopiskelu">aineopiskelijaksi</span>
         </div>
         <div class="application-description__line-content">Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.</div>
       </div>
@@ -76,7 +76,7 @@
 
       <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="mk">
         <div class="application-description__line-header">
-          Olet hakemassa <span class="application-description__line-label--maahanmuuttajakoulutus">maahanmuuttajakoulutukseen</span>
+          Olet hakemassa <span class="application-description__line-label--maahanmuuttajakoulutus">maahanmuuttajakoulutuksiin</span>
         </div>
         <div class="application-description__line-content">Maahanmuuttajakoulutukset ovat sellaisia opiskelijoita varten, joiden äidinkieli ei ole suomi ja jotka tarvitsevat peruskoulun päättötodistuksen jatko-opintoja varten.</div>
       </div>
@@ -86,11 +86,23 @@
 
       <section class="application-content__information">
         <div class="application-content__information-page-specific">
-          <p>Klikkaa seuraava painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>
+          <p>Klikkaa Seuraava-painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>
           <p><b>Huom!</b> Punaisella tähdellä merkityt kentät ovat pakollisia.</p>
         </div>
-        <div class="application-content__information-line-specific">
-          
+        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
+          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:nettilukio@otavanopisto.fi">nettilukio@otavanopisto.fi</a></p>
+        </div>
+        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
+          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:nettiperuskoulu@otavanopisto.fi">nettiperuskoulu@otavanopisto.fi</a></p>
+        </div>
+        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu">
+          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:aineopiskelu@otavanopisto.fi">aineopiskelu@otavanopisto.fi</a></p>
+        </div>
+        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="mk">
+          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:maahanmuuttajakoulutukset@otavanopisto.fi">maahanmuuttajakoulutukset@otavanopisto.fi</a></p>
+        </div>
+        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio">
+          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:aikuislukio@otavanopisto.fi">aikuislukio@otavanopisto.fi</a></p>
         </div>
       </section>
       <section class="application-content__form">

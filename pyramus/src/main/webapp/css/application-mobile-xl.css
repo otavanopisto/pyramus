@@ -17,16 +17,16 @@
   height: 65px;
 }
 
-.application-content--edit {
-  align-content: flex-start;
-  flex-flow: row wrap;
+.application-description__credentials,
+.application-description__edit {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 480px;
+  width: 100%;
 }
 
-.application-description.application-description--credentials {
-  text-align: center;
-}
-
-.application-content.application-content--credentials {
+.application-content.application-content--credentials, 
+.application-content.application-content--edit {
   margin-left: auto;
   margin-right: auto;
   max-width: 480px;
@@ -42,4 +42,8 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-start;
-}  
+} 
+
+.field-attachments__description {
+  padding: 20px;
+} 

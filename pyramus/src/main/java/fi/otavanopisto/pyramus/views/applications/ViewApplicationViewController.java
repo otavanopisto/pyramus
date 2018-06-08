@@ -19,6 +19,8 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
+import fi.otavanopisto.pyramus.domainmodel.base.School;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -100,6 +102,32 @@ public class ViewApplicationViewController extends PyramusViewController {
           getFormValue(formData, "field-underage-country"),
           "Puh: " + getFormValue(formData, "field-underage-phone"),
           "Sähköposti: " + getFormValue(formData, "field-underage-email")));
+      }
+      
+      // Aineopiskelijan oppilaitos
+      
+      if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+        fields = new LinkedHashMap<>();
+        sections.put("Aineopiskelijan oppilaitos", fields);
+        fields.put("Opiskelee muualla", StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla") ? "Kyllä" : "Ei");
+        if (StringUtils.equals(getFormValue(formData, "field-internetix-school"), "kylla")) {
+          School school = ApplicationUtils.resolveSchool(getFormValue(formData, "field-internetix-contract-school"));
+          if (school == null) {
+            fields.put("Oppilaitos", getFormValue(formData, "field-internetix-contract-school-name"));
+            fields.put("Sopimusoppilaitos", "Ei");
+            fields.put("Opiskelupaikkakunta", getFormValue(formData, "field-internetix-contract-school-municipality"));
+            fields.put("Oppilaitoksen yhteyshenkilö", getFormValue(formData, "field-internetix-contract-school-contact"));
+            StudentExaminationType examinationType = ApplicationUtils.resolveStudentExaminationType(
+                getFormValue(formData, "field-internetix-contract-school-degree"));
+            if (examinationType != null) {
+              fields.put("Tutkintotyyppi", examinationType.getName());
+            }
+          }
+          else {
+            fields.put("Oppilaitos", school.getName());
+            fields.put("Sopimusoppilaitos", "Kyllä");
+          }
+        }
       }
 
       // Hakemiseen vaadittavat lisätiedot

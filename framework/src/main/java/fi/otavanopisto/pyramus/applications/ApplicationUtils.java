@@ -221,14 +221,18 @@ public class ApplicationUtils {
       return studentExaminationTypeDAO.findById(1L); // Muu tutkinto
     case "ammatillinen-perus":
       return studentExaminationTypeDAO.findById(2L); // Ammatillinen perustutkinto
-    case "ammatillinen-korkea":
-      return studentExaminationTypeDAO.findById(3L); // Ammattikorkeakoulututkinto
+    case "korkeakoulu":
+      return studentExaminationTypeDAO.findById(3L); // Korkeakoulututkinto
     case "kaksoistutkinto":
       return studentExaminationTypeDAO.findById(4L); // Kaksoistutkinto
     case "yo-tutkinto":
       return studentExaminationTypeDAO.findById(5L); // YO-tutkinto / lukion oppimäärä
     case "oppisopimus":
       return studentExaminationTypeDAO.findById(6L); // Oppisopimuskoulutus
+    case "peruskoulu":
+      return studentExaminationTypeDAO.findById(7L); // Peruskoulun oppimäärä
+    case "ylempi-kk":
+      return studentExaminationTypeDAO.findById(8L); // Ylempi korkeakoulututkinto
     default:
       return null;
     }
@@ -598,7 +602,7 @@ public class ApplicationUtils {
         createCredentialsUrl.append(application.getCredentialToken());
         
         content = IOUtils.toString(request.getServletContext().getResourceAsStream(
-            "/templates/applications/mail-credentials-create.html"), "UTF-8");
+            "/templates/applications/mails/mail-credentials-create.html"), "UTF-8");
         content = String.format(
             content,
             getFormValue(formData, "field-nickname"),
@@ -606,18 +610,10 @@ public class ApplicationUtils {
       }
       else {
         content = IOUtils.toString(request.getServletContext().getResourceAsStream(
-            "/templates/applications/mail-credentials-exist.html"), "UTF-8");
+            "/templates/applications/mails/mail-credentials-exist.html"), "UTF-8");
         content = String.format(
             content,
             getFormValue(formData, "field-nickname"));
-      }
-      
-      // Footer text tells this message is automated and contains line specific contact information
-      
-      String contentFooter = IOUtils.toString(request.getServletContext().getResourceAsStream(
-          String.format("/templates/applications/mail-confirmation-footer-%s.html", application.getLine())), "UTF-8");
-      if (contentFooter != null) {
-        content += contentFooter;
       }
         
       // Send mail to applicant (and possible guardian)
