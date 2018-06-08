@@ -13,12 +13,14 @@ import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactURLTypeDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -51,6 +53,7 @@ public class EditUserViewController extends PyramusViewController implements Bre
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     ContactURLTypeDAO contactURLTypeDAO = DAOFactory.getInstance().getContactURLTypeDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
 
     StaffMember user = staffDAO.findById(pageRequestContext.getLong("userId"));
     String username = "";
@@ -101,6 +104,9 @@ public class EditUserViewController extends PyramusViewController implements Bre
     }
     
     setJsDataVariable(pageRequestContext, "variables", variables.toString());
+
+    List<Organization> organizations = organizationDAO.listUnarchived();
+    Collections.sort(organizations, new StringAttributeComparator("getName"));
     
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());
     pageRequestContext.getRequest().setAttribute("user", user);
@@ -108,6 +114,7 @@ public class EditUserViewController extends PyramusViewController implements Bre
     pageRequestContext.getRequest().setAttribute("username", username);
     pageRequestContext.getRequest().setAttribute("contactTypes", contactTypes);
     pageRequestContext.getRequest().setAttribute("contactURLTypes", contactURLTypes);
+    pageRequestContext.getRequest().setAttribute("organizations", organizations);
     
     pageRequestContext.setIncludeJSP("/templates/users/edituser.jsp");
   }

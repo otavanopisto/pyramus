@@ -10,6 +10,7 @@ import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -43,7 +44,8 @@ public class AdminPasswordSetupWizardViewController extends SetupWizardControlle
     InternalAuth internalAuth = internalAuthDAO.create(username, passwordMD5);
     Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
     userIdentificationDAO.create(person, "internal", String.valueOf(internalAuth.getId()));
-    User user = userDAO.create(firstName, lastName, Role.ADMINISTRATOR, person, false);
+    Organization organization = null;
+    User user = userDAO.create(organization, firstName, lastName, Role.ADMINISTRATOR, person, false);
     personDAO.updateDefaultUser(person, user);
   }
 

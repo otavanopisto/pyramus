@@ -32,6 +32,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
@@ -42,6 +43,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
@@ -69,6 +71,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
@@ -95,6 +98,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.CourseAssessmentPermi
 import fi.otavanopisto.pyramus.rest.controller.permissions.LanguagePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MunicipalityPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.NationalityPermissions;
+import fi.otavanopisto.pyramus.rest.controller.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentActivityTypePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentContactLogEntryPermissions;
@@ -183,6 +187,9 @@ public class StudentRESTService extends AbstractRESTService {
   @Inject
   private AssessmentController assessmentController;
 
+  @Inject
+  private OrganizationDAO organizationDAO;
+  
   @Path("/languages")
   @POST
   @RESTPermit(LanguagePermissions.CREATE_LANGUAGE)
@@ -825,17 +832,28 @@ public class StudentRESTService extends AbstractRESTService {
     String name = entity.getName();
     String code = entity.getCode();
     Long categoryId = entity.getCategoryId();
+    Long organizationId = entity.getOrganizationId();
 
-    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null) {
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null || organizationId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
     StudyProgrammeCategory programmeCategory = studyProgrammeCategoryController.findStudyProgrammeCategoryById(categoryId);
-    if (programmeCategory == null) {
+    
+    Organization organization = organizationDAO.findById(organizationId);
+
+    if (programmeCategory == null || organization == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    return Response.ok(objectFactory.createModel(studyProgrammeController.createStudyProgramme(name, code, programmeCategory))).build();
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), organization)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
+    StudyProgramme studyProgramme = studyProgrammeController.createStudyProgramme(organization, name, code, programmeCategory);
+    return Response.ok(objectFactory.createModel(studyProgramme)).build();
   }
 
   @Path("/studyProgrammes")
@@ -843,14 +861,13 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(StudyProgrammePermissions.LIST_STUDYPROGRAMMES)
   public Response listStudyProgrammes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<StudyProgramme> studyProgrammes;
+
+    // TODO: Does this need organization check? LIST_STUDYPROGRAMMES is EVERYONE by default... 
+
     if (filterArchived) {
       studyProgrammes = studyProgrammeController.listUnarchivedStudyProgrammes();
     } else {
       studyProgrammes = studyProgrammeController.listStudyProgrammes();
-    }
-
-    if (studyProgrammes.isEmpty()) {
-      return Response.noContent().build();
     }
 
     return Response.ok(objectFactory.createModel(studyProgrammes)).build();
@@ -861,13 +878,11 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(StudyProgrammePermissions.FIND_STUDYPROGRAMME)
   public Response findStudyProgrammeById(@PathParam("ID") Long id, @Context Request request) {
     StudyProgramme studyProgramme = studyProgrammeController.findStudyProgrammeById(id);
-    if (studyProgramme == null) {
+    if (studyProgramme == null || studyProgramme.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (studyProgramme.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
+    // TODO: Does this need organization check? FIND_STUDYPROGRAMME is EVERYONE by default... 
 
     EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(studyProgramme.getVersion())));
     ResponseBuilder builder = request.evaluatePreconditions(tag);
@@ -897,8 +912,9 @@ public class StudentRESTService extends AbstractRESTService {
     String name = entity.getName();
     String code = entity.getCode();
     Long categoryId = entity.getCategoryId();
+    Long organizationId = entity.getOrganizationId();
 
-    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null) {
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null || organizationId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -907,7 +923,21 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    return Response.ok().entity(objectFactory.createModel(studyProgrammeController.updateStudyProgramme(studyProgramme, name, code, programmeCategory)))
+    Organization organization = organizationDAO.findById(organizationId);
+    if (organization == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      // User needs to be member of both the previous organization and the new one
+      if (!(UserUtils.isMemberOf(sessionController.getUser(), studyProgramme.getOrganization()) && UserUtils.isMemberOf(sessionController.getUser(), organization))) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
+    studyProgramme = studyProgrammeController.updateStudyProgramme(studyProgramme, organization, name, code, programmeCategory);
+    
+    return Response.ok().entity(objectFactory.createModel(studyProgramme))
         .build();
   }
 

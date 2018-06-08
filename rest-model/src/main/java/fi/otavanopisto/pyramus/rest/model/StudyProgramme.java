@@ -5,9 +5,10 @@ public class StudyProgramme {
   public StudyProgramme() {
   }
 
-  public StudyProgramme(Long id, String code, String name, Long categoryId, Boolean archived) {
+  public StudyProgramme(Long id, Long organizationId, String code, String name, Long categoryId, Boolean archived) {
     super();
     this.id = id;
+    this.organizationId = organizationId;
     this.code = code;
     this.name = name;
     this.categoryId = categoryId;
@@ -54,7 +55,16 @@ public class StudyProgramme {
     this.archived = archived;
   }
 
+  public Long getOrganizationId() {
+    return organizationId;
+  }
+
+  public void setOrganizationId(Long organizationId) {
+    this.organizationId = organizationId;
+  }
+
   private Long id;
+  private Long organizationId;
   private String name;
   private String code;
   private Long categoryId;

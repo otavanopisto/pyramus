@@ -9,10 +9,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import io.restassured.response.Response;
-
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.model.StudyProgramme;
+import io.restassured.response.Response;
 
 @RunWith(Parameterized.class)
 public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest {
@@ -31,11 +30,15 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
     return getGeneratedRoleData();
   }
   
+  private Long organizationId = 1l;
+
+  // TODO Check for 403 when needed
+  
   private StudyProgrammePermissions studyProgrammePermissions = new StudyProgrammePermissions();
   
   @Test
   public void testCreateStudyProgramme() throws NoSuchFieldException {
-    StudyProgramme studyProgramme = new StudyProgramme(null, "TST", "create", 1l, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, "TST", "create", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -70,7 +73,7 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
   
   @Test
   public void testUpdateStudyProgramme() throws NoSuchFieldException {
-    StudyProgramme studyProgramme = new StudyProgramme(null, "NOT", "Not Updated", 1l, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, "NOT", "Not Updated", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -79,7 +82,7 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
 
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      StudyProgramme updateStudyProgramme = new StudyProgramme(id, "UPD", "Updated", 2l, Boolean.FALSE);
+      StudyProgramme updateStudyProgramme = new StudyProgramme(id, organizationId, "UPD", "Updated", 2l, Boolean.FALSE);
 
       response = given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -95,7 +98,7 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
   
   @Test
   public void testDeleteStudyProgramme() throws NoSuchFieldException {
-    StudyProgramme studyProgramme = new StudyProgramme(null, "TST", "create type", 1l, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, "TST", "create type", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")

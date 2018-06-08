@@ -10,6 +10,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -142,6 +143,25 @@ public class UserUtils {
         (editor.getPerson().getId().equals(whose.getId())) ||
         ((editor.getRole() == Role.STUDY_PROGRAMME_LEADER) && (UserUtils.getHighestPersonRole(whose) != Role.MANAGER && UserUtils.getHighestPersonRole(whose) != Role.ADMINISTRATOR)) ||
         ((editor.getRole() == Role.MANAGER) && (UserUtils.getHighestPersonRole(whose) != Role.ADMINISTRATOR));
+  }
+
+  /**
+   * Checks if the user is member of an organization.
+   * 
+   * Checks only the users' organization against given organization. Does not check if the
+   * users' person has an user that might have access to the organization. Should it?
+   * 
+   * @param user
+   * @param organization
+   * @return
+   */
+  public static boolean isMemberOf(User user, Organization organization) {
+    if (user == null || organization == null)
+      return false;
+    
+    Organization userOrganization = user.getOrganization();
+
+    return organization != null && userOrganization != null && organization.getId().equals(userOrganization.getId());
   }
   
 }

@@ -1,10 +1,11 @@
 var categories = JSDATA["categories"].evalJSON();
+var organizations = JSDATA["organizations"].evalJSON();
 var studyProgrammes = JSDATA["studyProgrammes"].evalJSON();
 
 
 function addStudyProgrammesTableRow() {
   var table = getIxTableById('studyProgrammesTable');
-  var rowIndex = table.addRow([ '', '', '', '', '', '', -1, 1 ]);
+  var rowIndex = table.addRow([ '', '', '', '', '', '', '', -1, 1 ]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
@@ -45,9 +46,27 @@ function onLoad(event) {
           required : true
         },
         {
-          header : getLocale().getText("settings.studyProgrammes.studyProgrammesTableCategoryHeader"),
+          header : getLocale().getText("terms.organization"),
           width : 200,
           left : 346,
+          dataType : 'select',
+          editable : false,
+          paramName : 'organization',
+          options : (function() {
+            var result = [];
+            for ( var i = 0, l = organizations.length; i < l; i++) {
+              result.push({
+                text : organizations[i].name,
+                value : organizations[i].id
+              });
+            }
+            return result;
+          })()
+        },
+        {
+          header : getLocale().getText("settings.studyProgrammes.studyProgrammesTableCategoryHeader"),
+          width : 200,
+          left : 346 + 200 + 8,
           dataType : 'select',
           editable : false,
           paramName : 'category',
@@ -64,8 +83,8 @@ function onLoad(event) {
         },
         {
           header : getLocale().getText("settings.studyProgrammes.studyProgrammesTableCodeHeader"),
-          left : 554,
-          right : 44,
+          left : 346 + 200 + 8 + 200 + 8,
+          right : 8 + 22 + 8,
           dataType : 'text',
           editable : false,
           paramName : 'code'
@@ -142,9 +161,9 @@ function onLoad(event) {
   });
 
   var rows = new Array();
-  for ( var i = 0, l = studyProgrammes.length; i < l; i++) {
+  for (var i = 0, l = studyProgrammes.length; i < l; i++) {
     var studyProgramme = studyProgrammes[i];
-    rows.push([ '', jsonEscapeHTML(studyProgramme.name), studyProgramme.categoryId, studyProgramme.code, '', '', studyProgramme.id, 0 ]);
+    rows.push([ '', jsonEscapeHTML(studyProgramme.name), studyProgramme.organizationId, studyProgramme.categoryId, studyProgramme.code, '', '', studyProgramme.id, 0 ]);
   }
   studyProgrammeTable.addRows(rows);
 

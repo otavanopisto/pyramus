@@ -7,6 +7,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -18,28 +19,38 @@ public class StudyProgrammeController {
   @Inject
   private StudyProgrammeDAO studyProgrammeDAO;
   
-  public StudyProgramme createStudyProgramme(String name, String code, StudyProgrammeCategory category) {
-    StudyProgramme activityType = studyProgrammeDAO.create(name, category, code);
-    return activityType;
+  public StudyProgramme createStudyProgramme(Organization organization, String name, String code, StudyProgrammeCategory category) {
+    StudyProgramme studyProgramme = studyProgrammeDAO.create(organization, name, category, code);
+    return studyProgramme;
   }
   
   public StudyProgramme findStudyProgrammeById(Long id) {
-    StudyProgramme activityType = studyProgrammeDAO.findById(id);
-    return activityType;
+    StudyProgramme studyProgramme = studyProgrammeDAO.findById(id);
+    return studyProgramme;
   }
   
   public List<StudyProgramme> listStudyProgrammes() {
-    List<StudyProgramme> activityTypes = studyProgrammeDAO.listAll();
-    return activityTypes;
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listAll();
+    return studyProgrammes;
   }
 
   public List<StudyProgramme> listUnarchivedStudyProgrammes() {
-    List<StudyProgramme> activityTypes = studyProgrammeDAO.listUnarchived();
-    return activityTypes;
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
+    return studyProgrammes;
+  }
+
+  public List<StudyProgramme> listStudyProgrammesByOrganization(Organization organization) {
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listByOrganization(organization, null);
+    return studyProgrammes;
+  }
+
+  public List<StudyProgramme> listUnarchivedStudyProgrammesByOrganization(Organization organization) {
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listByOrganization(organization, false);
+    return studyProgrammes;
   }
   
-  public StudyProgramme updateStudyProgramme(StudyProgramme studyProgramme, String name, String code, StudyProgrammeCategory category) {
-    return studyProgrammeDAO.update(studyProgramme, name, category, code);
+  public StudyProgramme updateStudyProgramme(StudyProgramme studyProgramme, Organization organization, String name, String code, StudyProgrammeCategory category) {
+    return studyProgrammeDAO.update(studyProgramme, organization, name, category, code);
   }
 
   public StudyProgramme archiveStudyProgramme(StudyProgramme studyProgramme, User user) {

@@ -103,11 +103,23 @@ public class StudyProgramme implements ArchivableEntity {
     return version;
   }
 
+  public Organization getOrganization() {
+    return organization;
+  }
+
+  public void setOrganization(Organization organization) {
+    this.organization = organization;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="StudyProgramme")  
   @TableGenerator(name="StudyProgramme", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   @DocumentId
   private Long id;
+
+  @ManyToOne
+  @JoinColumn (name = "organization")
+  private Organization organization;
 
   @NotNull
   @Column(nullable = false)
@@ -121,7 +133,7 @@ public class StudyProgramme implements ArchivableEntity {
   @ManyToOne
   @JoinColumn (name = "category")
   private StudyProgrammeCategory category;
-  
+
   @NotNull
   @Column(nullable = false)
   private Boolean archived = Boolean.FALSE;

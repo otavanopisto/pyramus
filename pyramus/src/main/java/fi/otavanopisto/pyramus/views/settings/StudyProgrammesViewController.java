@@ -9,6 +9,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
@@ -31,20 +32,26 @@ public class StudyProgrammesViewController extends PyramusViewController impleme
   public void process(PageRequestContext pageRequestContext) {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     StudyProgrammeCategoryDAO studyProgrammeCategoryDAO = DAOFactory.getInstance().getStudyProgrammeCategoryDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     
     List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
     JSONArray jsonStudyProgrammes = new JSONArrayExtractor("name", "code", "id").extract(studyProgrammes);
     for (int i=0; i<jsonStudyProgrammes.size(); i++) {
       JSONObject jsonStudyProgrammeCategory = jsonStudyProgrammes.getJSONObject(i);
+      if (studyProgrammes.get(i).getOrganization() != null) {
+        jsonStudyProgrammeCategory.put("organizationId", studyProgrammes.get(i).getOrganization().getId());
+      }
       if (studyProgrammes.get(i).getCategory() != null) {
         jsonStudyProgrammeCategory.put("categoryId", studyProgrammes.get(i).getCategory().getId());
       }
     }
     
     String jsonCategories = new JSONArrayExtractor("name", "id").extractString(studyProgrammeCategoryDAO.listUnarchived());
+    String jsonOrganizations = new JSONArrayExtractor("name", "id").extractString(organizationDAO.listUnarchived());
     
     this.setJsDataVariable(pageRequestContext, "studyProgrammes", jsonStudyProgrammes.toString());
     this.setJsDataVariable(pageRequestContext, "categories", jsonCategories);
+    this.setJsDataVariable(pageRequestContext, "organizations", jsonOrganizations);
     pageRequestContext.setIncludeJSP("/templates/settings/studyprogrammes.jsp");
   }
 

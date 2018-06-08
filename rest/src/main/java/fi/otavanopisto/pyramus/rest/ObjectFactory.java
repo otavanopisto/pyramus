@@ -504,7 +504,8 @@ public class ObjectFactory {
           @Override
           public Object map(StudyProgramme entity) {
             Long categoryId = entity.getCategory() != null ? entity.getCategory().getId() : null;
-            return new fi.otavanopisto.pyramus.rest.model.StudyProgramme(entity.getId(), entity.getCode(), entity.getName(), categoryId, entity.getArchived());
+            Long organizationId = entity.getOrganization() != null ? entity.getOrganization().getId() : null;
+            return new fi.otavanopisto.pyramus.rest.model.StudyProgramme(entity.getId(), organizationId, entity.getCode(), entity.getName(), categoryId, entity.getArchived());
           }
         },
         
@@ -735,8 +736,9 @@ public class ObjectFactory {
           UserRole role = UserRole.valueOf(entity.getRole().name());
           String additionalContactInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
           Long personId = entity.getPerson() != null ? entity.getPerson().getId() : null;
+          Long organizationId = entity.getOrganization() != null ? entity.getOrganization().getId() : null;
           
-          return new fi.otavanopisto.pyramus.rest.model.StaffMember(entity.getId(), personId, additionalContactInfo, 
+          return new fi.otavanopisto.pyramus.rest.model.StaffMember(entity.getId(), personId, organizationId, additionalContactInfo, 
               entity.getFirstName(), entity.getLastName(), entity.getTitle(), role, tags, variables);
         }
       },
