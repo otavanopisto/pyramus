@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -8,20 +8,20 @@
     <div class="application-line"></div>
 
     <h3 class="form-section__header">Oppilaitostiedot</h3>
-    <p>Kurssimateriaalien k‰ytt‰minen itseopiskelussa on ilmaista. Voit siis rekisterˆity‰ Muikun k‰ytt‰j‰ksi ja ilmoittautua kursseille, vaikka et haluaisikaan niist‰ arviointia tai kurssisuoritusta. Jos haluat, ett‰ opettaja arvioi kurssisuorituksesi, se on joissakin tapauksissa maksullista. <a href="#" class="internetix-course-fees-link">Lue lis‰‰</a>.</p>
-    <p><b>Huom!</b> Oppilaitostieto tarkistetaan viel‰ j‰lkik‰teen ja l‰het‰mme laskun kurssin suorittamisesta, mik‰li olet opiskelijana jossain toisen asteen oppilaitoksessa.</p>
+    <p>Kurssimateriaalien k√§ytt√§minen itseopiskelussa on ilmaista. Voit siis ilmoittautua Muikun k√§ytt√§j√§ksi ja ilmoittautua kursseille, vaikka et haluaisikaan niist√§ arviointia tai kurssisuoritusta. Jos haluat, ett√§ opettaja arvioi kurssisuorituksesi, se on joissakin tapauksissa maksullista. <a href="#" class="internetix-course-fees-link">Lue lis√§√§</a>.</p>
+    <p><b>Huom!</b> Oppilaitostieto tarkistetaan viel√§ j√§lkik√§teen ja l√§het√§mme laskun kurssin suorittamisesta, mik√§li olet opiskelijana jossain toisessa oppilaitoksessa.</p>
 
     <div class="form-section__field-container field-internetix-school">
       <label for="field-internetix-school" class="required">Opiskelu muussa oppilaitoksessa</label>
       <select name="field-internetix-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
         <option value="">-- Valitse --</option>
-        <option value="en">En opiskele miss‰‰n oppilaitoksessa</option>
+        <option value="en">En opiskele miss√§√§n oppilaitoksessa</option>
         <option value="kylla">Opiskelen toisessa oppilaitoksessa</option>
       </select>
     </div>
 
     <div class="form-section__field-container field-internetix-school-info dependent" data-dependent-field="field-internetix-school" data-dependent-values="kylla">
-      <p>Alla olevassa alaspudotusvalikossa ovat ne oppilaitokset, joiden kanssa olemme tehneet sopimuksen. Jos et lˆyd‰ omaa oppilaitostasi listasta, valitse kohta <i>Muu oppilaitos</i>. Valitse myˆs, mit‰ tutkintoa suoritat t‰ll‰ hetkell‰. Jos et suorita mit‰‰n tutkintoa tai tutkintoasi ei ole listassa, valitse kohta <i>Muu tutkinto</i>.</p>
+      <p>Alla olevassa alaspudotusvalikossa ovat ne oppilaitokset, joiden kanssa olemme tehneet sopimuksen. Jos et l√∂yd√§ omaa oppilaitostasi listasta, valitse kohta <i>Muu oppilaitos</i>. Valitse my√∂s, mit√§ tutkintoa suoritat t√§ll√§ hetkell√§. Jos et suorita mit√§√§n tutkintoa tai tutkintoasi ei ole listassa, valitse kohta <i>Muu tutkinto</i>.</p>
     </div>
 
     <div class="form-section__field-container field-internetix-contract-school dependent" data-dependent-field="field-internetix-school" data-dependent-values="kylla">
@@ -43,20 +43,22 @@
     </div>
 
     <div class="form-section__field-container field-internetix-contract-school-contact dependent" data-dependent-field="field-internetix-contract-school" data-dependent-values="muu">
-      <label for="field-internetix-contract-school-contact" class="required">Oppilaitoksen yhteyshenkilˆ ja yhteystiedot</label>
+      <label for="field-internetix-contract-school-contact" class="required">Oppilaitoksen yhteyshenkil√∂ ja yhteystiedot</label>
       <textarea name="field-internetix-contract-school-contact" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
     </div>
 
     <div class="form-section__field-container field-internetix-contract-school-degree dependent" data-dependent-field="field-internetix-school" data-dependent-values="kylla">
       <label for="field-internetix-contract-school-degree" class="required">Suoritan</label>
-      <select name="field-internetix-contract-school-degree" data-source="/1/applications/contractschools" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+      <select name="field-internetix-contract-school-degree" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         <option value="">-- Valitse --</option>
         <option value="muu">Muu tutkinto</option>
+        <option value="yo-tutkinto">YO-tutkinto / lukion oppim√§√§r√§</option>
         <option value="ammatillinen-perus">Ammatillinen perustutkinto</option>
-        <option value="ammatillinen-korkea">Ammattikorkeakoulututkinto</option>
         <option value="kaksoistutkinto">Kaksoistutkinto</option>
-        <option value="yo-tutkinto">YO-tutkinto / lukion oppim‰‰r‰</option>
         <option value="oppisopimus">Oppisopimuskoulutus</option>
+        <option value="peruskoulu">Peruskoulun oppim√§√§r√§</option>
+        <option value="korkeakoulu">Korkeakoulututkinto</option>
+        <option value="ylempi-kk">Ylempi korkeakoulututkinto</option>
       </select>
     </div>
     
@@ -64,25 +66,25 @@
     </div>
     <div class="course-fees" style="display: none;">
       <div class="course-fees__close"></div>
-      <h3>Internetix-linjan kurssisuoritusten maksuista</h3>
-      <p>Internetix-linjalla voit opiskella samoja kursseja kuin Otavan Opiston nettilukiossa ja nettiperuskoulussa. Lis‰ksi tarjolla on jonkin verran myˆs muita kursseja.</p>
-      <p><b>Milloin opiskelu maksaa?</b></p>
-      <p>Oppimateriaalien itsen‰inen opiskeleminen Internetix-linjalla on maksutonta. Jos haluat, ett‰ kurssisuorituksesi arvioidaan, se on joissakin tapauksissa maksullista. Kurssiarvioinnin maksullisuuteen vaikuttaa kaksi asiaa: suoritettu kurssi sek‰ se, opiskeletko suoritushetkell‰ toisessa oppilaitoksessa. Jos et opiskele miss‰‰n oppilaitoksessa tai opiskelet oppilaitoksessa, jonka kanssa Otavan Opisto on tehnyt sopimuksen, arviointimaksua ei perit‰:</p>
+      <h3>Aineopiskelulinjan kurssimaksuista</h3>
+      <p>Aineopiskelulinjalla voit opiskella samoja kursseja kuin Otavan Opiston nettilukiossa ja nettiperuskoulussa. Lis√§ksi tarjolla on jonkin verran my√∂s muita kursseja.</p>
+      <p>Milloin opiskelu maksaa?</p>
+      <p>Oppimateriaalien itsen√§inen opiskeleminen (ilman arviointia) aineopiskelulinjalla on maksutonta.</p>
+      <p>Kurssiarvioinnin maksullisuuteen vaikuttaa kaksi asiaa: suoritettu kurssi sek√§ se, opiskeletko suoritushetkell√§ toisessa oppilaitoksessa.</p>
+      <p>Jos et opiskele miss√§√§n oppilaitoksessa:</p>
       <ul>
-        <li>lukion pakollisten tai valtakunnallisten syvent‰vien kurssien suorituksista</li>
-        <li>peruskoulun pakollisten tai valinnaisten kurssien suorituksista</li>
+        <li>voit tehd√§ ilmaiseksi lukion pakollisia tai valtakunnallisia syvent√§vi√§ kursseja</li>
+        <li>voit tehd√§ ilmaiseksi perusopetuksen pakollisia tai valinnaisia kursseja</li>
+        <li>koulukohtaiset syvent√§v√§t kurssit ovat aina maksullisia (140‚Ç¨/kurssi)</li>
+        <li>Huom! perusopetuksen kurssit ovat aina maksullisia oppivelvollisuusik√§isille eli alle 17-vuotiaille (140‚Ç¨/kurssi)</li>
       </ul>
-      <p>Muissa tapauksissa kurssisuorituksen arviointi maksaa 120 euroa.</p>
-      <p><b>Mist‰ tied‰n, onko oppilaitokseni tehnyt sopimuksen Otavan Opiston kanssa?</b></p>
+      <p>Jos opiskelet sopimusoppilaitoksessa (oppilaitoksen nimi l√∂ytyy ilmoittautumislomakkeen listalta):</p>
       <ul>
-        <li>Rekisterˆitymislomakkeen Oppilaitostiedot-kohdassa kysyt‰‰n oppilaitostasi. Jos sit‰ ei lˆydy alaspudotusvalikosta, oppilaitoksesi ei ole tehnyt sopimusta Otavan Opiston kanssa. Voit silti rekisterˆity‰ Internetix-linjan opiskelijaksi, mutta joudut maksamaan itse kurssin arvioinnista.</li>
-        <li>Jos olet jo rekisterˆitynyt, voit tiedustella asiaa Internetixin Tutorilta: opinnot@internetix.fi</li>
+        <li>varmista aina etuk√§teen oman oppilaitoksesi opolta tai rehtorilta, maksaako oppilaitos kurssisi vai joudutko maksamaan sen itse (140‚Ç¨/kurssi)</li>
       </ul>
-      <p><b>Jos opiskelet toisessa oppilaitoksessa</b></p>
-      <p>Voit kysy‰ oppilaitoksesi kiinnostusta tehd‰ oppilaitossopimus Otavan Opiston kanssa, jolloin oppilaitos maksaa opiskelustasi eik‰ sinulta perit‰ arviointimaksua:</p>
+      <p>Jos opiskelet jossain muussa oppilaitoksessa:</p>
       <ul>
-        <li>lukion pakollisten tai valtakunnallisten syvent‰vien kurssien suorituksista</li>
-        <li>peruskoulun pakollisten tai valinnaisten kurssien suorituksista</li>
+        <li>kaikki lukion ja perusopetuksen kurssit ovat maksullisia (140‚Ç¨/kurssi)</li>
       </ul>
     </div>
 

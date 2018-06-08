@@ -67,10 +67,11 @@
           </div>
         </div>
         <div class="selection-box__description">
-          Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.
+          Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.<br/><br/>
+          Jos haluat käyttää vain oppimateriaaleja, sinun ei tarvitse ilmoittautua. Löydät avoimet oppimateriaalit osoitteesta: <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a> → Avoimet materiaalit
         </div>
         <div class="selection-box__link-container">
-          <a class="selection-box__link" href="/applications/create.page?line=aineopiskelu">Hae Aineopiskelijaksi</a>
+          <a class="selection-box__link" href="/applications/create.page?line=aineopiskelu">Ilmoittaudu aineopiskelijaksi</a>
         </div>
       </div>
       
@@ -91,14 +92,14 @@
       <div class="selection-box selection-box--maahanmuuttajakoulutus">
         <div class="selection-box__header-image">
           <div class="selection-box__header-text">
-            Maahanmuuttajaoulutukse<span class="selection-box__header-text-indicator">t...</span>
+            Maahanmuuttajakoulutukse<span class="selection-box__header-text-indicator">t...</span>
           </div>
         </div>
         <div class="selection-box__description">
-          Maahanmuuttajakoulutukset ovat sellaisia opiskelijoita varten, joiden äidinkieli ei ole suomi ja jotka tarvitsevat peruskoulun päättötodistuksen jatko-opintoja varten.
+          Maahanmuuttajakoulutukset ovat opiskelijoita varten, joiden äidinkieli ei ole suomi ja jotka tarvitsevat peruskoulun päättötodistuksen jatko-opintoja varten.
         </div>
         <div class="selection-box__link-container">
-          <a class="selection-box__link" href="/applications/create.page?line=mk">Hae Maahanmuuttajakoulutukseen</a>
+          <a class="selection-box__link" href="/applications/create.page?line=mk">Hae Maahanmuuttajakoulutuksiin</a>
         </div>
       </div>
       

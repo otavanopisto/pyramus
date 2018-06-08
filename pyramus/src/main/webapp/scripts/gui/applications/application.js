@@ -81,6 +81,9 @@
         var line = $('select[name="field-line"]').val();
         var hasUnderageSupport = $('#field-line option:selected').attr('data-underage-support') == 'true';
         $('.section-underage').attr('data-skip', !hasUnderageSupport || years >= 18);
+        if ($('#field-ssn-end').val()) {
+          $('#field-ssn-end').parsley().validate();
+        }
       }
       else {
         $('.section-underage').attr('data-skip', 'true');
@@ -169,34 +172,22 @@
     
     $('[data-dependencies]').change(function() {
       var name = $(this).attr('name');
+      var srcVisible = $(this).is(':visible') || name == 'field-line';
       var value = $(this).is(':checkbox') ? $(this).is(':checked') ? $(this).val() : '' : $(this).val();
-      $('.form-section__field-container[data-dependent-field="' + name + '"]').each(function() {
+      $('[data-dependent-field="' + name + '"]').each(function() {
         var show = false;
-        var values = $(this).attr('data-dependent-values').split(',');
-        for (var i = 0; i < values.length; i++) {
-          show = values[i] == value;
-          if (show) {
-            break;
+        if (srcVisible) {
+          var values = $(this).attr('data-dependent-values').split(',');
+          for (var i = 0; i < values.length; i++) {
+            show = values[i] == value;
+            if (show) {
+              break;
+            }
           }
         }
         $(this).toggle(show);
         $(this).find('[data-dependencies]').trigger('change');
       });
-      if ($(this).hasClass('parsley-success') || $(this).hasClass('parsley-error')) {
-        $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
-      } 
-    });
-    
-    // Privacy policy
-    
-    $('.summary-privacy-link').on('click', function() {
-      $('.privacy-policy-overlay').toggle();
-      $('.privacy-policy').toggle();
-    });
-    
-    $('.privacy-policy__close, .privacy-policy-overlay').on('click', function() {
-      $('.privacy-policy-overlay').toggle();
-      $('.privacy-policy').toggle();
     });
     
     // Course fees
@@ -228,13 +219,28 @@
     });
     
     $('.button-next-section').click(function() {
-      if ($('.application-form').parsley().validate({group: 'block-' + currentIndex()})) {
+      var valid = false;
+      if ($('.form-section.current').hasClass('section-source')) {
+        valid = $('input[name="field-source"]:checked').val();
+        if (!valid) {
+          $('#field-source-mandatory').show();
+        }
+      }
+      else {
+        valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
+      }
+      if (valid) {
         var newIndex = currentIndex() + 1;  
         while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
           newIndex++;
         }
         navigateTo($(applicationSections[newIndex]));
       }
+    });
+    
+    $('input[name="field-source"]').click(function() {
+      var val = $('input[name="field-source"]:checked').val();
+      $('#field-source-mandatory').toggle(!val);
     });
 
     $('.button-save-application').click(function() {

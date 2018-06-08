@@ -688,7 +688,6 @@ public class ApplicationRESTService extends AbstractRESTService {
 
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     String line = formData.getString("field-line");
-    String lineUi = ApplicationUtils.applicationLineUiValue(line);
     String surname = application.getLastName();
     String referenceCode = application.getReferenceCode();
     String applicantMail = application.getEmail();
@@ -698,27 +697,28 @@ public class ApplicationRESTService extends AbstractRESTService {
       if (!StringUtils.equals(application.getLine(), "aineopiskelu")) {
 
         // Confirmation mail subject and content
-
-        String subject = "Hakemus opiskelemaan Otavan Opistoon vastaanotettu";
+        
+        String subject = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+            String.format("/templates/applications/mails/mail-confirmation-%s-subject.txt", line)), "UTF-8");
         String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-            "/templates/applications/mail-confirmation.html"), "UTF-8");
-
-        // #577: Contact information depends on the line selected; append suitable footer to mail content
-
-        try {
-          String contentFooter = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
-              String.format("/templates/applications/mail-confirmation-footer-%s.html", line)), "UTF-8");
-          if (contentFooter != null) {
-            content += contentFooter;
-          }
-        }
-        catch (Exception e) {
-          logger.log(Level.WARNING, String.format("No mail confirmation footer for line %s", line), e);
+            String.format("/templates/applications/mails/mail-confirmation-%s-content.html", line)), "UTF-8");
+        
+        if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
+          logger.log(Level.SEVERE, String.format("Confirmation mail for line %s not defined", line));
+          return;
         }
 
-        // Replace the dynamic parts of the mail content
+        // Replace the dynamic parts of the mail content (edit link, surname and reference code)
 
-        content = String.format(content, lineUi, surname, referenceCode);
+        StringBuilder viewUrl = new StringBuilder();
+        viewUrl.append(httpRequest.getScheme());
+        viewUrl.append("://");
+        viewUrl.append(httpRequest.getServerName());
+        viewUrl.append(":");
+        viewUrl.append(httpRequest.getServerPort());
+        viewUrl.append("/applications/edit.page");
+
+        content = String.format(content, viewUrl, surname, referenceCode);
 
         // Send mail to applicant or, for minors, applicant and guardian
 

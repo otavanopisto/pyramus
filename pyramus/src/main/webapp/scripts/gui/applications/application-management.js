@@ -22,11 +22,15 @@
         success: function(files) {
           $('#attachments-title').toggle(files.length > 0);
           for (var i = 0; i < files.length; i++) {
-            attachmentsContainer.append($('<div>').addClass('application-attachment').append(
-              $('<a>')
-                .attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + files[i].name)
-                .attr('target', '_blank')
-                .text(files[i].name)));
+            attachmentsContainer.append($('<div>').addClass('application-attachment')
+              .append(
+                $('<span>').addClass('icon-attachment'))
+              .append(
+                $('<a>')
+                  .attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + files[i].name)
+                  .attr('target', '_blank')
+                  .addClass('attachment-link')
+                  .text(files[i].name)));
           }
         },
         error: function(err) {
@@ -40,6 +44,10 @@
     updateDocumentUrls();
     
     // Header buttons
+    
+    $('#action-application-back-pyramus').on('click', function() {
+      window.location.href = '/applications/browse.page';
+    });
     
     $('#action-application-view').on('click', function() {
       window.location.href = '/applications/view.page?application=' + $('body').attr('data-application-entity-id');
@@ -72,17 +80,30 @@
       });
     });
     
-    $('#action-application-log').on('click', function() {
-      $('section.application-logs').toggle();
-      if ($('section.application-logs').is(':visible')) {
+    $('#action-application-logs').on('click', function() {
+      $('section.application-logs').slideToggle();
+    });
+    
+    $('#applications-tab-mail').on('click', function() {
+      $('section.application-mail').fadeIn( 100 );
+      $('#applications-tab-mail').addClass('active');
+      $('#applications-tab-comment').removeClass('active');
+      
+      if ($('section.application-mail').is(':visible')) {
+        $('section.application-comment').hide();
+      }
+      
+    });
+    
+    $('#applications-tab-comment').on('click', function() {
+      $('section.application-comment').fadeIn( 100 );
+      $('#applications-tab-comment').addClass('active');
+      $('#applications-tab-mail').removeClass('active');
+      
+      if ($('section.application-comment').is(':visible')) {
         $('section.application-mail').hide();
       }
-    });
-    $('#action-application-mail').on('click', function() {
-      $('section.application-mail').toggle();
-      if ($('section.application-mail').is(':visible')) {
-        $('section.application-logs').hide();
-      }
+      
     });
     
     // Save log entry
@@ -344,8 +365,7 @@
       contentType: 'application/json; charset=utf-8',
       success: function(response) {
         for (var i = 0; i < response.recipients.length; i++) {
-          var row = $('<div>').addClass('field-row-flex');
-          var rowInputElement = $('<div>').addClass('field-row-element');
+          var row = $('<div>').addClass('application-mail-recipient');
           var rowInput = $('<input>').attr({
             'id': 'mail-form-recipient-' + i,
             'type': 'checkbox',
@@ -354,14 +374,11 @@
           if (response.recipients[i].type == 'to') {
             $(rowInput).attr('checked', 'checked');
           }
-          var rowLabelElement = $('<div>').addClass('field-row-label');
           var rowLabel = $('<label>')
             .attr('for', 'mail-form-recipient-' + i)
             .text(response.recipients[i].name + ' <' + response.recipients[i].mail + '>');
-          $(row).append(rowInputElement).append(rowLabelElement);
-          $(rowInputElement).append(rowInput);
-          $(rowLabelElement).append(rowLabel);
-          $('div.mail-form-recipients').append(row);
+          $(row).append(rowInput).append(rowLabel);
+          $('div.application-mail-recipients').append(row);
         }
       }
     });
@@ -392,50 +409,48 @@
     
     // Signatures
     
-    var docId = $('.signatures-container').attr('data-document-id');
-    var docState = $('.signatures-container').attr('data-document-state');
-    $('.signatures-container').on('click', function(event) {
+    var docId = $('.sign-button').attr('data-document-id');
+    var docState = $('.sign-button').attr('data-document-state');
+    $('.sign-button').on('click', function(event) {
       event.stopPropagation();
-      if ($('.signatures-auth-sources').is(':empty')) {
-        processingOn();
-        $.ajax({
-          url: '/applications/generateacceptancedocument.json',
-          type: 'GET',
-          data: {
-            id: $('body').attr('data-application-entity-id')
-          },
-          dataType: "json",
-          contentType: "application/json; charset=utf-8",
-          success: function(response) {
-            if (response.status == 'OK') {
-              updateDocumentUrls();
-              showSignatures();
-            }
-            else {
-              $('.notification-queue').notificationQueue('notification', 'error', response.reason);
-            }
-            processingOff();
-          },
-          error: function(err) {
-            $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
-            processingOff();
+      processingOn();
+      $.ajax({
+        url: '/applications/generateacceptancedocument.json',
+        type: 'GET',
+        data: {
+          id: $('body').attr('data-application-entity-id')
+        },
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+          if (response.status == 'OK') {
+            updateDocumentUrls();
+            showSignatures();
           }
-        });
-      }
+          else {
+            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+          }
+          processingOff();
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+          processingOff();
+        }
+      });
     });
-    if (docState == 'INVITATION_CREATED') {
-      showSignatures();
-    }
     
     // Application handling options
     
     $('.application-handling-option').on('click', function(event) {
-      var id = $('body').attr('data-application-entity-id');
       var state = $(this).attr('data-state');
+      if (!state) {
+        return; // handlling option won't change state, ignore
+      }
       if (state == 'ARCHIVE') {
         archiveApplication();
         return;
       }
+      var id = $('body').attr('data-application-entity-id');
       processingOn();
       $.ajax({
         url: '/applications/updateapplicationstate.json',
@@ -488,7 +503,7 @@
         }
         $(this).toggle(available);
       });
-      $('.signatures-container').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
+      $('.sign-button').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
     }
     
     function archiveApplication() {
@@ -546,40 +561,64 @@
     }
 
     function processingOn() {
-      $('.application-handling-container')
-        .addClass('processing')
+      $('body')
         .append($('<div>')
-          .addClass('processing-overlay'))
-        .append($('<div>')
-          .addClass('processing-icon'));
+          .addClass('processing-overlay'));
     }
 
     function processingOff() {
-      $('.application-handling-container').removeClass("processing");
       $('.processing-overlay').remove();
-      $('.processing-icon').remove();
     }
 
     function showSignatures() {
-      $.getJSON('/applications/listsignaturesources.json', function(data) {
-        if (data.sources) {
-          $.each(data.sources.methods, function(index, method) {
-            $('.signatures-auth-sources').append(
-              $('<img>')
-                .addClass('auth-source')
-                .attr('src', method.image)
-                .attr('data-identifier', method.identifier)
-                .attr('title', method.name)
-                .on('click', function(event) {
-                  event.stopPropagation();
-                  sign($(this).attr('data-identifier'));
-                })
-            );
-          });
-        }
-        else {
-          $('.notification-queue').notificationQueue('notification', 'error', 'Tunnistuslähteiden lataaminen epäonnistui');
-        }
+      if ($('#signatures-dialog').find('.auth-source').length == 0) {
+        $.getJSON('/applications/listsignaturesources.json', function(data) {
+          if (data.sources) {
+            $.each(data.sources.methods, function(index, method) {
+              $('#signatures-dialog').append(
+                  $('<img>')
+                  .addClass('auth-source')
+                  .attr('src', method.image)
+                  .attr('data-identifier', method.identifier)
+                  .attr('title', method.name)
+                  .on('click', function(event) {
+                    event.stopPropagation();
+                    sign($(this).attr('data-identifier'));
+                  })
+              );
+            });
+            openSignaturesDialog();
+          }
+          else {
+            $('.notification-queue').notificationQueue('notification', 'error', 'Tunnistuslähteiden lataaminen epäonnistui');
+          }
+        });
+      }
+      else {
+        openSignaturesDialog();
+      }
+    }
+    
+    function openSignaturesDialog() {
+      var dialog = $('#signatures-dialog');
+      $(dialog).dialog({
+        resizable: false,
+        height: 'auto',
+        minHeight: 350,
+        width: 'auto',
+        modal: true,
+        position: {
+          my: 'center',
+          at: 'center',
+          of: window
+        },
+        buttons: [{
+          text: "Peruuta",
+          class: 'cancel-button',
+          click: function() {
+            $(dialog).dialog("close");
+          }
+        }]
       });
     }
     
