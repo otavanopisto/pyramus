@@ -28,5 +28,6 @@ public enum KoskiOppiaineetYleissivistava {
   PS,
   TE,
   YH,
-  YL
+  YL,
+  OPA
 }
