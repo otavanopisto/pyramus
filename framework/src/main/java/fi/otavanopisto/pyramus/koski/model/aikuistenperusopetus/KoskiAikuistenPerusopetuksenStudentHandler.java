@@ -214,6 +214,11 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       StudentSubjectSelections studentSubjects, Subject subject, Map<String, AikuistenPerusopetuksenOppiaineenSuoritus> map) {
     String subjectCode = subjectCode(subject);
 
+    // ot1, ot2 etc have subject OPA
+    if (StringUtils.equals(subjectCode, "ot")) {
+      subjectCode = "OPA";
+    }
+    
     // SubjectCode for religious subjects is different
     if (StringUtils.equals(subjectCode, "ue") || StringUtils.equals(subjectCode, "uo") || StringUtils.equals(subjectCode, "et"))
       subjectCode = "KT";
