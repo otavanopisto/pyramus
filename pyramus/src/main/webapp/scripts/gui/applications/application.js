@@ -239,7 +239,11 @@
     });
     
     $('.button-next-section').click(function() {
-      /*
+//      var newIndex = currentIndex() + 1;  
+//      while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
+//        newIndex++;
+//      }
+//      navigateTo($(applicationSections[newIndex]));
       var valid = false;
       if ($('.form-section.current').hasClass('section-source')) {
         valid = $('input[name="field-source"]:checked').val();
@@ -250,8 +254,6 @@
       else {
         valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
       }
-      */
-      var valid = true;
       if (valid) {
         var newIndex = currentIndex() + 1;  
         while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
