@@ -536,13 +536,23 @@ public class ApplicationUtils {
           getFormValue(formData, "field-underage-phone"));
     }
     
-    // School (Internetix students)
+    // Contract school (Internetix students)
     
-    String schoolId = getFormValue(formData, "field-internetix-school");
+    String schoolId = getFormValue(formData, "field-internetix-contract-school");
     if (NumberUtils.isNumber(schoolId)) {
       School school = schoolDAO.findById(Long.parseLong(schoolId));
       if (school != null) {
         studentDAO.updateSchool(student, school);
+      }
+    }
+    else {
+      String customSchool = getFormValue(formData, "field-internetix-contract-school-name");
+      if (!StringUtils.isEmpty(customSchool)) {
+        List<School> schools = schoolDAO.listByNameLowercase(customSchool);
+        School school = schools.isEmpty() ? null : schools.get(0);
+        if (school != null) {
+          studentDAO.updateSchool(student, school);
+        }
       }
     }
     
