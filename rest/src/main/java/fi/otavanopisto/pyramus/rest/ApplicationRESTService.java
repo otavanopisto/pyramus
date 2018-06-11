@@ -524,6 +524,15 @@ public class ApplicationRESTService extends AbstractRESTService {
 
     return Response.ok(municipalityList).build();
   }
+  
+  @Path("/schools")
+  @GET
+  @Unsecure
+  public Response listSchools() {
+    List<School> schools = schoolDAO.listUnarchived();
+    String[] schoolNames = schools.stream().map(school -> school.getName()).sorted(String::compareToIgnoreCase).toArray(String[]::new);
+    return Response.ok(schoolNames).build();
+  }
 
   @Path("/contractschools")
   @GET

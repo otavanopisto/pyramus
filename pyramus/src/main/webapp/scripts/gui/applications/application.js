@@ -69,6 +69,26 @@
       });
     });
     
+    // School autocomplete
+    
+    $.ajax({
+      url: '/1/applications/schools',
+      type: 'GET',
+      contentType: 'application/json; charset=utf-8',
+      success: function(result) {
+        $('#school-selector').autocomplete({
+          delay: 300,
+          minLength: 3,
+          source: function(request, response) {
+            var matcher = new RegExp('^' + $.ui.autocomplete.escapeRegex(request.term), 'i');
+            response($.grep(result, function(item) {
+              return matcher.test(item);
+            }));
+          }
+        });
+      }
+    });
+    
     // Section checks
     
     $('#field-line').on('change', function() {
@@ -219,6 +239,7 @@
     });
     
     $('.button-next-section').click(function() {
+      /*
       var valid = false;
       if ($('.form-section.current').hasClass('section-source')) {
         valid = $('input[name="field-source"]:checked').val();
@@ -229,6 +250,8 @@
       else {
         valid = $('.application-form').parsley().validate({group: 'block-' + currentIndex()});
       }
+      */
+      var valid = true;
       if (valid) {
         var newIndex = currentIndex() + 1;  
         while ($(applicationSections[newIndex]).attr('data-skip') == 'true') {
