@@ -734,6 +734,41 @@ public class ApplicationUtils {
     }
   }
 
+  public static String sourceUiValue(String value) {
+    switch (value) {
+    case "tuttu":
+      return "Ennestään tuttu";
+    case "google":
+      return "Google";
+    case "facebook":
+      return "Facebook";
+    case "instagram":
+      return "Instagram";
+    case "sanomalehti":
+      return "Sanomalehti";
+    case "tienvarsimainos":
+      return "Tienvarsimainos";
+    case "valotaulumainos":
+      return "Valotaulumainos";
+    case "elokuva":
+      return "Elokuva- tai TV-mainos";
+    case "tuttava":
+      return "Kuulin kaverilta, tuttavalta, tms.";
+    case "opot":
+      return "Opot";
+    case "messut":
+      return "Messut";
+    case "te-toimisto":
+      return "TE-toimisto";
+    case "nuorisotyo":
+      return "Nuorisotyö";
+    case "muu":
+      return "Muu";
+    default:
+      return null;
+    }
+  }
+
   /**
    * Sanitizes the given filename so that it can be safely used as part of a file path. The filename
    * is first stripped of traditional invalid filename characters (\ / : * ? " < > |) and then of all
