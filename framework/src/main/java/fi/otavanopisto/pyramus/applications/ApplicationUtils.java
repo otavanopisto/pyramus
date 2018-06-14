@@ -450,6 +450,15 @@ public class ApplicationUtils {
       return null;
     }
     
+    // Study time end plus one year (for Internetix students)  
+    
+    Date studyTimeEnd = null;
+    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+      Calendar c = Calendar.getInstance();
+      c.add(Calendar.YEAR, 1);
+      studyTimeEnd = c.getTime();
+    }
+    
     // Create student
     
     Student student = studentDAO.create(
@@ -458,7 +467,7 @@ public class ApplicationUtils {
         getFormValue(formData, "field-last-name"),
         getFormValue(formData, "field-nickname"),
         null, // additionalInfo,
-        null, // studyTimeEnd (TODO can this be resolved?)
+        studyTimeEnd,
         ApplicationUtils.resolveStudentActivityType(getFormValue(formData, "field-job")),
         ApplicationUtils.resolveStudentExaminationType(getFormValue(formData, "field-internetix-contract-school-degree")),
         null, // student educational level (entity)
