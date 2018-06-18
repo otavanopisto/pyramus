@@ -191,7 +191,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
         if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
           KurssinArviointi arviointi = new KurssinArviointiNumeerinen(aineKeskiarvo, student.getStudyEndDate());
           oppiaineenSuoritus.addArviointi(arviointi);
-        } else if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
+        } else if (ArviointiasteikkoYleissivistava.isLiteral(aineKeskiarvo)) {
           KurssinArviointi arviointi = new KurssinArviointiSanallinen(aineKeskiarvo, student.getStudyEndDate(), kuvaus("Suoritettu/Hylätty"));
           oppiaineenSuoritus.addArviointi(arviointi);
         }
