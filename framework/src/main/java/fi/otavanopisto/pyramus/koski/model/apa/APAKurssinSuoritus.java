@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model.apa;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -25,7 +25,7 @@ public class APAKurssinSuoritus {
     this.arviointi.add(arviointi);
   }
   
-  public Set<KurssinArviointi> getArviointi() {
+  public List<KurssinArviointi> getArviointi() {
     return arviointi;
   }
   
@@ -58,7 +58,7 @@ public class APAKurssinSuoritus {
   }
 
   private APAKurssinTunniste koulutusmoduuli;
-  private final Set<KurssinArviointi> arviointi = new HashSet<>();
+  private final List<KurssinArviointi> arviointi = new ArrayList<>();
   private KoodistoViite<Kieli> suorituskieli;
   private OsaamisenTunnustaminen tunnustettu;
   private final KoodistoViite<SuorituksenTyyppi> tyyppi = new KoodistoViite<>(SuorituksenTyyppi.aikuistenperusopetuksenalkuvaiheenkurssi);
