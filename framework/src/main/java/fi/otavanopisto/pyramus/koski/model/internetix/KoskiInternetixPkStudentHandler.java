@@ -398,7 +398,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
   private ArviointiasteikkoYleissivistava getSubjectMeanGrade(AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus) {
     List<ArviointiasteikkoYleissivistava> kurssiarvosanat = new ArrayList<>();
     for (AikuistenPerusopetuksenKurssinSuoritus kurssinSuoritus : oppiaineenSuoritus.getOsasuoritukset()) {
-      Set<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
+      List<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
       Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
       
       kurssiarvosanat.add(ArviointiasteikkoYleissivistava.bestGrade(arvosanat));
