@@ -244,6 +244,7 @@
 //        newIndex++;
 //      }
 //      navigateTo($(applicationSections[newIndex]));
+//      return;
       var valid = false;
       if ($('.form-section.current').hasClass('section-source')) {
         valid = $('input[name="field-source"]:checked').val();
