@@ -191,7 +191,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
         if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
           KurssinArviointi arviointi = new KurssinArviointiNumeerinen(aineKeskiarvo, student.getStudyEndDate());
           oppiaineenSuoritus.addArviointi(arviointi);
-        } else if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
+        } else if (ArviointiasteikkoYleissivistava.isLiteral(aineKeskiarvo)) {
           KurssinArviointi arviointi = new KurssinArviointiSanallinen(aineKeskiarvo, student.getStudyEndDate(), kuvaus("Suoritettu/Hylätty"));
           oppiaineenSuoritus.addArviointi(arviointi);
         }
@@ -321,7 +321,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
   private ArviointiasteikkoYleissivistava getSubjectMeanGrade(APAOppiaineenSuoritus oppiaineenSuoritus) {
     List<ArviointiasteikkoYleissivistava> kurssiarvosanat = new ArrayList<>();
     for (APAKurssinSuoritus kurssinSuoritus : oppiaineenSuoritus.getOsasuoritukset()) {
-      Set<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
+      List<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
       Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
       
       kurssiarvosanat.add(ArviointiasteikkoYleissivistava.bestGrade(arvosanat));

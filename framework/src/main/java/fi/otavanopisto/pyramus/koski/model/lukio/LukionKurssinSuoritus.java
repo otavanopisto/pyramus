@@ -1,7 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model.lukio;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -43,7 +43,7 @@ public class LukionKurssinSuoritus {
     this.arviointi.add(arviointi);
   }
   
-  public Set<KurssinArviointi> getArviointi() {
+  public List<KurssinArviointi> getArviointi() {
     return arviointi;
   }
   
@@ -76,7 +76,7 @@ public class LukionKurssinSuoritus {
   }
 
   private LukionKurssinTunniste koulutusmoduuli;
-  private final Set<KurssinArviointi> arviointi = new HashSet<>();
+  private final List<KurssinArviointi> arviointi = new ArrayList<>();
   private OsaamisenTunnustaminen tunnustettu;
   private KoodistoViite<Kieli> suorituskieli;
   private final KoodistoViite<SuorituksenTyyppi> tyyppi = new KoodistoViite<>(SuorituksenTyyppi.lukionkurssi);
