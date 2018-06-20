@@ -68,21 +68,21 @@
       <div class="course-fees__close"></div>
       <h3>Aineopiskelulinjan kurssimaksuista</h3>
       <p>Aineopiskelulinjalla voit opiskella samoja kursseja kuin Otavan Opiston nettilukiossa ja nettiperuskoulussa. Lisäksi tarjolla on jonkin verran myös muita kursseja.</p>
-      <p>Milloin opiskelu maksaa?</p>
+      <p><b>Milloin opiskelu maksaa?</b></p>
       <p>Oppimateriaalien itsenäinen opiskeleminen (ilman arviointia) aineopiskelulinjalla on maksutonta.</p>
       <p>Kurssiarvioinnin maksullisuuteen vaikuttaa kaksi asiaa: suoritettu kurssi sekä se, opiskeletko suoritushetkellä toisessa oppilaitoksessa.</p>
-      <p>Jos et opiskele missään oppilaitoksessa:</p>
+      <p><b>Jos et opiskele missään oppilaitoksessa:</b></p>
       <ul>
         <li>voit tehdä ilmaiseksi lukion pakollisia tai valtakunnallisia syventäviä kursseja</li>
         <li>voit tehdä ilmaiseksi perusopetuksen pakollisia tai valinnaisia kursseja</li>
         <li>koulukohtaiset syventävät kurssit ovat aina maksullisia (140€/kurssi)</li>
         <li>Huom! perusopetuksen kurssit ovat aina maksullisia oppivelvollisuusikäisille eli alle 17-vuotiaille (140€/kurssi)</li>
       </ul>
-      <p>Jos opiskelet sopimusoppilaitoksessa (oppilaitoksen nimi löytyy ilmoittautumislomakkeen listalta):</p>
+      <p><b>Jos opiskelet sopimusoppilaitoksessa</b> (oppilaitoksen nimi löytyy ilmoittautumislomakkeen listalta):</p>
       <ul>
         <li>varmista aina etukäteen oman oppilaitoksesi opolta tai rehtorilta, maksaako oppilaitos kurssisi vai joudutko maksamaan sen itse (140€/kurssi)</li>
       </ul>
-      <p>Jos opiskelet jossain muussa oppilaitoksessa:</p>
+      <p><b>Jos opiskelet jossain muussa oppilaitoksessa:</b></p>
       <ul>
         <li>kaikki lukion ja perusopetuksen kurssit ovat maksullisia (140€/kurssi)</li>
       </ul>
