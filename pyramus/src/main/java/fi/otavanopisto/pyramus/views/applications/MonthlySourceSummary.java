@@ -107,12 +107,12 @@ public class MonthlySourceSummary {
         }
       }
 
-      //TODO Enable
-      //Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, "pasi.kukkonen@otavanopisto.fi", subject, summary.toString());
+      //TODO Enable when feature launches
+      //Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, "mediatiimi@otavanopisto.fi", subject, summary.toString());
     }
     catch (Exception e) {
       Logger logger = Logger.getLogger(MonthlySourceSummary.class.getName());
-      logger.log(Level.SEVERE, "Failed to send application monhtly source summary", e);
+      logger.log(Level.SEVERE, "Failed to send application monthly source summary", e);
     }
   }
 
