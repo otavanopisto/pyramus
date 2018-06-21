@@ -20,6 +20,7 @@ import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.mailer.Mailer;
 import net.sf.json.JSONObject;
 
 @Stateless
@@ -107,8 +108,7 @@ public class MonthlySourceSummary {
         }
       }
 
-      //TODO Enable when feature launches
-      //Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, "mediatiimi@otavanopisto.fi", subject, summary.toString());
+      Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, "mediatiimi@otavanopisto.fi", subject, summary.toString());
     }
     catch (Exception e) {
       Logger logger = Logger.getLogger(MonthlySourceSummary.class.getName());
