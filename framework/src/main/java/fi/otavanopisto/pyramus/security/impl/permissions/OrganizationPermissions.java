@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.rest.controller.permissions;
+package fi.otavanopisto.pyramus.security.impl.permissions;
 
 import java.util.List;
 

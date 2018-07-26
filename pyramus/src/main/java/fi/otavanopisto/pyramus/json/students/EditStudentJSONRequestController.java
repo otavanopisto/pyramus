@@ -66,7 +66,6 @@ import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
-import fi.otavanopisto.pyramus.rest.controller.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.security.impl.PermissionController;
 
 public class EditStudentJSONRequestController extends JSONRequestController2 {
@@ -88,7 +87,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
     if (!PermissionController.instance().hasEnvironmentPermission(user, PyramusUIPermissions.EDIT_STUDENT)) {
       return false;
     } else {
-      if (PermissionController.instance().hasEnvironmentPermission(user, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (UserUtils.canAccessAllOrganizations(user)) {
         return true;
       } else {
         Long personId = requestContext.getLong("personId");
@@ -206,7 +205,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       }
     }
 
-    List<Student> students = PermissionController.instance().hasEnvironmentPermission(loggedUser, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS) ?
+    List<Student> students = UserUtils.canAccessAllOrganizations(loggedUser) ?
         studentDAO.listByPerson(person) : studentDAO.listByPersonAndOrganization(person, loggedUser.getOrganization());
 
     for (Student student : students) {

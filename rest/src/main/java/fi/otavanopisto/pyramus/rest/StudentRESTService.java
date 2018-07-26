@@ -101,7 +101,6 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.CourseAssessmentPermi
 import fi.otavanopisto.pyramus.rest.controller.permissions.LanguagePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MunicipalityPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.NationalityPermissions;
-import fi.otavanopisto.pyramus.rest.controller.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentActivityTypePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentContactLogEntryPermissions;
@@ -116,6 +115,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
+import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 
 @Path("/students")
 @Produces("application/json")

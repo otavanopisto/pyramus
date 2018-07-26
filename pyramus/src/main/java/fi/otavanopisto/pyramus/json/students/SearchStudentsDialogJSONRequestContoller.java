@@ -23,10 +23,9 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.search.PersonFilter;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
-import fi.otavanopisto.pyramus.rest.controller.permissions.OrganizationPermissions;
-import fi.otavanopisto.pyramus.security.impl.PermissionController;
 
 /**
  * Request handler for searching students.
@@ -42,7 +41,7 @@ public class SearchStudentsDialogJSONRequestContoller extends JSONRequestControl
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     StaffMember loggedUser = staffMemberDAO.findById(jsonRequestContext.getLoggedUserId());
-    Organization organization = PermissionController.instance().hasEnvironmentPermission(loggedUser, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS) ?
+    Organization organization = UserUtils.canAccessAllOrganizations(loggedUser) ?
         null : loggedUser.getOrganization();
 
     Integer resultsPerPage = NumberUtils.createInteger(jsonRequestContext.getRequest().getParameter("maxResults"));

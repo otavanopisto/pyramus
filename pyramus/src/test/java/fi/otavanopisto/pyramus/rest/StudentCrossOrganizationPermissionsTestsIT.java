@@ -17,12 +17,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import io.restassured.response.Response;
-
-import fi.otavanopisto.pyramus.rest.controller.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.Organization;
 import fi.otavanopisto.pyramus.rest.model.Student;
 import fi.otavanopisto.pyramus.rest.model.StudyProgramme;
+import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 
 
 /**

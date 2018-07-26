@@ -16,6 +16,8 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.security.impl.PermissionController;
+import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 
 public class UserUtils {
 
@@ -162,6 +164,10 @@ public class UserUtils {
     Organization userOrganization = user.getOrganization();
 
     return organization != null && userOrganization != null && organization.getId().equals(userOrganization.getId());
+  }
+ 
+  public static boolean canAccessAllOrganizations(User user) {
+    return PermissionController.instance().hasEnvironmentPermission(user, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS);
   }
   
 }

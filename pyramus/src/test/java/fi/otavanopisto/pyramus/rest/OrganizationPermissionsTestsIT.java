@@ -9,8 +9,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import fi.otavanopisto.pyramus.rest.controller.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.rest.model.Organization;
+import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 import io.restassured.response.Response;
 
 @RunWith(Parameterized.class)

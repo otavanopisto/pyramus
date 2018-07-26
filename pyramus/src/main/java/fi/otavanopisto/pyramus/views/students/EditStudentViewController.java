@@ -60,7 +60,6 @@ import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
-import fi.otavanopisto.pyramus.rest.controller.permissions.OrganizationPermissions;
 import fi.otavanopisto.pyramus.security.impl.PermissionController;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 import net.sf.json.JSONArray;
@@ -85,7 +84,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     if (!PermissionController.instance().hasEnvironmentPermission(user, PyramusUIPermissions.EDIT_STUDENT)) {
       return false;
     } else {
-      if (PermissionController.instance().hasEnvironmentPermission(user, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (UserUtils.canAccessAllOrganizations(user)) {
         return true;
       } else {
         Long personId = requestContext.getLong("person");
@@ -134,7 +133,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     Long personId = pageRequestContext.getLong("person");
     Person person = personDAO.findById(personId);
     
-    List<Student> students = PermissionController.instance().hasEnvironmentPermission(loggedUser, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS) ?
+    List<Student> students = UserUtils.canAccessAllOrganizations(loggedUser) ?
         studentDAO.listByPerson(person) : studentDAO.listByPersonAndOrganization(person, loggedUser.getOrganization());
 
     Collections.sort(students, new Comparator<Student>() {
