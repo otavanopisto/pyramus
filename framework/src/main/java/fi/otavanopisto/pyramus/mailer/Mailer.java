@@ -12,11 +12,18 @@ import javax.persistence.PersistenceException;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.system.SettingDAO;
+import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
+import fi.otavanopisto.pyramus.domainmodel.system.Setting;
+import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
+
 public class Mailer {
 
   public static final String PLAINTEXT = "text/plain; charset=UTF-8";
   public static final String HTML = "text/html; charset=UTF-8";
   
+  public static final String MAILER_ENABLED = "applications.mailerEnabled";
   public static final String JNDI_APPLICATION = "java:/mail/pyramus-haku";
 
   private static final Logger logger = Logger.getLogger(Mailer.class.getName());
@@ -55,7 +62,47 @@ public class Mailer {
       logger.log(Level.SEVERE, "MailService not bound");
       return;
     }
-    mailService.sendMail(jndiName, mimeType, from, to, cc, Collections.emptySet(), subject, content, mailAttachments);
+    boolean mailEnabled = Boolean.parseBoolean(getSetting(MAILER_ENABLED));
+    if (!mailEnabled) {
+      logger.info(String.format("Debug mail due to %s not being enabled", jndiName));
+      logger.info("From: " + from);
+      logger.info("To: " + toCDT(to));
+      logger.info("Cc: " + toCDT(cc));
+      logger.info("Subject: " + subject);
+      logger.info("Content: " + content);
+    }
+    else {
+      mailService.sendMail(jndiName, mimeType, from, to, cc, Collections.emptySet(), subject, content, mailAttachments);
+    }
+  }
+
+  private static String getSetting(String settingName) {
+    SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
+    SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
+    SettingKey key = settingKeyDAO.findByName(settingName);
+    if (key != null) {
+      Setting setting = settingDAO.findByKey(key);
+      
+      if (setting != null) {
+        return setting.getValue();
+      }
+    }
+    
+    return null;
+  }
+
+  private static String toCDT(Set<String> set) {
+    if (set == null || set.isEmpty()) {
+      return "-";
+    }
+    StringBuilder sb = new StringBuilder();
+    for (String s : set) {
+      if (sb.length() > 0) {
+        sb.append(", ");
+      }
+      sb.append(s);
+    }
+    return sb.toString();
   }
 
   private static String getAppName() throws NamingException {

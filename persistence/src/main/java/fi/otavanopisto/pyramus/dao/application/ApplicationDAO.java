@@ -261,5 +261,23 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     
     return entityManager.createQuery(criteria).getResultList();
   }
+  
+  public List<Application> listByTimeframe(Date startDate, Date endDate) {
+    EntityManager entityManager = getEntityManager(); 
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Application> criteria = criteriaBuilder.createQuery(Application.class);
+    Root<Application> root = criteria.from(Application.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.greaterThanOrEqualTo(root.get(Application_.created), startDate),
+        criteriaBuilder.lessThanOrEqualTo(root.get(Application_.created), endDate),
+        criteriaBuilder.equal(root.get(Application_.archived), Boolean.FALSE)
+      )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
 
 }

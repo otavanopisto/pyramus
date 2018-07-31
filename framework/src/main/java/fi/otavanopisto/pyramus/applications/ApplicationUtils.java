@@ -78,50 +78,57 @@ public class ApplicationUtils {
   private static final Logger logger = Logger.getLogger(ApplicationUtils.class.getName());
 
   public static String applicationStateUiValue(ApplicationState applicationState) {
-    switch (applicationState) {
-    case PENDING:
-      return "Jätetty";
-    case PROCESSING:
-      return "Käsittelyssä";
-    case WAITING_STAFF_SIGNATURE:
-      return "Odottaa virallista hyväksyntää";
-    case STAFF_SIGNED:
-      return "Hyväksyntä allekirjoitettu";
-    case APPROVED_BY_SCHOOL:
-      return "Hyväksytty";
-    case APPROVED_BY_APPLICANT:
-      return "Opiskelupaikka vastaanotettu";
-    case TRANSFERRED_AS_STUDENT:
-      return "Siirretty opiskelijaksi";
-    case REGISTERED_AS_STUDENT:
-      return "Rekisteröitynyt aineopiskelijaksi";
-    case REJECTED:
-      return "Hylätty";
+    if (applicationState != null) {
+      switch (applicationState) {
+      case PENDING:
+        return "Jätetty";
+      case PROCESSING:
+        return "Käsittelyssä";
+      case WAITING_STAFF_SIGNATURE:
+        return "Odottaa virallista hyväksyntää";
+      case STAFF_SIGNED:
+        return "Hyväksyntä allekirjoitettu";
+      case APPROVED_BY_SCHOOL:
+        return "Hyväksytty";
+      case APPROVED_BY_APPLICANT:
+        return "Opiskelupaikka vastaanotettu";
+      case TRANSFERRED_AS_STUDENT:
+        return "Siirretty opiskelijaksi";
+      case REGISTERED_AS_STUDENT:
+        return "Rekisteröitynyt aineopiskelijaksi";
+      case REJECTED:
+        return "Hylätty";
+       default:
+         return null;
+      }
     }
     return null;
   }
 
   public static String applicationLineUiValue(String value) {
-    switch (value) {
-    case "aineopiskelu":
-      return "Aineopiskelu";
-    case "nettilukio":
-      return "Nettilukio";
-    case "nettipk":
-      return "Nettiperuskoulu";
-    case "aikuislukio":
-      return "Aikuislukio";
-    case "bandilinja":
-      return "Bändilinja";
-    case "kasvatustieteet":
-      return "Kasvatustieteen linja";
-    case "laakislinja":
-      return "Lääkislinja";
-    case "mk":
-      return "Maahanmuuttajakoulutukset";
-    default:
-      return null;
+    if (value != null) {
+      switch (value) {
+      case "aineopiskelu":
+        return "Aineopiskelu";
+      case "nettilukio":
+        return "Nettilukio";
+      case "nettipk":
+        return "Nettiperuskoulu";
+      case "aikuislukio":
+        return "Aikuislukio";
+      case "bandilinja":
+        return "Bändilinja";
+      case "kasvatustieteet":
+        return "Kasvatustieteen linja";
+      case "laakislinja":
+        return "Lääkislinja";
+      case "mk":
+        return "Maahanmuuttajakoulutukset";
+      default:
+        return null;
+      }
     }
+    return null;
   }
   
   public static boolean isValidLine(String line) {
@@ -443,6 +450,15 @@ public class ApplicationUtils {
       return null;
     }
     
+    // Study time end plus one year (for Internetix students)  
+    
+    Date studyTimeEnd = null;
+    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+      Calendar c = Calendar.getInstance();
+      c.add(Calendar.YEAR, 1);
+      studyTimeEnd = c.getTime();
+    }
+    
     // Create student
     
     Student student = studentDAO.create(
@@ -451,7 +467,7 @@ public class ApplicationUtils {
         getFormValue(formData, "field-last-name"),
         getFormValue(formData, "field-nickname"),
         null, // additionalInfo,
-        null, // studyTimeEnd (TODO can this be resolved?)
+        studyTimeEnd,
         ApplicationUtils.resolveStudentActivityType(getFormValue(formData, "field-job")),
         ApplicationUtils.resolveStudentExaminationType(getFormValue(formData, "field-internetix-contract-school-degree")),
         null, // student educational level (entity)
@@ -529,13 +545,23 @@ public class ApplicationUtils {
           getFormValue(formData, "field-underage-phone"));
     }
     
-    // School (Internetix students)
+    // Contract school (Internetix students)
     
-    String schoolId = getFormValue(formData, "field-internetix-school");
+    String schoolId = getFormValue(formData, "field-internetix-contract-school");
     if (NumberUtils.isNumber(schoolId)) {
       School school = schoolDAO.findById(Long.parseLong(schoolId));
       if (school != null) {
         studentDAO.updateSchool(student, school);
+      }
+    }
+    else {
+      String customSchool = getFormValue(formData, "field-internetix-contract-school-name");
+      if (!StringUtils.isEmpty(customSchool)) {
+        List<School> schools = schoolDAO.listByNameLowercase(customSchool);
+        School school = schools.isEmpty() ? null : schools.get(0);
+        if (school != null) {
+          studentDAO.updateSchool(student, school);
+        }
       }
     }
     
@@ -714,6 +740,41 @@ public class ApplicationUtils {
     }
     else {
       return existingPersons.values().iterator().next();
+    }
+  }
+
+  public static String sourceUiValue(String value) {
+    switch (value) {
+    case "tuttu":
+      return "Ennestään tuttu";
+    case "google":
+      return "Google";
+    case "facebook":
+      return "Facebook";
+    case "instagram":
+      return "Instagram";
+    case "sanomalehti":
+      return "Sanomalehti";
+    case "tienvarsimainos":
+      return "Tienvarsimainos";
+    case "valotaulumainos":
+      return "Valotaulumainos";
+    case "elokuva":
+      return "Elokuva- tai TV-mainos";
+    case "tuttava":
+      return "Kuulin kaverilta, tuttavalta, tms.";
+    case "opot":
+      return "Opot";
+    case "messut":
+      return "Messut";
+    case "te-toimisto":
+      return "TE-toimisto";
+    case "nuorisotyo":
+      return "Nuorisotyö";
+    case "muu":
+      return "Muu";
+    default:
+      return null;
     }
   }
 

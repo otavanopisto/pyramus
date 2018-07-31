@@ -190,7 +190,7 @@ public class ViewApplicationViewController extends PyramusViewController {
           if (sb.length() > 0) {
             sb.append("\n");
           }
-          sb.append(sourceUiValue(sourcesArray.getString(i)));
+          sb.append(ApplicationUtils.sourceUiValue(sourcesArray.getString(i)));
         }
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-source-other"))) {
@@ -243,44 +243,6 @@ public class ViewApplicationViewController extends PyramusViewController {
   private String getFormValue(JSONObject object, String key) {
     return object.has(key) ? object.getString(key) : null;
   }
-
-  private String sourceUiValue(String value) {
-    switch (value) {
-    case "tuttu":
-      return "Ennestään tuttu";
-    case "google":
-      return "Google";
-    case "facebook":
-      return "Facebook";
-    case "instagram":
-      return "Instagram";
-    case "sanomalehti":
-      return "Sanomalehti";
-    case "tienvarsimainos":
-      return "Tienvarsimainos";
-    case "valotaulumainos":
-      return "Valotaulumainos";
-    case "elokuva":
-      return "Elokuva- tai TV-mainos";
-    case "radio":
-      return "Radio";
-    case "tuttava":
-      return "Kuulin kaverilta, tuttavalta, tms.";
-    case "te-toimisto":
-      return "TE-toimisto";
-    case "messut":
-      return "Messut";
-    case "nuorisotyo":
-      return "Nuorisotyö";
-    case "opot":
-      return "Opot";
-    case "muu":
-      return "Muu";
-    default:
-      return null;
-    }
-  }
-  
   
   private String foreignLineUiValue(String value) {
     switch (value) {

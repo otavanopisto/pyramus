@@ -69,6 +69,26 @@
       });
     });
     
+    // School autocomplete
+    
+    $.ajax({
+      url: '/1/applications/schools',
+      type: 'GET',
+      contentType: 'application/json; charset=utf-8',
+      success: function(result) {
+        $('#school-selector').autocomplete({
+          delay: 300,
+          minLength: 3,
+          source: function(request, response) {
+            var matcher = new RegExp('^' + $.ui.autocomplete.escapeRegex(request.term), 'i');
+            response($.grep(result, function(item) {
+              return matcher.test(item);
+            }));
+          }
+        });
+      }
+    });
+    
     // Section checks
     
     $('#field-line').on('change', function() {
@@ -381,6 +401,7 @@
     $('.form-section.current').removeClass('current');
     $(section).addClass('current').show();
     $('.form-navigation').toggle(!$(section).hasClass('section-done'));
+    $('.application-content__information-page-specific').toggle(!$(section).hasClass('section-done'));
     // toggle previous section button
     var canNavigate = false;
     for (var i = currentIndex() - 1; i >= 0; i--) {

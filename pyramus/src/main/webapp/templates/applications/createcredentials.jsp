@@ -59,7 +59,7 @@
         <section class="application-description application-description--credentials">
           <div class="application-description__credentials">
             <div class="application-description__credentials-header">
-              Muikku-tunnuksien luonti
+              Muikku-tunnusten luonti
             </div>
           </div>
         </section>
