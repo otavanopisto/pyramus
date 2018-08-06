@@ -284,6 +284,8 @@ public class ApplicationUtils {
       switch (foreignLine) {
       case "apa":
         return studyProgrammeDAO.findById(29L); // Aikuisten perusopetuksen alkuvaiheen opetus
+      case "luku":
+        return studyProgrammeDAO.findById(33L); // Aikuisten perusopetuksen lukutaitovaihe
       case "pk":
         return studyProgrammeDAO.findById(11L); // Peruskoululinja
       case "luva":
