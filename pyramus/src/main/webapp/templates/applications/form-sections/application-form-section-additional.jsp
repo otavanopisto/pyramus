@@ -13,11 +13,16 @@
       <label for="field-foreign-line" class="required">Opintojen tyyppi</label>
       <select name="field-foreign-line" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
         <option value="">-- Valitse --</option>
+        <option value="luku">Aikuisten perusopetuksen lukutaitovaihe</option>
         <option value="apa">Aikuisten perusopetuksen alkuvaihe</option>
         <option value="pk">Aikuisten perusopetuksen päättövaihe (monikulttuurinen peruskoululinja)</option>
         <option value="luva">Lukioon valmistava koulutus maahanmuuttajille (LUVA)</option>
         <option value="lisaopetus">Lisäopetus</option>
       </select>
+    </div>
+
+    <div class="form-section__field-container dependent" data-dependent-field="field-foreign-line" data-dependent-values="luku">
+      <p>Koulutus on oppivelvollisuusiän ylittäneille luku- ja kirjoitustaidottomille maahanmuuttajille, jotka eivät osaa lukea tai kirjoittaa suomen kieltä ja jotka haluavat saada valmiudet perusopetukseen tai työelämään siirtymistä varten.</p>
     </div>
 
     <div class="form-section__field-container dependent" data-dependent-field="field-foreign-line" data-dependent-values="apa">

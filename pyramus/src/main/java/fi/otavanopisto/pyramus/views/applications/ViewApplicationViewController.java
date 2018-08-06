@@ -248,6 +248,8 @@ public class ViewApplicationViewController extends PyramusViewController {
     switch (value) {
     case "apa":
       return "Aikuisten perusopetuksen alkuvaiheen koulutus";
+    case "luku":
+      return "Aikuisten perusopetuksen lukutaitovaihe";
     case "pk":
       return "Monikulttuurinen peruskoululinja (aikuisten perusopetuksen päättövaihe)";
     case "luva":
