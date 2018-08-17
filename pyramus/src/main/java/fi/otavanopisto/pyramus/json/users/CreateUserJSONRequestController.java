@@ -26,6 +26,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -83,12 +84,14 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     String password = requestContext.getString("password1");
     String password2 = requestContext.getString("password2");
     Long organizationId = requestContext.getLong("organizationId");
-    
-    Organization organization = null;
-    if (organizationId != null) {
-      organization = organizationDAO.findById(organizationId);
+
+    User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
+    Organization organization = organizationId != null ? organizationDAO.findById(organizationId) : null;
+
+    if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
+      throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid organization.");
     }
-    
+
     Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));

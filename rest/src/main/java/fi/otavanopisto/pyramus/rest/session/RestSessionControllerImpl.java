@@ -1,12 +1,9 @@
 package fi.otavanopisto.pyramus.rest.session;
 
 import java.util.Locale;
-import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -16,14 +13,12 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 
-import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
-import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.rest.controller.OauthController;
 import fi.otavanopisto.pyramus.security.impl.AbstractSessionControllerImpl;
-import fi.otavanopisto.pyramus.security.impl.PermissionResolver;
+import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.security.ContextReference;
 
@@ -32,7 +27,7 @@ import fi.otavanopisto.security.ContextReference;
 public class RestSessionControllerImpl extends AbstractSessionControllerImpl implements SessionController {
   
   @Inject
-  private Logger logger;
+  private Permissions permissions;
   
   @Inject
   private HttpServletRequest request;
@@ -40,9 +35,6 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
   @Inject
   private OauthController oauthController;
 
-  @Inject
-  private PermissionDAO permissionDAO;
-  
   @Inject
   private UserDAO userDAO;
   
@@ -66,31 +58,7 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
   
   @Override
   public boolean hasPermission(String permissionName, ContextReference contextReference) {
-    Permission permission = permissionDAO.findByName(permissionName);
-    PermissionResolver permissionResolver = getPermissionResolver(permission);
-    if (permissionResolver == null) {
-      logger.severe(String.format("Could not find permissionResolver for permission %s", permission));
-      return false;
-    }
-    
-    if (isLoggedIn()) {
-      return isSuperuser() || permissionResolver.hasPermission(permission, contextReference, getUser());
-    } else {
-      return permissionResolver.hasEveryonePermission(permission, contextReference);
-    }
-  }
-  
-  @Inject
-  @Any
-  private Instance<PermissionResolver> permissionResolvers;
-  
-  private PermissionResolver getPermissionResolver(Permission permission) {
-    for (PermissionResolver resolver : permissionResolvers) {
-      if (resolver.handlesPermission(permission))
-        return resolver;
-    }
-    
-    return null;
+    return permissions.hasPermission(getUser(), permissionName, contextReference);
   }
   
   @Override
@@ -137,12 +105,6 @@ public class RestSessionControllerImpl extends AbstractSessionControllerImpl imp
     }
 
     return null;
-  }
-  
-  @Override
-  public boolean isSuperuser() {
-    // TODO: Admin?
-    return false;
   }
   
   @Override

@@ -38,6 +38,7 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
@@ -229,11 +230,24 @@ public class StudentGroup implements ContextReference, ArchivableEntity {
     return version;
   }
 
+  public Organization getOrganization() {
+    return organization;
+  }
+
+  public void setOrganization(Organization organization) {
+    this.organization = organization;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="StudentGroup")  
   @TableGenerator(name="StudentGroup", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   @DocumentId
   private Long id;
+
+  @ManyToOne
+  @JoinColumn (name = "organization")
+  @IndexedEmbedded(includeEmbeddedObjectId = true)
+  private Organization organization;
 
   @NotNull
   @Column (nullable = false)

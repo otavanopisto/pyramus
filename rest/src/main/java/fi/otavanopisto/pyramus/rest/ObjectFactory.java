@@ -514,6 +514,7 @@ public class ObjectFactory {
           public Object map(StudentGroup entity) {
             Long creatorId = entity.getCreator().getId();
             Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
+            Long organizationId = entity.getOrganization() != null ? entity.getOrganization().getId() : null;
 
             List<String> tags = new ArrayList<>();
             
@@ -526,7 +527,7 @@ public class ObjectFactory {
 
             return new fi.otavanopisto.pyramus.rest.model.StudentGroup(entity.getId(), entity.getName(), entity.getDescription(), 
               toOffsetDateTime(entity.getBeginDate()), creatorId, toOffsetDateTime(entity.getCreated()), lastModifierId, 
-              toOffsetDateTime(entity.getLastModified()), tags, entity.getGuidanceGroup(), entity.getArchived() 
+              toOffsetDateTime(entity.getLastModified()), tags, entity.getGuidanceGroup(), organizationId, entity.getArchived() 
             );
           }
         },

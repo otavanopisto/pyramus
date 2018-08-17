@@ -1,13 +1,23 @@
 package fi.otavanopisto.pyramus.views.students;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 
 /**
  * The controller responsible of the Create StudentGroup view of the application.
@@ -22,6 +32,22 @@ public class CreateStudentGroupViewController extends PyramusViewController impl
    * @param pageRequestContext Page request context
    */
   public void process(PageRequestContext pageRequestContext) {
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    
+    Long loggedUserId = pageRequestContext.getLoggedUserId();
+    StaffMember user = staffMemberDAO.findById(loggedUserId);
+    
+    List<Organization> organizations;
+    if (UserUtils.canAccessAllOrganizations(user)) {
+      organizations = organizationDAO.listUnarchived();
+    } else {
+      organizations = Arrays.asList(user.getOrganization());
+    }
+    
+    Collections.sort(organizations, new StringAttributeComparator("getName"));
+    pageRequestContext.getRequest().setAttribute("organizations", organizations);
+
     pageRequestContext.setIncludeJSP("/templates/students/createstudentgroup.jsp");
   }
 

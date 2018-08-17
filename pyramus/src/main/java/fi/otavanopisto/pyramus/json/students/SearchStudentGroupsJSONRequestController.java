@@ -15,10 +15,13 @@ import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
 /**
@@ -52,6 +55,10 @@ public class SearchStudentGroupsJSONRequestController extends JSONRequestControl
 
     SearchResult<StudentGroup> searchResult;
     
+    StaffMember loggedUser = userDAO.findById(requestContext.getLoggedUserId());
+    Organization organization = UserUtils.canAccessAllOrganizations(loggedUser) ?
+        null : loggedUser.getOrganization();
+    
     if ("advanced".equals(requestContext.getRequest().getParameter("activeTab"))) {
       String name = requestContext.getRequest().getParameter("name");
       String description = requestContext.getRequest().getParameter("description");
@@ -78,12 +85,12 @@ public class SearchStudentGroupsJSONRequestController extends JSONRequestControl
         timeframeEnd = new Date(NumberUtils.createLong(value));
       }
 
-      searchResult = studentGroupDAO.searchStudentGroups(resultsPerPage, page, name, tags, description, user, 
+      searchResult = studentGroupDAO.searchStudentGroups(resultsPerPage, page, organization, name, tags, description, user, 
           timeframeStart, timeframeEnd, true);
     }
     else {
       String text = requestContext.getRequest().getParameter("text");
-      searchResult = studentGroupDAO.searchStudentGroupsBasic(resultsPerPage, page, text); 
+      searchResult = studentGroupDAO.searchStudentGroupsBasic(resultsPerPage, page, organization, text); 
     }
 
     List<Map<String, Object>> results = new ArrayList<>();

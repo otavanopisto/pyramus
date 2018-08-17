@@ -11,7 +11,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentGroupUserDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.security.impl.PermissionController;
+import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionFeatures;
 import fi.otavanopisto.security.ContextReference;
 import fi.otavanopisto.security.PermissionFeature;
@@ -31,7 +31,7 @@ public class OnlyOwnGroupsPermissionFeature implements PermissionFeatureHandler 
   private StudentGroupStudentDAO studentGroupStudentDAO;
   
   @Inject
-  private PermissionController permissionController;
+  private Permissions permissionController;
   
   @Override
   public boolean hasPermission(String perm, fi.otavanopisto.security.User user, ContextReference contextReference, boolean allowed) {

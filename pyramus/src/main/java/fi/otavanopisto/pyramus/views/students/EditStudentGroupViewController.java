@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.views.students;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -16,16 +17,22 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 
 /**
  * The controller responsible of the Edit Student Group view of the application.
@@ -41,6 +48,8 @@ public class EditStudentGroupViewController extends PyramusViewController implem
    */
   public void process(PageRequestContext pageRequestContext) {
     StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     // The student group to be edited
     
@@ -111,6 +120,19 @@ public class EditStudentGroupViewController extends PyramusViewController implem
     
     setJsDataVariable(pageRequestContext, "studentGroupStudents", studentGroupStudentsJSON.toString());
     
+    Long loggedUserId = pageRequestContext.getLoggedUserId();
+    StaffMember user = staffMemberDAO.findById(loggedUserId);
+    
+    List<Organization> organizations;
+    if (UserUtils.canAccessAllOrganizations(user)) {
+      organizations = organizationDAO.listUnarchived();
+    } else {
+      organizations = Arrays.asList(user.getOrganization());
+    }
+    
+    Collections.sort(organizations, new StringAttributeComparator("getName"));
+    pageRequestContext.getRequest().setAttribute("organizations", organizations);
+
     pageRequestContext.setIncludeJSP("/templates/students/editstudentgroup.jsp");
   }
 

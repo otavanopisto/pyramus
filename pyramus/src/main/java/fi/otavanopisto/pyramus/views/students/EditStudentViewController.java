@@ -60,7 +60,7 @@ import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
-import fi.otavanopisto.pyramus.security.impl.PermissionController;
+import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -81,7 +81,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     Long loggedUserId = requestContext.getLoggedUserId();
     User user = userDAO.findById(loggedUserId);
 
-    if (!PermissionController.instance().hasEnvironmentPermission(user, PyramusUIPermissions.EDIT_STUDENT)) {
+    if (!Permissions.instance().hasEnvironmentPermission(user, PyramusUIPermissions.EDIT_STUDENT)) {
       return false;
     } else {
       if (UserUtils.canAccessAllOrganizations(user)) {

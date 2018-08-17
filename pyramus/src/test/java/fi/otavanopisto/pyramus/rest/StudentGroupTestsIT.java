@@ -30,6 +30,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         null, 
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE,
+        null, // organizationId
         Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
@@ -119,6 +120,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         null, 
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE,
+        null, // organizationId
         Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
@@ -151,6 +153,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
           null, 
           Arrays.asList("tag2", "tag3"), 
           Boolean.FALSE,
+          null, // organizationId
           Boolean.FALSE);
       
       given().headers(getAuthHeaders())
@@ -190,6 +193,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         null, 
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE,
+        null, // organizationId
         Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())

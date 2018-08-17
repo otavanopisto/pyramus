@@ -66,7 +66,7 @@ import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
-import fi.otavanopisto.pyramus.security.impl.PermissionController;
+import fi.otavanopisto.pyramus.security.impl.Permissions;
 
 public class EditStudentJSONRequestController extends JSONRequestController2 {
 
@@ -84,7 +84,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
     Long loggedUserId = requestContext.getLoggedUserId();
     User user = userDAO.findById(loggedUserId);
 
-    if (!PermissionController.instance().hasEnvironmentPermission(user, PyramusUIPermissions.EDIT_STUDENT)) {
+    if (!Permissions.instance().hasEnvironmentPermission(user, PyramusUIPermissions.EDIT_STUDENT)) {
       return false;
     } else {
       if (UserUtils.canAccessAllOrganizations(user)) {

@@ -8,21 +8,26 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupUserDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
+import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 
 public class CreateStudentGroupJSONRequestController extends JSONRequestController {
 
@@ -33,6 +38,7 @@ public class CreateStudentGroupJSONRequestController extends JSONRequestControll
     StudentGroupStudentDAO studentGroupStudentDAO = DAOFactory.getInstance().getStudentGroupStudentDAO();
     StudentGroupUserDAO studentGroupUserDAO = DAOFactory.getInstance().getStudentGroupUserDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
 
     // StudentGroup basic information
 
@@ -57,8 +63,13 @@ public class CreateStudentGroupJSONRequestController extends JSONRequestControll
     }
 
     User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
+    Organization organization = organizationDAO.findById(requestContext.getLong("organizationId"));
 
-    StudentGroup studentGroup = studentGroupDAO.create(name, description, beginDate, loggedUser, guidanceGroup);
+    if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
+      throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid organization.");
+    }
+
+    StudentGroup studentGroup = studentGroupDAO.create(organization, name, description, beginDate, loggedUser, guidanceGroup);
 
     // Tags
     
