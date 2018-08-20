@@ -279,8 +279,8 @@ public class EditStudentViewController extends PyramusViewController2 implements
     List<Curriculum> curriculums = curriculumDAO.listUnarchived();
     Collections.sort(curriculums, new StringAttributeComparator("getName"));
 
-    // TODO: restrict to the assignable studyprogrammes
-    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
+    List<StudyProgramme> studyProgrammes = UserUtils.canAccessAllOrganizations(loggedUser) ? 
+        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), false);
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
     
     pageRequestContext.getRequest().setAttribute("tags", studentTags);

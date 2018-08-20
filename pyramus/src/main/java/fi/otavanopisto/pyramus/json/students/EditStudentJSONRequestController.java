@@ -277,7 +277,9 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       entityId = requestContext.getLong("studyProgramme." + student.getId());
       StudyProgramme studyProgramme = entityId != null && entityId > 0 ? studyProgrammeDAO.findById(entityId) : null;
       
-      // TODO: check that the user has access to the studyprogramme
+      if (!UserUtils.canAccessOrganization(loggedUser, studyProgramme.getOrganization())) {
+        throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid studyprogramme.");
+      }
   
       entityId = requestContext.getLong("studyEndReason." + student.getId());
       StudentStudyEndReason studyEndReason = entityId == null ? null : studyEndReasonDAO.findById(entityId);

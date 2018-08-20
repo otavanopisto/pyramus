@@ -71,22 +71,22 @@
     <filter-name>AccessLoggingFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  <filter>
-    <filter-name>IpFilter</filter-name>
-    <filter-class>fi.pyramus.services.utils.IpFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>IpFilter</filter-name>
-    <url-pattern>/PyramusWebServices/services/*</url-pattern>
-  </filter-mapping>
-  <filter>
-    <filter-name>IpLoggingFilter</filter-name>
-    <filter-class>fi.pyramus.services.utils.IpLoggingFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>IpLoggingFilter</filter-name>
-    <url-pattern>/PyramusWebServices/services/*</url-pattern>
-  </filter-mapping>
+<!--   <filter> -->
+<!--     <filter-name>IpFilter</filter-name> -->
+<!--     <filter-class>fi.pyramus.services.utils.IpFilter</filter-class> -->
+<!--   </filter> -->
+<!--   <filter-mapping> -->
+<!--     <filter-name>IpFilter</filter-name> -->
+<!--     <url-pattern>/PyramusWebServices/services/*</url-pattern> -->
+<!--   </filter-mapping> -->
+<!--   <filter> -->
+<!--     <filter-name>IpLoggingFilter</filter-name> -->
+<!--     <filter-class>fi.pyramus.services.utils.IpLoggingFilter</filter-class> -->
+<!--   </filter> -->
+<!--   <filter-mapping> -->
+<!--     <filter-name>IpLoggingFilter</filter-name> -->
+<!--     <url-pattern>/PyramusWebServices/services/*</url-pattern> -->
+<!--   </filter-mapping> -->
   <servlet>
     <servlet-name>pyramus</servlet-name>
     <servlet-class>fi.internetix.smvc.dispatcher.Servlet</servlet-class>

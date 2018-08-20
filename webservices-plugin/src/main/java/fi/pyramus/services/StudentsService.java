@@ -182,14 +182,14 @@ public class StudentsService extends PyramusService {
     return (AddressEntity[]) EntityFactoryVault.buildFromDomainObjects(student.getContactInfo().getAddresses());
   }
   
-//  public StudentEntity[] listStudentsByStudyProgramme(@WebParam (name="studyProgrammeId") Long studyProgrammeId) {
-//    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-//    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
-//    
-//    StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
-//    
-//    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listByStudyProgramme(studyProgramme));
-//  }
+  public StudentEntity[] listStudentsByStudyProgramme(@WebParam (name="studyProgrammeId") Long studyProgrammeId) {
+    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
+    
+    StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
+    
+    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listByStudyProgramme(studyProgramme));
+  }
   
   public StudentEntity[] listStudentsByAbstractStudent(@WebParam (name="abstractStudentId") Long abstractStudentId) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
@@ -200,26 +200,26 @@ public class StudentsService extends PyramusService {
     return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listByPerson(person));
   }
   
-//  public StudentEntity[] listActiveStudentsByAbstractStudent(@WebParam (name="abstractStudentId") Long abstractStudentId) {
-//    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-//    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
-//    
-//    Person person = personDAO.findById(abstractStudentId);
-//
-//    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listActiveStudentsByPerson(person));
-//  }
+  public StudentEntity[] listActiveStudentsByAbstractStudent(@WebParam (name="abstractStudentId") Long abstractStudentId) {
+    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    
+    Person person = personDAO.findById(abstractStudentId);
 
-//  public StudentEntity[] listActiveStudents() {
-//    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-//    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listActiveStudents());
-//  }
+    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listActiveStudentsByPerson(person));
+  }
 
-//  public StudentEntity[] listActiveStudentsByStudyProgramme(@WebParam (name="studyProgrammeId") Long studyProgrammeId) {
-//    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-//    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
-//    StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
-//    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listActiveStudentsByStudyProgramme(studyProgramme));
-//  }
+  public StudentEntity[] listActiveStudents() {
+    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listActiveStudents());
+  }
+
+  public StudentEntity[] listActiveStudentsByStudyProgramme(@WebParam (name="studyProgrammeId") Long studyProgrammeId) {
+    StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
+    StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
+    return (StudentEntity[]) EntityFactoryVault.buildFromDomainObjects(studentDAO.listActiveStudentsByStudyProgramme(studyProgramme));
+  }
   
   public StudentEntity createStudent(
       @WebParam (name="abstractStudentId") Long abstractStudentId, 
