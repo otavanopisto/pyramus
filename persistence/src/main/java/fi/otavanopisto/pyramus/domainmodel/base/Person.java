@@ -728,6 +728,34 @@ public class Person implements ContextReference {
 
   @Transient
   @Field
+  public String getInactiveOrganizationIds() {
+    Set<String> results = new HashSet<>();
+    for (Student student : getStudents()) {
+      if (!student.getArchived() && !student.getActive()) {
+        if (student.getStudyProgramme() != null && student.getStudyProgramme().getOrganization() != null) {
+          results.add(student.getStudyProgramme().getOrganization().getId().toString());
+        }
+      }
+    }
+    return setToString(results);
+  }
+
+  @Transient
+  @Field
+  public String getActiveOrganizationIds() {
+    Set<String> results = new HashSet<>();
+    for (Student student : getStudents()) {
+      if (!student.getArchived() && student.getActive()) {
+        if (student.getStudyProgramme() != null && student.getStudyProgramme().getOrganization() != null) {
+          results.add(student.getStudyProgramme().getOrganization().getId().toString());
+        }
+      }
+    }
+    return setToString(results);
+  }
+  
+  @Transient
+  @Field
   public String getActiveTags() {
     Set<String> results = new HashSet<>();
     for (Student student : getStudents()) {
@@ -756,6 +784,21 @@ public class Person implements ContextReference {
         for (Tag tag : student.getTags()) {
           results.add(tag.getText());
         }
+      }
+    }
+
+    return setToString(results);
+  }
+
+  @Transient
+  @Field
+  public String getStaffMemberOrganizations() {
+    Set<String> results = new HashSet<>();
+    for (StaffMember staffMember : getStaffMembers()) {
+      Organization organization = staffMember.getOrganization(); 
+      
+      if (organization != null) {
+        results.add(organization.getId().toString());
       }
     }
 

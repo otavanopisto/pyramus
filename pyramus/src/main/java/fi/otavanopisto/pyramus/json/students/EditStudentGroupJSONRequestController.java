@@ -11,14 +11,17 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.StaleObjectStateException;
 
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupUserDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
@@ -27,7 +30,9 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
+import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 
 /**
  * The controller responsible of modifying an existing student group.
@@ -49,6 +54,7 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
     StudentGroupStudentDAO studentGroupStudentDAO = DAOFactory.getInstance().getStudentGroupStudentDAO();
     StudentGroupUserDAO studentGroupUserDAO = DAOFactory.getInstance().getStudentGroupUserDAO();
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
 
     // StudentGroup basic information
 
@@ -79,7 +85,13 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
     if (!studentGroup.getVersion().equals(version))
       throw new StaleObjectStateException(StudentGroup.class.getName(), studentGroup.getId());
     
-    studentGroupDAO.update(studentGroup, name, description, beginDate, loggedUser);
+    Organization organization = organizationDAO.findById(requestContext.getLong("organizationId"));
+
+    if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
+      throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid organization.");
+    }
+    
+    studentGroupDAO.update(studentGroup, organization, name, description, beginDate, loggedUser);
 
     // Tags
 

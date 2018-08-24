@@ -5,13 +5,9 @@ import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
 import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
-import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
-import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.security.ContextReference;
 
 @Stateful
@@ -19,7 +15,7 @@ import fi.otavanopisto.security.ContextReference;
 public abstract class AbstractSessionControllerImpl implements SessionController {
   
   @Inject
-  private PermissionDAO permissionDAO;
+  private Permissions permissions;
   
   @Override
   public Locale getLocale() {
@@ -40,35 +36,10 @@ public abstract class AbstractSessionControllerImpl implements SessionController
 
   @Override
   public boolean hasPermission(String permissionName, ContextReference contextReference) {
-    Permission permission = permissionDAO.findByName(permissionName);
-    PermissionResolver permissionResolver = getPermissionResolver(permission);
-    
-    if (isLoggedIn()) {
-      return isSuperuser() || permissionResolver.hasPermission(permission, contextReference, getUser());
-    } else {
-      return permissionResolver.hasEveryonePermission(permission, contextReference);
-    }
-  }
-  
-  @Inject
-  @Any
-  private Instance<PermissionResolver> permissionResolvers;
-  
-  private PermissionResolver getPermissionResolver(Permission permission) {
-    for (PermissionResolver resolver : permissionResolvers) {
-      if (resolver.handlesPermission(permission))
-        return resolver;
-    }
-    
-    return null;
+    return permissions.hasPermission(getUser(), permissionName, contextReference);
   }
   
   private Locale locale;
-
-  @Override
-  public boolean isSuperuser() {
-    return false;
-  }
 
   @Override
   public boolean hasEnvironmentPermission(String permission) {

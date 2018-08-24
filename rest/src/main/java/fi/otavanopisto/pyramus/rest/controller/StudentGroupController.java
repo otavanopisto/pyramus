@@ -13,6 +13,7 @@ import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupUserDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
@@ -37,13 +38,12 @@ public class StudentGroupController {
   @Inject
   private TagDAO tagDAO;
   
-  public StudentGroup createStudentGroup(String name, String description, Date beginDate, User user) {
-    return createStudentGroup(name, description, beginDate, user, Boolean.FALSE);
+  public StudentGroup createStudentGroup(Organization organization, String name, String description, Date beginDate, User user) {
+    return createStudentGroup(organization, name, description, beginDate, user, Boolean.FALSE);
   }
 
-  
-  public StudentGroup createStudentGroup(String name, String description, Date beginDate, User user, Boolean guidanceGroup) {
-    StudentGroup studentGroup = studentGroupDAO.create(name, description, beginDate, user, guidanceGroup);
+  public StudentGroup createStudentGroup(Organization organization, String name, String description, Date beginDate, User user, Boolean guidanceGroup) {
+    StudentGroup studentGroup = studentGroupDAO.create(organization, name, description, beginDate, user, guidanceGroup);
     return studentGroup;
   }
   
@@ -56,20 +56,16 @@ public class StudentGroupController {
     return tag;
   }
   
-  public List<StudentGroup> listStudentGroups() {
-    return studentGroupDAO.listAll();
+  public List<StudentGroup> listStudentGroups(Organization organization, Integer firstResult, Integer maxResults) {
+    return studentGroupDAO.listByOrganization(organization, firstResult, maxResults, null);
   }
 
-  public List<StudentGroup> listStudentGroups(Integer firstResult, Integer maxResults) {
-    return studentGroupDAO.listAll(firstResult, maxResults);
-  }
-  
-  public List<StudentGroup> listUnarchivedStudentGroups() {
-    return studentGroupDAO.listUnarchived();
+  public List<StudentGroup> listUnarchivedStudentGroups(Organization organization) {
+    return studentGroupDAO.listByOrganization(organization, null, null, false);
   }
 
-  public List<StudentGroup> listUnarchivedStudentGroups(Integer firstResult, Integer maxResults) {
-    return studentGroupDAO.listUnarchived(firstResult, maxResults);
+  public List<StudentGroup> listUnarchivedStudentGroups(Organization organization, Integer firstResult, Integer maxResults) {
+    return studentGroupDAO.listByOrganization(organization, firstResult, maxResults, false);
   }
   
   public StudentGroup findStudentGroupById(Long id) {
@@ -80,8 +76,8 @@ public class StudentGroupController {
     return studentGroup.getTags();
   }
   
-  public StudentGroup updateStudentGroup(StudentGroup studentGroup, String name, String description, Date beginDate, User user) {
-    return studentGroupDAO.update(studentGroup, name, description, beginDate, user);
+  public StudentGroup updateStudentGroup(StudentGroup studentGroup, Organization organization, String name, String description, Date beginDate, User user) {
+    return studentGroupDAO.update(studentGroup, organization, name, description, beginDate, user);
   }
   
   public StudentGroup archiveStudentGroup(StudentGroup studentGroup, User user) {

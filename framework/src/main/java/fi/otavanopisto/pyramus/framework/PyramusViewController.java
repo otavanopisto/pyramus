@@ -19,41 +19,24 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 public abstract class PyramusViewController implements PageController {
 
-  // TODO: Remove this and UserRole
   public abstract UserRole[] getAllowedRoles();
 
-  // TODO: Declare abstract
-  public String getPermission() {
-    return null;
+  protected void throwLoginRequiredException(RequestContext requestContext) {
+    HttpServletRequest request = requestContext.getRequest();
+    StringBuilder currentUrl = new StringBuilder(request.getRequestURL());
+    String queryString = request.getQueryString();
+    if (!StringUtils.isBlank(queryString)) {
+      currentUrl.append('?');
+      currentUrl.append(queryString);
+    }
+    throw new LoginRequiredException(currentUrl.toString());
   }
   
   public void authorize(RequestContext requestContext) throws LoginRequiredException, AccessDeniedException {
-    
-    // TODO: Below for permission framework
-//    if (getPermission() != null) {
-//      try {
-//        if (!PyramusRights.hasPermission(getPermission())) {
-//          throw new AccessDeniedException(requestContext.getRequest().getLocale());
-//        }
-//      } catch (NamingException e) {
-//        e.printStackTrace();
-//        throw new AccessDeniedException(requestContext.getRequest().getLocale());
-//      }
-//    }
- 
-    // TODO: Remove old rights code
-    
     UserRole[] roles = getAllowedRoles();
     if (!contains(roles, UserRole.EVERYONE)) {
       if (!requestContext.isLoggedIn()) {
-        HttpServletRequest request = requestContext.getRequest();
-        StringBuilder currentUrl = new StringBuilder(request.getRequestURL());
-        String queryString = request.getQueryString();
-        if (!StringUtils.isBlank(queryString)) {
-          currentUrl.append('?');
-          currentUrl.append(queryString);
-        }
-        throw new LoginRequiredException(currentUrl.toString());
+        throwLoginRequiredException(requestContext);
       }
       else {
         Long loggedUserId = requestContext.getLoggedUserId();

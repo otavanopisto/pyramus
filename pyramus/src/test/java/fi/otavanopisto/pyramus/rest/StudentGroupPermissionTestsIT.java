@@ -48,6 +48,7 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
         null, 
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE,
+        null, // organizationId
         Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
@@ -96,6 +97,7 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
         null, 
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE,
+        null, // organizationId
         Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -115,6 +117,7 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
           null, 
           Arrays.asList("tag2", "tag3"), 
           Boolean.FALSE,
+          null, // organizationId
           Boolean.FALSE);
       
       response = given().headers(getAuthHeaders())
@@ -141,6 +144,7 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
         null, 
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE,
+        null, // organizationId
         Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())

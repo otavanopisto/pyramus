@@ -33,9 +33,11 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 
@@ -58,6 +60,8 @@ public class CreateStudentViewController extends PyramusViewController implement
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     
+    User loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
+
     Long personId = pageRequestContext.getLong("personId");
     if (personId != null) {
       Person person = personDAO.findById(personId);
@@ -75,7 +79,8 @@ public class CreateStudentViewController extends PyramusViewController implement
       setJsDataVariable(pageRequestContext, "createstudent_phones", phones);
     }
 
-    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
+    List<StudyProgramme> studyProgrammes = UserUtils.canAccessAllOrganizations(loggedUser) ? 
+        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), false);
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
 
     List<Nationality> nationalities = nationalityDAO.listUnarchived();

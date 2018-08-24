@@ -11,12 +11,13 @@ public class StudentGroup {
   }
 
   public StudentGroup(Long id, String name, String description, OffsetDateTime beginDate, Long creatorId, OffsetDateTime created, Long lastModifierId,
-      OffsetDateTime lastModified, List<String> tags, Boolean guidanceGroup, Boolean archived) {
+      OffsetDateTime lastModified, List<String> tags, Boolean guidanceGroup, Long organizationId, Boolean archived) {
     super();
     this.id = id;
     this.name = name;
     this.description = description;
     this.beginDate = beginDate;
+    this.organizationId = organizationId;
     this.archived = archived;
     this.creatorId = creatorId;
     this.created = created;
@@ -114,6 +115,14 @@ public class StudentGroup {
     this.guidanceGroup = guidanceGroup;
   }
 
+  public Long getOrganizationId() {
+    return organizationId;
+  }
+
+  public void setOrganizationId(Long organizationId) {
+    this.organizationId = organizationId;
+  }
+
   private Long id;
   private String name;
   private String description;
@@ -125,4 +134,5 @@ public class StudentGroup {
   private OffsetDateTime lastModified;
   private List<String> tags;
   private Boolean guidanceGroup;
+  private Long organizationId;
 }

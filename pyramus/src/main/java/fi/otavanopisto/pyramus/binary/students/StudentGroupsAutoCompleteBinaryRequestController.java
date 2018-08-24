@@ -11,9 +11,13 @@ import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.BinaryRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.BinaryRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 
 /** A binary request controller responsible for providing server-side autocomplete
  * for student groups search.
@@ -32,8 +36,8 @@ public class StudentGroupsAutoCompleteBinaryRequestController extends BinaryRequ
    */
   public void process(BinaryRequestContext binaryRequestContext) {
     StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     String text = binaryRequestContext.getString("text");
-    
     
     StringBuilder resultBuilder = new StringBuilder();
     resultBuilder.append("<ul>");
@@ -41,7 +45,11 @@ public class StudentGroupsAutoCompleteBinaryRequestController extends BinaryRequ
     if (!StringUtils.isBlank(text)) {
       text = QueryParser.escape(StringUtils.trim(text)) + '*';
 
-      List<StudentGroup> studentGroups = studentGroupDAO.searchStudentGroupsBasic(100, 0, text).getResults();
+      StaffMember loggedUser = staffMemberDAO.findById(binaryRequestContext.getLoggedUserId());
+      Organization organization = UserUtils.canAccessAllOrganizations(loggedUser) ?
+          null : loggedUser.getOrganization();
+      
+      List<StudentGroup> studentGroups = studentGroupDAO.searchStudentGroupsBasic(100, 0, organization, text).getResults();
 
       for (StudentGroup studentGroup : studentGroups) {
         addResult(resultBuilder, studentGroup);

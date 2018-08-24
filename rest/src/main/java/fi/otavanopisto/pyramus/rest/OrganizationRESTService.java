@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
-import fi.otavanopisto.pyramus.rest.controller.permissions.OrganizationPermissions;
+import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 
 @Path("/organizations")
 @Produces("application/json")

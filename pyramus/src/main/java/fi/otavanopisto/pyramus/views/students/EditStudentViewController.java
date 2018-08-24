@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.internetix.smvc.controllers.RequestContext;
+import fi.otavanopisto.pyramus.PyramusUIPermissions;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -56,15 +56,52 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
-import fi.otavanopisto.pyramus.framework.PyramusViewController;
-import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
+import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
-public class EditStudentViewController extends PyramusViewController implements Breadcrumbable {
+public class EditStudentViewController extends PyramusViewController2 implements Breadcrumbable {
 
+  public EditStudentViewController() {
+    super(
+        true // requireLoggedIn
+    );
+  }
+
+  @Override
+  protected boolean checkAccess(RequestContext requestContext) {
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+
+    Long loggedUserId = requestContext.getLoggedUserId();
+    User user = userDAO.findById(loggedUserId);
+
+    if (!Permissions.instance().hasEnvironmentPermission(user, PyramusUIPermissions.EDIT_STUDENT)) {
+      return false;
+    } else {
+      if (UserUtils.canAccessAllOrganizations(user)) {
+        return true;
+      } else {
+        Long personId = requestContext.getLong("person");
+        Person person = personDAO.findById(personId);
+        
+        for (Student student : person.getStudents()) {
+          if (UserUtils.isMemberOf(user, student.getOrganization())) {
+            // Having one common organization is enough - though the view may not allow editing all
+            return true;
+          }
+        }
+
+        return false;
+      }
+    }
+  }
+  
   public void process(PageRequestContext pageRequestContext) {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
@@ -96,7 +133,9 @@ public class EditStudentViewController extends PyramusViewController implements 
     Long personId = pageRequestContext.getLong("person");
     Person person = personDAO.findById(personId);
     
-    List<Student> students = studentDAO.listByPerson(person);
+    List<Student> students = UserUtils.canAccessAllOrganizations(loggedUser) ?
+        studentDAO.listByPerson(person) : studentDAO.listByPersonAndOrganization(person, loggedUser.getOrganization());
+
     Collections.sort(students, new Comparator<Student>() {
       @Override
       public int compare(Student o1, Student o2) {
@@ -240,7 +279,8 @@ public class EditStudentViewController extends PyramusViewController implements 
     List<Curriculum> curriculums = curriculumDAO.listUnarchived();
     Collections.sort(curriculums, new StringAttributeComparator("getName"));
 
-    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
+    List<StudyProgramme> studyProgrammes = UserUtils.canAccessAllOrganizations(loggedUser) ? 
+        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), false);
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
     
     pageRequestContext.getRequest().setAttribute("tags", studentTags);
@@ -266,10 +306,6 @@ public class EditStudentViewController extends PyramusViewController implements 
     pageRequestContext.getRequest().setAttribute("allowEditCredentials", UserUtils.allowEditCredentials(loggedUser, person));
     
     pageRequestContext.setIncludeJSP("/templates/students/editstudent.jsp");
-  }
-
-  public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
   /**

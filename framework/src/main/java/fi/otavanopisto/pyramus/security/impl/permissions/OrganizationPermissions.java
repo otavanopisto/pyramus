@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.rest.controller.permissions;
+package fi.otavanopisto.pyramus.security.impl.permissions;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import fi.otavanopisto.security.Scope;
 public class OrganizationPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, TRUSTED_SYSTEM })
   public static final String ACCESS_ALL_ORGANIZATIONS = "ACCESS_ALL_ORGANIZATIONS";
 
   @Scope (PermissionScope.ENVIRONMENT)
@@ -20,11 +20,11 @@ public class OrganizationPermissions extends AbstractPyramusPermissionCollection
   public static final String CREATE_ORGANIZATION = "CREATE_ORGANIZATION";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, TRUSTED_SYSTEM })
   public static final String LIST_ORGANIZATIONS = "LIST_ORGANIZATIONS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, TRUSTED_SYSTEM })
   public static final String FIND_ORGANIZATION = "FIND_ORGANIZATION";
   
   @Scope (PermissionScope.ENVIRONMENT)
