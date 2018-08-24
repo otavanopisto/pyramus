@@ -66,6 +66,7 @@ import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
@@ -194,6 +195,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       attachmentInfo.put("id", applicationAttachment.getId());
       attachmentInfo.put("applicationId", applicationAttachment.getApplicationId());
       attachmentInfo.put("name", applicationAttachment.getName());
+      attachmentInfo.put("description", applicationAttachment.getDescription());
       attachmentInfo.put("size", applicationAttachment.getSize());
       results.add(attachmentInfo);
     }
@@ -491,6 +493,25 @@ public class ApplicationRESTService extends AbstractRESTService {
             null);
         logger.log(Level.INFO, String.format("Updated %s application with id %s", line, application.getApplicationId()));
         modifiedApplicationPostProcessing(application);
+      }
+
+      // Attachments
+      
+      if (formData.has("attachment-name") && formData.has("attachment-description")) {
+        ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
+        JSONArray attachmentNames = formData.getJSONArray("attachment-name");
+        JSONArray attachmentDescriptions = formData.getJSONArray("attachment-description");
+        for (int i = 0; i < attachmentNames.size(); i++) {
+          String name = attachmentNames.getString(i);
+          String description = attachmentDescriptions.getString(i);
+          ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, name);
+          if (applicationAttachment == null) {
+            logger.warning(String.format("Attachment %s for application %s not found", name, applicationId));
+          }
+          else {
+            applicationAttachmentDAO.updateDescription(applicationAttachment, description);
+          }
+        }
       }
       
       response.put("referenceCode", referenceCode);

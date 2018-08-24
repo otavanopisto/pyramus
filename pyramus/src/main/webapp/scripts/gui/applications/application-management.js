@@ -30,7 +30,7 @@
                   .attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + files[i].name)
                   .attr('target', '_blank')
                   .addClass('attachment-link')
-                  .text(files[i].name)));
+                  .text(files[i].description||files[i].name)));
           }
         },
         error: function(err) {

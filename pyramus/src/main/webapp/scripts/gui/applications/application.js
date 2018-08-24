@@ -557,7 +557,7 @@
       contentType: "application/json; charset=utf-8",
       success: function(files) {
         for (var i = 0; i < files.length; i++) {
-          createAttachmentFormElement(files[i].name, files[i].size);
+          createAttachmentFormElement(files[i].name, files[i].description, files[i].size);
         }
       },
       error: function(err) {
@@ -566,13 +566,22 @@
     });
   }
   
-  function createAttachmentFormElement(name, size) {
+  function createAttachmentFormElement(name, description, size) {
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('#field-attachments-files');
     var fileElement = $('.application-file.template').clone();
     fileElement.attr('data-file-size', size);
     fileElement.removeClass('template');
     fileContainer.append(fileElement);
+    var nameElement = $('<input>').attr('type', 'hidden');
+    nameElement.attr('name', 'attachment-name');
+    nameElement.attr('value', name);
+    var descriptionElement = $('<input>').attr('type', 'text');
+    descriptionElement.attr('name', 'attachment-description');
+    descriptionElement.attr('placeholder', 'Kuvaus');
+    descriptionElement.attr('value', description);
+    fileElement.find('.application-file__description').append(nameElement);
+    fileElement.find('.application-file__description').append(descriptionElement);
     fileElement.find('.application-file__link').attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + name);
     fileElement.find('.application-file__size').text((size / 1024 + 1).toFixed(0) + ' KB');
     fileElement.find('.application-file__link').text(name);
@@ -670,7 +679,7 @@
       },
       success: function(data) {
         progressElement.remove();
-        createAttachmentFormElement(fileName, file.size);
+        createAttachmentFormElement(fileName, '', file.size);
       },
       error: function(err) {
         if (err.status == 409) {

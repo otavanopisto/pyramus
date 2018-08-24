@@ -56,4 +56,11 @@ public class ApplicationAttachmentDAO extends PyramusEntityDAO<ApplicationAttach
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  public ApplicationAttachment updateDescription(ApplicationAttachment applicationAttachment, String description) {
+    EntityManager entityManager = getEntityManager();
+    applicationAttachment.setDescription(description);
+    entityManager.persist(applicationAttachment);
+    return applicationAttachment;
+  }
+
 }
