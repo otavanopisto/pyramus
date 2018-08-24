@@ -13,12 +13,15 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class SaveApplicationJSONRequestController extends JSONRequestController {
@@ -73,6 +76,25 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
         logger.log(Level.WARNING, "Refusing application due to missing email");
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
+      }
+      
+      // Attachments
+      
+      if (formData.has("attachment-name") && formData.has("attachment-description")) {
+        ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
+        JSONArray attachmentNames = formData.getJSONArray("attachment-name");
+        JSONArray attachmentDescriptions = formData.getJSONArray("attachment-description");
+        for (int i = 0; i < attachmentNames.size(); i++) {
+          String name = attachmentNames.getString(i);
+          String description = attachmentDescriptions.getString(i);
+          ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, name);
+          if (applicationAttachment == null) {
+            logger.warning(String.format("Attachment %s for application %s not found", name, applicationId));
+          }
+          else {
+            applicationAttachmentDAO.updateDescription(applicationAttachment, description);
+          }
+        }
       }
       
       // Save application

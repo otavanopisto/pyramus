@@ -605,7 +605,7 @@ public class ApplicationUtils {
             if (file.exists()) {
               String contentType = Files.probeContentType(path);
               byte[] data = FileUtils.readFileToByteArray(file);
-              studentFileDAO.create(student, attachmentFileName, attachmentFileName, null, contentType, data, staffMember);
+              studentFileDAO.create(student, StringUtils.isBlank(attachment.getDescription()) ? attachmentFileName : attachment.getDescription(), attachmentFileName, null, contentType, data, staffMember);
             }
           }
           catch (IOException e) {

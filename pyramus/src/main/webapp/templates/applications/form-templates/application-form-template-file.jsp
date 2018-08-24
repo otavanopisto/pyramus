@@ -5,6 +5,7 @@
 
   <div class="application-file template" style="display:none;">
     <div class="application-file__details">
+      <span class="application-file__description"></span>
       <span class="application-file__name"><a class="application-file__link" target="_blank"></a></span>
       <span class="application-file__size"></span>
     </div>
