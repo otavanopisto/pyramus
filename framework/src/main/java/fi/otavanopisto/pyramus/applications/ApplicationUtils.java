@@ -165,6 +165,28 @@ public class ApplicationUtils {
     Nationality nationality = nationalityDAO.findById(nationalityId);
     return nationality == null ? null : nationality.getName();
   }
+  
+  public static String previousStudiesUiValue(String value) {
+    if (value != null) {
+      switch (value) {
+      case "perus":
+        return "Peruskoulu";
+      case "kansa":
+        return "Kansakoulu";
+      case "lukio":
+        return "Lukio (keskeytynyt)";
+      case "ammatillinen":
+        return "Ammatillinen 2. aste";
+      case "korkea":
+        return "Korkeakoulu";
+      case "muu":
+        return "Muu";
+      default:
+        return null;
+      }
+    }
+    return null;
+  }
 
   public static Nationality resolveNationality(String value) {
     if (StringUtils.isBlank(value)) {

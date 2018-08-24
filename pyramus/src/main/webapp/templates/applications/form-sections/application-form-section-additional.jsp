@@ -41,9 +41,37 @@
       <p>Koulutuksessa voit korottaa peruskoulun päättötodistuksen arvosanoja.</p>
     </div>
 
-    <div class="form-section__field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,laakislinja,kasvatustieteet">
+    <div class="form-section__field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettipk,aikuislukio,bandilinja,laakislinja,kasvatustieteet">
       <label for="field-previous-studies" class="required">Aiemmat opinnot (listaa myös keskeytyneet)</label>
       <textarea name="field-previous-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>
+    </div>
+
+    <div class="form-section__field-container field-previous-studies-nettilukio dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
+      <label for="field-previous-studies-nettilukio" class="required">Aiemmat opinnot</label>
+      <select name="field-previous-studies-nettilukio" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
+        <option value="">-- Valitse --</option>
+        <option value="perus">Peruskoulu</option>
+        <option value="kansa">Kansakoulu</option>
+        <option value="lukio">Lukio (keskeytynyt)</option>
+        <option value="ammatillinen">Ammatillinen 2. aste</option>
+        <option value="korkea">Korkeakoulu</option>
+        <option value="muu">Muu</option>
+      </select>
+    </div>
+
+    <div class="form-section__field-container field-previous-studies-nettilukio-school dependent" data-dependent-field="field-previous-studies-nettilukio" data-dependent-values="lukio">
+      <label for="field-previous-studies-nettilukio-school" class="required">Oppilaitos</label>
+      <input type="text" name="field-previous-studies-nettilukio-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+    </div>
+
+    <div class="form-section__field-container field-previous-studies-nettilukio-duration dependent" data-dependent-field="field-previous-studies-nettilukio" data-dependent-values="lukio">
+      <label for="field-previous-studies-nettilukio-duration" class="required">Opintojen kesto</label>
+      <input type="text" name="field-previous-studies-nettilukio-duration" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+    </div>
+
+    <div class="form-section__field-container field-previous-studies-nettilukio-other dependent" data-dependent-field="field-previous-studies-nettilukio" data-dependent-values="muu">
+      <label for="field-previous-studies-nettilukio-other" class="required">Kerro tarkemmin</label>
+      <input type="text" name="field-previous-studies-nettilukio-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>
 
     <div class="form-section__field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio">

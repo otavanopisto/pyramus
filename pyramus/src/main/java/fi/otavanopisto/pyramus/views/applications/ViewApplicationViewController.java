@@ -138,11 +138,23 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies"))) {
         fields.put("Aiemmat opinnot", getFormValue(formData, "field-previous-studies"));
       }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio"))) {
+        fields.put("Aiemmat opinnot", ApplicationUtils.previousStudiesUiValue(getFormValue(formData, "field-previous-studies-nettilukio")));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-school"))) {
+        fields.put("Aiempi oppilaitos", getFormValue(formData, "field-previous-studies-nettilukio-school"));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-duration"))) {
+        fields.put("Aiempien opintojen kesto", getFormValue(formData, "field-previous-studies-nettilukio-duration"));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-other"))) {
+        fields.put("Kerro tarkemmin", getFormValue(formData, "field-previous-studies-nettilukio-other"));
+      }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-other-school"))) {
         fields.put("Opiskelee toisessa oppilaitoksessa", simpleBooleanUiValue(getFormValue(formData, "field-other-school")));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-other-school-name"))) {
-        fields.put("Oppilaitos", getFormValue(formData, "field-other-school-name"));
+        fields.put("Nykyinen oppilaitos", getFormValue(formData, "field-other-school-name"));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-goals"))) {
         fields.put("Opiskelutavoitteet", goalsUiValue(getFormValue(formData, "field-goals")));
