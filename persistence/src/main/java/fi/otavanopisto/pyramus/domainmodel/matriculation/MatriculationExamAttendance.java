@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.domainmodel.matriculationexamapplication;
+package fi.otavanopisto.pyramus.domainmodel.matriculation;
 
 import java.util.Date;
 import java.util.HashSet;

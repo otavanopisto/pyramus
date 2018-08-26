@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.domainmodel.matriculationexamapplication;
+package fi.otavanopisto.pyramus.domainmodel.matriculation;
 
 public enum MatriculationExamAttendanceStatus {
   PLANNED,
