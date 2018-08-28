@@ -44,6 +44,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
@@ -750,13 +751,21 @@ public class ApplicationUtils {
     }
 
     if (existingPersons.size() > 1) {
-      throw new DuplicatePersonException();
+      throw new DuplicatePersonException("Käyttäjätiedot täsmäävät useampaan olemassa olevaan käyttäjätiliin");
     }
     else if (existingPersons.isEmpty()) {
       return null;
     }
     else {
-      return existingPersons.values().iterator().next();
+      Person person = existingPersons.values().iterator().next();
+      if (person.getDefaultUser() != null) {
+        StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+        StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
+        if (staffMember != null) {
+          throw new DuplicatePersonException("Käyttäjätiedot viittaavat henkilökunnan jäseneen");
+        }
+      }
+      return person;
     }
   }
 
