@@ -750,13 +750,6 @@ public class ApplicationUtils {
     }
 
     if (existingPersons.size() > 1) {
-      StringBuilder sb = new StringBuilder();
-      for (Person person : existingPersons.values()) {
-        if (sb.length() > 0) {
-          sb.append(",");
-        }
-        sb.append(person.getId());
-      }
       throw new DuplicatePersonException();
     }
     else if (existingPersons.isEmpty()) {
