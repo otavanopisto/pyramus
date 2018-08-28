@@ -144,25 +144,21 @@
     </div>
 
     <div class="form-section__field-container field-lodging dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio,bandilinja,mk">
-      <div class="field-row-flex">
-        <div class="field-row-element">
-          <input type="checkbox" id="field-lodging" name="field-lodging" value="kylla">
-        </div>
-        <div class="field-row-label">
-          <label for="field-lodging">Tarvitsen asunnon opiston kampukselta</label>
-        </div>
-      </div>
+      <label for="field-lodging" class="required">Tarvitsen asunnon opiston kampukselta</label>
+      <select name="field-lodging" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        <option value="">-- Valitse --</option>
+        <option value="kylla">Kyllä</option>
+        <option value="ei">Ei</option>
+      </select>
     </div>
 
     <div class="form-section__field-container field-lodging-partial dependent" data-dependent-field="field-line" data-dependent-values="laakislinja,kasvatustieteet">
-      <div class="field-row-flex">
-        <div class="field-row-element">
-          <input type="checkbox" id="field-lodging-partial" name="field-lodging-partial" value="kylla">
-        </div>
-        <div class="field-row-label">
-          <label for="field-lodging-partial">Tarvitsen asunnon opiston kampukselta lähijaksojen ajaksi</label>
-        </div>
-      </div>
+      <label for="field-lodging-partial" class="required">Tarvitsen asunnon opiston kampukselta lähijaksojen ajaksi</label>
+      <select name="field-lodging-partial" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        <option value="">-- Valitse --</option>
+        <option value="kylla">Kyllä</option>
+        <option value="ei">Ei</option>
+      </select>
     </div>
 
   </section>
