@@ -12,6 +12,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -107,6 +108,7 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
       }
       boolean referenceCodeModified = !StringUtils.equals(application.getLastName(), lastName);
       String referenceCode = referenceCodeModified ? generateReferenceCode(lastName, application.getReferenceCode()) : application.getReferenceCode(); 
+      boolean lineChanged = !StringUtils.equals(line, application.getLine());
       application = applicationDAO.update(
           application,
           line,
@@ -118,6 +120,12 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
           application.getState(),
           application.getApplicantEditable(),
           staffMember);
+      
+      // If line has changed, send notification of a new application 
+      
+      if (lineChanged) {
+        ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, true, null);
+      }
       
       String redirecUrl = requestContext.getRequest().getContextPath() + "/applications/view.page?application=" + application.getId();
       requestContext.setRedirectURL(redirecUrl);
