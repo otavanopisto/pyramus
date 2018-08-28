@@ -480,6 +480,7 @@ public class ApplicationRESTService extends AbstractRESTService {
         else {
           referenceCode = application.getReferenceCode();
         }
+        boolean lineChanged = !StringUtils.equals(line, application.getLine());
         application = applicationDAO.update(
             application,
             line,
@@ -493,6 +494,9 @@ public class ApplicationRESTService extends AbstractRESTService {
             null);
         logger.log(Level.INFO, String.format("Updated %s application with id %s", line, application.getApplicationId()));
         modifiedApplicationPostProcessing(application);
+        if (lineChanged) {
+          ApplicationUtils.sendNotifications(application, httpRequest, null, true, null);
+        }
       }
 
       // Attachments
