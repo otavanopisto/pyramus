@@ -27,7 +27,8 @@
   width: 100%;
 }
 
-.application-content--edit {
+.application-content--edit,
+.application-content--credentials {
   padding: 10px;
 }
 
