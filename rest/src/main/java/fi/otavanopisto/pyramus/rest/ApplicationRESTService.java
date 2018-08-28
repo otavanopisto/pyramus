@@ -69,6 +69,7 @@ import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import net.sf.json.util.JSONUtils;
 
 @Path("/applications")
 @Produces(MediaType.APPLICATION_JSON)
@@ -503,11 +504,24 @@ public class ApplicationRESTService extends AbstractRESTService {
       
       if (formData.has("attachment-name") && formData.has("attachment-description")) {
         ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
-        JSONArray attachmentNames = formData.getJSONArray("attachment-name");
-        JSONArray attachmentDescriptions = formData.getJSONArray("attachment-description");
-        for (int i = 0; i < attachmentNames.size(); i++) {
-          String name = attachmentNames.getString(i);
-          String description = attachmentDescriptions.getString(i);
+        if (JSONUtils.isArray(formData.get("attachment-name"))) {
+          JSONArray attachmentNames = formData.getJSONArray("attachment-name");
+          JSONArray attachmentDescriptions = formData.getJSONArray("attachment-description");
+          for (int i = 0; i < attachmentNames.size(); i++) {
+            String name = attachmentNames.getString(i);
+            String description = attachmentDescriptions.getString(i);
+            ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, name);
+            if (applicationAttachment == null) {
+              logger.warning(String.format("Attachment %s for application %s not found", name, applicationId));
+            }
+            else {
+              applicationAttachmentDAO.updateDescription(applicationAttachment, description);
+            }
+          }
+        }
+        else {
+          String name = formData.getString("attachment-name");
+          String description = formData.getString("attachment-description");
           ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, name);
           if (applicationAttachment == null) {
             logger.warning(String.format("Attachment %s for application %s not found", name, applicationId));
