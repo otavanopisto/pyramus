@@ -79,7 +79,7 @@
         <main class="application-content application-content--edit">
           <c:choose>
             <c:when test="${!empty handlerName && !empty handlerEmail}">
-              <p class="application-editing-information-row"><b>Hakemuksesi käsittelijä</b><br/>${handlerName}<br/>${handlerEmail}</p>
+              <p class="application-editing-information-row-single"><b>Hakemuksesi käsittelijä</b><br/>${handlerName}<br/>${handlerEmail}</p>
               <p class="application-editing-information-link"><a href="/applications/edit.page">Takaisin edelliselle sivulle</a></p>
             </c:when>
             <c:otherwise>

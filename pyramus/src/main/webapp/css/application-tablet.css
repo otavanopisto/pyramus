@@ -70,13 +70,15 @@ body {
   padding: 30px;
 } 
 
-.application-content--edit {
+.application-content--edit,
+.application-content--credentials {
   align-content: flex-start;
   flex-flow: row wrap;
   padding: 10px;
 }
 
-.application-content--edit .application-content__form  {
+.application-content--edit .application-content__form,
+.application-content--credentials .application-content__form  {
   flex-basis: 100%;
   margin: 0;
   max-width: 100%;
@@ -85,12 +87,12 @@ body {
 
 .application-description__credentials,
 .application-description__edit {
-  max-width: 520px;
+  max-width: 560px;
 }
 
 .application-content.application-content--credentials,
 .application-content.application-content--edit {
-  max-width: 520px;
+  max-width: 560px;
 }
 
 .application-content--edit .application-editing-information-row {
@@ -98,6 +100,14 @@ body {
   font-size: 14px;
   margin: 15px;
   max-width: calc(50% - 30px);
+  word-break: break-all;
+}
+
+.application-content--edit .application-editing-information-row-single {
+  flex-basis: calc(100% - 30px);
+  font-size: 14px;
+  margin: 15px;
+  max-width: calc(100% - 30px);
   word-break: break-all;
 }
 

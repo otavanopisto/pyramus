@@ -65,7 +65,7 @@
         </section>
         
         <main class="application-content application-content--credentials">
-          <section class="application-content__form">
+          <section class="application-content__form application-content__form--credentials">
             <form class="application-form">
               <section class="form-section section-create-credentials current">
                 <div class="error-container" style="display:none;"></div>

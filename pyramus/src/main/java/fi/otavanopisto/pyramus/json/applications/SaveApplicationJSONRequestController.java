@@ -12,6 +12,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -23,6 +24,7 @@ import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.util.JSONUtils;
 
 public class SaveApplicationJSONRequestController extends JSONRequestController {
 
@@ -82,11 +84,24 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
       
       if (formData.has("attachment-name") && formData.has("attachment-description")) {
         ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
-        JSONArray attachmentNames = formData.getJSONArray("attachment-name");
-        JSONArray attachmentDescriptions = formData.getJSONArray("attachment-description");
-        for (int i = 0; i < attachmentNames.size(); i++) {
-          String name = attachmentNames.getString(i);
-          String description = attachmentDescriptions.getString(i);
+        if (JSONUtils.isArray(formData.get("attachment-name"))) {
+          JSONArray attachmentNames = formData.getJSONArray("attachment-name");
+          JSONArray attachmentDescriptions = formData.getJSONArray("attachment-description");
+          for (int i = 0; i < attachmentNames.size(); i++) {
+            String name = attachmentNames.getString(i);
+            String description = attachmentDescriptions.getString(i);
+            ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, name);
+            if (applicationAttachment == null) {
+              logger.warning(String.format("Attachment %s for application %s not found", name, applicationId));
+            }
+            else {
+              applicationAttachmentDAO.updateDescription(applicationAttachment, description);
+            }
+          }
+        }
+        else {
+          String name = formData.getString("attachment-name");
+          String description = formData.getString("attachment-description");
           ApplicationAttachment applicationAttachment = applicationAttachmentDAO.findByApplicationIdAndName(applicationId, name);
           if (applicationAttachment == null) {
             logger.warning(String.format("Attachment %s for application %s not found", name, applicationId));
@@ -107,6 +122,7 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
       }
       boolean referenceCodeModified = !StringUtils.equals(application.getLastName(), lastName);
       String referenceCode = referenceCodeModified ? generateReferenceCode(lastName, application.getReferenceCode()) : application.getReferenceCode(); 
+      boolean lineChanged = !StringUtils.equals(line, application.getLine());
       application = applicationDAO.update(
           application,
           line,
@@ -118,6 +134,12 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
           application.getState(),
           application.getApplicantEditable(),
           staffMember);
+      
+      // If line has changed, send notification of a new application 
+      
+      if (lineChanged) {
+        ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, true, null);
+      }
       
       String redirecUrl = requestContext.getRequest().getContextPath() + "/applications/view.page?application=" + application.getId();
       requestContext.setRedirectURL(redirecUrl);

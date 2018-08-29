@@ -577,6 +577,7 @@
     nameElement.attr('name', 'attachment-name');
     nameElement.attr('value', name);
     var descriptionElement = $('<input>').attr('type', 'text');
+    descriptionElement.addClass('attachment-description');
     descriptionElement.attr('name', 'attachment-description');
     descriptionElement.attr('placeholder', 'Kuvaus');
     descriptionElement.attr('value', description);

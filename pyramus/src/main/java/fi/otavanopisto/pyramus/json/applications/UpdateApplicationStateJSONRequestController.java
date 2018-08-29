@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
-import fi.otavanopisto.pyramus.applications.DuplicatePersonException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
@@ -177,7 +176,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           
           // Separate logic for transferring the applicant as student
           
-          Student student = ApplicationUtils.createPyramusStudent(application, staffMember); // throws exception if multiple persons found
+          Student student = ApplicationUtils.createPyramusStudent(application, staffMember); // throws exception if multiple persons or is staff
           PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
           personDAO.updateDefaultUser(student.getPerson(), student);
           String credentialToken = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
@@ -213,11 +212,6 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
       requestContext.addResponseParameter("handler", application.getHandler() == null ? null : application.getHandler().getFullName());
       requestContext.addResponseParameter("handlerId", application.getHandler() == null ? null : application.getHandler().getId());
       requestContext.addResponseParameter("lastModified", application.getLastModified().getTime());
-    }
-    catch (DuplicatePersonException dpe) {
-      requestContext.addResponseParameter("status", "FAIL");
-      requestContext.addResponseParameter("reason", "Käyttäjätiedot täsmäävät useampaan olemassa olevaan käyttäjätiliin");
-      logger.log(Level.SEVERE, "Error updating application state", dpe);
     }
     catch (Exception e) {
       requestContext.addResponseParameter("status", "FAIL");
