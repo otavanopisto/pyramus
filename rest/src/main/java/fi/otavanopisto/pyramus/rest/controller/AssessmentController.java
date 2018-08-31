@@ -9,10 +9,13 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentRequestDAO;
+import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -26,6 +29,9 @@ public class AssessmentController {
   
   @Inject
   private CourseAssessmentRequestDAO courseAssessmentRequestDAO;
+  
+  @Inject
+  private CreditLinkDAO creditLinkDAO;
   
   public CourseAssessment createCourseAssessment(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment){
     // Create course assessment (reusing archived, if any)...
@@ -67,6 +73,10 @@ public class AssessmentController {
   
   public List<CourseAssessment> listByStudent(Student student){
     return courseAssessmentDAO.listByStudent(student);
+  }
+
+  public List<CreditLink> listLinkedCreditsByStudent(Student student) {
+    return creditLinkDAO.listByStudentAndType(student, CreditType.CourseAssessment);
   }
 
   public List<CourseAssessment> listByCourseAndStudent(Course course, Student student){
