@@ -82,7 +82,8 @@
           </div>
         </div>
         <div class="selection-box__description">
-          Aikuislukiossa opiskelet koko lukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Aikuislukiossa voit myös tehdä loppuun aiemmin kesken jääneet toisessa päivä- tai aikuislukiossa aloittamasi lukio-opinnot.
+          Aikuislukiossa opiskelet koko lukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Aikuislukiossa voit myös tehdä loppuun aiemmin kesken jääneet toisessa päivä- tai aikuislukiossa aloittamasi lukio-opinnot.<br/><br/>
+          Aikuislukio on valintasi, jos haluat opiskella lukio-opintoja lähiopintoina Otavan Opiston kampuksella Mikkelissä. Myös asuminen asuntolassa on mahdollista.
         </div>
         <div class="selection-box__link-container">
           <a class="selection-box__link" href="/applications/create.page?line=aikuislukio">Hae Aikuislukioon</a>
