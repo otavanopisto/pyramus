@@ -57,6 +57,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -2167,6 +2168,25 @@ public class StudentRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(assessments)).build();
   }
 
+  @Path("/students/{STUDENTID:[0-9]*}/linkedAssessments/")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentsLinkedCourseAssessments(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    List<CreditLink> assessments = assessmentController.listLinkedCreditsByStudent(student);
+    
+    return Response.ok(objectFactory.createModel(assessments)).build();
+  }
+
   @Path("/students/{STUDENTID:[0-9]*}/latestCourseAssessment/")
   @GET
   @RESTPermit(handling = Handling.INLINE)
@@ -2983,6 +3003,24 @@ public class StudentRESTService extends AbstractRESTService {
     }
     
     List<TransferCredit> transferCredits = studentController.listStudentTransferCredits(student);
+    
+    return Response.status(Status.OK).entity(objectFactory.createModel(transferCredits)).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/linkedTransferCredits")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listStudentsLinkedTransferCredits(@PathParam("STUDENTID") Long studentId) {
+    Student student = studentController.findStudentById(studentId);
+    Status studentStatus = checkStudent(student);
+    if (studentStatus != Status.OK)
+      return Response.status(studentStatus).build();
+
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.LIST_STUDENT_TRANSFER_CREDITS, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    List<CreditLink> transferCredits = studentController.listStudentLinkedTransferCredits(student);
     
     return Response.status(Status.OK).entity(objectFactory.createModel(transferCredits)).build();
   }

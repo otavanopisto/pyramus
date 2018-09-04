@@ -59,13 +59,13 @@
         <section class="application-description application-description--credentials">
           <div class="application-description__credentials">
             <div class="application-description__credentials-header">
-              Muikku-tunnuksien luonti
+              Muikku-tunnusten luonti
             </div>
           </div>
         </section>
         
         <main class="application-content application-content--credentials">
-          <section class="application-content__form">
+          <section class="application-content__form application-content__form--credentials">
             <form class="application-form">
               <section class="form-section section-create-credentials current">
                 <div class="error-container" style="display:none;"></div>

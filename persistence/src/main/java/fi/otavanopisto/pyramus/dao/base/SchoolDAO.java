@@ -31,6 +31,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.SchoolField;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariable;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.SchoolVariable_;
+import fi.otavanopisto.pyramus.domainmodel.base.School_;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
 
@@ -58,6 +59,21 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
     school.setContactInfo(contactInfo);
     school.setBillingDetails(billingDetails);
     return persist(school);
+  }
+  
+  public List<School> listByNameLowercase(String name) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<School> criteria = criteriaBuilder.createQuery(School.class);
+    Root<School> root = criteria.from(School.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(
+        criteriaBuilder.lower(root.get(School_.name)), name.toLowerCase())
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
 
   /**

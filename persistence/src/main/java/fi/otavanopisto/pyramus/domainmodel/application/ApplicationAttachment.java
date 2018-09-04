@@ -45,6 +45,14 @@ public class ApplicationAttachment {
     this.size = size;
   }
 
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="ApplicationAttachment")
   @TableGenerator(name="ApplicationAttachment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -59,6 +67,8 @@ public class ApplicationAttachment {
   @Column (nullable = false)
   @NotEmpty
   private String name;
+  
+  private String description;
 
   @NotNull
   @Column (nullable = false)

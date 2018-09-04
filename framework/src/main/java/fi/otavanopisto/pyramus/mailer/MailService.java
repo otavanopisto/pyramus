@@ -44,17 +44,6 @@ public class MailService {
   @Lock(LockType.READ)
   public void onMailEvent(@Observes MailEvent event) {
     try {
-      if (Boolean.valueOf(System.getProperty("pyramus-mailer-debug"))) {
-        System.out.println("Debug mail");
-        System.out.println("From: " + event.getFrom());
-        System.out.println("To: " + toCDT(event.getTo()));
-        System.out.println("Cc: " + toCDT(event.getCc()));
-        System.out.println("Bcc: " + toCDT(event.getBcc()));
-        System.out.println("Subject: " + event.getSubject());
-        System.out.println("Content: " + event.getContent());
-        return;
-      }
-      
       String jndiName = event.getJndiName();
       String mimeType = event.getMimeType();
       String from = event.getFrom();
@@ -153,20 +142,6 @@ public class MailService {
       addresses[i++] = new InternetAddress(email);
     }
     return addresses;
-  }
-  
-  private String toCDT(Set<String> set) {
-    if (set == null || set.isEmpty()) {
-      return "-";
-    }
-    StringBuilder sb = new StringBuilder();
-    for (String s : set) {
-      if (sb.length() > 0) {
-        sb.append(", ");
-      }
-      sb.append(s);
-    }
-    return sb.toString();
   }
 
 }

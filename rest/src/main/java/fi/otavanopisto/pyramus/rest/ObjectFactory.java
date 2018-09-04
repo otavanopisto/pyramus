@@ -60,6 +60,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseType;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
@@ -271,6 +272,28 @@ public class ObjectFactory {
             
             return new fi.otavanopisto.pyramus.rest.model.TransferCredit(entity.getId(), studentId, date, gradeId, gradigScaleId, entity.getVerbalAssessment(), 
                 assessorId, entity.getArchived(), entity.getCourseName(), entity.getCourseNumber(), length, lengthUnitId, schoolId, subjectId, optionality, curriculumId, offCurriculum);
+          }
+        },
+        
+        new Mapper<CreditLink>(){
+          @Override
+          public Object map(CreditLink entity) {
+            Long studentId = entity.getStudent() != null ? entity.getStudent().getId() : null;
+            
+            if (entity.getCredit() != null) {
+              switch (entity.getCredit().getCreditType()) {
+                case CourseAssessment:
+                  fi.otavanopisto.pyramus.rest.model.CourseAssessment credit = (fi.otavanopisto.pyramus.rest.model.CourseAssessment) createModel(entity.getCredit());
+                  return new fi.otavanopisto.pyramus.rest.model.CreditLinkCourseAssessment(entity.getId(), studentId, credit);
+                case TransferCredit:
+                  fi.otavanopisto.pyramus.rest.model.TransferCredit tc = (fi.otavanopisto.pyramus.rest.model.TransferCredit) createModel(entity.getCredit());
+                  return new fi.otavanopisto.pyramus.rest.model.CreditLinkTransferCredit(entity.getId(), studentId, tc);
+                default:
+                  return null;
+              }
+            }
+            
+            return null;
           }
         },
         

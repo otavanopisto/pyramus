@@ -93,3 +93,12 @@
   background: url('../gfx/icons/32x32/actions/remove.png') center center no-repeat;
   background-size: contain;
 }
+
+.application-file__description {
+  display: block;
+  margin: 10px 0 0;
+}
+
+.attachment-description {
+  border: 0;
+}
