@@ -1,55 +1,22 @@
 package fi.otavanopisto.pyramus.domainmodel.matriculation;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
-
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderColumn;
-import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
-import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
-import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
-import fi.otavanopisto.pyramus.domainmodel.base.Tag;
-import fi.otavanopisto.pyramus.domainmodel.students.Student;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
 @Entity
 @Indexed
@@ -85,6 +52,70 @@ public class MatriculationExamAttendance implements ArchivableEntity {
   public void setId(Long id) {
     this.id = id;
   }
+  
+  public MatriculationExamEnrollment getEnrollment() {
+    return enrollment;
+  }
+
+  public void setEnrollment(MatriculationExamEnrollment enrollment) {
+    this.enrollment = enrollment;
+  }
+
+  public MatriculationExamSubject getSubject() {
+    return subject;
+  }
+
+  public void setSubject(MatriculationExamSubject subject) {
+    this.subject = subject;
+  }
+
+  public Boolean isMandatory() {
+    return mandatory;
+  }
+
+  public void setMandatory(Boolean mandatory) {
+    this.mandatory = mandatory;
+  }
+
+  public Boolean isRepeat() {
+    return repeat;
+  }
+
+  public void setRepeat(Boolean repeat) {
+    this.repeat = repeat;
+  }
+
+  public Integer getYear() {
+    return year;
+  }
+
+  public void setYear(Integer year) {
+    this.year = year;
+  }
+
+  public MatriculationExamTerm getTerm() {
+    return term;
+  }
+
+  public void setTerm(MatriculationExamTerm term) {
+    this.term = term;
+  }
+
+  public MatriculationExamAttendanceStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(MatriculationExamAttendanceStatus status) {
+    this.status = status;
+  }
+
+  public MatriculationExamGrade getGrade() {
+    return grade;
+  }
+
+  public void setGrade(MatriculationExamGrade grade) {
+    this.grade = grade;
+  }
 
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamAttendance")  
@@ -93,21 +124,20 @@ public class MatriculationExamAttendance implements ArchivableEntity {
   private Long id;
   
   @ManyToOne
-  @JoinColumn (name = "application")
-  private MatriculationExamApplication application;
+  private MatriculationExamEnrollment enrollment;
   
   @Column
   @Enumerated(EnumType.STRING)
   private MatriculationExamSubject subject;
   
   @Column
-  private boolean mandatory;
+  private Boolean mandatory;
+  
+  @Column(name = "repeat_")
+  private Boolean repeat;
   
   @Column
-  private boolean repeat;
-  
-  @Column
-  private int year;
+  private Integer year;
   
   @Column
   @Enumerated(EnumType.ORDINAL)

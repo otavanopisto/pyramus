@@ -1,59 +1,29 @@
 package fi.otavanopisto.pyramus.domainmodel.matriculation;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderColumn;
-import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FullTextFilterDef;
-import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.SortableField;
-import org.hibernate.search.annotations.Store;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
-import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
-import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
-import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
 
 @Entity
 @Indexed
-public class MatriculationExamApplication implements ArchivableEntity {
+public class MatriculationExamEnrollment implements ArchivableEntity {
 
   /**
    * Returns the unique identifier of this object.
@@ -130,11 +100,11 @@ public class MatriculationExamApplication implements ArchivableEntity {
     this.city = city;
   }
 
-  public Integer getNationalStudentNumber() {
+  public Long getNationalStudentNumber() {
     return nationalStudentNumber;
   }
 
-  public void setNationalStudentNumber(Integer nationalStudentNumber) {
+  public void setNationalStudentNumber(Long nationalStudentNumber) {
     this.nationalStudentNumber = nationalStudentNumber;
   }
 
@@ -182,9 +152,50 @@ public class MatriculationExamApplication implements ArchivableEntity {
     this.id = id;
   }
 
+  public SchoolType getEnrollAs() {
+    return enrollAs;
+  }
+
+  public void setEnrollAs(SchoolType enrollAs) {
+    this.enrollAs = enrollAs;
+  }
+
+  public String getLocation() {
+    return location;
+  }
+
+  public void setLocation(String location) {
+    this.location = location;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
+  public boolean isCanPublishName() {
+    return canPublishName;
+  }
+
+  public void setCanPublishName(boolean canPublishName) {
+    this.canPublishName = canPublishName;
+  }
+
+  public MatriculationExamEnrollmentState getState() {
+    return state;
+  }
+
+  public void setState(MatriculationExamEnrollmentState state) {
+    this.state = state;
+  }
+  
+
   @Id
-  @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamApplication")  
-  @TableGenerator(name="MatriculationExamApplication", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
+  @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
+  @TableGenerator(name="MatriculationExamEnrollment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   @DocumentId 
   private Long id;
   
@@ -210,7 +221,7 @@ public class MatriculationExamApplication implements ArchivableEntity {
   private String city;
   
   @Column
-  private Integer nationalStudentNumber;
+  private Long nationalStudentNumber;
   
   @Column
   private String guider;
@@ -235,9 +246,11 @@ public class MatriculationExamApplication implements ArchivableEntity {
   private boolean canPublishName;
 
   @ManyToOne
-  @JoinColumn (name = "student")
-  @IndexedEmbedded
   private Student student;
+  
+  @Column
+  @Enumerated(EnumType.STRING)
+  private MatriculationExamEnrollmentState state;
 
   @NotNull
   @Column(nullable = false)

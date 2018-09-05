@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>
+  CREATE TABLE `MatriculationExamEnrollment` (
+    `id` BIGINT PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL,
+    `ssn` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255) NOT NULL,
+    `phone` VARCHAR(255) NOT NULL,
+    `address` VARCHAR(255) NOT NULL,
+    `postalCode` VARCHAR(255) NOT NULL,
+    `city` VARCHAR(255) NOT NULL,
+    `nationalStudentNumber` BIGINT,
+    `guider` VARCHAR(255) NOT NULL,
+    `enrollAs` VARCHAR(255) NOT NULL,
+    `numMandatoryCourses` INTEGER NOT NULL,
+    `restartExam` BIT(1) NOT NULL,
+    `location` VARCHAR(255) NOT NULL,
+    `message` VARCHAR(1024) NOT NULL,
+    `canPublishName` BIT(1) NOT NULL,
+    `student_id` BIGINT,
+    `state` VARCHAR(255) NOT NULL,
+    `archived` BIT(1) NOT NULL,
+    `version` BIGINT NOT NULL,
+    CONSTRAINT `MatriculationExamEnrollment_student_id`
+      FOREIGN KEY (`student_id`) REFERENCES `Student` (`id`)
+  );
+  </sql>
+
+  <sql>
+  CREATE TABLE `MatriculationExamAttendance` (
+    `id` BIGINT PRIMARY KEY,
+    `enrollment_id` BIGINT NOT NULL,
+    `subject` VARCHAR(255) NOT NULL,
+    `mandatory` BIT(1) NOT NULL,
+    `repeat` BIT(1) NOT NULL,
+    `year` INTEGER NOT NULL,
+    `term` INTEGER NOT NULL,
+    `status` VARCHAR(255) NOT NULL,
+    `grade` VARCHAR(255) NOT NULL,
+    `archived` BIT(1) NOT NULL,
+    `version` BIGINT NOT NULL,
+    CONSTRAINT `MatriculationExamAttendance_enrollment_id`
+      FOREIGN KEY (`enrollment_id`) REFERENCES `Application` (`id`)
+  );
+  </sql>
+
+</update>

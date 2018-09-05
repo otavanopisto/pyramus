@@ -8,18 +8,17 @@
       <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
       <property name="hibernate.current_session_context_class" value="jta" />
       <property name="hibernate.generate_statistics" value="true" />
-      <property name="hibernate.show_sql" value="false" />
 
       <!-- Cache -->
 
-      <property name="hibernate.cache.use_second_level_cache" value="true" />
-      <property name="hibernate.cache.use_query_cache" value="true" />
-      <property name="hibernate.cache.infinispan.statistics.enabled" value="true"/>
+      <property name="hibernate.cache.use_second_level_cache" value="false" />
+      <property name="hibernate.cache.use_query_cache" value="false" />
+      <property name="hibernate.cache.infinispan.statistics.enabled" value="false"/>
       
       <!-- Statistics and Debugging -->
 
-      <property name="hibernate.format_sql" value="false" />
-      <property name="hibernate.show_sql" value="false" />
+      <property name="hibernate.format_sql" value="true" />
+      <property name="hibernate.show_sql" value="true" />
       <property name="hibernate.generate_statistics" value="true" />
       <property name="hibernate.session.events.log" value="false" />
       <property name="hibernate.hbm2ddl.auto" value="validate" />
