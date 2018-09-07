@@ -6,16 +6,24 @@ import java.util.List;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 
 public class SearchStudentsDialogViewController extends PyramusViewController {
 
   public void process(PageRequestContext requestContext) {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
-    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    
+    User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
+
+    List<StudyProgramme> studyProgrammes = UserUtils.canAccessAllOrganizations(loggedUser) ? 
+        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), false);
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
     
     requestContext.getRequest().setAttribute("studyProgrammes", studyProgrammes);
