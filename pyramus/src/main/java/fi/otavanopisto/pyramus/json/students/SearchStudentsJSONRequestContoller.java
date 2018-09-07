@@ -134,7 +134,7 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
         String inactiveStudyProgrammes = "";
   
         for (Student student1 : studentList2) {
-          if (student1.getStudyProgramme() != null) {
+          if (student1.getStudyProgramme() != null && UserUtils.canAccessOrganization(loggedUser, student1.getOrganization())) {
             if (!student1.getHasFinishedStudies()) {
               if (activeStudyProgrammes.length() == 0)
                 activeStudyProgrammes = student1.getStudyProgramme().getName();
