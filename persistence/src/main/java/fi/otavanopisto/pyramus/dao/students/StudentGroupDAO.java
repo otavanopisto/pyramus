@@ -336,20 +336,14 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     Root<StudentGroup> root = criteria.from(StudentGroup.class);
 
     List<Predicate> predicates = new ArrayList<Predicate>();
-    
-    if (organization != null) {
-      predicates.add(criteriaBuilder.equal(root.get(StudentGroup_.organization), organization));
-    }
+    predicates.add(criteriaBuilder.equal(root.get(StudentGroup_.organization), organization));
     
     if (archived != null) {
       predicates.add(criteriaBuilder.equal(root.get(StudentGroup_.archived), archived));
     }
     
     criteria.select(root);
-    
-    if (!predicates.isEmpty()) {
-      criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
-    }
+    criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
     
     TypedQuery<StudentGroup> query = entityManager.createQuery(criteria);
     
