@@ -17,6 +17,8 @@ import fi.otavanopisto.pyramus.rest.model.StudentGroup;
 
 public class StudentGroupTestsIT extends AbstractRESTServiceTest {
 
+  private static final Long TEST_ORGANIZATION_ID = 1l;
+
   @Test
   public void testCreateStudentGroup() {
     StudentGroup entity = new StudentGroup(
@@ -30,7 +32,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         null, 
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE,
-        null, // organizationId
+        TEST_ORGANIZATION_ID, // organizationId
         Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
@@ -120,7 +122,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         null, 
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE,
-        null, // organizationId
+        TEST_ORGANIZATION_ID, // organizationId
         Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
@@ -153,7 +155,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
           null, 
           Arrays.asList("tag2", "tag3"), 
           Boolean.FALSE,
-          null, // organizationId
+          TEST_ORGANIZATION_ID, // organizationId
           Boolean.FALSE);
       
       given().headers(getAuthHeaders())
@@ -193,7 +195,7 @@ public class StudentGroupTestsIT extends AbstractRESTServiceTest {
         null, 
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE,
-        null, // organizationId
+        TEST_ORGANIZATION_ID, // organizationId
         Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
