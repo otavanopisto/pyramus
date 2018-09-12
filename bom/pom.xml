@@ -316,12 +316,6 @@
 
 			<dependency>
 				<groupId>fi.otavanopisto.pyramus</groupId>
-				<artifactId>webservices-plugin</artifactId>
-				<version>${pyramus.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>fi.otavanopisto.pyramus</groupId>
 				<artifactId>smvcj</artifactId>
 				<version>${pyramus.version}</version>
 			</dependency>
