@@ -290,7 +290,16 @@ public class Course {
     this.curriculumIds = curriculumIds;
   }
 
+  public Long getOrganizationId() {
+    return organizationId;
+  }
+
+  public void setOrganizationId(Long organizationId) {
+    this.organizationId = organizationId;
+  }
+
   private Long id;
+  private Long organizationId;
   private String name;
   private OffsetDateTime created;
   private OffsetDateTime lastModified;
