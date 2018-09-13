@@ -21,6 +21,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 
 @Dependent
 @Stateless
@@ -56,16 +57,21 @@ public class StudentGroupController {
     return tag;
   }
   
-  public List<StudentGroup> listStudentGroups(Organization organization, Integer firstResult, Integer maxResults) {
-    return studentGroupDAO.listByOrganization(organization, firstResult, maxResults, null);
-  }
-
-  public List<StudentGroup> listUnarchivedStudentGroups(Organization organization) {
-    return studentGroupDAO.listByOrganization(organization, null, null, false);
-  }
-
-  public List<StudentGroup> listUnarchivedStudentGroups(Organization organization, Integer firstResult, Integer maxResults) {
-    return studentGroupDAO.listByOrganization(organization, firstResult, maxResults, false);
+  public List<StudentGroup> listAccessibleStudentGroups(User user, Integer firstResult, Integer maxResults, boolean filterArchived) {
+    if (UserUtils.canAccessAllOrganizations(user)) {
+      if (filterArchived) {
+        return studentGroupDAO.listUnarchived(firstResult, maxResults);
+      } else {
+        return studentGroupDAO.listAll(firstResult, maxResults);
+      }
+    } else {
+      Organization organization = user.getOrganization();
+      if (filterArchived) {
+        return studentGroupDAO.listByOrganization(organization, firstResult, maxResults, false);
+      } else {
+        return studentGroupDAO.listByOrganization(organization, firstResult, maxResults, null);
+      }
+    }
   }
   
   public StudentGroup findStudentGroupById(Long id) {
