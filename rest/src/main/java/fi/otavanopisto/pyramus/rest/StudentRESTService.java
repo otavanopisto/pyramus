@@ -1006,12 +1006,7 @@ public class StudentRESTService extends AbstractRESTService {
         studentGroups = studentGroupController.listStudentGroupsByMember(user, firstResult, maxResults);
       }
     } else {
-      Organization organization = UserUtils.canAccessAllOrganizations(user) ? null : user.getOrganization();
-      if (filterArchived) {
-        studentGroups = studentGroupController.listUnarchivedStudentGroups(organization, firstResult, maxResults);
-      } else {
-        studentGroups = studentGroupController.listStudentGroups(organization, firstResult, maxResults);
-      }
+      studentGroups = studentGroupController.listAccessibleStudentGroups(user, firstResult, maxResults, filterArchived);
     }
     
     if (studentGroups.isEmpty()) {
