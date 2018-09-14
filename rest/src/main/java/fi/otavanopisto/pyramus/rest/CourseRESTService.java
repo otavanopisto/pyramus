@@ -62,6 +62,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
@@ -144,6 +145,11 @@ public class CourseRESTService extends AbstractRESTService {
 
     Module module = moduleController.findModuleById(courseEntity.getModuleId());
     Organization organization = organizationController.findById(courseEntity.getOrganizationId());
+    User user = sessionController.getUser();
+    if (!UserUtils.canAccessOrganization(user, organization)) {
+      logger.warning(String.format("User %d has no access to organization %d", user.getId(), organization.getId()));
+      return Response.status(Status.FORBIDDEN).build();
+    }
     String name = courseEntity.getName();
     String nameExtension = courseEntity.getNameExtension();
     CourseState state = courseController.findCourseStateById(courseEntity.getStateId());
@@ -301,6 +307,11 @@ public class CourseRESTService extends AbstractRESTService {
     Organization organization = organizationController.findById(courseEntity.getOrganizationId());
     if (organization == null) {
       return Response.status(Status.NOT_FOUND).entity(String.format("Organization with id %d not found", courseEntity.getOrganizationId())).build();
+    }
+    User user = sessionController.getUser();
+    if (!UserUtils.canAccessOrganization(user, organization)) {
+      logger.warning(String.format("User %d has no access to organization %d", user.getId(), organization.getId()));
+      return Response.status(Status.FORBIDDEN).build();
     }
     
     Integer courseNumber = courseEntity.getCourseNumber();
