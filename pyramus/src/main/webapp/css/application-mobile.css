@@ -358,15 +358,17 @@ body {
 }
 
 .application-content__information-page-specific {
+  display: none;
   margin: 0 0 10px;
 }
 
 .application-content__information-line-specific {
+  display: none;
   margin: 10px 0 0;
 }
 
-.application-content__information-page-specific p:first-child,
-.application-content__information-line-specific p:first-child {
+.application-content__information-page-specific-non-summary,
+.application-content__information-page-specific-summary {
   margin: 0 0 10px;
 }
 

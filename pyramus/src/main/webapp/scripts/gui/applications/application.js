@@ -402,6 +402,8 @@
     $(section).addClass('current').show();
     $('.form-navigation').toggle(!$(section).hasClass('section-done'));
     $('.application-content__information-page-specific').toggle(!$(section).hasClass('section-done'));
+    $('.application-content__information-page-specific-non-summary').toggle(!$(section).hasClass('section-summary'));
+    $('.application-content__information-page-specific-summary').toggle($(section).hasClass('section-summary'));
     // toggle previous section button
     var canNavigate = false;
     for (var i = currentIndex() - 1; i >= 0; i--) {

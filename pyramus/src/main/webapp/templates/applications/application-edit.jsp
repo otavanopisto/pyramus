@@ -87,7 +87,8 @@
 
       <section class="application-content__information">
         <div class="application-content__information-page-specific">
-          <p>Klikkaa Seuraava-painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>
+          <p class="application-content__information-page-specific-non-summary">Klikkaa Seuraava-painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>
+          <p class="application-content__information-page-specific-summary">Klikkaa Lähetä-painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>
           <p><b>Huom!</b> Punaisella tähdellä merkityt kentät ovat pakollisia.</p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
