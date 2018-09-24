@@ -168,7 +168,8 @@ input[type="checkbox"]:checked::after {
 }
 
 .privacy-policy,
-.course-fees {
+.course-fees,
+.nettilukio-promise {
   border-radius: 5px;
   bottom: 20px;
   box-shadow: 0 0 50px rgba(0,0,0,0.2);
@@ -183,7 +184,8 @@ input[type="checkbox"]:checked::after {
 }
 
 .privacy-policy__close,
-.course-fees__close {
+.course-fees__close,
+.nettilukio-promise__close {
   background-color: transparent;
   background-image: url('../gfx/icons/48x48/actions/close.png');
   border: 0;

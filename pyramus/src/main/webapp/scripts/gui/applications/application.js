@@ -212,14 +212,16 @@
     
     // Course fees
 
-    $('.internetix-course-fees-link').on('click', function() {
+    $('.internetix-course-fees-link, .course-fees__close, .course-fees-overlay').on('click', function() {
       $('.course-fees-overlay').toggle();
       $('.course-fees').toggle();
     });
     
-    $('.course-fees__close, .course-fees-overlay').on('click', function() {
-      $('.course-fees-overlay').toggle();
-      $('.course-fees').toggle();
+    // Study promises
+
+    $('.nettilukio-promise-link, .nettilukio-promise__close, .nettilukio-promise-overlay').on('click', function() {
+      $('.nettilukio-promise-overlay').toggle();
+      $('.nettilukio-promise').toggle();
     });
     
     // Page information

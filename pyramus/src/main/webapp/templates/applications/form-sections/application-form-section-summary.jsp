@@ -43,4 +43,31 @@
         </div>
       </div>
     </div>
+
+    <div class="summary-container field-nettilukio-promise dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-nettilukio-promise" name="field-nettilukio-promise" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        </div>
+        <div class="field-row-label">
+          <label for="field-nettilukio-promise" class="required">Ymmärrän, että verkko-oppimisympäristö Muikussa tekemäni itsenäiset verkkokurssisuoritukset ovat näyttöjä omasta osaamisestani ja sitoudun tekemään tehtävät itsenäisesti. Ymmärrän myös, että opiskeluoikeus edellyttää lukiolain nojalla opintojen säännöllistä etenemistä (Lukiolaki 714/2018, 24 § ja 25 §). <a href="#" class="nettilukio-promise-link">Opiskelun säännöt Nettilukiossa</a>.</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="nettilukio-promise-overlay">
+    </div>
+    <div class="nettilukio-promise">
+      <div class="nettilukio-promise__close"></div>
+      <h3>Kurssin itsenäinen suorittaminen</h3>
+      <p>Nettilukion kurssien arvioitavia tehtäviä tehdessä on tärkeä muistaa, että vastauksesi osoittavat juuri sinun henkilökohtaista osaamistasi: vastauksiin sisältyvät asiat, esimerkit, tekstin rakentaminen ovat näyttöjä siitä, miten sinä olet asian hahmottanut ja ymmärtänyt. Arvioitavat tehtävät muodostavat pohjan henkilökohtaisen kurssisuorituksesi arvioinnille.</p>
+      <p>Arvioitavien tehtävien osalta yhteistyö toisen opiskelijan kanssa ei lähtökohtaisesti ole mahdollista, ellei opettaja ole erikseen tehtävänannossa näin ohjeistanut tai ellei opettajan kanssa sovita tästä ennen kurssin suorittamista.</p>
+      <p>Mikäli sinulla kuitenkin olisi mahdollisuus opiskella verkkokursseja toisen opiskelijan kanssa yhdessä, se on tietyin reunaehdoin sallittua. Tällaisessa tilanteessa on tärkeää että ilmaiset tämän opettajalle jo kurssin alussa ja tuot tämän esiin esim. oppimispäiväkirjassa erittelemällä tekemistä siten, että sinun osuutesi oppimisesta tulee näkyviin. Arvioinnin kannalta oppimisprosessin läpinäkyvyys on tärkeää.</p>
+      <p>Kurssin materiaalien läpikäyminen ja harjoitustehtävien tekeminen jonkun toisen tuella on mahdollista. Jos tarvitset apua arvioitavien tehtävien tekemisessä, käänny opettajan puoleen tai kysy apua oppiainekohtaisessa FB-ryhmässä. Siten opettajan on mahdollista nähdä, millaista apua olet saanut. HUOM! Avun pyytäminen ei vaikuta arvosanaasi alentavasti.</p>
+      <p><b>Muista, että kurssilla annettavat näytöt osaamisesta (arvioitavat tehtävät, oppimispäiväkirja) ovat henkilökohtaisia!</b></p>
+      <h3>Opintojen eteneminen</h3>
+      <p>Tärkeää on, että opintosi meillä etenevät. Suositus on, että jätät ensimmäisen kurssin arvioitavaksi kolmen kuukauden kuluessa opintojesi aloituksesta ja vuosittain opintosi etenevät vähintään viiden kurssin verran. Opintojesi tulee mielellään edetä tasaisesti, niin ettei välillä ole useita kuukausia ilman kurssisuoritusta.</p>
+      <p>Jos sinulle tulee jostakin syystä tilanne, ettet pysty opiskelemaan tai haluat erota nettilukiosta, ota heti yhteyttä omaan ohjaajaasi.</p>
+    </div>
+  
   </section>
