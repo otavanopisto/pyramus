@@ -73,6 +73,22 @@ body {
   padding: 0 0 20px;
 }
 
+.application-selection__section-container {
+  align-content: flex-start;
+  display: flex;
+  flex-basis: 100%;
+  flex-flow: row wrap;
+  flex-grow: 1;
+  flex-shrink: 1;
+  padding: 0 0 20px;
+}
+
+.application-selection__section-header {
+  font-size: 18px;
+  font-weight: 400;
+  margin: 10px 15px;
+}
+
 .selection-box {
   align-items: flex-start;
   background-color: #fff;

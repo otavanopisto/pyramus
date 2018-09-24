@@ -63,6 +63,10 @@
   padding: 30px;
 }
 
+.application-selection__section-header {
+  font-size: 24px;
+}
+
 .application-description__line-header,
 .application-description__credentials-header,
 .application-description__edit-header {
@@ -74,7 +78,7 @@
 }
 
 .application-header__show-content-information {
-  display: none;  
+  display: none;
 }
 
 .application-content__information {

@@ -127,6 +127,11 @@ body {
   padding: 20px;
 }
 
+.application-selection__section-header {
+  font-size: 22px;
+  margin: 10px 10px 20px;
+}
+
 .application-description__line-header,
 .application-description__credentials-header,
 .application-description__edit-header {
