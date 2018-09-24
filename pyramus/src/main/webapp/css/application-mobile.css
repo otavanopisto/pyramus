@@ -429,7 +429,9 @@ b {
 /* Course fees and study promises */
 
 .course-fees-overlay,
-.nettilukio-promise-overlay {
+.nettilukio-promise-overlay,
+.aineopiskelu-promise-overlay,
+.nettipk-promise-overlay {
   display: none;
   position: fixed;
   top: 0;
@@ -442,7 +444,9 @@ b {
 }
 
 .course-fees,
-.nettilukio-promise {
+.nettilukio-promise,
+.aineopiskelu-promise,
+.nettipk-promise {
   display: none;
   background: #fff;
   border: 3px solid #8ed2de;
@@ -459,7 +463,9 @@ b {
 }
 
 .course-fees__close,
-.nettilukio-promise__close {
+.nettilukio-promise__close,
+.aineopiskelu-promise__close,
+.nettipk-promise__close {
   background-color: #009fe3;
   background-image: url('../gfx/icons/48x48/actions/close.png');
   background-size: contain;

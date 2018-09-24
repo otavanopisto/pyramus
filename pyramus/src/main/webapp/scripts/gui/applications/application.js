@@ -223,6 +223,16 @@
       $('.nettilukio-promise-overlay').toggle();
       $('.nettilukio-promise').toggle();
     });
+
+    $('.aineopiskelu-promise-link, .aineopiskelu-promise__close, .aineopiskelu-promise-overlay').on('click', function() {
+      $('.aineopiskelu-promise-overlay').toggle();
+      $('.aineopiskelu-promise').toggle();
+    });
+
+    $('.nettipk-promise-link, .nettipk-promise__close, .nettipk-promise-overlay').on('click', function() {
+      $('.nettipk-promise-overlay').toggle();
+      $('.nettipk-promise').toggle();
+    });
     
     // Page information
     

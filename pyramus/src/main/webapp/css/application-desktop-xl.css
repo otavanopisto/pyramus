@@ -71,7 +71,9 @@
 
 .privacy-policy,
 .course-fees,
-.nettilukio-promise {
+.nettilukio-promise,
+.aineopiskelu-promise,
+.nettipk-promise {
   margin: 0 0 0 -400px;
   max-width: 800px;
 }
