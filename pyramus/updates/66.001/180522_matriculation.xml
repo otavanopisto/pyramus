@@ -46,4 +46,14 @@
   );
   </sql>
 
+  <sql>
+  CREATE TABLE `MatriculationExam` (
+    `id` BIGINT PRIMARY KEY,
+    `starts` DATETIME NOT NULL,
+    `ends` DATETIME NOT NULL,
+    `archived` BIT(1) NOT NULL,
+    `version` BIGINT NOT NULL,
+  );
+  </sql>
+
 </update>
