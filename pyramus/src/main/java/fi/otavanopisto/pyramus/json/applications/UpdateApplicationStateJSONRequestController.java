@@ -14,6 +14,7 @@ import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
@@ -182,6 +183,11 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String credentialToken = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
           application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
           ApplicationUtils.mailCredentialsInfo(requestContext.getRequest(), student, application);
+        }
+        else if (applicationState == ApplicationState.REJECTED && application.getState() == ApplicationState.REGISTERED_AS_STUDENT) {
+          Student student = application.getStudent();
+          StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+          studentDAO.archive(student);
         }
         
         // Update the actual application state
