@@ -22,7 +22,7 @@
     </header>
   
     <section class="application-description">
-      <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
+      <div class="application-description__line application-description__line--selection">
         <div class="application-description__line-header">
           Hae opiskelijaksi <span class="application-description__line-label">Otavan Opistoon</span>
         </div>
