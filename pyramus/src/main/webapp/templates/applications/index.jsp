@@ -33,7 +33,7 @@
     <main class="application-selection">
 
       <div class="application-selection__section-wrapper">
-        <div class="application-selection__section-header">Otavan Opiston <b>liikelaitoksen verkkokoulutukset</b></div>
+        <div class="application-selection__section-header">Otavan Opiston liikelaitoksen verkkokoulutukset</div>
         <div class="application-selection__section-container">
           <div class="selection-box selection-box--nettilukio">
             <div class="selection-box__header-image">
@@ -81,7 +81,7 @@
       </div>
 
       <div class="application-selection__section-wrapper">
-        <div class="application-selection__section-header">Otavan Opiston <b>lähikoulutukset</b></div>
+        <div class="application-selection__section-header">Otavan Opiston lähikoulutukset</div>
         <div class="application-selection__section-container">
           <div class="selection-box selection-box--aikuislukio">
             <div class="selection-box__header-image">
