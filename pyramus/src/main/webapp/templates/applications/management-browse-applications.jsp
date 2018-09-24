@@ -174,9 +174,9 @@
               <option value="nettilukio">Nettilukio</option>
               <option value="nettipk">Nettiperuskoulu</option>
               <option value="aikuislukio">Aikuislukio</option>
-              <option value="bandilinja">Bändilinja</option>
+              <!-- <option value="bandilinja">Bändilinja</option>
               <option value="kasvatustieteet">Kasvatustieteen linja</option>
-              <option value="laakislinja">Lääkislinja</option>
+              <option value="laakislinja">Lääkislinja</option> -->
               <option value="mk">Maahanmuuttajakoulutukset</option>
             </select>
           </div>
