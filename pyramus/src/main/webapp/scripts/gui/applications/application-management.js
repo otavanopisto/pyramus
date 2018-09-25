@@ -131,7 +131,7 @@
     // Existing students (unless student already created)
     
     var currentState = $('#info-application-state-value').attr('data-state');
-    if (currentState != 'TRANSFERRED_AS_STUDENT' && currentState != 'REGISTERED_AS_STUDENT') {
+    if (currentState != 'TRANSFERRED_AS_STUDENT' && currentState != 'REGISTERED_AS_STUDENT' && currentState != 'REGISTRATION_CHECKED' && currentState != 'REJECTED') {
       $.ajax({
         url: '/applications/listexistingpersons.json',
         type: "GET",
