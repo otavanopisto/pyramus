@@ -65,7 +65,7 @@
               <option value="APPROVED_BY_SCHOOL" <c:if test="${notification.state == 'APPROVED_BY_SCHOOL'}">selected="selected"</c:if>>Hyväksytty</option>
               <option value="APPROVED_BY_APPLICANT" <c:if test="${notification.state == 'APPROVED_BY_APPLICANT'}">selected="selected"</c:if>>Opiskelupaikka vastaanotettu</option>
               <option value="TRANSFERRED_AS_STUDENT" <c:if test="${notification.state == 'TRANSFERRED_AS_STUDENT'}">selected="selected"</c:if>>Siirretty opiskelijaksi</option>
-              <option value="REGISTERED_AS_STUDENT" <c:if test="${notification.state == 'REGISTERED_AS_STUDENT'}">selected="selected"</c:if>>Rekisteröitynyt aineopiskelijaksi</option>
+              <option value="REGISTERED_AS_STUDENT" <c:if test="${notification.state == 'REGISTERED_AS_STUDENT'}">selected="selected"</c:if>>Ilmoittautunut aineopiskelijaksi</option>
               <option value="REGISTRATION_CHECKED" <c:if test="${notification.state == 'REGISTRATION_CHECKED'}">selected="selected"</c:if>>Tiedot tarkistettu</option>
               <option value="REJECTED" <c:if test="${notification.state == 'REJECTED'}">selected="selected"</c:if>>Hylätty</option>
             </select>

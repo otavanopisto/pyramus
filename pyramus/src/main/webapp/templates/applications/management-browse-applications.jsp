@@ -158,7 +158,7 @@
               <option value="APPROVED_BY_SCHOOL">Hyväksytty</option>
               <option value="APPROVED_BY_APPLICANT">Opiskelupaikka vastaanotettu</option>
               <option value="TRANSFERRED_AS_STUDENT">Siirretty opiskelijaksi</option>
-              <option value="REGISTERED_AS_STUDENT">Rekisteröitynyt aineopiskelijaksi</option>
+              <option value="REGISTERED_AS_STUDENT">Ilmoittautunut aineopiskelijaksi</option>
               <option value="REGISTRATION_CHECKED">Tiedot tarkistettu</option>
               <option value="REJECTED">Hylätty</option>
             </select>
