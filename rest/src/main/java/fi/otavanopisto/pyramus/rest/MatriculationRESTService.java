@@ -73,36 +73,48 @@ public class MatriculationRESTService extends AbstractRESTService {
     if (student == null) {
       return Response.status(Status.BAD_REQUEST).entity("Student not found").build();
     }
+    
+    if (!"PENDING".equals(enrollment.getState())) {
+      return Response.status(Status.FORBIDDEN)
+                     .entity("Can only send pending enrollments via REST")
+                     .build();
+    }
   
-    MatriculationExamEnrollment enrollmentEntity = matriculationExamEnrollmentDao.create(
-      enrollment.getName(),
-      enrollment.getSsn(),
-      enrollment.getEmail(),
-      enrollment.getPhone(),
-      enrollment.getAddress(),
-      enrollment.getPostalCode(),
-      enrollment.getCity(),
-      enrollment.getNationalStudentNumber(),
-      enrollment.getGuider(),
-      SchoolType.valueOf(enrollment.getEnrollAs()),
-      enrollment.getNumMandatoryCourses(),
-      enrollment.isRestartExam(),
-      enrollment.getLocation(),
-      enrollment.getMessage(),
-      enrollment.isCanPublishName(),
-      student,
-      MatriculationExamEnrollmentState.valueOf(enrollment.getState()));
-      
-    for (MatriculationExamAttendance attendance : enrollment.getAttendances()) {
-      matriculationExamAttendanceDao.create(
-        enrollmentEntity,
-        MatriculationExamSubject.valueOf(attendance.getSubject()),
-        attendance.getMandatory(),
-        attendance.getRepeat(),
-        attendance.getYear(),
-        MatriculationExamTerm.valueOf(attendance.getTerm()),
-        MatriculationExamAttendanceStatus.valueOf(attendance.getStatus()),
-        MatriculationExamGrade.valueOf(attendance.getGrade()));
+    try {
+      MatriculationExamEnrollment enrollmentEntity = matriculationExamEnrollmentDao.create(
+        enrollment.getName(),
+        enrollment.getSsn(),
+        enrollment.getEmail(),
+        enrollment.getPhone(),
+        enrollment.getAddress(),
+        enrollment.getPostalCode(),
+        enrollment.getCity(),
+        enrollment.getNationalStudentNumber(),
+        enrollment.getGuider(),
+        SchoolType.valueOf(enrollment.getEnrollAs()),
+        enrollment.getNumMandatoryCourses(),
+        enrollment.isRestartExam(),
+        enrollment.getLocation(),
+        enrollment.getMessage(),
+        enrollment.isCanPublishName(),
+        student,
+        MatriculationExamEnrollmentState.valueOf(enrollment.getState()));
+        
+      for (MatriculationExamAttendance attendance : enrollment.getAttendances()) {
+        matriculationExamAttendanceDao.create(
+          enrollmentEntity,
+          MatriculationExamSubject.valueOf(attendance.getSubject()),
+          attendance.getMandatory(),
+          attendance.getRepeat(),
+          attendance.getYear(),
+          MatriculationExamTerm.valueOf(attendance.getTerm()),
+          MatriculationExamAttendanceStatus.valueOf(attendance.getStatus()),
+          MatriculationExamGrade.valueOf(attendance.getGrade()));
+      }
+    } catch (IllegalArgumentException ex) {
+      return Response.status(Status.BAD_REQUEST)
+                     .entity(ex.getMessage())
+                     .build();
     }
     
     return Response.ok().build();

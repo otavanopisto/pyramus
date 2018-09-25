@@ -342,6 +342,18 @@
 
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="matriculation.editEnrollment.state"/>
+                <jsp:param name="helpLocale" value="matriculation.editEnrollment.state.help"/>
+              </jsp:include>            
+							<select class="required" name="state">
+							  <option ${state=='PENDING' ? 'selected="selected"' : ''} value="PENDING">Jätetty</option>
+							  <option ${state=='APPROVED' ? 'selected="selected"' : ''} value="APPROVED">Hyväksytty</option>
+							  <option ${state=='REJECTED' ? 'selected="selected"' : ''} value="REJECTED">Hylätty</option>
+							</select>
+            </div>
+
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="matriculation.editEnrollment.enrolled"/>
               </jsp:include>            
 							<div class="genericTableAddRowContainer">

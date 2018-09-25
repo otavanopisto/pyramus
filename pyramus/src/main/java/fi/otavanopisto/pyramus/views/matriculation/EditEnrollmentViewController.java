@@ -26,8 +26,6 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 
 public class EditEnrollmentViewController extends PyramusViewController {
   
-  private static final Logger logger = Logger.getLogger(EditEnrollmentViewController.class.getName());
-  
   public void process(PageRequestContext pageRequestContext) {
     switch (pageRequestContext.getRequest().getMethod()) {
     case "GET":
@@ -70,8 +68,10 @@ public class EditEnrollmentViewController extends PyramusViewController {
       pageRequestContext.getString("location"),
       pageRequestContext.getString("message"),
       pageRequestContext.getBoolean("canPulishName"),
-      null,
-      MatriculationExamEnrollmentState.PENDING);
+      enrollment.getStudent(),
+      MatriculationExamEnrollmentState.valueOf(
+        pageRequestContext.getString("state")
+      ));
     attendanceDAO.deleteByEnrollment(enrollment);
     int enrolledAttendances = pageRequestContext.getInteger("enrolledAttendances.rowCount");
     for (int i=0; i<enrolledAttendances; i++) {
@@ -145,6 +145,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
     pageRequestContext.getRequest().setAttribute("location", enrollment.getLocation());
     pageRequestContext.getRequest().setAttribute("message", enrollment.getMessage());
     pageRequestContext.getRequest().setAttribute("canPublishName", enrollment.isCanPublishName());
+    pageRequestContext.getRequest().setAttribute("state", enrollment.getState().name());
     
     List<MatriculationExamAttendance> attendances = attendanceDAO.listByEnrollment(enrollment);
     

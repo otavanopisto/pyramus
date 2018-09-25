@@ -1,11 +1,17 @@
 package fi.otavanopisto.pyramus.dao.matriculation;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
@@ -99,4 +105,27 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     entityManager.persist(enrollment);
     return enrollment;
   }
+  
+  public List<MatriculationExamEnrollment> listByState(
+    MatriculationExamEnrollmentState state,
+    int firstResult,
+    int maxResults
+  ) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<MatriculationExamEnrollment> criteria = criteriaBuilder.createQuery(MatriculationExamEnrollment.class);
+    Root<MatriculationExamEnrollment> root = criteria.from(MatriculationExamEnrollment.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.state), state)
+    );
+    
+    return entityManager
+      .createQuery(criteria)
+      .setFirstResult(firstResult)
+      .setMaxResults(maxResults)
+      .getResultList();
+  }
+
 }
