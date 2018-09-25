@@ -33,7 +33,7 @@
     <main class="application-selection">
 
       <div class="application-selection__section-wrapper">
-        <div class="application-selection__section-header">Otavan Opiston <b>liikelaitoksen verkkokoulutukset</b></div>
+        <div class="application-selection__section-header">Otavan Opiston liikelaitoksen <b>verkkokoulutukset</b></div>
         <div class="application-selection__section-container">
           <div class="selection-box selection-box--nettilukio">
             <div class="selection-box__header-image">
