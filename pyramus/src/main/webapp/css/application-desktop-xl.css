@@ -27,7 +27,8 @@
   width: 100%;
 }
 
-.application-content--edit {
+.application-content--edit,
+.application-content--credentials {
   padding: 10px;
 }
 
@@ -69,7 +70,10 @@
 }
 
 .privacy-policy,
-.course-fees {
+.course-fees,
+.nettilukio-promise,
+.aineopiskelu-promise,
+.nettipk-promise {
   margin: 0 0 0 -400px;
   max-width: 800px;
 }

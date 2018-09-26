@@ -46,9 +46,9 @@
               <option value="nettilukio" <c:if test="${notification.line == 'nettilukio'}">selected="selected"</c:if>>Nettilukio</option>
               <option value="nettipk" <c:if test="${notification.line == 'nettipk'}">selected="selected"</c:if>>Nettiperuskoulu</option>
               <option value="aikuislukio" <c:if test="${notification.line == 'aikuislukio'}">selected="selected"</c:if>>Aikuislukio</option>
-              <option value="bandilinja" <c:if test="${notification.line == 'bandilinja'}">selected="selected"</c:if>>Bändilinja</option>
+              <!-- <option value="bandilinja" <c:if test="${notification.line == 'bandilinja'}">selected="selected"</c:if>>Bändilinja</option>
               <option value="kasvatustieteet" <c:if test="${notification.line == 'kasvatustieteet'}">selected="selected"</c:if>>Kasvatustieteen linja</option>
-              <option value="laakislinja" <c:if test="${notification.line == 'laakislinja'}">selected="selected"</c:if>>Lääkislinja</option>
+              <option value="laakislinja" <c:if test="${notification.line == 'laakislinja'}">selected="selected"</c:if>>Lääkislinja</option> -->
               <option value="mk" <c:if test="${notification.line == 'mk'}">selected="selected"</c:if>>Maahanmuuttajakoulutukset</option>
             </select>
           </div>
@@ -65,7 +65,8 @@
               <option value="APPROVED_BY_SCHOOL" <c:if test="${notification.state == 'APPROVED_BY_SCHOOL'}">selected="selected"</c:if>>Hyväksytty</option>
               <option value="APPROVED_BY_APPLICANT" <c:if test="${notification.state == 'APPROVED_BY_APPLICANT'}">selected="selected"</c:if>>Opiskelupaikka vastaanotettu</option>
               <option value="TRANSFERRED_AS_STUDENT" <c:if test="${notification.state == 'TRANSFERRED_AS_STUDENT'}">selected="selected"</c:if>>Siirretty opiskelijaksi</option>
-              <option value="REGISTERED_AS_STUDENT" <c:if test="${notification.state == 'REGISTERED_AS_STUDENT'}">selected="selected"</c:if>>Rekisteröitynyt aineopiskelijaksi</option>
+              <option value="REGISTERED_AS_STUDENT" <c:if test="${notification.state == 'REGISTERED_AS_STUDENT'}">selected="selected"</c:if>>Ilmoittautunut aineopiskelijaksi</option>
+              <option value="REGISTRATION_CHECKED" <c:if test="${notification.state == 'REGISTRATION_CHECKED'}">selected="selected"</c:if>>Tiedot tarkistettu</option>
               <option value="REJECTED" <c:if test="${notification.state == 'REJECTED'}">selected="selected"</c:if>>Hylätty</option>
             </select>
           </div>

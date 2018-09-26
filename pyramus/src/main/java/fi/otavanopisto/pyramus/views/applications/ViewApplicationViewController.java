@@ -138,11 +138,23 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies"))) {
         fields.put("Aiemmat opinnot", getFormValue(formData, "field-previous-studies"));
       }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio"))) {
+        fields.put("Aiemmat opinnot", ApplicationUtils.previousStudiesUiValue(getFormValue(formData, "field-previous-studies-nettilukio")));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-school"))) {
+        fields.put("Aiempi oppilaitos", getFormValue(formData, "field-previous-studies-nettilukio-school"));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-duration"))) {
+        fields.put("Aiempien opintojen kesto", getFormValue(formData, "field-previous-studies-nettilukio-duration"));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-other"))) {
+        fields.put("Kerro tarkemmin", getFormValue(formData, "field-previous-studies-nettilukio-other"));
+      }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-other-school"))) {
         fields.put("Opiskelee toisessa oppilaitoksessa", simpleBooleanUiValue(getFormValue(formData, "field-other-school")));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-other-school-name"))) {
-        fields.put("Oppilaitos", getFormValue(formData, "field-other-school-name"));
+        fields.put("Nykyinen oppilaitos", getFormValue(formData, "field-other-school-name"));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-goals"))) {
         fields.put("Opiskelutavoitteet", goalsUiValue(getFormValue(formData, "field-goals")));
@@ -171,10 +183,10 @@ public class ViewApplicationViewController extends PyramusViewController {
         fields.put("Vapaamuotoinen esittely", getFormValue(formData, "field-info"));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-lodging"))) {
-        fields.put("Asunto kampukselta", "Kyllä");
+        fields.put("Asunto kampukselta", simpleBooleanUiValue(getFormValue(formData, "field-lodging")));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-lodging-partial"))) {
-        fields.put("Asunto kampukselta lähijaksojen ajaksi", "Kyllä");
+        fields.put("Asunto kampukselta lähijaksojen ajaksi", simpleBooleanUiValue(getFormValue(formData, "field-lodging-partial")));
       }
       
       // Hakulähde
@@ -190,7 +202,7 @@ public class ViewApplicationViewController extends PyramusViewController {
           if (sb.length() > 0) {
             sb.append("\n");
           }
-          sb.append(sourceUiValue(sourcesArray.getString(i)));
+          sb.append(ApplicationUtils.sourceUiValue(sourcesArray.getString(i)));
         }
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-source-other"))) {
@@ -243,49 +255,13 @@ public class ViewApplicationViewController extends PyramusViewController {
   private String getFormValue(JSONObject object, String key) {
     return object.has(key) ? object.getString(key) : null;
   }
-
-  private String sourceUiValue(String value) {
-    switch (value) {
-    case "tuttu":
-      return "Ennestään tuttu";
-    case "google":
-      return "Google";
-    case "facebook":
-      return "Facebook";
-    case "instagram":
-      return "Instagram";
-    case "sanomalehti":
-      return "Sanomalehti";
-    case "tienvarsimainos":
-      return "Tienvarsimainos";
-    case "valotaulumainos":
-      return "Valotaulumainos";
-    case "elokuva":
-      return "Elokuva- tai TV-mainos";
-    case "radio":
-      return "Radio";
-    case "tuttava":
-      return "Kuulin kaverilta, tuttavalta, tms.";
-    case "te-toimisto":
-      return "TE-toimisto";
-    case "messut":
-      return "Messut";
-    case "nuorisotyo":
-      return "Nuorisotyö";
-    case "opot":
-      return "Opot";
-    case "muu":
-      return "Muu";
-    default:
-      return null;
-    }
-  }
-  
   
   private String foreignLineUiValue(String value) {
     switch (value) {
     case "apa":
       return "Aikuisten perusopetuksen alkuvaiheen koulutus";
+    case "luku":
+      return "Aikuisten perusopetuksen lukutaitovaihe";
     case "pk":
       return "Monikulttuurinen peruskoululinja (aikuisten perusopetuksen päättövaihe)";
     case "luva":

@@ -20,89 +20,99 @@
         </div>
       </div>
     </header>
-  
+
     <section class="application-description">
-      <div class="application-description__line application-description__line--selection form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
+      <div class="application-description__line application-description__line--selection">
         <div class="application-description__line-header">
           Hae opiskelijaksi <span class="application-description__line-label">Otavan Opistoon</span>
         </div>
         <div class="application-description__line-content">Valitse haluamasi koulutusohjelma ja siirry täyttämään opiskelijahakemus.</div>
       </div>
     </section>
-  
+
     <main class="application-selection">
-    
-      <div class="selection-box selection-box--nettilukio">
-        <div class="selection-box__header-image">
-          <div class="selection-box__header-text">
-            Nettiluki<span class="selection-box__header-text-indicator">o...</span>
+
+      <div class="application-selection__section-wrapper">
+        <div class="application-selection__section-header">Otavan Opiston liikelaitoksen <b>verkkokoulutukset</b></div>
+        <div class="application-selection__section-container">
+          <div class="selection-box selection-box--nettilukio">
+            <div class="selection-box__header-image">
+              <div class="selection-box__header-text">
+                Nettiluki<span class="selection-box__header-text-indicator">o...</span>
+              </div>
+            </div>
+            <div class="selection-box__description">
+              Nettilukiossa opiskelet lukio-opintoja tutkintotavoitteisesti tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Nettilukio on aikuislukio ja tarkoitettu yli 18-vuotiaille opiskelijoille. Alaikäisiä voidaan hyväksyä vain, jos haun taustalla on riittävät perusteet. Toisessa oppilaitoksessa opiskelevat ja yksittäisiä lukiokursseja suorittavat voivat ilmoittautua aineopiskelijaksi.
+            </div>
+            <div class="selection-box__link-container">
+              <a class="selection-box__link" href="/applications/create.page?line=nettilukio">Hae Nettilukioon</a>
+            </div>
+          </div>
+  
+          <div class="selection-box selection-box--nettiperuskoulu">
+            <div class="selection-box__header-image">
+              <div class="selection-box__header-text">
+                Nettiperuskoul<span class="selection-box__header-text-indicator">u...</span>
+              </div>
+            </div>
+            <div class="selection-box__description">
+              Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.
+            </div>
+            <div class="selection-box__link-container">
+              <a class="selection-box__link" href="/applications/create.page?line=nettipk">Hae Nettiperuskouluun</a>
+            </div>
+          </div>
+  
+          <div class="selection-box selection-box--aineopiskelu">
+            <div class="selection-box__header-image">
+              <div class="selection-box__header-text">
+                Aineopiskel<span class="selection-box__header-text-indicator">u...</span>
+              </div>
+            </div>
+            <div class="selection-box__description">
+              Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.<br/><br/>
+              Jos haluat käyttää vain oppimateriaaleja, sinun ei tarvitse ilmoittautua. Löydät avoimet oppimateriaalit osoitteesta: <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a> → Avoimet materiaalit
+            </div>
+            <div class="selection-box__link-container">
+              <a class="selection-box__link" href="/applications/create.page?line=aineopiskelu">Ilmoittaudu aineopiskelijaksi</a>
+            </div>
           </div>
         </div>
-        <div class="selection-box__description">
-          Nettilukiossa opiskelet koko aikuislukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Nettilukiossa voit myös tehdä loppuun aiemmin kesken jääneet lukio-opinnot. Nettilukio on tarkoitettu yli 18-vuotiaille opiskelijoille. Toisessa oppilaitoksessa opiskelevat ja yksittäisiä lukiokursseja suorittavat voivat ilmoittautua aineopiskelijaksi.
-        </div>
-        <div class="selection-box__link-container">
-          <a class="selection-box__link" href="/applications/create.page?line=nettilukio">Hae Nettilukioon</a>
-        </div>
       </div>
-      
-      <div class="selection-box selection-box--nettiperuskoulu">
-        <div class="selection-box__header-image">
-          <div class="selection-box__header-text">
-            Nettiperuskoul<span class="selection-box__header-text-indicator">u...</span>
+
+      <div class="application-selection__section-wrapper">
+        <div class="application-selection__section-header">Otavan Opiston <b>lähikoulutukset</b></div>
+        <div class="application-selection__section-container">
+          <div class="selection-box selection-box--aikuislukio">
+            <div class="selection-box__header-image">
+              <div class="selection-box__header-text">
+                Aikuisluki<span class="selection-box__header-text-indicator">o...</span>
+              </div>
+            </div>
+            <div class="selection-box__description">
+              Aikuislukiossa opiskelet koko lukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Aikuislukiossa voit myös tehdä loppuun aiemmin kesken jääneet toisessa päivä- tai aikuislukiossa aloittamasi lukio-opinnot.<br/><br/>
+              Aikuislukio on valintasi, jos haluat opiskella lukio-opintoja lähiopintoina Otavan Opiston kampuksella Mikkelissä. Myös asuminen asuntolassa on mahdollista.
+            </div>
+            <div class="selection-box__link-container">
+              <a class="selection-box__link" href="/applications/create.page?line=aikuislukio">Hae Aikuislukioon</a>
+            </div>
+          </div>
+
+          <div class="selection-box selection-box--maahanmuuttajakoulutus">
+            <div class="selection-box__header-image">
+              <div class="selection-box__header-text">
+                Maahanmuuttajakoulutukse<span class="selection-box__header-text-indicator">t...</span>
+              </div>
+            </div>
+            <div class="selection-box__description">
+              Maahanmuuttajakoulutukset ovat opiskelijoita varten, joiden äidinkieli ei ole suomi ja jotka tarvitsevat peruskoulun päättötodistuksen jatko-opintoja varten.
+            </div>
+            <div class="selection-box__link-container">
+              <a class="selection-box__link" href="/applications/create.page?line=mk">Hae Maahanmuuttajakoulutuksiin</a>
+            </div>
           </div>
         </div>
-        <div class="selection-box__description">
-          Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.
-        </div>
-        <div class="selection-box__link-container">
-          <a class="selection-box__link" href="/applications/create.page?line=nettipk">Hae Nettiperuskouluun</a>
-        </div>
       </div>
-      
-      <div class="selection-box selection-box--aineopiskelu">
-        <div class="selection-box__header-image">
-          <div class="selection-box__header-text">
-            Aineopiskel<span class="selection-box__header-text-indicator">u...</span>
-          </div>
-        </div>
-        <div class="selection-box__description">
-          Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.<br/><br/>
-          Jos haluat käyttää vain oppimateriaaleja, sinun ei tarvitse ilmoittautua. Löydät avoimet oppimateriaalit osoitteesta: <a href="https://otavanopisto.muikkuverkko.fi">https://otavanopisto.muikkuverkko.fi</a> → Avoimet materiaalit
-        </div>
-        <div class="selection-box__link-container">
-          <a class="selection-box__link" href="/applications/create.page?line=aineopiskelu">Ilmoittaudu aineopiskelijaksi</a>
-        </div>
-      </div>
-      
-      <div class="selection-box selection-box--aikuislukio">
-        <div class="selection-box__header-image">
-          <div class="selection-box__header-text">
-            Aikuisluki<span class="selection-box__header-text-indicator">o...</span>
-          </div>
-        </div>
-        <div class="selection-box__description">
-          Aikuislukiossa opiskelet koko lukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Aikuislukiossa voit myös tehdä loppuun aiemmin kesken jääneet toisessa päivä- tai aikuislukiossa aloittamasi lukio-opinnot.
-        </div>
-        <div class="selection-box__link-container">
-          <a class="selection-box__link" href="/applications/create.page?line=aikuislukio">Hae Aikuislukioon</a>
-        </div>
-      </div>
-      
-      <div class="selection-box selection-box--maahanmuuttajakoulutus">
-        <div class="selection-box__header-image">
-          <div class="selection-box__header-text">
-            Maahanmuuttajakoulutukse<span class="selection-box__header-text-indicator">t...</span>
-          </div>
-        </div>
-        <div class="selection-box__description">
-          Maahanmuuttajakoulutukset ovat opiskelijoita varten, joiden äidinkieli ei ole suomi ja jotka tarvitsevat peruskoulun päättötodistuksen jatko-opintoja varten.
-        </div>
-        <div class="selection-box__link-container">
-          <a class="selection-box__link" href="/applications/create.page?line=mk">Hae Maahanmuuttajakoulutuksiin</a>
-        </div>
-      </div>
-      
     </main>
     <footer class="application-footer">
       <div class="application-footer__contact">
