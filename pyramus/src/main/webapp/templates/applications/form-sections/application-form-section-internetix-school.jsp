@@ -62,9 +62,9 @@
       </select>
     </div>
     
-    <div class="course-fees-overlay" style="display: none;">
+    <div class="course-fees-overlay">
     </div>
-    <div class="course-fees" style="display: none;">
+    <div class="course-fees">
       <div class="course-fees__close"></div>
       <h3>Aineopiskelulinjan kurssimaksuista</h3>
       <p>Aineopiskelulinjalla voit opiskella samoja kursseja kuin Otavan Opiston nettilukiossa ja nettiperuskoulussa. Lisäksi tarjolla on jonkin verran myös muita kursseja.</p>

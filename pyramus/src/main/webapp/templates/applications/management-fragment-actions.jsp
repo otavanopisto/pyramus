@@ -12,7 +12,7 @@
     <div class="application-handling-option accept-action sign-button" data-document-id="${infoSignatures.staffDocumentId}" data-document-state="${infoSignatures.staffDocumentState}" data-ssn="${infoSsn}" style="display:none;">
       <span class="application-handling-text">Allekirjoita hyväksyntä</span>
     </div>
-    <div class="application-handling-option accept-action" data-line="!aineopiskelu" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyväksymisestä</span></div>
+    <div class="application-handling-option accept-action" data-state="APPROVED_BY_SCHOOL" data-show="STAFF_SIGNED"><span class="application-handling-text">Ilmoita hyväksymisestä</span></div>
     <div class="application-handling-option accept-action" data-line="nettilukio" data-state="TRANSFERRED_AS_STUDENT" data-show="APPROVED_BY_SCHOOL,APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirrä opiskelijaksi</span></div>
     <div class="application-handling-option accept-action" data-line="nettipk" data-state="TRANSFERRED_AS_STUDENT" data-show="APPROVED_BY_SCHOOL,APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirrä opiskelijaksi</span></div>
     <div class="application-handling-option accept-action" data-line="aikuislukio" data-state="TRANSFERRED_AS_STUDENT" data-show="PROCESSING,APPROVED_BY_SCHOOL,APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirrä opiskelijaksi</span></div>

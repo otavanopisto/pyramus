@@ -96,7 +96,9 @@ public class ApplicationUtils {
       case TRANSFERRED_AS_STUDENT:
         return "Siirretty opiskelijaksi";
       case REGISTERED_AS_STUDENT:
-        return "Rekisteröitynyt aineopiskelijaksi";
+        return "Ilmoittautunut aineopiskelijaksi";
+      case REGISTRATION_CHECKED:
+        return "Tiedot tarkistettu";
       case REJECTED:
         return "Hylätty";
        default:

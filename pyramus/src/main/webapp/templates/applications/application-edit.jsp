@@ -51,7 +51,7 @@
         <div class="application-description__line-header">
           Olet hakemassa <span class="application-description__line-label--nettilukio">nettilukioon</span>
         </div>
-        <div class="application-description__line-content">Nettilukiossa opiskelet koko aikuislukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Nettilukiossa voit myös tehdä loppuun aiemmin kesken jääneet lukio-opinnot. Nettilukio on tarkoitettu yli 18-vuotiaille opiskelijoille. Toisessa oppilaitoksessa opiskelevat ja yksittäisiä lukiokursseja suorittavat voivat ilmoittautua aineopiskelijaksi.</div>
+        <div class="application-description__line-content">Nettilukiossa opiskelet lukio-opintoja tutkintotavoitteisesti tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Nettilukio on aikuislukio ja tarkoitettu yli 18-vuotiaille opiskelijoille. Alaikäisiä voidaan hyväksyä vain, jos haun taustalla on riittävät perusteet. Toisessa oppilaitoksessa opiskelevat ja yksittäisiä lukiokursseja suorittavat voivat ilmoittautua aineopiskelijaksi.</div>
       </div>
 
       <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
@@ -87,7 +87,8 @@
 
       <section class="application-content__information">
         <div class="application-content__information-page-specific">
-          <p>Klikkaa Seuraava-painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>
+          <p class="application-content__information-page-specific-non-summary">Klikkaa Seuraava-painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>
+          <p class="application-content__information-page-specific-summary">Klikkaa Lähetä-painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>
           <p><b>Huom!</b> Punaisella tähdellä merkityt kentät ovat pakollisia.</p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
