@@ -21,8 +21,6 @@
     `canPublishName` BIT(1) NOT NULL,
     `student_id` BIGINT,
     `state` VARCHAR(255) NOT NULL,
-    `archived` BIT(1) NOT NULL,
-    `version` BIGINT NOT NULL,
     CONSTRAINT `MatriculationExamEnrollment_student_id`
       FOREIGN KEY (`student_id`) REFERENCES `Student` (`id`)
   );
@@ -34,13 +32,11 @@
     `enrollment_id` BIGINT NOT NULL,
     `subject` VARCHAR(255) NOT NULL,
     `mandatory` BIT(1) NOT NULL,
-    `repeat` BIT(1) NOT NULL,
+    `retry` BIT(1) NOT NULL,
     `year` INTEGER NOT NULL,
     `term` INTEGER NOT NULL,
     `status` VARCHAR(255) NOT NULL,
     `grade` VARCHAR(255) NOT NULL,
-    `archived` BIT(1) NOT NULL,
-    `version` BIGINT NOT NULL,
     CONSTRAINT `MatriculationExamAttendance_enrollment_id`
       FOREIGN KEY (`enrollment_id`) REFERENCES `Application` (`id`)
   );
@@ -51,8 +47,7 @@
     `id` BIGINT PRIMARY KEY,
     `starts` DATETIME NOT NULL,
     `ends` DATETIME NOT NULL,
-    `archived` BIT(1) NOT NULL,
-    `version` BIGINT NOT NULL,
+    `version` BIGINT NOT NULL
   );
   </sql>
 

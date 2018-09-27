@@ -15,7 +15,6 @@
     <jsp:include page="/templates/generic/dialog_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/jsonrequest_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/tabs_support.jsp"></jsp:include>
-    <jsp:include page="/templates/generic/searchnavigation_support.jsp"></jsp:include>
     
     <script type="text/javascript">
       function onLoad(event) {

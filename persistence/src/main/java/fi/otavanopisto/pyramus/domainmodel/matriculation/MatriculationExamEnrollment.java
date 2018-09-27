@@ -1,7 +1,5 @@
 package fi.otavanopisto.pyramus.domainmodel.matriculation;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,19 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
-import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
 
-import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
 @Entity
-@Indexed
-public class MatriculationExamEnrollment implements ArchivableEntity {
+public class MatriculationExamEnrollment {
 
   /**
    * Returns the unique identifier of this object.
@@ -32,16 +24,6 @@ public class MatriculationExamEnrollment implements ArchivableEntity {
    */
   public Long getId() {
     return id;
-  }
-
-  @Override
-  public Boolean getArchived() {
-    return archived;
-  }
-
-  @Override
-  public void setArchived(Boolean archived) {
-    this.archived = archived;
   }
   
   public String getName() {
@@ -138,14 +120,6 @@ public class MatriculationExamEnrollment implements ArchivableEntity {
 
   public void setStudent(Student student) {
     this.student = student;
-  }
-
-  public Long getVersion() {
-    return version;
-  }
-
-  public void setVersion(Long version) {
-    this.version = version;
   }
 
   public void setId(Long id) {
@@ -252,12 +226,4 @@ public class MatriculationExamEnrollment implements ArchivableEntity {
   @Enumerated(EnumType.STRING)
   private MatriculationExamEnrollmentState state;
 
-  @NotNull
-  @Column(nullable = false)
-  @Field
-  private Boolean archived = Boolean.FALSE;
-
-  @Version
-  @Column(nullable = false)
-  private Long version;
 }

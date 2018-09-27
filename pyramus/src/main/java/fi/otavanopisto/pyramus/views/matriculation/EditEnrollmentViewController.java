@@ -3,7 +3,6 @@ package fi.otavanopisto.pyramus.views.matriculation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -161,7 +160,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
                 attendance.getId(),
                 attendance.getSubject().name(),
                 attendance.isMandatory() ? "MANDATORY" : "OPTIONAL",
-                attendance.isRepeat() ? "REPEAT" : "FIRST_TIME",
+                attendance.isRetry() ? "REPEAT" : "FIRST_TIME",
                 ""));
         break;
       case FINISHED:

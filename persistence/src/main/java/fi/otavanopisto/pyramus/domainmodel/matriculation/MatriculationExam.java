@@ -11,16 +11,9 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-
-import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 
 @Entity
-public class MatriculationExam implements ArchivableEntity {
+public class MatriculationExam {
 
   /**
    * Returns the unique identifier of this object.
@@ -51,16 +44,6 @@ public class MatriculationExam implements ArchivableEntity {
     this.ends = ends;
   }
 
-  @Override
-  public Boolean getArchived() {
-    return archived;
-  }
-
-  @Override
-  public void setArchived(Boolean archived) {
-    this.archived = archived;
-  }
-  
   public Long getVersion() {
     return version;
   }
@@ -76,19 +59,15 @@ public class MatriculationExam implements ArchivableEntity {
 
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false)
-  @Field
   private Date starts;
   
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false)
-  @Field
   private Date ends;
-  
-  @NotNull
-  @Column(nullable = false)
-  @Field
-  private Boolean archived = Boolean.FALSE;
 
+  /* Version required because we persist an entity with a set id, to get rid
+   * of duplication
+   */
   @Version
   @Column(nullable = false)
   private Long version;

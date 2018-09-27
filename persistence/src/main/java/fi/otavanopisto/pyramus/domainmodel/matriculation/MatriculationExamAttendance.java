@@ -9,18 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
-import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-
-import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 
 @Entity
-@Indexed
-public class MatriculationExamAttendance implements ArchivableEntity {
+public class MatriculationExamAttendance {
 
   /**
    * Returns the unique identifier of this object.
@@ -29,24 +22,6 @@ public class MatriculationExamAttendance implements ArchivableEntity {
    */
   public Long getId() {
     return id;
-  }
-
-  @Override
-  public Boolean getArchived() {
-    return archived;
-  }
-
-  @Override
-  public void setArchived(Boolean archived) {
-    this.archived = archived;
-  }
-  
-  public Long getVersion() {
-    return version;
-  }
-
-  public void setVersion(Long version) {
-    this.version = version;
   }
 
   public void setId(Long id) {
@@ -77,12 +52,12 @@ public class MatriculationExamAttendance implements ArchivableEntity {
     this.mandatory = mandatory;
   }
 
-  public Boolean isRepeat() {
-    return repeat;
+  public Boolean isRetry() {
+    return retry;
   }
 
-  public void setRepeat(Boolean repeat) {
-    this.repeat = repeat;
+  public void setRetry(Boolean retry) {
+    this.retry = retry;
   }
 
   public Integer getYear() {
@@ -133,8 +108,8 @@ public class MatriculationExamAttendance implements ArchivableEntity {
   @Column
   private Boolean mandatory;
   
-  @Column(name = "repeat_")
-  private Boolean repeat;
+  @Column
+  private Boolean retry;
   
   @Column
   private Integer year;
@@ -150,13 +125,4 @@ public class MatriculationExamAttendance implements ArchivableEntity {
   @Column
   @Enumerated(EnumType.STRING)
   private MatriculationExamGrade grade;
-  
-  @NotNull
-  @Column(nullable = false)
-  @Field
-  private Boolean archived = Boolean.FALSE;
-
-  @Version
-  @Column(nullable = false)
-  private Long version;
 }

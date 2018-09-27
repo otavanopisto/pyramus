@@ -35,13 +35,11 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
     attendance.setEnrollment(enrollment);
     attendance.setSubject(subject);
     attendance.setMandatory(mandatory);
-    attendance.setRepeat(repeat);
+    attendance.setRetry(repeat);
     attendance.setYear(year);
     attendance.setTerm(term);
     attendance.setStatus(status);
     attendance.setGrade(grade);
-    attendance.setArchived(false);
-    attendance.setVersion(0L);
     getEntityManager().persist(attendance);
     return attendance;
   }

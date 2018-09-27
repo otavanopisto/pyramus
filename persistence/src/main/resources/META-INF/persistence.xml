@@ -11,9 +11,9 @@
 
       <!-- Cache -->
 
-      <property name="hibernate.cache.use_second_level_cache" value="false" />
-      <property name="hibernate.cache.use_query_cache" value="false" />
-      <property name="hibernate.cache.infinispan.statistics.enabled" value="false"/>
+      <property name="hibernate.cache.use_second_level_cache" value="true" />
+      <property name="hibernate.cache.use_query_cache" value="true" />
+      <property name="hibernate.cache.infinispan.statistics.enabled" value="true"/>
       
       <!-- Statistics and Debugging -->
 
