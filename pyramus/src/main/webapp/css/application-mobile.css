@@ -73,6 +73,22 @@ body {
   padding: 0 0 20px;
 }
 
+.application-selection__section-container {
+  align-content: flex-start;
+  display: flex;
+  flex-basis: 100%;
+  flex-flow: row wrap;
+  flex-grow: 1;
+  flex-shrink: 1;
+  padding: 0 0 20px;
+}
+
+.application-selection__section-header {
+  font-size: 18px;
+  font-weight: 400;
+  margin: 10px 15px;
+}
+
 .selection-box {
   align-items: flex-start;
   background-color: #fff;
@@ -358,15 +374,17 @@ body {
 }
 
 .application-content__information-page-specific {
+  display: none;
   margin: 0 0 10px;
 }
 
 .application-content__information-line-specific {
+  display: none;
   margin: 10px 0 0;
 }
 
-.application-content__information-page-specific p:first-child,
-.application-content__information-line-specific p:first-child {
+.application-content__information-page-specific-non-summary,
+.application-content__information-page-specific-summary {
   margin: 0 0 10px;
 }
 
@@ -419,8 +437,18 @@ a {
   color: #009fe3;
 }
 
-/* COURSES FEESY */
-.course-fees-overlay {
+strong,
+b {
+  font-weight: 600;
+}
+
+/* Course fees and study promises */
+
+.course-fees-overlay,
+.nettilukio-promise-overlay,
+.aineopiskelu-promise-overlay,
+.nettipk-promise-overlay {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -431,7 +459,11 @@ a {
   width: 100%;
 }
 
-.course-fees {
+.course-fees,
+.nettilukio-promise,
+.aineopiskelu-promise,
+.nettipk-promise {
+  display: none;
   background: #fff;
   border: 3px solid #8ed2de;
   bottom: 0;
@@ -446,7 +478,10 @@ a {
   z-index: 100;
 }
 
-.course-fees__close {
+.course-fees__close,
+.nettilukio-promise__close,
+.aineopiskelu-promise__close,
+.nettipk-promise__close {
   background-color: #009fe3;
   background-image: url('../gfx/icons/48x48/actions/close.png');
   background-size: contain;
