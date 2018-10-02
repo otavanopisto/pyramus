@@ -18,7 +18,8 @@
     <div class="application-handling-option accept-action" data-line="aikuislukio" data-state="TRANSFERRED_AS_STUDENT" data-show="PROCESSING,APPROVED_BY_SCHOOL,APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirr‰ opiskelijaksi</span></div>
     <div class="application-handling-option accept-action" data-line="mk" data-state="TRANSFERRED_AS_STUDENT" data-show="PROCESSING,APPROVED_BY_SCHOOL,APPROVED_BY_APPLICANT"><span class="application-handling-text">Siirr‰ opiskelijaksi</span></div>
     <div class="application-handling-option accept-action" data-line="aineopiskelu" data-state="TRANSFERRED_AS_STUDENT" data-show="PROCESSING"><span class="application-handling-text">Siirr‰ opiskelijaksi</span></div>
-    <div class="application-handling-option decline-action" data-state="REJECTED" data-show="PROCESSING,APPROVED_BY_SCHOOL"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
+    <div class="application-handling-option accept-action" data-line="aineopiskelu" data-state="REGISTRATION_CHECKED" data-show="REGISTERED_AS_STUDENT"><span class="application-handling-text">Kuittaa tarkistetuksi</span></div>    
+    <div class="application-handling-option decline-action" data-state="REJECTED" data-show="PROCESSING,APPROVED_BY_SCHOOL,REGISTERED_AS_STUDENT"><span class="application-handling-text decline-application">Hylk‰‰ hakemus</span></div>
     <div class="application-handling-option delete-action" data-state="ARCHIVE" data-show="PROCESSING"><span class="application-handling-text archive-application">Poista hakemus</span></div>
   </div>
   

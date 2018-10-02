@@ -64,6 +64,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       Map<String, String> fields = new LinkedHashMap<>();
       sections.put("Perustiedot", fields);
       
+      fields.put("Muokkaustunnus", application.getReferenceCode());
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(getFormValue(formData, "field-line")));
       fields.put("Nimi", String.format("%s, %s", getFormValue(formData, "field-last-name"), getFormValue(formData, "field-first-names")));
       if (StringUtils.isNotBlank(getFormValue(formData, "field-nickname"))) {
