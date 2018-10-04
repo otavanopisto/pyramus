@@ -16,9 +16,11 @@ import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -123,6 +125,7 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
       boolean referenceCodeModified = !StringUtils.equals(application.getLastName(), lastName);
       String referenceCode = referenceCodeModified ? generateReferenceCode(lastName, application.getReferenceCode()) : application.getReferenceCode(); 
       boolean lineChanged = !StringUtils.equals(line, application.getLine());
+      String oldLine = application.getLine();
       application = applicationDAO.update(
           application,
           line,
@@ -138,7 +141,15 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
       // If line has changed, send notification of a new application 
       
       if (lineChanged) {
-        ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, true, null);
+        String notification = String.format("Hakemus vaihdettu linjalta <b>%s</b> linjalle <b>%s</b>",
+            ApplicationUtils.applicationLineUiValue(line), ApplicationUtils.applicationLineUiValue(oldLine));
+        ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+        applicationLogDAO.create(
+            application,
+            ApplicationLogType.HTML,
+            notification,
+            staffMember);
+        ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, true, null, false);
       }
       
       String redirecUrl = requestContext.getRequest().getContextPath() + "/applications/view.page?application=" + application.getId();

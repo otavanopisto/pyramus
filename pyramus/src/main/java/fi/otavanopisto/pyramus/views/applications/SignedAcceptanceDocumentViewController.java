@@ -97,7 +97,7 @@ public class SignedAcceptanceDocumentViewController extends PyramusViewControlle
             applicationSignatures.getStaffInvitationId(),
             applicationSignatures.getStaffInvitationToken());
         String notificationPostfix = String.format("<a href=\"%s\" target=\"_blank\">Hyväksymisasiakirja</a>", documentUrl); 
-        ApplicationUtils.sendNotifications(application, pageRequestContext.getRequest(), staffMember, false, notificationPostfix);
+        ApplicationUtils.sendNotifications(application, pageRequestContext.getRequest(), staffMember, false, notificationPostfix, true);
       }
       else {
         logger.severe(String.format("Staff signature for application %d was not completed successfully", application.getId()));

@@ -46,6 +46,7 @@ import fi.otavanopisto.pyramus.applications.DuplicatePersonException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
@@ -55,6 +56,7 @@ import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -459,7 +461,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
             application = applicationDAO.updateApplicationStateAsApplicant(application, ApplicationState.REGISTERED_AS_STUDENT);
             application = applicationDAO.updateApplicantEditable(application, Boolean.FALSE);
-            ApplicationUtils.sendNotifications(application, httpRequest, null, true, null);
+            ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, true);
             ApplicationUtils.mailCredentialsInfo(httpRequest, student, application);
             response.put("autoRegistered", "true");
           }
@@ -482,6 +484,7 @@ public class ApplicationRESTService extends AbstractRESTService {
           referenceCode = application.getReferenceCode();
         }
         boolean lineChanged = !StringUtils.equals(line, application.getLine());
+        String oldLine = application.getLine(); 
         application = applicationDAO.update(
             application,
             line,
@@ -496,7 +499,15 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.INFO, String.format("Updated %s application with id %s", line, application.getApplicationId()));
         modifiedApplicationPostProcessing(application);
         if (lineChanged) {
-          ApplicationUtils.sendNotifications(application, httpRequest, null, true, null);
+          String notification = String.format("Hakija vaihtoi hakemustaan linjalta <b>%s</b> linjalle <b>%s</b>",
+              ApplicationUtils.applicationLineUiValue(line), ApplicationUtils.applicationLineUiValue(oldLine));
+          ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+          applicationLogDAO.create(
+              application,
+              ApplicationLogType.HTML,
+              notification,
+              null);
+          ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, false);
         }
       }
 
@@ -780,7 +791,7 @@ public class ApplicationRESTService extends AbstractRESTService {
 
       // Handle notification mails and log entries
 
-      ApplicationUtils.sendNotifications(application, httpRequest, null, true, null);
+      ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, true);
     }
     catch (IOException e) {
       logger.log(Level.SEVERE, "Unable to retrieve confirmation mail template", e);
