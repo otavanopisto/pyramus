@@ -5,6 +5,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.security.ContextReference;
@@ -36,8 +37,17 @@ public abstract class AbstractPermissionResolver {
    */
   protected User resolveUser(ContextReference contextReference) {
     for (UserContextResolver resolver : userContextResolvers) {
-      if (resolver.handlesContextReference(contextReference))
+      if (resolver.handlesContextReference(contextReference)) {
         return resolver.resolveUser(contextReference);
+      }
+    }
+    
+    return null;
+  }
+  
+  protected Course resolveCourse(ContextReference contextReference) {
+    if (contextReference instanceof Course) {
+      return (Course) contextReference;
     }
     
     return null;

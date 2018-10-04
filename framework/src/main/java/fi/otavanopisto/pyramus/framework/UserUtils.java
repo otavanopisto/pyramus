@@ -177,4 +177,8 @@ public class UserUtils {
     return canAccessAllOrganizations(user) || isMemberOf(user, organization);
   }
   
+  public static boolean isOwnerOf(User user, Person person) {
+    return user.getPerson().getId().equals(person.getId());
+  }
+  
 }

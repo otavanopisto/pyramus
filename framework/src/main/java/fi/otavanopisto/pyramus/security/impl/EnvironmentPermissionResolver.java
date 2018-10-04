@@ -8,9 +8,18 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.security.EnvironmentRolePermissionDAO;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.security.ContextReference;
 import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.PermissionFeatureHandler;
@@ -27,13 +36,19 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
   private EnvironmentRolePermissionDAO environmentUserRolePermissionDAO;
 
   @Inject
+  private CourseStaffMemberDAO courseStaffMemberDAO;
+
+  @Inject
+  private CourseStudentDAO courseStudentDAO;
+  
+  @Inject
   @Any
   private Instance<PermissionFeatureHandler> featureHandlers;
   
   @Override
   public boolean handlesPermission(Permission permission) {
     if (permission != null)
-      return (PermissionScope.ENVIRONMENT.equals(permission.getScope()));
+      return PermissionScope.ENVIRONMENT.equals(permission.getScope()) || PermissionScope.COURSE.equals(permission.getScope());
     else
       return false;
   }
@@ -41,11 +56,27 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
   @Override
   public boolean hasPermission(Permission permission, ContextReference contextReference, User user) {
     fi.otavanopisto.pyramus.domainmodel.users.User userEntity = getUser(user);
-    boolean allowed = environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(userEntity.getRole(), permission);
-    if (!allowed) {
-      allowed = hasEveryonePermission(permission, contextReference);
+    
+    if (userEntity == null) {
+      return hasEveryonePermission(permission, contextReference);
     }
     
+    boolean allowed = false;
+    
+    if (PermissionScope.COURSE.equals(permission.getScope()) && (contextReference != null)) {
+      Course course = resolveCourse(contextReference);
+      if (course != null) {
+        allowed = allowed || hasCourseAccess(course, userEntity, permission);
+      }
+    }
+    
+    Role environmentRole = userEntity.getRole();
+    
+    allowed = 
+        allowed || 
+        environmentUserRolePermissionDAO.hasEnvironmentPermissionAccess(environmentRole, permission) ||
+        hasEveryonePermission(permission, contextReference);
+
     PyramusPermissionCollection collection = findCollection(permission.getName());
     try {
       PermissionFeature[] features = collection.listPermissionFeatures(permission.getName());
@@ -64,6 +95,40 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     }
     
     return allowed;
+  }
+
+  private boolean hasCourseAccess(Course course, fi.otavanopisto.pyramus.domainmodel.users.User userEntity,
+      Permission permission) {
+    PyramusPermissionCollection permissionCollection = findCollection(permission.getName());
+    if (permissionCollection != null) {
+      try {
+        CourseRoleArchetype[] defaultCourseRoles = permissionCollection.getDefaultCourseRoles(permission.getName());
+        String[] defaultRoles = permissionCollection.getDefaultRoles(permission.getName());
+
+        // Is EnvironmentRole in the environment roles of the permission
+        if (ArrayUtils.contains(defaultRoles, userEntity.getRole().toString())) {
+          return true;
+        }
+        
+        if (userEntity instanceof Student) {
+          CourseStudent courseStudent = courseStudentDAO.findByCourseAndStudent(course, (Student) userEntity);
+          if (courseStudent != null) {
+            return ArrayUtils.contains(defaultCourseRoles, CourseRoleArchetype.STUDENT);
+          }
+        } 
+        else if (userEntity instanceof StaffMember) {
+          CourseStaffMember courseStaffMember = courseStaffMemberDAO.findByCourseAndStaffMember(course, (StaffMember) userEntity);
+          // There may be several types of Roles but they don't have a particular type so we just default to a generic course staff type
+          
+          if (courseStaffMember != null) {
+            ArrayUtils.contains(defaultCourseRoles, CourseRoleArchetype.TEACHER);
+          }
+        }
+      } catch (NoSuchFieldException e) {
+      }
+    }
+
+    return false;
   }
 
   @Override

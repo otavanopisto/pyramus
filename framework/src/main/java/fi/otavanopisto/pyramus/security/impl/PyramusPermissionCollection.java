@@ -14,6 +14,8 @@ public interface PyramusPermissionCollection extends PermissionCollection {
    */
   String[] getDefaultRoles(String permission) throws NoSuchFieldException;
 
+  CourseRoleArchetype[] getDefaultCourseRoles(String permission) throws NoSuchFieldException;
+  
   PermissionFeature[] listPermissionFeatures(String permission) throws NoSuchFieldException, SecurityException;
   
 }

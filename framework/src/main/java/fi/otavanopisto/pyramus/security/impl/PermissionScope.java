@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.security.impl;
 
 public class PermissionScope {
   public static final String ENVIRONMENT = "ENVIRONMENT";
+  public static final String COURSE = "COURSE";
 
   /**
    * Owner of an entity who is a student. Ownership ends when studies are over.

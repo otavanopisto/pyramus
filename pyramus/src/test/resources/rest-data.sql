@@ -490,7 +490,8 @@ values
   (3, 1000, 1),
   (4, 1000, 1),
   (5, 1000, 1),
-  (6, 1000, 1);
+  (6, 1000, 1),
+  (7, 1001, 1);
   
 insert into 
   CourseStaffMember (id, staffMember_id, role_id)
@@ -504,7 +505,8 @@ insert into
   CourseStudent (id, archived, enrolmentTime, lodging, optionality, billingDetails, enrolmentType, participationType, student)
 values
   (5, false, PARSEDATETIME('1 1 2010', 'd M yyyy'), false, 'OPTIONAL', null, 1, 1, 3),
-  (6, false, PARSEDATETIME('1 1 2011', 'd M yyyy'), true, 'MANDATORY', null, 2, 2, 4);
+  (6, false, PARSEDATETIME('1 1 2011', 'd M yyyy'), true, 'MANDATORY', null, 2, 2, 4),
+  (7, false, PARSEDATETIME('1 1 2012', 'd M yyyy'), true, 'MANDATORY', null, 2, 2, 13);
 
 insert into
   Credit (id, archived, verbalAssessment, date, creditType, version, assessor_id, grade)
