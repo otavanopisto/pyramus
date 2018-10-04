@@ -500,7 +500,7 @@ public class ApplicationRESTService extends AbstractRESTService {
         modifiedApplicationPostProcessing(application);
         if (lineChanged) {
           String notification = String.format("Hakija vaihtoi hakemustaan linjalta <b>%s</b> linjalle <b>%s</b>",
-              ApplicationUtils.applicationLineUiValue(line), ApplicationUtils.applicationLineUiValue(oldLine));
+              ApplicationUtils.applicationLineUiValue(oldLine), ApplicationUtils.applicationLineUiValue(line));
           ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
           applicationLogDAO.create(
               application,
