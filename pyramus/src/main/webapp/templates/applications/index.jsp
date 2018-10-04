@@ -24,7 +24,7 @@
     <section class="application-description">
       <div class="application-description__line application-description__line--selection">
         <div class="application-description__line-header">
-          Hae opiskelijaksi <span class="application-description__line-label">Otavan Opistoon</span>
+          Hae opiskelijaksi
         </div>
         <div class="application-description__line-content">Valitse haluamasi koulutusohjelma ja siirry täyttämään opiskelijahakemus.</div>
       </div>

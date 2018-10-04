@@ -325,7 +325,7 @@ public class ApplicationUtils {
     }
   }
   
-  public static void sendNotifications(Application application, HttpServletRequest request, StaffMember staffMember, boolean newApplication, String notificationPostfix) {
+  public static void sendNotifications(Application application, HttpServletRequest request, StaffMember staffMember, boolean newApplication, String notificationPostfix, boolean doLogEntry) {
     ApplicationNotificationDAO applicationNotificationDAO = DAOFactory.getInstance().getApplicationNotificationDAO();
     List<ApplicationNotification> notifications = applicationNotificationDAO.listByNullOrLineAndState(
         application.getLine(), application.getState());
@@ -384,16 +384,18 @@ public class ApplicationUtils {
     
     // Log entry
     
-    String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState()));
-    if (notificationPostfix != null) {
-      notification = String.format("%s<br/>%s", notification, notificationPostfix);
+    if (doLogEntry) {
+      String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState()));
+      if (notificationPostfix != null) {
+        notification = String.format("%s<br/>%s", notification, notificationPostfix);
+      }
+      ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+      applicationLogDAO.create(
+          application,
+          ApplicationLogType.HTML,
+          notification,
+          staffMember);
     }
-    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-    applicationLogDAO.create(
-      application,
-      ApplicationLogType.HTML,
-      notification,
-      staffMember);
   }
 
   public static String extractSSN(Application application) {

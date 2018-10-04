@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-  <section class="form-section section-source">
+  <section class="form-section section-source" style="display:none;">
 
     <div class="application-line"></div>
 
@@ -125,7 +125,7 @@
       <p id="field-source-mandatory" style="display:none;">Valitse vähintään yksi</p>
     </div>
 
-    <div class="form-section__field-container field-source-other dependent" data-dependent-field="field-source" data-dependent-values="sanomalehti,valotaulumainos,elokuva,messut,muu">
+    <div class="form-section__field-container field-source-other dependent" data-dependent-field="field-source" data-dependent-values="sanomalehti,valotaulumainos,elokuva,messut,muu" style="display:none;">
       <label for="field-source-other" class="required">Kerro tarkemmin mistä</label>
       <input type="text" name="field-source-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>

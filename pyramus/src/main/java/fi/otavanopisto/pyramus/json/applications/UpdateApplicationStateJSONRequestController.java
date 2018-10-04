@@ -205,7 +205,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
         
         // Email notifications and log entries related to state change
         
-        ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, false, null);
+        ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, false, null, true);
       }
 
       // Response parameters

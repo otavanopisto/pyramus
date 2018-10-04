@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-  <section class="form-section section-summary">
+  <section class="form-section section-summary" style="display:none;">
 
     <div class="application-line"></div>
 
@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div class="summary-container field-nettilukio-promise dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
+    <div class="summary-container field-nettilukio-promise dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
       <div class="field-row-flex">
         <div class="field-row-element">
           <input type="checkbox" id="field-nettilukio-promise" name="field-nettilukio-promise" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <div class="summary-container field-aineopiskelu-promise dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu">
+    <div class="summary-container field-aineopiskelu-promise dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
       <div class="field-row-flex">
         <div class="field-row-element">
           <input type="checkbox" id="field-aineopiskelu-promise" name="field-aineopiskelu-promise" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
@@ -66,7 +66,7 @@
       </div>
     </div>
 
-    <div class="summary-container field-nettipk-promise dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
+    <div class="summary-container field-nettipk-promise dependent" data-dependent-field="field-line" data-dependent-values="nettipk" style="display:none;">
       <div class="field-row-flex">
         <div class="field-row-element">
           <input type="checkbox" id="field-nettipk-promise" name="field-nettipk-promise" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
@@ -77,9 +77,9 @@
       </div>
     </div>
 
-    <div class="nettilukio-promise-overlay">
+    <div class="nettilukio-promise-overlay" style="display:none;">
     </div>
-    <div class="nettilukio-promise">
+    <div class="nettilukio-promise" style="display:none;">
       <div class="nettilukio-promise__close"></div>
       <h3>Kurssin itsenäinen suorittaminen</h3>
       <p>Nettilukion kurssien arvioitavia tehtäviä tehdessä on tärkeä muistaa, että vastauksesi osoittavat juuri sinun henkilökohtaista osaamistasi: vastauksiin sisältyvät asiat, esimerkit, tekstin rakentaminen ovat näyttöjä siitä, miten sinä olet asian hahmottanut ja ymmärtänyt. Arvioitavat tehtävät muodostavat pohjan henkilökohtaisen kurssisuorituksesi arvioinnille.</p>
@@ -92,9 +92,9 @@
       <p>Jos sinulle tulee jostakin syystä tilanne, ettet pysty opiskelemaan tai haluat erota nettilukiosta, ota heti yhteyttä omaan ohjaajaasi.</p>
     </div>
 
-    <div class="aineopiskelu-promise-overlay">
+    <div class="aineopiskelu-promise-overlay" style="display:none;">
     </div>
-    <div class="aineopiskelu-promise">
+    <div class="aineopiskelu-promise" style="display:none;">
       <div class="aineopiskelu-promise__close"></div>
       <h3>Kurssin itsenäinen suorittaminen</h3>
       <p>Nettilukion kurssien arvioitavia tehtäviä tehdessä on tärkeä muistaa, että vastauksesi osoittavat juuri sinun henkilökohtaista osaamistasi: vastauksiin sisältyvät asiat, esimerkit, tekstin rakentaminen ovat näyttöjä siitä, miten sinä olet asian hahmottanut ja ymmärtänyt. Arvioitavat tehtävät muodostavat pohjan henkilökohtaisen kurssisuorituksesi arvioinnille.</p>
@@ -103,10 +103,10 @@
       <p>Kurssin materiaalien läpikäyminen ja harjoitustehtävien tekeminen jonkun toisen tuella on mahdollista. Jos tarvitset apua arvioitavien tehtävien tekemisessä, käänny opettajan puoleen tai kysy apua oppiainekohtaisessa FB-ryhmässä. Siten opettajan on mahdollista nähdä, millaista apua olet saanut. HUOM! Avun pyytäminen ei vaikuta arvosanaasi alentavasti.</p>
       <p><b>Muista, että kurssilla annettavat näytöt osaamisesta (arvioitavat tehtävät, oppimispäiväkirja) ovat henkilökohtaisia!</b></p>
     </div>
-    <div class="aineopiskelu-promise-overlay">
-    </div>
 
-    <div class="nettipk-promise">
+    <div class="nettipk-promise-overlay" style="display:none;">
+    </div>
+    <div class="nettipk-promise" style="display:none;">
       <div class="nettipk-promise__close"></div>
       <h3>Kurssin itsenäinen suorittaminen</h3>
       <p>Nettiperuskoulun kurssien arvioitavia tehtäviä tehdessä on tärkeä muistaa, että vastauksesi osoittavat juuri sinun henkilökohtaista osaamistasi: vastauksiin sisältyvät asiat, esimerkit, tekstin rakentaminen ovat näyttöjä siitä, miten sinä olet asian hahmottanut ja ymmärtänyt. Arvioitavat tehtävät muodostavat pohjan henkilökohtaisen kurssisuorituksesi arvioinnille.</p>
