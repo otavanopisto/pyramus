@@ -142,7 +142,7 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
       
       if (lineChanged) {
         String notification = String.format("Hakemus vaihdettu linjalta <b>%s</b> linjalle <b>%s</b>",
-            ApplicationUtils.applicationLineUiValue(line), ApplicationUtils.applicationLineUiValue(oldLine));
+            ApplicationUtils.applicationLineUiValue(oldLine), ApplicationUtils.applicationLineUiValue(line));
         ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
         applicationLogDAO.create(
             application,
