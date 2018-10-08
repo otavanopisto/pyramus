@@ -133,7 +133,6 @@ import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
-import fi.otavanopisto.pyramus.dao.users.EmailSignatureDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
@@ -610,10 +609,6 @@ public class DAOFactory {
 
   public EmailDAO getEmailDAO() {
     return (EmailDAO) findByClass(EmailDAO.class);
-  }
-
-  public EmailSignatureDAO getEmailSignatureDAO() {
-    return (EmailSignatureDAO) findByClass(EmailSignatureDAO.class);
   }
 
   public LanguageDAO getLanguageDAO() {

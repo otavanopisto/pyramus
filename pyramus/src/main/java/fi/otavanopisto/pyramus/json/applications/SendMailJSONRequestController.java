@@ -16,11 +16,9 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
-import fi.otavanopisto.pyramus.dao.users.EmailSignatureDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
-import fi.otavanopisto.pyramus.domainmodel.users.EmailSignature;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -95,14 +93,6 @@ public class SendMailJSONRequestController extends JSONRequestController {
         logger.log(Level.WARNING, "Refusing application mail due to missing subject or content");
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
-      }
-      
-      // #870: Email signature
-      
-      EmailSignatureDAO emailSignatureDAO = DAOFactory.getInstance().getEmailSignatureDAO();
-      EmailSignature emailSignature = emailSignatureDAO.findByUser(staffMember);
-      if (emailSignature != null) {
-        content += emailSignature.getSignature();
       }
       
       // Send mail
