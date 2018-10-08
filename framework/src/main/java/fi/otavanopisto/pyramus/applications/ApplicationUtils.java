@@ -351,7 +351,10 @@ public class ApplicationUtils {
       String mailSubject = null;
       String mailContent = null;
       if (newApplication) {
-        mailSubject = String.format("Uusi hakemus linjalle %s", applicationLineUiValue(application.getLine()));
+        mailSubject = String.format("Uusi hakemus linjalle %s [%s %s]",
+            applicationLineUiValue(application.getLine()),
+            application.getFirstName(),
+            application.getLastName());
         mailContent = String.format(
           "<p>Hakija <b>%s %s</b> (%s) on jättänyt hakemuksen linjalle <b>%s</b>.</p>" +
           "<p>Pääset hakemustietoihin <b><a href=\"%s\">tästä linkistä</a></b>.</p>",
@@ -362,7 +365,9 @@ public class ApplicationUtils {
           viewUrl);
       }
       else {
-        mailSubject = "Hakemuksen tila on muuttunut";
+        mailSubject = String.format("Hakemuksen tila on muuttunut [%s %s]",
+            application.getFirstName(),
+            application.getLastName());
         mailContent = String.format(
           "<p>Hakijan <b>%s %s</b> (%s) hakemus linjalle <b>%s</b> on siirtynyt tilaan <b>%s</b>.</p>" +
           "<p>Pääset hakemustietoihin <b><a href=\"%s\">tästä linkistä</a></b>.</p>",
