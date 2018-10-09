@@ -13,7 +13,7 @@
       <div class="field-attachments__uploader">
         <div class="field-attachments__selector-container">
           <input type="file" id="field-attachments" name="field-attachments" multiple="true" class="field-attachments__selector">
-          <div class="field-attachments__description">Lisää liitteitä klikkaamalla tästä tai raahaamalla niitä tähän laatikkoon. Liitteiden suurin sallittu yhteiskoko on 10 MB</div>
+          <div class="field-attachments__description">Lisää liitteitä klikkaamalla tästä tai raahaamalla niitä tähän laatikkoon. Liitteiden suurin sallittu yhteiskoko on 20 MB</div>
         </div>
         <div id="field-attachments-files" class="field-attachments__files"></div>
       </div>
