@@ -488,6 +488,21 @@ public class ApplicationUtils {
       studyTimeEnd = c.getTime();
     }
     
+    // #868: Non-contract school information (for Internetix students, if exists)
+    
+    String additionalInfo = null;
+    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+      String contractSchoolName = getFormValue(formData, "field-internetix-contract-school-name");
+      String contractSchoolMunicipality = getFormValue(formData, "field-internetix-contract-school-municipality");
+      String contractSchoolContact = getFormValue(formData, "field-internetix-contract-school-contact");
+      if (!StringUtils.isAnyEmpty(contractSchoolName, contractSchoolMunicipality, contractSchoolContact)) {
+        additionalInfo = String.format("<p><strong>Muun kuin sopimusoppilaitoksen yhteystiedot:</strong><br/>%s (%s)<br/>%s</p>",
+            contractSchoolName,
+            contractSchoolMunicipality,
+            StringUtils.replace(contractSchoolContact, "\n", "<br/>"));
+      }
+    }
+    
     // Create student
     
     Student student = studentDAO.create(
@@ -495,7 +510,7 @@ public class ApplicationUtils {
         getFormValue(formData, "field-first-names"),
         getFormValue(formData, "field-last-name"),
         getFormValue(formData, "field-nickname"),
-        null, // additionalInfo,
+        additionalInfo,
         studyTimeEnd,
         ApplicationUtils.resolveStudentActivityType(getFormValue(formData, "field-job")),
         ApplicationUtils.resolveStudentExaminationType(getFormValue(formData, "field-internetix-contract-school-degree")),
