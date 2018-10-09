@@ -606,6 +606,15 @@ public class ApplicationUtils {
         if (school != null) {
           studentDAO.updateSchool(student, school);
         }
+        else {
+          String notification = "<b>Huom!</b> Opiskelijan ilmoittamaa oppilaitosta ei löydy vielä Pyramuksesta!";
+          ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+          applicationLogDAO.create(
+              application,
+              ApplicationLogType.HTML,
+              notification,
+              null);
+        }
       }
     }
     

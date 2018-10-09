@@ -112,7 +112,9 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
           SuorituksenTila.VALMIS : SuorituksenTila.KESKEYTYNYT;
     }
 
-    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
+    String departmentIdentifier = settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
+
+    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(departmentIdentifier);
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
     Set<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineet = assessmentsToModel(ops, student, studentEducationType, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS);
@@ -122,7 +124,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
     if (suorituksenTila == SuorituksenTila.VALMIS)
-      suoritus.setVahvistus(getVahvistus(student, academyIdentifier));
+      suoritus.setVahvistus(getVahvistus(student, departmentIdentifier));
     opiskeluoikeus.addSuoritus(suoritus);
     
     oppiaineet.forEach(oppiaine -> suoritus.addOsasuoritus(oppiaine));

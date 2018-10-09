@@ -132,6 +132,13 @@ public class KoskiSettings {
       
       modulitunnisteet.put(studyProgrammeId, studyProgramme.getString("modulitunniste"));
       
+      if (studyProgramme.has("toimipisteOID")) {
+        String toimipisteOID = studyProgramme.getString("toimipisteOID");
+        if (StringUtils.isNotBlank(toimipisteOID)) {
+          toimipisteOIDt.put(studyProgrammeId, toimipisteOID);
+        }
+      }
+
       JSONObject diaariJSON = studyProgramme.getJSONObject("diaari");
       if (diaariJSON != null) {
         for (Object curriculumIdKey : diaariJSON.keySet()) {
@@ -279,6 +286,11 @@ public class KoskiSettings {
     return settings;
   }
   
+  public String getToimipisteOID(Long studyProgrammeId, String defaultIdentifier) {
+    return toimipisteOIDt.containsKey(studyProgrammeId) ?
+        toimipisteOIDt.get(studyProgrammeId) : defaultIdentifier;
+  }
+  
   private KoskiIntegrationSettingsWrapper settings;
   private boolean testEnvironment;
   private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
@@ -287,6 +299,7 @@ public class KoskiSettings {
   private Map<Long, SuorituksenTyyppi> suoritustyypit = new HashMap<>();
   private Map<Long, KoskiStudyProgrammeHandler> handlerTypes = new HashMap<>();
   private Map<Long, String> modulitunnisteet = new HashMap<>();
+  private Map<Long, String> toimipisteOIDt = new HashMap<>();
   private Map<String, String> diaarinumerot = new HashMap<>();
   private Map<Long, String> courseTypeMapping = new HashMap<>();
   private Map<String, String> subjectToLanguageMapping = new HashMap<>();
@@ -294,4 +307,5 @@ public class KoskiSettings {
   private Map<Long, String> vahvistaja = new HashMap<>();
   private Map<Long, String> vahvistajanTitteli = new HashMap<>();
   private Map<Long, Set<KoskiOppiaineetYleissivistava>> pakollisetOppiaineet = new HashMap<>();
+
 }
