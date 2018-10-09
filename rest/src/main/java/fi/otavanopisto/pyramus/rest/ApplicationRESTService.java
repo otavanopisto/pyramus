@@ -743,6 +743,10 @@ public class ApplicationRESTService extends AbstractRESTService {
    */
   private void newApplicationPostProcessing(Application application) {
 
+    // Handle notification mails and log entries
+
+    ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, true);
+
     // Mail to the applicant
 
     JSONObject formData = JSONObject.fromObject(application.getFormData());
@@ -752,6 +756,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     String applicantMail = application.getEmail();
     String guardianMail = formData.getString("field-underage-email");
     try {
+
       // #769: Do not mail application edit instructions to Internetix applicants 
       if (!StringUtils.equals(application.getLine(), "aineopiskelu")) {
 
@@ -787,11 +792,15 @@ public class ApplicationRESTService extends AbstractRESTService {
         else {
           Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content);
         }
+
+        // #879: Add sent confirmation mail to application log
+        
+        ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+        applicationLogDAO.create(application,
+            ApplicationLogType.HTML,
+            String.format("<p>Hakijalle lähetettiin sähköpostia:</p><p><b>%s</b></p>%s", subject, content),
+            null);
       }
-
-      // Handle notification mails and log entries
-
-      ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, true);
     }
     catch (IOException e) {
       logger.log(Level.SEVERE, "Unable to retrieve confirmation mail template", e);
