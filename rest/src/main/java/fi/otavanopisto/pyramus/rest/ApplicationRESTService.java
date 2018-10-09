@@ -143,8 +143,8 @@ public class ApplicationRESTService extends AbstractRESTService {
       // Enforce maximum attachment size
       
       long size = fileData.length + FileUtils.sizeOfDirectory(folder);
-      if (size > 10485760) {
-        logger.log(Level.WARNING,"Refusing attachment due to total attachment size over 10MB");
+      if (size > 20971520) {
+        logger.log(Level.WARNING,"Refusing attachment due to total attachment size over 20MB");
         return Response.status(Status.BAD_REQUEST).build();
       }
       

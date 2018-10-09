@@ -32,8 +32,8 @@
       for (var i = 0; i < files.length; i++) {
        filesSize += files[i].size;
       }
-      if (filesSize > 10485760) {
-        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on 10 MB');
+      if (filesSize > 20971520) {
+        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on 20 MB');
         return;
       }
       for (var i = 0; i < files.length; i++) {
