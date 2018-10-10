@@ -268,7 +268,8 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     subjectCode = subjectCode.toUpperCase();
     
     for (AikuistenPerusopetuksenAlkuvaiheenOppiaineet subject : AikuistenPerusopetuksenAlkuvaiheenOppiaineet.values()) {
-      if (subjectCode.equals("A" + subject.toString())) {
+      final String[] apaSubjects = { "A" + subject.toString(), "L" + subject.toString() };
+      if (ArrayUtils.contains(apaSubjects, subjectCode)) {
         return subject;
       }
     }
