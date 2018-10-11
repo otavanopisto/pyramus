@@ -31,11 +31,37 @@
 					{value: "AUTUMN2021", text: "Syksy 2021"}
 				];
 				var subjectOptions = [
-					{value: "MAA", text: "Pitkä matematiikka MAA"},
-					{value: "MAB", text: "Lyhyt matematiikka MAB"},
-					{value: "ENA", text: "Englanti ENA"},
-					{value: "RUB", text: "Ruotsi RUB"},
-					{value: "AI", text: "Äidinkieli AI"}
+					{value:"AI", text:"Äidinkieli"},
+					{value:"S2", text:"Suomi toisena kielenä"},
+					{value:"ENA", text:"Englanti, A-taso"},
+					{value:"RAA", text:"Ranska, A-taso"},
+					{value:"ESA", text:"Espanja, A-taso"},
+					{value:"SAA", text:"Saksa, A-taso"},
+					{value:"VEA", text:"Venäjä, A-taso"},
+					{value:"UE", text:"Uskonto"},
+					{value:"ET", text:"Elämänkatsomustieto"},
+					{value:"YO", text:"Yhteiskuntaoppi"},
+					{value:"KE", text:"Kemia"},
+					{value:"GE", text:"Maantiede"},
+					{value:"TT", text:"Terveystieto"},
+					{value:"ENC", text:"Englanti, C-taso"},
+					{value:"RAC", text:"Ranska, C-taso"},
+					{value:"ESC", text:"Espanja, C-taso"},
+					{value:"SAC", text:"Saksa, C-taso"},
+					{value:"VEC", text:"Venäjä, C-taso"},
+					{value:"ITC", text:"Italia, C-taso"},
+					{value:"POC", text:"Portugali, C-taso"},
+					{value:"LAC", text:"Latina, C-taso"},
+					{value:"SMC", text:"Saame, C-taso"},
+					{value:"RUA", text:"Ruotsi, A-taso"},
+					{value:"RUB", text:"Ruotsi, B-taso"},
+					{value:"PS", text:"Psykologia"},
+					{value:"FI", text:"Filosofia"},
+					{value:"HI", text:"Historia"},
+					{value:"FY", text:"Fysiikka"},
+					{value:"BI", text:"Biologia"},
+					{value:"MAA", text:"Matematiikka, pitkä"},
+					{value:"MAB", text:"Matematiikka, lyhyt"}
 				];
 				var mandatorityOptions = [
 					{value: "MANDATORY", text: "Pakollinen"},
@@ -46,13 +72,14 @@
 					{value: "REPEAT", text: "Uusinta"}
 				];
 				var gradeOptions = [
-					{value: "IMPROBATUR", text: "IMPROBATUR"},
-					{value: "APPROBATUR", text: "APPROBATUR"},
-					{value: "LUBENTER_APPROBATUR", text: "LUBENTER_APPROBATUR"},
-					{value: "CUM_LAUDE_APPROBATUR", text: "CUM_LAUDE_APPROBATUR"},
-					{value: "MAGNA_CUM_LAUDE_APPROBATUR", text: "MAGNA_CUM_LAUDE_APPROBATUR"},
-					{value: "EXIMIA_CUM_LAUDE_APPROBATUR", text: "EXIMIA_CUM_LAUDE_APPROBATUR"},
-					{value: "LAUDATUR", text: "LAUDATUR"}
+					{value: "IMPROBATUR", text: "Improbatur"},
+					{value: "APPROBATUR", text: "Approbatur"},
+					{value: "LUBENTER_APPROBATUR", text: "Lubenter approbatur"},
+					{value: "CUM_LAUDE_APPROBATUR", text: "Cum laude approbatur"},
+					{value: "MAGNA_CUM_LAUDE_APPROBATUR", text: "Magna cum laude approbatur"},
+					{value: "EXIMIA_CUM_LAUDE_APPROBATUR", text: "Eximia cum laude approbatur"},
+					{value: "LAUDATUR", text: "Laudatur"},
+					{value: "UNKNOWN", text: "Ei tiedossa"},
 				];
 				var tabControl = new IxProtoTabs($('tabs'));
 

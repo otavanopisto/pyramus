@@ -1,9 +1,35 @@
 package fi.otavanopisto.pyramus.domainmodel.matriculation;
 
 public enum MatriculationExamSubject {
-  MAA,
-  MAB,
+  AI,
+  S2,
   ENA,
+  RAA,
+  ESA,
+  SAA,
+  VEA,
+  UE,
+  ET,
+  YO,
+  KE,
+  GE,
+  TT,
+  ENC,
+  RAC,
+  ESC,
+  SAC,
+  VEC,
+  ITC,
+  POC,
+  LAC,
+  SMC,
+  RUA,
   RUB,
-  AI
+  PS,
+  FI,
+  HI,
+  FY,
+  BI,
+  MAA,
+  MAB
 }

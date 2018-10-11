@@ -30,15 +30,15 @@
   CREATE TABLE `MatriculationExamAttendance` (
     `id` BIGINT PRIMARY KEY,
     `enrollment_id` BIGINT NOT NULL,
-    `subject` VARCHAR(255) NOT NULL,
-    `mandatory` BIT(1) NOT NULL,
-    `retry` BIT(1) NOT NULL,
-    `year` INTEGER NOT NULL,
-    `term` INTEGER NOT NULL,
-    `status` VARCHAR(255) NOT NULL,
-    `grade` VARCHAR(255) NOT NULL,
+    `subject` VARCHAR(255),
+    `mandatory` BIT(1),
+    `retry` BIT(1),
+    `year` INTEGER,
+    `term` INTEGER,
+    `status` VARCHAR(255),
+    `grade` VARCHAR(255),
     CONSTRAINT `MatriculationExamAttendance_enrollment_id`
-      FOREIGN KEY (`enrollment_id`) REFERENCES `Application` (`id`)
+      FOREIGN KEY (`enrollment_id`) REFERENCES `MatriculationExamEnrollment` (`id`)
   );
   </sql>
 

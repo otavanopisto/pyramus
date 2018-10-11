@@ -107,9 +107,12 @@ public class MatriculationRESTService extends AbstractRESTService {
           attendance.getMandatory(),
           attendance.getRepeat(),
           attendance.getYear(),
-          MatriculationExamTerm.valueOf(attendance.getTerm()),
-          MatriculationExamAttendanceStatus.valueOf(attendance.getStatus()),
-          MatriculationExamGrade.valueOf(attendance.getGrade()));
+          attendance.getTerm() != null
+            ? MatriculationExamTerm.valueOf(attendance.getTerm()) : null,
+          attendance.getStatus() != null
+            ? MatriculationExamAttendanceStatus.valueOf(attendance.getStatus()) : null,
+          attendance.getGrade() != null
+            ? MatriculationExamGrade.valueOf(attendance.getGrade()) : null);
       }
     } catch (IllegalArgumentException ex) {
       return Response.status(Status.BAD_REQUEST)

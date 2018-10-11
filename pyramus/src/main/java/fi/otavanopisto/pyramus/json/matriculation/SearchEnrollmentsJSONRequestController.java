@@ -54,8 +54,12 @@ public class SearchEnrollmentsJSONRequestController extends JSONRequestControlle
       results.add(result);
     }
     
+    long count = dao.count();
+    
     requestContext.addResponseParameter("statusMessage", "");
     requestContext.addResponseParameter("results", results);
+    requestContext.addResponseParameter("pages", Math.ceil((double)count / resultsPerPage));
+    requestContext.addResponseParameter("page", page);
   }
 
   public UserRole[] getAllowedRoles() {
