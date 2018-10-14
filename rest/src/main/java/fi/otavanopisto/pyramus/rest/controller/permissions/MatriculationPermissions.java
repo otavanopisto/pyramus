@@ -15,9 +15,6 @@ public class MatriculationPermissions extends AbstractPyramusPermissionCollectio
   @DefaultPermissionRoles ({ STUDENT, ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String GET_CURRENT_EXAM = "GET_CURRENT_EXAM";
   
-  @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ STUDENT, ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
-  public static final String ENROLL_TO_EXAM = "ENROLL_TO_EXAM";
   
   @Override
   public List<String> listPermissions() {

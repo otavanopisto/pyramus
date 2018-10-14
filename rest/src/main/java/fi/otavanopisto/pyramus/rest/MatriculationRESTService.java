@@ -26,8 +26,12 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
+import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MatriculationPermissions;
+import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance;
+import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/matriculation")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,6 +39,9 @@ import fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance;
 @Stateful
 @RequestScoped
 public class MatriculationRESTService extends AbstractRESTService {
+
+  @Inject
+  private RESTSecurity restSecurity;
 
   @Inject
   private MatriculationExamDAO matriculationExamDao;
@@ -47,7 +54,7 @@ public class MatriculationRESTService extends AbstractRESTService {
 
   @Inject
   private MatriculationExamAttendanceDAO matriculationExamAttendanceDao;
-
+  
   @Path("/currentExam")
   @GET
   @RESTPermit(MatriculationPermissions.GET_CURRENT_EXAM)
@@ -66,12 +73,16 @@ public class MatriculationRESTService extends AbstractRESTService {
   
   @Path("/enrollments")
   @POST
-  @RESTPermit(MatriculationPermissions.ENROLL_TO_EXAM)
+  @RESTPermit(handling = Handling.INLINE)
   public Response enrollToExam(fi.otavanopisto.pyramus.rest.model.MatriculationExamEnrollment enrollment) {
   
     Student student = studentDao.findById(enrollment.getStudentId());
     if (student == null) {
       return Response.status(Status.BAD_REQUEST).entity("Student not found").build();
+    }
+
+    if (!restSecurity.hasPermission(new String[] { UserPermissions.USER_OWNER }, student)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
     
     if (!"PENDING".equals(enrollment.getState())) {
@@ -120,7 +131,7 @@ public class MatriculationRESTService extends AbstractRESTService {
                      .build();
     }
     
-    return Response.ok().build();
+    return Response.ok(enrollment).build();
   }
 
 }
