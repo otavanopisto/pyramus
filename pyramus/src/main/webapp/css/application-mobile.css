@@ -228,7 +228,6 @@ body {
 }
 
 .application-description__line {
-  display: none;
   max-width: 100%;
 }
 
@@ -374,12 +373,10 @@ body {
 }
 
 .application-content__information-page-specific {
-  display: none;
   margin: 0 0 10px;
 }
 
 .application-content__information-line-specific {
-  display: none;
   margin: 10px 0 0;
 }
 
@@ -448,7 +445,6 @@ b {
 .nettilukio-promise-overlay,
 .aineopiskelu-promise-overlay,
 .nettipk-promise-overlay {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -463,7 +459,6 @@ b {
 .nettilukio-promise,
 .aineopiskelu-promise,
 .nettipk-promise {
-  display: none;
   background: #fff;
   border: 3px solid #8ed2de;
   bottom: 0;

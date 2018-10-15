@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-  <section class="form-section section-personal-info">
+  <section class="form-section section-personal-info" style="display:none;">
 
     <h3 class="form-section__header">Henkilötiedot</h3>
     
