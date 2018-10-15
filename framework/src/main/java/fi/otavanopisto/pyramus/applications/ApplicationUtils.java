@@ -96,7 +96,9 @@ public class ApplicationUtils {
       case TRANSFERRED_AS_STUDENT:
         return "Siirretty opiskelijaksi";
       case REGISTERED_AS_STUDENT:
-        return "Rekisteröitynyt aineopiskelijaksi";
+        return "Ilmoittautunut aineopiskelijaksi";
+      case REGISTRATION_CHECKED:
+        return "Tiedot tarkistettu";
       case REJECTED:
         return "Hylätty";
        default:
@@ -323,7 +325,7 @@ public class ApplicationUtils {
     }
   }
   
-  public static void sendNotifications(Application application, HttpServletRequest request, StaffMember staffMember, boolean newApplication, String notificationPostfix) {
+  public static void sendNotifications(Application application, HttpServletRequest request, StaffMember staffMember, boolean newApplication, String notificationPostfix, boolean doLogEntry) {
     ApplicationNotificationDAO applicationNotificationDAO = DAOFactory.getInstance().getApplicationNotificationDAO();
     List<ApplicationNotification> notifications = applicationNotificationDAO.listByNullOrLineAndState(
         application.getLine(), application.getState());
@@ -349,7 +351,10 @@ public class ApplicationUtils {
       String mailSubject = null;
       String mailContent = null;
       if (newApplication) {
-        mailSubject = String.format("Uusi hakemus linjalle %s", applicationLineUiValue(application.getLine()));
+        mailSubject = String.format("Uusi hakemus linjalle %s [%s %s]",
+            applicationLineUiValue(application.getLine()),
+            application.getFirstName(),
+            application.getLastName());
         mailContent = String.format(
           "<p>Hakija <b>%s %s</b> (%s) on jättänyt hakemuksen linjalle <b>%s</b>.</p>" +
           "<p>Pääset hakemustietoihin <b><a href=\"%s\">tästä linkistä</a></b>.</p>",
@@ -360,7 +365,9 @@ public class ApplicationUtils {
           viewUrl);
       }
       else {
-        mailSubject = "Hakemuksen tila on muuttunut";
+        mailSubject = String.format("Hakemuksen tila on muuttunut [%s %s]",
+            application.getFirstName(),
+            application.getLastName());
         mailContent = String.format(
           "<p>Hakijan <b>%s %s</b> (%s) hakemus linjalle <b>%s</b> on siirtynyt tilaan <b>%s</b>.</p>" +
           "<p>Pääset hakemustietoihin <b><a href=\"%s\">tästä linkistä</a></b>.</p>",
@@ -382,16 +389,18 @@ public class ApplicationUtils {
     
     // Log entry
     
-    String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState()));
-    if (notificationPostfix != null) {
-      notification = String.format("%s<br/>%s", notification, notificationPostfix);
+    if (doLogEntry) {
+      String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState()));
+      if (notificationPostfix != null) {
+        notification = String.format("%s<br/>%s", notification, notificationPostfix);
+      }
+      ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+      applicationLogDAO.create(
+          application,
+          ApplicationLogType.HTML,
+          notification,
+          staffMember);
     }
-    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-    applicationLogDAO.create(
-      application,
-      ApplicationLogType.HTML,
-      notification,
-      staffMember);
   }
 
   public static String extractSSN(Application application) {
@@ -484,6 +493,21 @@ public class ApplicationUtils {
       studyTimeEnd = c.getTime();
     }
     
+    // #868: Non-contract school information (for Internetix students, if exists)
+    
+    String additionalInfo = null;
+    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+      String contractSchoolName = getFormValue(formData, "field-internetix-contract-school-name");
+      String contractSchoolMunicipality = getFormValue(formData, "field-internetix-contract-school-municipality");
+      String contractSchoolContact = getFormValue(formData, "field-internetix-contract-school-contact");
+      if (!StringUtils.isAnyEmpty(contractSchoolName, contractSchoolMunicipality, contractSchoolContact)) {
+        additionalInfo = String.format("<p><strong>Muun kuin sopimusoppilaitoksen yhteystiedot:</strong><br/>%s (%s)<br/>%s</p>",
+            contractSchoolName,
+            contractSchoolMunicipality,
+            StringUtils.replace(contractSchoolContact, "\n", "<br/>"));
+      }
+    }
+    
     // Create student
     
     Student student = studentDAO.create(
@@ -491,7 +515,7 @@ public class ApplicationUtils {
         getFormValue(formData, "field-first-names"),
         getFormValue(formData, "field-last-name"),
         getFormValue(formData, "field-nickname"),
-        null, // additionalInfo,
+        additionalInfo,
         studyTimeEnd,
         ApplicationUtils.resolveStudentActivityType(getFormValue(formData, "field-job")),
         ApplicationUtils.resolveStudentExaminationType(getFormValue(formData, "field-internetix-contract-school-degree")),
@@ -586,6 +610,15 @@ public class ApplicationUtils {
         School school = schools.isEmpty() ? null : schools.get(0);
         if (school != null) {
           studentDAO.updateSchool(student, school);
+        }
+        else {
+          String notification = "<b>Huom!</b> Opiskelijan ilmoittamaa oppilaitosta ei löydy vielä Pyramuksesta!";
+          ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+          applicationLogDAO.create(
+              application,
+              ApplicationLogType.HTML,
+              notification,
+              null);
         }
       }
     }

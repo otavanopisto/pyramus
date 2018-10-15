@@ -32,8 +32,8 @@
       for (var i = 0; i < files.length; i++) {
        filesSize += files[i].size;
       }
-      if (filesSize > 10485760) {
-        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on 10 MB');
+      if (filesSize > 20971520) {
+        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on 20 MB');
         return;
       }
       for (var i = 0; i < files.length; i++) {
@@ -212,14 +212,26 @@
     
     // Course fees
 
-    $('.internetix-course-fees-link').on('click', function() {
+    $('.internetix-course-fees-link, .course-fees__close, .course-fees-overlay').on('click', function() {
       $('.course-fees-overlay').toggle();
       $('.course-fees').toggle();
     });
     
-    $('.course-fees__close, .course-fees-overlay').on('click', function() {
-      $('.course-fees-overlay').toggle();
-      $('.course-fees').toggle();
+    // Study promises
+
+    $('.nettilukio-promise-link, .nettilukio-promise__close, .nettilukio-promise-overlay').on('click', function() {
+      $('.nettilukio-promise-overlay').toggle();
+      $('.nettilukio-promise').toggle();
+    });
+
+    $('.aineopiskelu-promise-link, .aineopiskelu-promise__close, .aineopiskelu-promise-overlay').on('click', function() {
+      $('.aineopiskelu-promise-overlay').toggle();
+      $('.aineopiskelu-promise').toggle();
+    });
+
+    $('.nettipk-promise-link, .nettipk-promise__close, .nettipk-promise-overlay').on('click', function() {
+      $('.nettipk-promise-overlay').toggle();
+      $('.nettipk-promise').toggle();
     });
     
     // Page information
@@ -402,6 +414,8 @@
     $(section).addClass('current').show();
     $('.form-navigation').toggle(!$(section).hasClass('section-done'));
     $('.application-content__information-page-specific').toggle(!$(section).hasClass('section-done'));
+    $('.application-content__information-page-specific-non-summary').toggle(!$(section).hasClass('section-summary'));
+    $('.application-content__information-page-specific-summary').toggle($(section).hasClass('section-summary'));
     // toggle previous section button
     var canNavigate = false;
     for (var i = currentIndex() - 1; i >= 0; i--) {

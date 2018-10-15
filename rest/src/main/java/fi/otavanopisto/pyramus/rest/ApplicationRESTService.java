@@ -46,6 +46,7 @@ import fi.otavanopisto.pyramus.applications.DuplicatePersonException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.base.LanguageDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
@@ -55,6 +56,7 @@ import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -141,8 +143,8 @@ public class ApplicationRESTService extends AbstractRESTService {
       // Enforce maximum attachment size
       
       long size = fileData.length + FileUtils.sizeOfDirectory(folder);
-      if (size > 10485760) {
-        logger.log(Level.WARNING,"Refusing attachment due to total attachment size over 10MB");
+      if (size > 20971520) {
+        logger.log(Level.WARNING,"Refusing attachment due to total attachment size over 20MB");
         return Response.status(Status.BAD_REQUEST).build();
       }
       
@@ -459,7 +461,7 @@ public class ApplicationRESTService extends AbstractRESTService {
             application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
             application = applicationDAO.updateApplicationStateAsApplicant(application, ApplicationState.REGISTERED_AS_STUDENT);
             application = applicationDAO.updateApplicantEditable(application, Boolean.FALSE);
-            ApplicationUtils.sendNotifications(application, httpRequest, null, true, null);
+            ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, true);
             ApplicationUtils.mailCredentialsInfo(httpRequest, student, application);
             response.put("autoRegistered", "true");
           }
@@ -482,6 +484,7 @@ public class ApplicationRESTService extends AbstractRESTService {
           referenceCode = application.getReferenceCode();
         }
         boolean lineChanged = !StringUtils.equals(line, application.getLine());
+        String oldLine = application.getLine(); 
         application = applicationDAO.update(
             application,
             line,
@@ -496,7 +499,15 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.INFO, String.format("Updated %s application with id %s", line, application.getApplicationId()));
         modifiedApplicationPostProcessing(application);
         if (lineChanged) {
-          ApplicationUtils.sendNotifications(application, httpRequest, null, true, null);
+          String notification = String.format("Hakija vaihtoi hakemustaan linjalta <b>%s</b> linjalle <b>%s</b>",
+              ApplicationUtils.applicationLineUiValue(oldLine), ApplicationUtils.applicationLineUiValue(line));
+          ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+          applicationLogDAO.create(
+              application,
+              ApplicationLogType.HTML,
+              notification,
+              null);
+          ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, false);
         }
       }
 
@@ -732,6 +743,10 @@ public class ApplicationRESTService extends AbstractRESTService {
    */
   private void newApplicationPostProcessing(Application application) {
 
+    // Handle notification mails and log entries
+
+    ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, true);
+
     // Mail to the applicant
 
     JSONObject formData = JSONObject.fromObject(application.getFormData());
@@ -741,6 +756,7 @@ public class ApplicationRESTService extends AbstractRESTService {
     String applicantMail = application.getEmail();
     String guardianMail = formData.getString("field-underage-email");
     try {
+
       // #769: Do not mail application edit instructions to Internetix applicants 
       if (!StringUtils.equals(application.getLine(), "aineopiskelu")) {
 
@@ -776,11 +792,15 @@ public class ApplicationRESTService extends AbstractRESTService {
         else {
           Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content);
         }
+
+        // #879: Add sent confirmation mail to application log
+        
+        ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+        applicationLogDAO.create(application,
+            ApplicationLogType.HTML,
+            String.format("<p>Hakijalle lähetettiin sähköpostia:</p><p><b>%s</b></p>%s", subject, content),
+            null);
       }
-
-      // Handle notification mails and log entries
-
-      ApplicationUtils.sendNotifications(application, httpRequest, null, true, null);
     }
     catch (IOException e) {
       logger.log(Level.SEVERE, "Unable to retrieve confirmation mail template", e);
@@ -804,7 +824,9 @@ public class ApplicationRESTService extends AbstractRESTService {
       viewUrl.append("/applications/view.page?application=");
       viewUrl.append(application.getId());
 
-      String subject = "Hakija on muokannut hakemustaan";
+      String subject = String.format("Hakija on muokannut hakemustaan [%s %s]",
+          application.getFirstName(),
+          application.getLastName());
       String content = String.format(
           "<p>Hakija <b>%s %s</b> (%s) on muokannut hakemustaan linjalle <b>%s</b>.</p>" +
           "<p>Pääset hakemustietoihin <b><a href=\"%s\">tästä linkistä</a></b>.</p>",
