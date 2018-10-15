@@ -32,8 +32,8 @@
       for (var i = 0; i < files.length; i++) {
        filesSize += files[i].size;
       }
-      if (filesSize > 10485760) {
-        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on 10 MB');
+      if (filesSize > 20971520) {
+        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on 20 MB');
         return;
       }
       for (var i = 0; i < files.length; i++) {
@@ -212,14 +212,26 @@
     
     // Course fees
 
-    $('.internetix-course-fees-link').on('click', function() {
+    $('.internetix-course-fees-link, .course-fees__close, .course-fees-overlay').on('click', function() {
       $('.course-fees-overlay').toggle();
       $('.course-fees').toggle();
     });
     
-    $('.course-fees__close, .course-fees-overlay').on('click', function() {
-      $('.course-fees-overlay').toggle();
-      $('.course-fees').toggle();
+    // Study promises
+
+    $('.nettilukio-promise-link, .nettilukio-promise__close, .nettilukio-promise-overlay').on('click', function() {
+      $('.nettilukio-promise-overlay').toggle();
+      $('.nettilukio-promise').toggle();
+    });
+
+    $('.aineopiskelu-promise-link, .aineopiskelu-promise__close, .aineopiskelu-promise-overlay').on('click', function() {
+      $('.aineopiskelu-promise-overlay').toggle();
+      $('.aineopiskelu-promise').toggle();
+    });
+
+    $('.nettipk-promise-link, .nettipk-promise__close, .nettipk-promise-overlay').on('click', function() {
+      $('.nettipk-promise-overlay').toggle();
+      $('.nettipk-promise').toggle();
     });
     
     // Page information
@@ -402,6 +414,8 @@
     $(section).addClass('current').show();
     $('.form-navigation').toggle(!$(section).hasClass('section-done'));
     $('.application-content__information-page-specific').toggle(!$(section).hasClass('section-done'));
+    $('.application-content__information-page-specific-non-summary').toggle(!$(section).hasClass('section-summary'));
+    $('.application-content__information-page-specific-summary').toggle($(section).hasClass('section-summary'));
     // toggle previous section button
     var canNavigate = false;
     for (var i = currentIndex() - 1; i >= 0; i--) {
@@ -557,7 +571,7 @@
       contentType: "application/json; charset=utf-8",
       success: function(files) {
         for (var i = 0; i < files.length; i++) {
-          createAttachmentFormElement(files[i].name, files[i].size);
+          createAttachmentFormElement(files[i].name, files[i].description, files[i].size);
         }
       },
       error: function(err) {
@@ -566,13 +580,23 @@
     });
   }
   
-  function createAttachmentFormElement(name, size) {
+  function createAttachmentFormElement(name, description, size) {
     var applicationId = $('#field-application-id').val();
     var fileContainer = $('#field-attachments-files');
     var fileElement = $('.application-file.template').clone();
     fileElement.attr('data-file-size', size);
     fileElement.removeClass('template');
     fileContainer.append(fileElement);
+    var nameElement = $('<input>').attr('type', 'hidden');
+    nameElement.attr('name', 'attachment-name');
+    nameElement.attr('value', name);
+    var descriptionElement = $('<input>').attr('type', 'text');
+    descriptionElement.addClass('attachment-description');
+    descriptionElement.attr('name', 'attachment-description');
+    descriptionElement.attr('placeholder', 'Kuvaus');
+    descriptionElement.attr('value', description);
+    fileElement.find('.application-file__description').append(nameElement);
+    fileElement.find('.application-file__description').append(descriptionElement);
     fileElement.find('.application-file__link').attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + name);
     fileElement.find('.application-file__size').text((size / 1024 + 1).toFixed(0) + ' KB');
     fileElement.find('.application-file__link').text(name);
@@ -670,7 +694,7 @@
       },
       success: function(data) {
         progressElement.remove();
-        createAttachmentFormElement(fileName, file.size);
+        createAttachmentFormElement(fileName, '', file.size);
       },
       error: function(err) {
         if (err.status == 409) {

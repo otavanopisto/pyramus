@@ -126,7 +126,9 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
           SuorituksenTila.VALMIS : SuorituksenTila.KESKEYTYNYT;
     }
 
-    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
+    String departmentIdentifier = settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
+
+    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(departmentIdentifier);
     Set<OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> oppiaineet = assessmentsToModel(student, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS, defaultStudyProgramme);
 
     // Aineopiskelija
@@ -137,7 +139,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
       oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(HANDLER_TYPE, oppiaine.getOps()));
       if (suorituksenTila == SuorituksenTila.VALMIS)
-        oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, academyIdentifier));
+        oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, departmentIdentifier));
       opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
     }
     

@@ -18,6 +18,7 @@ import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
+import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
@@ -35,6 +36,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
+import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
@@ -81,6 +84,9 @@ public class StudentController {
 
   @Inject
   private StudentLodgingPeriodDAO studentLodgingPeriodDAO;
+  
+  @Inject
+  private CreditLinkDAO creditLinkDAO;
   
   public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
@@ -281,6 +287,10 @@ public class StudentController {
 
   public List<TransferCredit> listStudentTransferCredits(Student student) {
     return transferCreditDAO.listByStudent(student);
+  }
+  
+  public List<CreditLink> listStudentLinkedTransferCredits(Student student) {
+    return creditLinkDAO.listByStudentAndType(student, CreditType.TransferCredit);
   }
   
   /* Lodging Period */

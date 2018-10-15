@@ -1,6 +1,5 @@
 /* FORM STRUCTURE */
 .form-section {
-  display: none;
   margin: 0 0 20px;
 }
 
@@ -38,10 +37,6 @@
 .field-row-flex .field-row-label {
   flex: 1 1 auto;
 }
-
-.form-section__field-container.dependent {
-  display: none;
-} 
 
 /* FORM ELEMENTS */
 label {

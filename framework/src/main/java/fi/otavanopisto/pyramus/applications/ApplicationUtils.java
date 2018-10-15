@@ -44,6 +44,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
@@ -95,7 +96,9 @@ public class ApplicationUtils {
       case TRANSFERRED_AS_STUDENT:
         return "Siirretty opiskelijaksi";
       case REGISTERED_AS_STUDENT:
-        return "Rekisteröitynyt aineopiskelijaksi";
+        return "Ilmoittautunut aineopiskelijaksi";
+      case REGISTRATION_CHECKED:
+        return "Tiedot tarkistettu";
       case REJECTED:
         return "Hylätty";
        default:
@@ -164,6 +167,28 @@ public class ApplicationUtils {
     NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
     Nationality nationality = nationalityDAO.findById(nationalityId);
     return nationality == null ? null : nationality.getName();
+  }
+  
+  public static String previousStudiesUiValue(String value) {
+    if (value != null) {
+      switch (value) {
+      case "perus":
+        return "Peruskoulu";
+      case "kansa":
+        return "Kansakoulu";
+      case "lukio":
+        return "Lukio (keskeytynyt)";
+      case "ammatillinen":
+        return "Ammatillinen 2. aste";
+      case "korkea":
+        return "Korkeakoulu";
+      case "muu":
+        return "Muu";
+      default:
+        return null;
+      }
+    }
+    return null;
   }
 
   public static Nationality resolveNationality(String value) {
@@ -300,7 +325,7 @@ public class ApplicationUtils {
     }
   }
   
-  public static void sendNotifications(Application application, HttpServletRequest request, StaffMember staffMember, boolean newApplication, String notificationPostfix) {
+  public static void sendNotifications(Application application, HttpServletRequest request, StaffMember staffMember, boolean newApplication, String notificationPostfix, boolean doLogEntry) {
     ApplicationNotificationDAO applicationNotificationDAO = DAOFactory.getInstance().getApplicationNotificationDAO();
     List<ApplicationNotification> notifications = applicationNotificationDAO.listByNullOrLineAndState(
         application.getLine(), application.getState());
@@ -326,7 +351,10 @@ public class ApplicationUtils {
       String mailSubject = null;
       String mailContent = null;
       if (newApplication) {
-        mailSubject = String.format("Uusi hakemus linjalle %s", applicationLineUiValue(application.getLine()));
+        mailSubject = String.format("Uusi hakemus linjalle %s [%s %s]",
+            applicationLineUiValue(application.getLine()),
+            application.getFirstName(),
+            application.getLastName());
         mailContent = String.format(
           "<p>Hakija <b>%s %s</b> (%s) on jättänyt hakemuksen linjalle <b>%s</b>.</p>" +
           "<p>Pääset hakemustietoihin <b><a href=\"%s\">tästä linkistä</a></b>.</p>",
@@ -337,7 +365,9 @@ public class ApplicationUtils {
           viewUrl);
       }
       else {
-        mailSubject = "Hakemuksen tila on muuttunut";
+        mailSubject = String.format("Hakemuksen tila on muuttunut [%s %s]",
+            application.getFirstName(),
+            application.getLastName());
         mailContent = String.format(
           "<p>Hakijan <b>%s %s</b> (%s) hakemus linjalle <b>%s</b> on siirtynyt tilaan <b>%s</b>.</p>" +
           "<p>Pääset hakemustietoihin <b><a href=\"%s\">tästä linkistä</a></b>.</p>",
@@ -359,16 +389,18 @@ public class ApplicationUtils {
     
     // Log entry
     
-    String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState()));
-    if (notificationPostfix != null) {
-      notification = String.format("%s<br/>%s", notification, notificationPostfix);
+    if (doLogEntry) {
+      String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState()));
+      if (notificationPostfix != null) {
+        notification = String.format("%s<br/>%s", notification, notificationPostfix);
+      }
+      ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+      applicationLogDAO.create(
+          application,
+          ApplicationLogType.HTML,
+          notification,
+          staffMember);
     }
-    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-    applicationLogDAO.create(
-      application,
-      ApplicationLogType.HTML,
-      notification,
-      staffMember);
   }
 
   public static String extractSSN(Application application) {
@@ -461,6 +493,21 @@ public class ApplicationUtils {
       studyTimeEnd = c.getTime();
     }
     
+    // #868: Non-contract school information (for Internetix students, if exists)
+    
+    String additionalInfo = null;
+    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+      String contractSchoolName = getFormValue(formData, "field-internetix-contract-school-name");
+      String contractSchoolMunicipality = getFormValue(formData, "field-internetix-contract-school-municipality");
+      String contractSchoolContact = getFormValue(formData, "field-internetix-contract-school-contact");
+      if (!StringUtils.isAnyEmpty(contractSchoolName, contractSchoolMunicipality, contractSchoolContact)) {
+        additionalInfo = String.format("<p><strong>Muun kuin sopimusoppilaitoksen yhteystiedot:</strong><br/>%s (%s)<br/>%s</p>",
+            contractSchoolName,
+            contractSchoolMunicipality,
+            StringUtils.replace(contractSchoolContact, "\n", "<br/>"));
+      }
+    }
+    
     // Create student
     
     Student student = studentDAO.create(
@@ -468,7 +515,7 @@ public class ApplicationUtils {
         getFormValue(formData, "field-first-names"),
         getFormValue(formData, "field-last-name"),
         getFormValue(formData, "field-nickname"),
-        null, // additionalInfo,
+        additionalInfo,
         studyTimeEnd,
         ApplicationUtils.resolveStudentActivityType(getFormValue(formData, "field-job")),
         ApplicationUtils.resolveStudentExaminationType(getFormValue(formData, "field-internetix-contract-school-degree")),
@@ -564,6 +611,15 @@ public class ApplicationUtils {
         if (school != null) {
           studentDAO.updateSchool(student, school);
         }
+        else {
+          String notification = "<b>Huom!</b> Opiskelijan ilmoittamaa oppilaitosta ei löydy vielä Pyramuksesta!";
+          ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+          applicationLogDAO.create(
+              application,
+              ApplicationLogType.HTML,
+              notification,
+              null);
+        }
       }
     }
     
@@ -583,7 +639,7 @@ public class ApplicationUtils {
             if (file.exists()) {
               String contentType = Files.probeContentType(path);
               byte[] data = FileUtils.readFileToByteArray(file);
-              studentFileDAO.create(student, attachmentFileName, attachmentFileName, null, contentType, data, staffMember);
+              studentFileDAO.create(student, StringUtils.isBlank(attachment.getDescription()) ? attachmentFileName : attachment.getDescription(), attachmentFileName, null, contentType, data, staffMember);
             }
           }
           catch (IOException e) {
@@ -728,20 +784,21 @@ public class ApplicationUtils {
     }
 
     if (existingPersons.size() > 1) {
-      StringBuilder sb = new StringBuilder();
-      for (Person person : existingPersons.values()) {
-        if (sb.length() > 0) {
-          sb.append(",");
-        }
-        sb.append(person.getId());
-      }
-      throw new DuplicatePersonException();
+      throw new DuplicatePersonException("Käyttäjätiedot täsmäävät useampaan olemassa olevaan käyttäjätiliin");
     }
     else if (existingPersons.isEmpty()) {
       return null;
     }
     else {
-      return existingPersons.values().iterator().next();
+      Person person = existingPersons.values().iterator().next();
+      if (person.getDefaultUser() != null) {
+        StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+        StaffMember staffMember = staffMemberDAO.findById(person.getDefaultUser().getId());
+        if (staffMember != null) {
+          throw new DuplicatePersonException("Käyttäjätiedot viittaavat henkilökunnan jäseneen");
+        }
+      }
+      return person;
     }
   }
 

@@ -9,12 +9,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
-import fi.otavanopisto.pyramus.applications.DuplicatePersonException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
@@ -177,12 +177,17 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           
           // Separate logic for transferring the applicant as student
           
-          Student student = ApplicationUtils.createPyramusStudent(application, staffMember); // throws exception if multiple persons found
+          Student student = ApplicationUtils.createPyramusStudent(application, staffMember); // throws exception if multiple persons or is staff
           PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
           personDAO.updateDefaultUser(student.getPerson(), student);
           String credentialToken = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
           application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
           ApplicationUtils.mailCredentialsInfo(requestContext.getRequest(), student, application);
+        }
+        else if (applicationState == ApplicationState.REJECTED && application.getState() == ApplicationState.REGISTERED_AS_STUDENT) {
+          Student student = application.getStudent();
+          StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+          studentDAO.archive(student);
         }
         
         // Update the actual application state
@@ -200,7 +205,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
         
         // Email notifications and log entries related to state change
         
-        ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, false, null);
+        ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, false, null, true);
       }
 
       // Response parameters
@@ -213,11 +218,6 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
       requestContext.addResponseParameter("handler", application.getHandler() == null ? null : application.getHandler().getFullName());
       requestContext.addResponseParameter("handlerId", application.getHandler() == null ? null : application.getHandler().getId());
       requestContext.addResponseParameter("lastModified", application.getLastModified().getTime());
-    }
-    catch (DuplicatePersonException dpe) {
-      requestContext.addResponseParameter("status", "FAIL");
-      requestContext.addResponseParameter("reason", "Käyttäjätiedot täsmäävät useampaan olemassa olevaan käyttäjätiliin");
-      logger.log(Level.SEVERE, "Error updating application state", dpe);
     }
     catch (Exception e) {
       requestContext.addResponseParameter("status", "FAIL");

@@ -112,6 +112,7 @@
           <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/listnotifications.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.manageNotifications"/></a></li>
           <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/createmailtemplate.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.createMailTemplate"/></a></li>
           <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/applications/listmailtemplates.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.applications.manageMailTemplates"/></a></li>
+          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/users/createemailsignature.page" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.createEmailSignature"/></a></li>
           <ix:extensionHook name="generic.navigation.applicationsMenu"/>
         </ul>
       </li>

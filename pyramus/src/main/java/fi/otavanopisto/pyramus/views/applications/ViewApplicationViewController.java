@@ -64,6 +64,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       Map<String, String> fields = new LinkedHashMap<>();
       sections.put("Perustiedot", fields);
       
+      fields.put("Muokkaustunnus", application.getReferenceCode());
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(getFormValue(formData, "field-line")));
       fields.put("Nimi", String.format("%s, %s", getFormValue(formData, "field-last-name"), getFormValue(formData, "field-first-names")));
       if (StringUtils.isNotBlank(getFormValue(formData, "field-nickname"))) {
@@ -138,11 +139,23 @@ public class ViewApplicationViewController extends PyramusViewController {
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies"))) {
         fields.put("Aiemmat opinnot", getFormValue(formData, "field-previous-studies"));
       }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio"))) {
+        fields.put("Aiemmat opinnot", ApplicationUtils.previousStudiesUiValue(getFormValue(formData, "field-previous-studies-nettilukio")));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-school"))) {
+        fields.put("Aiempi oppilaitos", getFormValue(formData, "field-previous-studies-nettilukio-school"));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-duration"))) {
+        fields.put("Aiempien opintojen kesto", getFormValue(formData, "field-previous-studies-nettilukio-duration"));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-other"))) {
+        fields.put("Kerro tarkemmin", getFormValue(formData, "field-previous-studies-nettilukio-other"));
+      }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-other-school"))) {
         fields.put("Opiskelee toisessa oppilaitoksessa", simpleBooleanUiValue(getFormValue(formData, "field-other-school")));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-other-school-name"))) {
-        fields.put("Oppilaitos", getFormValue(formData, "field-other-school-name"));
+        fields.put("Nykyinen oppilaitos", getFormValue(formData, "field-other-school-name"));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-goals"))) {
         fields.put("Opiskelutavoitteet", goalsUiValue(getFormValue(formData, "field-goals")));
@@ -171,10 +184,10 @@ public class ViewApplicationViewController extends PyramusViewController {
         fields.put("Vapaamuotoinen esittely", getFormValue(formData, "field-info"));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-lodging"))) {
-        fields.put("Asunto kampukselta", "Kyllä");
+        fields.put("Asunto kampukselta", simpleBooleanUiValue(getFormValue(formData, "field-lodging")));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-lodging-partial"))) {
-        fields.put("Asunto kampukselta lähijaksojen ajaksi", "Kyllä");
+        fields.put("Asunto kampukselta lähijaksojen ajaksi", simpleBooleanUiValue(getFormValue(formData, "field-lodging-partial")));
       }
       
       // Hakulähde

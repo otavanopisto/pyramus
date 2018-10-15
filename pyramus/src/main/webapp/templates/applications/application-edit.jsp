@@ -40,42 +40,42 @@
     </header>
     
     <section class="application-description">
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="">
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="" style="display:none;">
         <div class="application-description__line-header">
           Hae opiskelijaksi <span class="application-description__line-label">Otavan Opistoon</span>
         </div>
         <div class="application-description__line-content">Valitse haluamasi koulutusohjelma ja siirry täyttämään opiskelijahakemus.</div>
       </div>
 
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
         <div class="application-description__line-header">
           Olet hakemassa <span class="application-description__line-label--nettilukio">nettilukioon</span>
         </div>
-        <div class="application-description__line-content">Nettilukiossa opiskelet koko aikuislukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Nettilukiossa voit myös tehdä loppuun aiemmin kesken jääneet lukio-opinnot. Nettilukio on tarkoitettu yli 18-vuotiaille opiskelijoille. Toisessa oppilaitoksessa opiskelevat ja yksittäisiä lukiokursseja suorittavat voivat ilmoittautua aineopiskelijaksi.</div>
+        <div class="application-description__line-content">Nettilukiossa opiskelet lukio-opintoja tutkintotavoitteisesti tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Nettilukio on aikuislukio ja tarkoitettu yli 18-vuotiaille opiskelijoille. Alaikäisiä voidaan hyväksyä vain, jos haun taustalla on riittävät perusteet. Toisessa oppilaitoksessa opiskelevat ja yksittäisiä lukiokursseja suorittavat voivat ilmoittautua aineopiskelijaksi.</div>
       </div>
 
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettipk" style="display:none;">
         <div class="application-description__line-header">
           Olet hakemassa <span class="application-description__line-label--nettiperuskoulu">nettiperuskouluun</span>
         </div>
         <div class="application-description__line-content">Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.</div>
       </div>
 
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu">
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
         <div class="application-description__line-header">
           Olet ilmoittautumassa <span class="application-description__line-label--aineopiskelu">aineopiskelijaksi</span>
         </div>
         <div class="application-description__line-content">Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.</div>
       </div>
 
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio">
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio" style="display:none;">
         <div class="application-description__line-header">
           Olet hakemassa <span class="application-description__line-label--aikuislukio">aikuislukioon</span>
         </div>
         <div class="application-description__line-content">Aikuislukiossa opiskelet koko lukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Aikuislukiossa voit myös tehdä loppuun aiemmin kesken jääneet toisessa päivä- tai aikuislukiossa aloittamasi lukio-opinnot.</div>
       </div>
 
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="mk">
+      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
         <div class="application-description__line-header">
           Olet hakemassa <span class="application-description__line-label--maahanmuuttajakoulutus">maahanmuuttajakoulutuksiin</span>
         </div>
@@ -86,23 +86,24 @@
     <main class="application-content">
 
       <section class="application-content__information">
-        <div class="application-content__information-page-specific">
-          <p>Klikkaa Seuraava-painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>
+        <div class="application-content__information-page-specific" style="display:none;">
+          <p class="application-content__information-page-specific-non-summary">Klikkaa Seuraava-painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>
+          <p class="application-content__information-page-specific-summary">Klikkaa Lähetä-painiketta lomakkeen alaosassa kun olet täyttänyt tarvittavat tiedot.</p>
           <p><b>Huom!</b> Punaisella tähdellä merkityt kentät ovat pakollisia.</p>
         </div>
-        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettilukio">
+        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
           <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:nettilukio@otavanopisto.fi">nettilukio@otavanopisto.fi</a></p>
         </div>
-        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettipk">
+        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettipk" style="display:none;">
           <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:nettiperuskoulu@otavanopisto.fi">nettiperuskoulu@otavanopisto.fi</a></p>
         </div>
-        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu">
+        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
           <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:aineopiskelu@otavanopisto.fi">aineopiskelu@otavanopisto.fi</a></p>
         </div>
-        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="mk">
+        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
           <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:maahanmuuttajakoulutukset@otavanopisto.fi">maahanmuuttajakoulutukset@otavanopisto.fi</a></p>
         </div>
-        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio">
+        <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio" style="display:none;">
           <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:aikuislukio@otavanopisto.fi">aikuislukio@otavanopisto.fi</a></p>
         </div>
       </section>
