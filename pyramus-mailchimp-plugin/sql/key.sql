@@ -1,2 +1,0 @@
-insert into SettingKey (id, name) select max(id) + 1, 'mailchimp.apiKey' from SettingKey;
-update hibernate_sequences set sequence_next_hi_value = (select max(id) + 1 from SettingKey) where sequence_name = 'SettingKey';
