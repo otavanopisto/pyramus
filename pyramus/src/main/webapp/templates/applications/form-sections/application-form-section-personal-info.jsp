@@ -97,5 +97,10 @@
       <label for="field-email" class="required">Sähköpostiosoite</label>
       <input type="email" id="field-email" name="field-email" data-parsley-required="true">
     </div>
+
+    <div class="form-section__field-container field-email-secondary">
+      <label for="field-email" class="required">Sähköpostiosoite uudelleen</label>
+      <input type="email" id="field-email-secondary" name="field-email-secondary" data-parsley-required="true" data-parsley-email-match="">
+    </div>
   
   </section>
