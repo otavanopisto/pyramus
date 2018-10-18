@@ -171,6 +171,16 @@
         fi: 'Tämä kenttä on pakollinen'
       }
     });
+
+    Parsley.addValidator('emailMatch', {
+      requirementType: 'string',
+      validateString: function(value) {
+        return value == $('#field-email').val();
+      },
+      messages: {
+        fi: 'Sähköpostiosoitteet eivät täsmää'
+      }
+    });
     
     // Allow other sex with valid ssn postfix
     
