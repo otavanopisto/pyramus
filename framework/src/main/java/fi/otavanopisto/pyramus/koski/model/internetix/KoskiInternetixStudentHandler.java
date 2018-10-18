@@ -1,12 +1,14 @@
 package fi.otavanopisto.pyramus.koski.model.internetix;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
@@ -39,6 +41,10 @@ public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
       oos.add(lukio);
     }
 
+    if (oos.isEmpty()) {
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
+    }
+    
     return oos;
   }
 
