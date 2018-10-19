@@ -31,8 +31,8 @@ import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
-import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import fi.otavanopisto.pyramus.koski.settings.KoskiIntegrationSettingsWrapper;
 import net.sf.json.JSONObject;
 
@@ -120,9 +120,6 @@ public class KoskiSettings {
         freeLodgingStudyProgrammes.add(studyProgrammeId);
       }
       
-      SuorituksenTyyppi suorituksenTyyppi = SuorituksenTyyppi.valueOf(studyProgramme.getString("suorituksentyyppi"));
-      suoritustyypit.put(studyProgrammeId, suorituksenTyyppi);
-
       if (EnumUtils.isValidEnum(KoskiStudyProgrammeHandler.class, studyProgramme.getString("handler"))) {
         KoskiStudyProgrammeHandler handlerType = KoskiStudyProgrammeHandler.valueOf(studyProgramme.getString("handler"));
         handlerTypes.put(studyProgrammeId, handlerType);
@@ -130,8 +127,16 @@ public class KoskiSettings {
         logger.warning(String.format("Unknown handler %s", studyProgramme.getString("handler")));
       }
       
-      modulitunnisteet.put(studyProgrammeId, studyProgramme.getString("modulitunniste"));
-      
+      if (studyProgramme.has("opintojenRahoitus")) {
+        String opintojenRahoitusStr = studyProgramme.getString("opintojenRahoitus");
+        if (StringUtils.isNotBlank(opintojenRahoitusStr)) {
+          OpintojenRahoitus or = OpintojenRahoitus.reverseLookup(opintojenRahoitusStr);
+          if (or != null) {
+            opintojenRahoitus.put(studyProgrammeId, or);
+          }
+        }
+      }
+
       if (studyProgramme.has("toimipisteOID")) {
         String toimipisteOID = studyProgramme.getString("toimipisteOID");
         if (StringUtils.isNotBlank(toimipisteOID)) {
@@ -241,14 +246,6 @@ public class KoskiSettings {
     return false;
   }
 
-  public SuorituksenTyyppi getSuorituksenTyyppi(Long studyProgrammeId) {
-    return suoritustyypit.get(studyProgrammeId);
-  }
-
-  public String getModuliTunniste(Long studyProgrammeId) {
-    return modulitunnisteet.get(studyProgrammeId);
-  }
-  
   public String getDiaariNumero(Long studyProgrammeId, Long curriculumId) {
     String key = String.format("%d.%d", studyProgrammeId, curriculumId);
     return diaarinumerot.get(key);
@@ -291,14 +288,17 @@ public class KoskiSettings {
         toimipisteOIDt.get(studyProgrammeId) : defaultIdentifier;
   }
   
+  public OpintojenRahoitus getOpintojenRahoitus(Long studyProgrammeId) {
+    return opintojenRahoitus.get(studyProgrammeId);
+  }
+
   private KoskiIntegrationSettingsWrapper settings;
   private boolean testEnvironment;
   private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
   private Set<Long> freeLodgingStudyProgrammes = new HashSet<Long>();
   private Map<Long, OpiskeluoikeudenTila> studentStateMap = new HashMap<>();
-  private Map<Long, SuorituksenTyyppi> suoritustyypit = new HashMap<>();
   private Map<Long, KoskiStudyProgrammeHandler> handlerTypes = new HashMap<>();
-  private Map<Long, String> modulitunnisteet = new HashMap<>();
+  private Map<Long, OpintojenRahoitus> opintojenRahoitus = new HashMap<>();
   private Map<Long, String> toimipisteOIDt = new HashMap<>();
   private Map<String, String> diaarinumerot = new HashMap<>();
   private Map<Long, String> courseTypeMapping = new HashMap<>();

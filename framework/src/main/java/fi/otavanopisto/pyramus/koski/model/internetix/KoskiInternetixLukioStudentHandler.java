@@ -110,14 +110,16 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
 
     opiskeluoikeus.setLisatiedot(getLisatiedot(student));
 
-    if (!handleLinkedStudyOID(student, opiskeluoikeus)) {
-      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.LINKED_MISSING_VALUES, new Date());
-      return null;
+    // Rahoitus; jos määritetty jokin kiinteä arvo, käytetään sitä
+    OpintojenRahoitus opintojenRahoitus = settings.getOpintojenRahoitus(student.getStudyProgramme().getId());
+    if (opintojenRahoitus == null) {
+      // Jos kiinteää rahoitusarvoa ei ole määritetty, rahoitus määräytyy oppilaitoksen mukaan
+      opintojenRahoitus = student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6;
     }
     
     OpiskeluoikeudenTila jaksonTila = !Boolean.TRUE.equals(student.getArchived()) ? OpiskeluoikeudenTila.lasna : OpiskeluoikeudenTila.mitatoity;
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), jaksonTila);
-    jakso.setOpintojenRahoitus(new KoodistoViite<>(student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6));
+    jakso.setOpintojenRahoitus(new KoodistoViite<>(opintojenRahoitus));
     opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
 
     SuorituksenTila suorituksenTila = SuorituksenTila.KESKEN;
@@ -149,7 +151,6 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     }
     
     if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
-      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
       return null;
     }
     
