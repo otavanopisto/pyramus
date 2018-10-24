@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -52,27 +54,29 @@ public class EditEnrollmentViewController extends PyramusViewController {
     }
     enrollmentDAO.update(
       enrollment,
-      pageRequestContext.getString("name"),
-      pageRequestContext.getString("ssn"),
-      pageRequestContext.getString("email"),
-      pageRequestContext.getString("phone"),
-      pageRequestContext.getString("address"),
-      pageRequestContext.getString("postalCode"),
-      pageRequestContext.getString("postalOffice"),
-      pageRequestContext.getLong("nationalStudentNumber"),
-      pageRequestContext.getString("guidanceCounselor"),
+      ObjectUtils.firstNonNull(pageRequestContext.getString("name"), ""),
+      ObjectUtils.firstNonNull(pageRequestContext.getString("ssn"), ""),
+      ObjectUtils.firstNonNull(pageRequestContext.getString("email"), ""),
+      ObjectUtils.firstNonNull(pageRequestContext.getString("phone"), ""),
+      ObjectUtils.firstNonNull(pageRequestContext.getString("address"), ""),
+      ObjectUtils.firstNonNull(pageRequestContext.getString("postalCode"), ""),
+      ObjectUtils.firstNonNull(pageRequestContext.getString("postalOffice"), ""),
+      ObjectUtils.firstNonNull(pageRequestContext.getString("guidanceCounselor"), ""),
       SchoolType.valueOf(pageRequestContext.getString("enrollAs")),
-      pageRequestContext.getInteger("numMandatoryCourses"),
+      ObjectUtils.firstNonNull(pageRequestContext.getInteger("numMandatoryCourses"), 0),
       pageRequestContext.getBoolean("restartExam"),
-      pageRequestContext.getString("location"),
-      pageRequestContext.getString("message"),
-      pageRequestContext.getBoolean("canPulishName"),
+      ObjectUtils.firstNonNull(pageRequestContext.getString("location"), ""),
+      ObjectUtils.firstNonNull(pageRequestContext.getString("message"), ""),
+      pageRequestContext.getBoolean("canPublishName"),
       enrollment.getStudent(),
       MatriculationExamEnrollmentState.valueOf(
         pageRequestContext.getString("state")
       ));
     attendanceDAO.deleteByEnrollment(enrollment);
-    int enrolledAttendances = pageRequestContext.getInteger("enrolledAttendances.rowCount");
+    Integer enrolledAttendances = pageRequestContext.getInteger("enrolledAttendances.rowCount");
+    if (enrolledAttendances == null) {
+      enrolledAttendances = 0;
+    }
     for (int i=0; i<enrolledAttendances; i++) {
       MatriculationExamSubject subject =
         MatriculationExamSubject.valueOf(pageRequestContext.getString("enrolledAttendances." + i + ".subject"));
@@ -83,7 +87,10 @@ public class EditEnrollmentViewController extends PyramusViewController {
       attendanceDAO.create(enrollment, subject, mandatory, repeat,
         null, null, MatriculationExamAttendanceStatus.ENROLLED, null);
     }
-    int finishedAttendances = pageRequestContext.getInteger("finishedAttendances.rowCount");
+    Integer finishedAttendances = pageRequestContext.getInteger("finishedAttendances.rowCount");
+    if (finishedAttendances == null) {
+      finishedAttendances = 0;
+    }
     for (int i=0; i<finishedAttendances; i++) {
       String termString = pageRequestContext.getString("finishedAttendances." + i + ".term");
       MatriculationExamTerm term = MatriculationExamTerm.valueOf(termString.substring(0, 6));
@@ -97,7 +104,10 @@ public class EditEnrollmentViewController extends PyramusViewController {
       attendanceDAO.create(enrollment, subject, mandatory, null, year, term,
         MatriculationExamAttendanceStatus.FINISHED, grade);
     }
-    int plannedAttendances = pageRequestContext.getInteger("plannedAttendances.rowCount");
+    Integer plannedAttendances = pageRequestContext.getInteger("plannedAttendances.rowCount");
+    if (plannedAttendances == null) {
+      plannedAttendances = 0;
+    }
     for (int i=0; i<plannedAttendances; i++) {
       String termString = pageRequestContext.getString("plannedAttendances." + i + ".term");
       MatriculationExamTerm term = MatriculationExamTerm.valueOf(termString.substring(0, 6));
