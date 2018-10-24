@@ -90,7 +90,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setAddress(address);
     enrollment.setPostalCode(postalCode);
     enrollment.setCity(city);
-    enrollment.setNationalStudentNumber(0L);
     enrollment.setGuider(guider);
     enrollment.setEnrollAs(enrollAs);
     enrollment.setNumMandatoryCourses(numMandatoryCourses);
