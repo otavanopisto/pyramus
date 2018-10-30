@@ -184,10 +184,18 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           application = applicationDAO.updateApplicationStudentAndCredentialToken(application, student, credentialToken);
           ApplicationUtils.mailCredentialsInfo(requestContext.getRequest(), student, application);
         }
-        else if (applicationState == ApplicationState.REJECTED && application.getState() == ApplicationState.REGISTERED_AS_STUDENT) {
-          Student student = application.getStudent();
-          StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
-          studentDAO.archive(student);
+        else if (applicationState == ApplicationState.REJECTED) {
+          if (application.getState() == ApplicationState.REGISTERED_AS_STUDENT) {
+            Student student = application.getStudent();
+            StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
+            studentDAO.archive(student);
+          }
+          // #4226: Applications of rejected Internetix students are removed immediately
+          if (StringUtils.equals("aineopiskelu", application.getLine())) {
+            ApplicationUtils.deleteApplication(application);
+            requestContext.setRedirectURL(requestContext.getRequest().getContextPath() + "/applications/browse.page");
+            return;
+          }
         }
         
         // Update the actual application state

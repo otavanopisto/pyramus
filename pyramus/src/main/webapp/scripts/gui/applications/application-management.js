@@ -464,7 +464,10 @@
         },
         dataType: 'json',
         success: function(response) {
-          if (response.status == 'OK') {
+          if (response.redirectURL) {
+            window.location.href = response.redirectURL;
+          }
+          else if (response.status == 'OK') {
             window.location.reload();
           }
           else {
