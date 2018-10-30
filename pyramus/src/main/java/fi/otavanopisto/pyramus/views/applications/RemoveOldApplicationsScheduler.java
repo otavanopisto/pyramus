@@ -39,17 +39,13 @@ public class RemoveOldApplicationsScheduler {
       ApplicationUtils.deleteApplication(application);
     }
     // #4226: nettilukio, nettipk: year after registration if not transferred as student
-    applications = applicationDAO.listByOlderAndLine(date, "nettilukio");
+    applications = applicationDAO.listByOlderAndLineAndNullStudent(date, "nettilukio");
     for (Application application : applications) {
-      if (application.getStudent() == null) {
-        ApplicationUtils.deleteApplication(application);
-      }
+      ApplicationUtils.deleteApplication(application);
     }
-    applications = applicationDAO.listByOlderAndLine(date, "nettipk");
+    applications = applicationDAO.listByOlderAndLineAndNullStudent(date, "nettipk");
     for (Application application : applications) {
-      if (application.getStudent() == null) {
-        ApplicationUtils.deleteApplication(application);
-      }
+      ApplicationUtils.deleteApplication(application);
     }
   }
   

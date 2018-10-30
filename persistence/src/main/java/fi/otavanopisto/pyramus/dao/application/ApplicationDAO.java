@@ -288,6 +288,22 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     );
     return entityManager.createQuery(criteria).getResultList();
   }
+
+  public List<Application> listByOlderAndLineAndNullStudent(Date date, String line) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Application> criteria = criteriaBuilder.createQuery(Application.class);
+    Root<Application> root = criteria.from(Application.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.lessThanOrEqualTo(root.get(Application_.created), date),
+        criteriaBuilder.equal(root.get(Application_.line), line),
+        criteriaBuilder.isNull(root.get(Application_.student))
+      )
+    );
+    return entityManager.createQuery(criteria).getResultList();
+  }
   
   public List<Application> listByTimeframe(Date startDate, Date endDate) {
     EntityManager entityManager = getEntityManager(); 
