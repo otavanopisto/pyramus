@@ -309,6 +309,13 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).entity(String.format("Organization with id %d not found", courseEntity.getOrganizationId())).build();
     }
     User user = sessionController.getUser();
+    if ((course.getOrganization() != null) && !UserUtils.canAccessOrganization(user, course.getOrganization())) {
+      logger.warning(String.format("User %d has no access to organization %d", user.getId(), course.getOrganization().getId()));
+      return Response.status(Status.FORBIDDEN).build();
+    } else if ((course.getOrganization() == null) && !UserUtils.canAccessAllOrganizations(user)) {
+      logger.warning(String.format("User %d has cannot access course %d because it has no organization.", user.getId(), course.getId()));
+      return Response.status(Status.FORBIDDEN).build();
+    }
     if (!UserUtils.canAccessOrganization(user, organization)) {
       logger.warning(String.format("User %d has no access to organization %d", user.getId(), organization.getId()));
       return Response.status(Status.FORBIDDEN).build();
