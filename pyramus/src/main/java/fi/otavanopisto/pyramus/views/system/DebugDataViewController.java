@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStateDAO;
@@ -17,6 +18,7 @@ import fi.otavanopisto.pyramus.dao.resources.ResourceCategoryDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
 import fi.otavanopisto.pyramus.domainmodel.resources.ResourceCategory;
@@ -38,6 +40,7 @@ public class DebugDataViewController extends PyramusViewController {
     ResourceCategoryDAO resourceCategoryDAO = DAOFactory.getInstance().getResourceCategoryDAO();
     MaterialResourceDAO materialResourceDAO = DAOFactory.getInstance().getMaterialResourceDAO();
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
 
     String type = requestContext.getRequest().getParameter("type");
     int count = Integer.parseInt(requestContext.getRequest().getParameter("count"));
@@ -59,7 +62,8 @@ public class DebugDataViewController extends PyramusViewController {
       for (int i = start; i < (start + count); i++) {
         EducationalTimeUnit etu = educationalTimeUnitDAO.findById(new Long(1));
         CourseState courseState = courseStateDAO.findById(new Long(1));
-        courseDAO.create(moduleDAO.findById(new Long(1)), "Kurssi " + i, "", courseState, null, null, null, null, null, new Double(10), etu, null, null, null, null, null, null, "Kuvaustekstiä kurssille " + i, null, null, null, null, user);
+        Organization organization = organizationDAO.findById(1L);
+        courseDAO.create(moduleDAO.findById(new Long(1)), organization, "Kurssi " + i, "", courseState, null, null, null, null, null, new Double(10), etu, null, null, null, null, null, null, "Kuvaustekstiä kurssille " + i, null, null, null, null, user);
       }
     }
     else if ("resource".equals(type)) {

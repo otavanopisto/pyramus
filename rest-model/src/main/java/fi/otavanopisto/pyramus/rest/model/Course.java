@@ -14,19 +14,20 @@ public class Course {
       Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Set<Long> curriculumIds, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
-      Map<String, String> variables, List<String> tags) {
+      Map<String, String> variables, List<String> tags, Long organizationId) {
     this(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
-        creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
+        creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags, organizationId);
   }
 
   public Course(Long id, String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Set<Long> curriculumIds, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
-      Map<String, String> variables, List<String> tags) {
+      Map<String, String> variables, List<String> tags, Long organizationId) {
     super();
     this.id = id;
+    this.organizationId = organizationId;
     this.name = name;
     this.created = created;
     this.lastModified = lastModified;
@@ -290,7 +291,16 @@ public class Course {
     this.curriculumIds = curriculumIds;
   }
 
+  public Long getOrganizationId() {
+    return organizationId;
+  }
+
+  public void setOrganizationId(Long organizationId) {
+    this.organizationId = organizationId;
+  }
+
   private Long id;
+  private Long organizationId;
   private String name;
   private OffsetDateTime created;
   private OffsetDateTime lastModified;
