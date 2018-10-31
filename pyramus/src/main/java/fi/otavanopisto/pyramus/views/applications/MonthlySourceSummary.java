@@ -28,6 +28,8 @@ public class MonthlySourceSummary {
   
   @Schedule(dayOfMonth = "1", hour = "2", persistent = false)
   public void doMonhtlySummary() {
+    Logger logger = Logger.getLogger(MonthlySourceSummary.class.getName());
+    logger.info("Running monthly application source summary");
     try {
       // Sources
 
@@ -111,7 +113,6 @@ public class MonthlySourceSummary {
       Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, "mediatiimi@otavanopisto.fi", subject, summary.toString());
     }
     catch (Exception e) {
-      Logger logger = Logger.getLogger(MonthlySourceSummary.class.getName());
       logger.log(Level.SEVERE, "Failed to send application monthly source summary", e);
     }
   }

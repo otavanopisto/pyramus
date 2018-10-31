@@ -245,6 +245,18 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
   
+  public Application findByStudent(Student student) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Application> criteria = criteriaBuilder.createQuery(Application.class);
+    Root<Application> root = criteria.from(Application.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(Application_.student), student)
+    );
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+  
   public List<Application> listByEmailAndArchived(String email, Boolean archived) {
     EntityManager entityManager = getEntityManager(); 
     
@@ -259,6 +271,37 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
       )
     );
     
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
+  public List<Application> listByOlderAndLine(Date date, String line) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Application> criteria = criteriaBuilder.createQuery(Application.class);
+    Root<Application> root = criteria.from(Application.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.lessThanOrEqualTo(root.get(Application_.created), date),
+        criteriaBuilder.equal(root.get(Application_.line), line)
+      )
+    );
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<Application> listByOlderAndLineAndNullStudent(Date date, String line) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Application> criteria = criteriaBuilder.createQuery(Application.class);
+    Root<Application> root = criteria.from(Application.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.lessThanOrEqualTo(root.get(Application_.created), date),
+        criteriaBuilder.equal(root.get(Application_.line), line),
+        criteriaBuilder.isNull(root.get(Application_.student))
+      )
+    );
     return entityManager.createQuery(criteria).getResultList();
   }
   

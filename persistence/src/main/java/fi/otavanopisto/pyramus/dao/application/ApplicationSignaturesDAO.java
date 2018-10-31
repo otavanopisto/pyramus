@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.dao.application;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -43,6 +44,18 @@ public class ApplicationSignaturesDAO extends PyramusEntityDAO<ApplicationSignat
     criteria.select(root);
     criteria.where(criteriaBuilder.equal(root.get(ApplicationSignatures_.staffInvitationId), invitationId));
     return getSingleResult(entityManager.createQuery(criteria));
+  }
+  
+  public List<ApplicationSignatures> listByApplication(Application application) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ApplicationSignatures> criteria = criteriaBuilder.createQuery(ApplicationSignatures.class);
+    Root<ApplicationSignatures> root = criteria.from(ApplicationSignatures.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(ApplicationSignatures_.application), application)
+    );
+    return entityManager.createQuery(criteria).getResultList();
   }
 
   public ApplicationSignatures findByApplicantInvitationId(String invitationId) {
