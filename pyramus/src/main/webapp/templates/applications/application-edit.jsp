@@ -92,19 +92,19 @@
           <p><b>Huom!</b> Punaisella tähdellä merkityt kentät ovat pakollisia.</p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
-          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:nettilukio@otavanopisto.fi">nettilukio@otavanopisto.fi</a></p>
+          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:nettilukio@otavanopisto.fi">nettilukio@otavanopisto.fi</a></p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettipk" style="display:none;">
-          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:nettiperuskoulu@otavanopisto.fi">nettiperuskoulu@otavanopisto.fi</a></p>
+          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:nettiperuskoulu@otavanopisto.fi">nettiperuskoulu@otavanopisto.fi</a></p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
-          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:aineopiskelu@otavanopisto.fi">aineopiskelu@otavanopisto.fi</a></p>
+          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:aineopiskelu@otavanopisto.fi">aineopiskelu@otavanopisto.fi</a></p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
           <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:maahanmuuttajakoulutukset@otavanopisto.fi">maahanmuuttajakoulutukset@otavanopisto.fi</a></p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio" style="display:none;">
-          <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:aikuislukio@otavanopisto.fi">aikuislukio@otavanopisto.fi</a></p>
+          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:aikuislukio@otavanopisto.fi">aikuislukio@otavanopisto.fi</a></p>
         </div>
       </section>
       <section class="application-content__form">
