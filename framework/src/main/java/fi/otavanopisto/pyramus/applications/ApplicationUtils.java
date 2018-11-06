@@ -243,7 +243,7 @@ public class ApplicationUtils {
   }
   
   public static Sex resolveGender(String genderValue, String ssnEnd) {
-    if (!StringUtils.isBlank(ssnEnd) && ssnEnd.length() == 4) {
+    if (!StringUtils.isBlank(ssnEnd) && !StringUtils.equalsIgnoreCase(ssnEnd, "XXXX") && ssnEnd.length() == 4) {
       char c = ssnEnd.charAt(2);
       return c == '1' || c == '3' || c == '5' || c == '7' || c == '9' ? Sex.MALE : Sex.FEMALE;
     }
@@ -416,7 +416,7 @@ public class ApplicationUtils {
   }
 
   public static String constructSSN(String birthday, String ssnEnd) {
-    if (StringUtils.isBlank(birthday) || StringUtils.isBlank(ssnEnd)) {
+    if (StringUtils.isBlank(birthday) || StringUtils.isBlank(ssnEnd) || StringUtils.equalsIgnoreCase(ssnEnd, "XXXX")) {
       return null;
     }
     try {
@@ -793,12 +793,9 @@ public class ApplicationUtils {
     // Person by social security number
     
     Map<Long, Person> existingPersons = new HashMap<Long, Person>();
-    boolean hasSsn = getFormValue(applicationData, "field-ssn-end") != null;
-    if (hasSsn) {
-      
-      // Given SSN
-      
-      String ssn = constructSSN(getFormValue(applicationData, "field-birthday"), getFormValue(applicationData, "field-ssn-end"));
+    String ssn = constructSSN(getFormValue(applicationData, "field-birthday"), getFormValue(applicationData, "field-ssn-end"));
+    if (StringUtils.isNotBlank(ssn)) {
+
       List<Person> persons = personDAO.listBySSNUppercase(ssn);
       for (Person person : persons) {
         existingPersons.put(person.getId(), person);

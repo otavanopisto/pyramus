@@ -392,7 +392,7 @@
 
   function setLine(line) {
     var option =  $('#field-line').find('option:selected');
-    var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
+    var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true' || $('body').attr('data-mode') == 'edit';
     $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
     $('.section-internetix-school').attr('data-skip', option.val() != 'aineopiskelu');
     // section toggle for existing applications
@@ -454,8 +454,11 @@
   }
   
   function isValidSsnEnd(value, allowEmpty) {
-    if (value == '') {
+    if (!value || value == '') {
       return allowEmpty;
+    }
+    else if (value.toUpperCase() == 'XXXX') {
+      return true;
     }
     var valid = value != '' && value.length == 4 && /^[0-9]{3}[a-zA-Z0-9]{1}/.test(value);
     if (valid) {
