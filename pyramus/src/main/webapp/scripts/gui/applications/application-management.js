@@ -467,7 +467,7 @@
           },
           buttons: [{
             text: 'Siirrä',
-            class: 'lankineeeeeeeeen',
+            class: 'ok-button',
             click: function() {
               changeApplicationState(state);
               $(dialog).dialog("close");

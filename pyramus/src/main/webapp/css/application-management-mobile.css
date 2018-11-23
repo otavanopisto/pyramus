@@ -780,6 +780,10 @@ textarea {
   background: #7391a7;
 }
 
+.ui-dialog .ui-dialog-buttonset button.ui-button.ok-button {
+  background: #24c118;
+}
+
 .ui-widget-overlay {
   background: #243a42 !important;
   opacity: 0.6 !important;
