@@ -450,6 +450,70 @@
         archiveApplication();
         return;
       }
+
+      // #904: Confirm transfer as student
+      
+      if (state == 'TRANSFERRED_AS_STUDENT') {
+        var dialog = $('#transfer-as-student-dialog');
+        $(dialog).dialog({
+          resizable: false,
+          height: 'auto',
+          width: 'auto',
+          modal: true,
+          position: {
+            my: 'center',
+            at: 'center',
+            of: window
+          },
+          buttons: [{
+            text: 'Siirrä',
+            class: 'ok-button',
+            click: function() {
+              changeApplicationState(state);
+              $(dialog).dialog("close");
+            }
+          }, {
+            text: "Peruuta",
+            class: 'cancel-button',
+            click: function() {
+              $(dialog).dialog("close");
+            }
+          }]
+        });
+      }
+      else {
+        changeApplicationState(state);
+      }
+    });
+    $('.application-handling-container').show();
+    
+    function refreshActions() {
+      var applicationLine = $('#field-line').val();
+      var currentState = $('#info-application-state-value').attr('data-state');
+      $('div.application-handling-option').each(function() {
+        // see if option is valid for the application line 
+        var line = $(this).attr('data-line');
+        var available = !line || applicationLine == line || (line.startsWith('!') && applicationLine != line.substring(1));
+        // see if option is valid for the application state
+        if (available) {
+          var optionState = $(this).attr('data-state');
+          if (optionState == currentState) {
+            available = false;
+          }
+          else {
+            var applicableStates = [];
+            if ($(this).attr('data-show')) {
+              applicableStates = $(this).attr('data-show').split(',');
+              available = $.inArray(currentState, applicableStates) >= 0;
+            }
+          }
+        }
+        $(this).toggle(available);
+      });
+      $('.sign-button').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
+    }
+    
+    function changeApplicationState(state) {
       var id = $('body').attr('data-application-entity-id');
       processingOn();
       $.ajax({
@@ -480,33 +544,6 @@
           processingOff();
         }
       });
-    });
-    $('.application-handling-container').show();
-    
-    function refreshActions() {
-      var applicationLine = $('#field-line').val();
-      var currentState = $('#info-application-state-value').attr('data-state');
-      $('div.application-handling-option').each(function() {
-        // see if option is valid for the application line 
-        var line = $(this).attr('data-line');
-        var available = !line || applicationLine == line || (line.startsWith('!') && applicationLine != line.substring(1));
-        // see if option is valid for the application state
-        if (available) {
-          var optionState = $(this).attr('data-state');
-          if (optionState == currentState) {
-            available = false;
-          }
-          else {
-            var applicableStates = [];
-            if ($(this).attr('data-show')) {
-              applicableStates = $(this).attr('data-show').split(',');
-              available = $.inArray(currentState, applicableStates) >= 0;
-            }
-          }
-        }
-        $(this).toggle(available);
-      });
-      $('.sign-button').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
     }
     
     function archiveApplication() {
