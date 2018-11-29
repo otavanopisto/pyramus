@@ -1,0 +1,79 @@
+{
+  "any": {
+    "AI": { 
+      "comment": "Äidinkieli, 4 pakollista kurssia",
+      "passing-grades": 4,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "ENA": {
+      "comment": "Vieras kieli, pitkä oppimäärä (englanti) 5 pakollista kurssia",
+      "passing-grades": 5,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "RAB3": {
+      "comment": "Vieras kieli, lyhyt oppimäärä (esim. ranska, saksa, espanja italia), 2 kurssia (näissä ei ole pakollisia kursseja)",
+      "passing-grades": 2,
+      "education-type": "lukio",
+      "education-subtype": null,
+      "transfer-credit-only-mandatory": false
+    },
+    "RUB": {
+      "comment": "Toinen kotimainen kieli (ruotsi), 4 pakollista kurssia",
+      "passing-grades": 4,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "MAB": {
+      "comment": "Matematiikka, lyhyt 5 pakollista kurssia",
+      "passing-grades": 5,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "MAA": {
+      "comment": "Matematiikka, pitkä 9 pakollista kurssia",
+      "passing-grades": 9,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "PS": {
+      "comment": "muut valinnaiset reaaliaineet (PS+TE) 2 valtakunnallista syventävää kurssia / kirjoitettava aine",
+      "passing-grades": 2,
+      "education-type": "lukio",
+      "education-subtype": "valtakunnallinensyventava",
+      "transfer-credit-only-mandatory": false
+    }
+  },
+  "2016": {
+    "YH": {
+      "comment": "Yhteiskuntaoppi OPS2016, 2 pakollista kurssia",
+      "passing-grades": 2,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "HI": { 
+      "comment": "Historia OPS2016, 2 pakollista kurssia",
+      "passing-grades": 2,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    }
+  },
+  "2005": {
+    "HI": { 
+      "comment": "Yhteiskuntaoppi OPS2005 ja muut pakolliset reaaliaineet 1 pakollinen kurssi / kirjoitettava aine",
+      "passing-grades": 1,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    }
+  }
+  
+}
