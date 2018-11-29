@@ -110,6 +110,16 @@ public class CommonController {
     return educationType;
   }
   
+  /**
+   * Finds an education type by code
+   * 
+   * @param code code
+   * @return found education type or null if not found
+   */
+  public EducationType findEducationTypeByCode(String code) {
+    return educationTypeDAO.findByCode(code);
+  }
+  
   public EducationType updateEducationType(EducationType educationType, String name, String code) {
     educationTypeDAO.update(educationType, name, code);
     return educationType;
@@ -137,6 +147,17 @@ public class CommonController {
   
   public EducationSubtype findEducationSubtypeById(Long id) {
     return educationSubtypeDAO.findById(id);
+  }
+
+  /**
+   * Finds an education subtype by education type and code
+   * 
+   * @param educationType education type
+   * @param code code
+   * @return found education subtype or null if not found
+   */
+  public EducationSubtype findEducationSubtypeByCode(EducationType educationType, String code) {
+    return educationSubtypeDAO.findByEducationTypeAndCode(educationType, code);
   }
   
   public List<EducationSubtype> listEducationSubtypesByEducationType(EducationType educationType) {
@@ -291,6 +312,16 @@ public class CommonController {
   public Subject findSubjectById(Long id) {
     Subject subject = subjectDAO.findById(id);
     return subject;
+  }
+  
+  /**
+   * Finds a subject by code
+   * 
+   * @param code code
+   * @return found subject or null if not found
+   */
+  public Subject findSubjectByCode(String code) {
+    return subjectDAO.findByCode(code);
   }
   
   public SearchResult<Subject> searchSubjects(int resultsPerPage, int page, String text) {
