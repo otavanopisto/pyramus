@@ -358,6 +358,16 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     return entityManager.createQuery(criteria).getResultList();
   }
   
+  /**
+   * Lists course students by student, course subject and course curriculum.
+   * 
+   * Method excludes archived students, courses and course students
+   * 
+   * @param student student
+   * @param subject course subject
+   * @param curriculum course curriculum
+   * @return list of course students
+   */
   public List<CourseStudent> listByStudentAndCourseSubjectAndCourseCurriculum(Student student, Subject subject, Curriculum curriculum) {
     EntityManager entityManager = getEntityManager(); 
     
