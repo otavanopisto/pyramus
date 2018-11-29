@@ -59,6 +59,29 @@ public class EducationSubtypeDAO extends PyramusEntityDAO<EducationSubtype> {
     
     return getSingleResult(entityManager.createQuery(criteria));
   }
+  
+  /**
+   * Finds an education subtype by education type and subtype code
+   * 
+   * @param educationType education type
+   * @param code code
+   * @return found education subtype or null if not found
+   */
+  public EducationSubtype findByEducationTypeAndCode(EducationType educationType, String code) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<EducationSubtype> criteria = criteriaBuilder.createQuery(EducationSubtype.class);
+    Root<EducationSubtype> root = criteria.from(EducationSubtype.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(EducationSubtype_.educationType), educationType),
+      criteriaBuilder.equal(root.get(EducationSubtype_.code), code)
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+
 
   /**
    * Returns a list of all education subtypes from the database, sorted by their name.
