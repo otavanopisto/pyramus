@@ -177,7 +177,7 @@ public class AssessmentController {
    * @param optionality optionality if null, optionality is ignored
    * @return list of student's transfer credits
    */
-  public List<TransferCredit> listTransferCreditsByStudentAndCurriculumAndOptionality(Student student, Subject subject, Curriculum curriculum, CourseOptionality courseOptionality) {
+  public List<TransferCredit> listTransferCreditsByStudentAndCurriculumAndOptionality(Student student, Curriculum curriculum, CourseOptionality courseOptionality) {
     return transferCreditDAO.listByStudentAndCurriculumAndOptionality(student, curriculum, courseOptionality);
   }
 
@@ -225,7 +225,7 @@ public class AssessmentController {
 
     List<TransferCredit> transferCredits;
     if (subject == null) {
-      transferCredits = listTransferCreditsByStudentAndCurriculumAndOptionality(student, subject, curriculum, transferCreditOptionality);
+      transferCredits = listTransferCreditsByStudentAndCurriculumAndOptionality(student, curriculum, transferCreditOptionality);
     } else {
       transferCredits = listTransferCreditsByStudentAndSubjectAndCurriculumAndOptionality(student, subject, curriculum, transferCreditOptionality);
     }
