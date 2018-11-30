@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
@@ -87,6 +88,9 @@ public class StudentController {
   
   @Inject
   private CreditLinkDAO creditLinkDAO;
+  
+  @Inject
+  private Logger logger;
   
   public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
@@ -306,6 +310,6 @@ public class StudentController {
   public void deleteLodgingPeriod(StudentLodgingPeriod period) {
     studentLodgingPeriodDAO.delete(period);
   }
-
+  
 }
 

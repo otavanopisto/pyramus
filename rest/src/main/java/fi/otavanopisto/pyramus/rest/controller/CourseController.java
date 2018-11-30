@@ -510,6 +510,14 @@ public class CourseController {
   public List<CourseStudent> listByStudentAndCourseSubjectAndCourseCurriculum(Student student, Subject subject, Curriculum curriculum) {
     return courseStudentDAO.listByStudentAndCourseSubjectAndCourseCurriculum(student, subject, curriculum);
   }
+
+  public List<CourseStudent> listByStudentAndCourseCurriculum(Student student, Curriculum curriculum) {
+    return courseStudentDAO.listByStudentAndCourseCurriculum(student, curriculum);
+  }
+
+  public List<CourseStudent> listByStudent(Student student) {
+    return courseStudentDAO.listByStudent(student);
+  }
   
   public CourseStudent findCourseStudentByCourseAndStudent(Course course, Student student) {
     return courseStudentDAO.findByCourseAndStudent(course, student);
