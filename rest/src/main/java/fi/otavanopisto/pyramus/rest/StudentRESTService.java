@@ -78,6 +78,7 @@ import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.CurriculumController;
 import fi.otavanopisto.pyramus.rest.controller.LanguageController;
+import fi.otavanopisto.pyramus.rest.controller.MatriculationEligibilityController;
 import fi.otavanopisto.pyramus.rest.controller.MunicipalityController;
 import fi.otavanopisto.pyramus.rest.controller.NationalityController;
 import fi.otavanopisto.pyramus.rest.controller.PersonController;
@@ -88,6 +89,7 @@ import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.StudentEducationalLevelController;
 import fi.otavanopisto.pyramus.rest.controller.StudentExaminationTypeController;
 import fi.otavanopisto.pyramus.rest.controller.StudentGroupController;
+import fi.otavanopisto.pyramus.rest.controller.StudentMatriculationEligibilityResult;
 import fi.otavanopisto.pyramus.rest.controller.StudentStudyEndReasonController;
 import fi.otavanopisto.pyramus.rest.controller.StudyProgrammeCategoryController;
 import fi.otavanopisto.pyramus.rest.controller.StudyProgrammeController;
@@ -108,6 +110,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategor
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
+import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
@@ -179,6 +182,9 @@ public class StudentRESTService extends AbstractRESTService {
   @Inject
   private SessionController sessionController;
 
+  @Inject
+  private MatriculationEligibilityController matriculationEligibilityController;
+  
   @Inject
   private ObjectFactory objectFactory;
   
@@ -1583,6 +1589,31 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     return Response.noContent().build();
+  }
+  
+  @Path("/students/{ID:[0-9]*}/matriculationEligibility")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentMatriculationEligibility(@PathParam("ID") Long studentId, @QueryParam ("subjectCode") String subjectCode) {
+    if (StringUtils.isBlank(subjectCode)) {
+      return Response.status(Status.BAD_REQUEST).entity("Subject is required").build();
+    }
+    
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).entity("Not found").build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    StudentMatriculationEligibilityResult result = matriculationEligibilityController.getStudentMatriculationEligible(student, subjectCode);
+    if (result == null) {
+      return Response.status(Status.BAD_REQUEST).entity("Could not resolve matriculation eligibility").build();
+    } else {
+      return Response.ok(new StudentMatriculationEligibility(result.getEligible(), result.getRequirePassingGrades(), result.getAcceptedCourseCount(), result.getAcceptedTransferCreditCount())).build();
+    }
   }
 
   @Path("/students/{ID:[0-9]*}/contactLogEntries")
