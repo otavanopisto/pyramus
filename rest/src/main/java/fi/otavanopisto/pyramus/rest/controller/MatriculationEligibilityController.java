@@ -79,7 +79,7 @@ public class MatriculationEligibilityController {
    * @param subjectCode subject code
    * @return matriculation eligibility into given subject for a student
    */
-  public StudentMatriculationEligibilityResult isStudentMatriculationEligible(Student student, String subjectCode) {
+  public StudentMatriculationEligibilityResult getStudentMatriculationEligible(Student student, String subjectCode) {
     Curriculum curriculum = student.getCurriculum();
     if (curriculum == null) {
       if (logger.isLoggable(Level.SEVERE)) {
