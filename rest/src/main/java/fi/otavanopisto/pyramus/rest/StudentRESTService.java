@@ -107,6 +107,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudentStudyEndReason
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategoryPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
+import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
@@ -2915,6 +2916,15 @@ public class StudentRESTService extends AbstractRESTService {
     List<CreditLink> transferCredits = studentController.listStudentLinkedTransferCredits(student);
     
     return Response.status(Status.OK).entity(objectFactory.createModel(transferCredits)).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/courseStats")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentCourseStats(@PathParam("STUDENTID") Long studentId) {
+    StudentCourseStats response = new StudentCourseStats();
+    response.setNumberCompletedCourses(10);
+    return Response.ok(response).build();
   }
 
   /**
