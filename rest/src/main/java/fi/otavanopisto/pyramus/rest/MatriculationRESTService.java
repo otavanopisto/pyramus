@@ -95,7 +95,7 @@ public class MatriculationRESTService extends AbstractRESTService {
           new fi.otavanopisto.pyramus.rest.model.MatriculationExamEnrollment();
       String enrollmentDate = null;
       if (latest.getEnrollmentDate() != null) {
-        enrollmentDate = latest.getEnrollmentDate().toLocalDate().toString();
+        enrollmentDate = latest.getEnrollmentDate().toString();
       }
       result.setName(latest.getName());
       result.setSsn(latest.getSsn());
@@ -159,7 +159,7 @@ public class MatriculationRESTService extends AbstractRESTService {
         enrollment.isCanPublishName(),
         student,
         MatriculationExamEnrollmentState.valueOf(enrollment.getState()),
-        Date.valueOf(LocalDate.now()));
+        new Date());
         
       for (MatriculationExamAttendance attendance : enrollment.getAttendances()) {
         matriculationExamAttendanceDao.create(
