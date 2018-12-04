@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
-import java.sql.Date;
+import java.util.Date;
 import java.time.LocalDate;
 
 import javax.ejb.Stateful;
