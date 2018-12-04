@@ -221,4 +221,33 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
     return entityManager.createQuery(criteria).getSingleResult();
   }
 
+  public List<TransferCredit> listByStudentAndCurriculumAndOptionality(
+      Student student,
+      Curriculum curriculum,
+      CourseOptionality optionality) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<TransferCredit> criteria = criteriaBuilder.createQuery(TransferCredit.class);
+    Root<TransferCredit> root = criteria.from(TransferCredit.class);
+    criteria.select(root);
+    
+    List<Predicate> predicates = new ArrayList<>();
+    
+    if (optionality != null) {
+      predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.optionality), optionality));
+    }
+    
+    if (curriculum != null) {
+      predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.curriculum), curriculum));
+    }
+
+    predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.archived), Boolean.FALSE));
+    predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.student), student));
+
+    criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
 }

@@ -306,6 +306,6 @@ public class StudentController {
   public void deleteLodgingPeriod(StudentLodgingPeriod period) {
     studentLodgingPeriodDAO.delete(period);
   }
-
+  
 }
 

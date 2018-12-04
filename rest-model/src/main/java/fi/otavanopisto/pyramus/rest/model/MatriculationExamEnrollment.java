@@ -156,6 +156,14 @@ public class MatriculationExamEnrollment {
     this.attendances = attendances;
   }
 
+  public String getEnrollmentDate() {
+    return enrollmentDate;
+  }
+
+  public void setEnrollmentDate(String enrollmentDate) {
+    this.enrollmentDate = enrollmentDate;
+  }
+
   private Long id;
   private String name;
   private String ssn;
@@ -175,5 +183,6 @@ public class MatriculationExamEnrollment {
   private Long studentId;
   private String state;
   private List<MatriculationExamAttendance> attendances;
+  private String enrollmentDate;
 
 }

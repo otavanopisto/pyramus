@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.domainmodel.matriculation;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -166,6 +168,13 @@ public class MatriculationExamEnrollment {
     this.state = state;
   }
   
+  public Date getEnrollmentDate() {
+    return enrollmentDate;
+  }
+
+  public void setEnrollmentDate(Date enrollmentDate) {
+    this.enrollmentDate = enrollmentDate;
+  }
 
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
@@ -225,5 +234,8 @@ public class MatriculationExamEnrollment {
   @Column
   @Enumerated(EnumType.STRING)
   private MatriculationExamEnrollmentState state;
+  
+  @Column
+  private Date enrollmentDate;
 
 }

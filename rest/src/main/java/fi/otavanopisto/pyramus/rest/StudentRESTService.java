@@ -37,6 +37,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
+import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
@@ -109,6 +110,7 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudentStudyEndReason
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammeCategoryPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
+import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
@@ -2946,6 +2948,53 @@ public class StudentRESTService extends AbstractRESTService {
     List<CreditLink> transferCredits = studentController.listStudentLinkedTransferCredits(student);
     
     return Response.status(Status.OK).entity(objectFactory.createModel(transferCredits)).build();
+  }
+
+  @Path("/students/{STUDENTID:[0-9]*}/courseStats")
+  @GET
+  @RESTPermit(handling = Handling.INLINE)
+  public Response getStudentCourseStats(
+      @PathParam("STUDENTID") Long studentId,
+      @QueryParam("educationTypeCode") String educationTypeCode,
+      @QueryParam("educationSubtypeCode") String educationSubtypeCode) {
+    StudentCourseStats response = new StudentCourseStats();
+    
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).entity("Not found").build();
+    }
+    
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.FIND_STUDENT, UserPermissions.USER_OWNER }, student, Style.OR)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    EducationType educationType = commonController.findEducationTypeByCode(educationTypeCode);
+    if (educationType == null) {
+      return Response.status(Status.BAD_REQUEST).entity("Education type does not exist").build();
+    }
+    
+    EducationSubtype educationSubtype = commonController.findEducationSubtypeByCode(
+        educationType,
+        educationSubtypeCode);
+    if (educationSubtype == null) {
+      return Response.status(Status.BAD_REQUEST).entity("Education subtype does not exist").build();
+    }
+    
+    int numCompletedCourses = assessmentController.getAcceptedCourseCount(
+        student,
+        null,
+        educationType,
+        educationSubtype,
+        student.getCurriculum());
+
+    numCompletedCourses += assessmentController.getAcceptedTransferCreditCount(
+        student,
+        null,
+        true,
+        student.getCurriculum());
+
+    response.setNumberCompletedCourses(numCompletedCourses);
+    return Response.ok(response).build();
   }
 
   /**

@@ -357,6 +357,31 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
     
     return entityManager.createQuery(criteria).getResultList();
   }
+
+
+  public List<CourseStudent> listByStudentAndCourseCurriculum(Student student, Curriculum curriculum) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseStudent> criteria = criteriaBuilder.createQuery(CourseStudent.class);
+    Root<CourseStudent> root = criteria.from(CourseStudent.class);
+    Join<CourseStudent, Student> studentJoin = root.join(CourseStudent_.student);
+    Join<CourseStudent, Course> courseJoin = root.join(CourseStudent_.course);
+    SetJoin<Course, Curriculum> curriculumJoin = courseJoin.join(Course_.curriculums);
+
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(curriculumJoin, curriculum),
+        criteriaBuilder.equal(root.get(CourseStudent_.student), student),
+        criteriaBuilder.equal(root.get(CourseStudent_.archived), Boolean.FALSE),
+        criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
+        criteriaBuilder.equal(studentJoin.get(Student_.archived), Boolean.FALSE)
+      )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
   
   /**
    * Lists course students by student, course subject and course curriculum.
