@@ -21,6 +21,16 @@
       return o;
     };
     
+    var maxAttachmentSize = 52428800;
+    $.ajax({
+      url: "/1/applications/attachmentSizeLimit",
+      type: "GET",
+      contentType: "application/json; charset=utf-8",
+      success: function(result) {
+        maxAttachmentSize = result;
+      }
+    });
+    
     // Attachments uploader
     
     $('#field-attachments').on('change', function() {
@@ -32,8 +42,9 @@
       for (var i = 0; i < files.length; i++) {
        filesSize += files[i].size;
       }
-      if (filesSize > 20971520) {
-        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on 20 MB');
+      if (filesSize > maxAttachmentSize) {
+        var mb = Math.floor(maxAttachmentSize / 1048576);
+        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on ' + mb + ' MB');
         return;
       }
       for (var i = 0; i < files.length; i++) {
