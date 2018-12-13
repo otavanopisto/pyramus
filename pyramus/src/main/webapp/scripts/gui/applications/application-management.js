@@ -131,7 +131,7 @@
     // Existing students (unless student already created)
     
     var currentState = $('#info-application-state-value').attr('data-state');
-    if (currentState != 'TRANSFERRED_AS_STUDENT' && currentState != 'REGISTERED_AS_STUDENT') {
+    if (currentState != 'TRANSFERRED_AS_STUDENT' && currentState != 'REGISTERED_AS_STUDENT' && currentState != 'REGISTRATION_CHECKED' && currentState != 'REJECTED') {
       $.ajax({
         url: '/applications/listexistingpersons.json',
         type: "GET",
@@ -450,33 +450,40 @@
         archiveApplication();
         return;
       }
-      var id = $('body').attr('data-application-entity-id');
-      processingOn();
-      $.ajax({
-        url: '/applications/updateapplicationstate.json',
-        type: "POST",
-        data: {
-          id: id,
-          state: state,
-          lockApplication: state == 'PROCESSING',
-          setHandler: !$('#info-application-handler-value').attr('data-handler-id'),
-          removeHandler: state == 'PENDING'
-        },
-        dataType: 'json',
-        success: function(response) {
-          if (response.status == 'OK') {
-            window.location.reload();
-          }
-          else {
-            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
-          }
-          processingOff();
-        },
-        error: function(err) {
-          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
-          processingOff();
-        }
-      });
+
+      // #904: Confirm transfer as student
+      
+      if (state == 'TRANSFERRED_AS_STUDENT') {
+        var dialog = $('#transfer-as-student-dialog');
+        $(dialog).dialog({
+          resizable: false,
+          height: 'auto',
+          width: 'auto',
+          modal: true,
+          position: {
+            my: 'center',
+            at: 'center',
+            of: window
+          },
+          buttons: [{
+            text: 'Siirrä',
+            class: 'ok-button',
+            click: function() {
+              changeApplicationState(state);
+              $(dialog).dialog("close");
+            }
+          }, {
+            text: "Peruuta",
+            class: 'cancel-button',
+            click: function() {
+              $(dialog).dialog("close");
+            }
+          }]
+        });
+      }
+      else {
+        changeApplicationState(state);
+      }
     });
     $('.application-handling-container').show();
     
@@ -504,6 +511,39 @@
         $(this).toggle(available);
       });
       $('.sign-button').toggle(currentState == 'WAITING_STAFF_SIGNATURE');
+    }
+    
+    function changeApplicationState(state) {
+      var id = $('body').attr('data-application-entity-id');
+      processingOn();
+      $.ajax({
+        url: '/applications/updateapplicationstate.json',
+        type: "POST",
+        data: {
+          id: id,
+          state: state,
+          lockApplication: state == 'PROCESSING',
+          setHandler: !$('#info-application-handler-value').attr('data-handler-id'),
+          removeHandler: state == 'PENDING'
+        },
+        dataType: 'json',
+        success: function(response) {
+          if (response.redirectURL) {
+            window.location.href = response.redirectURL;
+          }
+          else if (response.status == 'OK') {
+            window.location.reload();
+          }
+          else {
+            $('.notification-queue').notificationQueue('notification', 'error', response.reason);
+          }
+          processingOff();
+        },
+        error: function(err) {
+          $('.notification-queue').notificationQueue('notification', 'error', err.statusText);
+          processingOff();
+        }
+      });
     }
     
     function archiveApplication() {

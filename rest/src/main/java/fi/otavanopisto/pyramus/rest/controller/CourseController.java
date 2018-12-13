@@ -487,7 +487,38 @@ public class CourseController {
   public List<CourseStudent> listCourseStudentsByCourse(Course course) {
     return courseStudentDAO.listByCourse(course);
   }
+  
+  /**
+   * Lists course students by student and course subject
+   * 
+   * @param student student
+   * @param subject course subject
+   * @return list of course students
+   */
+  public List<CourseStudent> listByStudentAndCourseSubject(Student student, Subject subject) {
+    return courseStudentDAO.listByStudentAndCourseSubject(student, subject);
+  }
+  
+  /**
+   * Lists course students by student, course subject and course curriculum
+   * 
+   * @param student student
+   * @param subject course subject
+   * @param curriculum course curriculum
+   * @return list of course students
+   */
+  public List<CourseStudent> listByStudentAndCourseSubjectAndCourseCurriculum(Student student, Subject subject, Curriculum curriculum) {
+    return courseStudentDAO.listByStudentAndCourseSubjectAndCourseCurriculum(student, subject, curriculum);
+  }
 
+  public List<CourseStudent> listByStudentAndCourseCurriculum(Student student, Curriculum curriculum) {
+    return courseStudentDAO.listByStudentAndCourseCurriculum(student, curriculum);
+  }
+
+  public List<CourseStudent> listByStudent(Student student) {
+    return courseStudentDAO.listByStudent(student);
+  }
+  
   public CourseStudent findCourseStudentByCourseAndStudent(Course course, Student student) {
     return courseStudentDAO.findByCourseAndStudent(course, student);
   }

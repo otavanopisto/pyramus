@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-  <section class="form-section section-personal-info">
+  <section class="form-section section-personal-info" style="display:none;">
 
     <h3 class="form-section__header">Henkilötiedot</h3>
     
@@ -96,6 +96,11 @@
     <div class="form-section__field-container field-email">
       <label for="field-email" class="required">Sähköpostiosoite</label>
       <input type="email" id="field-email" name="field-email" data-parsley-required="true">
+    </div>
+
+    <div class="form-section__field-container field-email-secondary">
+      <label for="field-email-secondary" class="required">Sähköpostiosoite uudelleen</label>
+      <input type="email" id="field-email-secondary" name="field-email-secondary" data-parsley-required="true" data-parsley-email-match="">
     </div>
   
   </section>

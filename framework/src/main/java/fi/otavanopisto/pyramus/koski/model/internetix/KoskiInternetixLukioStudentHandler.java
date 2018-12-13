@@ -110,14 +110,16 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
 
     opiskeluoikeus.setLisatiedot(getLisatiedot(student));
 
-    if (!handleLinkedStudyOID(student, opiskeluoikeus)) {
-      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.LINKED_MISSING_VALUES, new Date());
-      return null;
+    // Rahoitus; jos määritetty jokin kiinteä arvo, käytetään sitä
+    OpintojenRahoitus opintojenRahoitus = settings.getOpintojenRahoitus(student.getStudyProgramme().getId());
+    if (opintojenRahoitus == null) {
+      // Jos kiinteää rahoitusarvoa ei ole määritetty, rahoitus määräytyy oppilaitoksen mukaan
+      opintojenRahoitus = student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6;
     }
     
     OpiskeluoikeudenTila jaksonTila = !Boolean.TRUE.equals(student.getArchived()) ? OpiskeluoikeudenTila.lasna : OpiskeluoikeudenTila.mitatoity;
     OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), jaksonTila);
-    jakso.setOpintojenRahoitus(new KoodistoViite<>(student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6));
+    jakso.setOpintojenRahoitus(new KoodistoViite<>(opintojenRahoitus));
     opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
 
     SuorituksenTila suorituksenTila = SuorituksenTila.KESKEN;
@@ -131,7 +133,9 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
           SuorituksenTila.VALMIS : SuorituksenTila.KESKEYTYNYT;
     }
 
-    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
+    String departmentIdentifier = settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
+
+    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(departmentIdentifier);
     Set<OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> oppiaineet = assessmentsToModel(student, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS, defaultStudyProgramme);
 
     // Aineopiskelija
@@ -142,12 +146,11 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
       oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(HANDLER_TYPE, oppiaine.getOps()));
       oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
       if (suorituksenTila == SuorituksenTila.VALMIS)
-        oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, academyIdentifier));
+        oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, departmentIdentifier));
       opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
     }
     
     if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
-      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
       return null;
     }
     

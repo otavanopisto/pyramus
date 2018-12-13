@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.json.applications;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,8 @@ public class ListLogEntriesJSONRequestController extends JSONRequestController {
         return;
       }
       List<Map<String, Object>> results = new ArrayList<>();
-      List<ApplicationLog> logEntries = applicationLogDAO.listByApplication(application);
+      List<ApplicationLog> logEntries = applicationLogDAO.listByApplicationAndArchived(application, Boolean.FALSE);
+      logEntries.sort(Comparator.comparing(ApplicationLog::getDate).thenComparing(ApplicationLog::getId).reversed());
       for (ApplicationLog logEntry : logEntries) {
         Map<String, Object> logEntryInfo = new HashMap<>();
         logEntryInfo.put("id", logEntry.getId());

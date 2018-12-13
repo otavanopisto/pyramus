@@ -108,13 +108,15 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
           SuorituksenTila.VALMIS : SuorituksenTila.KESKEYTYNYT;
     }
     
-    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(academyIdentifier);
+    String departmentIdentifier = settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
+
+    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(departmentIdentifier);
     APASuoritus suoritus = new APASuoritus(
         PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
     if (suorituksenTila == SuorituksenTila.VALMIS)
-      suoritus.setVahvistus(getVahvistus(student, academyIdentifier));
+      suoritus.setVahvistus(getVahvistus(student, departmentIdentifier));
     opiskeluoikeus.addSuoritus(suoritus);
     
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
@@ -212,7 +214,7 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     boolean matchingEducationType = studentEducationType != null && subject.getEducationType() != null && 
         studentEducationType.getId().equals(subject.getEducationType().getId());
     
-    if (matchingEducationType && StringUtils.equals(subjectCode, "as2")) {
+    if (matchingEducationType && (StringUtils.equals(subjectCode, "as2") || StringUtils.equals(subjectCode, "läi"))) {
       OppiaineAidinkieliJaKirjallisuus aine = OppiaineAidinkieliJaKirjallisuus.AI7; // s2
       
       APAOppiaineenTunniste tunniste = new APAOppiaineenTunnisteAidinkieli(aine);
@@ -266,7 +268,8 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     subjectCode = subjectCode.toUpperCase();
     
     for (AikuistenPerusopetuksenAlkuvaiheenOppiaineet subject : AikuistenPerusopetuksenAlkuvaiheenOppiaineet.values()) {
-      if (subjectCode.equals("A" + subject.toString())) {
+      final String[] apaSubjects = { "A" + subject.toString(), "L" + subject.toString() };
+      if (ArrayUtils.contains(apaSubjects, subjectCode)) {
         return subject;
       }
     }

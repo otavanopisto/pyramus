@@ -16,7 +16,9 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
 import fi.otavanopisto.pyramus.PyramusUIPermissions;
 import fi.otavanopisto.pyramus.I18N.Messages;
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
@@ -40,6 +42,7 @@ import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -331,12 +334,14 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         periods.forEach(period -> lodgingPeriodDAO.delete(period));
       }
       
+      boolean studiesEnded = student.getStudyEndDate() == null && studyEndDate != null;
+      
       // Student
 
       studentDAO.update(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd,
           activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, 
           studyProgramme, curriculum, previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText);
-     
+      
       // Tags
 
       studentDAO.setStudentTags(student, tagEntities);
@@ -433,6 +438,15 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         PhoneNumber phoneNumber = phoneNumbers.get(i);
         if (!existingPhoneNumbers.contains(phoneNumber.getId())) {
           phoneNumberDAO.delete(phoneNumber);
+        }
+      }
+      
+      // #4226: Remove applications of nettipk/nettilukio students when their studies end
+      if (studiesEnded && (studyProgramme.getId() == 6L || studyProgramme.getId() == 7L)) {
+        ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+        Application application = applicationDAO.findByStudent(student);
+        if (application != null) {
+          ApplicationUtils.deleteApplication(application);
         }
       }
     }

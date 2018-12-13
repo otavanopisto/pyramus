@@ -3,13 +3,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-  <section class="form-section section-underage" data-skip="true">
+  <section class="form-section section-underage" data-skip="true" style="display:none;">
 
     <div class="application-line"></div>
 
     <h3 class="form-section__header">Huoltajan tiedot</h3>
 
-    <div class="form-section__field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,laakislinja">
+    <div class="form-section__field-container field-underage-grounds dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio,bandilinja,laakislinja" style="display:none;">
       <label for="field-underage-grounds">Alaikäisen hakemusperusteet</label>
       <textarea name="field-underage-grounds" rows="5" cols="40"></textarea>
     </div>

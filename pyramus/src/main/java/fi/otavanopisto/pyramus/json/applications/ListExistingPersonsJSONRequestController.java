@@ -42,8 +42,7 @@ public class ListExistingPersonsJSONRequestController extends JSONRequestControl
       
       JSONObject applicationData = JSONObject.fromObject(application.getFormData());      
       
-      boolean hasSsn = applicationData.getString("field-ssn-end") != null;
-      String ssn = hasSsn ? ApplicationUtils.constructSSN(applicationData.getString("field-birthday"), applicationData.getString("field-ssn-end")) : null;
+      String ssn = ApplicationUtils.constructSSN(applicationData.getString("field-birthday"), applicationData.getString("field-ssn-end"));
       String emailAddress = StringUtils.lowerCase(StringUtils.trim(applicationData.getString("field-email")));
   
       EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
@@ -69,7 +68,7 @@ public class ListExistingPersonsJSONRequestController extends JSONRequestControl
       
       // Persons with SSN
       
-      if (hasSsn) {
+      if (!StringUtils.isBlank(ssn)) {
         List<Person> persons = personDAO.listBySSNUppercase(ssn);
         for (Person person : persons) {
           existingPersons.put(person.getId(), person);

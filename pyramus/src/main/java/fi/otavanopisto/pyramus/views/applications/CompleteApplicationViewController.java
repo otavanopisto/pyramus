@@ -80,7 +80,7 @@ public class CompleteApplicationViewController extends PyramusViewController {
             applicationSignatures.getApplicantInvitationId(),
             applicationSignatures.getApplicantInvitationToken());
         String notificationPostfix = String.format("<a href=\"%s\" target=\"_blank\">Opiskelupaikan vastaanottoasiakirja</a>", documentUrl); 
-        ApplicationUtils.sendNotifications(application, pageRequestContext.getRequest(), null, false, notificationPostfix);
+        ApplicationUtils.sendNotifications(application, pageRequestContext.getRequest(), null, false, notificationPostfix, true);
       }
       else {
         logger.severe(String.format("Applicant signature for application %d was not completed successfully", application.getId()));

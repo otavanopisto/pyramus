@@ -26,8 +26,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationNotificationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
@@ -49,8 +51,10 @@ import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLog;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationNotification;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
@@ -96,7 +100,9 @@ public class ApplicationUtils {
       case TRANSFERRED_AS_STUDENT:
         return "Siirretty opiskelijaksi";
       case REGISTERED_AS_STUDENT:
-        return "Rekisteröitynyt aineopiskelijaksi";
+        return "Ilmoittautunut aineopiskelijaksi";
+      case REGISTRATION_CHECKED:
+        return "Tiedot tarkistettu";
       case REJECTED:
         return "Hylätty";
        default:
@@ -237,7 +243,7 @@ public class ApplicationUtils {
   }
   
   public static Sex resolveGender(String genderValue, String ssnEnd) {
-    if (!StringUtils.isBlank(ssnEnd) && ssnEnd.length() == 4) {
+    if (!StringUtils.isBlank(ssnEnd) && !StringUtils.equalsIgnoreCase(ssnEnd, "XXXX") && ssnEnd.length() == 4) {
       char c = ssnEnd.charAt(2);
       return c == '1' || c == '3' || c == '5' || c == '7' || c == '9' ? Sex.MALE : Sex.FEMALE;
     }
@@ -323,7 +329,7 @@ public class ApplicationUtils {
     }
   }
   
-  public static void sendNotifications(Application application, HttpServletRequest request, StaffMember staffMember, boolean newApplication, String notificationPostfix) {
+  public static void sendNotifications(Application application, HttpServletRequest request, StaffMember staffMember, boolean newApplication, String notificationPostfix, boolean doLogEntry) {
     ApplicationNotificationDAO applicationNotificationDAO = DAOFactory.getInstance().getApplicationNotificationDAO();
     List<ApplicationNotification> notifications = applicationNotificationDAO.listByNullOrLineAndState(
         application.getLine(), application.getState());
@@ -349,7 +355,10 @@ public class ApplicationUtils {
       String mailSubject = null;
       String mailContent = null;
       if (newApplication) {
-        mailSubject = String.format("Uusi hakemus linjalle %s", applicationLineUiValue(application.getLine()));
+        mailSubject = String.format("Uusi hakemus linjalle %s [%s %s]",
+            applicationLineUiValue(application.getLine()),
+            application.getFirstName(),
+            application.getLastName());
         mailContent = String.format(
           "<p>Hakija <b>%s %s</b> (%s) on jättänyt hakemuksen linjalle <b>%s</b>.</p>" +
           "<p>Pääset hakemustietoihin <b><a href=\"%s\">tästä linkistä</a></b>.</p>",
@@ -360,7 +369,9 @@ public class ApplicationUtils {
           viewUrl);
       }
       else {
-        mailSubject = "Hakemuksen tila on muuttunut";
+        mailSubject = String.format("Hakemuksen tila on muuttunut [%s %s]",
+            application.getFirstName(),
+            application.getLastName());
         mailContent = String.format(
           "<p>Hakijan <b>%s %s</b> (%s) hakemus linjalle <b>%s</b> on siirtynyt tilaan <b>%s</b>.</p>" +
           "<p>Pääset hakemustietoihin <b><a href=\"%s\">tästä linkistä</a></b>.</p>",
@@ -382,16 +393,18 @@ public class ApplicationUtils {
     
     // Log entry
     
-    String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState()));
-    if (notificationPostfix != null) {
-      notification = String.format("%s<br/>%s", notification, notificationPostfix);
+    if (doLogEntry) {
+      String notification = String.format("Hakemus on siirtynyt tilaan <b>%s</b>", ApplicationUtils.applicationStateUiValue(application.getState()));
+      if (notificationPostfix != null) {
+        notification = String.format("%s<br/>%s", notification, notificationPostfix);
+      }
+      ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+      applicationLogDAO.create(
+          application,
+          ApplicationLogType.HTML,
+          notification,
+          staffMember);
     }
-    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
-    applicationLogDAO.create(
-      application,
-      ApplicationLogType.HTML,
-      notification,
-      staffMember);
   }
 
   public static String extractSSN(Application application) {
@@ -403,7 +416,7 @@ public class ApplicationUtils {
   }
 
   public static String constructSSN(String birthday, String ssnEnd) {
-    if (StringUtils.isBlank(birthday) || StringUtils.isBlank(ssnEnd)) {
+    if (StringUtils.isBlank(birthday) || StringUtils.isBlank(ssnEnd) || StringUtils.equalsIgnoreCase(ssnEnd, "XXXX")) {
       return null;
     }
     try {
@@ -434,6 +447,50 @@ public class ApplicationUtils {
   public static Student createPyramusStudent(Application application, StaffMember staffMember) throws DuplicatePersonException {
     Person person = resolvePerson(application);
     return createPyramusStudent(application, person, staffMember);
+  }
+  
+  public static void deleteApplication(Application application) {
+    logger.info(String.format("Removing application %d of %s %s (%s) to line %s created at %tF)",
+        application.getId(),
+        application.getFirstName(),
+        application.getLastName(),
+        application.getEmail(),
+        application.getLine(),
+        application.getCreated()));
+    // Delete signatures
+    ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
+    List<ApplicationSignatures> applicationSignatures = applicationSignaturesDAO.listByApplication(application);
+    for (ApplicationSignatures applicationSignature : applicationSignatures) {
+      applicationSignaturesDAO.delete(applicationSignature);
+    }
+    // Delete log entries
+    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+    List<ApplicationLog> applicationLogs = applicationLogDAO.listByApplication(application);
+    for (ApplicationLog applicationLog : applicationLogs) {
+      applicationLogDAO.delete(applicationLog);
+    }
+    // Delete attachments (database)
+    ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
+    List<ApplicationAttachment> applicationAttachments = applicationAttachmentDAO.listByApplicationId(application.getApplicationId());
+    for (ApplicationAttachment applicationAttachment : applicationAttachments) {
+      applicationAttachmentDAO.delete(applicationAttachment);
+    }
+    // Delete attachments (file system)
+    String attachmentsFolder = getSettingValue("applications.storagePath");
+    if (!StringUtils.isEmpty(attachmentsFolder)) {
+      File attachmentFolder = Paths.get(attachmentsFolder, application.getApplicationId()).toFile();
+      if (attachmentFolder.exists()) {
+        try {
+          FileUtils.deleteDirectory(attachmentFolder);
+        }
+        catch (IOException e) {
+          logger.log(Level.WARNING, String.format("Failed to remove application attachment folder %s", attachmentFolder), e);
+        }
+      }
+    }
+    // Delete application
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    applicationDAO.delete(application);
   }
 
   public static Student createPyramusStudent(Application application, Person person, StaffMember staffMember) {
@@ -484,6 +541,21 @@ public class ApplicationUtils {
       studyTimeEnd = c.getTime();
     }
     
+    // #868: Non-contract school information (for Internetix students, if exists)
+    
+    String additionalInfo = null;
+    if (StringUtils.equals(getFormValue(formData, "field-line"), "aineopiskelu")) {
+      String contractSchoolName = getFormValue(formData, "field-internetix-contract-school-name");
+      String contractSchoolMunicipality = getFormValue(formData, "field-internetix-contract-school-municipality");
+      String contractSchoolContact = getFormValue(formData, "field-internetix-contract-school-contact");
+      if (!StringUtils.isAnyEmpty(contractSchoolName, contractSchoolMunicipality, contractSchoolContact)) {
+        additionalInfo = String.format("<p><strong>Muun kuin sopimusoppilaitoksen yhteystiedot:</strong><br/>%s (%s)<br/>%s</p>",
+            contractSchoolName,
+            contractSchoolMunicipality,
+            StringUtils.replace(contractSchoolContact, "\n", "<br/>"));
+      }
+    }
+    
     // Create student
     
     Student student = studentDAO.create(
@@ -491,7 +563,7 @@ public class ApplicationUtils {
         getFormValue(formData, "field-first-names"),
         getFormValue(formData, "field-last-name"),
         getFormValue(formData, "field-nickname"),
-        null, // additionalInfo,
+        additionalInfo,
         studyTimeEnd,
         ApplicationUtils.resolveStudentActivityType(getFormValue(formData, "field-job")),
         ApplicationUtils.resolveStudentExaminationType(getFormValue(formData, "field-internetix-contract-school-degree")),
@@ -586,6 +658,15 @@ public class ApplicationUtils {
         School school = schools.isEmpty() ? null : schools.get(0);
         if (school != null) {
           studentDAO.updateSchool(student, school);
+        }
+        else {
+          String notification = "<b>Huom!</b> Opiskelijan ilmoittamaa oppilaitosta ei löydy vielä Pyramuksesta!";
+          ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+          applicationLogDAO.create(
+              application,
+              ApplicationLogType.HTML,
+              notification,
+              null);
         }
       }
     }
@@ -712,12 +793,9 @@ public class ApplicationUtils {
     // Person by social security number
     
     Map<Long, Person> existingPersons = new HashMap<Long, Person>();
-    boolean hasSsn = getFormValue(applicationData, "field-ssn-end") != null;
-    if (hasSsn) {
-      
-      // Given SSN
-      
-      String ssn = constructSSN(getFormValue(applicationData, "field-birthday"), getFormValue(applicationData, "field-ssn-end"));
+    String ssn = constructSSN(getFormValue(applicationData, "field-birthday"), getFormValue(applicationData, "field-ssn-end"));
+    if (StringUtils.isNotBlank(ssn)) {
+
       List<Person> persons = personDAO.listBySSNUppercase(ssn);
       for (Person person : persons) {
         existingPersons.put(person.getId(), person);

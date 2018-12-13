@@ -44,9 +44,9 @@
               <option value="nettilukio">Nettilukio</option>
               <option value="nettipk">Nettiperuskoulu</option>
               <option value="aikuislukio">Aikuislukio</option>
-              <option value="bandilinja">Bändilinja</option>
+              <!-- <option value="bandilinja">Bändilinja</option>
               <option value="kasvatustieteet">Kasvatustieteen linja</option>
-              <option value="laakislinja">Lääkislinja</option>
+              <option value="laakislinja">Lääkislinja</option> -->
               <option value="mk">Maahanmuuttajakoulutukset</option>
             </select>
           </div>
@@ -63,7 +63,8 @@
               <option value="APPROVED_BY_SCHOOL">Hyväksytty</option>
               <option value="APPROVED_BY_APPLICANT">Opiskelupaikka vastaanotettu</option>
               <option value="TRANSFERRED_AS_STUDENT">Siirretty opiskelijaksi</option>
-              <option value="REGISTERED_AS_STUDENT">Rekisteröitynyt aineopiskelijaksi</option>
+              <option value="REGISTERED_AS_STUDENT">Ilmoittautunut aineopiskelijaksi</option>
+              <option value="REGISTRATION_CHECKED">Tiedot tarkistettu</option>
               <option value="REJECTED">Hylätty</option>
             </select>
           </div>

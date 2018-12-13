@@ -101,6 +101,9 @@ import fi.otavanopisto.pyramus.dao.help.HelpItemTitleDAO;
 import fi.otavanopisto.pyramus.dao.help.HelpPageContentDAO;
 import fi.otavanopisto.pyramus.dao.help.HelpPageDAO;
 import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleComponentDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.plugins.PluginDAO;
@@ -134,6 +137,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
+import fi.otavanopisto.pyramus.dao.users.EmailSignatureDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
@@ -188,6 +192,20 @@ public class DAOFactory {
 
   public fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO getApplicationAttachmentDAO() {
     return (ApplicationAttachmentDAO) findByClass(fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO.class);
+  }
+  
+  /* Matriculation examination enrollments */
+  
+  public MatriculationExamEnrollmentDAO getMatriculationExamEnrollmentDAO() {
+    return (MatriculationExamEnrollmentDAO) findByClass(MatriculationExamEnrollmentDAO.class);
+  }
+
+  public MatriculationExamAttendanceDAO getMatriculationExamAttendanceDAO() {
+    return (MatriculationExamAttendanceDAO) findByClass(MatriculationExamAttendanceDAO.class);
+  }
+
+  public MatriculationExamDAO getMatriculationExamDAO() {
+    return (MatriculationExamDAO) findByClass(MatriculationExamDAO.class);
   }
 
   /* Student */
@@ -610,6 +628,10 @@ public class DAOFactory {
 
   public EmailDAO getEmailDAO() {
     return (EmailDAO) findByClass(EmailDAO.class);
+  }
+
+  public EmailSignatureDAO getEmailSignatureDAO() {
+    return (EmailSignatureDAO) findByClass(EmailSignatureDAO.class);
   }
 
   public LanguageDAO getLanguageDAO() {

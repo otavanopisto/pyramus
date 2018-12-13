@@ -28,6 +28,11 @@ a {
   color: #009fe3;
 }
 
+strong,
+b {
+  font-weight: 600;
+}
+
 button,
 input,
 select,
@@ -773,6 +778,10 @@ textarea {
 
 .ui-dialog .ui-dialog-buttonset button.ui-button.cancel-button {
   background: #7391a7;
+}
+
+.ui-dialog .ui-dialog-buttonset button.ui-button.ok-button {
+  background: #24c118;
 }
 
 .ui-widget-overlay {

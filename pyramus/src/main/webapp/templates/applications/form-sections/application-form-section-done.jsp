@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-  <section class="form-section section-done submitted" data-skip="true">
+  <section class="form-section section-done submitted" data-skip="true" style="display:none;">
     <h3 class="form-section__header">Hakemuksesi on vastaanotettu</h3>
     <p>Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa <a href="/applications/edit.page">https://pyramus.otavanopisto.fi/applications/edit.page</a></p>
     <p>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen:</p>
@@ -12,12 +12,12 @@
     <p>Nämä ohjeet on lähetetty myös antamaasi sähköpostiosoitteeseen <span class="email" id="edit-info-email"></span></p>
   </section>
 
-  <section class="form-section section-done internetix-submitted" data-skip="true">
+  <section class="form-section section-done internetix-submitted" data-skip="true" style="display:none;">
     <h3 class="form-section__header">Ilmoittautumisesi on tallennettu</h3>
     <p>Koska olet tietojemme mukaan opiskellut Otavan Opistossa aiemminkin, käsittelemme hakemuksesi manuaalisesti. Lähetämme sinulle sähköpostia antamaasi osoitteeseen, kun hakemus on käsitelty.</p>
   </section>
 
-  <section class="form-section section-done registered" data-skip="true">
+  <section class="form-section section-done registered" data-skip="true" style="display:none;">
     <h3 class="form-section__header">Ilmoittautumisesi on tallennettu</h3>
     <p>Lähetimme antamaasi sähköpostiosoitteeseen ohjeet, joilla voit luoda haluamasi tunnukset Otavan Opiston Muikku-oppimisympäristöön.</p>
   </section>

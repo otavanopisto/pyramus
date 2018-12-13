@@ -21,6 +21,16 @@
       return o;
     };
     
+    var maxAttachmentSize = 52428800;
+    $.ajax({
+      url: "/1/applications/attachmentSizeLimit",
+      type: "GET",
+      contentType: "application/json; charset=utf-8",
+      success: function(result) {
+        maxAttachmentSize = result;
+      }
+    });
+    
     // Attachments uploader
     
     $('#field-attachments').on('change', function() {
@@ -32,8 +42,9 @@
       for (var i = 0; i < files.length; i++) {
        filesSize += files[i].size;
       }
-      if (filesSize > 10485760) {
-        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on 10 MB');
+      if (filesSize > maxAttachmentSize) {
+        var mb = Math.floor(maxAttachmentSize / 1048576);
+        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on ' + mb + ' MB');
         return;
       }
       for (var i = 0; i < files.length; i++) {
@@ -171,6 +182,16 @@
         fi: 'Tämä kenttä on pakollinen'
       }
     });
+
+    Parsley.addValidator('emailMatch', {
+      requirementType: 'string',
+      validateString: function(value) {
+        return value == $('#field-email').val();
+      },
+      messages: {
+        fi: 'Sähköpostiosoitteet eivät täsmää'
+      }
+    });
     
     // Allow other sex with valid ssn postfix
     
@@ -212,14 +233,26 @@
     
     // Course fees
 
-    $('.internetix-course-fees-link').on('click', function() {
+    $('.internetix-course-fees-link, .course-fees__close, .course-fees-overlay').on('click', function() {
       $('.course-fees-overlay').toggle();
       $('.course-fees').toggle();
     });
     
-    $('.course-fees__close, .course-fees-overlay').on('click', function() {
-      $('.course-fees-overlay').toggle();
-      $('.course-fees').toggle();
+    // Study promises
+
+    $('.nettilukio-promise-link, .nettilukio-promise__close, .nettilukio-promise-overlay').on('click', function() {
+      $('.nettilukio-promise-overlay').toggle();
+      $('.nettilukio-promise').toggle();
+    });
+
+    $('.aineopiskelu-promise-link, .aineopiskelu-promise__close, .aineopiskelu-promise-overlay').on('click', function() {
+      $('.aineopiskelu-promise-overlay').toggle();
+      $('.aineopiskelu-promise').toggle();
+    });
+
+    $('.nettipk-promise-link, .nettipk-promise__close, .nettipk-promise-overlay').on('click', function() {
+      $('.nettipk-promise-overlay').toggle();
+      $('.nettipk-promise').toggle();
     });
     
     // Page information
@@ -370,7 +403,7 @@
 
   function setLine(line) {
     var option =  $('#field-line').find('option:selected');
-    var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
+    var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true' || $('body').attr('data-mode') == 'edit';
     $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
     $('.section-internetix-school').attr('data-skip', option.val() != 'aineopiskelu');
     // section toggle for existing applications
@@ -402,6 +435,8 @@
     $(section).addClass('current').show();
     $('.form-navigation').toggle(!$(section).hasClass('section-done'));
     $('.application-content__information-page-specific').toggle(!$(section).hasClass('section-done'));
+    $('.application-content__information-page-specific-non-summary').toggle(!$(section).hasClass('section-summary'));
+    $('.application-content__information-page-specific-summary').toggle($(section).hasClass('section-summary'));
     // toggle previous section button
     var canNavigate = false;
     for (var i = currentIndex() - 1; i >= 0; i--) {
@@ -430,8 +465,11 @@
   }
   
   function isValidSsnEnd(value, allowEmpty) {
-    if (value == '') {
+    if (!value || value == '') {
       return allowEmpty;
+    }
+    else if (value.toUpperCase() == 'XXXX') {
+      return true;
     }
     var valid = value != '' && value.length == 4 && /^[0-9]{3}[a-zA-Z0-9]{1}/.test(value);
     if (valid) {
