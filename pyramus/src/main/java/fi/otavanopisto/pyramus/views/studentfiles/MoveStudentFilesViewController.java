@@ -24,26 +24,26 @@ public class MoveStudentFilesViewController extends PyramusViewController {
       int bytes = 0;
       int totalBytes = 0;
       int totalFiles = 0;
-      Long currentId = PyramusFileUtils.getLastMovedEntityId();
-      List<Long> answerIds = studentFileDAO.listIdsByLargerAndLimit(currentId, count);
-      for (Long answerId : answerIds) {
+      Long currentEntityId = PyramusFileUtils.getLastMovedEntityId();
+      List<Long> entityIds = studentFileDAO.listIdsByLargerAndLimit(currentEntityId, count);
+      for (Long entityId : entityIds) {
         try {
-          StudentFile studentFile = studentFileDAO.findById(answerId); 
+          StudentFile studentFile = studentFileDAO.findById(entityId); 
           if (studentFile != null) {
             bytes = PyramusFileUtils.relocateToFileSystem(studentFile);
             if (bytes > 0) {
               totalBytes += bytes;
               totalFiles++;
             }
-            currentId = answerId;
+            currentEntityId = entityId;
           }
-          PyramusFileUtils.setLastMovedEntityId(currentId);
+          PyramusFileUtils.setLastMovedEntityId(currentEntityId);
         }
         catch (IOException e) {
-          logger.log(Level.SEVERE, String.format("Failed to relocate StudentFile %d", currentId), e);
+          logger.log(Level.SEVERE, String.format("Failed to relocate StudentFile %d", currentEntityId), e);
         }
       }
-      logger.info(String.format("Moved %d files (%d bytes) with latest entity at %d", totalFiles, totalBytes, currentId));
+      logger.info(String.format("Moved %d files (%d bytes) with latest entity at %d", totalFiles, totalBytes, currentEntityId));
     }
   }
 
