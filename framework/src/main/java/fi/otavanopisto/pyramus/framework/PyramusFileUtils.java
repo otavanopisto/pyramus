@@ -70,9 +70,8 @@ public class PyramusFileUtils {
   }
   
   public static void storeFile(User user, String fileId, byte[] data) throws IOException {
-    File userFile = null;
     File storageFolder = getStorageFolder(user);
-    userFile = Paths.get(storageFolder.getPath(), fileId).toFile();
+    File userFile = Paths.get(storageFolder.getPath(), fileId).toFile();
     FileUtils.writeByteArrayToFile(userFile, data);
   }
 
