@@ -32,7 +32,7 @@ public class PyramusFileUtils {
   public static File getStorageFolder(User user) throws IOException {
     String storageFolder = SettingUtils.getSettingValue("files.storageFolder");
     if (StringUtils.isBlank(storageFolder)) {
-      throw new IOException("file.storageFolder not set");
+      throw new IOException("files.storageFolder not set");
     }
     File userFolder = Paths.get(storageFolder, user.getId().toString()).toFile();
     if (!userFolder.exists()) {
