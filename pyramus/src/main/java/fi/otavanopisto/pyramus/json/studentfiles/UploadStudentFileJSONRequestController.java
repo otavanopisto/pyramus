@@ -1,5 +1,9 @@
 package fi.otavanopisto.pyramus.json.studentfiles;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.commons.fileupload.FileItem;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
@@ -12,6 +16,7 @@ import fi.otavanopisto.pyramus.domainmodel.file.FileType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
+import fi.otavanopisto.pyramus.framework.PyramusFileUtils;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
 /**
@@ -20,6 +25,8 @@ import fi.otavanopisto.pyramus.framework.UserRole;
  * @see fi.otavanopisto.pyramus.views.students.EditStudentGroupViewController
  */
 public class UploadStudentFileJSONRequestController extends JSONRequestController {
+
+  private static final Logger logger = Logger.getLogger(UploadStudentFileJSONRequestController.class.getName());
 
   /**
    * Processes the request to edit a student group.
@@ -45,9 +52,22 @@ public class UploadStudentFileJSONRequestController extends JSONRequestControlle
     FileType fileType = fileTypeId != null ? fileTypeDAO.findById(fileTypeId) : null;
     
     if (fileItem != null) {
+      String fileId = null;
       byte[] data = fileItem.get();
-
-      studentFileDAO.create(student, name, fileItem.getName(), fileType, fileItem.getContentType(), data, loggedUser);
+      
+      if (PyramusFileUtils.isFileSystemStorageEnabled()) {
+        try {
+          fileId = PyramusFileUtils.generateFileId();
+          PyramusFileUtils.storeFile(student, fileId, data);
+          data = null;
+        }
+        catch (IOException e) {
+          fileId = null;
+          logger.log(Level.SEVERE, "Store user file to file system failed", e);
+        }
+      }
+      
+      studentFileDAO.create(student, name, fileItem.getName(), fileId, fileType, fileItem.getContentType(), data, loggedUser);
     }
   }
 
