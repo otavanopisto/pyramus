@@ -26,8 +26,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationAttachmentDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationLogDAO;
 import fi.otavanopisto.pyramus.dao.application.ApplicationNotificationDAO;
+import fi.otavanopisto.pyramus.dao.application.ApplicationSignaturesDAO;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
@@ -49,8 +51,10 @@ import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLog;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLogType;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationNotification;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationSignatures;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
@@ -239,7 +243,7 @@ public class ApplicationUtils {
   }
   
   public static Sex resolveGender(String genderValue, String ssnEnd) {
-    if (!StringUtils.isBlank(ssnEnd) && ssnEnd.length() == 4) {
+    if (!StringUtils.isBlank(ssnEnd) && !StringUtils.equalsIgnoreCase(ssnEnd, "XXXX") && ssnEnd.length() == 4) {
       char c = ssnEnd.charAt(2);
       return c == '1' || c == '3' || c == '5' || c == '7' || c == '9' ? Sex.MALE : Sex.FEMALE;
     }
@@ -412,7 +416,7 @@ public class ApplicationUtils {
   }
 
   public static String constructSSN(String birthday, String ssnEnd) {
-    if (StringUtils.isBlank(birthday) || StringUtils.isBlank(ssnEnd)) {
+    if (StringUtils.isBlank(birthday) || StringUtils.isBlank(ssnEnd) || StringUtils.equalsIgnoreCase(ssnEnd, "XXXX")) {
       return null;
     }
     try {
@@ -443,6 +447,50 @@ public class ApplicationUtils {
   public static Student createPyramusStudent(Application application, StaffMember staffMember) throws DuplicatePersonException {
     Person person = resolvePerson(application);
     return createPyramusStudent(application, person, staffMember);
+  }
+  
+  public static void deleteApplication(Application application) {
+    logger.info(String.format("Removing application %d of %s %s (%s) to line %s created at %tF)",
+        application.getId(),
+        application.getFirstName(),
+        application.getLastName(),
+        application.getEmail(),
+        application.getLine(),
+        application.getCreated()));
+    // Delete signatures
+    ApplicationSignaturesDAO applicationSignaturesDAO = DAOFactory.getInstance().getApplicationSignaturesDAO();
+    List<ApplicationSignatures> applicationSignatures = applicationSignaturesDAO.listByApplication(application);
+    for (ApplicationSignatures applicationSignature : applicationSignatures) {
+      applicationSignaturesDAO.delete(applicationSignature);
+    }
+    // Delete log entries
+    ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+    List<ApplicationLog> applicationLogs = applicationLogDAO.listByApplication(application);
+    for (ApplicationLog applicationLog : applicationLogs) {
+      applicationLogDAO.delete(applicationLog);
+    }
+    // Delete attachments (database)
+    ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
+    List<ApplicationAttachment> applicationAttachments = applicationAttachmentDAO.listByApplicationId(application.getApplicationId());
+    for (ApplicationAttachment applicationAttachment : applicationAttachments) {
+      applicationAttachmentDAO.delete(applicationAttachment);
+    }
+    // Delete attachments (file system)
+    String attachmentsFolder = getSettingValue("applications.storagePath");
+    if (!StringUtils.isEmpty(attachmentsFolder)) {
+      File attachmentFolder = Paths.get(attachmentsFolder, application.getApplicationId()).toFile();
+      if (attachmentFolder.exists()) {
+        try {
+          FileUtils.deleteDirectory(attachmentFolder);
+        }
+        catch (IOException e) {
+          logger.log(Level.WARNING, String.format("Failed to remove application attachment folder %s", attachmentFolder), e);
+        }
+      }
+    }
+    // Delete application
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    applicationDAO.delete(application);
   }
 
   public static Student createPyramusStudent(Application application, Person person, StaffMember staffMember) {
@@ -745,12 +793,9 @@ public class ApplicationUtils {
     // Person by social security number
     
     Map<Long, Person> existingPersons = new HashMap<Long, Person>();
-    boolean hasSsn = getFormValue(applicationData, "field-ssn-end") != null;
-    if (hasSsn) {
-      
-      // Given SSN
-      
-      String ssn = constructSSN(getFormValue(applicationData, "field-birthday"), getFormValue(applicationData, "field-ssn-end"));
+    String ssn = constructSSN(getFormValue(applicationData, "field-birthday"), getFormValue(applicationData, "field-ssn-end"));
+    if (StringUtils.isNotBlank(ssn)) {
+
       List<Person> persons = personDAO.listBySSNUppercase(ssn);
       for (Person person : persons) {
         existingPersons.put(person.getId(), person);

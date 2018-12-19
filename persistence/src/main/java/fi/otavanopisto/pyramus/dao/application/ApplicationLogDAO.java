@@ -56,9 +56,24 @@ public class ApplicationLogDAO extends PyramusEntityDAO<ApplicationLog> {
     Root<ApplicationLog> root = criteria.from(ApplicationLog.class);
     criteria.select(root);
     criteria.where(
+      criteriaBuilder.equal(root.get(ApplicationLog_.application), application)
+    );
+    criteria.orderBy(criteriaBuilder.desc(root.get(ApplicationLog_.date)));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<ApplicationLog> listByApplicationAndArchived(Application application, Boolean archived) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ApplicationLog> criteria = criteriaBuilder.createQuery(ApplicationLog.class);
+    Root<ApplicationLog> root = criteria.from(ApplicationLog.class);
+    criteria.select(root);
+    criteria.where(
       criteriaBuilder.and(
         criteriaBuilder.equal(root.get(ApplicationLog_.application), application),
-        criteriaBuilder.equal(root.get(ApplicationLog_.archived), Boolean.FALSE)
+        criteriaBuilder.equal(root.get(ApplicationLog_.archived), archived)
       ));
     criteria.orderBy(criteriaBuilder.desc(root.get(ApplicationLog_.date)));
     

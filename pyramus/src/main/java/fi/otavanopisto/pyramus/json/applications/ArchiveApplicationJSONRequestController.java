@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.json.applications;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
@@ -15,7 +16,7 @@ public class ArchiveApplicationJSONRequestController extends JSONRequestControll
     if (id != null) {
       Application application = applicationDAO.findById(id);
       if (application != null) {
-        applicationDAO.archive(application);
+        ApplicationUtils.deleteApplication(application);
       }
     }
   }

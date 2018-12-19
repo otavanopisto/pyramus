@@ -46,8 +46,9 @@ public class EditStudentFileJSONRequestController extends JSONRequestController 
 
     if (fileItem != null) {
       byte[] data = fileItem.get();
-
-      studentFileDAO.updateData(studentFile, fileItem.getContentType(), data, loggedUser);
+      if (data != null && data.length > 0) {
+        studentFileDAO.updateData(studentFile, fileItem.getContentType(), data, loggedUser);
+      }
     }
   }
 

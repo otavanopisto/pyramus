@@ -37,6 +37,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -81,6 +82,8 @@ import net.sf.json.util.JSONUtils;
 public class ApplicationRESTService extends AbstractRESTService {
 
   private static final Logger logger = Logger.getLogger(ApplicationRESTService.class.getName());
+  
+  private static long DEFAULT_ATTACHMENT_SIZE_LIMIT = 52428800;
 
   @Context
   private UriInfo uri;
@@ -142,9 +145,14 @@ public class ApplicationRESTService extends AbstractRESTService {
 
       // Enforce maximum attachment size
       
+      String attachmentSizeLimit = getSettingValue("applications.attachmentSizeLimit");
+      long maxSize = DEFAULT_ATTACHMENT_SIZE_LIMIT;
+      if (!StringUtils.isBlank(attachmentSizeLimit) && NumberUtils.isNumber(attachmentSizeLimit)) {
+        maxSize = Long.valueOf(attachmentSizeLimit);
+      }
       long size = fileData.length + FileUtils.sizeOfDirectory(folder);
-      if (size > 20971520) {
-        logger.log(Level.WARNING,"Refusing attachment due to total attachment size over 20MB");
+      if (size > maxSize) {
+        logger.log(Level.WARNING,"Refusing attachment due to total attachment size");
         return Response.status(Status.BAD_REQUEST).build();
       }
       
@@ -343,6 +351,20 @@ public class ApplicationRESTService extends AbstractRESTService {
     }
   }
   
+  @Path("/attachmentSizeLimit")
+  @GET
+  @Unsecure
+  public Response getAttachmentSizeLimit(@HeaderParam("Referer") String referer) {
+    if (!isApplicationCall(referer)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    String attachmentSizeLimit = getSettingValue("applications.attachmentSizeLimit");
+    if (StringUtils.isBlank(attachmentSizeLimit) || !NumberUtils.isNumber(attachmentSizeLimit)) {
+      attachmentSizeLimit = String.format("%d", DEFAULT_ATTACHMENT_SIZE_LIMIT);
+    }
+    return Response.ok(attachmentSizeLimit).build();
+  }
+
   @Path("/getapplicationdata/{ID}")
   @GET
   @Unsecure

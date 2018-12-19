@@ -25,4 +25,7 @@
   <div id="delete-application-dialog" title="Hakemuksen poistaminen" style="display:none;">
     <p>Haluatko varmasti poistaa t‰m‰n hakemuksen?</p>
   </div>
+  <div id="transfer-as-student-dialog" title="Siirret‰‰nkˆ hakija opiskelijaksi?" style="display:none;">
+    <p>Huomaa, ett‰ t‰m‰n j‰lkeen hakemuksen k‰sittely ei en‰‰ ole mahdollista<br/>ja ett‰ opiskelija saa ohjeet Muikku-tunnusten luomiseksi.</p>
+  </div>
 </section>  

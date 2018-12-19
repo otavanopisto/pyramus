@@ -21,6 +21,16 @@
       return o;
     };
     
+    var maxAttachmentSize = 52428800;
+    $.ajax({
+      url: "/1/applications/attachmentSizeLimit",
+      type: "GET",
+      contentType: "application/json; charset=utf-8",
+      success: function(result) {
+        maxAttachmentSize = result;
+      }
+    });
+    
     // Attachments uploader
     
     $('#field-attachments').on('change', function() {
@@ -32,8 +42,9 @@
       for (var i = 0; i < files.length; i++) {
        filesSize += files[i].size;
       }
-      if (filesSize > 20971520) {
-        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on 20 MB');
+      if (filesSize > maxAttachmentSize) {
+        var mb = Math.floor(maxAttachmentSize / 1048576);
+        $('.notification-queue').notificationQueue('notification', 'error', 'Liitteiden suurin sallittu yhteiskoko on ' + mb + ' MB');
         return;
       }
       for (var i = 0; i < files.length; i++) {
@@ -392,7 +403,7 @@
 
   function setLine(line) {
     var option =  $('#field-line').find('option:selected');
-    var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true';
+    var hasAttachmentSupport = $(option).attr('data-attachment-support') == 'true' || $('body').attr('data-mode') == 'edit';
     $('.section-attachments').attr('data-skip', !hasAttachmentSupport);
     $('.section-internetix-school').attr('data-skip', option.val() != 'aineopiskelu');
     // section toggle for existing applications
@@ -454,8 +465,11 @@
   }
   
   function isValidSsnEnd(value, allowEmpty) {
-    if (value == '') {
+    if (!value || value == '') {
       return allowEmpty;
+    }
+    else if (value.toUpperCase() == 'XXXX') {
+      return true;
     }
     var valid = value != '' && value.length == 4 && /^[0-9]{3}[a-zA-Z0-9]{1}/.test(value);
     if (valid) {

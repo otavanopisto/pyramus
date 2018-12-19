@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.grading;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -120,6 +122,44 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
     return entityManager.createQuery(criteria).getResultList();
   }
   
+  /**
+   * Lists student's transfer credits by student, subject, curriculum and optionality.
+   * 
+   * Method exludes archived transfer credits
+   * 
+   * @param student student
+   * @param subject subject
+   * @param curriculum curriculum if null, curriculum is ignored
+   * @param optionality optionality if null, optionality is ignored
+   * @return list of student's transfer credits
+   */
+  public List<TransferCredit> listByStudentAndSubjectAndCurriculumAndOptionality(Student student, Subject subject, Curriculum curriculum, CourseOptionality optionality) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<TransferCredit> criteria = criteriaBuilder.createQuery(TransferCredit.class);
+    Root<TransferCredit> root = criteria.from(TransferCredit.class);
+    criteria.select(root);
+    
+    List<Predicate> predicates = new ArrayList<>();
+    
+    if (optionality != null) {
+      predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.optionality), optionality));
+    }
+    
+    if (curriculum != null) {
+      predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.curriculum), curriculum));
+    }
+
+    predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.archived), Boolean.FALSE));
+    predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.student), student));
+    predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.subject), subject));
+
+    criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
   public TransferCredit update(TransferCredit transferCredit, String courseName, Integer courseNumber, Double courseLength, 
       EducationalTimeUnit courseLengthUnit, School school, Subject subject, CourseOptionality optionality, Student student, 
       StaffMember assessingUser, Grade grade, Date date, String verbalAssessment, Curriculum curriculum, boolean offCurriculum) {
@@ -179,6 +219,35 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
         ));
     
     return entityManager.createQuery(criteria).getSingleResult();
+  }
+
+  public List<TransferCredit> listByStudentAndCurriculumAndOptionality(
+      Student student,
+      Curriculum curriculum,
+      CourseOptionality optionality) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<TransferCredit> criteria = criteriaBuilder.createQuery(TransferCredit.class);
+    Root<TransferCredit> root = criteria.from(TransferCredit.class);
+    criteria.select(root);
+    
+    List<Predicate> predicates = new ArrayList<>();
+    
+    if (optionality != null) {
+      predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.optionality), optionality));
+    }
+    
+    if (curriculum != null) {
+      predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.curriculum), curriculum));
+    }
+
+    predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.archived), Boolean.FALSE));
+    predicates.add(criteriaBuilder.equal(root.get(TransferCredit_.student), student));
+
+    criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
 
 }

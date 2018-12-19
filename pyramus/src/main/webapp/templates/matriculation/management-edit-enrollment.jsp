@@ -21,6 +21,10 @@
 		
 			function onLoad(event) {
 				var termOptions = [
+					{value: "SPRING2016", text: "Kevät 2016"},
+					{value: "AUTUMN2016", text: "Syksy 2016"},
+					{value: "SPRING2017", text: "Kevät 2017"},
+					{value: "AUTUMN2017", text: "Syksy 2017"},
 					{value: "SPRING2018", text: "Kevät 2018"},
 					{value: "AUTUMN2018", text: "Syksy 2018"},
 					{value: "SPRING2019", text: "Kevät 2019"},

@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.matriculation;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -35,7 +36,8 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     String message,
     boolean canPublishName,
     Student student,
-    MatriculationExamEnrollmentState state
+    MatriculationExamEnrollmentState state,
+    Date enrollmentDate
   ) {
     EntityManager entityManager = getEntityManager();
     MatriculationExamEnrollment result = new MatriculationExamEnrollment();
@@ -57,6 +59,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     result.setCanPublishName(canPublishName);
     result.setStudent(student);
     result.setState(state);
+    result.setEnrollmentDate(enrollmentDate);
     
     entityManager.persist(result);
     return result;
@@ -71,7 +74,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     String address,
     String postalCode,
     String city,
-    Long nationalStudentNumber,
     String guider,
     SchoolType enrollAs,
     int numMandatoryCourses,
@@ -91,7 +93,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setAddress(address);
     enrollment.setPostalCode(postalCode);
     enrollment.setCity(city);
-    enrollment.setNationalStudentNumber(nationalStudentNumber);
     enrollment.setGuider(guider);
     enrollment.setEnrollAs(enrollAs);
     enrollment.setNumMandatoryCourses(numMandatoryCourses);
@@ -126,6 +127,25 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       .setFirstResult(firstResult)
       .setMaxResults(maxResults)
       .getResultList();
+  }
+  
+  public MatriculationExamEnrollment findLatestByStudent(Student student) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<MatriculationExamEnrollment> criteria = criteriaBuilder.createQuery(MatriculationExamEnrollment.class);
+    Root<MatriculationExamEnrollment> root = criteria.from(MatriculationExamEnrollment.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.student), student)
+    );
+    criteria.orderBy(criteriaBuilder.desc(root.get(MatriculationExamEnrollment_.enrollmentDate)));
+    List<MatriculationExamEnrollment> resultList = 
+        entityManager.createQuery(criteria).getResultList();
+    if (resultList.size() == 0) {
+      return null;
+    } else {
+      return resultList.get(0);
+    }
   }
 
 }

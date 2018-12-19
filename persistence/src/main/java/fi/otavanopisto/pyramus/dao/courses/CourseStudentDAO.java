@@ -14,11 +14,14 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
+import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
+import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
@@ -321,6 +324,98 @@ public class CourseStudentDAO extends PyramusEntityDAO<CourseStudent> {
         ));
     
     return entityManager.createQuery(criteria).getSingleResult();
+  }
+  
+  /**
+   * Lists course students by student and subject.
+   * 
+   * Method excludes archived students, courses and course students
+   * 
+   * @param student student
+   * @param subject subject
+   * @return list of course students
+   */
+  public List<CourseStudent> listByStudentAndCourseSubject(Student student, Subject subject) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseStudent> criteria = criteriaBuilder.createQuery(CourseStudent.class);
+    Root<CourseStudent> root = criteria.from(CourseStudent.class);
+    Join<CourseStudent, Student> studentJoin = root.join(CourseStudent_.student);
+    Join<CourseStudent, Course> courseJoin = root.join(CourseStudent_.course);
+    
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(courseJoin.get(Course_.subject), subject),
+        criteriaBuilder.equal(root.get(CourseStudent_.student), student),
+        criteriaBuilder.equal(root.get(CourseStudent_.archived), Boolean.FALSE),
+        criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
+        criteriaBuilder.equal(studentJoin.get(Student_.archived), Boolean.FALSE)
+      )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+
+  public List<CourseStudent> listByStudentAndCourseCurriculum(Student student, Curriculum curriculum) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseStudent> criteria = criteriaBuilder.createQuery(CourseStudent.class);
+    Root<CourseStudent> root = criteria.from(CourseStudent.class);
+    Join<CourseStudent, Student> studentJoin = root.join(CourseStudent_.student);
+    Join<CourseStudent, Course> courseJoin = root.join(CourseStudent_.course);
+    SetJoin<Course, Curriculum> curriculumJoin = courseJoin.join(Course_.curriculums);
+
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(curriculumJoin, curriculum),
+        criteriaBuilder.equal(root.get(CourseStudent_.student), student),
+        criteriaBuilder.equal(root.get(CourseStudent_.archived), Boolean.FALSE),
+        criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
+        criteriaBuilder.equal(studentJoin.get(Student_.archived), Boolean.FALSE)
+      )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
+  /**
+   * Lists course students by student, course subject and course curriculum.
+   * 
+   * Method excludes archived students, courses and course students
+   * 
+   * @param student student
+   * @param subject course subject
+   * @param curriculum course curriculum
+   * @return list of course students
+   */
+  public List<CourseStudent> listByStudentAndCourseSubjectAndCourseCurriculum(Student student, Subject subject, Curriculum curriculum) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseStudent> criteria = criteriaBuilder.createQuery(CourseStudent.class);
+    Root<CourseStudent> root = criteria.from(CourseStudent.class);
+    Join<CourseStudent, Student> studentJoin = root.join(CourseStudent_.student);
+    Join<CourseStudent, Course> courseJoin = root.join(CourseStudent_.course);
+    SetJoin<Course, Curriculum> curriculumJoin = courseJoin.join(Course_.curriculums);
+
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(curriculumJoin, curriculum),
+        criteriaBuilder.equal(courseJoin.get(Course_.subject), subject),
+        criteriaBuilder.equal(root.get(CourseStudent_.student), student),
+        criteriaBuilder.equal(root.get(CourseStudent_.archived), Boolean.FALSE),
+        criteriaBuilder.equal(courseJoin.get(Course_.archived), Boolean.FALSE),
+        criteriaBuilder.equal(studentJoin.get(Student_.archived), Boolean.FALSE)
+      )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
 
   public List<CourseStudent> listByModuleAndStudent(Module module, Student student) {
