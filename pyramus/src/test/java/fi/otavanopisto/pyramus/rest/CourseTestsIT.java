@@ -53,7 +53,8 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l, 
         null,
         null,
-        null);
+        null,
+        1L);
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -110,7 +111,8 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l, 
         null,
         null,
-        Arrays.asList("tag1", "tag2", "tag3"));
+        Arrays.asList("tag1", "tag2", "tag3"),
+        1L);
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -273,7 +275,8 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l, 
         null,
         null,
-        null);
+        null,
+        1L);
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -353,7 +356,8 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l, 
         null,
         null,
-        Arrays.asList("tag1", "tag2", "tag3"));
+        Arrays.asList("tag1", "tag2", "tag3"),
+        1L);
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -438,7 +442,8 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
         1l, 
         null,
         null,
-        null);
+        null,
+        1L);
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -475,10 +480,10 @@ public class CourseTestsIT extends AbstractRESTServiceTest {
       Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
-      Map<String, String> variables, List<String> tags) {
+      Map<String, String> variables, List<String> tags, Long organizationId) {
     return new Course(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
-        creatorId, lastModifierId, subjectId, null, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
+        creatorId, lastModifierId, subjectId, null, length, lengthUnitId, moduleId, stateId, typeId, variables, tags, organizationId);
   }
   
 }

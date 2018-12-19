@@ -35,6 +35,7 @@ import org.hibernate.search.annotations.Resolution;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseBase;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.persistence.search.filters.ArchivedEntityFilterFactory;
@@ -200,6 +201,14 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
     return state;
   }
   
+  public void setOrganization(Organization organization) {
+    this.organization = organization;
+  }
+  
+  public Organization getOrganization() {
+    return organization;
+  }
+  
   public CourseType getType() {
     return type;
   }
@@ -304,6 +313,10 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   @JoinColumn(name="state")
   @IndexedEmbedded
   private CourseState state;
+  
+  @ManyToOne
+  @JoinColumn(name="organization")
+  private Organization organization;
   
   @ManyToOne
   private CourseType type;

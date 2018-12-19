@@ -44,6 +44,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.CourseBaseVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -61,6 +62,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
@@ -69,6 +71,7 @@ import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.CurriculumController;
 import fi.otavanopisto.pyramus.rest.controller.ModuleController;
+import fi.otavanopisto.pyramus.rest.controller.OrganizationController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CommonPermissions;
@@ -107,6 +110,9 @@ public class CourseRESTService extends AbstractRESTService {
   private ModuleController moduleController;
 
   @Inject
+  private OrganizationController organizationController;
+
+  @Inject
   private CommonController commonController;
 
   @Inject
@@ -129,11 +135,21 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).entity("moduleId is required").build();
     }
 
+    if (courseEntity.getOrganizationId() == null) {
+      return Response.status(Status.BAD_REQUEST).entity("organizationId is required").build();
+    }
+
     if (courseEntity.getStateId() == null) {
       return Response.status(Status.BAD_REQUEST).entity("stateId is required").build();
     }
 
     Module module = moduleController.findModuleById(courseEntity.getModuleId());
+    Organization organization = organizationController.findById(courseEntity.getOrganizationId());
+    User user = sessionController.getUser();
+    if (!UserUtils.canAccessOrganization(user, organization)) {
+      logger.warning(String.format("User %d has no access to organization %d", user.getId(), organization.getId()));
+      return Response.status(Status.FORBIDDEN).build();
+    }
     String name = courseEntity.getName();
     String nameExtension = courseEntity.getNameExtension();
     CourseState state = courseController.findCourseStateById(courseEntity.getStateId());
@@ -178,7 +194,7 @@ public class CourseRESTService extends AbstractRESTService {
     
     User loggedUser = sessionController.getUser();
     
-    Course course = courseController.createCourse(module, name, nameExtension, state, type, subject, courseNumber, 
+    Course course = courseController.createCourse(module, organization, name, nameExtension, state, type, subject, courseNumber, 
         toDate(beginDate), toDate(endDate), courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, 
         teachingHours, distanceTeachingHours, planningHours, assessingHours, description, maxParticipantCount, 
         courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser);
@@ -270,6 +286,10 @@ public class CourseRESTService extends AbstractRESTService {
     if (!course.getId().equals(courseEntity.getId())) {
       return Response.status(Status.BAD_REQUEST).entity("Cannot change entity id in update request").build();
     }
+
+    if (courseEntity.getOrganizationId() == null) {
+      return Response.status(Status.BAD_REQUEST).entity("organizationId is required").build();
+    }
     
     String name = courseEntity.getName();
     String nameExtension = courseEntity.getNameExtension();
@@ -282,6 +302,23 @@ public class CourseRESTService extends AbstractRESTService {
       if (subject == null) {
         return Response.status(Status.NOT_FOUND).entity("specified subject does not exist").build();
       }
+    }
+    
+    Organization organization = organizationController.findById(courseEntity.getOrganizationId());
+    if (organization == null) {
+      return Response.status(Status.NOT_FOUND).entity(String.format("Organization with id %d not found", courseEntity.getOrganizationId())).build();
+    }
+    User user = sessionController.getUser();
+    if ((course.getOrganization() != null) && !UserUtils.canAccessOrganization(user, course.getOrganization())) {
+      logger.warning(String.format("User %d has no access to organization %d", user.getId(), course.getOrganization().getId()));
+      return Response.status(Status.FORBIDDEN).build();
+    } else if ((course.getOrganization() == null) && !UserUtils.canAccessAllOrganizations(user)) {
+      logger.warning(String.format("User %d has cannot access course %d because it has no organization.", user.getId(), course.getId()));
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    if (!UserUtils.canAccessOrganization(user, organization)) {
+      logger.warning(String.format("User %d has no access to organization %d", user.getId(), organization.getId()));
+      return Response.status(Status.FORBIDDEN).build();
     }
     
     Integer courseNumber = courseEntity.getCourseNumber();
@@ -312,7 +349,7 @@ public class CourseRESTService extends AbstractRESTService {
     Date enrolmentTimeEnd = toDate(courseEntity.getEnrolmentTimeEnd());
     User loggedUser = sessionController.getUser();
     
-    Course updatedCourse = courseController.updateCourse(course, name, nameExtension, state, type, subject, courseNumber, toDate(beginDate), toDate(endDate), courseLength,
+    Course updatedCourse = courseController.updateCourse(course, organization, name, nameExtension, state, type, subject, courseNumber, toDate(beginDate), toDate(endDate), courseLength,
         courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, assessingHours, description,
         maxParticipantCount, enrolmentTimeEnd, loggedUser);
     

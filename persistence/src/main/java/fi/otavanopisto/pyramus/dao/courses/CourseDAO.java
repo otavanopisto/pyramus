@@ -38,6 +38,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -82,7 +83,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
    * 
    * @return The created course
    */
-  public Course create(Module module, String name, String nameExtension, CourseState state, CourseType type, Subject subject, 
+  public Course create(Module module, Organization organization, String name, String nameExtension, CourseState state, CourseType type, Subject subject, 
       Integer courseNumber, Date beginDate, Date endDate, Double courseLength, EducationalTimeUnit courseLengthTimeUnit, 
       Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, Double distanceTeachingHours, Double planningHours, 
       Double assessingHours, String description, Long maxParticipantCount, BigDecimal courseFee, Currency courseFeeCurrency, Date enrolmentTimeEnd, User creatingUser) {
@@ -94,6 +95,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
 
     Course course = new Course();
     course.setModule(module);
+    course.setOrganization(organization);
     course.setName(name);
     course.setState(state);
     course.setType(type);
@@ -131,6 +133,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
    * Updates a course to the database.
    * 
    * @param course The course to be updated
+   * @param organization Course organization
    * @param name Course name
    * @param subject Course subject
    * @param courseNumber Course number
@@ -141,7 +144,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
    * @param description Course description
    * @param user The user making the update, stored as the last modifier of the course
    */
-  public void update(Course course, String name, String nameExtension, CourseState courseState, CourseType type, Subject subject,
+  public void update(Course course, Organization organization, String name, String nameExtension, CourseState courseState, CourseType type, Subject subject,
       Integer courseNumber, Date beginDate, Date endDate, Double courseLength,
       EducationalTimeUnit courseLengthTimeUnit, Double distanceTeachingDays, Double localTeachingDays, Double teachingHours, 
       Double distanceTeachingHours, Double planningHours, Double assessingHours, String description, Long maxParticipantCount, 
@@ -157,6 +160,7 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     educationalLength.setUnit(courseLengthTimeUnit);
     educationalLength.setUnits(courseLength);
 
+    course.setOrganization(organization);
     course.setName(name);
     course.setNameExtension(nameExtension);
     course.setState(courseState);

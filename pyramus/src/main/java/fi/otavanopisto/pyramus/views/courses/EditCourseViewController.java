@@ -20,6 +20,7 @@ import fi.otavanopisto.pyramus.dao.base.CurriculumDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseComponentDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
@@ -33,12 +34,14 @@ import fi.otavanopisto.pyramus.dao.courses.CourseStateDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -48,8 +51,10 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 
 /**
@@ -82,6 +87,8 @@ public class EditCourseViewController extends PyramusViewController implements B
     EducationalTimeUnitDAO educationalTimeUnitDAO = DAOFactory.getInstance().getEducationalTimeUnitDAO();
     EducationSubtypeDAO educationSubtypeDAO = DAOFactory.getInstance().getEducationSubtypeDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     // The course to be edited
     
@@ -179,6 +186,19 @@ public class EditCourseViewController extends PyramusViewController implements B
     
     List<Curriculum> curriculums = curriculumDAO.listUnarchived();
     Collections.sort(curriculums, new StringAttributeComparator("getName"));
+    
+    // Organizations
+
+    Long loggedUserId = pageRequestContext.getLoggedUserId();
+    StaffMember user = staffMemberDAO.findById(loggedUserId);
+    List<Organization> organizations;
+    if (UserUtils.canAccessAllOrganizations(user)) {
+      organizations = organizationDAO.listUnarchived();
+    } else {
+      organizations = Arrays.asList(user.getOrganization());
+    }
+    Collections.sort(organizations, new StringAttributeComparator("getName"));
+    pageRequestContext.getRequest().setAttribute("organizations", organizations);
 
     pageRequestContext.getRequest().setAttribute("educationSubtypes", educationSubtypes);
     pageRequestContext.getRequest().setAttribute("tags", tagsBuilder.toString());
