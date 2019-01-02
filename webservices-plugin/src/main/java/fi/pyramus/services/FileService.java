@@ -60,7 +60,7 @@ public class FileService extends PyramusService {
       e.printStackTrace();
     }
     
-    studentFileDAO.create(student, name, fileName, fileType, contentType, data, creator);
+    studentFileDAO.create(student, name, fileName, null, fileType, contentType, data, creator);
   }
   
 }

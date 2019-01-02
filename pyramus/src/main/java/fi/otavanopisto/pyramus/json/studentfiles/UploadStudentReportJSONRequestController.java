@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 
@@ -22,6 +24,7 @@ import fi.otavanopisto.pyramus.domainmodel.reports.Report;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
+import fi.otavanopisto.pyramus.framework.PyramusFileUtils;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
 /**
@@ -30,6 +33,8 @@ import fi.otavanopisto.pyramus.framework.UserRole;
  * @see fi.otavanopisto.pyramus.views.students.EditStudentGroupViewController
  */
 public class UploadStudentReportJSONRequestController extends JSONRequestController {
+
+  private static final Logger logger = Logger.getLogger(UploadStudentReportJSONRequestController.class.getName());
 
   /**
    * Processes the request to edit a student group.
@@ -100,10 +105,23 @@ public class UploadStudentReportJSONRequestController extends JSONRequestControl
       URLConnection urlConn = url.openConnection();
       InputStream inputStream = urlConn.getInputStream();
   
+      String fileId = null;
       byte[] data = IOUtils.toByteArray(inputStream);
+
+      if (PyramusFileUtils.isFileSystemStorageEnabled()) {
+        try {
+          fileId = PyramusFileUtils.generateFileId();
+          PyramusFileUtils.storeFile(student, fileId, data);
+          data = null;
+        }
+        catch (IOException e) {
+          fileId = null;
+          logger.log(Level.SEVERE, "Store user file to file system failed", e);
+        }
+      }
   
       String reportName = report.getName().toLowerCase().replaceAll("[^a-z0-9\\.]", "_");
-      studentFileDAO.create(student, name, reportName + "." + format, fileType, contentType, data, loggedUser);
+      studentFileDAO.create(student, name, reportName + "." + format, fileId, fileType, contentType, data, loggedUser);
     } catch (MalformedURLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

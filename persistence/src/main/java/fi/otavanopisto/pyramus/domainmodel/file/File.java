@@ -12,9 +12,11 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import fi.otavanopisto.pyramus.dao.ModificationTrackedEntity;
@@ -23,6 +25,11 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
+@Table(
+  uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"fileId"})
+  }
+)
 public class File implements ArchivableEntity, ModificationTrackedEntity {
 
   /**
@@ -114,6 +121,14 @@ public class File implements ArchivableEntity, ModificationTrackedEntity {
     this.fileType = fileType;
   }
 
+  public String getFileId() {
+    return fileId;
+  }
+
+  public void setFileId(String fileId) {
+    this.fileId = fileId;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="File")  
   @TableGenerator(name="File", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -122,6 +137,8 @@ public class File implements ArchivableEntity, ModificationTrackedEntity {
   private String name;
   
   private String fileName;
+
+  private String fileId;
   
   @ManyToOne  
   @JoinColumn(name="fileType")
