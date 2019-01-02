@@ -183,18 +183,21 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
     return assessment;
   }
   
-  public void archive(CourseAssessment courseAssessment) {
+  public CourseAssessment archive(CourseAssessment courseAssessment) {
     super.archive(courseAssessment);
-    
-    if (courseAssessment.getStudent() != null)
+    if (courseAssessment.getStudent() != null) {
       courseAssessmentRemovedEvent.fire(new CourseAssessmentEvent(courseAssessment.getStudent().getId(), courseAssessment.getId()));
+    }
+    return courseAssessment;
   }
 
-  public void unarchive(CourseAssessment courseAssessment) {
+  public CourseAssessment unarchive(CourseAssessment courseAssessment) {
     super.unarchive(courseAssessment);
-    
-    if (courseAssessment.getStudent() != null)
+    if (courseAssessment.getStudent() != null) {
+      // TODO If archive fires removed, should unarchive fire created rather than updated? 
       courseAssessmentUpdatedEvent.fire(new CourseAssessmentEvent(courseAssessment.getStudent().getId(), courseAssessment.getId()));
+    }
+    return courseAssessment;
   }
   
   public Long countByStudent(Student student) {
