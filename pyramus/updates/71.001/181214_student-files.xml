@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>insert into SettingKey (id,name) select coalesce(max(id),0) + 1, 'files.storageFolder' from SettingKey;</sql>
+  <sql>update hibernate_sequences set sequence_next_hi_value = (select max(id) + 1 from SettingKey) where sequence_name = 'SettingKey';</sql>
+  
+  <sql>alter table File add column fileId varchar(255);</sql>
+  <sql>alter table File add constraint UKkth22wlka5tgycx6gxxid24v2 unique (fileId);</sql>
+  
+</update>

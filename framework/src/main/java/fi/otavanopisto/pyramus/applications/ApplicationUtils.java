@@ -44,8 +44,6 @@ import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
-import fi.otavanopisto.pyramus.dao.system.SettingDAO;
-import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
@@ -68,11 +66,11 @@ import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
-import fi.otavanopisto.pyramus.domainmodel.system.Setting;
-import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
+import fi.otavanopisto.pyramus.framework.PyramusFileUtils;
+import fi.otavanopisto.pyramus.framework.SettingUtils;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
@@ -476,7 +474,7 @@ public class ApplicationUtils {
       applicationAttachmentDAO.delete(applicationAttachment);
     }
     // Delete attachments (file system)
-    String attachmentsFolder = getSettingValue("applications.storagePath");
+    String attachmentsFolder = SettingUtils.getSettingValue("applications.storagePath");
     if (!StringUtils.isEmpty(attachmentsFolder)) {
       File attachmentFolder = Paths.get(attachmentsFolder, application.getApplicationId()).toFile();
       if (attachmentFolder.exists()) {
@@ -675,7 +673,7 @@ public class ApplicationUtils {
     
     List<ApplicationAttachment> attachments = applicationAttachmentDAO.listByApplicationId(application.getApplicationId());
     if (!attachments.isEmpty()) {
-      String attachmentsFolder = getSettingValue("applications.storagePath");
+      String attachmentsFolder = SettingUtils.getSettingValue("applications.storagePath");
       if (StringUtils.isNotEmpty(attachmentsFolder)) {
         StudentFileDAO studentFileDAO = DAOFactory.getInstance().getStudentFileDAO();
         String applicationId = sanitizeFilename(application.getApplicationId());
@@ -685,9 +683,31 @@ public class ApplicationUtils {
             java.nio.file.Path path = Paths.get(attachmentsFolder, applicationId, attachmentFileName);
             File file = path.toFile();
             if (file.exists()) {
+              String fileId = null;
               String contentType = Files.probeContentType(path);
               byte[] data = FileUtils.readFileToByteArray(file);
-              studentFileDAO.create(student, StringUtils.isBlank(attachment.getDescription()) ? attachmentFileName : attachment.getDescription(), attachmentFileName, null, contentType, data, staffMember);
+
+              if (PyramusFileUtils.isFileSystemStorageEnabled()) {
+                try {
+                  fileId = PyramusFileUtils.generateFileId();
+                  PyramusFileUtils.storeFile(student, fileId, data);
+                  data = null;
+                }
+                catch (IOException e) {
+                  fileId = null;
+                  logger.log(Level.WARNING, "Store user file to file system failed", e);
+                }
+              }
+              
+              studentFileDAO.create(
+                  student,
+                  StringUtils.isBlank(attachment.getDescription()) ? attachmentFileName : attachment.getDescription(),
+                  attachmentFileName,
+                  fileId,
+                  null, // file type
+                  contentType,
+                  data,
+                  staffMember);
             }
           }
           catch (IOException e) {
@@ -897,19 +917,6 @@ public class ApplicationUtils {
   
   private static String getFormValue(JSONObject object, String key) {
     return object.has(key) ? object.getString(key) : null;
-  }
-
-  private static String getSettingValue(String key) {
-    SettingKeyDAO settingKeyDAO = DAOFactory.getInstance().getSettingKeyDAO();
-    SettingKey settingKey = settingKeyDAO.findByName(key);
-    if (settingKey != null) {
-      SettingDAO settingDAO = DAOFactory.getInstance().getSettingDAO();
-      Setting setting = settingDAO.findByKey(settingKey);
-      if (setting != null && setting.getValue() != null) {
-        return setting.getValue();
-      }
-    }
-    return null;
   }
 
 }

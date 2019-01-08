@@ -81,26 +81,34 @@ public class SaveCourseAssessmentsJSONRequestController extends JSONRequestContr
         CourseParticipationType participationType = participationTypeDAO.findById(participationTypeId);
         String verbalAssessment = null;
 
-        CourseAssessment assessment = courseAssessmentDAO.findByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
+        CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
+        if (courseAssessment != null && Boolean.TRUE.equals(courseAssessment.getArchived())) {
+          courseAssessment = courseAssessmentDAO.unarchive(courseAssessment);
+        }
 
         Long verbalModified = requestContext.getLong(colPrefix + ".verbalModified");
         if (verbalModified != null && verbalModified.intValue() == 1) {
           verbalAssessment = requestContext.getString(colPrefix + ".verbalAssessment");
-        } else {
-          if (assessment != null)
-            verbalAssessment = assessment.getVerbalAssessment();
+        }
+        else {
+          if (courseAssessment != null) {
+            verbalAssessment = courseAssessment.getVerbalAssessment();
+          }
         }
 
-        if (assessment != null) {
-          assessment = courseAssessmentDAO.update(assessment, assessingUser, grade, assessmentDate, verbalAssessment);
-        } else {
-          assessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, assessmentDate, verbalAssessment);
+        if (courseAssessment != null) {
+          courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment);
+        }
+        else {
+          courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, assessmentDate, verbalAssessment);
         }
 
         // Update Participation type
         courseStudentDAO.updateParticipationType(courseStudent, participationType);
-      } else
+      }
+      else {
         throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "CourseStudent was not defined");
+      }
     }
     requestContext.setRedirectURL(requestContext.getReferer(true));
   }

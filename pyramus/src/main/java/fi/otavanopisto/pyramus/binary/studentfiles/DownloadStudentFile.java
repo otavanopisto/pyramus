@@ -1,10 +1,15 @@
 package fi.otavanopisto.pyramus.binary.studentfiles;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import fi.internetix.smvc.controllers.BinaryRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.domainmodel.file.StudentFile;
 import fi.otavanopisto.pyramus.framework.BinaryRequestController;
+import fi.otavanopisto.pyramus.framework.PyramusFileUtils;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
 /** A binary request controller responsible for serving files
@@ -12,6 +17,8 @@ import fi.otavanopisto.pyramus.framework.UserRole;
  *
  */
 public class DownloadStudentFile extends BinaryRequestController {
+
+  private static final Logger logger = Logger.getLogger(DownloadStudentFile.class.getName());
 
   /** Processes a binary request.
    * The request should contain the following parameters:
@@ -31,7 +38,12 @@ public class DownloadStudentFile extends BinaryRequestController {
     
     if (studentFile != null) {
       binaryRequestContext.setFileName(studentFile.getFileName());
-      binaryRequestContext.setResponseContent(studentFile.getData(), studentFile.getContentType());
+      try {
+        binaryRequestContext.setResponseContent(PyramusFileUtils.getFileData(studentFile), studentFile.getContentType());
+      }
+      catch (IOException e) {
+        logger.log(Level.SEVERE, String.format("Exception retrieving user file %d", studentFile.getId()), e); 
+      }
     }
   }
   
