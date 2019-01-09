@@ -130,10 +130,8 @@ public class EditStudentJSONRequestController extends JSONRequestController {
         InternalAuth internalAuth = internalAuthDAO.findByUsername(username);
         if (internalAuth != null) {
           UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId("internal", internalAuth.getId().toString());
-          if (userIdentification != null) {
-            if (!person.getId().equals(userIdentification.getPerson().getId())) {
-              throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
-            }
+          if (userIdentification != null && !person.getId().equals(userIdentification.getPerson().getId())) {
+            throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
           }
         }
         
