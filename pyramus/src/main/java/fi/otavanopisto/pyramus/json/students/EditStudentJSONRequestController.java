@@ -36,6 +36,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
+import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
@@ -60,6 +61,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
@@ -119,9 +121,18 @@ public class EditStudentJSONRequestController extends JSONRequestController {
       boolean passwordBlank = StringUtils.isBlank(password);
   
       if (!usernameBlank||!passwordBlank) {
-        if (!passwordBlank) {
-          if (!password.equals(password2))
-            throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
+        if (!passwordBlank && !password.equals(password2)) {
+          throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
+        }
+
+        // #921: Check username
+        InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
+        InternalAuth internalAuth = internalAuthDAO.findByUsername(username);
+        if (internalAuth != null) {
+          UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId("internal", internalAuth.getId().toString());
+          if (userIdentification != null && !person.getId().equals(userIdentification.getPerson().getId())) {
+            throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
+          }
         }
         
         // TODO: Support for multiple internal authentication providers
