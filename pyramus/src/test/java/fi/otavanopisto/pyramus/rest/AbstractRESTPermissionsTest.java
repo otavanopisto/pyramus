@@ -35,6 +35,10 @@ import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
 
 public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest {
 
+  public AbstractRESTPermissionsTest() {
+    this.tools = new AbstractRESTServiceTestTools(this);
+  }
+  
   @Before
   public void setupRestAssured() {
 
@@ -239,7 +243,12 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     this.role = role;
   }
 
+  protected AbstractRESTServiceTestTools tools() {
+    return tools;
+  }
+  
   protected String role;
   private String accessToken;
   private String adminAccessToken;
+  private AbstractRESTServiceTestTools tools;
 }
