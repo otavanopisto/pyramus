@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -241,6 +242,16 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 
   protected void setRole(String role) {
     this.role = role;
+  }
+
+  protected boolean isCurrentRole(Role... roles) {
+    for (Role role : roles) {
+      if (StringUtils.equals(role.toString(), getRole())) {
+        return true;
+      }
+    }
+    
+    return false;
   }
 
   protected AbstractRESTServiceTestTools tools() {

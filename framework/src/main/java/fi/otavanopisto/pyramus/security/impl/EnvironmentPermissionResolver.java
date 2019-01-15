@@ -62,7 +62,7 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     }
     
     boolean allowed = false;
-    
+
     if (PermissionScope.COURSE.equals(permission.getScope()) && (contextReference != null)) {
       Course course = resolveCourse(contextReference);
       if (course != null) {
@@ -102,7 +102,6 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     PyramusPermissionCollection permissionCollection = findCollection(permission.getName());
     if (permissionCollection != null) {
       try {
-        CourseRoleArchetype[] defaultCourseRoles = permissionCollection.getDefaultCourseRoles(permission.getName());
         String[] defaultRoles = permissionCollection.getDefaultRoles(permission.getName());
 
         // Is EnvironmentRole in the environment roles of the permission
@@ -110,10 +109,13 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
           return true;
         }
         
+        CourseRoleArchetype[] defaultCourseRoles = permissionCollection.getDefaultCourseRoles(permission.getName());
         if (userEntity instanceof Student) {
           CourseStudent courseStudent = courseStudentDAO.findByCourseAndStudent(course, (Student) userEntity);
           if (courseStudent != null) {
             return ArrayUtils.contains(defaultCourseRoles, CourseRoleArchetype.STUDENT);
+          } else {
+            return false;
           }
         } 
         else if (userEntity instanceof StaffMember) {
@@ -121,8 +123,12 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
           // There may be several types of Roles but they don't have a particular type so we just default to a generic course staff type
           
           if (courseStaffMember != null) {
-            ArrayUtils.contains(defaultCourseRoles, CourseRoleArchetype.TEACHER);
+            return ArrayUtils.contains(defaultCourseRoles, CourseRoleArchetype.TEACHER);
+          } else {
+            return false;
           }
+        } else {
+          logger.severe(String.format("UserEntity could not be casted to a student nor staffmember."));
         }
       } catch (NoSuchFieldException e) {
       }

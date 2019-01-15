@@ -1847,17 +1847,19 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(handling = Handling.INLINE)
   public Response createCourseAssessment(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId,
       fi.otavanopisto.pyramus.rest.model.CourseAssessment entity) {
-
+    if (!sessionController.isLoggedIn()) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
     Student student = studentController.findStudentById(studentId);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
     
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
-
     Course course = courseController.findCourseById(courseId);
     
     if (course == null) {
@@ -1920,21 +1922,17 @@ public class StudentRESTService extends AbstractRESTService {
   @GET
   @RESTPermit(handling = Handling.INLINE)
   public Response listCourseAssessments(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
+    if (!sessionController.isLoggedIn()) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
     
     Student student = studentController.findStudentById(studentId);
-
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK) {
-      return Response.status(studentStatus).build();
-    }
-
-    Course course = courseController.findCourseById(courseId);
-    
-    if (course == null) {
+    if (student == null || student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (course.getArchived()) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null || course.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
@@ -1964,20 +1962,16 @@ public class StudentRESTService extends AbstractRESTService {
   @GET
   @RESTPermit(handling = Handling.INLINE)
   public Response findCourseAssessmentById(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
-    
+    if (!sessionController.isLoggedIn()) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     Student student = studentController.findStudentById(studentId);
-    
     if (student == null || student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK) {
-      return Response.status(studentStatus).build();
-    }
-
     Course course = courseController.findCourseById(courseId);
-    
     if (course == null || course.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
@@ -2016,12 +2010,19 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(handling = Handling.INLINE)
   public Response updateCourseAssessment(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id, 
       fi.otavanopisto.pyramus.rest.model.CourseAssessment entity) {
+    if (!sessionController.isLoggedIn()) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
     
     Student student = studentController.findStudentById(studentId);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
     Course course = courseController.findCourseById(courseId);
     CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(id);
 
-    if(courseAssessment == null){
+    if (courseAssessment == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
@@ -2029,20 +2030,25 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
-
-    if (course == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (course.getArchived()) {
+    if (course == null || course.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
     if (!sessionController.hasPermission(CourseAssessmentPermissions.UPDATE_COURSEASSESSMENT, course)) {
       return Response.status(Status.FORBIDDEN).build();
+    } else {
+      // User has the required permission, check if it's restricted to limited group of students 
+      if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+        StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+        
+        if (staffMember != null) {
+          if (!(courseController.isCourseStaffMember(course, staffMember) || studentController.isStudentGuider(staffMember, student))) {
+            return Response.status(Status.FORBIDDEN).build();
+          }
+        } else {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      }
     }
     
     CourseStudent courseStudent = courseController.findCourseStudentById(entity.getCourseStudentId());
@@ -2071,11 +2077,21 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessments/{ID}")
   @DELETE
   @RESTPermit(handling = Handling.INLINE)
-  public Response deleteCourseAssessment(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
+  public Response deleteCourseAssessment(
+      @PathParam("STUDENTID") Long studentId, 
+      @PathParam("COURSEID") Long courseId, 
+      @PathParam("ID") Long id,
+      @DefaultValue("false") @QueryParam("permanent") Boolean permanent
+      ) {
     
     Student student = studentController.findStudentById(studentId);
     Course course = courseController.findCourseById(courseId);
 
+    if (Boolean.TRUE.equals(permanent) && !UserUtils.isAdmin(sessionController.getUser())) {
+      // Allow permanent deletion only for admins
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
     Status studentStatus = checkStudent(student);
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build();
@@ -2094,11 +2110,15 @@ public class StudentRESTService extends AbstractRESTService {
     
     CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(id);
     
-    if(courseAssessment == null){
-     return Response.status(Status.NOT_FOUND).build(); 
+    if (courseAssessment == null) {
+      return Response.status(Status.NOT_FOUND).build(); 
     }
     
-    assessmentController.deleteCourseAssessment(courseAssessment);
+    if (Boolean.TRUE.equals(permanent)) {
+      assessmentController.deleteCourseAssessment(courseAssessment);
+    } else {
+      assessmentController.archiveCourseAssessment(courseAssessment);
+    }
     
     return Response.noContent().build();
   }

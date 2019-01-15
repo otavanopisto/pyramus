@@ -177,7 +177,19 @@ public class UserUtils {
     return canAccessAllOrganizations(user) || isMemberOf(user, organization);
   }
   
+  public static boolean isAdmin(User user) {
+    return user != null && user.getRole() == Role.ADMINISTRATOR;
+  }
+
   public static boolean isOwnerOf(User user, Person person) {
+    if (user == null) {
+      throw new IllegalArgumentException("User cannot be null");
+    }
+    
+    if (person == null) {
+      throw new IllegalArgumentException("Person cannot be null");
+    }
+    
     return user.getPerson().getId().equals(person.getId());
   }
   
