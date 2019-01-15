@@ -54,8 +54,9 @@ public class AssessmentController {
     // Create course assessment (reusing archived, if any)...
     CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
     if (courseAssessment != null) {
-      if (Boolean.TRUE.equals(courseAssessment.getArchived()))
-        courseAssessmentDAO.unarchive(courseAssessment);
+      if (Boolean.TRUE.equals(courseAssessment.getArchived())) {
+        courseAssessment = courseAssessmentDAO.unarchive(courseAssessment);
+      }
       courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, date, verbalAssessment);
     }
     else {

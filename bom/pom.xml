@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fi.otavanopisto.pyramus</groupId>
 	<artifactId>bom</artifactId>
-	<version>0.7.105-SNAPSHOT</version>
+	<version>0.7.107-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Pyramus BOM</name>
 	<url>https://github.com/otavanopisto/pyramus/</url>
@@ -55,7 +55,7 @@
 
 		<!-- Commons -->
 
-		<commons-fileupload.version>1.3.1</commons-fileupload.version>
+		<commons-fileupload.version>[1.3.3,)</commons-fileupload.version>
 		<commons-lang3.version>3.2.1</commons-lang3.version>
 
 		<!-- OpenCSV -->
@@ -86,7 +86,7 @@
 
 		<!-- Pyramus -->
 
-		<pyramus.version>0.7.105-SNAPSHOT</pyramus.version>
+		<pyramus.version>0.7.107-SNAPSHOT</pyramus.version>
 
 		<!-- Webapp-permission -->
 

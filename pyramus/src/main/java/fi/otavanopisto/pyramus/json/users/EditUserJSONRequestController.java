@@ -20,6 +20,7 @@ import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
+import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
@@ -29,6 +30,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
+import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
@@ -87,6 +89,18 @@ public class EditUserJSONRequestController extends JSONRequestController {
     if (organizationId != null) {
       // TODO Check the logged user can assign the organization
       organization = organizationDAO.findById(organizationId);
+    }
+
+    // #921: Check username
+    if (!StringUtils.isBlank(username)) {
+      InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
+      InternalAuth internalAuth = internalAuthDAO.findByUsername(username);
+      if (internalAuth != null) {
+        UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId("internal", internalAuth.getId().toString());
+        if (userIdentification != null && !user.getPerson().getId().equals(userIdentification.getPerson().getId())) {
+          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
+        }
+      }
     }
     
     int emailCount2 = requestContext.getInteger("emailTable.rowCount");
