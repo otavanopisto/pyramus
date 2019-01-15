@@ -128,7 +128,13 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
           SuorituksenTila.VALMIS : SuorituksenTila.KESKEYTYNYT;
     }
 
-    String departmentIdentifier = settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
+    KoskiStudyProgrammeHandlerParams handlerParams = getHandlerParams(HANDLER_TYPE);
+
+    // toimipiste-oid joko a) handlerParams:sta b) studyprogramme-asetuksista c) yleisesti kaikelle asetettu academyIdentifier
+    String departmentIdentifier = StringUtils.isNotBlank(handlerParams.getToimipisteOID()) ? handlerParams.getToimipisteOID() : 
+      settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
+
+    System.out.println("pk oid: " + departmentIdentifier);
 
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(departmentIdentifier);
     Set<OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> oppiaineet = assessmentsToModel(student, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS, defaultStudyProgramme);
@@ -192,11 +198,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     opsList.add(OpiskelijanOPS.ops2016);
     opsList.add(OpiskelijanOPS.ops2005);
     
-    KoskiStudyProgrammeHandlerParams handlerParams = settings.getSettings().getKoski().getHandlerParams().get(HANDLER_TYPE);
-    
-    if (handlerParams == null) {
-      throw new RuntimeException("HandlerParams not set for InternetixPk");
-    }
+    KoskiStudyProgrammeHandlerParams handlerParams = getHandlerParams(HANDLER_TYPE);
     
     // If this is default study programme of the student, we exclude the incompatible education type (ie list all other edutypes)
     // Otherwise, only list credits from one education type
