@@ -139,8 +139,6 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     String departmentIdentifier = StringUtils.isNotBlank(handlerParams.getToimipisteOID()) ? handlerParams.getToimipisteOID() : 
       settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
 
-    System.out.println("Lukio oid: " + departmentIdentifier);
-    
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(departmentIdentifier);
     Set<OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> oppiaineet = assessmentsToModel(student, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS, defaultStudyProgramme);
 
