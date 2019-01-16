@@ -56,6 +56,7 @@ import fi.otavanopisto.pyramus.koski.model.Organisaatio;
 import fi.otavanopisto.pyramus.koski.model.OrganisaatioHenkilo;
 import fi.otavanopisto.pyramus.koski.model.OrganisaatioOID;
 import fi.otavanopisto.pyramus.koski.model.SisaltavaOpiskeluoikeus;
+import fi.otavanopisto.pyramus.koski.settings.KoskiStudyProgrammeHandlerParams;
 
 public abstract class KoskiStudentHandler {
 
@@ -665,4 +666,13 @@ public abstract class KoskiStudentHandler {
     }
   }
 
+  protected KoskiStudyProgrammeHandlerParams getHandlerParams(KoskiStudyProgrammeHandler handlerType) {
+    KoskiStudyProgrammeHandlerParams handlerParams = settings.getSettings().getKoski().getHandlerParams().get(handlerType);
+
+    if (handlerParams == null) {
+      throw new RuntimeException(String.format("HandlerParams not set for %s", handlerType));
+    }
+
+    return handlerParams;
+  }
 }
