@@ -41,6 +41,21 @@ public class StudentSubjectGradeDAO extends PyramusEntityDAO<StudentSubjectGrade
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  public StudentSubjectGrade findBy(Student student, Subject subject) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StudentSubjectGrade> criteria = criteriaBuilder.createQuery(StudentSubjectGrade.class);
+    Root<StudentSubjectGrade> root = criteria.from(StudentSubjectGrade.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.equal(root.get(StudentSubjectGrade_.student), student),
+        criteriaBuilder.equal(root.get(StudentSubjectGrade_.subject), subject)
+    );
+    
+    return getSingleResult(entityManager.createQuery(criteria));
+  }
+  
   public StudentSubjectGrade updateGrade(StudentSubjectGrade studentSubjectGrade, Grade grade) {
     studentSubjectGrade.setGrade(grade);
     return persist(studentSubjectGrade);
@@ -50,4 +65,5 @@ public class StudentSubjectGradeDAO extends PyramusEntityDAO<StudentSubjectGrade
   public void delete(StudentSubjectGrade e) {
     super.delete(e);
   }
+
 }

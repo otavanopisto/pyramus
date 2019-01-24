@@ -21,6 +21,8 @@
 <jsp:include page="/templates/generic/jsonrequest_support.jsp"></jsp:include>
 <jsp:include page="/templates/generic/hoverpanel_support.jsp"></jsp:include>
 
+<link href="${pageContext.request.contextPath}/css/viewstudent-subjectcredits.css" rel="stylesheet">
+
 <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/moment/moment.min.js"></script>
 <script defer="defer" type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/students/koski.js"></script>
 
@@ -593,6 +595,137 @@
 
         return filesTable;
       }
+
+      function setupSubjectCreditsTable(studentId) {
+        var subjectCreditsData = JSDATA["subjectCredits"].evalJSON();
+        
+        if (subjectCreditsData) {
+          var studentSubjectCreditsData = subjectCreditsData["" + studentId];
+
+          if (studentSubjectCreditsData) {
+            var container = $('subjectCreditsTable.' + studentId);
+  
+            for (var i = 0, l = studentSubjectCreditsData.subjects.length; i < l; i++) {
+              var subject = studentSubjectCreditsData.subjects[i];
+              var subjectElement = container.appendChild(new Element("div", {className: "studentSubjectCreditsSubject"}));
+              var subjectNameElement = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsSubjectName"}));
+              subjectNameElement.update(subject.name);
+              var subjectCreditsContainer = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsCreditsContainer"}));
+  
+              if (subject.courses) {
+                for (var j = 0, m = subject.courses.length; j < m; j++) {
+                  var course = subject.courses[j];
+                  var courseContainer = subjectCreditsContainer.appendChild(new Element("div", {className: "studentSubjectCreditsCourseContainer"}));
+                  var courseIdentifierElement = courseContainer.appendChild(new Element("div", {className: "studentSubjectCreditsCourseIdentifier"}));
+
+                  var courseIdentifier = course.subject.code + course.courseNumber;
+                  courseIdentifierElement.update(courseIdentifier);
+
+                  var gradesContainer = courseContainer.appendChild(new Element("div", {className: "studentSubjectCreditsGradesContainer"}));
+
+                  // There are bunch of credits for a single course - figure out a way to show all of them (in order)
+                  for (var k = 0; k < course.credits.length; k++) {
+                    var credit = course.credits[k];
+
+                    var gradeContainer = gradesContainer.appendChild(new Element("span", {className: "studentSubjectCreditsGradeContainer"}));
+                    var gradeElement = gradeContainer.appendChild(new Element("span", {className: "studentSubjectCreditsGrade"}));
+                    
+                    var courseGrade = credit.gradeName;
+                    gradeElement.update(courseGrade);
+                  }
+                }
+              }
+
+              var pccElement = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsPassedCoursesCount"}));
+              pccElement.update("" + subject.passedCoursesCount);
+              
+              var subMeanContainer = subjectElement.appendChild(new Element("div", {className: "studentSubjectCreditsMeanGradeContainer"}));
+              var subMeanGrade = subMeanContainer.appendChild(new Element("div", {
+                id: "studentSubjectCreditsMeanGrade." + studentId + "." + subject.id,
+                className: "studentSubjectCreditsMeanGrade"
+              }));
+              var subMeanComputedGrade = subMeanContainer.appendChild(new Element("div", {className: "studentSubjectCreditsComputedMeanGrade"}));
+
+              if (subject.meanGrade) {
+                subMeanGrade.update("" + subject.meanGrade.name);
+              }
+
+              if (subject.computedMeanGrade) {
+                subMeanComputedGrade.update("" + subject.computedMeanGrade);
+              }
+
+              var subMeanEditButton = subMeanContainer.appendChild(new Element("img", {
+                src: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+                "data-studentId": studentId,
+                "data-subjectId": subject.id
+              }));
+              
+              Event.observe(subMeanEditButton, "click", clickEditSubjectTotalCredit);
+            }
+          }
+        }
+      }
+
+      function clickEditSubjectTotalCredit(event) {
+        var button = Event.element(event);
+        var studentId = button.getAttribute("data-studentId");
+        var subjectId = button.getAttribute("data-subjectId")
+        
+        var dialog = new IxDialog({
+          id : 'uploadReportDialog',
+          contentURL : GLOBAL_contextPath + '/students/editstudentsubjectgradedialog.page?studentId=' + studentId + '&subjectId=' + subjectId,
+          centered : true,
+          showOk : true,
+          showCancel : true,
+          title: '<fmt:message key="students.viewStudent.editStudentSubjectGradeDialog.title"/>',
+          okLabel: '<fmt:message key="generic.dialog.save"/>',
+          cancelLabel: '<fmt:message key="generic.dialog.cancel"/>'
+        });
+
+        dialog.addDialogListener(function(event) {
+          var dlg = event.dialog;
+          switch (event.name) {
+            case 'okClick':
+              event.preventDefault(true);
+
+              var contentDoc = dlg.getContentDocument();
+              var uploadForm = contentDoc.getElementById("editStudentSubjectGradeForm");
+              var studentId = uploadForm.elements["studentId"].value;
+              var subjectId = uploadForm.elements["subjectId"].value;
+              var gradeId = uploadForm.elements["gradeId"].value;
+
+              dlg.disableOkButton();
+
+              JSONRequest.request("students/editstudentsubjectgrade.json", {
+                parameters: {
+                  studentId: studentId,
+                  subjectId: subjectId,
+                  gradeId: gradeId
+                },
+                onSuccess: function (jsonResponse) {
+                  var results = jsonResponse.results;
+
+                  var subMeanGradeElement = $("studentSubjectCreditsMeanGrade." + studentId + "." + subjectId);
+                  if (results.computed) {
+                    subMeanGradeElement.update("");
+                  } else {
+                    var gradeName = results.gradeName;
+                    subMeanGradeElement.update(gradeName);
+                  }
+                },
+                onFailure: function(errorMessage, errorCode, isHttpError, jsonResponse) {
+                  alert(errorMessage);
+                }
+              });   
+      
+              dlg.close();
+            break;
+          }
+        });
+        
+        dialog.setSize("350px", "220px");
+        dialog.open();
+      }
       
       function setupTransferCreditsTable(studentId, containerElement, tableId) {
         /* TODO: Oppilaitos */
@@ -1034,6 +1167,8 @@
             else
               $('viewStudentCoursesTotalValue.${student.id}').innerHTML = visibleRows + " (" + totalRows + ")";
           });
+
+          setupSubjectCreditsTable(${student.id});
           
           // Setup grade tabs
           transferCreditsTable = setupTransferCreditsTable(
@@ -1730,6 +1865,8 @@
                     key="students.viewStudent.coursesTabLabel" />
                 </a> <a class="tabLabel" href="#grades.${student.id}"> <fmt:message
                     key="students.viewStudent.gradesTabLabel" />
+                </a> <a class="tabLabel" href="#subgrades.${student.id}"> <fmt:message
+                    key="students.viewStudent.subjectGradesTabLabel" />
                 </a> <a class="tabLabel" href="#contactlog.${student.id}">
                   <fmt:message
                     key="students.viewStudent.contactLogTabLabel" />
@@ -2457,6 +2594,12 @@
                 </div>
               </div>
 
+              <div id="subgrades.${student.id}" class="tabContent">
+                <div class="genericFormSection">
+                  <div id="subjectCreditsTable.${student.id}"></div>
+                </div>
+              </div>
+              
               <div id="contactlog.${student.id}" class="tabContent">
                 <div
                   id="contactLogTabRelatedActionsHoverMenuContainer.${student.id}"

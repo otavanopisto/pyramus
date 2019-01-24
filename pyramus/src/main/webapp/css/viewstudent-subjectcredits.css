@@ -1,0 +1,33 @@
+
+.studentSubjectCreditsSubject {
+}
+
+.studentSubjectCreditsSubject {
+  border-spacing: 5px;
+}
+
+.studentSubjectCreditsCreditsContainer {
+  background-color: silver;
+  display: table-cell;
+  margin: 5px;
+  width: 400px;
+}
+
+.studentSubjectCreditsCourseContainer {
+  display: table-cell;
+  padding: 5px;
+}
+
+.studentSubjectCreditsPassedCoursesCount {
+  background-color: silver;
+  display: table-cell;
+  padding: 5px;
+  width: 50px;
+}
+
+.studentSubjectCreditsMeanGradeContainer {
+  background-color: silver;
+  display: table-cell;
+  padding: 5px;
+  width: 50px;
+}
