@@ -51,19 +51,9 @@ public class AssessmentController {
   private CourseController courseController;
   
   public CourseAssessment createCourseAssessment(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment){
-    // Create course assessment (reusing archived, if any)...
-    CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
-    if (courseAssessment != null) {
-      if (Boolean.TRUE.equals(courseAssessment.getArchived())) {
-        courseAssessment = courseAssessmentDAO.unarchive(courseAssessment);
-      }
-      courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, date, verbalAssessment);
-    }
-    else {
-      courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, date, verbalAssessment);
-    }
-    // ...and mark respective course assessment requests as handled
-    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseStudent);
+    CourseAssessment courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, date, verbalAssessment);
+    // Mark respective course assessment requests as handled
+    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudentAndHandledAndArchived(courseStudent, Boolean.FALSE, Boolean.FALSE);
     for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
       courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
     }
@@ -74,7 +64,8 @@ public class AssessmentController {
     // Update course assessment...
     courseAssessment = courseAssessmentDAO.update(courseAssessment, assessingUser, grade, assessmentDate, verbalAssessment);
     // ...and mark respective course assessment requests as handled
-    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudent(courseAssessment.getCourseStudent());
+    List<CourseAssessmentRequest> courseAssessmentRequests = courseAssessmentRequestDAO.listByCourseStudentAndHandledAndArchived(
+        courseAssessment.getCourseStudent(), Boolean.FALSE, Boolean.FALSE);
     for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
       courseAssessmentRequestDAO.updateHandled(courseAssessmentRequest, Boolean.TRUE);
     }
