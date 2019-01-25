@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -76,8 +77,11 @@ public class AssessmentController {
     return courseAssessmentDAO.findById(id);
   }
 
-  public CourseAssessment findCourseAssessmentByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
-    return courseAssessmentDAO.findByCourseStudentAndArchived(courseStudent, archived);
+  public CourseAssessment findLatestCourseAssessmentByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
+    List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByCourseStudentAndArchived(courseStudent, archived);
+    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
+    CourseAssessment courseAssessment = courseAssessments.isEmpty() ? null : courseAssessments.get(0);
+    return courseAssessment;
   }
   
   public List<CourseAssessment> listByStudent(Student student){

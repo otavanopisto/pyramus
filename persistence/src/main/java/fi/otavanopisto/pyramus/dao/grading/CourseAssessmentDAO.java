@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.dao.grading;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -136,23 +137,15 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
         ));
     
     return entityManager.createQuery(criteria).getResultList();
-  }  
-  
-  public CourseAssessment findByCourseStudent(CourseStudent courseStudent) {
-    EntityManager entityManager = getEntityManager(); 
-    
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<CourseAssessment> criteria = criteriaBuilder.createQuery(CourseAssessment.class);
-    Root<CourseAssessment> root = criteria.from(CourseAssessment.class);
-    criteria.select(root);
-    criteria.where(
-      criteriaBuilder.equal(root.get(CourseAssessment_.courseStudent), courseStudent)
-    );
-    
-    return getSingleResult(entityManager.createQuery(criteria));
   }
-
-  public CourseAssessment findByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
+  
+  public CourseAssessment findLatestByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
+    List<CourseAssessment> courseAssessments = listByCourseStudentAndArchived(courseStudent, archived);
+    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
+    return courseAssessments.isEmpty() ? null : courseAssessments.get(0);
+  }
+  
+  public List<CourseAssessment> listByCourseStudentAndArchived(CourseStudent courseStudent, Boolean archived) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -166,7 +159,7 @@ public class CourseAssessmentDAO extends PyramusEntityDAO<CourseAssessment> {
       )
     );
     
-    return getSingleResult(entityManager.createQuery(criteria));
+    return entityManager.createQuery(criteria).getResultList();
   }
 
   public CourseAssessment update(CourseAssessment assessment, StaffMember assessingUser, Grade grade, Date assessmentDate, String verbalAssessment) {

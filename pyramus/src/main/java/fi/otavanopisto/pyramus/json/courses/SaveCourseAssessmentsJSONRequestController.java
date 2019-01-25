@@ -1,6 +1,8 @@
 package fi.otavanopisto.pyramus.json.courses;
 
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
@@ -81,10 +83,10 @@ public class SaveCourseAssessmentsJSONRequestController extends JSONRequestContr
         CourseParticipationType participationType = participationTypeDAO.findById(participationTypeId);
         String verbalAssessment = null;
 
-        CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
-        if (courseAssessment != null && Boolean.TRUE.equals(courseAssessment.getArchived())) {
-          courseAssessment = courseAssessmentDAO.unarchive(courseAssessment);
-        }
+        // TODO Updates latest assessment if found 
+        List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
+        courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
+        CourseAssessment courseAssessment = courseAssessments.isEmpty() ? null : courseAssessments.get(0);
 
         Long verbalModified = requestContext.getLong(colPrefix + ".verbalModified");
         if (verbalModified != null && verbalModified.intValue() == 1) {
