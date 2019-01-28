@@ -76,6 +76,7 @@ public class MonthlySourceSummary {
         Integer appCount = lineApplicationCounts.get(line);
         Map<String, SummaryItem> sources = lines.get(line);
         if (appCount == null || sources == null) {
+          applicationCount--;
           logger.warning(String.format("Application for unknown line %s", line));
           continue; 
         }
