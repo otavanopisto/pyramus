@@ -74,18 +74,20 @@ public class MonthlySourceSummary {
       for (Application application : applications) {
         String line = application.getLine();
         Integer appCount = lineApplicationCounts.get(line);
+        Map<String, SummaryItem> sources = lines.get(line);
+        if (appCount == null || sources == null) {
+          logger.warning(String.format("Application for unknown line %s", line));
+          continue; 
+        }
         lineApplicationCounts.put(line, appCount + 1);
         JSONObject formData = JSONObject.fromObject(application.getFormData());
         String source = getFormValue(formData, "field-source");
         String explanation = getFormValue(formData, "field-source-other");
-        Map<String, SummaryItem> sources = lines.get(line);
-        if (sources != null) {
-          SummaryItem summaryItem = sources.get(source);
-          if (summaryItem != null) {
-            summaryItem.count++;
-            if (!StringUtils.isEmpty(explanation)) {
-              summaryItem.explanations.add(explanation);
-            }
+        SummaryItem summaryItem = sources.get(source);
+        if (summaryItem != null) {
+          summaryItem.count++;
+          if (!StringUtils.isEmpty(explanation)) {
+            summaryItem.explanations.add(explanation);
           }
         }
       }
