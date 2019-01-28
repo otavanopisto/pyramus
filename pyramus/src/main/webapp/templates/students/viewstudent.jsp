@@ -624,8 +624,8 @@
                   var gradesContainer = courseContainer.appendChild(new Element("div", {className: "studentSubjectCreditsGradesContainer"}));
 
                   // There are bunch of credits for a single course - figure out a way to show all of them (in order)
-                  for (var k = 0; k < course.credits.length; k++) {
-                    var credit = course.credits[k];
+                  if (course.credits && course.credits.length > 0) {
+                    var credit = course.credits[0];
 
                     var gradeContainer = gradesContainer.appendChild(new Element("span", {className: "studentSubjectCreditsGradeContainer"}));
                     var gradeElement = gradeContainer.appendChild(new Element("span", {className: "studentSubjectCreditsGrade"}));
@@ -693,6 +693,7 @@
               var studentId = uploadForm.elements["studentId"].value;
               var subjectId = uploadForm.elements["subjectId"].value;
               var gradeId = uploadForm.elements["gradeId"].value;
+              var explanation = uploadForm.elements["explanation"].value;
 
               dlg.disableOkButton();
 
@@ -700,7 +701,8 @@
                 parameters: {
                   studentId: studentId,
                   subjectId: subjectId,
-                  gradeId: gradeId
+                  gradeId: gradeId,
+                  explanation: explanation
                 },
                 onSuccess: function (jsonResponse) {
                   var results = jsonResponse.results;
@@ -723,7 +725,7 @@
           }
         });
         
-        dialog.setSize("350px", "220px");
+        dialog.setSize("400px", "300px");
         dialog.open();
       }
       

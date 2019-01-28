@@ -46,13 +46,12 @@ public class EditStudentSubjectGradeDialogViewController extends PyramusViewCont
     Student student = studentDAO.findById(studentId);
     Subject subject = subjectDAO.findById(subjectId);
     StudentSubjectGrade studentSubjectGrade = studentSubjectGradeDAO.findBy(student, subject);
-    Grade grade = studentSubjectGrade != null ? studentSubjectGrade.getGrade() : null;
     
     List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
 
     requestContext.getRequest().setAttribute("student", student);
     requestContext.getRequest().setAttribute("subject", subject);
-    requestContext.getRequest().setAttribute("selectedGrade", grade);
+    requestContext.getRequest().setAttribute("studentSubjectGrade", studentSubjectGrade);
     requestContext.getRequest().setAttribute("gradingScales", gradingScales);
     
     requestContext.setIncludeJSP("/templates/students/editstudentsubjectgradedialog.jsp");

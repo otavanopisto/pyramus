@@ -54,7 +54,7 @@
               <optgroup label="${fn:escapeXml(gradingScale.name)}">
                 <c:forEach var="grade" items="${gradingScale.grades}">
                   <c:choose>
-                    <c:when test="${selectedGrade.id eq grade.id}">
+                    <c:when test="${studentSubjectGrade.grade.id eq grade.id}">
                       <option value="${grade.id}" selected="selected">${fn:escapeXml(grade.name)}</option>
                     </c:when>
                     <c:otherwise>
@@ -66,6 +66,15 @@
             </c:forEach>
           </select>
         </div>
+        
+        <div class="genericFormSection">
+          <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+            <jsp:param name="titleLocale" value="students.editStudentSubjectGradeDialog.explanationTitle" />
+            <jsp:param name="helpLocale" value="students.editStudentSubjectGradeDialog.explanationHelp" />
+          </jsp:include>
+          <textarea name="explanation" cols="60" rows="5">${studentSubjectGrade.explanation}</textarea>
+        </div>
+        
       </form>
     </div>
 

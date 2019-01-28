@@ -14,15 +14,18 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade_;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 
 @Stateless
 public class StudentSubjectGradeDAO extends PyramusEntityDAO<StudentSubjectGrade> {
 
-  public StudentSubjectGrade create(Student student, Subject subject, Grade grade) {
+  public StudentSubjectGrade create(Student student, Subject subject, StaffMember issuer, Grade grade, String explanation) {
     StudentSubjectGrade studentSubjectGrade = new StudentSubjectGrade();
     studentSubjectGrade.setStudent(student);
     studentSubjectGrade.setSubject(subject);
     studentSubjectGrade.setGrade(grade);
+    studentSubjectGrade.setIssuer(issuer);
+    studentSubjectGrade.setExplanation(explanation);
     
     return persist(studentSubjectGrade);
   }
@@ -56,8 +59,10 @@ public class StudentSubjectGradeDAO extends PyramusEntityDAO<StudentSubjectGrade
     return getSingleResult(entityManager.createQuery(criteria));
   }
   
-  public StudentSubjectGrade updateGrade(StudentSubjectGrade studentSubjectGrade, Grade grade) {
+  public StudentSubjectGrade updateGrade(StudentSubjectGrade studentSubjectGrade, StaffMember issuer, Grade grade, String explanation) {
     studentSubjectGrade.setGrade(grade);
+    studentSubjectGrade.setIssuer(issuer);
+    studentSubjectGrade.setExplanation(explanation);
     return persist(studentSubjectGrade);
   }
 

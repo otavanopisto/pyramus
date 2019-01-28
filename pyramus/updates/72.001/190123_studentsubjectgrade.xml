@@ -3,10 +3,12 @@
 
   <sql>
     create table StudentSubjectGrade (
-      id bigint not null auto_increment, 
+      id bigint not null auto_increment,
       student bigint not null, 
       subject bigint not null, 
       grade bigint not null, 
+      issuer bigint not null, 
+      explanation longtext, 
       primary key (id)
     );
   </sql>
@@ -21,6 +23,10 @@
 
   <sql>
     alter table StudentSubjectGrade add constraint FK4kgv2jestup53o0ksc4yp1mhw foreign key (subject) references Subject (id);
+  </sql>
+  
+  <sql>
+    alter table StudentSubjectGrade add constraint FKqomnuvo1y0nvbhesxr7gboyfg foreign key (issuer) references StaffMember (id);
   </sql>
 
 </update>
