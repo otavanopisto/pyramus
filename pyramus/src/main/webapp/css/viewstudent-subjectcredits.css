@@ -1,33 +1,64 @@
 
 .studentSubjectCreditsSubject {
+  align-items:center;
+  background-color: #fff;
+  border: 1px solid #E5ECFC;
+  border-radius: 5px;
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0 0 10px;
+  padding: 4px 10px;
 }
 
-.studentSubjectCreditsSubject {
-  border-spacing: 5px;
+.studentSubjectCreditsSubjectName {
+  border-bottom: 1px solid #E5ECFC;
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 0;
+  font-weight: bold;
+  margin-bottom: 2px;
+  padding: 6px 0;
 }
 
 .studentSubjectCreditsCreditsContainer {
-  background-color: silver;
-  display: table-cell;
-  margin: 5px;
-  width: 400px;
+  display: flex;
+  flex-flow: row nowrap;
+  flex-basis: auto;
+  flex-grow: 1;
+  flex-shrink: 0;
+  padding: 4px 0;
 }
 
 .studentSubjectCreditsCourseContainer {
-  display: table-cell;
-  padding: 5px;
+  background-color: #f5f8ff;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 0 10px 0 0;
+  padding: 10px;
+  text-align: center;
+}
+
+.studentSubjectCreditsCourseIdentifier {
+  font-weight: bold;
+  padding: 0 0 5px;
+}
+
+.studentSubjectCreditsGradeContainer {
+  padding: 0 5px;
 }
 
 .studentSubjectCreditsPassedCoursesCount {
-  background-color: silver;
-  display: table-cell;
-  padding: 5px;
-  width: 50px;
+  flex-basis: 100px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: 4px 8px;
+  text-align: center;
 }
 
 .studentSubjectCreditsMeanGradeContainer {
-  background-color: silver;
-  display: table-cell;
-  padding: 5px;
-  width: 50px;
+  flex-basis: 100px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: 4px 8px;
+  text-align: center;
 }
