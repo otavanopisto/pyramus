@@ -34,7 +34,7 @@ public class EditStudentSubjectGradeDialogViewController extends PyramusViewCont
     Long subjectId = requestContext.getLong("subjectId");
     
     if (studentId == null || subjectId == null) {
-      logger.log(Level.WARNING, String.format("Unable to load log view due to missing studentId (%d) or subjectId (%d).", studentId, subjectId));
+      logger.log(Level.WARNING, String.format("Unable to load view due to missing studentId (%d) or subjectId (%d).", studentId, subjectId));
       try {
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
       } catch (Exception e) {
