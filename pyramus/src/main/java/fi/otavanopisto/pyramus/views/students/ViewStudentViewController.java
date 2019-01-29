@@ -671,9 +671,11 @@ public class ViewStudentViewController extends PyramusViewController implements 
       StudentTOR tor = new StudentTOR();
 
       for (CourseAssessment courseAssessment : courseAssessmentsByStudent) {
-        Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
-        Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
-        addTORCredit(tor, student, subject, courseAssessment, courseNumber);
+        if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
+          Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
+          Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
+          addTORCredit(tor, student, subject, courseAssessment, courseNumber);
+        }
       }
       
       for (TransferCredit transferCredit : transferCreditsByStudent) {
@@ -684,16 +686,20 @@ public class ViewStudentViewController extends PyramusViewController implements 
       
       for (CreditLink linkedCourseAssessment : linkedCourseAssessmentByStudent) {
         CourseAssessment courseAssessment = (CourseAssessment) linkedCourseAssessment.getCredit();
-        Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
-        Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
-        addTORCredit(tor, student, subject, courseAssessment, courseNumber);
+        if (courseAssessment != null && courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
+          Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
+          Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
+          addTORCredit(tor, student, subject, courseAssessment, courseNumber);
+        }
       }
       
       for (CreditLink linkedTransferCredit : linkedTransferCreditsByStudent) {
         TransferCredit transferCredit = (TransferCredit) linkedTransferCredit.getCredit();
-        Subject subject = transferCredit.getSubject();
-        Integer courseNumber = transferCredit.getCourseNumber();
-        addTORCredit(tor, student, subject, transferCredit, courseNumber);
+        if (transferCredit != null) {
+          Subject subject = transferCredit.getSubject();
+          Integer courseNumber = transferCredit.getCourseNumber();
+          addTORCredit(tor, student, subject, transferCredit, courseNumber);
+        }
       }
 
       tor.sort();
