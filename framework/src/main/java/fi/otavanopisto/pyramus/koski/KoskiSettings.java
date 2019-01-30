@@ -152,11 +152,11 @@ public class KoskiSettings {
         }
       }
       
-      JSONObject vahvistajaJSON = studyProgramme.getJSONObject("vahvistaja");
-      if (vahvistajaJSON != null) {
-        vahvistaja.put(studyProgrammeId, vahvistajaJSON.getString("nimi"));
-        vahvistajanTitteli.put(studyProgrammeId, vahvistajaJSON.getString("titteli"));
-      }
+//      JSONObject vahvistajaJSON = studyProgramme.getJSONObject("vahvistaja");
+//      if (vahvistajaJSON != null) {
+//        vahvistaja.put(studyProgrammeId, vahvistajaJSON.getString("nimi"));
+//        vahvistajanTitteli.put(studyProgrammeId, vahvistajaJSON.getString("titteli"));
+//      }
       
       String pakollisetOppiaineet = studyProgramme.getString("pakollisetOppiaineet");
       if (StringUtils.isNotBlank(pakollisetOppiaineet)) {
@@ -251,13 +251,13 @@ public class KoskiSettings {
     return diaarinumerot.get(key);
   }
 
-  public String getVahvistaja(Long studyProgrammeId) {
-    return vahvistaja.get(studyProgrammeId);
-  }
-
-  public String getVahvistajanTitteli(Long studyProgrammeId) {
-    return vahvistajanTitteli.get(studyProgrammeId);
-  }
+//  public String getVahvistaja(Long studyProgrammeId) {
+//    return vahvistaja.get(studyProgrammeId);
+//  }
+//
+//  public String getVahvistajanTitteli(Long studyProgrammeId) {
+//    return vahvistajanTitteli.get(studyProgrammeId);
+//  }
 
   public Set<KoskiOppiaineetYleissivistava> getPakollisetOppiaineet(Long studyProgrammeId) {
     return pakollisetOppiaineet.get(studyProgrammeId);
@@ -304,8 +304,8 @@ public class KoskiSettings {
   private Map<Long, String> courseTypeMapping = new HashMap<>();
   private Map<String, String> subjectToLanguageMapping = new HashMap<>();
   
-  private Map<Long, String> vahvistaja = new HashMap<>();
-  private Map<Long, String> vahvistajanTitteli = new HashMap<>();
+//  private Map<Long, String> vahvistaja = new HashMap<>();
+//  private Map<Long, String> vahvistajanTitteli = new HashMap<>();
   private Map<Long, Set<KoskiOppiaineetYleissivistava>> pakollisetOppiaineet = new HashMap<>();
 
 }

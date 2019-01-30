@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -34,6 +36,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
@@ -52,11 +55,13 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariableKey;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
+import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
@@ -90,6 +95,7 @@ public class EditStudentViewController extends PyramusViewController implements 
     StudentLodgingPeriodDAO studentLodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
     PersonVariableKeyDAO personVariableKeyDAO = DAOFactory.getInstance().getPersonVariableKeyDAO();
     PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     User loggedUser = userDAO.findById(pageRequestContext.getLoggedUserId());
     
@@ -243,6 +249,26 @@ public class EditStudentViewController extends PyramusViewController implements 
     List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listUnarchived();
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
     
+    List<StaffMember> studyApprovers = staffMemberDAO.listByProperty(StaffMemberProperties.STUDY_APPROVER.getKey(), "1");
+    // Add study approvers to the list that have been used before so the selections can be persisted
+    List<StaffMember> selectedStudyApprovers = students.stream()
+      .map(student -> student.getStudyApprover())
+      .filter(Objects::nonNull)
+      .collect(Collectors.toList());
+    
+    for (StaffMember selectedStudyApprover : selectedStudyApprovers) {
+      Long selectedStudyApproverId = selectedStudyApprover.getId();
+      
+      boolean isSelectedInList = studyApprovers.stream()
+        .map(StaffMember::getId)
+        .anyMatch(selectedStudyApproverId::equals);
+      
+      if (!isSelectedInList) {
+        studyApprovers.add(selectedStudyApprover);
+      }
+    }
+    studyApprovers.sort(Comparator.comparing(StaffMember::getLastName).thenComparing(StaffMember::getFirstName));
+    
     pageRequestContext.getRequest().setAttribute("tags", studentTags);
     pageRequestContext.getRequest().setAttribute("person", person);
     pageRequestContext.getRequest().setAttribute("students", students);
@@ -264,6 +290,7 @@ public class EditStudentViewController extends PyramusViewController implements 
     pageRequestContext.getRequest().setAttribute("hasInternalAuthenticationStrategies", hasInternalAuthenticationStrategies);
     pageRequestContext.getRequest().setAttribute("username", username);
     pageRequestContext.getRequest().setAttribute("allowEditCredentials", UserUtils.allowEditCredentials(loggedUser, person));
+    pageRequestContext.getRequest().setAttribute("studyApprovers", studyApprovers);
     
     pageRequestContext.setIncludeJSP("/templates/students/editstudent.jsp");
   }

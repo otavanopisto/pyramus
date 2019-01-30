@@ -117,7 +117,17 @@ public class EditUserJSONRequestController extends JSONRequestController {
         }
       }
     }
-    
+
+    if (Role.ADMINISTRATOR.equals(loggedUserRole)) {
+      Integer propertyCount = requestContext.getInteger("propertiesTable.rowCount");
+      for (int i = 0; i < (propertyCount != null ? propertyCount : 0); i++) {
+        String colPrefix = "propertiesTable." + i;
+        String variableKey = requestContext.getString(colPrefix + ".key");
+        String variableValue = requestContext.getString(colPrefix + ".value");
+        user.getProperties().put(variableKey, variableValue);
+      }
+    }
+
     staffDAO.update(user, firstName, lastName, role);
     staffDAO.updateTitle(user, title);
     
