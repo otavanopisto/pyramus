@@ -702,6 +702,7 @@
           link: GLOBAL_contextPath + '/grading/managetransfercredits.page?studentId=' + studentId  
         }));      
 
+        <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
         studentRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/edit-delete.png',
           text: '<fmt:message key="students.editStudent.studentTabRelatedActionsArchiveStudentLabel"/>',
@@ -740,6 +741,7 @@
             dialog.open(); 
           }
         }));
+        </c:if>
       }
     </script>
     
