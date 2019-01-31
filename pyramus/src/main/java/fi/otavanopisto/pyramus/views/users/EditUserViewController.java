@@ -27,7 +27,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
-import fi.otavanopisto.pyramus.framework.StaffMemberProperty;
+import fi.otavanopisto.pyramus.framework.EntityProperty;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
@@ -104,7 +104,7 @@ public class EditUserViewController extends PyramusViewController implements Bre
     setJsDataVariable(pageRequestContext, "variables", variables.toString());
     
     JSONArray propertiesJSON = new JSONArray();
-    for (StaffMemberProperty prop : StaffMemberProperties.listProperties()) {
+    for (EntityProperty prop : StaffMemberProperties.listProperties()) {
       String value = user.getProperties().get(prop.getKey());
       
       JSONObject propertyJSON = new JSONObject();

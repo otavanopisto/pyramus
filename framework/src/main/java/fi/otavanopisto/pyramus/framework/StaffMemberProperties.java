@@ -7,10 +7,10 @@ import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
 
 public class StaffMemberProperties {
 
-  public static final StaffMemberProperty STUDY_APPROVER = new StaffMemberProperty("studyApprover", 
+  public static final EntityProperty STUDY_APPROVER = new EntityProperty("studyApprover", 
       VariableType.BOOLEAN, "staffMemberProperties.studyApprover");
 
-  public static List<StaffMemberProperty> listProperties() {
+  public static List<EntityProperty> listProperties() {
     return Arrays.asList(STUDY_APPROVER);
   }
 }

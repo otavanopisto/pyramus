@@ -2,9 +2,9 @@ package fi.otavanopisto.pyramus.framework;
 
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
 
-public class StaffMemberProperty {
+public class EntityProperty {
   
-  public StaffMemberProperty(String key, VariableType type, String localeKey) {
+  public EntityProperty(String key, VariableType type, String localeKey) {
     this.key = key;
     this.type = type;
     this.localeKey = localeKey;

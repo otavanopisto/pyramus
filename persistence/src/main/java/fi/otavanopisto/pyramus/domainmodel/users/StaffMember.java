@@ -64,5 +64,5 @@ public class StaffMember extends User {
   @MapKeyColumn (name = "name", length = 100)
   @Column (name = "value", length = 255)
   @CollectionTable (name = "StaffMemberProperties", joinColumns = @JoinColumn(name = "staffMember_id"))
-  private Map<String, String> properties = new HashMap<String, String>(); // maps from attribute name to value
+  private Map<String, String> properties = new HashMap<String, String>();
 }
