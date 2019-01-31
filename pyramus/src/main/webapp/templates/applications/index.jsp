@@ -126,7 +126,7 @@
         <a href="https://www.nettilukio.fi" target="top" class="application-footer__external-link">www.nettilukio.fi</a>
         <a href="https://www.nettiperuskoulu.fi" target="top" class="application-footer__external-link">www.nettiperuskoulu.fi</a>
         <a href="https://otavanopisto.muikkuverkko.fi" target="top" class="application-footer__external-link">otavanopisto.muikkuverkko.fi</a>
-        <a href="#" target="top" class="application-footer__external-link">Tietosuojaseloste</a>
+        <a href="http://otavanopisto.fi/resources/public/tietosuojaselosteet/opiskelijarekisteri_tietosuojaseloste.pdf" target="top" class="application-footer__external-link">Tietosuojaseloste</a>
       </div>
     </footer>
   </body>
