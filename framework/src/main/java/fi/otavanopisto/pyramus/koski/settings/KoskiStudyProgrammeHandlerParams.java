@@ -42,7 +42,16 @@ public class KoskiStudyProgrammeHandlerParams {
     return diaarinumerot.get(ops);
   }
   
+  public String getToimipisteOID() {
+    return toimipisteOID;
+  }
+
+  public void setToimipisteOID(String toimipisteOID) {
+    this.toimipisteOID = toimipisteOID;
+  }
+
   private List<Long> educationTypes = new ArrayList<>();
   private List<Long> excludedEducationTypes = new ArrayList<>();
   private Map<OpiskelijanOPS, String> diaarinumerot = new HashMap<>();
+  private String toimipisteOID;
 }

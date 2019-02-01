@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
@@ -31,6 +32,9 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 @Stateless
 public class UserController {
 
+  @Inject
+  private Logger logger;
+  
   @Inject
   private UserDAO userDAO;
   
@@ -128,6 +132,7 @@ public class UserController {
     if (variableKeys != null) {
       for (String variableKeyName : variableKeys) {
         if (userVariableKeyDAO.findByVariableKey(variableKeyName) == null) {
+          logger.warning(String.format("Detected missing uservariable %s", variableKeyName));
           return false;
         }
       }
