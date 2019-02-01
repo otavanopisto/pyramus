@@ -69,7 +69,7 @@ public class TORSubject extends Subject {
   public String getComputedMeanGrade() {
     Double arithmeticMeanGrade = getArithmeticMeanGrade();
     if (arithmeticMeanGrade != null) {
-      return String.valueOf(arithmeticMeanGrade);
+      return String.format("%.2f", arithmeticMeanGrade);
     }
 
     // Credits may be passing but non-numeric so try to return them

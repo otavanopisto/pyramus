@@ -752,8 +752,9 @@ public class ViewStudentViewController extends PyramusViewController implements 
   }
 
   private void addTORCredit(StudentTOR tor, Student student, Subject subject, Credit credit, Integer courseNumber) {
+    Long educationTypeId = subject.getEducationType() != null ? subject.getEducationType().getId() : null;
     fi.otavanopisto.pyramus.rest.model.Subject subjectModel = new fi.otavanopisto.pyramus.rest.model.Subject(
-        subject.getId(), subject.getCode(), subject.getName(), subject.getEducationType().getId(), subject.getArchived());
+        subject.getId(), subject.getCode(), subject.getName(), educationTypeId, subject.getArchived());
     
     TORSubject torSubject = tor.findSubject(subject.getId());
     if (torSubject == null) {
