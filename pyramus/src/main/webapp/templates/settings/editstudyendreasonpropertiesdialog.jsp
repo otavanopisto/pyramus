@@ -57,7 +57,6 @@
       });
       
       var variables = JSDATA["properties"].evalJSON();
-      console.log(variables);
       
       if (variables) {
         for (var i = 0, l = variables.length; i < l; i++) {
