@@ -618,7 +618,8 @@
                   var courseContainer = subjectCreditsContainer.appendChild(new Element("div", {className: "studentSubjectCreditsCourseContainer"}));
                   var courseIdentifierElement = courseContainer.appendChild(new Element("div", {className: "studentSubjectCreditsCourseIdentifier"}));
 
-                  var courseIdentifier = course.subject.code + course.courseNumber;
+                  var courseNumber = (course.courseNumber) ? course.courseNumber : "";
+                  var courseIdentifier = course.subject.code + courseNumber;
                   courseIdentifierElement.update(courseIdentifier);
 
                   var gradesContainer = courseContainer.appendChild(new Element("div", {className: "studentSubjectCreditsGradesContainer"}));
