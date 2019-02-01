@@ -621,6 +621,32 @@
             ]);
           }
         }
+
+        Event.observe($('studyEndReason.' + studentId), "click", _onStudyEndReasonChange);
+      }
+
+      function _onStudyEndReasonChange(event) {
+        var studyEndReasonElement = Event.element(event);
+        var studentId = studyEndReasonElement.getAttribute('data-studentid');
+        var studyApproverElement = $('studyApprover.' + studentId);
+        var approvalRequired = false;
+
+        var selectedOption = studyEndReasonElement.selectedIndex >= 0 ? studyEndReasonElement.options[studyEndReasonElement.selectedIndex] : undefined;
+
+        if (selectedOption) {
+          approvalRequired = selectedOption.getAttribute("data-approvalrequired") == "1";
+        }
+        
+        if (approvalRequired) {
+          studyApproverElement.addClassName('required');
+          initializeValidation(studyApproverElement.parentNode);
+        } else {
+          studyApproverElement.removeClassName('required');
+          studyApproverElement.removeClassName('valid');
+          studyApproverElement.removeClassName('invalid');
+          deinitializeValidation(studyApproverElement.parentNode);
+        }        
+        forceRevalidateAll(true);
       }
       
       function setupRelatedCommandsBasic() {
@@ -1218,15 +1244,16 @@
                   <jsp:param name="titleLocale" value="students.editStudent.studyEndReasonTitle"/>
                   <jsp:param name="helpLocale" value="students.editStudent.studyEndReasonHelp"/>
                 </jsp:include>
-                <select name="studyEndReason.${student.id}">
+                
+                <select id="studyEndReason.${student.id}" name="studyEndReason.${student.id}" data-studentid="${student.id}">
                   <option></option>  
                   <c:forEach var="reason" items="${studyEndReasons}">
                     <c:choose>
                       <c:when test="${reason.id eq student.studyEndReason.id}">
-                        <option value="${reason.id}" selected="selected">${reason.name}</option> 
+                        <option value="${reason.id}" data-approvalrequired="${reason.properties['studyApprovalRequired']}" selected="selected">${reason.name}</option> 
                       </c:when>
                       <c:otherwise>
-                        <option value="${reason.id}">${reason.name}</option> 
+                        <option value="${reason.id}" data-approvalrequired="${reason.properties['studyApprovalRequired']}">${reason.name}</option> 
                       </c:otherwise>
                     </c:choose>
     
@@ -1235,15 +1262,50 @@
 			                  <c:forEach var="childReason" items="${reason.childEndReasons}">
 			                    <c:choose>
 			                      <c:when test="${childReason.id eq student.studyEndReason.id}">
-			                        <option value="${childReason.id}" selected="selected">${childReason.name}</option> 
+			                        <option value="${childReason.id}" data-approvalrequired="${reason.properties['studyApprovalRequired']}" selected="selected">${childReason.name}</option> 
 			                      </c:when>
 			                      <c:otherwise>
-			                        <option value="${childReason.id}">${childReason.name}</option> 
+			                        <option value="${childReason.id}" data-approvalrequired="${reason.properties['studyApprovalRequired']}">${childReason.name}</option> 
 			                      </c:otherwise>
 			                    </c:choose>
 			                  </c:forEach>
                     </optgroup>
                     </c:if>
+                  </c:forEach>
+                </select>
+              </div>
+  
+              <div class="genericFormSection">      
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="students.editStudent.studiesApprovedByTitle"/>
+                  <jsp:param name="helpLocale" value="students.editStudent.studiesApprovedByHelp"/>
+                </jsp:include>
+
+                <c:set var="studyApproverRequired"></c:set>
+                <c:if test="${student.studyEndReason.properties['studyApprovalRequired'] eq '1'}">
+                  <c:set var="studyApproverRequired">required</c:set>
+                </c:if>
+  
+                <select id="studyApprover.${student.id}" name="studyApprover.${student.id}" class="${studyApproverRequired}">
+                  <option></option>
+                  <c:forEach var="studyApprover" items="${studyApprovers}">
+                    <c:choose>
+                      <c:when test="${studyApprover.title eq null}">
+                        <c:set var="approverName">${studyApprover.lastName}, ${studyApprover.firstName}</c:set>
+                      </c:when>
+                      <c:otherwise>
+                        <c:set var="approverName">${studyApprover.lastName}, ${studyApprover.firstName} (${studyApprover.title})</c:set>
+                      </c:otherwise>
+                    </c:choose>
+
+                    <c:choose>
+                      <c:when test="${studyApprover.id eq student.studyApprover.id}">
+                        <option value="${studyApprover.id}" selected="selected">${approverName}</option> 
+                      </c:when>
+                      <c:otherwise>
+                        <option value="${studyApprover.id}">${approverName}</option> 
+                      </c:otherwise>
+                    </c:choose>
                   </c:forEach>
                 </select>
               </div>

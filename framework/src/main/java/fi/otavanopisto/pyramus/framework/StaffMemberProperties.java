@@ -3,6 +3,8 @@ package fi.otavanopisto.pyramus.framework;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.domainmodel.base.VariableType;
 
 public class StaffMemberProperties {
@@ -13,4 +15,15 @@ public class StaffMemberProperties {
   public static List<EntityProperty> listProperties() {
     return Arrays.asList(STUDY_APPROVER);
   }
+  
+  public static boolean isProperty(String key) {
+    if (StringUtils.isBlank(key)) {
+      return false;
+    }
+    
+    return listProperties().stream()
+        .map(property -> property.getKey())
+        .anyMatch(key::equals);
+  }
+
 }
