@@ -31,7 +31,7 @@
 
     <div class="form-section__field-container field-underage-email">
       <label for="field-underage-email" class="required">Sähköpostiosoite</label>
-      <input type="text" name="field-underage-email" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+      <input type="email" name="field-underage-email" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div> 
     
     <div class="form-section__field-container field-underage-street-address">

@@ -84,7 +84,7 @@ public class ViewApplicationViewController extends PyramusViewController {
       fields.put("Kansallisuus", ApplicationUtils.nationalityUiValue(getFormValue(formData, "field-nationality")));
       fields.put("Äidinkieli", ApplicationUtils.languageUiValue(getFormValue(formData, "field-language")));
       fields.put("Puhelinnumero", getFormValue(formData, "field-phone"));
-      fields.put("Sähköposti", getFormValue(formData, "field-email"));
+      fields.put("Sähköposti", StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email"))));
 
       // Alaikäisen hakemustiedot
       
@@ -102,7 +102,7 @@ public class ViewApplicationViewController extends PyramusViewController {
           getFormValue(formData, "field-underage-city"),
           getFormValue(formData, "field-underage-country"),
           "Puh: " + getFormValue(formData, "field-underage-phone"),
-          "Sähköposti: " + getFormValue(formData, "field-underage-email")));
+          "Sähköposti: " + StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")))));
       }
       
       // Aineopiskelijan oppilaitos
