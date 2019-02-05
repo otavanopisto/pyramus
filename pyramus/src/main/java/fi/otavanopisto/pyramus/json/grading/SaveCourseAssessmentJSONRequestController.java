@@ -1,8 +1,6 @@
 package fi.otavanopisto.pyramus.json.grading;
 
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -35,11 +33,7 @@ public class SaveCourseAssessmentJSONRequestController extends JSONRequestContro
     StaffMember assessingUser = staffMemberDAO.findById(assessingUserId);
     Grade grade = gradeId == null ? null : gradeDAO.findById(gradeId);
 
-    // TODO Updates latest assessment if found 
-    List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
-    courseAssessments.sort(Comparator.comparing(CourseAssessment::getDate).reversed());
-    CourseAssessment courseAssessment = courseAssessments.isEmpty() ? null : courseAssessments.get(0);
-    
+    CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
     if (courseAssessment == null) {
       courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, assessmentDate, verbalAssessment);
     }
