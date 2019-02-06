@@ -147,7 +147,7 @@
         fi: 'Klikkaa kutsumanimeäsi'
       }
     });
-
+    
     Parsley.addValidator('ssnEndFormat', {
       requirementType: 'string',
       validateString: function(value) {
@@ -180,6 +180,32 @@
       },
       messages: {
         fi: 'Tämä kenttä on pakollinen'
+      }
+    });
+
+    Parsley.addValidator('requiredEmailIfShown', {
+      requirementType: 'string',
+      validateString: function(value, requirement, event) {
+        var element = event.element;
+        if ($(element).is(':visible')) {
+          var emailRegExp = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+          if (!value || value.trim().length == 0 || !value.match(emailRegExp)) {
+            return false;
+          }
+        }
+        return true;
+      },
+      validateMultiple: function(value, requirement, event) {
+        var element = event.element;
+        if ($(element).is(':visible')) { 
+          if (value.length == 0) {
+            return false;
+          }
+        }
+        return true;
+      },
+      messages: {
+        fi: 'Sähköpostiosoite puuttuu tai on virheellinen'
       }
     });
 
