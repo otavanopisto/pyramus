@@ -23,15 +23,8 @@ body {
 } 
 
 .application-header__logo {
-  background: #000;
-  border-radius: 100%;
-  font-size: 1.125rem;
-  height: 100px;
-  justify-content: center;
-  line-height: 1.05;
-  position: absolute;
-  top: -16px;
-  width: 100px;
+  height: 35px;
+  margin: 20px 0;
 }
 
 .application-header__logo-branding {
