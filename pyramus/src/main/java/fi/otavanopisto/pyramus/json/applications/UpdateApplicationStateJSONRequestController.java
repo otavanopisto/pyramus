@@ -81,7 +81,7 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           String municipality = ApplicationUtils.municipalityUiValue(getFormValue(formData, "field-municipality"));
           String nationality = ApplicationUtils.nationalityUiValue(getFormValue(formData, "field-nationality"));
           String phone = getFormValue(formData, "field-phone");
-          String email = getFormValue(formData, "field-email");
+          String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
           String nickname = getFormValue(formData, "field-nickname");
           String guardianMail = getFormValue(formData, "field-underage-email");
 

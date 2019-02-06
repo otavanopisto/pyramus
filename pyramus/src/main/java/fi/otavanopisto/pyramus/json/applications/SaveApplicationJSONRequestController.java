@@ -75,8 +75,8 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
-      String email = formData.getString("field-email");
-      if (email == null) {
+      String email = StringUtils.lowerCase(StringUtils.trim(formData.getString("field-email")));
+      if (StringUtils.isBlank(email)) {
         logger.log(Level.WARNING, "Refusing application due to missing email");
         requestContext.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
