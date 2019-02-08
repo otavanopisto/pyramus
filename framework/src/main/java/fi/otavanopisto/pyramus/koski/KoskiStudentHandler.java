@@ -28,6 +28,7 @@ import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentSubjectGradeDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -40,6 +41,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
@@ -94,6 +96,9 @@ public abstract class KoskiStudentHandler {
   
   @Inject
   protected SchoolVariableDAO schoolVariableDAO;
+
+  @Inject
+  private StudentSubjectGradeDAO studentSubjectGradeDAO;
   
   public abstract void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid);
   public abstract Set<KoskiStudentId> listOids(Student student);
@@ -675,4 +680,15 @@ public abstract class KoskiStudentHandler {
 
     return handlerParams;
   }
+  
+  protected ArviointiasteikkoYleissivistava getSubjectGrade(Student student, Subject subject) {
+    StudentSubjectGrade studentSubjectGrade = studentSubjectGradeDAO.findBy(student, subject);
+    
+    if (studentSubjectGrade != null && studentSubjectGrade.getGrade() != null) {
+      return getArvosana(studentSubjectGrade.getGrade());
+    }
+    
+    return null;
+  }
+
 }
