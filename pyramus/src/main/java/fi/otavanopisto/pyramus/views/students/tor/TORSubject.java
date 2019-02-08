@@ -47,7 +47,7 @@ public class TORSubject extends Subject {
   }
 
   public void sort() {
-    Collections.sort(courses, Comparator.comparing(TORCourse::getCourseNumber));
+    Collections.sort(courses, Comparator.comparing(TORCourse::getCourseNumber, Comparator.nullsLast(Integer::compareTo)));
     courses.forEach(course -> course.sort());
   }
   

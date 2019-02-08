@@ -586,8 +586,9 @@ public class ApplicationUtils {
 
     // Attach email
     
-    String email = getFormValue(formData, "field-email");
-    emailDAO.create(student.getContactInfo(), contactType, Boolean.TRUE, email.toLowerCase());
+    String email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-email")));
+    logger.info(String.format("Attaching primary email %s", email));
+    emailDAO.create(student.getContactInfo(), contactType, Boolean.TRUE, email);
     
     // Attach address
     
@@ -611,13 +612,14 @@ public class ApplicationUtils {
     
     // Guardian info (if email is present, all other fields are required and present, too)
     
-    email = getFormValue(formData, "field-underage-email");
+    email = StringUtils.lowerCase(StringUtils.trim(getFormValue(formData, "field-underage-email")));
     if (!StringUtils.isBlank(email)) {
       
       // Attach email
       
+      logger.info(String.format("Attaching guardian email %s", email));
       contactType = contactTypeDAO.findById(5L); // Yhteyshenkilö (non-unique)
-      emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email.toLowerCase());
+      emailDAO.create(student.getContactInfo(), contactType, Boolean.FALSE, email);
 
       // Attach address
       
@@ -643,15 +645,9 @@ public class ApplicationUtils {
     // Contract school (Internetix students)
     
     String schoolId = getFormValue(formData, "field-internetix-contract-school");
-    if (NumberUtils.isNumber(schoolId)) {
-      School school = schoolDAO.findById(Long.parseLong(schoolId));
-      if (school != null) {
-        studentDAO.updateSchool(student, school);
-      }
-    }
-    else {
+    if (!NumberUtils.isNumber(schoolId)) {
       String customSchool = getFormValue(formData, "field-internetix-contract-school-name");
-      if (!StringUtils.isEmpty(customSchool)) {
+      if (!StringUtils.isBlank(customSchool)) {
         List<School> schools = schoolDAO.listByNameLowercase(customSchool);
         School school = schools.isEmpty() ? null : schools.get(0);
         if (school != null) {

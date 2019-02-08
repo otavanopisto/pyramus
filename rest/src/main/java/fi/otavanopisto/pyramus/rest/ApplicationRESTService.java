@@ -390,6 +390,8 @@ public class ApplicationRESTService extends AbstractRESTService {
 
     JSONObject formData = JSONObject.fromObject(object);
     
+    logger.info(String.format("Storing application %s", formData.toString()));
+    
     // Validate key parts of form data
     
     try {
@@ -413,8 +415,8 @@ public class ApplicationRESTService extends AbstractRESTService {
         logger.log(Level.WARNING, "Refusing application due to missing last name");
         return Response.status(Status.BAD_REQUEST).build();
       }
-      String email = formData.getString("field-email");
-      if (email == null) {
+      String email = StringUtils.lowerCase(StringUtils.trim(formData.getString("field-email")));
+      if (StringUtils.isBlank(email)) {
         logger.log(Level.WARNING, "Refusing application due to missing email");
         return Response.status(Status.BAD_REQUEST).build();
       }

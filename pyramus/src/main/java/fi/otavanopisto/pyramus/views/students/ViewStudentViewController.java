@@ -668,42 +668,46 @@ public class ViewStudentViewController extends PyramusViewController implements 
       studentProjects.put(student.getId(), studentProjectBeans);
       studentLodgingPeriods.put(student.getId(), studentLodgingPeriodDAO.listByStudent(student));
       
-      StudentTOR tor = new StudentTOR();
-
-      for (CourseAssessment courseAssessment : courseAssessmentsByStudent) {
-        if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
-          Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
-          Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
-          addTORCredit(tor, student, subject, courseAssessment, courseNumber);
+      try {
+        StudentTOR tor = new StudentTOR();
+  
+        for (CourseAssessment courseAssessment : courseAssessmentsByStudent) {
+          if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
+            Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
+            Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
+            addTORCredit(tor, student, subject, courseAssessment, courseNumber);
+          }
         }
-      }
-      
-      for (TransferCredit transferCredit : transferCreditsByStudent) {
-        Subject subject = transferCredit.getSubject();
-        Integer courseNumber = transferCredit.getCourseNumber();
-        addTORCredit(tor, student, subject, transferCredit, courseNumber);
-      }
-      
-      for (CreditLink linkedCourseAssessment : linkedCourseAssessmentByStudent) {
-        CourseAssessment courseAssessment = (CourseAssessment) linkedCourseAssessment.getCredit();
-        if (courseAssessment != null && courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
-          Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
-          Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
-          addTORCredit(tor, student, subject, courseAssessment, courseNumber);
-        }
-      }
-      
-      for (CreditLink linkedTransferCredit : linkedTransferCreditsByStudent) {
-        TransferCredit transferCredit = (TransferCredit) linkedTransferCredit.getCredit();
-        if (transferCredit != null) {
+        
+        for (TransferCredit transferCredit : transferCreditsByStudent) {
           Subject subject = transferCredit.getSubject();
           Integer courseNumber = transferCredit.getCourseNumber();
           addTORCredit(tor, student, subject, transferCredit, courseNumber);
         }
+        
+        for (CreditLink linkedCourseAssessment : linkedCourseAssessmentByStudent) {
+          CourseAssessment courseAssessment = (CourseAssessment) linkedCourseAssessment.getCredit();
+          if (courseAssessment != null && courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
+            Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
+            Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
+            addTORCredit(tor, student, subject, courseAssessment, courseNumber);
+          }
+        }
+        
+        for (CreditLink linkedTransferCredit : linkedTransferCreditsByStudent) {
+          TransferCredit transferCredit = (TransferCredit) linkedTransferCredit.getCredit();
+          if (transferCredit != null) {
+            Subject subject = transferCredit.getSubject();
+            Integer courseNumber = transferCredit.getCourseNumber();
+            addTORCredit(tor, student, subject, transferCredit, courseNumber);
+          }
+        }
+  
+        tor.sort();
+        subjectCredits.put(student.getId(), tor);
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-
-      tor.sort();
-      subjectCredits.put(student.getId(), tor);
     }
 
     ObjectMapper mapper = new ObjectMapper();
@@ -752,6 +756,10 @@ public class ViewStudentViewController extends PyramusViewController implements 
   }
 
   private void addTORCredit(StudentTOR tor, Student student, Subject subject, Credit credit, Integer courseNumber) {
+    if (credit.getGrade() == null) {
+      return;
+    }
+    
     Long educationTypeId = subject.getEducationType() != null ? subject.getEducationType().getId() : null;
     fi.otavanopisto.pyramus.rest.model.Subject subjectModel = new fi.otavanopisto.pyramus.rest.model.Subject(
         subject.getId(), subject.getCode(), subject.getName(), educationTypeId, subject.getArchived());

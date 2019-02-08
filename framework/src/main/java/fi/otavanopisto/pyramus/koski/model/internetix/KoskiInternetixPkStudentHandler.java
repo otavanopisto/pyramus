@@ -239,7 +239,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
       if (calculateMeanGrades) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(oppiaineenSuoritus) ? 
-            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(oppiaineenSuoritus.getOppiaineenSuoritus());
+            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(student, oppiaineenSuoritus.getSubject(), oppiaineenSuoritus.getOppiaineenSuoritus());
         
         if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
           KurssinArviointi arviointi = new KurssinArviointiNumeerinen(aineKeskiarvo, student.getStudyEndDate());
@@ -258,9 +258,9 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
 
   private OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> map(
       Map<String, OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> map, String mapKey, 
-      OpiskelijanOPS creditOPS, AikuistenPerusopetuksenOppiaineenTunniste tunniste) {
+      OpiskelijanOPS creditOPS, AikuistenPerusopetuksenOppiaineenTunniste tunniste, Subject subject) {
     OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> oswc = 
-        new OppiaineenSuoritusWithCurriculum<>(creditOPS, new AikuistenPerusopetuksenOppiaineenSuoritus(tunniste));
+        new OppiaineenSuoritusWithCurriculum<>(subject, creditOPS, new AikuistenPerusopetuksenOppiaineenSuoritus(tunniste));
     map.put(mapKey, oswc);
     return oswc;
   }
@@ -286,7 +286,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
         
         AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli(
             aine, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
-        return map(map, mapKey, creditOPS, tunniste);
+        return map(map, mapKey, creditOPS, tunniste, subject);
       } else
         return null;
     }
@@ -307,7 +307,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
           
           AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli(
               valinta, kieli, isPakollinenOppiaine(student, valinta));
-          return map(map, mapKey, creditOPS, tunniste);
+          return map(map, mapKey, creditOPS, tunniste, subject);
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
@@ -328,7 +328,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
         KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
         AikuistenPerusopetuksenOppiaineenTunniste tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusMuu(
             kansallinenAine, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.KT));
-        return map(map, mapKey, creditOPS, tunniste);
+        return map(map, mapKey, creditOPS, tunniste, subject);
       } else
         return null;
     }
@@ -339,7 +339,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.valueOf(StringUtils.upperCase(subjectCode));
       AikuistenPerusopetuksenOppiaineenTunniste tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusMuu(
           kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-      return map(map, mapKey, creditOPS, tunniste);
+      return map(map, mapKey, creditOPS, tunniste, subject);
     } else {
       // Other local subject
       // TODO Skipped subjects ?? (MUU)
@@ -347,7 +347,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(subjectCode, kuvaus(subject.getName()));
       AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen(
           paikallinenKoodi, false, kuvaus(subject.getName()));
-      return map(map, mapKey, creditOPS, tunniste);
+      return map(map, mapKey, creditOPS, tunniste, subject);
     }
   }
 
@@ -398,16 +398,22 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     return suoritus;
   }
 
-  private ArviointiasteikkoYleissivistava getSubjectMeanGrade(AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus) {
-    List<ArviointiasteikkoYleissivistava> kurssiarvosanat = new ArrayList<>();
-    for (AikuistenPerusopetuksenKurssinSuoritus kurssinSuoritus : oppiaineenSuoritus.getOsasuoritukset()) {
-      List<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
-      Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
+  private ArviointiasteikkoYleissivistava getSubjectMeanGrade(Student student, Subject subject, AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus) {
+    // Jos aineesta on annettu korotettu arvosana, käytetään automaattisesti sitä
+    ArviointiasteikkoYleissivistava korotettuArvosana = getSubjectGrade(student, subject);
+    if (korotettuArvosana != null) {
+      return korotettuArvosana;
+    } else {
+      List<ArviointiasteikkoYleissivistava> kurssiarvosanat = new ArrayList<>();
+      for (AikuistenPerusopetuksenKurssinSuoritus kurssinSuoritus : oppiaineenSuoritus.getOsasuoritukset()) {
+        List<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
+        Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
+        
+        kurssiarvosanat.add(ArviointiasteikkoYleissivistava.bestGrade(arvosanat));
+      }
       
-      kurssiarvosanat.add(ArviointiasteikkoYleissivistava.bestGrade(arvosanat));
+      return ArviointiasteikkoYleissivistava.meanGrade(kurssiarvosanat);
     }
-    
-    return ArviointiasteikkoYleissivistava.meanGrade(kurssiarvosanat);
   }
 
   @Override
