@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>alter table Student add column studyApprover bigint;</sql>
+  <sql>alter table Student add constraint FKfwh3ujj77xvy1qiu3a33e8frc foreign key (studyApprover) references StaffMember (id);</sql>
+
+  <sql>
+    create table StaffMemberProperties (
+      staffMember_id bigint not null, 
+      name varchar(100) not null, 
+      value varchar(255), 
+      primary key (staffMember_id, name)
+    );
+  </sql>
+
+  <sql>
+    alter table StaffMemberProperties add constraint FKmpc7tap99sctobv17lswsm2lx foreign key (staffMember_id) references StaffMember (id);
+  </sql>
+  
+  <sql>
+    create table StudentStudyEndReasonProperties (
+      studentStudyEndReason_id bigint not null, 
+      name varchar(100) not null, 
+      value varchar(255), 
+      primary key (studentStudyEndReason_id, name)
+    );
+  </sql>
+
+  <sql>
+    alter table StudentStudyEndReasonProperties add constraint FKhearyd9lyawwlob2866wcrbc8 foreign key (studentStudyEndReason_id) references StudentStudyEndReason (id);
+  </sql>
+  
+</update>

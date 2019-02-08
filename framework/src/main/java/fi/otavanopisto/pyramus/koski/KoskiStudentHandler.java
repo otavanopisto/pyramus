@@ -41,6 +41,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
@@ -176,15 +177,29 @@ public abstract class KoskiStudentHandler {
 
   protected HenkilovahvistusPaikkakunnalla getVahvistus(Student student, String academyOid) {
     Organisaatio henkilonOrganisaatio = new OrganisaatioOID(academyOid);
-    String nimi = settings.getVahvistaja(student.getStudyProgramme().getId());
-    String titteli = settings.getVahvistajanTitteli(student.getStudyProgramme().getId());
-    OrganisaatioHenkilo henkilo = new OrganisaatioHenkilo(nimi, kuvaus(titteli), henkilonOrganisaatio);
+    
+    StaffMember studyApprover = student.getStudyApprover();
+    
+    if (studyApprover != null) {
+      String nimi = studyApprover.getFirstName() + " " + studyApprover.getLastName();
+      String titteli = studyApprover.getTitle();
+      
+      if (StringUtils.isAnyBlank(nimi, titteli)) {
+        koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.MISSING_STUDYAPPROVER, new Date());
+        return null;
+      }
+      
+      OrganisaatioHenkilo henkilo = new OrganisaatioHenkilo(nimi, kuvaus(titteli), henkilonOrganisaatio);
 
-    Organisaatio myontajaOrganisaatio = new OrganisaatioOID(academyOid);
-    HenkilovahvistusPaikkakunnalla vahvistus = new HenkilovahvistusPaikkakunnalla(
-        student.getStudyEndDate(), Kunta.K491, myontajaOrganisaatio);
-    vahvistus.addMyontajaHenkilo(henkilo);
-    return vahvistus;
+      Organisaatio myontajaOrganisaatio = new OrganisaatioOID(academyOid);
+      HenkilovahvistusPaikkakunnalla vahvistus = new HenkilovahvistusPaikkakunnalla(
+          student.getStudyEndDate(), Kunta.K491, myontajaOrganisaatio);
+      vahvistus.addMyontajaHenkilo(henkilo);
+      return vahvistus;
+    } else {
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.MISSING_STUDYAPPROVER, new Date());
+      return null;
+    }
   }
 
   protected String getStudentIdentifier(KoskiStudyProgrammeHandler handler, Long studentId) {

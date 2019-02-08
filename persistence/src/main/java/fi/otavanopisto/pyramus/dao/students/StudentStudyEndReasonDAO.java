@@ -84,6 +84,11 @@ public class StudentStudyEndReasonDAO extends PyramusEntityDAO<StudentStudyEndRe
     return studyEndReason;
   }
   
+  public StudentStudyEndReason update(StudentStudyEndReason studyEndReason) {
+    getEntityManager().persist(studyEndReason);
+    return studyEndReason;
+  }
+
   public void delete(StudentStudyEndReason studyEndReason) {
     EntityManager entityManager = getEntityManager(); 
     if (studyEndReason.getParentReason() != null) {
@@ -94,4 +99,5 @@ public class StudentStudyEndReasonDAO extends PyramusEntityDAO<StudentStudyEndRe
     
     entityManager.remove(studyEndReason);
   }
+
 }

@@ -1,15 +1,20 @@
 package fi.otavanopisto.pyramus.domainmodel.students;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceException;
 import javax.persistence.TableGenerator;
@@ -29,13 +34,13 @@ public class StudentStudyEndReason {
   }
 
   public void setName(String name) {
-	  this.name = name;
+    this.name = name;
   }
 
-	public String getName() {
-	  return name;
+  public String getName() {
+    return name;
   }
-	
+  
   protected void setParentReason(StudentStudyEndReason parentReason) {
     this.parentReason = parentReason;
   }
@@ -75,6 +80,14 @@ public class StudentStudyEndReason {
     return version;
   }
 
+  public Map<String, String> getProperties() {
+    return properties;
+  }
+
+  public void setProperties(Map<String, String> properties) {
+    this.properties = properties;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="StudentStudyEndReason")  
   @TableGenerator(name="StudentStudyEndReason", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -90,6 +103,12 @@ public class StudentStudyEndReason {
   @OneToMany
   @JoinColumn (name = "parentReason")
   private List<StudentStudyEndReason> childEndReasons = new ArrayList<>();
+
+  @ElementCollection
+  @MapKeyColumn (name = "name", length = 100)
+  @Column (name = "value", length = 255)
+  @CollectionTable (name = "StudentStudyEndReasonProperties", joinColumns = @JoinColumn(name = "studentStudyEndReason_id"))
+  private Map<String, String> properties = new HashMap<String, String>();
 
   @Version
   @Column(nullable = false)

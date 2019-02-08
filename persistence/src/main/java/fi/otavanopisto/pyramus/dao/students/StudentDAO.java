@@ -534,6 +534,11 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return student;
   }
 
+  public Student updateApprover(Student student, StaffMember approver) {
+    student.setStudyApprover(approver);
+    return persist(student);
+  }
+  
   public Student removeTag(Student student, Tag tag) {
     student.removeTag(tag);
     persist(student);
@@ -561,5 +566,5 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     
     super.delete(e);
   }
-  
+
 }
