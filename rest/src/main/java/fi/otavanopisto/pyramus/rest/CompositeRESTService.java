@@ -123,7 +123,7 @@ public class CompositeRESTService {
           continue;
         }
         CourseAssessmentRequest courseAssessmentRequest = assessmentController.findCourseAssessmentRequestByCourseStudent(courseStudent);
-        CourseAssessment courseAssessment = assessmentController.findCourseAssessmentByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
+        CourseAssessment courseAssessment = assessmentController.findLatestCourseAssessmentByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
         assessmentRequest.setCourseStudentId(courseStudent.getId());
         assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest == null ? null : courseAssessmentRequest.getCreated());
@@ -181,7 +181,7 @@ public class CompositeRESTService {
     for (Course course : courses) {
       List<CourseAssessmentRequest> courseAssessmentRequests = assessmentController.listCourseAssessmentRequestsByCourseAndHandled(course, Boolean.FALSE);
       for (CourseAssessmentRequest courseAssessmentRequest : courseAssessmentRequests) {
-        CourseAssessment courseAssessment = assessmentController.findCourseAssessmentByCourseStudentAndArchived(courseAssessmentRequest.getCourseStudent(), Boolean.FALSE);
+        CourseAssessment courseAssessment = assessmentController.findLatestCourseAssessmentByCourseStudentAndArchived(courseAssessmentRequest.getCourseStudent(), Boolean.FALSE);
         CompositeAssessmentRequest assessmentRequest = new CompositeAssessmentRequest();
         assessmentRequest.setCourseStudentId(courseAssessmentRequest.getCourseStudent().getId());
         assessmentRequest.setAssessmentRequestDate(courseAssessmentRequest.getCreated());
