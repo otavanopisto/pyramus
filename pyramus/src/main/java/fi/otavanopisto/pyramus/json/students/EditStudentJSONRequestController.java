@@ -39,6 +39,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
@@ -65,6 +66,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
@@ -101,6 +103,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     StudentLodgingPeriodDAO lodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
     PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
     StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
     
@@ -262,7 +265,10 @@ public class EditStudentJSONRequestController extends JSONRequestController {
   
       entityId = requestContext.getLong("curriculum." + student.getId());
       Curriculum curriculum = entityId == null ? null : curriculumDAO.findById(entityId);
-      
+
+      entityId = requestContext.getLong("studyApprover." + student.getId());
+      StaffMember approver = entityId == null ? null : staffMemberDAO.findById(entityId);
+
       Integer variableCount = requestContext.getInteger("variablesTable." + student.getId() + ".rowCount");
       if (variableCount != null) {
         for (int i = 0; i < variableCount; i++) {
@@ -346,6 +352,8 @@ public class EditStudentJSONRequestController extends JSONRequestController {
       studentDAO.update(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd,
           activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, 
           studyProgramme, curriculum, previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText);
+      
+      studentDAO.updateApprover(student, approver);
       
       // Tags
 

@@ -34,6 +34,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
+import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
@@ -117,7 +118,19 @@ public class EditUserJSONRequestController extends JSONRequestController {
         }
       }
     }
-    
+
+    if (Role.ADMINISTRATOR.equals(loggedUserRole)) {
+      Integer propertyCount = requestContext.getInteger("propertiesTable.rowCount");
+      for (int i = 0; i < (propertyCount != null ? propertyCount : 0); i++) {
+        String colPrefix = "propertiesTable." + i;
+        String propertyKey = requestContext.getString(colPrefix + ".key");
+        String propertyValue = requestContext.getString(colPrefix + ".value");
+        if (StaffMemberProperties.isProperty(propertyKey)) {
+          user.getProperties().put(propertyKey, propertyValue);
+        }
+      }
+    }
+
     staffDAO.update(user, firstName, lastName, role);
     staffDAO.updateTitle(user, title);
     

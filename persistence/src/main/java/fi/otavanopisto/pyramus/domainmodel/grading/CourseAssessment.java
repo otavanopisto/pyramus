@@ -32,6 +32,6 @@ public class CourseAssessment extends Credit {
   }
   
   @ManyToOne
-  @JoinColumn(unique=true, name="courseStudent")
+  @JoinColumn(name="courseStudent")
   private CourseStudent courseStudent;
 }

@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -47,6 +44,8 @@ import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * The controller responsible of the Edit Student Project view of the application.
@@ -230,7 +229,7 @@ public class EditStudentProjectViewController extends PyramusViewController impl
     });
 
     for (CourseStudent courseStudent : courseStudents) {
-      CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
+      CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
       Grade grade = courseAssessment != null ? courseAssessment.getGrade() : null;
       
       JSONObject obj = new JSONObject();

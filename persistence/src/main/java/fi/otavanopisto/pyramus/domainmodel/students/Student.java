@@ -30,6 +30,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 @Entity
@@ -155,49 +156,49 @@ public class Student extends User implements ArchivableEntity {
   }
 
   public void setStudyEndDate(Date studyEndDate) {
-	  this.studyEndDate = studyEndDate;
+    this.studyEndDate = studyEndDate;
   }
 
-	public Date getStudyEndDate() {
-	  return studyEndDate;
+  public Date getStudyEndDate() {
+    return studyEndDate;
   }
 
-	public void setStudyStartDate(Date studyStartDate) {
-	  this.studyStartDate = studyStartDate;
+  public void setStudyStartDate(Date studyStartDate) {
+    this.studyStartDate = studyStartDate;
   }
 
-	public Date getStudyStartDate() {
-	  return studyStartDate;
+  public Date getStudyStartDate() {
+    return studyStartDate;
   }
 
-	public void setPreviousStudies(Double previousStudies) {
-	  this.previousStudies = previousStudies;
+  public void setPreviousStudies(Double previousStudies) {
+    this.previousStudies = previousStudies;
   }
 
-	public Double getPreviousStudies() {
-	  return previousStudies;
+  public Double getPreviousStudies() {
+    return previousStudies;
   }
 
-	public void setStudyEndReason(StudentStudyEndReason studyEndReason) {
-	  this.studyEndReason = studyEndReason;
+  public void setStudyEndReason(StudentStudyEndReason studyEndReason) {
+    this.studyEndReason = studyEndReason;
   }
 
-	public StudentStudyEndReason getStudyEndReason() {
-	  return studyEndReason;
+  public StudentStudyEndReason getStudyEndReason() {
+    return studyEndReason;
   }
 
-	public void setStudyEndText(String studyEndText) {
-	  this.studyEndText = studyEndText;
+  public void setStudyEndText(String studyEndText) {
+    this.studyEndText = studyEndText;
   }
 
-	public String getStudyEndText() {
-	  return studyEndText;
+  public String getStudyEndText() {
+    return studyEndText;
   }
-	
-	@Transient
-	public boolean getActive() {
-	  return getHasStartedStudies() && !getHasFinishedStudies();
-	}
+  
+  @Transient
+  public boolean getActive() {
+    return getHasStartedStudies() && !getHasFinishedStudies();
+  }
 
   @Transient
   public boolean getHasStartedStudies() {
@@ -209,7 +210,7 @@ public class Student extends User implements ArchivableEntity {
     return studyEndDate != null && studyEndDate.before(new Date());
   }
 
-	public void setActivityType(StudentActivityType activityType) {
+  public void setActivityType(StudentActivityType activityType) {
     this.activityType = activityType;
   }
 
@@ -261,6 +262,14 @@ public class Student extends User implements ArchivableEntity {
 
   public void setCurriculum(Curriculum curriculum) {
     this.curriculum = curriculum;
+  }
+
+  public StaffMember getStudyApprover() {
+    return studyApprover;
+  }
+
+  public void setStudyApprover(StaffMember studyApprover) {
+    this.studyApprover = studyApprover;
   }
 
   private String nickname;
@@ -328,4 +337,8 @@ public class Student extends User implements ArchivableEntity {
 
   @ManyToOne
   private Curriculum curriculum;
+  
+  @ManyToOne
+  @JoinColumn(name="studyApprover")
+  private StaffMember studyApprover;
 }
