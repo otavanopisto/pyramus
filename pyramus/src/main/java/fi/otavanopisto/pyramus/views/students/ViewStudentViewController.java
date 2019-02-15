@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -675,14 +678,17 @@ public class ViewStudentViewController extends PyramusViewController implements 
           if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
             Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
             Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
-            addTORCredit(tor, student, subject, courseAssessment, courseNumber);
+            Set<Curriculum> creditCurriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
+            addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums);
           }
         }
         
         for (TransferCredit transferCredit : transferCreditsByStudent) {
           Subject subject = transferCredit.getSubject();
           Integer courseNumber = transferCredit.getCourseNumber();
-          addTORCredit(tor, student, subject, transferCredit, courseNumber);
+          Set<Curriculum> creditCurriculums = transferCredit.getCurriculum() != null ? 
+              new HashSet<>(Arrays.asList(transferCredit.getCurriculum())) : Collections.emptySet();
+          addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums);
         }
         
         for (CreditLink linkedCourseAssessment : linkedCourseAssessmentByStudent) {
@@ -690,7 +696,8 @@ public class ViewStudentViewController extends PyramusViewController implements 
           if (courseAssessment != null && courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
             Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
             Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
-            addTORCredit(tor, student, subject, courseAssessment, courseNumber);
+            Set<Curriculum> creditCurriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
+            addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums);
           }
         }
         
@@ -699,7 +706,9 @@ public class ViewStudentViewController extends PyramusViewController implements 
           if (transferCredit != null) {
             Subject subject = transferCredit.getSubject();
             Integer courseNumber = transferCredit.getCourseNumber();
-            addTORCredit(tor, student, subject, transferCredit, courseNumber);
+            Set<Curriculum> creditCurriculums = transferCredit.getCurriculum() != null ? 
+                new HashSet<>(Arrays.asList(transferCredit.getCurriculum())) : Collections.emptySet();
+            addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums);
           }
         }
   
@@ -755,9 +764,24 @@ public class ViewStudentViewController extends PyramusViewController implements 
     pageRequestContext.setIncludeJSP("/templates/students/viewstudent.jsp");
   }
 
-  private void addTORCredit(StudentTOR tor, Student student, Subject subject, Credit credit, Integer courseNumber) {
+  private void addTORCredit(StudentTOR tor, Student student, Subject subject, Credit credit, Integer courseNumber, Set<Curriculum> creditCurriculums) {
     if (credit.getGrade() == null) {
       return;
+    }
+    
+    if (student.getCurriculum() != null) {
+      Long studentCurriculumId = student.getCurriculum().getId();
+      
+      if (!creditCurriculums.isEmpty()) {
+        boolean matchingCurriculum = creditCurriculums.stream()
+          .map(Curriculum::getId)
+          .anyMatch(studentCurriculumId::equals);
+        
+        // Both student and credit have curriculums set, but they didn't match -> skip the credit
+        if (!matchingCurriculum) {
+          return;
+        }
+      }
     }
     
     Long educationTypeId = subject.getEducationType() != null ? subject.getEducationType().getId() : null;
