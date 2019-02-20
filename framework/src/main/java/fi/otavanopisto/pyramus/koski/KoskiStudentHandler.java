@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.koski;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -28,6 +30,7 @@ import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.koski.KoskiPersonLogDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentSubjectGradeDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
@@ -41,6 +44,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
@@ -50,10 +54,15 @@ import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kunta;
 import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
+import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
+import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.model.HenkilovahvistusPaikkakunnalla;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.LahdeJarjestelmaID;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
+import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
+import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusTila;
 import fi.otavanopisto.pyramus.koski.model.Oppilaitos;
 import fi.otavanopisto.pyramus.koski.model.Organisaatio;
 import fi.otavanopisto.pyramus.koski.model.OrganisaatioHenkilo;
@@ -100,6 +109,9 @@ public abstract class KoskiStudentHandler {
 
   @Inject
   private StudentSubjectGradeDAO studentSubjectGradeDAO;
+  
+  @Inject
+  private StudentStudyPeriodDAO studentStudyPeriodDAO;
   
   public abstract void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid);
   public abstract Set<KoskiStudentId> listOids(Student student);
@@ -169,6 +181,41 @@ public abstract class KoskiStudentHandler {
     return koskiStudentId != null ? koskiStudentId.getOid() : null;
   }
 
+  protected SuorituksenTila opiskelujaksot(Student student, OpiskeluoikeusTila tila, OpintojenRahoitus rahoitus) {
+    OpiskeluoikeudenTila jaksonTila = !Boolean.TRUE.equals(student.getArchived()) ? OpiskeluoikeudenTila.lasna : OpiskeluoikeudenTila.mitatoity;
+    OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), jaksonTila);
+    jakso.setOpintojenRahoitus(new KoodistoViite<>(rahoitus));
+    tila.addOpiskeluoikeusJakso(jakso);
+
+    List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
+    studyPeriods.sort(Comparator.comparing(StudentStudyPeriod::getBegin));
+    
+    for (StudentStudyPeriod period : studyPeriods) {
+      switch (period.getPeriodType()) {
+        case TEMPORARILY_SUSPENDED:
+          tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(period.getBegin(), OpiskeluoikeudenTila.valiaikaisestikeskeytynyt));
+
+          if (period.getEnd() != null) {
+            tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(period.getEnd(), OpiskeluoikeudenTila.lasna));
+          }
+        break;
+      }
+    }
+    
+    SuorituksenTila suorituksenTila = SuorituksenTila.KESKEN;
+
+    if (student.getStudyEndDate() != null) {
+      OpiskeluoikeudenTila opintojenLopetusTila = settings.getStudentState(student, OpiskeluoikeudenTila.eronnut);
+      tila.addOpiskeluoikeusJakso(
+          new OpiskeluoikeusJakso(student.getStudyEndDate(), opintojenLopetusTila));
+
+      suorituksenTila = ArrayUtils.contains(OpiskeluoikeudenTila.GRADUATED_STATES, opintojenLopetusTila) ? 
+          SuorituksenTila.VALMIS : SuorituksenTila.KESKEYTYNYT;
+    }
+    
+    return suorituksenTila;
+  }
+  
   protected Kuvaus kuvaus(String fiKuvaus) {
     Kuvaus kuvaus = new Kuvaus();
     kuvaus.setFi(fiKuvaus);

@@ -36,6 +36,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -62,6 +63,8 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -99,6 +102,7 @@ public class EditStudentJSONRequestController extends JSONRequestController {
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     StudentLodgingPeriodDAO lodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
     PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
+    StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
     User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
@@ -307,6 +311,38 @@ public class EditStudentJSONRequestController extends JSONRequestController {
         List<StudentLodgingPeriod> periods = lodgingPeriodDAO.listByStudent(student);
         periods.removeIf(period -> remainingIds.contains(period.getId()));
         periods.forEach(period -> lodgingPeriodDAO.delete(period));
+      }
+      
+      Integer studyPeriodsCount = requestContext.getInteger("studentStudyPeriodsTable." + student.getId() + ".rowCount");
+      if (studyPeriodsCount != null) {
+        Set<Long> remainingIds = new HashSet<>();
+        
+        for (int i = 0; i < studyPeriodsCount; i++) {
+          String colPrefix = "studentStudyPeriodsTable." + student.getId() + "." + i;
+          
+          Long id = requestContext.getLong(colPrefix + ".id");
+          Date begin = requestContext.getDate(colPrefix + ".begin");
+          Date end = requestContext.getDate(colPrefix + ".end");
+          StudentStudyPeriodType periodType = (StudentStudyPeriodType) requestContext.getEnum(colPrefix + ".type", StudentStudyPeriodType.class);
+          
+          if (id == -1 && begin != null) {
+            StudentStudyPeriod studyPeriod = studentStudyPeriodDAO.create(student, begin, end, periodType);
+            remainingIds.add(studyPeriod.getId());
+          } else if (id > 0) {
+            StudentStudyPeriod studyPeriod = studentStudyPeriodDAO.findById(id);
+            remainingIds.add(id);
+            
+            if (begin != null) {
+              if (studyPeriod != null) {
+                studentStudyPeriodDAO.update(studyPeriod, begin, end, periodType);
+              }
+            }
+          }
+        }
+
+        List<StudentStudyPeriod> periods = studentStudyPeriodDAO.listByStudent(student);
+        periods.removeIf(period -> remainingIds.contains(period.getId()));
+        periods.forEach(period -> studentStudyPeriodDAO.delete(period));
       }
       
       boolean studiesEnded = student.getStudyEndDate() == null && studyEndDate != null;

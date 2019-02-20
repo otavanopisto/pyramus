@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
@@ -34,6 +32,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentEducationalLevelDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -53,6 +52,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -67,6 +68,8 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class EditStudentViewController extends PyramusViewController implements Breadcrumbable {
 
@@ -95,8 +98,11 @@ public class EditStudentViewController extends PyramusViewController implements 
     StudentLodgingPeriodDAO studentLodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
     PersonVariableKeyDAO personVariableKeyDAO = DAOFactory.getInstance().getPersonVariableKeyDAO();
     PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
+    StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
 
+    Locale locale = pageRequestContext.getRequest().getLocale();
+    
     User loggedUser = userDAO.findById(pageRequestContext.getLoggedUserId());
     
     Long personId = pageRequestContext.getLong("person");
@@ -144,6 +150,7 @@ public class EditStudentViewController extends PyramusViewController implements 
     Collections.sort(userVariableKeys, new StringAttributeComparator("getVariableName"));
     
     JSONObject studentLodgingPeriods = new JSONObject();
+    JSONObject studentStudyPeriodsJSON = new JSONObject();
     
     for (Student student : students) {
       StringBuilder tagsBuilder = new StringBuilder();
@@ -183,11 +190,27 @@ public class EditStudentViewController extends PyramusViewController implements 
         periodJSON.put("end", period.getEnd() != null ? period.getEnd().getTime() : null);
         lodgingPeriods.add(periodJSON);
       }
-      if (!lodgingPeriods.isEmpty())
+      if (!lodgingPeriods.isEmpty()) {
         studentLodgingPeriods.put(student.getId(), lodgingPeriods);
+      }
+      
+      List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
+      JSONArray studyPeriodsJSON = new JSONArray();
+      for (StudentStudyPeriod studyPeriod : studyPeriods) {
+        JSONObject periodJSON = new JSONObject();
+        periodJSON.put("id", studyPeriod.getId());
+        periodJSON.put("begin", studyPeriod.getBegin() != null ? studyPeriod.getBegin().getTime() : null);
+        periodJSON.put("end", studyPeriod.getEnd() != null ? studyPeriod.getEnd().getTime() : null);
+        periodJSON.put("type", studyPeriod.getPeriodType());
+        studyPeriodsJSON.add(periodJSON);
+      }
+      if (!studyPeriodsJSON.isEmpty()) {
+        studentStudyPeriodsJSON.put(student.getId(), studyPeriodsJSON);
+      }
     }
     
     setJsDataVariable(pageRequestContext, "studentLodgingPeriods", studentLodgingPeriods.toString());
+    setJsDataVariable(pageRequestContext, "studentStudyPeriods", studentStudyPeriodsJSON.toString());
 
     List<PersonVariableKey> personVariableKeys = personVariableKeyDAO.listUserEditablePersonVariableKeys();
     Collections.sort(personVariableKeys, new StringAttributeComparator("getVariableName"));
@@ -242,6 +265,15 @@ public class EditStudentViewController extends PyramusViewController implements 
         }
       }
     }
+
+    JSONArray studentStudyPeriodTypesJSON = new JSONArray();
+    for (StudentStudyPeriodType studentStudyPeriodType : StudentStudyPeriodType.values()) {
+      JSONObject studyPeriodType = new JSONObject();
+      studyPeriodType.put("id", studentStudyPeriodType.toString());
+      studyPeriodType.put("displayName", Messages.getInstance().getText(locale, String.format("generic.studentStudyPeriods.%s", studentStudyPeriodType)));
+      studentStudyPeriodTypesJSON.add(studyPeriodType);
+    }
+    setJsDataVariable(pageRequestContext, "studentStudyPeriodTypes", studentStudyPeriodTypesJSON.toString());
 
     List<Curriculum> curriculums = curriculumDAO.listUnarchived();
     Collections.sort(curriculums, new StringAttributeComparator("getName"));

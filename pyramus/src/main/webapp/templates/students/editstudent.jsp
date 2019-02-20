@@ -44,6 +44,10 @@
         lodgingPeriodTable.addRow([-1, '', '', '', '']);
       }
 
+      function addStudyPeriodTableRow(studyPeriodTable) {
+        studyPeriodTable.addRow([-1, '', 'TEMPORARILY_SUSPENDED', '', '']);
+      }
+
       function initPhoneTable(studentId) {
         var phoneTable = new IxTable($('phoneTable.' + studentId), {
           id : "phoneTable." + studentId,
@@ -432,6 +436,64 @@
         return lodgingPeriodsTable;
       }
         
+      function initStudentStudyPeriodsTable(studentId) {
+        var studentStudyPeriodTypes = JSDATA["studentStudyPeriodTypes"].evalJSON();
+        var studentStudyPeriodTypeOptions = [];
+
+        for (var i = 0; i < studentStudyPeriodTypes.length; i++) {
+          studentStudyPeriodTypeOptions.push({
+            text: studentStudyPeriodTypes[i].displayName,
+            value: studentStudyPeriodTypes[i].id
+          });
+        }
+
+        var studentStudyPeriodsTable = new IxTable($('studentStudyPeriodsTableContainer.' + studentId), {
+          id : "studentStudyPeriodsTable." + studentId,
+          columns : [{
+            dataType : 'hidden',
+            left : 0,
+            width : 0,
+            paramName : 'id'
+          }, {
+            header: '<fmt:message key="students.editStudent.studyPeriodsTable.begin"/>',
+            left : 8,
+            width: 160,
+            dataType : 'date',
+            editable: true,
+            required: true,
+            paramName: 'begin'
+          }, {
+            header : '<fmt:message key="students.editStudent.studyPeriodsTable.type"/>',
+            left : 8 + 160 + 8,
+            width : 200,
+            dataType: 'select',
+            editable: true,
+            required: true,
+            paramName: 'type',
+            options: studentStudyPeriodTypeOptions
+          }, {
+            header: '<fmt:message key="students.editStudent.studyPeriodsTable.end"/>',
+            left : 8 + 160 + 8 + 200 + 8,
+            width: 160,
+            dataType : 'date',
+            editable: true,
+            paramName: 'end'
+          }, {
+            width: 30,
+            left: 8 + 160 + 8 + 200 + 8 + 160 + 8,
+            dataType: 'button',
+            paramName: 'removeButton',
+            imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
+            tooltip: '<fmt:message key="students.editStudent.studyPeriodsTable.removeTooltip"/>',
+            onclick: function (event) {
+              event.tableComponent.deleteRow(event.row);
+            }
+          }]
+        });
+
+        return studentStudyPeriodsTable;
+      }
+        
       function setupTags() {
         JSONRequest.request("tags/getalltags.json", {
           onSuccess: function (jsonResponse) {
@@ -448,9 +510,11 @@
         var tabControl = new IxProtoTabs($('tabs'));
 
         var studentLodgingPeriodsContainer = JSDATA["studentLodgingPeriods"].evalJSON();
+        var studentStudyPeriodsContainer = JSDATA["studentStudyPeriods"].evalJSON();
 
         var data = {
-          studentLodgingPeriodsContainer : studentLodgingPeriodsContainer
+          studentLodgingPeriodsContainer : studentLodgingPeriodsContainer,
+          studentStudyPeriodsContainer: studentStudyPeriodsContainer
         };
         
         setupRelatedCommandsBasic();
@@ -617,6 +681,21 @@
               lodgingPeriods[i].begin,
               lodgingPeriods[i].end,
               '',
+              ''
+            ]);
+          }
+        }
+
+        var studyPeriodsTable = initStudentStudyPeriodsTable(studentId);
+        var studyPeriods = data.studentStudyPeriodsContainer[studentId.toString()];
+
+        if (studyPeriods && studyPeriods.length > 0) {
+          for (var i = 0, l = studyPeriods.length; i < l; i++) {
+            var rowNumber = studyPeriodsTable.addRow([
+              studyPeriods[i].id,
+              studyPeriods[i].begin,
+              studyPeriods[i].type,
+              studyPeriods[i].end,
               ''
             ]);
           }
@@ -1229,6 +1308,19 @@
                   <jsp:param name="helpLocale" value="students.editStudent.studyStartDateHelp"/>
                 </jsp:include>
                 <input type="text" name="studyStartDate.${student.id}" class="ixDateField" value="${fn:escapeXml(student.studyStartDate.time)}"/>
+              </div>
+  
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="students.editStudent.studyPeriodsTitle"/>
+                  <jsp:param name="helpLocale" value="students.editStudent.studyPeriodsHelp"/>
+                </jsp:include>
+                
+                <div class="genericTableAddRowContainer">
+                  <span class="genericTableAddRowLinkContainer" onclick="addStudyPeriodTableRow(getIxTableById('studentStudyPeriodsTable.${student.id}'));"><fmt:message key="students.editStudent.addStudyPeriodLink"/></span>
+                </div>
+
+                <div id="studentStudyPeriodsTableContainer.${student.id}"></div>
               </div>
   
               <div class="genericFormSection">    
