@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.rest.controller.permissions;
 import java.util.List;
 
 import fi.otavanopisto.pyramus.security.impl.AbstractPyramusPermissionCollection;
+import fi.otavanopisto.pyramus.security.impl.CourseRoleArchetype;
 import fi.otavanopisto.pyramus.security.impl.DefaultPermissionRoles;
 import fi.otavanopisto.pyramus.security.impl.PermissionScope;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
@@ -298,5 +299,10 @@ public class CoursePermissions extends AbstractPyramusPermissionCollection imple
   @Override
   public PermissionFeature[] listPermissionFeatures(String permission) throws NoSuchFieldException, SecurityException {
     return super.listPermissionFeatures(CoursePermissions.class, permission);
+  }
+
+  @Override
+  public CourseRoleArchetype[] getDefaultCourseRoles(String permission) throws NoSuchFieldException {
+    return super.getDefaultCourseRoles(CoursePermissions.class, permission);
   }
 }

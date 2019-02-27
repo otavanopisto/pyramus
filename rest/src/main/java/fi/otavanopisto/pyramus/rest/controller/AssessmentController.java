@@ -101,8 +101,12 @@ public class AssessmentController {
     return courseAssessmentDAO.listByStudentAndCourse(student, course);
   }
   
-  public void deleteCourseAssessment(CourseAssessment courseAssessment) {
+  public void archiveCourseAssessment(CourseAssessment courseAssessment) {
     courseAssessmentDAO.archive(courseAssessment);
+  }
+  
+  public void deleteCourseAssessment(CourseAssessment courseAssessment) {
+    courseAssessmentDAO.delete(courseAssessment);
   }
   
   public CourseAssessmentRequest createCourseAssessmentRequest(CourseStudent courseStudent, Date created, String requestText) {

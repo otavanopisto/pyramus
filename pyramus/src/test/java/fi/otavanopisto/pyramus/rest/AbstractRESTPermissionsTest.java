@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -35,6 +36,10 @@ import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
 
 public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest {
 
+  public AbstractRESTPermissionsTest() {
+    this.tools = new AbstractRESTServiceTestTools(this);
+  }
+  
   @Before
   public void setupRestAssured() {
 
@@ -198,12 +203,16 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
       int successStatusCode) throws NoSuchFieldException {
     int expectedStatusCode = roleIsAllowed(getRole(), permissionCollection, permission) ? successStatusCode : 403;
 
-    assertThat(
-        String.format("Status code <%d> didn't match expected code <%d> when Role = %s, Permission = %s",
-            response.statusCode(), expectedStatusCode, getRole(), permission),
-        response.statusCode(), is(expectedStatusCode));
+    assertPermission(permission, expectedStatusCode, response.statusCode());
   }
 
+  public void assertPermission(String permission, int expectedStatusCode, int statusCode) throws NoSuchFieldException {
+    assertThat(
+        String.format("Status code <%d> didn't match expected code <%d> when Role = %s, Permission = %s",
+            statusCode, expectedStatusCode, getRole(), permission),
+        statusCode, is(expectedStatusCode));
+  }
+  
   public static List<Object[]> getGeneratedRoleData() {
     // The parameter generator returns a List of
     // arrays. Each array has two elements: { role }.
@@ -235,7 +244,22 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     this.role = role;
   }
 
+  protected boolean isCurrentRole(Role... roles) {
+    for (Role role : roles) {
+      if (StringUtils.equals(role.toString(), getRole())) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
+  protected AbstractRESTServiceTestTools tools() {
+    return tools;
+  }
+  
   protected String role;
   private String accessToken;
   private String adminAccessToken;
+  private AbstractRESTServiceTestTools tools;
 }

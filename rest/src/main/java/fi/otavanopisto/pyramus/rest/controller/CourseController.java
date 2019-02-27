@@ -670,4 +670,8 @@ public class CourseController {
   public List<CourseDescription> listCourseDescriptionsByCourseBase(CourseBase courseBase) {
     return courseDescriptionDAO.listByCourseBase(courseBase);
   }
+
+  public boolean isCourseStaffMember(Course course, StaffMember staffMember) {
+    return courseStaffMemberDAO.findByCourseAndStaffMember(course, staffMember) != null;
+  }
 }
