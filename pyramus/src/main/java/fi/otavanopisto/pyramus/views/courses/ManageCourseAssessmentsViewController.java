@@ -69,7 +69,7 @@ public class ManageCourseAssessmentsViewController extends PyramusViewController
     while (students.hasNext()) {
       CourseStudent courseStudent = students.next();
       
-      CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
+      CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
       if (courseAssessment != null) {
         courseAssessments.put(courseStudent.getId(), courseAssessment);
         

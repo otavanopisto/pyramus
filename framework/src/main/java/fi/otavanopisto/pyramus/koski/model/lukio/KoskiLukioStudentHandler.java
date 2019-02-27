@@ -32,12 +32,12 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
-import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.KoskiConsts;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
+import fi.otavanopisto.pyramus.koski.OppiaineenSuoritusWithSubject;
 import fi.otavanopisto.pyramus.koski.StudentSubjectSelections;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
@@ -48,7 +48,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssit;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssitOPS2004Aikuiset;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionOppimaara;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
-import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
@@ -57,7 +56,6 @@ import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
-import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
@@ -102,22 +100,9 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
     opiskeluoikeus.setLisatiedot(getLisatiedot(student));
 
-    OpiskeluoikeudenTila jaksonTila = !Boolean.TRUE.equals(student.getArchived()) ? OpiskeluoikeudenTila.lasna : OpiskeluoikeudenTila.mitatoity;
-    OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), jaksonTila);
-    jakso.setOpintojenRahoitus(new KoodistoViite<>(student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6));
-    opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
-
-    SuorituksenTila suorituksenTila = SuorituksenTila.KESKEN;
+    SuorituksenTila suorituksenTila = opiskelujaksot(student, opiskeluoikeus.getTila(), 
+        student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6);
     
-    if (student.getStudyEndDate() != null) {
-      OpiskeluoikeudenTila opintojenLopetusTila = settings.getStudentState(student, OpiskeluoikeudenTila.eronnut);
-      opiskeluoikeus.getTila().addOpiskeluoikeusJakso(
-          new OpiskeluoikeusJakso(student.getStudyEndDate(), opintojenLopetusTila));
-      
-      suorituksenTila = ArrayUtils.contains(OpiskeluoikeudenTila.GRADUATED_STATES, opintojenLopetusTila) ? 
-          SuorituksenTila.VALMIS : SuorituksenTila.KESKEYTYNYT;
-    }
-
     String departmentIdentifier = settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
     
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(departmentIdentifier);
@@ -171,11 +156,12 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     Collection<CreditStub> credits = listCredits(student, true, true, ops, credit -> matchingCurriculumFilter(student, credit));
     Set<LukionOppiaineenSuoritus> results = new HashSet<>();
     
-    Map<String, LukionOppiaineenSuoritus> map = new HashMap<>();
+    Map<String, OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus>> map = new HashMap<>();
     Set<LukionOppiaineenSuoritus> accomplished = new HashSet<>();
     
     for (CreditStub credit : credits) {
-      LukionOppiaineenSuoritus oppiaineenSuoritus = getSubject(student, studentEducationType, credit.getSubject(), studentSubjects, map);
+      OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> oppiaineenSuoritusWSubject = getSubject(student, studentEducationType, credit.getSubject(), studentSubjects, map);
+      LukionOppiaineenSuoritus oppiaineenSuoritus = oppiaineenSuoritusWSubject.getOppiaineenSuoritus();
 
       collectAccomplishedMarks(credit.getSubject(), oppiaineenSuoritus, studentSubjects, accomplished);
       
@@ -190,7 +176,8 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       }
     }
     
-    for (LukionOppiaineenSuoritus lukionOppiaineenSuoritus : map.values()) {
+    for (OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> lukionOppiaineenSuoritusWSubject : map.values()) {
+      LukionOppiaineenSuoritus lukionOppiaineenSuoritus = lukionOppiaineenSuoritusWSubject.getOppiaineenSuoritus();
       if (CollectionUtils.isEmpty(lukionOppiaineenSuoritus.getOsasuoritukset())) {
         // Skip empty subjects
         continue;
@@ -199,7 +186,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
       if (calculateMeanGrades) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(lukionOppiaineenSuoritus) ? 
-            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(lukionOppiaineenSuoritus);
+            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(student, lukionOppiaineenSuoritusWSubject.getSubject(), lukionOppiaineenSuoritus);
         
         if (aineKeskiarvo != null) {
           LukionOppiaineenArviointi arviointi = new LukionOppiaineenArviointi(aineKeskiarvo, student.getStudyEndDate());
@@ -215,20 +202,26 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     return results;
   }
 
-  private ArviointiasteikkoYleissivistava getSubjectMeanGrade(LukionOppiaineenSuoritus oppiaineenSuoritus) {
-    List<ArviointiasteikkoYleissivistava> kurssiarvosanat = new ArrayList<>();
-    for (LukionKurssinSuoritus kurssinSuoritus : oppiaineenSuoritus.getOsasuoritukset()) {
-      List<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
-      Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
+  private ArviointiasteikkoYleissivistava getSubjectMeanGrade(Student student, Subject subject, LukionOppiaineenSuoritus oppiaineenSuoritus) {
+    // Jos aineesta on annettu korotettu arvosana, käytetään automaattisesti sitä
+    ArviointiasteikkoYleissivistava korotettuArvosana = getSubjectGrade(student, subject);
+    if (korotettuArvosana != null) {
+      return korotettuArvosana;
+    } else {
+      List<ArviointiasteikkoYleissivistava> kurssiarvosanat = new ArrayList<>();
+      for (LukionKurssinSuoritus kurssinSuoritus : oppiaineenSuoritus.getOsasuoritukset()) {
+        List<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
+        Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
+        
+        kurssiarvosanat.add(ArviointiasteikkoYleissivistava.bestGrade(arvosanat));
+      }
       
-      kurssiarvosanat.add(ArviointiasteikkoYleissivistava.bestGrade(arvosanat));
+      return ArviointiasteikkoYleissivistava.meanGrade(kurssiarvosanat);
     }
-    
-    return ArviointiasteikkoYleissivistava.meanGrade(kurssiarvosanat);
   }
   
-  private LukionOppiaineenSuoritus getSubject(Student student, EducationType studentEducationType,
-      Subject subject, StudentSubjectSelections studentSubjects, Map<String, LukionOppiaineenSuoritus> map) {
+  private OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> getSubject(Student student, EducationType studentEducationType,
+      Subject subject, StudentSubjectSelections studentSubjects, Map<String, OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus>> map) {
     String subjectCode = subjectCode(subject);
 
     if (map.containsKey(subjectCode))
@@ -241,18 +234,14 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       if (StringUtils.equals(subjectCode, studentSubjects.getMath())) {
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMatematiikka(
             OppiaineMatematiikka.valueOf(subjectCode), isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.MA));
-        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-        map.put(subjectCode, os);
-        return os;
+        return mapSubject(subject, subjectCode, tunniste, map);
       } else
         return null;
     }
     if (matchingEducationType && StringUtils.equals(subjectCode, "MAY")) {
       LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMatematiikka(
           OppiaineMatematiikka.MAY, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.MA));
-      LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-      map.put(subjectCode, os);
-      return os;
+      return mapSubject(subject, subjectCode, tunniste, map);
     }
     
     
@@ -260,9 +249,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusAidinkieli(
             OppiaineAidinkieliJaKirjallisuus.AI1, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
-        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-        map.put(subjectCode, os);
-        return os;
+        return mapSubject(subject, subjectCode, tunniste, map);
       } else
         return null;
     }
@@ -270,9 +257,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusAidinkieli(
             OppiaineAidinkieliJaKirjallisuus.AI7, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
-        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-        map.put(subjectCode, os);
-        return os;
+        return mapSubject(subject, subjectCode, tunniste, map);
       } else
         return null;
     }
@@ -293,9 +278,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
           
           LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusVierasKieli(valinta, kieli, 
               isPakollinenOppiaine(student, valinta));
-          LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-          map.put(subjectCode, os);
-          return os;
+          return mapSubject(subject, subjectCode, tunniste, map);
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
@@ -314,9 +297,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
         
         KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-        LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-        map.put("KT", os);
-        return os;
+        return mapSubject(subject, "KT", tunniste, map);
       } else
         return null;
     }
@@ -326,20 +307,22 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       
       KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.valueOf(StringUtils.upperCase(subjectCode));
       LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-      LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-      map.put(subjectCode, os);
-      return os;
+      return mapSubject(subject, subjectCode, tunniste, map);
     } else {
       // Other local subject
       
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(subjectCode, kuvaus(subject.getName()));
       LukionOppiaineenSuoritusPaikallinen tunniste = new LukionOppiaineenSuoritusPaikallinen(paikallinenKoodi, false, kuvaus(subject.getName()));
-      LukionOppiaineenSuoritus os = new LukionOppiaineenSuoritus(tunniste);
-      map.put(subjectCode, os);
-      return os;
+      return mapSubject(subject, subjectCode, tunniste, map);
     }
   }
 
+  private OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> mapSubject(Subject subject, String subjectCode, LukionOppiaineenTunniste tunniste, Map<String, OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus>> map) {
+    OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> os = new OppiaineenSuoritusWithSubject<>(subject, new LukionOppiaineenSuoritus(tunniste));
+    map.put(subjectCode, os);
+    return os;
+  }
+  
   protected LukionKurssinSuoritus createKurssiSuoritus(Student student, OpiskelijanOPS ops, CreditStub courseCredit) {
     String kurssiKoodi = courseCredit.getCourseCode();
     LukionKurssinTunniste tunniste;

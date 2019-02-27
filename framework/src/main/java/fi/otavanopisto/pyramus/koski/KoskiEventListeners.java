@@ -18,6 +18,7 @@ import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.events.CourseAssessmentEvent;
 import fi.otavanopisto.pyramus.events.StudentArchivedEvent;
+import fi.otavanopisto.pyramus.events.StudentSubjectGradeEvent;
 import fi.otavanopisto.pyramus.events.StudentUpdatedEvent;
 import fi.otavanopisto.pyramus.events.TransferCreditEvent;
 
@@ -51,6 +52,10 @@ public class KoskiEventListeners implements Serializable {
   }
   
   public void onCourseAssessmentEvent(@Observes CourseAssessmentEvent event) {
+    studentChanged(event.getStudentId());
+  }
+  
+  public void onStudentSubjectGradeEvent(@Observes StudentSubjectGradeEvent event) {
     studentChanged(event.getStudentId());
   }
   
