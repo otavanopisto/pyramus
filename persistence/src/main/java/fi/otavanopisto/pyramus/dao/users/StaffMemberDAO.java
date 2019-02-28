@@ -13,6 +13,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ListJoin;
+import javax.persistence.criteria.MapJoin;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
@@ -104,6 +105,25 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
             criteriaBuilder.equal(uvRoot.get(UserVariable_.key), userVariableKey),
             criteriaBuilder.equal(uvRoot.get(UserVariable_.value), value),
             criteriaBuilder.equal(userJoin.get(User_.archived), Boolean.FALSE)
+        ));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<StaffMember> listByProperty(String key, String value) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StaffMember> criteria = criteriaBuilder.createQuery(StaffMember.class);
+    Root<StaffMember> root = criteria.from(StaffMember.class);
+    MapJoin<StaffMember, String, String> props = root.join(StaffMember_.properties);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(StaffMember_.archived), Boolean.FALSE),
+            criteriaBuilder.equal(props.key(), key),
+            criteriaBuilder.equal(props.value(), value)
         ));
     
     return entityManager.createQuery(criteria).getResultList();

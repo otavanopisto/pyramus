@@ -18,15 +18,8 @@
 } 
 
 .application-header__logo {
-  background: #000;
-  border-radius: 100%;
-  font-size: 1.125rem;
-  height: 115px;
-  justify-content: center;
-  line-height: 1.1;
-  position: absolute;
-  top: -20px;
-  width: 115px;
+  height: 45px;
+  margin: 20px 0;
 }
 
 .application-selection {

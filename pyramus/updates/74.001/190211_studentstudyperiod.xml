@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>
+    create table StudentStudyPeriod (
+      id bigint not null auto_increment, 
+      begin date not null, 
+      end date, 
+      periodType varchar(255) not null, 
+      student bigint not null, 
+      primary key (id)
+    );
+  </sql>
+  
+  <sql>
+    alter table StudentStudyPeriod add constraint FKbf4xdl2ckiur2ace515uexm3o foreign key (student) references Student (id);
+  </sql>
+  
+</update>

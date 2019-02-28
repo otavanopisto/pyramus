@@ -13,8 +13,8 @@
 } 
 
 .application-header__logo {
-  font-size: 1.125rem;
-  height: 65px;
+  height: 35px;
+  margin: 15px 0;
 }
 
 .application-description__credentials,

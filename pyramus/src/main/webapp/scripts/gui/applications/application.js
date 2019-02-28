@@ -131,7 +131,8 @@
     Parsley.addValidator('birthdayFormat', {
       requirementType: 'string',
       validateString: function(value) {
-        return value && moment(value, 'D.M.YYYY').isValid() && value.lastIndexOf('.') == value.length - 5;
+        var dateRegExp = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/;
+        return value && moment(value, 'D.M.YYYY').isValid() && value.match(dateRegExp) != null;
       },
       messages: {
         fi: 'Päivämäärän muoto on virheellinen'
