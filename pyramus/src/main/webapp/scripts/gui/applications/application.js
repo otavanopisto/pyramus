@@ -131,7 +131,8 @@
     Parsley.addValidator('birthdayFormat', {
       requirementType: 'string',
       validateString: function(value) {
-        return value && moment(value, 'D.M.YYYY').isValid() && value.lastIndexOf('.') == value.length - 5;
+        var dateRegExp = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/;
+        return value && moment(value, 'D.M.YYYY').isValid() && value.match(dateRegExp) != null;
       },
       messages: {
         fi: 'Päivämäärän muoto on virheellinen'
@@ -147,7 +148,7 @@
         fi: 'Klikkaa kutsumanimeäsi'
       }
     });
-
+    
     Parsley.addValidator('ssnEndFormat', {
       requirementType: 'string',
       validateString: function(value) {
@@ -180,6 +181,32 @@
       },
       messages: {
         fi: 'Tämä kenttä on pakollinen'
+      }
+    });
+
+    Parsley.addValidator('requiredEmailIfShown', {
+      requirementType: 'string',
+      validateString: function(value, requirement, event) {
+        var element = event.element;
+        if ($(element).is(':visible')) {
+          var emailRegExp = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+          if (!value || value.trim().length == 0 || !value.match(emailRegExp)) {
+            return false;
+          }
+        }
+        return true;
+      },
+      validateMultiple: function(value, requirement, event) {
+        var element = event.element;
+        if ($(element).is(':visible')) { 
+          if (value.length == 0) {
+            return false;
+          }
+        }
+        return true;
+      },
+      messages: {
+        fi: 'Sähköpostiosoite puuttuu tai on virheellinen'
       }
     });
 

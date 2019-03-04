@@ -1,4 +1,4 @@
-<meta content="width=device-width, initial-scale=1.0, minimun-scale=1" name="viewport" />
+<meta content="width=device-width, initial-scale=1.0, minimum-scale=1" name="viewport" />
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=latin,latin-ext,cyrillic-ext,cyrillic,greek,greek-ext' rel='stylesheet' type='text/css'/>
 
 <@include_page path="/templates/generic/head_generic.jsp"/>

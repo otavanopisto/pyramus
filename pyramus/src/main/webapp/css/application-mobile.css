@@ -44,22 +44,12 @@ body {
 }
 
 .application-header__logo {
-  align-items: center;
-  color: #fff;
-  display: flex;
-  font-weight: 900;
-  height: 50px;
-  justify-content: flex-start;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.application-header__logo-text {
-  display: block;
-}
-
-.application-header__logo-branding {
-  color: #000;
+  background-image: url("/gfx/gui/otavia-logo-white.png");
+  background-position: center left;
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 30px;
+  margin: 10px 0;
 }
 
 /* SELECTION LAYOUT */

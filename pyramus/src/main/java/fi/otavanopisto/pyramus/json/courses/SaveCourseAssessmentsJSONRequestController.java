@@ -81,11 +81,7 @@ public class SaveCourseAssessmentsJSONRequestController extends JSONRequestContr
         CourseParticipationType participationType = participationTypeDAO.findById(participationTypeId);
         String verbalAssessment = null;
 
-        CourseAssessment courseAssessment = courseAssessmentDAO.findByCourseStudent(courseStudent);
-        if (courseAssessment != null && Boolean.TRUE.equals(courseAssessment.getArchived())) {
-          courseAssessment = courseAssessmentDAO.unarchive(courseAssessment);
-        }
-
+        CourseAssessment courseAssessment = courseAssessmentDAO.findLatestByCourseStudentAndArchived(courseStudent, Boolean.FALSE);
         Long verbalModified = requestContext.getLong(colPrefix + ".verbalModified");
         if (verbalModified != null && verbalModified.intValue() == 1) {
           verbalAssessment = requestContext.getString(colPrefix + ".verbalAssessment");

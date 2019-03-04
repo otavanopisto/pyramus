@@ -51,7 +51,7 @@
           <p class="application-editing-information-row"><b>Nettilukio</b><br/>Eeva Lehikoinen<br/>eeva.lehikoinen@otavanopisto.fi<br/>044 794 5107</p>
           <p class="application-editing-information-row"><b>Nettiperuskoulu</b><br/>Elise Hokkanen<br/>elise.hokkanen@otavanopisto.fi<br/>044 794 3273</p>
           <p class="application-editing-information-row"><b>Aineopiskelu</b><br/>aineopiskelu@otavanopisto.fi</p>
-          <p class="application-editing-information-row"><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavanopisto.fi<br/>015 194 3552</p>
+          <p class="application-editing-information-row"><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavia.fi<br/>015 194 3552</p>
           <!--<p class="application-editing-information-row"><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p> -->
           <!--<p class="application-editing-information-row"><b>Kasvatustieteen linja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>-->
           <!--<p class="application-editing-information-row"><b>Lääkislinja</b><br/>Minna Vähämäki<br/>minna.vahamaki@otavanopisto.fi<br/>040 189 7053</p>-->
@@ -87,7 +87,7 @@
               <p class="application-editing-information-row"><b>Nettilukio</b><br/>Eeva Lehikoinen<br/>eeva.lehikoinen@otavanopisto.fi<br/>044 794 5107</p>
               <p class="application-editing-information-row"><b>Nettiperuskoulu</b><br/>Elise Hokkanen<br/>elise.hokkanen@otavanopisto.fi<br/>044 794 3273</p>
               <p class="application-editing-information-row"><b>Aineopiskelu</b><br/>aineopiskelu@otavanopisto.fi</p>
-              <p class="application-editing-information-row"><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavanopisto.fi<br/>015 194 3552</p>
+              <p class="application-editing-information-row"><b>Lähilukio</b><br/>Otavan Opiston toimisto<br/>info@otavia.fi<br/>015 194 3552</p>
               <!--<p class="application-editing-information-row"><b>Bändilinja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>-->
               <!--<p class="application-editing-information-row"><b>Kasvatustieteen linja</b><br/>Jukka Tikkanen<br/>jukka.tikkanen@otavanopisto.fi<br/>044 794 5103</p>-->
               <!--<p class="application-editing-information-row"><b>Lääkislinja</b><br/>Minna Vähämäki<br/>minna.vahamaki@otavanopisto.fi<br/>040 189 7053</p>-->
@@ -133,7 +133,7 @@
         <div class="application-footer__contact-title">Ota yhteyttä</div>
         <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Osoite:</span> Otavantie 2 B, 50670 Otava</div>
         <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Puhelin:</span> 044 794 3552</div>
-        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Sähköposti:</span> info@otavanopisto.fi</div>
+        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Sähköposti:</span> info@otavia.fi</div>
       </div>
       <div class="application-footer__links">
         <a href="https://www.otavanopisto.fi" target="top" class="application-footer__external-link">www.otavanopisto.fi</a>

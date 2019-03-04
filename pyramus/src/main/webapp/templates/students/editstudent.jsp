@@ -44,6 +44,10 @@
         lodgingPeriodTable.addRow([-1, '', '', '', '']);
       }
 
+      function addStudyPeriodTableRow(studyPeriodTable) {
+        studyPeriodTable.addRow([-1, '', 'TEMPORARILY_SUSPENDED', '', '']);
+      }
+
       function initPhoneTable(studentId) {
         var phoneTable = new IxTable($('phoneTable.' + studentId), {
           id : "phoneTable." + studentId,
@@ -432,6 +436,64 @@
         return lodgingPeriodsTable;
       }
         
+      function initStudentStudyPeriodsTable(studentId) {
+        var studentStudyPeriodTypes = JSDATA["studentStudyPeriodTypes"].evalJSON();
+        var studentStudyPeriodTypeOptions = [];
+
+        for (var i = 0; i < studentStudyPeriodTypes.length; i++) {
+          studentStudyPeriodTypeOptions.push({
+            text: studentStudyPeriodTypes[i].displayName,
+            value: studentStudyPeriodTypes[i].id
+          });
+        }
+
+        var studentStudyPeriodsTable = new IxTable($('studentStudyPeriodsTableContainer.' + studentId), {
+          id : "studentStudyPeriodsTable." + studentId,
+          columns : [{
+            dataType : 'hidden',
+            left : 0,
+            width : 0,
+            paramName : 'id'
+          }, {
+            header: '<fmt:message key="students.editStudent.studyPeriodsTable.begin"/>',
+            left : 8,
+            width: 160,
+            dataType : 'date',
+            editable: true,
+            required: true,
+            paramName: 'begin'
+          }, {
+            header : '<fmt:message key="students.editStudent.studyPeriodsTable.type"/>',
+            left : 8 + 160 + 8,
+            width : 200,
+            dataType: 'select',
+            editable: true,
+            required: true,
+            paramName: 'type',
+            options: studentStudyPeriodTypeOptions
+          }, {
+            header: '<fmt:message key="students.editStudent.studyPeriodsTable.end"/>',
+            left : 8 + 160 + 8 + 200 + 8,
+            width: 160,
+            dataType : 'date',
+            editable: true,
+            paramName: 'end'
+          }, {
+            width: 30,
+            left: 8 + 160 + 8 + 200 + 8 + 160 + 8,
+            dataType: 'button',
+            paramName: 'removeButton',
+            imgsrc: GLOBAL_contextPath + '/gfx/list-remove.png',
+            tooltip: '<fmt:message key="students.editStudent.studyPeriodsTable.removeTooltip"/>',
+            onclick: function (event) {
+              event.tableComponent.deleteRow(event.row);
+            }
+          }]
+        });
+
+        return studentStudyPeriodsTable;
+      }
+        
       function setupTags() {
         JSONRequest.request("tags/getalltags.json", {
           onSuccess: function (jsonResponse) {
@@ -448,9 +510,11 @@
         var tabControl = new IxProtoTabs($('tabs'));
 
         var studentLodgingPeriodsContainer = JSDATA["studentLodgingPeriods"].evalJSON();
+        var studentStudyPeriodsContainer = JSDATA["studentStudyPeriods"].evalJSON();
 
         var data = {
-          studentLodgingPeriodsContainer : studentLodgingPeriodsContainer
+          studentLodgingPeriodsContainer : studentLodgingPeriodsContainer,
+          studentStudyPeriodsContainer: studentStudyPeriodsContainer
         };
         
         setupRelatedCommandsBasic();
@@ -621,6 +685,47 @@
             ]);
           }
         }
+
+        var studyPeriodsTable = initStudentStudyPeriodsTable(studentId);
+        var studyPeriods = data.studentStudyPeriodsContainer[studentId.toString()];
+
+        if (studyPeriods && studyPeriods.length > 0) {
+          for (var i = 0, l = studyPeriods.length; i < l; i++) {
+            var rowNumber = studyPeriodsTable.addRow([
+              studyPeriods[i].id,
+              studyPeriods[i].begin,
+              studyPeriods[i].type,
+              studyPeriods[i].end,
+              ''
+            ]);
+          }
+        }
+
+        Event.observe($('studyEndReason.' + studentId), "click", _onStudyEndReasonChange);
+      }
+
+      function _onStudyEndReasonChange(event) {
+        var studyEndReasonElement = Event.element(event);
+        var studentId = studyEndReasonElement.getAttribute('data-studentid');
+        var studyApproverElement = $('studyApprover.' + studentId);
+        var approvalRequired = false;
+
+        var selectedOption = studyEndReasonElement.selectedIndex >= 0 ? studyEndReasonElement.options[studyEndReasonElement.selectedIndex] : undefined;
+
+        if (selectedOption) {
+          approvalRequired = selectedOption.getAttribute("data-approvalrequired") == "1";
+        }
+        
+        if (approvalRequired) {
+          studyApproverElement.addClassName('required');
+          initializeValidation(studyApproverElement.parentNode);
+        } else {
+          studyApproverElement.removeClassName('required');
+          studyApproverElement.removeClassName('valid');
+          studyApproverElement.removeClassName('invalid');
+          deinitializeValidation(studyApproverElement.parentNode);
+        }        
+        forceRevalidateAll(true);
       }
       
       function setupRelatedCommandsBasic() {
@@ -702,6 +807,7 @@
           link: GLOBAL_contextPath + '/grading/managetransfercredits.page?studentId=' + studentId  
         }));      
 
+        <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
         studentRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/edit-delete.png',
           text: '<fmt:message key="students.editStudent.studentTabRelatedActionsArchiveStudentLabel"/>',
@@ -740,6 +846,7 @@
             dialog.open(); 
           }
         }));
+        </c:if>
       }
     </script>
     
@@ -1203,6 +1310,19 @@
                 <input type="text" name="studyStartDate.${student.id}" class="ixDateField" value="${fn:escapeXml(student.studyStartDate.time)}"/>
               </div>
   
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="students.editStudent.studyPeriodsTitle"/>
+                  <jsp:param name="helpLocale" value="students.editStudent.studyPeriodsHelp"/>
+                </jsp:include>
+                
+                <div class="genericTableAddRowContainer">
+                  <span class="genericTableAddRowLinkContainer" onclick="addStudyPeriodTableRow(getIxTableById('studentStudyPeriodsTable.${student.id}'));"><fmt:message key="students.editStudent.addStudyPeriodLink"/></span>
+                </div>
+
+                <div id="studentStudyPeriodsTableContainer.${student.id}"></div>
+              </div>
+  
               <div class="genericFormSection">    
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="students.editStudent.studyEndDateTitle"/>
@@ -1216,15 +1336,16 @@
                   <jsp:param name="titleLocale" value="students.editStudent.studyEndReasonTitle"/>
                   <jsp:param name="helpLocale" value="students.editStudent.studyEndReasonHelp"/>
                 </jsp:include>
-                <select name="studyEndReason.${student.id}">
+                
+                <select id="studyEndReason.${student.id}" name="studyEndReason.${student.id}" data-studentid="${student.id}">
                   <option></option>  
                   <c:forEach var="reason" items="${studyEndReasons}">
                     <c:choose>
                       <c:when test="${reason.id eq student.studyEndReason.id}">
-                        <option value="${reason.id}" selected="selected">${reason.name}</option> 
+                        <option value="${reason.id}" data-approvalrequired="${reason.properties['studyApprovalRequired']}" selected="selected">${reason.name}</option> 
                       </c:when>
                       <c:otherwise>
-                        <option value="${reason.id}">${reason.name}</option> 
+                        <option value="${reason.id}" data-approvalrequired="${reason.properties['studyApprovalRequired']}">${reason.name}</option> 
                       </c:otherwise>
                     </c:choose>
     
@@ -1233,15 +1354,50 @@
 			                  <c:forEach var="childReason" items="${reason.childEndReasons}">
 			                    <c:choose>
 			                      <c:when test="${childReason.id eq student.studyEndReason.id}">
-			                        <option value="${childReason.id}" selected="selected">${childReason.name}</option> 
+			                        <option value="${childReason.id}" data-approvalrequired="${reason.properties['studyApprovalRequired']}" selected="selected">${childReason.name}</option> 
 			                      </c:when>
 			                      <c:otherwise>
-			                        <option value="${childReason.id}">${childReason.name}</option> 
+			                        <option value="${childReason.id}" data-approvalrequired="${reason.properties['studyApprovalRequired']}">${childReason.name}</option> 
 			                      </c:otherwise>
 			                    </c:choose>
 			                  </c:forEach>
                     </optgroup>
                     </c:if>
+                  </c:forEach>
+                </select>
+              </div>
+  
+              <div class="genericFormSection">      
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="students.editStudent.studiesApprovedByTitle"/>
+                  <jsp:param name="helpLocale" value="students.editStudent.studiesApprovedByHelp"/>
+                </jsp:include>
+
+                <c:set var="studyApproverRequired"></c:set>
+                <c:if test="${student.studyEndReason.properties['studyApprovalRequired'] eq '1'}">
+                  <c:set var="studyApproverRequired">required</c:set>
+                </c:if>
+  
+                <select id="studyApprover.${student.id}" name="studyApprover.${student.id}" class="${studyApproverRequired}">
+                  <option></option>
+                  <c:forEach var="studyApprover" items="${studyApprovers}">
+                    <c:choose>
+                      <c:when test="${studyApprover.title eq null}">
+                        <c:set var="approverName">${studyApprover.lastName}, ${studyApprover.firstName}</c:set>
+                      </c:when>
+                      <c:otherwise>
+                        <c:set var="approverName">${studyApprover.lastName}, ${studyApprover.firstName} (${studyApprover.title})</c:set>
+                      </c:otherwise>
+                    </c:choose>
+
+                    <c:choose>
+                      <c:when test="${studyApprover.id eq student.studyApprover.id}">
+                        <option value="${studyApprover.id}" selected="selected">${approverName}</option> 
+                      </c:when>
+                      <c:otherwise>
+                        <option value="${studyApprover.id}">${approverName}</option> 
+                      </c:otherwise>
+                    </c:choose>
                   </c:forEach>
                 </select>
               </div>

@@ -90,6 +90,66 @@
         }
       }
           
+      function setupStaffMemberPropertiesTable() {
+        var variablesTable = new IxTable($('propertiesTableContainer'), {
+          id : "propertiesTable",
+          columns : [{
+            left: 8,
+            width: 30,
+            dataType: 'button',
+            imgsrc: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+            onclick: function (event) {
+              var table = event.tableComponent;
+              var valueColumn = table.getNamedColumnIndex('value');
+              table.setCellEditable(event.row, valueColumn, table.isCellEditable(event.row, valueColumn) == false);
+            }
+          }, {
+            dataType : 'hidden',
+            editable: false,
+            paramName: 'key'
+          },{
+            left : 38,
+            width: 150,
+            dataType : 'text',
+            editable: false,
+            paramName: 'name'
+          }, {
+            left : 188,
+            width : 750,
+            dataType: 'text',
+            editable: false,
+            paramName: 'value'
+          }]
+        });
+        
+        var variables = JSDATA["properties"].evalJSON();
+        if (variables) {
+          for (var i = 0, l = variables.length; i < l; i++) {
+            var rowNumber = variablesTable.addRow([
+              '',
+              variables[i].key,
+              variables[i].name,
+              variables[i].value
+            ]);
+
+            switch (variables[i].type) {
+              case 'NUMBER':
+                variablesTable.setCellDataType(rowNumber, 3, 'number');
+              break;
+              case 'DATE':
+                variablesTable.setCellDataType(rowNumber, 3, 'date');
+              break;
+              case 'BOOLEAN':
+                variablesTable.setCellDataType(rowNumber, 3, 'checkbox');
+              break;
+              default:
+                variablesTable.setCellDataType(rowNumber, 3, 'text');
+              break;
+            }
+          }
+        }
+      }
+          
       function setupTags() {
         JSONRequest.request("tags/getalltags.json", {
           onSuccess: function (jsonResponse) {
@@ -382,6 +442,7 @@
         <c:choose>
           <c:when test="${(loggedUserRole == 'ADMINISTRATOR')}">
             setupUserVariablesTable();
+            setupStaffMemberPropertiesTable();
           </c:when>
         </c:choose>
       }
@@ -589,6 +650,14 @@
                 
             <c:choose>
               <c:when test="${(loggedUserRole == 'ADMINISTRATOR')}">
+                <div class="genericFormSection">  
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="users.editUser.propertiesTitle"/>
+                    <jsp:param name="helpLocale" value="users.editUser.propertiesHelp"/>
+                  </jsp:include>         
+                  <div id="propertiesTableContainer"></div>
+                </div>
+
                 <div class="genericFormSection">  
                   <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                     <jsp:param name="titleLocale" value="users.editUser.variablesTitle"/>

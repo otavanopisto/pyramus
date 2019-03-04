@@ -32,17 +32,15 @@
     </div>
     <header class="application-header">
       <div class="application-header__content">
-        <div class="application-header__logo">
-          <div class="application-header__logo-text">Otavan<br/>Opist<span class="application-header__logo-branding">o...</span></div>
-        </div>
+        <div class="application-header__logo"></div>
         <nav class="application-header__show-content-information">?</nav>
       </div>
     </header>
-    
+
     <section class="application-description">
       <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="" style="display:none;">
         <div class="application-description__line-header">
-          Hae opiskelijaksi <span class="application-description__line-label">Otavan Opistoon</span>
+          Hae opiskelijaksi <span class="application-description__line-label">Otaviaan</span>
         </div>
         <div class="application-description__line-content">Valitse haluamasi koulutusohjelma ja siirry täyttämään opiskelijahakemus.</div>
       </div>
@@ -92,13 +90,13 @@
           <p><b>Huom!</b> Punaisella tähdellä merkityt kentät ovat pakollisia.</p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
-          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:nettilukio@otavanopisto.fi">nettilukio@otavanopisto.fi</a></p>
+          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:nettilukio@otavia.fi">nettilukio@otavia.fi</a></p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="nettipk" style="display:none;">
-          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:nettiperuskoulu@otavanopisto.fi">nettiperuskoulu@otavanopisto.fi</a></p>
+          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:nettiperuskoulu@otavia.fi">nettiperuskoulu@otavia.fi</a></p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
-          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:aineopiskelu@otavanopisto.fi">aineopiskelu@otavanopisto.fi</a></p>
+          <p>Mikäli sinulla on kysyttävää tai sinulla ei ole suomalaista henkilötunnusta, ota yhteyttä <a href="mailto:aineopiskelu@otavia.fi">aineopiskelu@otavia.fi</a></p>
         </div>
         <div class="application-content__information-line-specific dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
           <p>Mikäli sinulla on kysyttävää, ota yhteyttä <a href="mailto:maahanmuuttajakoulutukset@otavanopisto.fi">maahanmuuttajakoulutukset@otavanopisto.fi</a></p>
@@ -116,7 +114,7 @@
         <div class="application-footer__contact-title">Ota yhteyttä</div>
         <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Osoite:</span> Otavantie 2 B, 50670 Otava</div>
         <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Puhelin:</span> 044 794 3552</div>
-        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Sähköposti:</span> info@otavanopisto.fi</div>
+        <div class="application-footer__contact-row"><span class="application-footer__contact-row-label">Sähköposti:</span> info@otavia.fi</div>
       </div>
       <div class="application-footer__links">
         <a href="https://www.otavanopisto.fi" target="top" class="application-footer__external-link">www.otavanopisto.fi</a>

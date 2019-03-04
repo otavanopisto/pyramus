@@ -28,14 +28,13 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit;
-import fi.otavanopisto.pyramus.koski.KoodistoViite;
+import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.OppiaineenSuoritusWithCurriculum;
 import fi.otavanopisto.pyramus.koski.StudentSubjectSelections;
-import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
 import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenKurssit2015;
 import fi.otavanopisto.pyramus.koski.koodisto.AikuistenPerusopetuksenPaattovaiheenKurssit2017;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
@@ -43,7 +42,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
-import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
@@ -52,7 +50,6 @@ import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
-import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
@@ -112,23 +109,13 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       opintojenRahoitus = student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6;
     }
     
-    OpiskeluoikeudenTila jaksonTila = !Boolean.TRUE.equals(student.getArchived()) ? OpiskeluoikeudenTila.lasna : OpiskeluoikeudenTila.mitatoity;
-    OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), jaksonTila);
-    jakso.setOpintojenRahoitus(new KoodistoViite<>(opintojenRahoitus));
-    opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
+    SuorituksenTila suorituksenTila = opiskelujaksot(student, opiskeluoikeus.getTila(), opintojenRahoitus);
 
-    SuorituksenTila suorituksenTila = SuorituksenTila.KESKEN;
+    KoskiStudyProgrammeHandlerParams handlerParams = getHandlerParams(HANDLER_TYPE);
 
-    if (student.getStudyEndDate() != null) {
-      OpiskeluoikeudenTila opintojenLopetusTila = settings.getStudentState(student, OpiskeluoikeudenTila.eronnut);
-      opiskeluoikeus.getTila().addOpiskeluoikeusJakso(
-          new OpiskeluoikeusJakso(student.getStudyEndDate(), opintojenLopetusTila));
-
-      suorituksenTila = ArrayUtils.contains(OpiskeluoikeudenTila.GRADUATED_STATES, opintojenLopetusTila) ? 
-          SuorituksenTila.VALMIS : SuorituksenTila.KESKEYTYNYT;
-    }
-
-    String departmentIdentifier = settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
+    // toimipiste-oid joko a) handlerParams:sta b) studyprogramme-asetuksista c) yleisesti kaikelle asetettu academyIdentifier
+    String departmentIdentifier = StringUtils.isNotBlank(handlerParams.getToimipisteOID()) ? handlerParams.getToimipisteOID() : 
+      settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
 
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(departmentIdentifier);
     Set<OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> oppiaineet = assessmentsToModel(student, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS, defaultStudyProgramme);
@@ -192,11 +179,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     opsList.add(OpiskelijanOPS.ops2016);
     opsList.add(OpiskelijanOPS.ops2005);
     
-    KoskiStudyProgrammeHandlerParams handlerParams = settings.getSettings().getKoski().getHandlerParams().get(HANDLER_TYPE);
-    
-    if (handlerParams == null) {
-      throw new RuntimeException("HandlerParams not set for InternetixPk");
-    }
+    KoskiStudyProgrammeHandlerParams handlerParams = getHandlerParams(HANDLER_TYPE);
     
     // If this is default study programme of the student, we exclude the incompatible education type (ie list all other edutypes)
     // Otherwise, only list credits from one education type
@@ -239,7 +222,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
       if (calculateMeanGrades) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(oppiaineenSuoritus) ? 
-            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(oppiaineenSuoritus.getOppiaineenSuoritus());
+            ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(student, oppiaineenSuoritus.getSubject(), oppiaineenSuoritus.getOppiaineenSuoritus());
         
         if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
           KurssinArviointi arviointi = new KurssinArviointiNumeerinen(aineKeskiarvo, student.getStudyEndDate());
@@ -258,9 +241,9 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
 
   private OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> map(
       Map<String, OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> map, String mapKey, 
-      OpiskelijanOPS creditOPS, AikuistenPerusopetuksenOppiaineenTunniste tunniste) {
+      OpiskelijanOPS creditOPS, AikuistenPerusopetuksenOppiaineenTunniste tunniste, Subject subject) {
     OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus> oswc = 
-        new OppiaineenSuoritusWithCurriculum<>(creditOPS, new AikuistenPerusopetuksenOppiaineenSuoritus(tunniste));
+        new OppiaineenSuoritusWithCurriculum<>(subject, creditOPS, new AikuistenPerusopetuksenOppiaineenSuoritus(tunniste));
     map.put(mapKey, oswc);
     return oswc;
   }
@@ -286,7 +269,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
         
         AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli(
             aine, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
-        return map(map, mapKey, creditOPS, tunniste);
+        return map(map, mapKey, creditOPS, tunniste, subject);
       } else
         return null;
     }
@@ -307,7 +290,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
           
           AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli(
               valinta, kieli, isPakollinenOppiaine(student, valinta));
-          return map(map, mapKey, creditOPS, tunniste);
+          return map(map, mapKey, creditOPS, tunniste, subject);
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
@@ -328,7 +311,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
         KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
         AikuistenPerusopetuksenOppiaineenTunniste tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusMuu(
             kansallinenAine, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.KT));
-        return map(map, mapKey, creditOPS, tunniste);
+        return map(map, mapKey, creditOPS, tunniste, subject);
       } else
         return null;
     }
@@ -339,7 +322,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.valueOf(StringUtils.upperCase(subjectCode));
       AikuistenPerusopetuksenOppiaineenTunniste tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusMuu(
           kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-      return map(map, mapKey, creditOPS, tunniste);
+      return map(map, mapKey, creditOPS, tunniste, subject);
     } else {
       // Other local subject
       // TODO Skipped subjects ?? (MUU)
@@ -347,7 +330,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(subjectCode, kuvaus(subject.getName()));
       AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen(
           paikallinenKoodi, false, kuvaus(subject.getName()));
-      return map(map, mapKey, creditOPS, tunniste);
+      return map(map, mapKey, creditOPS, tunniste, subject);
     }
   }
 
@@ -398,16 +381,22 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     return suoritus;
   }
 
-  private ArviointiasteikkoYleissivistava getSubjectMeanGrade(AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus) {
-    List<ArviointiasteikkoYleissivistava> kurssiarvosanat = new ArrayList<>();
-    for (AikuistenPerusopetuksenKurssinSuoritus kurssinSuoritus : oppiaineenSuoritus.getOsasuoritukset()) {
-      List<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
-      Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
+  private ArviointiasteikkoYleissivistava getSubjectMeanGrade(Student student, Subject subject, AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus) {
+    // Jos aineesta on annettu korotettu arvosana, käytetään automaattisesti sitä
+    ArviointiasteikkoYleissivistava korotettuArvosana = getSubjectGrade(student, subject);
+    if (korotettuArvosana != null) {
+      return korotettuArvosana;
+    } else {
+      List<ArviointiasteikkoYleissivistava> kurssiarvosanat = new ArrayList<>();
+      for (AikuistenPerusopetuksenKurssinSuoritus kurssinSuoritus : oppiaineenSuoritus.getOsasuoritukset()) {
+        List<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
+        Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
+        
+        kurssiarvosanat.add(ArviointiasteikkoYleissivistava.bestGrade(arvosanat));
+      }
       
-      kurssiarvosanat.add(ArviointiasteikkoYleissivistava.bestGrade(arvosanat));
+      return ArviointiasteikkoYleissivistava.meanGrade(kurssiarvosanat);
     }
-    
-    return ArviointiasteikkoYleissivistava.meanGrade(kurssiarvosanat);
   }
 
   @Override
