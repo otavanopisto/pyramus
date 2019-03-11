@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>
+    insert into UserVariableKey (id, variableKey, variableName, variableType, userEditable, version)
+    select coalesce(max(id), 0) + 1, 'matriculation.examEnrollmentExpiryDate', 'YO-kirjoitusten ilmoittautumispäivämäärä', 'DATE', true, 0
+    from UserVariableKey 
+    on duplicate key update variableKey='matriculation.examEnrollmentExpiryDate', variableName='YO-kirjoitusten ilmoittautumispäivämäärä', variableType='DATE', userEditable=true;
+  </sql>
+
+  <sql>
+    delete from hibernate_sequences 
+    where sequence_name='UserVariableKey'; 
+  </sql>
+  
+  <sql>
+    insert into hibernate_sequences (sequence_name, sequence_next_hi_value) 
+    select 'UserVariableKey', coalesce(max(id) + 1, 1) from UserVariableKey;
+  </sql>
+  
+</update>
