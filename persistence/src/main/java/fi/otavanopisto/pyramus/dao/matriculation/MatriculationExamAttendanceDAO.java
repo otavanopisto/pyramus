@@ -5,11 +5,11 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance_;
@@ -40,8 +40,7 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
     attendance.setTerm(term);
     attendance.setStatus(status);
     attendance.setGrade(grade);
-    getEntityManager().persist(attendance);
-    return attendance;
+    return persist(attendance);
   }
 
   public List<MatriculationExamAttendance> listByEnrollment(
@@ -60,18 +59,33 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public void deleteByEnrollment(
-      MatriculationExamEnrollment enrollment
-  ) {
-    EntityManager entityManager = getEntityManager(); 
-    
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaDelete<MatriculationExamAttendance> delete = criteriaBuilder.createCriteriaDelete(MatriculationExamAttendance.class);
-    Root<MatriculationExamAttendance> root = delete.from(MatriculationExamAttendance.class);
-    delete.where(
-      criteriaBuilder.equal(root.get(MatriculationExamAttendance_.enrollment), enrollment)
-    );
-    
-    entityManager.createQuery(delete).executeUpdate();
+  public MatriculationExamAttendance update(MatriculationExamAttendance attendance,
+      MatriculationExamEnrollment enrollment,
+      MatriculationExamSubject subject,
+      Boolean mandatory,
+      Boolean repeat,
+      Integer year,
+      MatriculationExamTerm term,
+      MatriculationExamAttendanceStatus status,
+      MatriculationExamGrade grade) {
+    attendance.setEnrollment(enrollment);
+    attendance.setSubject(subject);
+    attendance.setMandatory(mandatory);
+    attendance.setRetry(repeat);
+    attendance.setYear(year);
+    attendance.setTerm(term);
+    attendance.setStatus(status);
+    attendance.setGrade(grade);
+    return persist(attendance);
   }
+
+  public MatriculationExamAttendance updateProjectAssessment(MatriculationExamAttendance attendance, ProjectAssessment projectAssessment) {
+    attendance.setProjectAssessment(projectAssessment);
+    return persist(attendance);
+  }
+  
+  public void delete(MatriculationExamAttendance matriculationExamAttendance) {
+    super.delete(matriculationExamAttendance);
+  }
+  
 }
