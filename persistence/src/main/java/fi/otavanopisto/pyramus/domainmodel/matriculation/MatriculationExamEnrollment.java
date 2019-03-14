@@ -2,13 +2,16 @@ package fi.otavanopisto.pyramus.domainmodel.matriculation;
 
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 
@@ -222,6 +225,8 @@ public class MatriculationExamEnrollment {
   @Column
   private String location;
   
+  @Lob
+  @Basic (fetch = FetchType.LAZY)
   @Column
   private String message;
   
