@@ -106,6 +106,11 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
     entityManager.persist(studentProject);
   }
 
+  public StudentProject updateOptionality(StudentProject studentProject, CourseOptionality projectOptionality) {
+    studentProject.setOptionality(projectOptionality);
+    return persist(studentProject);
+  }
+
   @SuppressWarnings("unchecked")
   public SearchResult<StudentProject> searchStudentProjectsBasic(int resultsPerPage, int page, String projectText, String studentText) {
     int firstResult = page * resultsPerPage;

@@ -202,22 +202,34 @@ public class EditEnrollmentViewController extends PyramusViewController {
     }
     
     CourseOptionality projectOptionality = mandatory ? CourseOptionality.MANDATORY : CourseOptionality.OPTIONAL;
-    Project project = subjectSettings.getProject();
-
-    List<StudentProject> studentProjects = studentProjectDAO.listBy(student, project, TSB.IGNORE);
-
-    // Find first non-archived project
-    StudentProject studentProject = studentProjects.stream()
-        .filter(studentProject1 -> BooleanUtils.isFalse(studentProject1.getArchived()))
-        .findFirst()
-        .orElse(null);
     
-    if (studentProject == null) {
-      // No unarchived student project was found so try to use any other
-      studentProject = studentProjects.isEmpty() ? null : studentProjects.get(0); //->unarchive
+    Project project = subjectSettings.getProject();
+    StudentProject studentProject;
+    
+    if (examAttendance != null && 
+        examAttendance.getProjectAssessment() != null && 
+        BooleanUtils.isFalse(examAttendance.getProjectAssessment().getArchived()) &&
+        examAttendance.getProjectAssessment().getStudentProject() != null &&
+        BooleanUtils.isFalse(examAttendance.getProjectAssessment().getStudentProject().getArchived())) {
+      // Use the studentproject from the projectassessment if it exists
+      studentProject = examAttendance.getProjectAssessment().getStudentProject();
+    } else {
+      // Resolve studentProject from the project in the settings
+      List<StudentProject> studentProjects = studentProjectDAO.listBy(student, project, TSB.IGNORE);
+
+      // Find first non-archived project
+      studentProject = studentProjects.stream()
+          .filter(studentProject1 -> BooleanUtils.isFalse(studentProject1.getArchived()))
+          .findFirst()
+          .orElse(null);
       
-      if (studentProject != null && BooleanUtils.isTrue(studentProject.getArchived())) {
-        studentProjectDAO.unarchive(studentProject);
+      if (studentProject == null) {
+        // No unarchived student project was found so try to use any other
+        studentProject = studentProjects.isEmpty() ? null : studentProjects.get(0);
+        
+        if (studentProject != null && BooleanUtils.isTrue(studentProject.getArchived())) {
+          studentProjectDAO.unarchive(studentProject);
+        }
       }
     }
     
@@ -237,6 +249,8 @@ public class EditEnrollmentViewController extends PyramusViewController {
         studentProjectModuleDAO.create(studentProject, projectModule.getModule(), null,
             CourseOptionality.getOptionality(projectModule.getOptionality().getValue()));
       }
+    } else {
+      studentProject = studentProjectDAO.updateOptionality(studentProject, projectOptionality);
     }
 
     MatriculationExam matriculationExam = matriculationExamDAO.get();
