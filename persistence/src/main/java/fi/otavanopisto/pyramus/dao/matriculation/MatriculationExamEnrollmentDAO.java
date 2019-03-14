@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.matriculation;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -129,6 +131,38 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       .getResultList();
   }
   
+  public List<MatriculationExamEnrollment> listBy(
+      MatriculationExamEnrollmentState state,
+      boolean below20courses,
+      int firstResult,
+      int maxResults) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<MatriculationExamEnrollment> criteria = criteriaBuilder.createQuery(MatriculationExamEnrollment.class);
+    Root<MatriculationExamEnrollment> root = criteria.from(MatriculationExamEnrollment.class);
+    
+    List<Predicate> predicates = new ArrayList<>();
+    if (state != null) {
+      predicates.add(criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.state), state));
+    }
+    if (below20courses) {
+      predicates.add(criteriaBuilder.lessThan(root.get(MatriculationExamEnrollment_.numMandatoryCourses), 20));
+    }
+    
+    criteria.select(root);
+    
+    if (!predicates.isEmpty()) {
+      criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+    }
+    
+    return entityManager
+      .createQuery(criteria)
+      .setFirstResult(firstResult)
+      .setMaxResults(maxResults)
+      .getResultList();
+  }
+    
   public MatriculationExamEnrollment findLatestByStudent(Student student) {
     EntityManager entityManager = getEntityManager(); 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();

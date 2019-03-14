@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
@@ -28,20 +30,12 @@ public class SearchEnrollmentsJSONRequestController extends JSONRequestControlle
       page = 0;
     }
     
-    String stateStr=
-      requestContext.getString("state");
-    MatriculationExamEnrollmentState state = null;
-    if (stateStr != null) {
-      state = MatriculationExamEnrollmentState.valueOf(stateStr);
-    }
+    Boolean below20courses = requestContext.getBoolean("below20courses");
+    String stateStr = requestContext.getString("state");
+    MatriculationExamEnrollmentState state = StringUtils.isNotBlank(stateStr) ? MatriculationExamEnrollmentState.valueOf(stateStr) : null;
     
     MatriculationExamEnrollmentDAO dao = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
-    List<MatriculationExamEnrollment> enrollments;
-    if (state == null) {
-      enrollments = dao.listAll(page * resultsPerPage, resultsPerPage);
-    } else {
-      enrollments = dao.listByState(state, page * resultsPerPage, resultsPerPage);
-    }
+    List<MatriculationExamEnrollment> enrollments = dao.listBy(state, BooleanUtils.isTrue(below20courses), page * resultsPerPage, resultsPerPage);
     
     List<Map<String, Object>> results = new ArrayList<>();
     for (MatriculationExamEnrollment enrollment : enrollments) {
@@ -51,6 +45,8 @@ public class SearchEnrollmentsJSONRequestController extends JSONRequestControlle
       result.put("name", enrollment.getName());
       result.put("email", enrollment.getEmail());
       result.put("state", enrollment.getState());
+      result.put("numMandatoryCourses", enrollment.getNumMandatoryCourses());
+      
       results.add(result);
     }
     
