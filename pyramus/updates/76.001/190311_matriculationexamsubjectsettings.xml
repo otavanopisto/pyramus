@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>
+    create table MatriculationExamSubjectSettings (
+      id bigint not null auto_increment, 
+      subject varchar(255) not null, 
+      project_id bigint, 
+      examDate datetime, 
+      primary key (id)
+    );
+  </sql>
+  
+  <sql>
+    alter table MatriculationExamSubjectSettings add constraint UK_11pqsbxadatp4rxqpx7eeoryj unique (subject);
+  </sql>
+
+  <sql>
+    alter table MatriculationExamSubjectSettings add constraint FKornlanpb0c6n1weyt279b72p8 foreign key (project_id) references Project (id);
+  </sql>
+    
+  <sql>
+    alter table MatriculationExam add column signupGrade_id bigint;
+  </sql>
+
+  <sql>
+    alter table MatriculationExam add constraint FKsvv2o3706wmr3xm936yacvlb9 foreign key (signupGrade_id) references Grade (id);
+  </sql>
+    
+  <sql>
+    alter table MatriculationExamAttendance add column projectAssessment_id bigint;
+  </sql>
+
+  <sql>
+    alter table MatriculationExamAttendance add constraint FKani6hdqbrl508k6e9dggv7cs5 foreign key (projectAssessment_id) references ProjectAssessment (id);
+  </sql>
+      
+</update>

@@ -117,19 +117,24 @@
 						paramName: 'repeat',
 						options: repeatOptions
 					}, {
+            header : 'Koepäivämäärä',
+            width: 200,
+            left: 8 + 300 + 8 + 300 + 8 + 200,
+            dataType : 'date',
+            editable: false,
+            paramName: 'examDate'
+          }, {
 						width : 22,
 						right : 8,
 						dataType : 'button',
 						imgsrc : GLOBAL_contextPath + '/gfx/edit-delete.png',
-						tooltip : 'Muokkaa',
-						onclick : function(event) {
-							enrolledAttendances.deleteRow(event.row);
-						}
+						tooltip : 'Poista',
+						onclick : confirmAttendanceDeletionClick
 					}]
 				});
 				enrolledAttendances.addRows(JSON.parse(JSDATA["enrolledAttendances"]));
 				document.getElementById("addEnrolledTableRow").addEventListener('click', function() {
-					enrolledAttendances.addRow([-1, 'ENA', 'MANDATORY', 'FIRST_TIME', '']);
+					enrolledAttendances.addRow([-1, 'ENA', 'MANDATORY', 'FIRST_TIME', '', '']);
 				});
 
 				var finishedAttendances = new IxTable($('finishedAttendancesTableContainer'), {
@@ -174,10 +179,8 @@
 						right : 8,
 						dataType : 'button',
 						imgsrc : GLOBAL_contextPath + '/gfx/edit-delete.png',
-						tooltip : 'Muokkaa',
-						onclick : function(event) {
-							finishedAttendances.deleteRow(event.row);
-						}
+						tooltip : 'Poista',
+						onclick : confirmAttendanceDeletionClick
 					}]
 				});
 				finishedAttendances.addRows(JSON.parse(JSDATA["finishedAttendances"]));
@@ -219,10 +222,8 @@
 						right : 8,
 						dataType : 'button',
 						imgsrc : GLOBAL_contextPath + '/gfx/edit-delete.png',
-						tooltip : 'Muokkaa',
-						onclick : function(event) {
-							plannedAttendances.deleteRow(event.row);
-						}
+						tooltip : 'Poista',
+						onclick : confirmAttendanceDeletionClick
 					}]
 				});
 				plannedAttendances.addRows(JSON.parse(JSDATA["plannedAttendances"]));
@@ -230,6 +231,47 @@
 					plannedAttendances.addRow([-1, 'SPRING2019', 'ENA', 'MANDATORY', '']);
 				});
 			};
+
+      function confirmAttendanceDeletionClick(event) {
+        var table = event.tableComponent;
+        var rowIndex = event.row;
+        var attendanceId = table.getCellValue(event.row, table.getNamedColumnIndex('attendanceId'));
+
+        if (attendanceId != -1) {
+          var url = GLOBAL_contextPath + "/simpledialog.page?localeId=matriculation.editEnrollment.archiveAttendanceConfirmDialogContent";
+          
+          var dialog = new IxDialog({
+            id : 'confirmRemoval',
+            contentURL : url,
+            centered : true,
+            showOk : true,  
+            showCancel : true,
+            autoEvaluateSize: true,
+            title : '<fmt:message key="generic.dialog.title.areyousure"/>',
+            okLabel : '<fmt:message key="generic.dialog.remove"/>',
+            cancelLabel : '<fmt:message key="generic.dialog.cancel"/>'
+          });
+        
+          dialog.addDialogListener(function(event) {
+            switch (event.name) {
+              case 'okClick':
+                JSONRequest.request("matriculation/archiveexamattendance.json", {
+                  parameters: {
+                    examAttendanceId: attendanceId
+                  },
+                  onSuccess: function (jsonResponse) {
+                    table.deleteRow(rowIndex);
+                  }
+                });   
+              break;
+            }
+          });
+        
+          dialog.open();
+        } else {
+          table.deleteRow(rowIndex);
+        }
+      }
 		</script>
 	</head> 
 	<body onload="onLoad(event);">
