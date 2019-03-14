@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>alter table MatriculationExamEnrollment modify column name varchar(255) null default null;</sql>
+  <sql>alter table MatriculationExamEnrollment modify column ssn varchar(255) null default null;</sql>
+  <sql>alter table MatriculationExamEnrollment modify column email varchar(255) null default null;</sql>
+  <sql>alter table MatriculationExamEnrollment modify column phone varchar(255) null default null;</sql>
+  <sql>alter table MatriculationExamEnrollment modify column address varchar(255) null default null;</sql>
+  <sql>alter table MatriculationExamEnrollment modify column city varchar(255) null default null;</sql>
+  <sql>alter table MatriculationExamEnrollment modify column guider varchar(255) null default null;</sql>
+  <sql>alter table MatriculationExamEnrollment modify column enrollAs varchar(255) null default null;</sql>
+  <sql>alter table MatriculationExamEnrollment modify column numMandatoryCourses integer null default null;</sql>
+  <sql>alter table MatriculationExamEnrollment modify column location varchar(255) null default null;</sql>
+  <sql>alter table MatriculationExamEnrollment modify column message longtext null default null;</sql>
+  
+</update>

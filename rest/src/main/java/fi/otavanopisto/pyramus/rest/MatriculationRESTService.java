@@ -1,7 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
 import java.util.Date;
-import java.time.LocalDate;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -135,7 +134,7 @@ public class MatriculationRESTService extends AbstractRESTService {
     }
     
     if (!"PENDING".equals(enrollment.getState())) {
-      return Response.status(Status.FORBIDDEN)
+      return Response.status(Status.BAD_REQUEST)
                      .entity("Can only send pending enrollments via REST")
                      .build();
     }
