@@ -382,7 +382,7 @@
 								<jsp:param name="titleLocale" value="matriculation.editEnrollment.restartExam"/>
 								<jsp:param name="helpLocale" value="matriculation.editEnrollment.restartExam.help"/>
 							</jsp:include>						
-							<input type="checkbox" name="restartExam" ${restartExam ? 'checked="checked"' : ''}/>
+							<input type="checkbox" name="restartExam" value="true" ${restartExam ? 'checked="checked"' : ''}/>
 						</div>
 
 						<div class="genericFormSection">
@@ -406,7 +406,7 @@
 								<jsp:param name="titleLocale" value="matriculation.editEnrollment.canPublishName"/>
 								<jsp:param name="helpLocale" value="matriculation.editEnrollment.canPublishName.help"/>
 							</jsp:include>						
-							<input type="checkbox" name="canPublishName" ${canPublishName ? 'checked="checked"' : ''}/>
+							<input type="checkbox" name="canPublishName" value="true" ${canPublishName ? 'checked="checked"' : ''}/>
 						</div>
 
 						<div class="genericFormSection">
