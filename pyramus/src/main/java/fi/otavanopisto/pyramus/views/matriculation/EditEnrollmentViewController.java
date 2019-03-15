@@ -255,7 +255,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
 
     MatriculationExam matriculationExam = matriculationExamDAO.get();
     
-    if (matriculationExam != null && matriculationExam.getSignupGrade() != null && examAttendance.getProjectAssessment() == null) {
+    if (matriculationExam != null && matriculationExam.getSignupGrade() != null && subjectSettings.getExamDate() != null && examAttendance.getProjectAssessment() == null) {
       // Add the exam date
       ProjectAssessment projectAssessment = projectAssessmentDAO.create(studentProject, loggedUser, matriculationExam.getSignupGrade(), subjectSettings.getExamDate(), "");
       // Link the project assessment to this exam atten dance
