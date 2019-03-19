@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.grading.GradeDAO;
@@ -17,7 +19,9 @@ import fi.otavanopisto.pyramus.domainmodel.grading.GradingScale;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
+import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import net.sf.json.JSONArray;
@@ -84,11 +88,15 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
     ProjectDAO projectDAO = DAOFactory.getInstance().getProjectDAO();
     GradeDAO gradeDAO = DAOFactory.getInstance().getGradeDAO();
     
-    Date starts = pageRequestContext.getDate("starts");
-    Date ends = pageRequestContext.getDate("ends");
+    Date starts = DateUtils.startOfDay(pageRequestContext.getDate("starts"));
+    Date ends = DateUtils.endOfDay(pageRequestContext.getDate("ends"));
+    
     Long signupGradeId = pageRequestContext.getLong("signupGradeId");
     Grade signupGrade = signupGradeId != null ? gradeDAO.findById(signupGradeId) : null;
-    dao.createOrUpdate(starts, ends, signupGrade);
+    Integer examYear = pageRequestContext.getInteger("examYear");
+    MatriculationExamTerm examTerm = StringUtils.isNotBlank(pageRequestContext.getString("examTerm")) ? 
+        MatriculationExamTerm.valueOf(pageRequestContext.getString("examTerm")) : null;
+    dao.createOrUpdate(starts, ends, signupGrade, examYear, examTerm);
     
     Long subjectTableRowCount = pageRequestContext.getLong("subjectSettingsTable.rowCount");
     for (int i = 0; i < subjectTableRowCount; i++) {

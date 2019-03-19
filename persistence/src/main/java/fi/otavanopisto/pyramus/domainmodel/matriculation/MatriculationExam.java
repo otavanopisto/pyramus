@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -63,6 +65,22 @@ public class MatriculationExam {
     this.signupGrade = signupGrade;
   }
 
+  public Integer getExamYear() {
+    return examYear;
+  }
+
+  public void setExamYear(Integer examYear) {
+    this.examYear = examYear;
+  }
+
+  public MatriculationExamTerm getExamTerm() {
+    return examTerm;
+  }
+
+  public void setExamTerm(MatriculationExamTerm examTerm) {
+    this.examTerm = examTerm;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExam")  
   @TableGenerator(name="MatriculationExam", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -75,6 +93,13 @@ public class MatriculationExam {
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false)
   private Date ends;
+
+  @Column
+  private Integer examYear;
+  
+  @Column
+  @Enumerated(EnumType.STRING)
+  private MatriculationExamTerm examTerm;
 
   @ManyToOne
   private Grade signupGrade;
