@@ -8,6 +8,7 @@ import javax.ejb.Stateless;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 
 @Stateless
 public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
@@ -15,7 +16,9 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
   public MatriculationExam createOrUpdate(
     Date starts,
     Date ends, 
-    Grade signupGrade
+    Grade signupGrade,
+    Integer examYear,
+    MatriculationExamTerm examTerm
   ) {
     MatriculationExam exam = get();
     if (exam == null) {
@@ -25,8 +28,9 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
     exam.setStarts(starts);
     exam.setEnds(ends);
     exam.setSignupGrade(signupGrade);
-    getEntityManager().persist(exam);
-    return exam;
+    exam.setExamYear(examYear);
+    exam.setExamTerm(examTerm);
+    return persist(exam);
   }
 
   public MatriculationExam get() {

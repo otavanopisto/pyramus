@@ -68,6 +68,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
       return;
     }
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    MatriculationExamDAO examDAO = DAOFactory.getInstance().getMatriculationExamDAO();
     MatriculationExamEnrollmentDAO enrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamAttendanceDAO attendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
     MatriculationExamEnrollment enrollment = enrollmentDAO.findById(id);
@@ -81,7 +82,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
     MatriculationExamEnrollmentState enrollmentState = MatriculationExamEnrollmentState.valueOf(
         pageRequestContext.getString("state"));
     
-    enrollmentDAO.update(
+    enrollment = enrollmentDAO.update(
       enrollment,
       ObjectUtils.firstNonNull(pageRequestContext.getString("name"), ""),
       ObjectUtils.firstNonNull(pageRequestContext.getString("ssn"), ""),
@@ -118,12 +119,17 @@ public class EditEnrollmentViewController extends PyramusViewController {
       
       MatriculationExamAttendance examAttendance;
       if (NEW_ROW_ID.equals(attendanceId)) {
+        // NOTE: new ENROLLED attendances are tied to the year and term defined in the exam properties
+        MatriculationExam matriculationExam = examDAO.get();
+        Integer year = matriculationExam.getExamYear();
+        MatriculationExamTerm term = matriculationExam.getExamTerm();
+        
         examAttendance = attendanceDAO.create(enrollment, subject, mandatory, repeat,
-          null, null, MatriculationExamAttendanceStatus.ENROLLED, null);
+            year, term, MatriculationExamAttendanceStatus.ENROLLED, null);
       } else {
         examAttendance = attendanceDAO.findById(attendanceId);
         examAttendance = attendanceDAO.update(examAttendance, enrollment, subject, mandatory, repeat,
-            null, null, MatriculationExamAttendanceStatus.ENROLLED, null);
+            examAttendance.getYear(), examAttendance.getTerm(), examAttendance.getStatus(), examAttendance.getGrade());
       }
       
       if (enrollmentState == MatriculationExamEnrollmentState.APPROVED) {
@@ -309,6 +315,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
         enrolledAttendances.add(
             Arrays.asList(
                 attendance.getId(),
+                attendance.getTerm().name() + attendance.getYear(),
                 attendance.getSubject().name(),
                 attendance.isMandatory() ? "MANDATORY" : "OPTIONAL",
                 attendance.isRetry() ? "REPEAT" : "FIRST_TIME",

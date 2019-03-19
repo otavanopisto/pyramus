@@ -19,6 +19,7 @@ import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
@@ -28,6 +29,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjec
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MatriculationPermissions;
@@ -42,6 +44,8 @@ import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 @RequestScoped
 public class MatriculationRESTService extends AbstractRESTService {
 
+  private static final String USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE = "matriculation.examEnrollmentExpiryDate";
+  
   @Inject
   private RESTSecurity restSecurity;
 
@@ -56,6 +60,9 @@ public class MatriculationRESTService extends AbstractRESTService {
 
   @Inject
   private MatriculationExamAttendanceDAO matriculationExamAttendanceDao;
+  
+  @Inject
+  private UserVariableDAO userVariableDAO;
   
   @Path("/currentExam")
   @GET
@@ -123,12 +130,17 @@ public class MatriculationRESTService extends AbstractRESTService {
   @POST
   @RESTPermit(handling = Handling.INLINE)
   public Response enrollToExam(fi.otavanopisto.pyramus.rest.model.MatriculationExamEnrollment enrollment) {
-  
     Student student = studentDao.findById(enrollment.getStudentId());
     if (student == null) {
       return Response.status(Status.BAD_REQUEST).entity("Student not found").build();
     }
 
+    if (!isExamEnrollmentActive(student)) {
+      return Response.status(Status.BAD_REQUEST)
+          .entity("Exam enrollment is closed")
+          .build();
+    }
+    
     if (!restSecurity.hasPermission(new String[] { UserPermissions.USER_OWNER }, student)) {
       return Response.status(Status.FORBIDDEN).build();
     }
@@ -138,7 +150,7 @@ public class MatriculationRESTService extends AbstractRESTService {
                      .entity("Can only send pending enrollments via REST")
                      .build();
     }
-  
+    
     try {
       MatriculationExamEnrollment enrollmentEntity = matriculationExamEnrollmentDao.create(
         enrollment.getName(),
@@ -161,16 +173,24 @@ public class MatriculationRESTService extends AbstractRESTService {
         new Date());
         
       for (MatriculationExamAttendance attendance : enrollment.getAttendances()) {
+        MatriculationExamAttendanceStatus status = attendance.getStatus() != null
+            ? MatriculationExamAttendanceStatus.valueOf(attendance.getStatus()) : null;
+            
+        MatriculationExam matriculationExam = matriculationExamDao.get();
+        // NOTE for ENROLLED the default values are taken from the exam properties if they don't exist in the payload
+        Integer year = attendance.getYear() != null ? attendance.getYear() : 
+          status == MatriculationExamAttendanceStatus.ENROLLED ? matriculationExam.getExamYear() : null;
+        MatriculationExamTerm term = attendance.getTerm() != null ? MatriculationExamTerm.valueOf(attendance.getTerm()) : 
+          status == MatriculationExamAttendanceStatus.ENROLLED ? matriculationExam.getExamTerm() : null;
+          
         matriculationExamAttendanceDao.create(
           enrollmentEntity,
           MatriculationExamSubject.valueOf(attendance.getSubject()),
           attendance.getMandatory(),
           attendance.getRepeat(),
-          attendance.getYear(),
-          attendance.getTerm() != null
-            ? MatriculationExamTerm.valueOf(attendance.getTerm()) : null,
-          attendance.getStatus() != null
-            ? MatriculationExamAttendanceStatus.valueOf(attendance.getStatus()) : null,
+          year,
+          term,
+          status,
           attendance.getGrade() != null
             ? MatriculationExamGrade.valueOf(attendance.getGrade()) : null);
       }
@@ -181,6 +201,24 @@ public class MatriculationRESTService extends AbstractRESTService {
     }
     
     return Response.ok(enrollment).build();
+  }
+
+  private boolean isExamEnrollmentActive(Student student) {
+    MatriculationExam matriculationExam = matriculationExamDao.get();
+    if (matriculationExam == null || matriculationExam.getStarts() == null || matriculationExam.getEnds() == null) {
+      // If dates are not set, exam enrollment is not active
+      return false;
+    }
+    
+    String personalExamEnrollmentExpiryStr = userVariableDAO.findByUserAndKey(student, USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE);
+    Date personalExamEnrollmentExpiry = personalExamEnrollmentExpiryStr != null ? DateUtils.endOfDay(new Date(Long.parseLong(personalExamEnrollmentExpiryStr))) : null;
+
+    Date enrollmentStarts = matriculationExam.getStarts();
+    Date enrollmentEnds = personalExamEnrollmentExpiry == null ? matriculationExam.getEnds() : 
+      new Date(Math.max(matriculationExam.getEnds().getTime(), personalExamEnrollmentExpiry.getTime()));
+    
+    Date currentDate = new Date();
+    return currentDate.after(enrollmentStarts) && currentDate.before(enrollmentEnds);
   }
 
 }

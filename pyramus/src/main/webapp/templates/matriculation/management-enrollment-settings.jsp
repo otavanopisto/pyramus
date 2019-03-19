@@ -90,6 +90,24 @@
 			</div>
 			<div id="settings" class="tabContent">
 				<form method="post">
+          <div class="genericFormSection">  
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="matriculation.settings.examYear"/>
+            </jsp:include>                                           
+            <input type="number" name="examYear" value="${exam.examYear}"/>
+          </div>
+
+          <div class="genericFormSection">  
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="matriculation.settings.examTerm"/>
+            </jsp:include>
+            <select name="examTerm">
+              <option value=""></option>
+              <option value="SPRING" ${exam.examTerm=='SPRING' ? 'selected="selected"' : ''}><fmt:message key="terms.seasons.spring"/></option>
+              <option value="AUTUMN" ${exam.examTerm=='AUTUMN' ? 'selected="selected"' : ''}><fmt:message key="terms.seasons.autumn"/></option>
+            </select>
+          </div>
+
 					<div class="genericFormSection">	
 						<jsp:include page="/templates/generic/fragments/formtitle.jsp">
 							<jsp:param name="titleLocale" value="matriculation.settings.startDate"/>

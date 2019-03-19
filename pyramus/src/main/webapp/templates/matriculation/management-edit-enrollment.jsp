@@ -93,17 +93,25 @@
 						dataType: 'hidden',
 						paramName: 'attendanceId'
 					}, {
+            header : 'Ajankohta',
+            left: 0,
+            width: 150,
+            dataType : 'select',
+            editable: false,
+            paramName: 'term',
+            options: termOptions
+          }, {
 						header : 'Aine',
-						left: 0,
+						left: 0 + 150 + 8,
 						width: 300,
 						dataType : 'select',
-						editable: true,
+						editable: false,
 						paramName: 'subject',
 						options: subjectOptions
 					}, {
 						header : 'Pakollisuus',
 						width: 300,
-						left: 8 + 300,
+						left: 0 + 150 + 8 + 300 + 8,
 						dataType : 'select',
 						editable: true,
 						paramName: 'mandatority',
@@ -111,7 +119,7 @@
 					}, {
 						header : 'Uusiminen',
 						width: 200,
-						left: 8 + 300 + 8 + 300,
+						left: 0 + 150 + 8 + 300 + 8 + 300 + 8,
 						dataType : 'select',
 						editable: true,
 						paramName: 'repeat',
@@ -119,7 +127,7 @@
 					}, {
             header : 'Koepäivämäärä',
             width: 200,
-            left: 8 + 300 + 8 + 300 + 8 + 200,
+            left: 0 + 150 + 8 + 300 + 8 + 300 + 8 + 200 + 8,
             dataType : 'date',
             editable: false,
             paramName: 'examDate'
@@ -134,7 +142,9 @@
 				});
 				enrolledAttendances.addRows(JSON.parse(JSDATA["enrolledAttendances"]));
 				document.getElementById("addEnrolledTableRow").addEventListener('click', function() {
-					enrolledAttendances.addRow([-1, 'ENA', 'MANDATORY', 'FIRST_TIME', '', '']);
+					var rowIndex = enrolledAttendances.addRow([-1, '', 'ENA', 'MANDATORY', 'FIRST_TIME', '', '']);
+          var subjectColumn = enrolledAttendances.getNamedColumnIndex('subject');
+          enrolledAttendances.setCellEditable(rowIndex, subjectColumn, true);
 				});
 
 				var finishedAttendances = new IxTable($('finishedAttendancesTableContainer'), {
@@ -145,7 +155,7 @@
 					}, {
 						header : 'Ajankohta',
 						left: 0,
-						width: 300,
+						width: 150,
 						dataType : 'select',
 						editable: true,
 						paramName: 'term',
@@ -153,7 +163,7 @@
 					}, {
 						header : 'Aine',
 						width: 300,
-						left: 8 + 300,
+						left: 0 + 150 + 8,
 						dataType : 'select',
 						editable: true,
 						paramName: 'subject',
@@ -161,7 +171,7 @@
 					}, {
 						header : 'Pakollisuus',
 						width: 200,
-						left: 8 + 300 + 8 + 300,
+						left: 0 + 150 + 8 + 300 + 8,
 						dataType : 'select',
 						editable: true,
 						paramName: 'mandatority',
@@ -169,7 +179,7 @@
 					}, {
 						header : 'Arvosana',
 						width: 200,
-						left: 8 + 300 + 8 + 300 + 8 + 200,
+						left: 0 + 150 + 8 + 300 + 8 + 200 + 8,
 						dataType : 'select',
 						editable: true,
 						paramName: 'grade',
@@ -196,7 +206,7 @@
 					}, {
 						header : 'Ajankohta',
 						left: 0,
-						width: 300,
+						width: 150,
 						dataType : 'select',
 						editable: true,
 						paramName: 'term',
@@ -204,7 +214,7 @@
 					}, {
 						header : 'Aine',
 						width: 300,
-						left: 8 + 300,
+						left: 0 + 150 + 8,
 						dataType : 'select',
 						editable: true,
 						paramName: 'subject',
@@ -212,7 +222,7 @@
 					}, {
 						header : 'Pakollisuus',
 						width: 200,
-						left: 8 + 300 + 8 + 300,
+						left: 0 + 150 + 8 + 300 + 8,
 						dataType : 'select',
 						editable: true,
 						paramName: 'mandatority',
