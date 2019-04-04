@@ -701,7 +701,7 @@
           }
         }
 
-        Event.observe($('studyEndReason.' + studentId), "click", _onStudyEndReasonChange);
+        Event.observe($('studyEndReason.' + studentId), 'change', _onStudyEndReasonChange);
       }
 
       function _onStudyEndReasonChange(event) {
