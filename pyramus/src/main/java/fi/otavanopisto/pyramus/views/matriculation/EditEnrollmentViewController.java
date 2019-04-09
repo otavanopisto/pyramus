@@ -27,6 +27,7 @@ import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
@@ -93,6 +94,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
       ObjectUtils.firstNonNull(pageRequestContext.getString("postalOffice"), ""),
       ObjectUtils.firstNonNull(pageRequestContext.getString("guidanceCounselor"), ""),
       SchoolType.valueOf(pageRequestContext.getString("enrollAs")),
+      DegreeType.valueOf(pageRequestContext.getString("degreeType")),
       ObjectUtils.firstNonNull(pageRequestContext.getInteger("numMandatoryCourses"), 0),
       pageRequestContext.getBoolean("restartExam"),
       ObjectUtils.firstNonNull(pageRequestContext.getString("location"), ""),
@@ -286,6 +288,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
       return;
     }
     
+    pageRequestContext.getRequest().setAttribute("enrollment", enrollment);
     pageRequestContext.getRequest().setAttribute("name", enrollment.getName());
     pageRequestContext.getRequest().setAttribute("ssn", enrollment.getSsn());
     pageRequestContext.getRequest().setAttribute("email", enrollment.getEmail());

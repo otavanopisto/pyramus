@@ -12,6 +12,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment_;
@@ -32,6 +33,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     Long nationalStudentNumber,
     String guider,
     SchoolType enrollAs,
+    DegreeType degreeType,
     int numMandatoryCourses,
     boolean restartExam,
     String location,
@@ -54,6 +56,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     result.setNationalStudentNumber(nationalStudentNumber);
     result.setGuider(guider);
     result.setEnrollAs(enrollAs);
+    result.setDegreeType(degreeType);
     result.setNumMandatoryCourses(numMandatoryCourses);
     result.setRestartExam(restartExam);
     result.setLocation(location);
@@ -78,6 +81,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     String city,
     String guider,
     SchoolType enrollAs,
+    DegreeType degreeType,
     int numMandatoryCourses,
     boolean restartExam,
     String location,
@@ -97,6 +101,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setCity(city);
     enrollment.setGuider(guider);
     enrollment.setEnrollAs(enrollAs);
+    enrollment.setDegreeType(degreeType);
     enrollment.setNumMandatoryCourses(numMandatoryCourses);
     enrollment.setRestartExam(restartExam);
     enrollment.setLocation(location);
