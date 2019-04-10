@@ -429,7 +429,10 @@
                 <jsp:param name="titleLocale" value="matriculation.editEnrollment.canPublishName"/>
                 <jsp:param name="helpLocale" value="matriculation.editEnrollment.canPublishName.help"/>
               </jsp:include>            
-              <input type="checkbox" name="canPublishName" value="true" ${canPublishName ? 'checked="checked"' : ''}/>
+              <select name="canPublishName">
+                <option ${enrollment.canPublishName ? 'selected="selected"' : ''} value="true">Haluan nimeni julkaistavan valmistujalistauksissa</option>
+                <option ${!enrollment.canPublishName ? 'selected="selected"' : ''} value="false">En halua nimeäni julkaistavan valmistujaislistauksissa</option>
+              </select>
             </div>
 
             <div class="genericFormSection">
