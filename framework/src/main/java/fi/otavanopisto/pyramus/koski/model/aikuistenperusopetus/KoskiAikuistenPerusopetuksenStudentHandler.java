@@ -154,17 +154,16 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
     Set<AikuistenPerusopetuksenOppiaineenSuoritus> results = new HashSet<>();
     
     Map<String, OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus>> map = new HashMap<>();
-    Set<AikuistenPerusopetuksenOppiaineenSuoritus> accomplished = new HashSet<>();
+    Set<OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus>> accomplished = new HashSet<>();
     
     for (CreditStub credit : credits) {
       OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> oppiaineenSuoritusWSubject = getSubject(student, studentEducationType, studentSubjects, credit.getSubject(), map);
-      AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus = oppiaineenSuoritusWSubject.getOppiaineenSuoritus();
-      collectAccomplishedMarks(credit.getSubject(), oppiaineenSuoritus, studentSubjects, accomplished);
+      collectAccomplishedMarks(credit.getSubject(), oppiaineenSuoritusWSubject, studentSubjects, accomplished);
 
-      if (settings.isReportedCredit(credit) && oppiaineenSuoritus != null) {
+      if (settings.isReportedCredit(credit) && oppiaineenSuoritusWSubject != null) {
         AikuistenPerusopetuksenKurssinSuoritus kurssiSuoritus = createKurssiSuoritus(ops, credit);
         if (kurssiSuoritus != null) {
-          oppiaineenSuoritus.addOsasuoritus(kurssiSuoritus);
+          oppiaineenSuoritusWSubject.getOppiaineenSuoritus().addOsasuoritus(kurssiSuoritus);
         } else {
           logger.warning(String.format("Course %s not reported for student %d due to unresolvable credit.", credit.getCourseCode(), student.getId()));
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNREPORTED_CREDIT, new Date(), credit.getCourseCode());
@@ -181,7 +180,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
       if (calculateMeanGrades) {
-        ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(oppiaineenSuoritus) ? 
+        ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(oppiaineenSuoritusWSubject) ? 
             ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(student, oppiaineenSuoritusWSubject.getSubject(), oppiaineenSuoritus);
         
         if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {

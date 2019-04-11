@@ -726,7 +726,7 @@ public abstract class KoskiStudentHandler {
 
   protected <T> void collectAccomplishedMarks(Subject subject, T subjectCounterpart,
       StudentSubjectSelections studentSubjects, Set<T> accomplished) {
-    if (subject != null) {
+    if (subject != null && subjectCounterpart != null) {
       if (studentSubjects.isAccomplishment(subject.getId())) {
         accomplished.add(subjectCounterpart);
       }
