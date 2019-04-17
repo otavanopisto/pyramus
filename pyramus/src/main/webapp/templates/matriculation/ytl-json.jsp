@@ -36,6 +36,13 @@
         <form method="get" action="${pageContext.request.contextPath}/ytl/report.binary">
           <div class="genericFormSection">  
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="matriculation.ytljson.schoolId"/>
+            </jsp:include>                                           
+            <input type="number" name="schoolId"/>
+          </div>
+
+          <div class="genericFormSection">  
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
               <jsp:param name="titleLocale" value="matriculation.settings.examYear"/>
             </jsp:include>                                           
             <input type="number" name="examYear" value="${currentYear}"/>
