@@ -20,6 +20,8 @@ import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
@@ -29,6 +31,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjec
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.DateUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
@@ -63,7 +66,10 @@ public class MatriculationRESTService extends AbstractRESTService {
   
   @Inject
   private UserVariableDAO userVariableDAO;
-  
+
+  @Inject
+  private UserVariableKeyDAO userVariableKeyDAO;
+
   @Path("/currentExam")
   @GET
   @RESTPermit(MatriculationPermissions.GET_CURRENT_EXAM)
@@ -113,6 +119,7 @@ public class MatriculationRESTService extends AbstractRESTService {
       result.setNationalStudentNumber(latest.getNationalStudentNumber());
       result.setGuider(latest.getGuider());
       result.setEnrollAs(latest.getEnrollAs().name());
+      result.setDegreeType(latest.getDegreeType().name());
       result.setNumMandatoryCourses(latest.getNumMandatoryCourses());
       result.setRestartExam(latest.isRestartExam());
       result.setLocation(latest.getLocation());
@@ -123,7 +130,6 @@ public class MatriculationRESTService extends AbstractRESTService {
       result.setEnrollmentDate(enrollmentDate);
       return Response.ok(result).build();
     }
-    
   }
   
   @Path("/enrollments")
@@ -163,6 +169,7 @@ public class MatriculationRESTService extends AbstractRESTService {
         enrollment.getNationalStudentNumber(),
         enrollment.getGuider(),
         SchoolType.valueOf(enrollment.getEnrollAs()),
+        DegreeType.valueOf(enrollment.getDegreeType()),
         enrollment.getNumMandatoryCourses(),
         enrollment.isRestartExam(),
         enrollment.getLocation(),
@@ -210,7 +217,8 @@ public class MatriculationRESTService extends AbstractRESTService {
       return false;
     }
     
-    String personalExamEnrollmentExpiryStr = userVariableDAO.findByUserAndKey(student, USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE);
+    UserVariableKey userVariableKey = userVariableKeyDAO.findByVariableKey(USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE);
+    String personalExamEnrollmentExpiryStr = userVariableKey != null ? userVariableDAO.findByUserAndKey(student, USERVARIABLE_PERSONAL_EXAM_ENROLLMENT_EXPIRYDATE) : null;
     Date personalExamEnrollmentExpiry = personalExamEnrollmentExpiryStr != null ? DateUtils.endOfDay(new Date(Long.parseLong(personalExamEnrollmentExpiryStr))) : null;
 
     Date enrollmentStarts = matriculationExam.getStarts();

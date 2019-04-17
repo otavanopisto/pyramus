@@ -187,6 +187,14 @@ public class MatriculationExamEnrollment {
     this.candidateNumber = candidateNumber;
   }
 
+  public DegreeType getDegreeType() {
+    return degreeType;
+  }
+
+  public void setDegreeType(DegreeType degreeType) {
+    this.degreeType = degreeType;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
   @TableGenerator(name="MatriculationExamEnrollment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -223,6 +231,10 @@ public class MatriculationExamEnrollment {
   @Column
   @Enumerated(EnumType.STRING)
   private SchoolType enrollAs;
+  
+  @Column
+  @Enumerated(EnumType.STRING)
+  private DegreeType degreeType;
   
   @Column
   private int numMandatoryCourses;
