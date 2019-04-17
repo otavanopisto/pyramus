@@ -8,13 +8,18 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment_;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 
@@ -163,6 +168,30 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       .getResultList();
   }
     
+  public List<MatriculationExamEnrollment> listDistinctByAttendanceTerms(MatriculationExamEnrollmentState enrollmentState, 
+      Integer year, MatriculationExamTerm term, MatriculationExamAttendanceStatus attendanceStatus) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<MatriculationExamEnrollment> criteria = criteriaBuilder.createQuery(MatriculationExamEnrollment.class);
+    Root<MatriculationExamAttendance> root = criteria.from(MatriculationExamAttendance.class);
+    Join<MatriculationExamAttendance, MatriculationExamEnrollment> enrollment = root.join(MatriculationExamAttendance_.enrollment);
+    
+    criteria.select(root.get(MatriculationExamAttendance_.enrollment)).distinct(true);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(enrollment.get(MatriculationExamEnrollment_.state), enrollmentState),
+            criteriaBuilder.equal(root.get(MatriculationExamAttendance_.year), year),
+            criteriaBuilder.equal(root.get(MatriculationExamAttendance_.term), term),
+            criteriaBuilder.equal(root.get(MatriculationExamAttendance_.status), attendanceStatus)
+        )
+    );
+    
+    return entityManager
+      .createQuery(criteria)
+      .getResultList();
+  }
+  
   public MatriculationExamEnrollment findLatestByStudent(Student student) {
     EntityManager entityManager = getEntityManager(); 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -180,6 +209,11 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     } else {
       return resultList.get(0);
     }
+  }
+
+  public MatriculationExamEnrollment updateCandidateNumber(MatriculationExamEnrollment enrollment, int candidateNumber) {
+    enrollment.setCandidateNumber(candidateNumber);
+    return persist(enrollment);
   }
 
 }

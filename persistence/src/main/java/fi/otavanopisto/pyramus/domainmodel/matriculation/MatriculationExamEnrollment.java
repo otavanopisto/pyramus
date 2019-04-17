@@ -179,6 +179,14 @@ public class MatriculationExamEnrollment {
     this.enrollmentDate = enrollmentDate;
   }
 
+  public Integer getCandidateNumber() {
+    return candidateNumber;
+  }
+
+  public void setCandidateNumber(Integer candidateNumber) {
+    this.candidateNumber = candidateNumber;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
   @TableGenerator(name="MatriculationExamEnrollment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -235,6 +243,9 @@ public class MatriculationExamEnrollment {
 
   @ManyToOne
   private Student student;
+  
+  @Column
+  private Integer candidateNumber;
   
   @Column
   @Enumerated(EnumType.STRING)
