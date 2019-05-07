@@ -6,16 +6,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -25,11 +17,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.BinaryRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
@@ -198,15 +192,29 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
   private void lataaSuoritetutKurssit(Student student, YTLAineKoodi ytlAineKoodi, List<SuoritettuKurssi> suoritetutKurssit) {
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
+    EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();
     
-    // TODO: educationtype?
-    Subject subject = subjectDAO.findByCode(ytlAineKoodi.getYtlAine());
-    List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudentAndSubject(student, subject);
-
-    long kursseja = courseAssessments.stream()
-      .filter(courseAssessment -> courseAssessment.getGrade() != null ? courseAssessment.getGrade().getPassingGrade() : false)
-      .count();
-    SuoritettuKurssi suoritettuKurssi = new SuoritettuKurssi(ytlAineKoodi.getYtlAine(), ytlAineKoodi.getYtlOppimäärä(), (int) kursseja);
+    long kurssiLukumäärä = 0;
+    
+    for (YTLAineKoodiSuoritettuKurssi ytlAKSK : ytlAineKoodi.getSuoritetutKurssit()) {
+      EducationType educationType = educationTypeDAO.findById(ytlAKSK.getEducationType());
+      if (educationType != null) {
+        Subject subject = subjectDAO.findBy(educationType, ytlAKSK.getSubjectCode());
+        if (subject != null) {
+          List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudentAndSubject(student, subject);
+      
+          kurssiLukumäärä += courseAssessments.stream()
+            .filter(courseAssessment -> courseAssessment.getGrade() != null ? courseAssessment.getGrade().getPassingGrade() : false)
+            .count();
+        } else {
+          System.out.println("Specified subjectcode for educationtype was not found");
+        }
+      } else {
+        System.out.println("Specified educationtype was not found");
+      }
+    }
+    
+    SuoritettuKurssi suoritettuKurssi = new SuoritettuKurssi(ytlAineKoodi.getYtlAine(), ytlAineKoodi.getYtlOppimäärä(), (int) kurssiLukumäärä);
     suoritetutKurssit.add(suoritettuKurssi);
   }
 
