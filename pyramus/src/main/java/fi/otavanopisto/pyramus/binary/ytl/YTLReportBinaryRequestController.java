@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -48,6 +50,7 @@ import fi.otavanopisto.pyramus.ytl.YTLSiirtotiedosto;
 
 public class YTLReportBinaryRequestController extends BinaryRequestController {
 
+  private static final Logger logger = Logger.getLogger(YTLReportBinaryRequestController.class.getName());
   private static final String KOSKI_HENKILO_OID = "koski.henkilo-oid";
 
   public void process(BinaryRequestContext binaryRequestContext) {
@@ -149,7 +152,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
       if (ytlÄidinkieli != null) {
         äidinkielenKoe = ytlÄidinkieli.getYtlAine();
       } else {
-        System.out.println("NOMAPPING");
+        logger.warning(String.format("No äidinkieli mapping found for %s", äidinkieli.getSubject()));
       }
     }
     
@@ -180,7 +183,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
         
         lataaSuoritetutKurssit(student, ytlAineKoodi, suoritetutKurssit);
       } else {
-        System.out.println("NOMAPPING");
+        logger.warning(String.format("No subject mapping found for %s", examSubject));
       }
     }
 
@@ -207,10 +210,10 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
             .filter(courseAssessment -> courseAssessment.getGrade() != null ? courseAssessment.getGrade().getPassingGrade() : false)
             .count();
         } else {
-          System.out.println("Specified subjectcode for educationtype was not found");
+          logger.warning(String.format("Specified subjectcode %s for educationtype %d was not found", ytlAKSK.getSubjectCode(), ytlAKSK.getEducationType()));
         }
       } else {
-        System.out.println("Specified educationtype was not found");
+        logger.warning(String.format("Specified educationtype %d was not found", ytlAKSK.getEducationType()));
       }
     }
     
@@ -271,8 +274,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
       InputStream json = getClass().getClassLoader().getResourceAsStream("fi/otavanopisto/pyramus/ytl/ytl_ainekoodit.json");
       return objectMapper.readValue(json, new TypeReference<List<YTLAineKoodi>>(){});
     } catch (IOException e) {
-      e.printStackTrace();
-//      logger.log(Level.SEVERE, "Failed to read matriculation eligibility mapping", e);
+      logger.log(Level.SEVERE, "Could not read YTL Mapping file", e);
     }
     
     return new ArrayList<>();
