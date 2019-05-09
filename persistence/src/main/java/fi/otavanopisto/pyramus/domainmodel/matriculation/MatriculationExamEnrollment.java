@@ -179,6 +179,14 @@ public class MatriculationExamEnrollment {
     this.enrollmentDate = enrollmentDate;
   }
 
+  public Integer getCandidateNumber() {
+    return candidateNumber;
+  }
+
+  public void setCandidateNumber(Integer candidateNumber) {
+    this.candidateNumber = candidateNumber;
+  }
+
   public DegreeType getDegreeType() {
     return degreeType;
   }
@@ -247,6 +255,9 @@ public class MatriculationExamEnrollment {
 
   @ManyToOne
   private Student student;
+  
+  @Column
+  private Integer candidateNumber;
   
   @Column
   @Enumerated(EnumType.STRING)

@@ -82,6 +82,32 @@ public class SubjectDAO extends PyramusEntityDAO<Subject> {
     return null;
   }
 
+  public Subject findBy(EducationType educationType, String subjectCode) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Subject> criteria = criteriaBuilder.createQuery(Subject.class);
+    Root<Subject> root = criteria.from(Subject.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(Subject_.educationType), educationType),
+            criteriaBuilder.equal(root.get(Subject_.code), subjectCode)
+        )
+    );
+    
+    List<Subject> subjects = entityManager.createQuery(criteria).getResultList();
+    
+    // This is sort of a hack for case sensitive search, same as in findByCode
+    for (Subject subject : subjects) {
+      if (subjectCode.equals(subject.getCode())) {
+        return subject;
+      }
+    }
+
+    return null;
+  }
+
   public List<Subject> listByEducationType(EducationType educationType) {
     EntityManager entityManager = getEntityManager(); 
     

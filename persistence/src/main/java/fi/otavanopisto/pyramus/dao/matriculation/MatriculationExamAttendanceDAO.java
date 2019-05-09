@@ -59,6 +59,42 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  public List<MatriculationExamAttendance> listByEnrollmentAndStatus(MatriculationExamEnrollment enrollment,
+      MatriculationExamAttendanceStatus status) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<MatriculationExamAttendance> criteria = criteriaBuilder.createQuery(MatriculationExamAttendance.class);
+    Root<MatriculationExamAttendance> root = criteria.from(MatriculationExamAttendance.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(MatriculationExamAttendance_.enrollment), enrollment),
+            criteriaBuilder.equal(root.get(MatriculationExamAttendance_.status), status)
+        )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public List<MatriculationExamAttendance> listBy(Integer year, MatriculationExamTerm term, MatriculationExamAttendanceStatus status) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<MatriculationExamAttendance> criteria = criteriaBuilder.createQuery(MatriculationExamAttendance.class);
+    Root<MatriculationExamAttendance> root = criteria.from(MatriculationExamAttendance.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(MatriculationExamAttendance_.year), year),
+            criteriaBuilder.equal(root.get(MatriculationExamAttendance_.term), term),
+            criteriaBuilder.equal(root.get(MatriculationExamAttendance_.status), status)
+        )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   public MatriculationExamAttendance update(MatriculationExamAttendance attendance,
       MatriculationExamEnrollment enrollment,
       MatriculationExamSubject subject,
@@ -87,5 +123,5 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
   public void delete(MatriculationExamAttendance matriculationExamAttendance) {
     super.delete(matriculationExamAttendance);
   }
-  
+
 }
