@@ -212,7 +212,6 @@ IxTable = Class.create({
         if (typeof value == 'object' && value instanceof Object && !(value instanceof Array)) {
           if (value.tooltip) {
             cell.title = value.tooltip;
-            hasStyles = true;
           }
           if (value.extraClass) {
             cell.addClassName(value.extraClass);
