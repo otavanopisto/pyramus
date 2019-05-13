@@ -408,6 +408,12 @@ h1.genericPageHeader{
   margin-left: 8px;
 }
 
+.viewStudentRaisedGrade {
+  background:url('../gfx/icons/custom/actions/ixtable_sortbutton_ascending.png') no-repeat;
+  background-position: 75px 5px;
+  height: 18px;
+}
+
 .viewStudentTransferCreditsTotalContainer {
   display: inline-block;   
   font-weight: bold;

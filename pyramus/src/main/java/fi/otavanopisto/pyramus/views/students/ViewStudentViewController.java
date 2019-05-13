@@ -13,9 +13,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -49,8 +52,10 @@ import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
+import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
+import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.file.StudentFile;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
@@ -207,6 +212,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
     JSONObject studentVariablesJSON = new JSONObject();
     JSONArray studentReportsJSON = new JSONArray();
     JSONArray curriculumsJSON = new JSONArray();
+    JSONObject studentAssessmentsJSON = new JSONObject();
     
     List<Report> studentReports = reportDAO.listByContextType(ReportContextType.Student);
     Collections.sort(studentReports, new StringAttributeComparator("getName"));
@@ -368,7 +374,6 @@ public class ViewStudentViewController extends PyramusViewController implements 
        */
       
       List<CourseAssessment> courseAssessmentsByStudent = courseAssessmentDAO.listByStudent(student);
-
       for (CourseAssessment courseAssessment : courseAssessmentsByStudent) {
         Long courseStudentId = courseAssessment.getCourseStudent().getId(); 
         courseAssessmentsByCourseStudent.put(courseStudentId, courseAssessment);
@@ -393,6 +398,52 @@ public class ViewStudentViewController extends PyramusViewController implements 
           return s1.compareToIgnoreCase(s2);
         }
       });
+
+      JSONArray jsonCourseStudentAssessments = new JSONArray();
+      for (CourseStudent courseStudent : courseStudentsByStudent) {
+        List<CourseAssessment> courseAssessmentList = courseAssessmentsByStudent.stream()
+          .filter(courseAssessment -> Objects.equals(courseStudent.getId(), courseAssessment.getCourseStudent().getId()))
+          .collect(Collectors.toList());
+        
+        if (CollectionUtils.isNotEmpty(courseAssessmentList) && courseStudent.getCourse() != null) {
+          Course course = courseStudent.getCourse();
+          
+          JSONObject obj = new JSONObject();
+          obj.put("courseStudentId", courseStudent.getId());
+          obj.put("courseName", course.getName());
+          obj.put("subjectName", getSubjectText(course.getSubject(), pageRequestContext.getRequest().getLocale()));
+          
+          JSONArray jsonCurriculums = new JSONArray();
+          for (Curriculum curriculum : course.getCurriculums()) {
+            JSONObject curobj = new JSONObject();
+            curobj.put("name", curriculum.getName());
+            jsonCurriculums.add(curobj);
+          }
+          obj.put("curriculums", jsonCurriculums);
+
+          if (course.getCourseLength() != null) {
+            EducationalLength courseLength = course.getCourseLength();
+            obj.put("courseLength", courseLength.getUnits().toString());
+            if (courseLength.getUnit() != null) {
+              obj.put("courseLengthUnitName", courseLength.getUnit().getName());
+            }
+          }
+          
+          JSONArray jsonCourseAssessments = new JSONArray();
+          for (CourseAssessment ass : courseAssessmentList) {
+            JSONObject assobj = new JSONObject();
+            assobj.put("timestamp", ass.getDate().getTime());
+            assobj.put("gradeName", ass.getGrade().getName());
+            assobj.put("gradingScaleName", ass.getGrade().getGradingScale().getName());
+            assobj.put("assessorName", ass.getAssessor().getFullName());
+            jsonCourseAssessments.add(assobj);
+          }
+          obj.put("assessments", jsonCourseAssessments);
+          jsonCourseStudentAssessments.add(obj);
+        }
+      }
+      studentAssessmentsJSON.put(student.getId(), jsonCourseStudentAssessments);
+      
       
       /**
        * Fetching and sorting of Transfer Credits 
@@ -738,6 +789,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
       e.printStackTrace();
     }
 
+    setJsDataVariable(pageRequestContext, "studentAssessments", studentAssessmentsJSON.toString());
     setJsDataVariable(pageRequestContext, "linkedCourseAssessments", linkedCourseAssessments.toString());
     setJsDataVariable(pageRequestContext, "linkedTransferCredits", linkedTransferCredits.toString());
     setJsDataVariable(pageRequestContext, "studentFiles", studentFiles.toString());
@@ -911,20 +963,20 @@ public class ViewStudentViewController extends PyramusViewController implements 
     
     String localizedSubject = subjectName;
     
-    if ((subjectCode != null) && (subjectEducationType != null)) {
+    if (StringUtils.isNotBlank(subjectCode) && StringUtils.isNotBlank(subjectEducationType)) {
       localizedSubject = Messages.getInstance().getText(locale, 
           "generic.subjectFormatterWithEducationType", new Object[] {
         subjectCode,
         subjectName,
         subjectEducationType
       });
-    } else if (subjectEducationType != null) {
+    } else if (StringUtils.isNotBlank(subjectEducationType)) {
       localizedSubject = Messages.getInstance().getText(locale, 
           "generic.subjectFormatterNoSubjectCode", new Object[] {
         subjectName,
         subjectEducationType
       });
-    } else if (subjectCode != null) {
+    } else if (StringUtils.isNotBlank(subjectCode)) {
       localizedSubject = Messages.getInstance().getText(locale, 
           "generic.subjectFormatterNoEducationType", new Object[] {
         subjectCode,

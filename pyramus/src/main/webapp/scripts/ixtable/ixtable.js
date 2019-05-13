@@ -207,15 +207,28 @@ IxTable = Class.create({
           cellStyles.width = column.width + 'px';
           hasStyles = true;
         }
-        
-        if (hasStyles)
+
+        var value = values[i];
+        if (typeof value == 'object' && value instanceof Object && !(value instanceof Array)) {
+          if (value.tooltip) {
+            cell.title = value.tooltip;
+            hasStyles = true;
+          }
+          if (value.extraClass) {
+            cell.addClassName(value.extraClass);
+          }
+          value = value.value;
+        }
+
+        if (hasStyles) {
           cell.setStyle(cellStyles);
+        }
         
         var cellContentHandler = this._createCellContentHandler(name, column, editable); 
         rowContent.appendChild(cell);
         var cellController = IxTableControllers.getController(column.dataType);
         cellController.attachContentHandler(this, cell, cellContentHandler);
-        cellController.setEditorValue(cellContentHandler, values[i]);
+        cellController.setEditorValue(cellContentHandler, value);
         
         if (this._hasHeader == true) {
           this._headerRow.setStyle({
