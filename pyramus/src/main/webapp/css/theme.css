@@ -409,9 +409,12 @@ h1.genericPageHeader{
 }
 
 .viewStudentRaisedGrade {
-  background:url('../gfx/icons/custom/actions/ixtable_sortbutton_ascending.png') no-repeat;
-  background-position: 75px 5px;
-  height: 18px;
+  background:url('../gfx/icons/custom/actions/raised-grade.png') no-repeat;
+  background-size: 12px 12px;
+  background-position: 15px 5px;
+  height: 20px;
+  font-style: italic;
+  font-weight: bold;
 }
 
 .viewStudentTransferCreditsTotalContainer {
