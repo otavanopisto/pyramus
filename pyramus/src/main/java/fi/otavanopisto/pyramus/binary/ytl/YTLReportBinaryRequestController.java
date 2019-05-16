@@ -21,14 +21,12 @@ import fi.internetix.smvc.controllers.BinaryRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
-import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
-import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
@@ -40,6 +38,9 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.framework.BinaryRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.views.students.tor.StudentTOR;
+import fi.otavanopisto.pyramus.views.students.tor.StudentTORController;
+import fi.otavanopisto.pyramus.views.students.tor.TORSubject;
 import fi.otavanopisto.pyramus.ytl.Kokelas;
 import fi.otavanopisto.pyramus.ytl.Koulutustyyppi;
 import fi.otavanopisto.pyramus.ytl.SuoritettuKurssi;
@@ -167,7 +168,15 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     kokelas.setUudelleenaloittaja(uudelleenaloittaja);
     
     kokelas.setÄidinkielenKoe(äidinkielenKoe);
-    
+
+    StudentTOR tor;
+    try {
+      tor = StudentTORController.constructStudentTOR(student);
+    } catch (Exception ex) {
+      tor = new StudentTOR();
+      logger.log(Level.SEVERE, String.format("Failed to construct TOR for Student %d", student.getId()), ex);
+    }
+
     List<SuoritettuKurssi> suoritetutKurssit = new ArrayList<>();
     
     for (MatriculationExamAttendance attendance : attendances) {
@@ -181,7 +190,7 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
           kokelas.addYlimääräinenKoe(ytlAineKoodi.getYhdistettyAineKoodi());
         }
         
-        lataaSuoritetutKurssit(student, ytlAineKoodi, suoritetutKurssit);
+        lataaSuoritetutKurssit(student, tor, ytlAineKoodi, suoritetutKurssit);
       } else {
         logger.warning(String.format("No subject mapping found for %s", examSubject));
       }
@@ -192,9 +201,8 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     return kokelas;
   }
 
-  private void lataaSuoritetutKurssit(Student student, YTLAineKoodi ytlAineKoodi, List<SuoritettuKurssi> suoritetutKurssit) {
+  private void lataaSuoritetutKurssit(Student student, StudentTOR tor, YTLAineKoodi ytlAineKoodi, List<SuoritettuKurssi> suoritetutKurssit) {
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
-    CourseAssessmentDAO courseAssessmentDAO = DAOFactory.getInstance().getCourseAssessmentDAO();
     EducationTypeDAO educationTypeDAO = DAOFactory.getInstance().getEducationTypeDAO();
     
     long kurssiLukumäärä = 0;
@@ -204,11 +212,10 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
       if (educationType != null) {
         Subject subject = subjectDAO.findBy(educationType, ytlAKSK.getSubjectCode());
         if (subject != null) {
-          List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudentAndSubject(student, subject);
-      
-          kurssiLukumäärä += courseAssessments.stream()
-            .filter(courseAssessment -> courseAssessment.getGrade() != null ? courseAssessment.getGrade().getPassingGrade() : false)
-            .count();
+          TORSubject torSubject = tor.findSubject(subject.getCode());
+          if (torSubject != null) {
+            kurssiLukumäärä += torSubject.getPassedCoursesCount();
+          }
         } else {
           logger.warning(String.format("Specified subjectcode %s for educationtype %d was not found", ytlAKSK.getSubjectCode(), ytlAKSK.getEducationType()));
         }

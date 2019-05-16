@@ -4,16 +4,15 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -42,7 +41,6 @@ import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentImageDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
-import fi.otavanopisto.pyramus.dao.students.StudentSubjectGradeDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -55,7 +53,6 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
 import fi.otavanopisto.pyramus.domainmodel.file.StudentFile;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
-import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditType;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
@@ -69,20 +66,15 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntry;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentContactLogEntryComment;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
-import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
-import fi.otavanopisto.pyramus.rest.model.Grade;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 import fi.otavanopisto.pyramus.views.students.tor.StudentTOR;
-import fi.otavanopisto.pyramus.views.students.tor.TORCourse;
-import fi.otavanopisto.pyramus.views.students.tor.TORCredit;
-import fi.otavanopisto.pyramus.views.students.tor.TORCreditType;
-import fi.otavanopisto.pyramus.views.students.tor.TORSubject;
+import fi.otavanopisto.pyramus.views.students.tor.StudentTORController;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -93,6 +85,8 @@ import net.sf.json.JSONObject;
  */
 public class ViewStudentViewController extends PyramusViewController implements Breadcrumbable {
 
+  private static final Logger logger = Logger.getLogger(ViewStudentViewController.class.getName());
+      
   /**
    * Returns allowed roles for this page. Allowed are UserRole.MANAGER and UserRole.ADMINISTRATOR.
    * 
@@ -672,50 +666,10 @@ public class ViewStudentViewController extends PyramusViewController implements 
       studentLodgingPeriods.put(student.getId(), studentLodgingPeriodDAO.listByStudent(student));
       
       try {
-        StudentTOR tor = new StudentTOR();
-  
-        for (CourseAssessment courseAssessment : courseAssessmentsByStudent) {
-          if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
-            Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
-            Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
-            Set<Curriculum> creditCurriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
-            addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums);
-          }
-        }
-        
-        for (TransferCredit transferCredit : transferCreditsByStudent) {
-          Subject subject = transferCredit.getSubject();
-          Integer courseNumber = transferCredit.getCourseNumber();
-          Set<Curriculum> creditCurriculums = transferCredit.getCurriculum() != null ? 
-              new HashSet<>(Arrays.asList(transferCredit.getCurriculum())) : Collections.emptySet();
-          addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums);
-        }
-        
-        for (CreditLink linkedCourseAssessment : linkedCourseAssessmentByStudent) {
-          CourseAssessment courseAssessment = (CourseAssessment) linkedCourseAssessment.getCredit();
-          if (courseAssessment != null && courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null) {
-            Subject subject = courseAssessment.getCourseStudent().getCourse().getSubject();
-            Integer courseNumber = courseAssessment.getCourseStudent().getCourse().getCourseNumber();
-            Set<Curriculum> creditCurriculums = courseAssessment.getCourseStudent().getCourse().getCurriculums();
-            addTORCredit(tor, student, subject, courseAssessment, courseNumber, creditCurriculums);
-          }
-        }
-        
-        for (CreditLink linkedTransferCredit : linkedTransferCreditsByStudent) {
-          TransferCredit transferCredit = (TransferCredit) linkedTransferCredit.getCredit();
-          if (transferCredit != null) {
-            Subject subject = transferCredit.getSubject();
-            Integer courseNumber = transferCredit.getCourseNumber();
-            Set<Curriculum> creditCurriculums = transferCredit.getCurriculum() != null ? 
-                new HashSet<>(Arrays.asList(transferCredit.getCurriculum())) : Collections.emptySet();
-            addTORCredit(tor, student, subject, transferCredit, courseNumber, creditCurriculums);
-          }
-        }
-  
-        tor.sort();
+        StudentTOR tor = StudentTORController.constructStudentTOR(student);
         subjectCredits.put(student.getId(), tor);
       } catch (Exception ex) {
-        ex.printStackTrace();
+        logger.log(Level.SEVERE, String.format("Failed to construct TOR for student %d", student.getId()), ex);
       }
     }
 
@@ -762,57 +716,6 @@ public class ViewStudentViewController extends PyramusViewController implements 
     pageRequestContext.getRequest().setAttribute("hasPersonVariables", CollectionUtils.isNotEmpty(personVariableKeys));
 
     pageRequestContext.setIncludeJSP("/templates/students/viewstudent.jsp");
-  }
-
-  private void addTORCredit(StudentTOR tor, Student student, Subject subject, Credit credit, Integer courseNumber, Set<Curriculum> creditCurriculums) {
-    if (credit.getGrade() == null) {
-      return;
-    }
-    
-    if (student.getCurriculum() != null) {
-      Long studentCurriculumId = student.getCurriculum().getId();
-      
-      if (!creditCurriculums.isEmpty()) {
-        boolean matchingCurriculum = creditCurriculums.stream()
-          .map(Curriculum::getId)
-          .anyMatch(studentCurriculumId::equals);
-        
-        // Both student and credit have curriculums set, but they didn't match -> skip the credit
-        if (!matchingCurriculum) {
-          return;
-        }
-      }
-    }
-    
-    Long educationTypeId = subject.getEducationType() != null ? subject.getEducationType().getId() : null;
-    fi.otavanopisto.pyramus.rest.model.Subject subjectModel = new fi.otavanopisto.pyramus.rest.model.Subject(
-        subject.getId(), subject.getCode(), subject.getName(), educationTypeId, subject.getArchived());
-    
-    TORSubject torSubject = tor.findSubject(subject.getId());
-    if (torSubject == null) {
-      torSubject = TORSubject.from(subjectModel);
-      tor.addSubject(torSubject);
-      
-      StudentSubjectGradeDAO studentSubjectGradeDAO = DAOFactory.getInstance().getStudentSubjectGradeDAO();
-      StudentSubjectGrade studentSubjectGrade = studentSubjectGradeDAO.findBy(student, subject);
-      if (studentSubjectGrade != null && studentSubjectGrade.getGrade() != null) {
-        fi.otavanopisto.pyramus.domainmodel.grading.Grade grade = studentSubjectGrade.getGrade();
-        Grade gradeModel = new Grade(grade.getId(), grade.getName(), grade.getDescription(), grade.getGradingScale().getId(),
-            grade.getPassingGrade(), grade.getQualification(), grade.getGPA(), grade.getArchived());
-        torSubject.setMeanGrade(gradeModel);
-      }
-    }
-    
-    TORCourse torCourse = torSubject.findCourse(courseNumber);
-    if (torCourse == null) {
-      torCourse = new TORCourse(subjectModel, courseNumber);
-      torSubject.addCourse(torCourse);
-    }
-    
-    String gradeName = credit.getGrade().getName();
-    Double gpa = credit.getGrade().getGPA();
-    torCourse.addCredit(new TORCredit(credit.getGrade().getId(), gradeName, gpa, credit.getDate(), 
-        TORCreditType.COURSEASSESSMENT, credit.getGrade().getPassingGrade()));
   }
 
   /**
