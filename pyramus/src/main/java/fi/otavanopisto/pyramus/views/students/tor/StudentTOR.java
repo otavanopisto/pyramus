@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class StudentTOR {
 
   public void addSubject(TORSubject subject) {
@@ -14,6 +16,10 @@ public class StudentTOR {
 
   public TORSubject findSubject(Long subjectId) {
     return subjects.stream().filter(subject -> Objects.equals(subject.getId(), subjectId)).findFirst().orElse(null);
+  }
+  
+  public TORSubject findSubject(String subjectCode) {
+    return subjects.stream().filter(subject -> StringUtils.equals(subject.getCode(), subjectCode)).findFirst().orElse(null);
   }
   
   public List<TORSubject> getSubjects() {
