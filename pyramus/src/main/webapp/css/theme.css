@@ -408,6 +408,15 @@ h1.genericPageHeader{
   margin-left: 8px;
 }
 
+.viewStudentRaisedGrade {
+  background:url('../gfx/icons/custom/actions/raised-grade.png') no-repeat;
+  background-size: 12px 12px;
+  background-position: 15px 5px;
+  height: 20px;
+  font-style: italic;
+  font-weight: bold;
+}
+
 .viewStudentTransferCreditsTotalContainer {
   display: inline-block;   
   font-weight: bold;
