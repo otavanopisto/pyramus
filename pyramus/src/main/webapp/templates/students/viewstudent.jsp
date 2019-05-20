@@ -1085,12 +1085,13 @@
         var filesTable;
         var transferCreditsTable;
         var courseAssessmentsTable;
-        
+
         var studentFilesContainer = JSDATA["studentFiles"].evalJSON();
         var linkedCourseAssessmentsContainer = JSDATA["linkedCourseAssessments"].evalJSON();
         var linkedTransferCreditsContainer = JSDATA["linkedTransferCredits"].evalJSON();
         var curriculumContainer = JSDATA["curriculums"].evalJSON();
         var studentVariablesContainer = JSDATA["studentVariables"].evalJSON();
+        var studentAssessmentsContainer = JSDATA["studentAssessments"].evalJSON();
 
         Event.observe($('koski-status'), 'click', toggleKoskiLogDetailsVisibility);
         loadLogEntries(${person.id});
@@ -1245,59 +1246,63 @@
               true);
 
           rows.clear();
-          <c:forEach var="studentCourseAssessment" items="${courseAssessments[student.id]}">
-            <c:set var="subjectName">
-              <c:choose>
-                <c:when test="${studentCourseAssessment.courseStudent.course.subject.educationType ne null and not empty studentCourseAssessment.courseStudent.course.subject.code}">
-                  <fmt:message key="generic.subjectFormatterWithEducationType">
-                    <fmt:param value="${studentCourseAssessment.courseStudent.course.subject.code}"/>
-                    <fmt:param value="${studentCourseAssessment.courseStudent.course.subject.name}"/>
-                    <fmt:param value="${studentCourseAssessment.courseStudent.course.subject.educationType.name}"/>
-                  </fmt:message>
-                </c:when>
-                <c:when test="${studentCourseAssessment.courseStudent.course.subject.educationType ne null and empty studentCourseAssessment.courseStudent.course.subject.code}">
-                  <fmt:message key="generic.subjectFormatterNoSubjectCode">
-                    <fmt:param value="${studentCourseAssessment.courseStudent.course.subject.name}"/>
-                    <fmt:param value="${studentCourseAssessment.courseStudent.course.subject.educationType.name}"/>
-                  </fmt:message>
-                </c:when>
-                <c:when test="${studentCourseAssessment.courseStudent.course.subject.educationType eq null and not empty studentCourseAssessment.courseStudent.course.subject.code}">
-                  <fmt:message key="generic.subjectFormatterNoEducationType">
-                    <fmt:param value="${studentCourseAssessment.courseStudent.course.subject.code}"/>
-                    <fmt:param value="${studentCourseAssessment.courseStudent.course.subject.name}"/>
-                  </fmt:message>
-                </c:when>
-                <c:otherwise>
-                  ${studentCourseAssessment.courseStudent.course.subject.name}
-                </c:otherwise>
-              </c:choose>
-            </c:set>
 
-            var curriculums = [];
-            <c:forEach var="curriculum" items="${studentCourseAssessment.courseStudent.course.curriculums}">
-              curriculums.push("${fn:escapeXml(curriculum.name)}");
-            </c:forEach>
+          var studentAssessments = studentAssessmentsContainer['${student.id}'];
+          if (studentAssessments) {
+            for (var i = 0, l = studentAssessments.length; i < l; i++) {
+              var studentAssessment = studentAssessments[i];
+              
+              var curriculumsStr = "";
+              if (studentAssessment.curriculums && studentAssessment.curriculums.length > 0) {
+                curriculumsStr = studentAssessment.curriculums[0].name;
+                for (var ci = 1; ci < studentAssessment.curriculums.length; ci++) {
+                  curriculumsStr = curriculumsStr + ", " + studentAssessment.curriculums[ci].name;
+                }
+              }
 
-            var curriculumsStr = "";
-            if (curriculums.length > 0) {
-              curriculumsStr = curriculums[0];
-              for (var i = 1, l = curriculums.length; i < l; i++)
-                curriculumsStr = curriculumsStr + ", " + curriculums[i];
+              var topAssessment = studentAssessment.assessments[0];
+              var gradeTooltip = undefined;
+              var gradeExtraClass = undefined;
+
+              if (studentAssessment.assessments.length > 1) {
+                gradeTooltip = "";
+                gradeExtraClass = "viewStudentRaisedGrade";
+                
+                for (var ai = 0; ai < studentAssessment.assessments.length; ai++) {
+                  gradeTooltip = 
+                    gradeTooltip + 
+                    getLocale().getDate(studentAssessment.assessments[ai].timestamp, false) + 
+                    " - " + 
+                    studentAssessment.assessments[ai].gradeName + 
+                    "\n";
+
+                  if (studentAssessment.assessments[ai].timestamp > topAssessment.timestamp) {
+                    topAssessment = studentAssessment.assessments[ai];
+                  }
+                }
+              }
+              
+              var grade = {
+                value: topAssessment.gradeName,
+                tooltip: gradeTooltip,
+                extraClass: gradeExtraClass
+              }
+
+              rows.push([
+                studentAssessment.courseName,
+                studentAssessment.subjectName,
+                curriculumsStr,
+                topAssessment.timestamp,
+                studentAssessment.courseLength,
+                studentAssessment.courseLengthUnitName,
+                grade,
+                topAssessment.gradingScaleName,
+                topAssessment.assessorName,
+                studentAssessment.courseStudentId,
+                '']);
             }
-            
-            rows.push([
-              '${fn:escapeXml(studentCourseAssessment.courseStudent.course.name)}',
-              '${fn:escapeXml(subjectName)}',
-              curriculumsStr,
-              '${studentCourseAssessment.date.time}',
-              '${studentCourseAssessment.courseStudent.course.courseLength.units}',
-              '${fn:escapeXml(studentCourseAssessment.courseStudent.course.courseLength.unit.name)}',
-              '${fn:escapeXml(studentCourseAssessment.grade.name)}',
-              '${fn:escapeXml(studentCourseAssessment.grade.gradingScale.name)}',
-              '${fn:escapeXml(studentCourseAssessment.assessor.fullName)}',
-              '${studentCourseAssessment.courseStudent.id}',
-              '']);
-          </c:forEach>
+          }
+          
           courseAssessmentsTable.addRows(rows);
           if (courseAssessmentsTable.getRowCount() > 0) {
             $('viewStudentCourseAssessmentsTotalValue.${student.id}').innerHTML = courseAssessmentsTable.getRowCount(); 
