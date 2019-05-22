@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.projects;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +28,7 @@ import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
@@ -101,6 +104,11 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
     studentProject.setLastModified(now);
 
     entityManager.persist(studentProject);
+  }
+
+  public StudentProject updateOptionality(StudentProject studentProject, CourseOptionality projectOptionality) {
+    studentProject.setOptionality(projectOptionality);
+    return persist(studentProject);
   }
 
   @SuppressWarnings("unchecked")
@@ -217,6 +225,26 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
     }
   }
 
+  public List<StudentProject> listBy(Student student, Project project, TSB archived) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StudentProject> criteria = criteriaBuilder.createQuery(StudentProject.class);
+    Root<StudentProject> root = criteria.from(StudentProject.class);
+    
+    List<Predicate> predicates = new ArrayList<>();
+    predicates.add(criteriaBuilder.equal(root.get(StudentProject_.project), project));
+    predicates.add(criteriaBuilder.equal(root.get(StudentProject_.student), student));
+    if (archived.isBoolean()) {
+      predicates.add(criteriaBuilder.equal(root.get(StudentProject_.archived), archived.booleanValue()));
+    }
+    
+    criteria.select(root);
+    criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   public List<StudentProject> listByStudent(Student student) {
     EntityManager entityManager = getEntityManager(); 
     
@@ -274,5 +302,5 @@ public class StudentProjectDAO extends PyramusEntityDAO<StudentProject> {
     
     return entityManager.createQuery(criteria).getSingleResult();
   }
-  
+
 }

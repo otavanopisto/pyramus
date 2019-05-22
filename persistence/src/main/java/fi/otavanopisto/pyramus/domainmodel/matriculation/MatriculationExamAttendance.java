@@ -12,6 +12,8 @@ import javax.persistence.TableGenerator;
 
 import org.hibernate.search.annotations.DocumentId;
 
+import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
+
 @Entity
 public class MatriculationExamAttendance {
 
@@ -92,6 +94,14 @@ public class MatriculationExamAttendance {
     this.grade = grade;
   }
 
+  public ProjectAssessment getProjectAssessment() {
+    return projectAssessment;
+  }
+
+  public void setProjectAssessment(ProjectAssessment projectAssessment) {
+    this.projectAssessment = projectAssessment;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamAttendance")  
   @TableGenerator(name="MatriculationExamAttendance", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -125,4 +135,7 @@ public class MatriculationExamAttendance {
   @Column
   @Enumerated(EnumType.STRING)
   private MatriculationExamGrade grade;
+  
+  @ManyToOne
+  private ProjectAssessment projectAssessment;
 }

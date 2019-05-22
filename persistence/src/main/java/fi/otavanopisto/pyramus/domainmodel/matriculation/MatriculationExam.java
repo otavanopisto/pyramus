@@ -4,13 +4,18 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
+
+import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 
 @Entity
 public class MatriculationExam {
@@ -52,6 +57,30 @@ public class MatriculationExam {
     this.version = version;
   }
 
+  public Grade getSignupGrade() {
+    return signupGrade;
+  }
+
+  public void setSignupGrade(Grade signupGrade) {
+    this.signupGrade = signupGrade;
+  }
+
+  public Integer getExamYear() {
+    return examYear;
+  }
+
+  public void setExamYear(Integer examYear) {
+    this.examYear = examYear;
+  }
+
+  public MatriculationExamTerm getExamTerm() {
+    return examTerm;
+  }
+
+  public void setExamTerm(MatriculationExamTerm examTerm) {
+    this.examTerm = examTerm;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExam")  
   @TableGenerator(name="MatriculationExam", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -65,6 +94,16 @@ public class MatriculationExam {
   @Column(nullable = false)
   private Date ends;
 
+  @Column
+  private Integer examYear;
+  
+  @Column
+  @Enumerated(EnumType.STRING)
+  private MatriculationExamTerm examTerm;
+
+  @ManyToOne
+  private Grade signupGrade;
+  
   /* Version required because we persist an entity with a set id, to get rid
    * of duplication
    */

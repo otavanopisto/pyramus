@@ -20,10 +20,13 @@
     <script type="text/javascript">
       function doSearch(page) {
         var searchForm = $("searchForm");
+        var below20courses = searchForm.below20courses.checked === true;
+
         JSONRequest.request("matriculation/searchenrollments.json", {
           parameters: {
             page: page,
             state: searchForm.enrollmentState.value,
+            below20courses: below20courses
           },
           onSuccess: function(jsonResponse) {
             var resultsTable = getIxTableById('searchResultsTable');
@@ -35,7 +38,8 @@
                 results[i].id,
                 results[i].name,
                 results[i].email,
-                $('enrollmentState').select('option[value="' + results[i].state +'"]').first().innerHTML,
+                results[i].state,
+                results[i].numMandatoryCourses,
                 '']);
             }
             resultsTable.reattachToDom();
@@ -86,9 +90,21 @@
             header : 'Tila',
             width: 200,
             left: 8 + 300 + 8 + 300,
+            dataType : 'select',
+            editable: false,
+            paramName: 'state',
+            options: [
+              { text: "Jätetty", value: "PENDING" },
+              { text: "Hyväksytty", value: "APPROVED" },
+              { text: "Hylätty", value: "REJECTED" }
+            ]
+          }, {
+            header : 'Pakollisia kursseja',
+            width: 150,
+            left: 8 + 300 + 8 + 300 + 8 + 200,
             dataType : 'text',
             editable: false,
-            paramName: 'state'
+            paramName: 'numMandatoryCourses'
           }, {
             width : 22,
             right : 8,
@@ -133,6 +149,10 @@
             </select>
           </div>
   
+          <div class="genericFormSection">
+            <input type="checkbox" name="below20courses" id="below20courses" value="1"> Vain alle 20 kurssia suorittaneet
+          </div>
+          
           <div class="genericFormSubmitSection">
             <input type="submit" value="Käytä">
           </div>

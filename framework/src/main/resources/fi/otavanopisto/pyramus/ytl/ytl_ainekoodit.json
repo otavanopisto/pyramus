@@ -1,0 +1,346 @@
+[
+  {
+    "ytlAine": "A",
+    "ytlOppimäärä": "",
+    "aine": "äidinkieli, suomi",
+    "aineKoodi": "ÄI",
+    "matriculationExamSubject": "AI",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "ÄI" }
+    ]
+  },
+  {
+    "ytlAine": "A5",
+    "ytlOppimäärä": "",
+    "aine": "suomi toisena kielenä",
+    "aineKoodi": "S2",
+    "matriculationExamSubject": "S2",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "S2" }
+    ]
+  },
+  {
+    "ytlAine": "M",
+    "ytlOppimäärä": "",
+    "aine": "pitkä matematiikka",
+    "aineKoodi": "MAA",
+    "matriculationExamSubject": "MAA",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "MAY" },
+      { "educationType": "2", "subjectCode": "MAA" },
+      { "educationType": "2", "subjectCode": "MAB" }
+    ]
+  },
+  {
+    "ytlAine": "N",
+    "ytlOppimäärä": "",
+    "aine": "lyhyt matematiikka",
+    "aineKoodi": "MAB",
+    "matriculationExamSubject": "MAB",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "MAY" },
+      { "educationType": "2", "subjectCode": "MAA" },
+      { "educationType": "2", "subjectCode": "MAB" }
+    ]
+  },
+
+  {
+    "ytlAine": "B",
+    "ytlOppimäärä": "A",
+    "aine": "ruotsi, pitkä oppimäärä",
+    "aineKoodi": "RUA",
+    "matriculationExamSubject": "RUA",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "RUA" },
+      { "educationType": "2", "subjectCode": "RUB" },
+      { "educationType": "2", "subjectCode": "RUC" }
+    ]
+  },
+  {
+    "ytlAine": "B",
+    "ytlOppimäärä": "B",
+    "aine": "ruotsi, keskipitkä oppimäärä",
+    "aineKoodi": "RUB",
+    "matriculationExamSubject": "RUB",
+      "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "RUA" },
+      { "educationType": "2", "subjectCode": "RUB" },
+      { "educationType": "2", "subjectCode": "RUC" }
+    ]
+  },
+  {
+    "ytlAine": "E",
+    "ytlOppimäärä": "A",
+    "aine": "englanti, pitkä oppimäärä",
+    "aineKoodi": "ENA",
+    "matriculationExamSubject": "ENA",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "ENA" },
+      { "educationType": "2", "subjectCode": "ENB" },
+      { "educationType": "2", "subjectCode": "ENC" }
+    ]
+  },
+  {
+    "ytlAine": "E",
+    "ytlOppimäärä": "C",
+    "aine": "englanti, lyhyt oppimäärä",
+    "aineKoodi": "ENC",
+    "matriculationExamSubject": "ENC",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "ENA" },
+      { "educationType": "2", "subjectCode": "ENB" },
+      { "educationType": "2", "subjectCode": "ENC" }
+    ]
+  },
+  {
+    "ytlAine": "F",
+    "ytlOppimäärä": "A",
+    "aine": "ranska, pitkä oppimäärä",
+    "aineKoodi": "RAA",
+    "matriculationExamSubject": "RAA",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "RAA" },
+      { "educationType": "2", "subjectCode": "RAB" },
+      { "educationType": "2", "subjectCode": "RAC" }
+    ]
+  },
+  {
+    "ytlAine": "F",
+    "ytlOppimäärä": "C",
+    "aine": "ranska, lyhyt oppimäärä",
+    "aineKoodi": "RAC",
+    "matriculationExamSubject": "RAC",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "RAA" },
+      { "educationType": "2", "subjectCode": "RAB" },
+      { "educationType": "2", "subjectCode": "RAC" }
+    ]
+  },
+  {
+    "ytlAine": "P",
+    "ytlOppimäärä": "A",
+    "aine": "espanja, pitkä oppimäärä",
+    "aineKoodi": "ESA",
+    "matriculationExamSubject": "ESA",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "ESA" },
+      { "educationType": "2", "subjectCode": "ESB" },
+      { "educationType": "2", "subjectCode": "ESC" }
+    ]
+  },
+  {
+    "ytlAine": "P",
+    "ytlOppimäärä": "C",
+    "aine": "espanja, lyhyt oppimäärä",
+    "aineKoodi": "ESC",
+    "matriculationExamSubject": "ESC",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "ESA" },
+      { "educationType": "2", "subjectCode": "ESB" },
+      { "educationType": "2", "subjectCode": "ESC" }
+    ]
+  },
+  {
+    "ytlAine": "S",
+    "ytlOppimäärä": "A",
+    "aine": "saksa, pitkä oppimäärä",
+    "aineKoodi": "SAA",
+    "matriculationExamSubject": "SAA",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "SAA" },
+      { "educationType": "2", "subjectCode": "SAB" },
+      { "educationType": "2", "subjectCode": "SAC" }
+    ]
+  },
+  {
+    "ytlAine": "S",
+    "ytlOppimäärä": "C",
+    "aine": "saksa, lyhyt oppimäärä",
+    "aineKoodi": "SAC",
+    "matriculationExamSubject": "SAC",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "SAA" },
+      { "educationType": "2", "subjectCode": "SAB" },
+      { "educationType": "2", "subjectCode": "SAC" }
+    ]
+  },
+  {
+    "ytlAine": "V",
+    "ytlOppimäärä": "A",
+    "aine": "venäjä, pitkä oppimäärä",
+    "aineKoodi": "VEA",
+    "matriculationExamSubject": "VEA",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "VEA" },
+      { "educationType": "2", "subjectCode": "VEB" },
+      { "educationType": "2", "subjectCode": "VEC" }
+    ]
+  },
+  {
+    "ytlAine": "V",
+    "ytlOppimäärä": "C",
+    "aine": "venäjä, lyhyt oppimäärä",
+    "aineKoodi": "VEC",
+    "matriculationExamSubject": "VEC",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "VEA" },
+      { "educationType": "2", "subjectCode": "VEB" },
+      { "educationType": "2", "subjectCode": "VEC" }
+    ]
+  },
+  {
+    "ytlAine": "T",
+    "ytlOppimäärä": "C",
+    "aine": "italia, lyhyt oppimäärä",
+    "aineKoodi": "ITC",
+    "matriculationExamSubject": "ITC",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "ITA" },
+      { "educationType": "2", "subjectCode": "ITB" },
+      { "educationType": "2", "subjectCode": "ITC" }
+    ]
+  },
+  {
+    "ytlAine": "G",
+    "ytlOppimäärä": "C",
+    "aine": "portugali, lyhyt oppimäärä",
+    "aineKoodi": "POC",
+    "matriculationExamSubject": "POC",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "POA" },
+      { "educationType": "2", "subjectCode": "POB" },
+      { "educationType": "2", "subjectCode": "POC" }
+    ]
+  },
+  {
+    "ytlAine": "L",
+    "ytlOppimäärä": "C",
+    "aine": "latina, lyhyt oppimäärä",
+    "aineKoodi": "LAC",
+    "matriculationExamSubject": "LAC",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "LAA" },
+      { "educationType": "2", "subjectCode": "LAB" },
+      { "educationType": "2", "subjectCode": "LAC" }
+    ]
+  },
+  {
+    "ytlAine": "D",
+    "ytlOppimäärä": "C",
+    "aine": "pohjoissaame, lyhyt oppimäärä",
+    "aineKoodi": "SMB3",
+    "matriculationExamSubject": "SAC"
+  },
+
+  {
+    "ytlAine": "BI",
+    "ytlOppimäärä": "",
+    "aine": "biologia",
+    "aineKoodi": "BI",
+    "matriculationExamSubject": "BI",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "BI" }
+    ]
+  },
+  {
+    "ytlAine": "FF",
+    "ytlOppimäärä": "",
+    "aine": "filosofia",
+    "aineKoodi": "FI",
+    "matriculationExamSubject": "FI",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "FI" }
+    ]
+  },
+  {
+    "ytlAine": "FY",
+    "ytlOppimäärä": "",
+    "aine": "fysiikka",
+    "aineKoodi": "FY",
+    "matriculationExamSubject": "FY",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "FY" }
+    ]
+  },
+  {
+    "ytlAine": "GE",
+    "ytlOppimäärä": "",
+    "aine": "maantiede",
+    "aineKoodi": "GE",
+    "matriculationExamSubject": "GE",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "GE" }
+    ]
+  },
+  {
+    "ytlAine": "HI",
+    "ytlOppimäärä": "",
+    "aine": "historia",
+    "aineKoodi": "HI",
+    "matriculationExamSubject": "HI",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "HI" }
+    ]
+  },
+  {
+    "ytlAine": "KE",
+    "ytlOppimäärä": "",
+    "aine": "kemia",
+    "aineKoodi": "KE",
+    "matriculationExamSubject": "KE",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "KE" }
+    ]
+  },
+  {
+    "ytlAine": "PS",
+    "ytlOppimäärä": "",
+    "aine": "psykologia",
+    "aineKoodi": "PS",
+    "matriculationExamSubject": "PS",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "PS" }
+    ]
+  },
+  {
+    "ytlAine": "TE",
+    "ytlOppimäärä": "",
+    "aine": "terveystieto",
+    "aineKoodi": "TE",
+    "matriculationExamSubject": "TT",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "TE" }
+    ]
+  },
+
+  {
+    "ytlAine": "UE",
+    "ytlOppimäärä": "",
+    "aine": "uskonto, ev.-lut.",
+    "aineKoodi": "UE",
+    "matriculationExamSubject": "UE",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "UE" }
+    ]
+  },
+  {
+    "ytlAine": "ET",
+    "ytlOppimäärä": "",
+    "aine": "elämänkatsomustieto",
+    "aineKoodi": "ET",
+    "matriculationExamSubject": "ET",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "ET" }
+    ]
+  },
+  {
+    "ytlAine": "YH",
+    "ytlOppimäärä": "",
+    "aine": "yhteiskuntaoppi",
+    "aineKoodi": "YH",
+    "matriculationExamSubject": "YO",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "YH" }
+    ]
+  }
+]

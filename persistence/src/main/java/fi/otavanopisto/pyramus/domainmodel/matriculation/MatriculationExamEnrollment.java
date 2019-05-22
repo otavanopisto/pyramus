@@ -2,13 +2,16 @@ package fi.otavanopisto.pyramus.domainmodel.matriculation;
 
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 
@@ -176,6 +179,22 @@ public class MatriculationExamEnrollment {
     this.enrollmentDate = enrollmentDate;
   }
 
+  public Integer getCandidateNumber() {
+    return candidateNumber;
+  }
+
+  public void setCandidateNumber(Integer candidateNumber) {
+    this.candidateNumber = candidateNumber;
+  }
+
+  public DegreeType getDegreeType() {
+    return degreeType;
+  }
+
+  public void setDegreeType(DegreeType degreeType) {
+    this.degreeType = degreeType;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
   @TableGenerator(name="MatriculationExamEnrollment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -214,6 +233,10 @@ public class MatriculationExamEnrollment {
   private SchoolType enrollAs;
   
   @Column
+  @Enumerated(EnumType.STRING)
+  private DegreeType degreeType;
+  
+  @Column
   private int numMandatoryCourses;
   
   @Column
@@ -222,6 +245,8 @@ public class MatriculationExamEnrollment {
   @Column
   private String location;
   
+  @Lob
+  @Basic (fetch = FetchType.LAZY)
   @Column
   private String message;
   
@@ -230,6 +255,9 @@ public class MatriculationExamEnrollment {
 
   @ManyToOne
   private Student student;
+  
+  @Column
+  private Integer candidateNumber;
   
   @Column
   @Enumerated(EnumType.STRING)
