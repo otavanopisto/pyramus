@@ -95,7 +95,9 @@ import net.sf.json.JSONObject;
  * ViewController for editing student information.
  */
 public class ViewStudentViewController extends PyramusViewController2 implements Breadcrumbable {
-
+  
+  private static final Logger logger = Logger.getLogger(ViewStudentViewController.class.getName());
+  
   public ViewStudentViewController() {
     super(
         true // requireLoggedIn
