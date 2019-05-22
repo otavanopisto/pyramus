@@ -53,6 +53,8 @@
     "suoritetutKurssit": [
       { "educationType": "2", "subjectCode": "RUA" },
       { "educationType": "2", "subjectCode": "RUB" },
+      { "educationType": "2", "subjectCode": "RUB1" },
+      { "educationType": "2", "subjectCode": "RUB3" },
       { "educationType": "2", "subjectCode": "RUC" }
     ]
   },
@@ -65,6 +67,8 @@
       "suoritetutKurssit": [
       { "educationType": "2", "subjectCode": "RUA" },
       { "educationType": "2", "subjectCode": "RUB" },
+      { "educationType": "2", "subjectCode": "RUB1" },
+      { "educationType": "2", "subjectCode": "RUB3" },
       { "educationType": "2", "subjectCode": "RUC" }
     ]
   },
