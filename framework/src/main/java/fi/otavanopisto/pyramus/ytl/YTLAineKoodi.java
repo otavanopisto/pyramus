@@ -1,7 +1,9 @@
 package fi.otavanopisto.pyramus.ytl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -61,10 +63,19 @@ public class YTLAineKoodi {
     return ytlAine + (StringUtils.isNotBlank(ytlOppimäärä) ? ytlOppimäärä : "");
   }
   
+  public Set<String> getSuoritetutKurssitLisäaineet() {
+    return suoritetutKurssitLisäaineet;
+  }
+
+  public void setSuoritetutKurssitLisäaineet(Set<String> suoritetutKurssitLisäaineet) {
+    this.suoritetutKurssitLisäaineet = suoritetutKurssitLisäaineet;
+  }
+
   private String ytlAine;
   private String ytlOppimäärä;
   private String aine;
   private String aineKoodi;
   private MatriculationExamSubject matriculationExamSubject;
   private List<YTLAineKoodiSuoritettuKurssi> suoritetutKurssit = new ArrayList<>();
+  private Set<String> suoritetutKurssitLisäaineet = new HashSet<>();
 }
