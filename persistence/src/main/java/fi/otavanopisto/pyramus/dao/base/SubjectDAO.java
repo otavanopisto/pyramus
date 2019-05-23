@@ -141,6 +141,7 @@ public class SubjectDAO extends PyramusEntityDAO<Subject> {
     if (!StringUtils.isBlank(text)) {
       queryBuilder.append("+(");
       addTokenizedSearchCriteria(queryBuilder, "name", text, false);
+      addTokenizedSearchCriteria(queryBuilder, "code", text, false);
       addTokenizedSearchCriteria(queryBuilder, "educationType.name", text, false);
       queryBuilder.append(")");
     }
