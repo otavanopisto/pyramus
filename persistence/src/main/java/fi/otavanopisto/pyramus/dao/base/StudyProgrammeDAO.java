@@ -11,6 +11,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
@@ -60,7 +61,7 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
   
-  public List<StudyProgramme> listByOrganization(Organization organization, Boolean archived) {
+  public List<StudyProgramme> listByOrganization(Organization organization, TSB archived) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -71,8 +72,8 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
     List<Predicate> predicates = new ArrayList<>();
     predicates.add(criteriaBuilder.equal(root.get(StudyProgramme_.organization), organization));
     
-    if (archived != null) {
-      predicates.add(criteriaBuilder.equal(root.get(StudyProgramme_.archived), archived));
+    if (archived.isBoolean()) {
+      predicates.add(criteriaBuilder.equal(root.get(StudyProgramme_.archived), archived.booleanValue()));
     }
     
     criteria.where(

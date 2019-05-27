@@ -42,6 +42,7 @@ import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -318,7 +319,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     Collections.sort(curriculums, new StringAttributeComparator("getName"));
 
     List<StudyProgramme> studyProgrammes = UserUtils.canAccessAllOrganizations(loggedUser) ? 
-        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), false);
+        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), TSB.FALSE);
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
     
     List<StaffMember> studyApprovers = staffMemberDAO.listByProperty(StaffMemberProperties.STUDY_APPROVER.getKey(), "1");

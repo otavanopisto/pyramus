@@ -7,6 +7,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
@@ -40,12 +41,12 @@ public class StudyProgrammeController {
   }
 
   public List<StudyProgramme> listStudyProgrammesByOrganization(Organization organization) {
-    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listByOrganization(organization, null);
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listByOrganization(organization, TSB.IGNORE);
     return studyProgrammes;
   }
 
   public List<StudyProgramme> listUnarchivedStudyProgrammesByOrganization(Organization organization) {
-    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listByOrganization(organization, false);
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listByOrganization(organization, TSB.FALSE);
     return studyProgrammes;
   }
   
