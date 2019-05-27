@@ -6,11 +6,15 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -177,22 +181,37 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
       logger.log(Level.SEVERE, String.format("Failed to construct TOR for Student %d", student.getId()), ex);
     }
 
-    List<SuoritettuKurssi> suoritetutKurssit = new ArrayList<>();
+    Set<String> suoritetutKurssitAineet = new HashSet<>();
     
     for (MatriculationExamAttendance attendance : attendances) {
       MatriculationExamSubject examSubject = attendance.getSubject();
       
       YTLAineKoodi ytlAineKoodi = examSubjectToYTLAineKoodi(examSubject, mapping);
       if (ytlAineKoodi != null) {
-        if (attendance.isMandatory()) {
-          kokelas.addPakollinenKoe(ytlAineKoodi.getYhdistettyAineKoodi());
-        } else {
-          kokelas.addYlimääräinenKoe(ytlAineKoodi.getYhdistettyAineKoodi());
+        // Äidinkielelle on oma lokeronsa, ei lisätä pakolliseksi/ylimääräiseksi
+        if (!isÄidinkieli(attendance)) {
+          if (attendance.isMandatory()) {
+            kokelas.addPakollinenKoe(ytlAineKoodi.getYhdistettyAineKoodi());
+          } else {
+            kokelas.addYlimääräinenKoe(ytlAineKoodi.getYhdistettyAineKoodi());
+          }
         }
         
-        lataaSuoritetutKurssit(student, tor, ytlAineKoodi, suoritetutKurssit);
+        suoritetutKurssitAineet.add(ytlAineKoodi.getYtlAine());
+        if (CollectionUtils.isNotEmpty(ytlAineKoodi.getSuoritetutKurssitLisäaineet())) {
+          suoritetutKurssitAineet.addAll(ytlAineKoodi.getSuoritetutKurssitLisäaineet());
+        }
       } else {
         logger.warning(String.format("No subject mapping found for %s", examSubject));
+      }
+    }
+
+    List<SuoritettuKurssi> suoritetutKurssit = new ArrayList<>();
+    
+    for (String suoritetutKurssitAine : suoritetutKurssitAineet) {
+      List<YTLAineKoodi> ytlAineKoodit = ytlSubjectToYTLAineKoodi(suoritetutKurssitAine, mapping);
+      for (YTLAineKoodi ytlAineKoodi : ytlAineKoodit) {
+        lataaSuoritetutKurssit(student, tor, ytlAineKoodi, suoritetutKurssit);
       }
     }
 
@@ -265,6 +284,12 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
       .filter(ainekoodi -> (ainekoodi.getMatriculationExamSubject() == examSubject))
       .findFirst()
       .orElse(null);
+  }
+  
+  private List<YTLAineKoodi> ytlSubjectToYTLAineKoodi(String ytlSubject, List<YTLAineKoodi> mapping) {
+    return mapping.stream()
+      .filter(ainekoodi -> StringUtils.equals(ainekoodi.getYtlAine(), ytlSubject))
+      .collect(Collectors.toList());
   }
   
   private boolean isÄidinkieli(MatriculationExamAttendance attendance) {

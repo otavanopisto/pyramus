@@ -26,10 +26,9 @@
     "aineKoodi": "MAA",
     "matriculationExamSubject": "MAA",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "MAY" },
-      { "educationType": "2", "subjectCode": "MAA" },
-      { "educationType": "2", "subjectCode": "MAB" }
-    ]
+      { "educationType": "2", "subjectCode": "MAA" }
+    ],
+    "suoritetutKurssitLisäaineet": ["N"]
   },
   {
     "ytlAine": "N",
@@ -38,10 +37,9 @@
     "aineKoodi": "MAB",
     "matriculationExamSubject": "MAB",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "MAY" },
-      { "educationType": "2", "subjectCode": "MAA" },
       { "educationType": "2", "subjectCode": "MAB" }
-    ]
+    ],
+    "suoritetutKurssitLisäaineet": ["M"]
   },
 
   {
@@ -51,9 +49,7 @@
     "aineKoodi": "RUA",
     "matriculationExamSubject": "RUA",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "RUA" },
-      { "educationType": "2", "subjectCode": "RUB" },
-      { "educationType": "2", "subjectCode": "RUC" }
+      { "educationType": "2", "subjectCode": "RUA" }
     ]
   },
   {
@@ -63,9 +59,9 @@
     "aineKoodi": "RUB",
     "matriculationExamSubject": "RUB",
       "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "RUA" },
       { "educationType": "2", "subjectCode": "RUB" },
-      { "educationType": "2", "subjectCode": "RUC" }
+      { "educationType": "2", "subjectCode": "RUB1" },
+      { "educationType": "2", "subjectCode": "RUB3" }
     ]
   },
   {
@@ -75,9 +71,7 @@
     "aineKoodi": "ENA",
     "matriculationExamSubject": "ENA",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "ENA" },
-      { "educationType": "2", "subjectCode": "ENB" },
-      { "educationType": "2", "subjectCode": "ENC" }
+      { "educationType": "2", "subjectCode": "ENA" }
     ]
   },
   {
@@ -87,8 +81,6 @@
     "aineKoodi": "ENC",
     "matriculationExamSubject": "ENC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "ENA" },
-      { "educationType": "2", "subjectCode": "ENB" },
       { "educationType": "2", "subjectCode": "ENC" }
     ]
   },
@@ -99,9 +91,7 @@
     "aineKoodi": "RAA",
     "matriculationExamSubject": "RAA",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "RAA" },
-      { "educationType": "2", "subjectCode": "RAB" },
-      { "educationType": "2", "subjectCode": "RAC" }
+      { "educationType": "2", "subjectCode": "RAA" }
     ]
   },
   {
@@ -111,8 +101,6 @@
     "aineKoodi": "RAC",
     "matriculationExamSubject": "RAC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "RAA" },
-      { "educationType": "2", "subjectCode": "RAB" },
       { "educationType": "2", "subjectCode": "RAC" }
     ]
   },
@@ -123,9 +111,7 @@
     "aineKoodi": "ESA",
     "matriculationExamSubject": "ESA",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "ESA" },
-      { "educationType": "2", "subjectCode": "ESB" },
-      { "educationType": "2", "subjectCode": "ESC" }
+      { "educationType": "2", "subjectCode": "ESA" }
     ]
   },
   {
@@ -135,8 +121,6 @@
     "aineKoodi": "ESC",
     "matriculationExamSubject": "ESC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "ESA" },
-      { "educationType": "2", "subjectCode": "ESB" },
       { "educationType": "2", "subjectCode": "ESC" }
     ]
   },
@@ -147,9 +131,7 @@
     "aineKoodi": "SAA",
     "matriculationExamSubject": "SAA",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "SAA" },
-      { "educationType": "2", "subjectCode": "SAB" },
-      { "educationType": "2", "subjectCode": "SAC" }
+      { "educationType": "2", "subjectCode": "SAA" }
     ]
   },
   {
@@ -159,8 +141,6 @@
     "aineKoodi": "SAC",
     "matriculationExamSubject": "SAC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "SAA" },
-      { "educationType": "2", "subjectCode": "SAB" },
       { "educationType": "2", "subjectCode": "SAC" }
     ]
   },
@@ -171,9 +151,7 @@
     "aineKoodi": "VEA",
     "matriculationExamSubject": "VEA",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "VEA" },
-      { "educationType": "2", "subjectCode": "VEB" },
-      { "educationType": "2", "subjectCode": "VEC" }
+      { "educationType": "2", "subjectCode": "VEA" }
     ]
   },
   {
@@ -183,8 +161,6 @@
     "aineKoodi": "VEC",
     "matriculationExamSubject": "VEC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "VEA" },
-      { "educationType": "2", "subjectCode": "VEB" },
       { "educationType": "2", "subjectCode": "VEC" }
     ]
   },
@@ -195,8 +171,6 @@
     "aineKoodi": "ITC",
     "matriculationExamSubject": "ITC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "ITA" },
-      { "educationType": "2", "subjectCode": "ITB" },
       { "educationType": "2", "subjectCode": "ITC" }
     ]
   },
@@ -207,8 +181,6 @@
     "aineKoodi": "POC",
     "matriculationExamSubject": "POC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "POA" },
-      { "educationType": "2", "subjectCode": "POB" },
       { "educationType": "2", "subjectCode": "POC" }
     ]
   },
@@ -219,8 +191,6 @@
     "aineKoodi": "LAC",
     "matriculationExamSubject": "LAC",
     "suoritetutKurssit": [
-      { "educationType": "2", "subjectCode": "LAA" },
-      { "educationType": "2", "subjectCode": "LAB" },
       { "educationType": "2", "subjectCode": "LAC" }
     ]
   },

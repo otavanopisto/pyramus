@@ -461,10 +461,11 @@ public class ViewStudentViewController extends PyramusViewController2 implements
           JSONArray jsonCourseAssessments = new JSONArray();
           for (CourseAssessment ass : courseAssessmentList) {
             JSONObject assobj = new JSONObject();
-            assobj.put("timestamp", ass.getDate().getTime());
-            assobj.put("gradeName", ass.getGrade().getName());
-            assobj.put("gradingScaleName", ass.getGrade().getGradingScale().getName());
-            assobj.put("assessorName", ass.getAssessor().getFullName());
+            assobj.put("timestamp", ass.getDate() != null ? ass.getDate().getTime() : null);
+            assobj.put("gradeName", ass.getGrade() != null ? ass.getGrade().getName() : null);
+            assobj.put("gradingScaleName", (ass.getGrade() != null && ass.getGrade().getGradingScale() != null) ? 
+                ass.getGrade().getGradingScale().getName() : null);
+            assobj.put("assessorName", ass.getAssessor() != null ? ass.getAssessor().getFullName() : null);
             jsonCourseAssessments.add(assobj);
           }
           obj.put("assessments", jsonCourseAssessments);
