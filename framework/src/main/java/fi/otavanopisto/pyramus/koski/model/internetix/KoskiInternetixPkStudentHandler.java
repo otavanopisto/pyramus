@@ -80,6 +80,12 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
   @Inject
   private Logger logger;
 
+  @Override
+  protected boolean isPakollinenOppiaine(Student student, KoskiOppiaineetYleissivistava oppiaine) {
+    KoskiStudyProgrammeHandlerParams handlerParams = getHandlerParams(HANDLER_TYPE);
+    return handlerParams.isPakollinenOppiaine(oppiaine);
+  }
+  
   public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = resolveInternetixOid(student, HANDLER_TYPE);
@@ -255,12 +261,12 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     String subjectCode = subjectCode(subject);
 
     String mapKey = String.valueOf(creditOPS) + subjectCode;
-    if (map.containsKey(mapKey))
+    if (map.containsKey(mapKey)) {
       return map.get(mapKey);
+    }
     
     boolean matchingEducationType = educationTypes != null && subject.getEducationType() != null && 
         educationTypes.contains(subject.getEducationType().getId());
-    
     if (matchingEducationType && (StringUtils.equals(subjectCode, "äi") || StringUtils.equals(subjectCode, "s2"))) {
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
         OppiaineAidinkieliJaKirjallisuus aine = StringUtils.equals(subjectCode, "s2") ? 
