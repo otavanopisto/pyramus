@@ -87,7 +87,7 @@ public class OrganizationRESTService extends AbstractRESTService {
   @Path("/{ID:[0-9]*}")
   @PUT
   @RESTPermit (OrganizationPermissions.UPDATE_ORGANIZATION)
-  public Response updateSchool(@PathParam("ID") Long id, fi.otavanopisto.pyramus.rest.model.Organization entity) {
+  public Response updateOrganization(@PathParam("ID") Long id, fi.otavanopisto.pyramus.rest.model.Organization entity) {
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
@@ -110,7 +110,7 @@ public class OrganizationRESTService extends AbstractRESTService {
   @Path("/{ID:[0-9]*}")
   @DELETE
   @RESTPermit (OrganizationPermissions.DELETE_ORGANIZATION)
-  public Response deleteSchool(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
+  public Response deleteOrganization(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     Organization organization = organizationDAO.findById(id);
     if (organization == null) {
       return Response.status(Status.NOT_FOUND).build();
