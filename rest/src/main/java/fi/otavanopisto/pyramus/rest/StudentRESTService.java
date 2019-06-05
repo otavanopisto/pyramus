@@ -36,6 +36,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
+import fi.otavanopisto.pyramus.domainmodel.Archived;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
@@ -850,21 +851,18 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    StudyProgrammeCategory programmeCategory = studyProgrammeCategoryController.findStudyProgrammeCategoryById(categoryId);
-    
+    StudyProgrammeCategory studyProgrammeCategory = studyProgrammeCategoryController.findStudyProgrammeCategoryById(categoryId);
     Organization organization = organizationDAO.findById(organizationId);
 
-    if (programmeCategory == null || organization == null) {
+    if (studyProgrammeCategory == null || organization == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
-      if (!UserUtils.isMemberOf(sessionController.getUser(), organization)) {
-        return Response.status(Status.FORBIDDEN).build();
-      }
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), organization)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
     
-    StudyProgramme studyProgramme = studyProgrammeController.createStudyProgramme(organization, name, code, programmeCategory);
+    StudyProgramme studyProgramme = studyProgrammeController.createStudyProgramme(organization, name, code, studyProgrammeCategory);
     return Response.ok(objectFactory.createModel(studyProgramme)).build();
   }
 
@@ -872,16 +870,8 @@ public class StudentRESTService extends AbstractRESTService {
   @GET
   @RESTPermit(StudyProgrammePermissions.LIST_STUDYPROGRAMMES)
   public Response listStudyProgrammes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-    List<StudyProgramme> studyProgrammes;
-
-    // TODO: Does this need organization check? LIST_STUDYPROGRAMMES is EVERYONE by default... 
-
-    if (filterArchived) {
-      studyProgrammes = studyProgrammeController.listUnarchivedStudyProgrammes();
-    } else {
-      studyProgrammes = studyProgrammeController.listStudyProgrammes();
-    }
-
+    List<StudyProgramme> studyProgrammes = studyProgrammeController.listAccessibleStudyProgrammes(
+        sessionController.getUser(), filterArchived ? Archived.UNARCHIVED : Archived.BOTH);
     return Response.ok(objectFactory.createModel(studyProgrammes)).build();
   }
 
@@ -894,8 +884,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    // TODO: Does this need organization check? FIND_STUDYPROGRAMME is EVERYONE by default... 
-
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studyProgramme.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
     EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(studyProgramme.getVersion())));
     ResponseBuilder builder = request.evaluatePreconditions(tag);
     if (builder != null) {
@@ -940,11 +932,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
-      // User needs to be member of both the previous organization and the new one
-      if (!(UserUtils.isMemberOf(sessionController.getUser(), studyProgramme.getOrganization()) && UserUtils.isMemberOf(sessionController.getUser(), organization))) {
-        return Response.status(Status.FORBIDDEN).build();
-      }
+    // User needs to be member of both the previous organization and the new one
+    if (!(UserUtils.canAccessOrganization(sessionController.getUser(), studyProgramme.getOrganization()) 
+        && UserUtils.canAccessOrganization(sessionController.getUser(), organization))) {
+      return Response.status(Status.FORBIDDEN).build();
     }
     
     studyProgramme = studyProgrammeController.updateStudyProgramme(studyProgramme, organization, name, code, programmeCategory);
@@ -1066,21 +1057,20 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     Organization organization = organizationDAO.findById(organizationId);
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    
+    if ((studentGroup == null) || (organization == null) || studentGroup.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    // Can the user access the new organization?
     if (!UserUtils.canAccessOrganization(sessionController.getUser(), organization)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
+    // Can the user access the old organization?
     if (!UserUtils.canAccessOrganization(sessionController.getUser(), studentGroup.getOrganization())) {
       return Response.status(Status.FORBIDDEN).build();
-    }
-
-    if ((studentGroup == null) || (organization == null)) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    if (studentGroup.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
     }
 
     studentGroupController.updateStudentGroup(studentGroup, organization, name, description, toDate(beginDate), sessionController.getUser());

@@ -7,7 +7,7 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.domainmodel.TSB;
+import fi.otavanopisto.pyramus.domainmodel.Archived;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
@@ -24,7 +24,7 @@ public class SearchStudentsDialogViewController extends PyramusViewController {
     User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
 
     List<StudyProgramme> studyProgrammes = UserUtils.canAccessAllOrganizations(loggedUser) ? 
-        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), TSB.FALSE);
+        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), Archived.UNARCHIVED);
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
     
     requestContext.getRequest().setAttribute("studyProgrammes", studyProgrammes);

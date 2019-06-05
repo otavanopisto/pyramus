@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -7,11 +8,12 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
-import fi.otavanopisto.pyramus.domainmodel.TSB;
+import fi.otavanopisto.pyramus.domainmodel.Archived;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 
 @Stateless
 @Dependent
@@ -30,6 +32,19 @@ public class StudyProgrammeController {
     return studyProgramme;
   }
   
+  public List<StudyProgramme> listStudyProgrammes(Archived archived) {
+    switch (archived) {
+      case UNARCHIVED:
+        return listUnarchivedStudyProgrammes();
+      case ARCHIVED:
+        return listArchivedStudyProgrammes();
+      case BOTH:
+        return listStudyProgrammes();
+    }
+    
+    throw new RuntimeException("unknown archived parameter");
+  }
+
   public List<StudyProgramme> listStudyProgrammes() {
     List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listAll();
     return studyProgrammes;
@@ -40,16 +55,16 @@ public class StudyProgrammeController {
     return studyProgrammes;
   }
 
-  public List<StudyProgramme> listStudyProgrammesByOrganization(Organization organization) {
-    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listByOrganization(organization, TSB.IGNORE);
-    return studyProgrammes;
-  }
-
-  public List<StudyProgramme> listUnarchivedStudyProgrammesByOrganization(Organization organization) {
-    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listByOrganization(organization, TSB.FALSE);
+  public List<StudyProgramme> listArchivedStudyProgrammes() {
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listArchived();
     return studyProgrammes;
   }
   
+  public List<StudyProgramme> listStudyProgrammesByOrganization(Organization organization, Archived archived) {
+    List<StudyProgramme> studyProgrammes = studyProgrammeDAO.listByOrganization(organization, archived);
+    return studyProgrammes;
+  }
+
   public StudyProgramme updateStudyProgramme(StudyProgramme studyProgramme, Organization organization, String name, String code, StudyProgrammeCategory category) {
     return studyProgrammeDAO.update(studyProgramme, organization, name, category, code);
   }
@@ -61,6 +76,21 @@ public class StudyProgrammeController {
 
   public void deleteStudyProgramme(StudyProgramme studyProgramme) {
     studyProgrammeDAO.delete(studyProgramme);
+  }
+
+  public List<StudyProgramme> listAccessibleStudyProgrammes(User user, Archived archived) {
+    if (user != null) {
+      if (UserUtils.canAccessAllOrganizations(user)) {
+        return listStudyProgrammes(archived);
+      } else {
+        if (user.getOrganization() != null) {
+          return listStudyProgrammesByOrganization(user.getOrganization(), archived);
+        }
+      }
+    }
+    
+    // No matching case found - return empty list
+    return new ArrayList<>();
   }
 
 }

@@ -13,7 +13,7 @@ import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.domainmodel.TSB;
+import fi.otavanopisto.pyramus.domainmodel.Archived;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
@@ -60,7 +60,7 @@ public class SearchStudentsViewController extends PyramusViewController implemen
     User loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
 
     List<StudyProgramme> studyProgrammes = UserUtils.canAccessAllOrganizations(loggedUser) ? 
-        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), TSB.FALSE);
+        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), Archived.UNARCHIVED);
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
     
     List<Nationality> nationalities = nationalityDAO.listUnarchived();

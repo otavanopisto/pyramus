@@ -11,7 +11,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
-import fi.otavanopisto.pyramus.domainmodel.TSB;
+import fi.otavanopisto.pyramus.domainmodel.Archived;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
@@ -61,7 +61,7 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
   
-  public List<StudyProgramme> listByOrganization(Organization organization, TSB archived) {
+  public List<StudyProgramme> listByOrganization(Organization organization, Archived archived) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();

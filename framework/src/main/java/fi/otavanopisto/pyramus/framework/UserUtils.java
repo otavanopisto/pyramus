@@ -167,7 +167,7 @@ public class UserUtils {
   }
  
   public static boolean canAccessAllOrganizations(User user) {
-    return Permissions.instance().hasEnvironmentPermission(user, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS);
+    return user != null ? Permissions.instance().hasEnvironmentPermission(user, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS) : false;
   }
 
   /**
