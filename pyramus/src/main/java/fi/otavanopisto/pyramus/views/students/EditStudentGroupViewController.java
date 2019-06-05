@@ -8,12 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.apache.commons.lang.math.NumberUtils;
-
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.internetix.smvc.controllers.RequestContext;
+import fi.otavanopisto.pyramus.PyramusUIPermissions;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -27,20 +24,40 @@ import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
-import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.framework.PyramusViewController;
-import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * The controller responsible of the Edit Student Group view of the application.
  * 
  * @see fi.otavanopisto.pyramus.json.students.EditStudentGroupJSONRequestController
  */
-public class EditStudentGroupViewController extends PyramusViewController implements Breadcrumbable {
+public class EditStudentGroupViewController extends PyramusViewController2 implements Breadcrumbable {
 
+  public EditStudentGroupViewController() {
+    super(
+        true        // requireLoggedIn
+    );
+  }
+
+  @Override
+  protected boolean checkAccess(RequestContext requestContext) {
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
+
+    StaffMember loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
+    StudentGroup studentGroup = studentGroupDAO.findById(requestContext.getLong("studentgroup"));
+
+    return 
+        Permissions.instance().hasEnvironmentPermission(loggedUser, PyramusUIPermissions.EDIT_STUDENTGROUP) &&
+        UserUtils.canAccessOrganization(loggedUser, studentGroup.getOrganization());
+  }
+  
   /**
    * Processes the page request by including the corresponding JSP page to the response.
    * 
@@ -53,7 +70,7 @@ public class EditStudentGroupViewController extends PyramusViewController implem
 
     // The student group to be edited
     
-    StudentGroup studentGroup = studentGroupDAO.findById(NumberUtils.createLong(pageRequestContext.getRequest().getParameter("studentgroup")));
+    StudentGroup studentGroup = studentGroupDAO.findById(pageRequestContext.getLong("studentgroup"));
     pageRequestContext.getRequest().setAttribute("studentGroup", studentGroup);
 
     List<StudentGroupStudent> studentGroupStudents = new ArrayList<>(studentGroup.getStudents());
@@ -175,16 +192,6 @@ public class EditStudentGroupViewController extends PyramusViewController implem
     });
     
     return students;
-  }
-
-  /**
-   * Returns the roles allowed to access this page. Editing student groups is available for users with
-   * {@link Role#MANAGER} or {@link Role#ADMINISTRATOR} privileges.
-   * 
-   * @return The roles allowed to access this page
-   */
-  public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
   /**
