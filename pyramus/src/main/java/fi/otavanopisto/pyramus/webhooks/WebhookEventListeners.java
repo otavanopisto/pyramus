@@ -17,6 +17,9 @@ import fi.otavanopisto.pyramus.events.CourseStudentArchivedEvent;
 import fi.otavanopisto.pyramus.events.CourseStudentCreatedEvent;
 import fi.otavanopisto.pyramus.events.CourseStudentUpdatedEvent;
 import fi.otavanopisto.pyramus.events.CourseUpdatedEvent;
+import fi.otavanopisto.pyramus.events.OrganizationArchivedEvent;
+import fi.otavanopisto.pyramus.events.OrganizationCreatedEvent;
+import fi.otavanopisto.pyramus.events.OrganizationUpdatedEvent;
 import fi.otavanopisto.pyramus.events.PersonArchivedEvent;
 import fi.otavanopisto.pyramus.events.PersonCreatedEvent;
 import fi.otavanopisto.pyramus.events.PersonUpdatedEvent;
@@ -103,6 +106,20 @@ public class WebhookEventListeners {
 
   public void onStudentArchived(@Observes(during=TransactionPhase.AFTER_SUCCESS) StudentArchivedEvent event) {
     webhooks.sendWebhookNotification(new WebhookStudentArchivePayload(event.getStudentId()));
+  }
+  
+  /* Organization */
+
+  public void onOrganizationCreated(@Observes(during=TransactionPhase.AFTER_SUCCESS) OrganizationCreatedEvent event) {
+    webhooks.sendWebhookNotification(new WebhookOrganizationCreatePayload(event.getId(), event.getName()));
+  }
+
+  public void onOrganizationUpdated(@Observes(during=TransactionPhase.AFTER_SUCCESS) OrganizationUpdatedEvent event) {
+    webhooks.sendWebhookNotification(new WebhookOrganizationUpdatePayload(event.getId(), event.getName()));
+  }
+
+  public void onOrganizationArchived(@Observes(during=TransactionPhase.AFTER_SUCCESS) OrganizationArchivedEvent event) {
+    webhooks.sendWebhookNotification(new WebhookOrganizationArchivePayload(event.getId()));
   }
   
   /* Course Staff Member */
