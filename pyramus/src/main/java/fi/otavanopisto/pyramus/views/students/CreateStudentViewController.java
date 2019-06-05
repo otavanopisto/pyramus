@@ -23,6 +23,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentStudyEndReasonDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
+import fi.otavanopisto.pyramus.domainmodel.TSB;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -80,7 +81,7 @@ public class CreateStudentViewController extends PyramusViewController implement
     }
 
     List<StudyProgramme> studyProgrammes = UserUtils.canAccessAllOrganizations(loggedUser) ? 
-        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), false);
+        studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), TSB.FALSE);
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
 
     List<Nationality> nationalities = nationalityDAO.listUnarchived();

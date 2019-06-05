@@ -2,13 +2,16 @@ package fi.otavanopisto.pyramus.koski.settings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
+import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KoskiStudyProgrammeHandlerParams {
@@ -50,8 +53,22 @@ public class KoskiStudyProgrammeHandlerParams {
     this.toimipisteOID = toimipisteOID;
   }
 
+  public Set<KoskiOppiaineetYleissivistava> getPakollisetOppiaineet() {
+    return pakollisetOppiaineet;
+  }
+
+  public void setPakollisetOppiaineet(Set<KoskiOppiaineetYleissivistava> pakollisetOppiaineet) {
+    this.pakollisetOppiaineet = pakollisetOppiaineet;
+  }
+
+  @JsonIgnore
+  public boolean isPakollinenOppiaine(KoskiOppiaineetYleissivistava oppiaine) {
+    return this.pakollisetOppiaineet.contains(oppiaine);
+  }
+  
   private List<Long> educationTypes = new ArrayList<>();
   private List<Long> excludedEducationTypes = new ArrayList<>();
   private Map<OpiskelijanOPS, String> diaarinumerot = new HashMap<>();
   private String toimipisteOID;
+  private Set<KoskiOppiaineetYleissivistava> pakollisetOppiaineet = new HashSet<>();
 }
