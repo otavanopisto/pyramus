@@ -20,6 +20,13 @@ public class PyramusUIPermissions extends AbstractPyramusPermissionCollection im
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String EDIT_STUDENT = "EDIT_STUDENT";
 
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String VIEW_STUDENTGROUP = "VIEW_STUDENTGROUP";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String EDIT_STUDENTGROUP = "EDIT_STUDENTGROUP";
   
   @Override
   public List<String> listPermissions() {
