@@ -105,7 +105,7 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
         String[] defaultRoles = permissionCollection.getDefaultRoles(permission.getName());
 
         // Is EnvironmentRole in the environment roles of the permission
-        if (ArrayUtils.contains(defaultRoles, userEntity.getRole().toString())) {
+        if ((userEntity.getRole() != null) && ArrayUtils.contains(defaultRoles, userEntity.getRole().toString())) {
           return true;
         }
         
