@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateful;
@@ -22,7 +24,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
+import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 
 @Path("/organizations")
@@ -35,6 +40,9 @@ public class OrganizationRESTService extends AbstractRESTService {
   @Inject
   private OrganizationDAO organizationDAO;
   
+  @Inject
+  private SessionController sessionController;
+
   @Inject
   private ObjectFactory objectFactory;
   
@@ -60,13 +68,18 @@ public class OrganizationRESTService extends AbstractRESTService {
   @Path("/")
   @GET
   @RESTPermit (OrganizationPermissions.LIST_ORGANIZATIONS)
-  public Response listOrganizations(@DefaultValue("false") @QueryParam("showArchived") boolean showArchived) {
+  public Response listOrganizations(@DefaultValue("false") @QueryParam("includeArchived") boolean showArchived) {
     List<Organization> organizations;
     
-    if (showArchived) {
-      organizations = organizationDAO.listAll();
+    if (UserUtils.canAccessAllOrganizations(sessionController.getUser())) {
+      if (showArchived) {
+        organizations = organizationDAO.listAll();
+      } else {
+        organizations = organizationDAO.listUnarchived();
+      }
     } else {
-      organizations = organizationDAO.listUnarchived();
+      User user = sessionController.getUser();
+      organizations = (user != null && user.getOrganization() != null) ? Arrays.asList(user.getOrganization()) : new ArrayList<>();
     }
     
     return Response.ok(objectFactory.createModel(organizations)).build();
@@ -77,7 +90,7 @@ public class OrganizationRESTService extends AbstractRESTService {
   @RESTPermit (OrganizationPermissions.FIND_ORGANIZATION)
   public Response findOrganization(@PathParam("ID") Long id) {
     Organization organization = organizationDAO.findById(id);
-    if (organization == null || organization.getArchived()) {
+    if (organization == null || organization.getArchived() || !UserUtils.canAccessOrganization(sessionController.getUser(), organization)) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
@@ -92,16 +105,16 @@ public class OrganizationRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    Organization organization = organizationDAO.findById(id);
-    if (organization == null || organization.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    
     String name = entity.getName();
     if (StringUtils.isBlank(name)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
+    Organization organization = organizationDAO.findById(id);
+    if (organization == null || organization.getArchived() || !UserUtils.canAccessOrganization(sessionController.getUser(), organization)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
     organizationDAO.update(organization, name);
     
     return Response.ok(objectFactory.createModel(organization)).build();
@@ -112,7 +125,7 @@ public class OrganizationRESTService extends AbstractRESTService {
   @RESTPermit (OrganizationPermissions.DELETE_ORGANIZATION)
   public Response deleteOrganization(@PathParam("ID") Long id, @DefaultValue ("false") @QueryParam ("permanent") Boolean permanent) {
     Organization organization = organizationDAO.findById(id);
-    if (organization == null) {
+    if (organization == null || !UserUtils.canAccessOrganization(sessionController.getUser(), organization)) {
       return Response.status(Status.NOT_FOUND).build();
     }
   
