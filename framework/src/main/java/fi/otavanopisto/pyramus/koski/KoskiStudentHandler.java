@@ -181,41 +181,45 @@ public abstract class KoskiStudentHandler {
   }
 
   protected StudyEndReasonMapping opiskelujaksot(Student student, OpiskeluoikeusTila tila, OpintojenRahoitus rahoitus) {
-    OpiskeluoikeudenTila jaksonTila = !Boolean.TRUE.equals(student.getArchived()) ? OpiskeluoikeudenTila.lasna : OpiskeluoikeudenTila.mitatoity;
-    OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), jaksonTila);
-    jakso.setOpintojenRahoitus(new KoodistoViite<>(rahoitus));
-    tila.addOpiskeluoikeusJakso(jakso);
-
-    List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
-    studyPeriods.sort(Comparator.comparing(StudentStudyPeriod::getBegin));
-    
-    for (StudentStudyPeriod period : studyPeriods) {
-      switch (period.getPeriodType()) {
-        case TEMPORARILY_SUSPENDED:
-          tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(period.getBegin(), OpiskeluoikeudenTila.valiaikaisestikeskeytynyt));
-
-          if (period.getEnd() != null) {
-            tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(period.getEnd(), OpiskeluoikeudenTila.lasna));
-          }
-        break;
-      }
-    }
-    
-    if (student.getStudyEndDate() != null) {
-      OpiskeluoikeudenTila opintojenLopetusTila = OpiskeluoikeudenTila.eronnut;
-      StudyEndReasonMapping studyEndReasonMapping = student.getStudyEndReason() != null ? 
-          settings.getStudyEndReasonMapping(student.getStudyEndReason()) : null;
-
-      if (studyEndReasonMapping != null) {
-        opintojenLopetusTila = studyEndReasonMapping.getOpiskeluoikeudenTila();
-      } else {
-        koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.MISSING_STUDYENDREASONMAPPING, new Date());
+    if (!Boolean.TRUE.equals(student.getArchived())) {
+      OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
+      jakso.setOpintojenRahoitus(new KoodistoViite<>(rahoitus));
+      tila.addOpiskeluoikeusJakso(jakso);
+  
+      List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
+      studyPeriods.sort(Comparator.comparing(StudentStudyPeriod::getBegin));
+      
+      for (StudentStudyPeriod period : studyPeriods) {
+        switch (period.getPeriodType()) {
+          case TEMPORARILY_SUSPENDED:
+            tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(period.getBegin(), OpiskeluoikeudenTila.valiaikaisestikeskeytynyt));
+  
+            if (period.getEnd() != null) {
+              tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(period.getEnd(), OpiskeluoikeudenTila.lasna));
+            }
+          break;
+        }
       }
       
-      tila.addOpiskeluoikeusJakso(
-          new OpiskeluoikeusJakso(student.getStudyEndDate(), opintojenLopetusTila));
-      
-      return studyEndReasonMapping;
+      if (student.getStudyEndDate() != null) {
+        OpiskeluoikeudenTila opintojenLopetusTila = OpiskeluoikeudenTila.eronnut;
+        StudyEndReasonMapping studyEndReasonMapping = student.getStudyEndReason() != null ? 
+            settings.getStudyEndReasonMapping(student.getStudyEndReason()) : null;
+  
+        if (studyEndReasonMapping != null) {
+          opintojenLopetusTila = studyEndReasonMapping.getOpiskeluoikeudenTila();
+        } else {
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.MISSING_STUDYENDREASONMAPPING, new Date());
+        }
+        
+        tila.addOpiskeluoikeusJakso(
+            new OpiskeluoikeusJakso(student.getStudyEndDate(), opintojenLopetusTila));
+        
+        return studyEndReasonMapping;
+      }
+    } else {
+      // Student.archived=true -> mitätöity
+      tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(student.getStudyEndDate(), OpiskeluoikeudenTila.mitatoity));
     }
     
     return null;
