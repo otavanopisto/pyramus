@@ -26,14 +26,15 @@ import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
-import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.settings.KoskiIntegrationSettingsWrapper;
+import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 import net.sf.json.JSONObject;
 
 @ApplicationScoped
@@ -87,14 +88,6 @@ public class KoskiSettings {
   
   private void readSettings(JSONObject settings) {
     JSONObject koskiSettings = settings.getJSONObject("koski");
-    JSONObject studyEndReasonMapping = koskiSettings.getJSONObject("studyEndReasonMapping");
-    for (Object studyEndReasonKey : studyEndReasonMapping.keySet()) {
-      Long studyEndReasonId = Long.parseLong(studyEndReasonKey.toString());
-      JSONObject studyEndReasonSetting = studyEndReasonMapping.getJSONObject(studyEndReasonId.toString());
-      OpiskeluoikeudenTila koskiStudyState = OpiskeluoikeudenTila.valueOf(studyEndReasonSetting.getString("koski-status"));
-      studentStateMap.put(studyEndReasonId, koskiStudyState);
-    }
-
     JSONObject courseTypeMapping = koskiSettings.getJSONObject("courseTypeMapping");
     for (Object courseTypeMappingKey : courseTypeMapping.keySet()) {
       Long courseSubTypeId = Long.parseLong(courseTypeMappingKey.toString());
@@ -152,12 +145,6 @@ public class KoskiSettings {
         }
       }
       
-//      JSONObject vahvistajaJSON = studyProgramme.getJSONObject("vahvistaja");
-//      if (vahvistajaJSON != null) {
-//        vahvistaja.put(studyProgrammeId, vahvistajaJSON.getString("nimi"));
-//        vahvistajanTitteli.put(studyProgrammeId, vahvistajaJSON.getString("titteli"));
-//      }
-      
       String pakollisetOppiaineet = studyProgramme.getString("pakollisetOppiaineet");
       if (StringUtils.isNotBlank(pakollisetOppiaineet)) {
         Set<KoskiOppiaineetYleissivistava> set = new HashSet<>();
@@ -191,13 +178,6 @@ public class KoskiSettings {
   
   public boolean isFreeLodging(Long studyProgrammeId) {
     return freeLodgingStudyProgrammes.contains(studyProgrammeId);
-  }
-  
-  public OpiskeluoikeudenTila getStudentState(Student student, OpiskeluoikeudenTila defaultValue) {
-    if (student.getStudyEndReason() != null) {
-      return studentStateMap.get(student.getStudyEndReason().getId());
-    } else
-      return defaultValue;
   }
   
   private String getSetting(String settingName) {
@@ -251,14 +231,6 @@ public class KoskiSettings {
     return diaarinumerot.get(key);
   }
 
-//  public String getVahvistaja(Long studyProgrammeId) {
-//    return vahvistaja.get(studyProgrammeId);
-//  }
-//
-//  public String getVahvistajanTitteli(Long studyProgrammeId) {
-//    return vahvistajanTitteli.get(studyProgrammeId);
-//  }
-
   public Set<KoskiOppiaineetYleissivistava> getPakollisetOppiaineet(Long studyProgrammeId) {
     return pakollisetOppiaineet.get(studyProgrammeId);
   }
@@ -292,20 +264,19 @@ public class KoskiSettings {
     return opintojenRahoitus.get(studyProgrammeId);
   }
 
+  public StudyEndReasonMapping getStudyEndReasonMapping(StudentStudyEndReason studyEndReason) {
+    return studyEndReason != null ? getSettings().getKoski().getStudyEndReasonMapping(studyEndReason.getId()) : null;
+  }
+
   private KoskiIntegrationSettingsWrapper settings;
   private boolean testEnvironment;
   private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
   private Set<Long> freeLodgingStudyProgrammes = new HashSet<Long>();
-  private Map<Long, OpiskeluoikeudenTila> studentStateMap = new HashMap<>();
   private Map<Long, KoskiStudyProgrammeHandler> handlerTypes = new HashMap<>();
   private Map<Long, OpintojenRahoitus> opintojenRahoitus = new HashMap<>();
   private Map<Long, String> toimipisteOIDt = new HashMap<>();
   private Map<String, String> diaarinumerot = new HashMap<>();
   private Map<Long, String> courseTypeMapping = new HashMap<>();
   private Map<String, String> subjectToLanguageMapping = new HashMap<>();
-  
-//  private Map<Long, String> vahvistaja = new HashMap<>();
-//  private Map<Long, String> vahvistajanTitteli = new HashMap<>();
   private Map<Long, Set<KoskiOppiaineetYleissivistava>> pakollisetOppiaineet = new HashMap<>();
-
 }
