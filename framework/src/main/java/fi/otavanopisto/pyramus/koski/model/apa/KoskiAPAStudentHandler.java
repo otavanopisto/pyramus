@@ -45,7 +45,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.Kielivalikoima;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
-import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
@@ -57,6 +56,7 @@ import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOpiskeluoikeus;
+import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 
 public class KoskiAPAStudentHandler extends KoskiStudentHandler {
 
@@ -90,8 +90,10 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
     
     opiskeluoikeus.setLisatiedot(getLisatiedot(student));
 
-    SuorituksenTila suorituksenTila = opiskelujaksot(student, opiskeluoikeus.getTila(), 
+    StudyEndReasonMapping lopetusSyy = opiskelujaksot(student, opiskeluoikeus.getTila(), 
         student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6);
+    boolean laskeKeskiarvot = lopetusSyy != null ? lopetusSyy.getLaskeAinekeskiarvot() : false;
+    boolean sisällytäVahvistus = lopetusSyy != null ? lopetusSyy.getSisällytäVahvistaja() : false;
 
     String departmentIdentifier = settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
 
@@ -100,13 +102,14 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
         PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
-    if (suorituksenTila == SuorituksenTila.VALMIS)
+    if (sisällytäVahvistus) {
       suoritus.setVahvistus(getVahvistus(student, departmentIdentifier));
+    }
     opiskeluoikeus.addSuoritus(suoritus);
     
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
-    assessmentsToModel(ops, student, studentEducationType, studentSubjects, suoritus, suorituksenTila == SuorituksenTila.VALMIS);
+    assessmentsToModel(ops, student, studentEducationType, studentSubjects, suoritus, laskeKeskiarvot);
     
     return opiskeluoikeus;
   }

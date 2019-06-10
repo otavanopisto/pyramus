@@ -44,7 +44,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
-import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTila;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
@@ -69,6 +68,7 @@ import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusop
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenTunniste;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.PerusopetuksenOppiaineenOppimaaranSuoritus;
 import fi.otavanopisto.pyramus.koski.settings.KoskiStudyProgrammeHandlerParams;
+import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 
 /**
  * Käsittelee Internetix-/aineopiskelijan peruskoulukurssien osuuden.
@@ -115,7 +115,9 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       opintojenRahoitus = student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6;
     }
     
-    SuorituksenTila suorituksenTila = opiskelujaksot(student, opiskeluoikeus.getTila(), opintojenRahoitus);
+    StudyEndReasonMapping lopetusSyy = opiskelujaksot(student, opiskeluoikeus.getTila(), opintojenRahoitus);
+    boolean laskeKeskiarvot = lopetusSyy != null ? lopetusSyy.getLaskeAinekeskiarvot() : false;
+    boolean sisällytäVahvistus = lopetusSyy != null ? lopetusSyy.getSisällytäVahvistaja() : false;
 
     KoskiStudyProgrammeHandlerParams handlerParams = getHandlerParams(HANDLER_TYPE);
 
@@ -124,7 +126,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
 
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(departmentIdentifier);
-    Set<OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> oppiaineet = assessmentsToModel(student, studentSubjects, suorituksenTila == SuorituksenTila.VALMIS, defaultStudyProgramme);
+    Set<OppiaineenSuoritusWithCurriculum<AikuistenPerusopetuksenOppiaineenSuoritus>> oppiaineet = assessmentsToModel(student, studentSubjects, laskeKeskiarvot, defaultStudyProgramme);
 
     // Aineopiskelija
 
@@ -133,8 +135,9 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
           oppiaine.getOppiaineenSuoritus(), PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, toimipiste);
       oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
       oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(HANDLER_TYPE, oppiaine.getOps()));
-      if (suorituksenTila == SuorituksenTila.VALMIS)
+      if (sisällytäVahvistus) {
         oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, departmentIdentifier));
+      }
       opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
     }
     

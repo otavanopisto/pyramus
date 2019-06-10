@@ -42,7 +42,21 @@ public class KoskiIntegrationSettings {
     this.filteredGrades = filteredGrades;
   }
 
+  @JsonIgnore
+  public StudyEndReasonMapping getStudyEndReasonMapping(Long studyEndReasonId) {
+    return studyEndReasonMapping.get(studyEndReasonId);
+  }
+
+  public Map<Long, StudyEndReasonMapping> getStudyEndReasonMapping() {
+    return studyEndReasonMapping;
+  }
+
+  public void setStudyEndReasonMapping(Map<Long, StudyEndReasonMapping> studyEndReasonMapping) {
+    this.studyEndReasonMapping = studyEndReasonMapping;
+  }
+
   private String academyIdentifier;
   private Map<KoskiStudyProgrammeHandler, KoskiStudyProgrammeHandlerParams> handlerParams = new HashMap<>();
   private Set<Long> filteredGrades = new HashSet<>();
+  private Map<Long, StudyEndReasonMapping> studyEndReasonMapping = new HashMap<>();
 }
