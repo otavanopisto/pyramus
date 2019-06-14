@@ -60,7 +60,7 @@ public class Webhooks {
     try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
       HttpPost httpPost = new HttpPost(url);
       try {
-        StringEntity dataEntity = new StringEntity(data);
+        StringEntity dataEntity = new StringEntity(data, "UTF-8");
         try {
           httpPost.addHeader("X-Pyramus-Signature", signature);
           httpPost.setEntity(dataEntity);
