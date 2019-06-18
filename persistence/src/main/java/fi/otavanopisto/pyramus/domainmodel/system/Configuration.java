@@ -17,12 +17,11 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Configuration {
 
-	
-	public Long getId() {
-		return this.id;
-	}
-	
-	public String getName() {
+  public Long getId() {
+    return this.id;
+  }
+
+  public String getName() {
     return name;
   }
 
@@ -39,15 +38,15 @@ public class Configuration {
   }
 
   @Id
-  @GeneratedValue(strategy=GenerationType.TABLE, generator="Configuration")  
-  @TableGenerator(name="Configuration", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
-	private Long id;
-	
-  @NotNull
-  @Column (nullable = false)
-	private String name;
+  @GeneratedValue(strategy = GenerationType.TABLE, generator = "Configuration")
+  @TableGenerator(name = "Configuration", allocationSize = 1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
+  private Long id;
 
-	@Lob
+  @NotNull
+  @Column(nullable = false)
+  private String name;
+
+  @Lob
   @Basic(fetch = FetchType.LAZY)
   @Column
   private String value;
