@@ -143,6 +143,23 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     return query.getResultList();
   }
 
+  public List<StudentGroup> listByNameLowercaseAndArchived(String name, Boolean archived) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StudentGroup> criteria = criteriaBuilder.createQuery(StudentGroup.class);
+    Root<StudentGroup> root = criteria.from(StudentGroup.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(criteriaBuilder.lower(root.get(StudentGroup_.name)), name.toLowerCase()),
+        criteriaBuilder.equal(root.get(StudentGroup_.archived), archived)
+      )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
   @SuppressWarnings("unchecked")
   public SearchResult<StudentGroup> searchStudentGroups(int resultsPerPage, int page, String name, 
       String tags, String description, User user, Date timeframeStart, Date timeframeEnd, 
