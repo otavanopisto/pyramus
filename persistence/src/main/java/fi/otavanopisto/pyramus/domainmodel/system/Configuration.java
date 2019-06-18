@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -38,12 +37,11 @@ public class Configuration {
   }
 
   @Id
-  @GeneratedValue(strategy = GenerationType.TABLE, generator = "Configuration")
-  @TableGenerator(name = "Configuration", allocationSize = 1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
+  @GeneratedValue (strategy = GenerationType.IDENTITY)
   private Long id;
 
   @NotNull
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String name;
 
   @Lob
