@@ -175,51 +175,15 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
     variables.put("TV1", "text");
     variables.put("TV2", "123");
     
-    Student student = new Student(null, 
-      1l, // personId
-      "to be", // firstName
-      "created", // lastName
-      "cretest", // nickname
-      "additional", // additionalInfo
-      "additional contact info", // additionalContactInfo
-      1l, // nationalityId 
-      1l, //languageId
-      1l, //municipalityId
-      1l, // schoolId
-      1l, // activityTypeId
-      1l, // examinationTypeId
-      1l, // educationalLevelId
-      getDate(2020, 11, 2), // studyTimeEnd
-      studyProgrammeId, // studyProgrammeId
-      null, // curriculumId
-      2d, // previousStudies
-      "Carpenter", // education
-      Boolean.FALSE, // lodging
-      getDate(2010, 2, 3), // studyStartDate
-      getDate(2013, 1, 2), // studyEndDate
-      1l, // studyEndReasonId, 
-      "Testing...", // studyEndText, 
-      variables, // variables
-      Arrays.asList("tag1", "tag2"),  // tags, 
-      Boolean.FALSE //archived
-    );
-
-    Response response = given().headers(getAdminAuthHeaders())
-        .contentType("application/json")
-        .body(student)
-        .post("/students/students");
-
-    int studentId = response.body().jsonPath().getInt("id");
-
+    Student student = tools().createStudent(1L, studyProgrammeId);
     try {
-      response = given().headers(getAuthHeaders())
-          .get("/students/students/{ID}", studentId);
+      Response response = given().headers(getAuthHeaders())
+          .get("/students/students/{ID}", student.getId());
   
       int expectedStatusCode = roleIsAllowed(role, studentPermissions, StudentPermissions.FIND_STUDENT) ? 200 : 403;
       assertOk(response, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS, expectedStatusCode);
     } finally {
-      given().headers(getAdminAuthHeaders())
-        .delete("/students/students/{ID}?permanent=true", studentId);
+      tools().deleteStudent(student);
     }
   }
   
@@ -239,47 +203,13 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
     variables.put("TV1", "text");
     variables.put("TV2", "123");
     
-    Student student = new Student(null, 
-      1l, 
-      "not updated firstName", // firstName
-      "not updated lastName", // lastName
-      "not updated nickname", // nickname
-      "not updated additional", // additionalInfo 
-      "not updated additional contact info", // additionalContactInfo
-      1l, // nationalityId 
-      1l, //languageId
-      1l, //municipalityId
-      1l, // schoolId
-      1l, // activityTypeId
-      1l, // examinationTypeId
-      1l, // educationalLevelId
-      getDate(2020, 11, 2), // studyTimeEnd
-      studyProgrammeId, // studyProgrammeId
-      null, // curriculumId
-      2d, // previousStudies
-      "not updated education", // education
-      Boolean.FALSE, // lodging
-      getDate(2010, 2, 3), // studyStartDate
-      getDate(2013, 1, 2), // studyEndDate
-      1l, // studyEndReasonId, 
-      "not updated studyEndText", // studyEndText, 
-      variables, // variables
-      Arrays.asList("tag1", "tag2"),  // tags, 
-      Boolean.FALSE //archived
-    );
-      
-    Response response = given().headers(getAdminAuthHeaders())
-      .contentType("application/json")
-      .body(student)
-      .post("/students/students");
-    
-    Long id = new Long(response.body().jsonPath().getInt("id"));
+    Student student = tools().createStudent(1L, studyProgrammeId);
     try {
       Map<String, String> updateVariables = new HashMap<>();
       updateVariables.put("TV2", "abc");
       updateVariables.put("TV3", "edf");
       
-      Student updateStudent = new Student(id, 
+      Student updateStudent = new Student(student.getId(), 
         2l, 
         "updated firstName", // firstName
         "updated lastName", // lastName
@@ -308,16 +238,15 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
         Boolean.FALSE //archived
       );
       
-      response = given().headers(getAuthHeaders())
+      Response response = given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(updateStudent)
-        .put("/students/students/{ID}", id);
+        .put("/students/students/{ID}", student.getId());
 
       int expectedStatusCode = roleIsAllowed(role, studentPermissions, StudentPermissions.UPDATE_STUDENT) ? 200 : 403;
       assertOk(response, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS, expectedStatusCode);
     } finally {
-      given().headers(getAdminAuthHeaders())
-        .delete("/students/students/{ID}?permanent=true", id);
+      tools().deleteStudent(student);
     }
   }
   
@@ -384,55 +313,18 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
   
   @Test
   public void testDeleteStudent() throws NoSuchFieldException {
-    Map<String, String> variables = new HashMap<>();
-    variables.put("TV1", "text");
-    variables.put("TV2", "123");
-    
-    Student student = new Student(null, 
-      1l, 
-      "to be deleted", // firstName
-      "to be deleted", // lastName
-      "to be deleted", // nickname
-      "to be deleted", // additionalInfo,
-      "to be deleted", // additionalContactInfo
-      1l, // nationalityId 
-      1l, //languageId
-      1l, //municipalityId
-      1l, // schoolId
-      1l, // activityTypeId
-      1l, // examinationTypeId
-      1l, // educationalLevelId
-      getDate(2020, 11, 2), // studyTimeEnd
-      studyProgrammeId, // studyProgrammeId
-      null, // curriculumId
-      2d, // previousStudies
-      "to be deleted", // education
-      Boolean.FALSE, // lodging
-      getDate(2010, 2, 3), // studyStartDate
-      getDate(2013, 1, 2), // studyEndDate
-      1l, // studyEndReasonId, 
-      "to be deleted", // studyEndText, 
-      variables, // variables
-      Arrays.asList("tag1", "tag2"),  // tags, 
-      Boolean.FALSE //archived
-    );
-    
-    Response response = given().headers(getAdminAuthHeaders())
-      .contentType("application/json")
-      .body(student)
-      .post("/students/students");
-    
-    Long id = new Long(response.body().jsonPath().getInt("id"));
-    
-    response = given().headers(getAuthHeaders())
-      .delete("/students/students/{ID}", id);
+    Student student = tools().createStudent(1L, studyProgrammeId);
 
-    // Both DELETE_STUDENT and ACCESS_ALL_ORGANIZATIONS are  needed
-    int expectedStatusCode = roleIsAllowed(role, studentPermissions, StudentPermissions.DELETE_STUDENT) ? 204 : 403;
-    assertOk(response, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS, expectedStatusCode);
-
-    given().headers(getAdminAuthHeaders())
-      .delete("/students/students/{ID}?permanent=true", id);
+    try {
+      Response response = given().headers(getAuthHeaders())
+        .delete("/students/students/{ID}", student.getId());
+  
+      // Both DELETE_STUDENT and ACCESS_ALL_ORGANIZATIONS are  needed
+      int expectedStatusCode = roleIsAllowed(role, studentPermissions, StudentPermissions.DELETE_STUDENT) ? 204 : 403;
+      assertOk(response, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS, expectedStatusCode);
+    } finally {
+      tools().deleteStudent(student);
+    }
   }
     
 }

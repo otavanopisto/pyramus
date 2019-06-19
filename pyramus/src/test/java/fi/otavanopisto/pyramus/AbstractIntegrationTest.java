@@ -179,7 +179,7 @@ public abstract class AbstractIntegrationTest {
     return localDateTime.atOffset(offset);
   }
   
-  protected OffsetDateTime getDate(int year, int monthOfYear, int dayOfMonth) {
+  public OffsetDateTime getDate(int year, int monthOfYear, int dayOfMonth) {
     return getDateToOffsetDateTime(year, monthOfYear, dayOfMonth);
   }
 }

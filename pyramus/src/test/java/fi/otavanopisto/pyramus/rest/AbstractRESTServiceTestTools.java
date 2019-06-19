@@ -4,17 +4,71 @@ import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import fi.otavanopisto.pyramus.rest.model.Course;
 import fi.otavanopisto.pyramus.rest.model.CourseAssessment;
 import fi.otavanopisto.pyramus.rest.model.CourseStaffMember;
 import fi.otavanopisto.pyramus.rest.model.CourseStudent;
+import fi.otavanopisto.pyramus.rest.model.Student;
 import io.restassured.response.Response;
 
 public class AbstractRESTServiceTestTools {
 
   public AbstractRESTServiceTestTools(AbstractRESTPermissionsTest testClass) {
     this.testClass = testClass;
+  }
+
+  public Student createStudent(Long personId, Long studyProgrammeId) {
+    Map<String, String> variables = new HashMap<>();
+    variables.put("TV1", "text");
+    variables.put("TV2", "123");
+
+    Student student = new Student(
+        null, // id 
+        personId, // personId 
+        "firstName", // firstName
+        "lastName", // lastName
+        "nickname", // nickname
+        "additionalInfo", // additionalInfo 
+        "additionalContactInfo", // additionalContactInfo
+        1l, // nationalityId 
+        1l, //languageId
+        1l, //municipalityId
+        1l, // schoolId
+        1l, // activityTypeId
+        1l, // examinationTypeId
+        1l, // educationalLevelId
+        getDate(2020, 11, 2), // studyTimeEnd
+        studyProgrammeId, // studyProgrammeId
+        null, // curriculumId
+        2d, // previousStudies
+        "not updated education", // education
+        Boolean.FALSE, // lodging
+        getDate(2010, 2, 3), // studyStartDate
+        getDate(2013, 1, 2), // studyEndDate
+        1l, // studyEndReasonId, 
+        "studyEndText", // studyEndText, 
+        variables, // variables
+        Arrays.asList("tag1", "tag2"),  // tags, 
+        Boolean.FALSE //archived
+    );
+        
+    Response response = given().headers(getAdminAuthHeaders())
+      .contentType("application/json")
+      .body(student)
+      .post("/students/students");
+
+    response.then().statusCode(200);
+
+    return response.body().as(Student.class);
+  }
+  
+  public void deleteStudent(Student student) {
+    given().headers(getAdminAuthHeaders())
+      .delete("/students/students/{ID}?permanent=true", student.getId());
   }
   
   public Course createCourse(String name, Long organizationId) {
@@ -26,7 +80,7 @@ public class AbstractRESTServiceTestTools {
     course.setLength(30d);
     course.setLengthUnitId(1l);
     
-    Response response = given().headers(testClass.getAdminAuthHeaders())
+    Response response = given().headers(getAdminAuthHeaders())
         .contentType("application/json")
         .body(course)
         .post("/courses/courses/");
@@ -37,7 +91,7 @@ public class AbstractRESTServiceTestTools {
   }
   
   public void deleteCourse(Course course) {
-    given().headers(testClass.getAdminAuthHeaders())
+    given().headers(getAdminAuthHeaders())
       .delete("/courses/courses/{ID}?permanent=true", course.getId())
       .then()
       .statusCode(204);
@@ -46,7 +100,7 @@ public class AbstractRESTServiceTestTools {
   public CourseStaffMember createCourseStaffMember(Long courseId, Long staffMemberId, Long roleId) {
     CourseStaffMember courseStaffMember = new CourseStaffMember(null, courseId, staffMemberId, roleId);      
 
-    Response response = given().headers(testClass.getAdminAuthHeaders())
+    Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
       .body(courseStaffMember)
       .post("/courses/courses/{COURSEID}/staffMembers/", courseId);
@@ -57,7 +111,7 @@ public class AbstractRESTServiceTestTools {
   }
 
   public void deleteCourseStaffMember(Long courseId, CourseStaffMember courseStaffMember) {
-    given().headers(testClass.getAdminAuthHeaders())
+    given().headers(getAdminAuthHeaders())
       .delete("/courses/courses/{COURSEID}/staffMembers/{ID}", courseId, courseStaffMember.getId())
       .then()
       .statusCode(204);
@@ -72,7 +126,7 @@ public class AbstractRESTServiceTestTools {
     courseStudent.setEnrolmentTypeId(1l);
     courseStudent.setParticipationTypeId(1l);
     
-    Response response = given().headers(testClass.getAdminAuthHeaders())
+    Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
       .body(courseStudent)
       .post("/courses/courses/{COURSEID}/students", courseId);
@@ -83,7 +137,7 @@ public class AbstractRESTServiceTestTools {
   }
 
   public void deleteCourseStudent(CourseStudent courseStudent) {
-    given().headers(testClass.getAdminAuthHeaders())
+    given().headers(getAdminAuthHeaders())
       .delete("/courses/courses/{COURSEID}/students/{ID}?permanent=true", courseStudent.getCourseId(), courseStudent.getId())
       .then()
       .statusCode(204);
@@ -100,7 +154,7 @@ public class AbstractRESTServiceTestTools {
     courseAssessment.setDate(OffsetDateTime.now());
     courseAssessment.setPassing(Boolean.TRUE);
     
-    Response response = given().headers(testClass.getAdminAuthHeaders())
+    Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
       .body(courseAssessment)
       .post("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/", studentId, courseId);
@@ -111,10 +165,18 @@ public class AbstractRESTServiceTestTools {
   }
 
   public void deleteCourseAssessment(Long courseId, Long studentId, CourseAssessment testASSESSMENT) {
-    given().headers(testClass.getAdminAuthHeaders())
+    given().headers(getAdminAuthHeaders())
       .delete("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/{ID}?permanent=true", studentId, courseId, testASSESSMENT.getId())
       .then()
       .statusCode(204);
+  }
+
+  private Map<String, String> getAdminAuthHeaders() {
+    return testClass.getAdminAuthHeaders();
+  }
+  
+  protected OffsetDateTime getDate(int year, int monthOfYear, int dayOfMonth) {
+    return testClass.getDate(year, monthOfYear, dayOfMonth);
   }
 
 }
