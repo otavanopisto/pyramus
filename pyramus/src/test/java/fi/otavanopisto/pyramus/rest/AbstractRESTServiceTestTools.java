@@ -12,7 +12,9 @@ import fi.otavanopisto.pyramus.rest.model.Course;
 import fi.otavanopisto.pyramus.rest.model.CourseAssessment;
 import fi.otavanopisto.pyramus.rest.model.CourseStaffMember;
 import fi.otavanopisto.pyramus.rest.model.CourseStudent;
+import fi.otavanopisto.pyramus.rest.model.Organization;
 import fi.otavanopisto.pyramus.rest.model.Student;
+import fi.otavanopisto.pyramus.rest.model.StudyProgramme;
 import io.restassured.response.Response;
 
 public class AbstractRESTServiceTestTools {
@@ -169,6 +171,41 @@ public class AbstractRESTServiceTestTools {
       .delete("/students/students/{STUDENTID}/courses/{COURSEID}/assessments/{ID}?permanent=true", studentId, courseId, testASSESSMENT.getId())
       .then()
       .statusCode(204);
+  }
+
+  public Organization createOrganization(String simpleName) {
+    Organization organization = new Organization(null, getClass().getSimpleName(), false);
+    
+    Response response = given().headers(getAdminAuthHeaders())
+        .contentType("application/json")
+        .body(organization)
+        .post("/organizations");
+    
+    response.then().statusCode(200);
+    return response.as(Organization.class);
+  }
+
+  public void deleteOrganization(Organization organization) {
+    given().headers(getAdminAuthHeaders())
+      .delete("/organizations/{ID}?permanent=true", organization.getId())
+      .then()
+      .statusCode(204);
+  }
+
+  public StudyProgramme createStudyProgramme(Long organizationId, String code, String name, Long categoryId) {
+    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, code, name, categoryId, false);
+    Response response = given().headers(getAdminAuthHeaders())
+      .contentType("application/json")
+      .body(studyProgramme)
+      .post("/students/studyProgrammes");
+
+    response.then().statusCode(200);
+    return response.as(StudyProgramme.class);
+  }
+
+  public void deleteStudyProgramme(StudyProgramme studyProgramme) {
+    given().headers(getAdminAuthHeaders())
+      .delete("/students/studyProgrammes/{ID}?permanent=true", studyProgramme.getId());
   }
 
   private Map<String, String> getAdminAuthHeaders() {

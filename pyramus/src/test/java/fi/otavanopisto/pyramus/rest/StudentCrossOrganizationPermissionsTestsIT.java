@@ -49,39 +49,19 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
 //  private final static long TEST_STUDENT_ID = 3l;
 //  private static final long SECONDARY_TEST_STUDENT_ID = 13L;
 
-  private Long organizationId;
-  private Long studyProgrammeId;
+  private Organization organization;
+  private StudyProgramme studyProgramme;
   
   @Before
   public void beforeTests() {
-    Organization organization = new Organization(null, getClass().getSimpleName(), false);
-    
-    Response response = given().headers(getAdminAuthHeaders())
-        .contentType("application/json")
-        .body(organization)
-        .post("/organizations");
-    
-    response.then().statusCode(200);
-    organizationId = response.body().jsonPath().getLong("id");
-
-    // Create test study programme
-    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, "TEST", getClass().getSimpleName(), 1l, false);
-    response = given().headers(getAdminAuthHeaders())
-      .contentType("application/json")
-      .body(studyProgramme)
-      .post("/students/studyProgrammes");
-
-    response.then().statusCode(200);
-    studyProgrammeId = response.body().jsonPath().getLong("id");
+    organization = tools().createOrganization(getClass().getSimpleName());
+    studyProgramme = tools().createStudyProgramme(organization.getId(), "TEST", getClass().getSimpleName(), 1l);
   }
   
   @After
   public void after() {
-    given().headers(getAdminAuthHeaders())
-      .delete("/students/studyProgrammes/{ID}?permanent=true", studyProgrammeId);
-
-    given().headers(getAdminAuthHeaders())
-      .delete("/organizations/{ID}?permanent=true", organizationId);
+    tools().deleteStudyProgramme(studyProgramme);
+    tools().deleteOrganization(organization);
   }
   
   @Test
@@ -110,7 +90,7 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
       1l, // examinationTypeId
       1l, // educationalLevelId
       getDate(2020, 11, 2), // studyTimeEnd
-      studyProgrammeId, // studyProgrammeId
+      studyProgramme.getId(), // studyProgrammeId
       null, // curriculumId
       2d, // previousStudies
       "Carpenter", // education
@@ -175,7 +155,7 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
     variables.put("TV1", "text");
     variables.put("TV2", "123");
     
-    Student student = tools().createStudent(1L, studyProgrammeId);
+    Student student = tools().createStudent(1L, studyProgramme.getId());
     try {
       Response response = given().headers(getAuthHeaders())
           .get("/students/students/{ID}", student.getId());
@@ -203,7 +183,7 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
     variables.put("TV1", "text");
     variables.put("TV2", "123");
     
-    Student student = tools().createStudent(1L, studyProgrammeId);
+    Student student = tools().createStudent(1L, studyProgramme.getId());
     try {
       Map<String, String> updateVariables = new HashMap<>();
       updateVariables.put("TV2", "abc");
@@ -224,7 +204,7 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
         2l, // examinationTypeId
         2l, // educationalLevelId
         getDate(2030, 11, 2), // studyTimeEnd
-        studyProgrammeId, // studyProgrammeId
+        studyProgramme.getId(), // studyProgrammeId
         null, // curriculumId
         2d, // previousStudies
         "updated education", // education
@@ -313,7 +293,7 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
   
   @Test
   public void testDeleteStudent() throws NoSuchFieldException {
-    Student student = tools().createStudent(1L, studyProgrammeId);
+    Student student = tools().createStudent(1L, studyProgramme.getId());
 
     try {
       Response response = given().headers(getAuthHeaders())
