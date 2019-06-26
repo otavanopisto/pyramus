@@ -303,12 +303,14 @@ public class OnnistuuClient {
       baseUrl.append(httpRequest.getServerName());
       baseUrl.append(":");
       baseUrl.append(httpRequest.getServerPort());
+      
+      String documentPath = StringUtils.equals(line, "aikuislukio")
+          ? "/templates/applications/document-staff-signed-otava.html"
+          : "/templates/applications/document-staff-signed-otavia.html"; 
 
       // Staff signed document skeleton
 
-      String document = IOUtils.toString(
-          requestContext.getServletContext().getResourceAsStream("/templates/applications/document-staff-signed.html"),
-          "UTF-8");
+      String document = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(documentPath), "UTF-8");
 
       // Replace document date
 
@@ -376,11 +378,13 @@ public class OnnistuuClient {
       baseUrl.append(":");
       baseUrl.append(httpRequest.getServerPort());
 
+      String documentPath = StringUtils.equals(line, "aikuislukio")
+          ? "/templates/applications/document-student-signed-otava.html"
+          : "/templates/applications/document-student-signed-otavia.html"; 
+
       // Applicant signed document skeleton
 
-      String document = IOUtils.toString(
-          requestContext.getServletContext().getResourceAsStream("/templates/applications/document-student-signed.html"),
-          "UTF-8");
+      String document = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(documentPath), "UTF-8");
 
       // Replace applicant information
 
