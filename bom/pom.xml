@@ -37,9 +37,15 @@
 
 		<wildfly-spec-api.version>10.0.0.Final</wildfly-spec-api.version>
 
+    <!-- JUnit4 -->
+    <junit4.version>4.12</junit4.version>
+    
+    <!-- JUnit5 -->
+    <junit5.version>5.4.2</junit5.version>
+
 		<!-- REST-assured -->
 
-		<rest-assured.version>3.0.6</rest-assured.version>
+		<rest-assured.version>4.0.0</rest-assured.version>
 
 		<!-- Hamcrest -->
 
@@ -343,6 +349,41 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+      
+      <!-- JUnit4 -->
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit4.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.junit.vintage</groupId>
+        <artifactId>junit-vintage-engine</artifactId>
+        <version>${junit5.version}</version>
+      </dependency>
+  
+      <!-- JUnit5 -->
+      
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit5.version}</version>
+      </dependency>
+  
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit5.version}</version>
+      </dependency>
+  
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-params</artifactId>
+        <version>${junit5.version}</version>
+      </dependency>
+      
 		</dependencies>
 	</dependencyManagement>
 

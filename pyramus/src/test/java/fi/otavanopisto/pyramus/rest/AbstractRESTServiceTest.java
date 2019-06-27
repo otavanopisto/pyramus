@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.rest;
 import static io.restassured.RestAssured.certificate;
 import static io.restassured.RestAssured.given;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -17,7 +18,7 @@ import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
-import io.restassured.mapper.factory.Jackson2ObjectMapperFactory;
+import io.restassured.path.json.mapper.factory.Jackson2ObjectMapperFactory;
 import io.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.AbstractIntegrationTest;
@@ -32,10 +33,8 @@ public abstract class AbstractRESTServiceTest extends AbstractIntegrationTest {
     RestAssured.authentication = certificate(getKeystoreFile(), getKeystorePass());
     RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
         ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory() {
-
-          @SuppressWarnings("rawtypes")
           @Override
-          public com.fasterxml.jackson.databind.ObjectMapper create(Class cls, String charset) {
+          public com.fasterxml.jackson.databind.ObjectMapper create(Type cls, String charset) {
             com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
             objectMapper.registerModule(new JSR310Module());
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -86,7 +85,7 @@ public abstract class AbstractRESTServiceTest extends AbstractIntegrationTest {
 
   public void login(int userid) {
     Response loginResponse = given() // Login first using dummy login method
-        .contentType(ContentType.URLENC).parameter("testuserid", userid).post("https://dev.pyramus.fi:8443/users/externallogin.page");
+        .contentType(ContentType.URLENC).param("testuserid", userid).post("https://dev.pyramus.fi:8443/users/externallogin.page");
     String jsessionId = loginResponse.getCookie("JSESSIONID");
     setSessionId(jsessionId);
   }

@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
-import io.restassured.mapper.factory.Jackson2ObjectMapperFactory;
+import io.restassured.path.json.mapper.factory.Jackson2ObjectMapperFactory;
 import io.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.AbstractIntegrationTest;
@@ -49,10 +50,8 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 
     RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
         ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory() {
-
-          @SuppressWarnings("rawtypes")
           @Override
-          public com.fasterxml.jackson.databind.ObjectMapper create(Class cls, String charset) {
+          public com.fasterxml.jackson.databind.ObjectMapper create(Type cls, String charset) {
             com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
             objectMapper.registerModule(new JSR310Module());
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -170,7 +169,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   public boolean roleIsAllowed(String role, PyramusPermissionCollection permissionCollection, String permission) throws NoSuchFieldException {
     List<String> allowedRoles = Arrays.asList(permissionCollection.getDefaultRoles(permission));
 
-    return roleIsAllowed(getRole(), allowedRoles);
+    return roleIsAllowed(role, allowedRoles);
   }
 	
   public boolean roleIsAllowed(String role, List<String> allowedRoles) {
