@@ -13,6 +13,8 @@ import fi.otavanopisto.pyramus.rest.model.CourseAssessment;
 import fi.otavanopisto.pyramus.rest.model.CourseStaffMember;
 import fi.otavanopisto.pyramus.rest.model.CourseStudent;
 import fi.otavanopisto.pyramus.rest.model.Organization;
+import fi.otavanopisto.pyramus.rest.model.Person;
+import fi.otavanopisto.pyramus.rest.model.Sex;
 import fi.otavanopisto.pyramus.rest.model.Student;
 import fi.otavanopisto.pyramus.rest.model.StudyProgramme;
 import io.restassured.response.Response;
@@ -23,6 +25,24 @@ public class AbstractRESTServiceTestTools {
     this.testClass = testClass;
   }
 
+  public Person createPerson() {
+    Person person = new Person(null, null, null, Sex.FEMALE, false, "AbstractRESTServiceTestTools.createPerson()", null);
+    
+    Response response = given().headers(getAdminAuthHeaders())
+      .contentType("application/json")
+      .body(person)
+      .post("/persons/persons");
+    
+    response.then().statusCode(200);
+
+    return response.body().as(Person.class);
+  }
+  
+  public void deletePerson(Person person) {
+    given().headers(getAdminAuthHeaders())
+      .delete("/persons/persons/{ID}", person.getId());
+  }
+  
   public Student createStudent(Long personId, Long studyProgrammeId) {
     Map<String, String> variables = new HashMap<>();
     variables.put("TV1", "text");
