@@ -1,24 +1,24 @@
 package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import io.restassured.response.Response;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.Organization;
+import fi.otavanopisto.pyramus.rest.model.Person;
 import fi.otavanopisto.pyramus.rest.model.Student;
 import fi.otavanopisto.pyramus.rest.model.StudyProgramme;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
@@ -27,45 +27,30 @@ import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions
 /**
  * Tests of permissions used in StudentRESTService
  */
-@RunWith(Parameterized.class)
-public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPermissionsTest {
+@TestInstance(Lifecycle.PER_CLASS)
+public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
-  public StudentCrossOrganizationPermissionsTestsIT(String role) {
-    this.role = role;
-  }
-  
-  /*
-   * This method is called the the JUnit parameterized test runner and returns a
-   * Collection of Arrays. For each Array in the Collection, each array element
-   * corresponds to a parameter in the constructor.
-   */
-  @Parameters
-  public static List<Object[]> generateData() {
-    return getGeneratedRoleData();
-  }
-  
   private StudentPermissions studentPermissions = new StudentPermissions();
   private OrganizationPermissions organizationPermissions = new OrganizationPermissions();
-//  private final static long TEST_STUDENT_ID = 3l;
-//  private static final long SECONDARY_TEST_STUDENT_ID = 13L;
 
   private Organization organization;
   private StudyProgramme studyProgramme;
   
-  @Before
+  @BeforeAll
   public void beforeTests() {
     organization = tools().createOrganization(getClass().getSimpleName());
     studyProgramme = tools().createStudyProgramme(organization.getId(), "TEST", getClass().getSimpleName(), 1l);
   }
   
-  @After
+  @AfterAll
   public void after() {
     tools().deleteStudyProgramme(studyProgramme);
     tools().deleteOrganization(organization);
   }
   
-  @Test
-  public void testCreateStudent() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testCreateStudent(Role role) throws NoSuchFieldException {
     /**
      * Tests permission to create student if the creator is not in the
      * same organization.
@@ -104,19 +89,64 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
       Boolean.FALSE //archived
     );
 
-    Response response = given().headers(getAuthHeaders())
+    Response response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(student)
         .post("/students/students");
 
     int expectedStatusCode = roleIsAllowed(role, studentPermissions, StudentPermissions.CREATE_STUDENT) ? 200 : 403;
-    assertOk(response, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS, expectedStatusCode);
+    assertOk(role, response, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS, expectedStatusCode);
     
     if (response.getStatusCode() == 200) {
       int id = response.body().jsonPath().getInt("id");
       
       given().headers(getAdminAuthHeaders())
         .delete("/students/students/{ID}?permanent=true", id);
+    }
+  }
+
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testListStudents(Role role) throws NoSuchFieldException {
+    if (roleIsAllowed(role, studentPermissions, StudentPermissions.LIST_STUDENTS)) {
+      Person person = tools().createPerson();
+      Student studentFromAnotherOrg = tools().createStudent(person.getId(), studyProgramme.getId());
+      Person person2 = tools().createPerson();
+      Student studentFromSameOrg = tools().createStudent(person2.getId(), 1L);
+      
+      try {
+        Response response = given().headers(getAuthHeaders(role))
+          .get("/students/students");
+        Student[] listStudents = response.as(Student[].class);
+        
+        if (!roleIsAllowed(role, studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+          // User has no group restriction
+          assertTrue(Arrays.stream(listStudents).anyMatch(student -> studentFromSameOrg.getId().equals(student.getId())),
+              String.format("Couldn't list student from same org (%s).", role));
+        } else {
+          // User has group restriction (study guider)
+          assertFalse(Arrays.stream(listStudents).anyMatch(student -> studentFromSameOrg.getId().equals(student.getId())),
+              String.format("Couldn't list student from same org (%s).", role));
+        }
+        
+        if (roleIsAllowed(role, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+          // Can access all organizations -> can list student from another org.
+          assertTrue(Arrays.stream(listStudents).anyMatch(student -> studentFromAnotherOrg.getId().equals(student.getId())),
+              String.format("Listed student from another org (%s).", role));
+        } else {
+          // Can access only own organizations -> can't list student from another org.
+          assertFalse(Arrays.stream(listStudents).anyMatch(student -> studentFromAnotherOrg.getId().equals(student.getId())),
+              String.format("Listed student from another org (%s).", role));
+        }
+      } finally {
+        tools().deleteStudent(studentFromSameOrg);
+        tools().deletePerson(person2);
+        tools().deleteStudent(studentFromAnotherOrg);
+        tools().deletePerson(person);
+      }
+    } else {
+      given().headers(getAuthHeaders(role))
+        .get("/students/students").then().statusCode(403);
     }
   }
   
@@ -149,19 +179,20 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
 //    }
 //  }
   
-  @Test
-  public void testFindStudent() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testFindStudent(Role role) throws NoSuchFieldException {
     Map<String, String> variables = new HashMap<>();
     variables.put("TV1", "text");
     variables.put("TV2", "123");
     
     Student student = tools().createStudent(1L, studyProgramme.getId());
     try {
-      Response response = given().headers(getAuthHeaders())
+      Response response = given().headers(getAuthHeaders(role))
           .get("/students/students/{ID}", student.getId());
   
       int expectedStatusCode = roleIsAllowed(role, studentPermissions, StudentPermissions.FIND_STUDENT) ? 200 : 403;
-      assertOk(response, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS, expectedStatusCode);
+      assertOk(role, response, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS, expectedStatusCode);
     } finally {
       tools().deleteStudent(student);
     }
@@ -177,8 +208,9 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
 //    assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENT);
 //  }
   
-  @Test
-  public void testUpdateStudent() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testUpdateStudent(Role role) throws NoSuchFieldException {
     Map<String, String> variables = new HashMap<>();
     variables.put("TV1", "text");
     variables.put("TV2", "123");
@@ -218,13 +250,13 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
         Boolean.FALSE //archived
       );
       
-      Response response = given().headers(getAuthHeaders())
+      Response response = given().headers(getAuthHeaders(role))
         .contentType("application/json")
         .body(updateStudent)
         .put("/students/students/{ID}", student.getId());
 
       int expectedStatusCode = roleIsAllowed(role, studentPermissions, StudentPermissions.UPDATE_STUDENT) ? 200 : 403;
-      assertOk(response, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS, expectedStatusCode);
+      assertOk(role, response, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS, expectedStatusCode);
     } finally {
       tools().deleteStudent(student);
     }
@@ -291,17 +323,18 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
 //    }
 //  }  
   
-  @Test
-  public void testDeleteStudent() throws NoSuchFieldException {
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void testDeleteStudent(Role role) throws NoSuchFieldException {
     Student student = tools().createStudent(1L, studyProgramme.getId());
 
     try {
-      Response response = given().headers(getAuthHeaders())
+      Response response = given().headers(getAuthHeaders(role))
         .delete("/students/students/{ID}", student.getId());
   
       // Both DELETE_STUDENT and ACCESS_ALL_ORGANIZATIONS are  needed
       int expectedStatusCode = roleIsAllowed(role, studentPermissions, StudentPermissions.DELETE_STUDENT) ? 204 : 403;
-      assertOk(response, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS, expectedStatusCode);
+      assertOk(role, response, organizationPermissions, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS, expectedStatusCode);
     } finally {
       tools().deleteStudent(student);
     }
