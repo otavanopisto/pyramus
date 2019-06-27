@@ -21,6 +21,7 @@ import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
@@ -35,15 +36,13 @@ import fi.otavanopisto.pyramus.Common;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
 
-public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest {
+public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest implements AbstractRestServicePermissionsTestI{
 
   public AbstractRESTPermissionsTest() {
     this.tools = new AbstractRESTServiceTestTools(this);
   }
   
-  @Before
-  public void setupRestAssured() {
-
+  static {
     RestAssured.baseURI = getAppUrl(true) + "/1";
     RestAssured.port = getPortHttps();
     RestAssured.authentication = certificate(getKeystoreFile(), getKeystorePass());
@@ -58,12 +57,10 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
             return objectMapper;
           }
         }));
-
   }
 
   @Before
   public void createAccessTokens() {
-
     OAuthClientRequest tokenRequest = null;
 
     if (!Role.EVERYONE.name().equals(role)) {
@@ -111,8 +108,8 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     }
   }
 	
-  @Before
-  public void testConnection() throws IOException {
+  @BeforeClass
+  public static void testConnection() throws IOException {
     Socket socket = new Socket();
     try {
       socket.connect(new InetSocketAddress(getHost(), getPortHttp()), 0);
@@ -122,7 +119,6 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
       socket.close();
     }
   }
-
 	
   public String getAccessToken() {
     return accessToken;

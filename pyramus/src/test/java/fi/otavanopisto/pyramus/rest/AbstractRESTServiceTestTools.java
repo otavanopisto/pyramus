@@ -21,7 +21,7 @@ import io.restassured.response.Response;
 
 public class AbstractRESTServiceTestTools {
 
-  public AbstractRESTServiceTestTools(AbstractRESTPermissionsTest testClass) {
+  public AbstractRESTServiceTestTools(AbstractRestServicePermissionsTestI testClass) {
     this.testClass = testClass;
   }
 
@@ -165,7 +165,7 @@ public class AbstractRESTServiceTestTools {
       .statusCode(204);
   }
 
-  private AbstractRESTPermissionsTest testClass;
+  private AbstractRestServicePermissionsTestI testClass;
 
   public CourseAssessment createCourseAssessment(Long courseId, Long studentId, Long courseStudentId) {
     CourseAssessment courseAssessment = new CourseAssessment();
