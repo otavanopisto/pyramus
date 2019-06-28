@@ -4,18 +4,44 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 
+@TestInstance(Lifecycle.PER_CLASS)
 public class PyramusJUnitEnvironmentTestsIT extends AbstractRESTPermissionsTestJUnit5 {
 
+  List<Role> roles = new ArrayList<>();
+  
+  @BeforeAll
+  public void fillRoles() {
+    Arrays.stream(Role.values()).forEach(role -> roles.add(role));
+  }
+  
+  @AfterAll
+  public void ensureAllRoles() {
+    assertTrue(roles.isEmpty(), "Not all roles were handled");
+  }
+  
+  @ParameterizedTest
+  @EnumSource(Role.class)
+  public void removeRole(Role role) {
+    roles.remove(role);
+  }
+  
   /**
    * Ensures roleIsAllowed works as intented.
    */
