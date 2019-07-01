@@ -305,7 +305,7 @@ function onLoad(event) {
     id : "variablesTable",
     columns : [ {
       left : 8,
-      width : 30,
+      width : 22,
       dataType : 'button',
       imgsrc : GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
       tooltip : getLocale().getText("settings.editSchool.variablesTableEditTooltip"),
@@ -319,13 +319,13 @@ function onLoad(event) {
       editable : false,
       paramName : 'key'
     }, {
-      left : 38,
-      width : 150,
+      left : 8 + 22 + 8,
+      width : 200,
       dataType : 'text',
       editable : false,
       paramName : 'name'
     }, {
-      left : 188,
+      left : 8 + 22 + 8 + 200 + 8,
       width : 750,
       dataType : 'text',
       editable : false,

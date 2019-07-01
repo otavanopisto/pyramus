@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>create table Configuration (id bigint not null auto_increment, name varchar(255) not null, value longtext, primary key (id));</sql>
+  <sql>alter table Configuration add constraint UK_sham1yps58yd0i428x5sk3uns unique (name);</sql>
+  
+</update>

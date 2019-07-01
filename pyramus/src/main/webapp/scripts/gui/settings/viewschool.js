@@ -12,13 +12,13 @@ function onLoad(event) {
       editable : false,
       paramName : 'key'
     }, {
-      left : 0,
-      width : 150,
+      left : 8,
+      width : 200,
       dataType : 'text',
       editable : false,
       paramName : 'name'
     }, {
-      left : 150,
+      left : 8 + 200 + 8,
       width : 750,
       dataType : 'text',
       editable : false,

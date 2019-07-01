@@ -44,6 +44,9 @@ import fi.otavanopisto.pyramus.dao.file.StudentFileDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
+import fi.otavanopisto.pyramus.dao.system.ConfigurationDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
@@ -66,6 +69,8 @@ import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.system.Configuration;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
@@ -74,6 +79,7 @@ import fi.otavanopisto.pyramus.framework.SettingUtils;
 import fi.otavanopisto.pyramus.mailer.Mailer;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class ApplicationUtils {
@@ -648,10 +654,11 @@ public class ApplicationUtils {
     if (!NumberUtils.isNumber(schoolId)) {
       String customSchool = getFormValue(formData, "field-internetix-contract-school-name");
       if (!StringUtils.isBlank(customSchool)) {
-        List<School> schools = schoolDAO.listByNameLowercase(customSchool);
+        List<School> schools = schoolDAO.listByNameLowercaseAndArchived(customSchool, Boolean.FALSE);
         School school = schools.isEmpty() ? null : schools.get(0);
         if (school != null) {
           studentDAO.updateSchool(student, school);
+          processSchoolStudentGroups(school, student); // #1003: add student to student group(s) based on school 
         }
         else {
           String notification = "<b>Huom!</b> Opiskelijan ilmoittamaa oppilaitosta ei löydy vielä Pyramuksesta!";
@@ -896,6 +903,38 @@ public class ApplicationUtils {
     default:
       return null;
     }
+  }
+  
+  private static void processSchoolStudentGroups(School school, Student student) {
+    ConfigurationDAO configurationDAO = DAOFactory.getInstance().getConfigurationDAO();
+    Configuration configuration = configurationDAO.findByName("application");
+    if (configuration != null && !StringUtils.isEmpty(configuration.getValue())) {
+      try {
+        JSONObject configurationDocument = JSONObject.fromObject(configuration.getValue());
+        if (configurationDocument.has("schoolStudentGroups")) {
+          JSONArray schoolStudentGroups = configurationDocument.getJSONArray("schoolStudentGroups");
+          for (int i = 0; i < schoolStudentGroups.size(); i++) {
+            JSONObject schoolStudentGroup = schoolStudentGroups.getJSONObject(i);
+            String mapSchool = schoolStudentGroup.getString("school");
+            if (StringUtils.equalsIgnoreCase(mapSchool, school.getName())) {
+              String mapStudentGroup = schoolStudentGroup.getString("studentGroup");
+              StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
+              List<StudentGroup> studentGroups = studentGroupDAO.listByNameLowercaseAndArchived(mapStudentGroup, Boolean.FALSE);
+              if (studentGroups.size() != 1) {
+                logger.warning(String.format("Skipping school %s student group %s mapping because it doesn't point to a single student group", mapSchool, mapStudentGroup));
+                continue;
+              }
+              StudentGroupStudentDAO studentGroupStudentDAO = DAOFactory.getInstance().getStudentGroupStudentDAO();
+              studentGroupStudentDAO.create(studentGroups.get(0), student, studentGroups.get(0).getLastModifier());
+            }
+          }
+        }
+      }
+      catch (Exception e) {
+        logger.log(Level.WARNING, "Exception processing student school and student group mapping", e);
+      }
+    }
+    
   }
 
   /**

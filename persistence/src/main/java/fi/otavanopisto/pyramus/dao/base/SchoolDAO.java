@@ -61,7 +61,7 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
     return persist(school);
   }
   
-  public List<School> listByNameLowercase(String name) {
+  public List<School> listByNameLowercaseAndArchived(String name, Boolean archived) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -69,8 +69,10 @@ public class SchoolDAO extends PyramusEntityDAO<School> {
     Root<School> root = criteria.from(School.class);
     criteria.select(root);
     criteria.where(
-      criteriaBuilder.equal(
-        criteriaBuilder.lower(root.get(School_.name)), name.toLowerCase())
+      criteriaBuilder.and(
+        criteriaBuilder.equal(criteriaBuilder.lower(root.get(School_.name)), name.toLowerCase()),
+        criteriaBuilder.equal(root.get(School_.archived), archived)
+      )
     );
     
     return entityManager.createQuery(criteria).getResultList();

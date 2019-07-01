@@ -1,0 +1,103 @@
+@page {
+  -fs-flow-top: "header";
+  -fs-flow-bottom: "footer";
+  background-color: #fff;
+  background-image: url('/gfx/applications/pdf-background-otava.png'); 
+  background-position: top center; 
+  background-repeat: no-repeat; 
+  background-size: 100%;
+  margin: 0;
+  padding: 0;
+  size: 210mm 297mm;
+}
+
+@font-face {
+  -fs-pdf-font-embed: embed;
+  -fs-pdf-font-encoding: Identity-H;
+  font-family: 'Exo 2';
+  font-style: normal;
+  font-weight: 300;
+  src: url('/fonts/Exo2-Light.ttf');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2212, U+2215;
+}
+
+body {
+  color: #2c2c2c;
+  font-family: "Exo 2";
+  font-size: 16px;
+  font-weight: 300
+}
+
+.document__body {
+  padding: 150px 40px 0 95px;
+  position: relative;
+}
+
+.document__date {
+  display: inline-block;
+  position: absolute;
+  right: 40px;
+  top: 150px;
+}
+
+.document__information h3 {
+  font-size: 18px;
+  font-weight: 300;
+  margin: 0 0 40px;
+}
+
+.document__information h2 {
+  font-size: 24px;
+  font-weight: 300;
+  margin: 0 0 30px;
+}
+
+.document__infofrmation p {
+  margin: 0 0 10px;
+}
+
+.document__information-row {
+  border-bottom: 1px solid #eee;
+  clear: both;
+  display: table;
+  padding: 12px 0;
+  width: 100%;
+}
+.document__information-label {
+  display: table-cell;
+  width: 140px;
+}
+
+.document__information-data {
+  display: table-cell;
+  width: auto;
+}
+
+.document__signature-primary,
+.document__signature-secondary {
+  margin: 80px 0;
+}
+
+.document__student-signature {
+  margin: 150px 0 0;
+}
+
+.document__signature-primary p,
+.document__signature-secondary p {
+  margin: 0 0 5px;
+}
+
+.document__signature-row {
+  padding: 12px 0;
+}
+
+.document__signature-label {
+  display: inline-block;
+  width: 165px;
+}
+
+.document__signature-data {
+  border-bottom: 1px solid #000;
+  display: inline-block;
+  width: 300px;
+}
