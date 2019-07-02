@@ -25,11 +25,11 @@ public class CourseAssessmentPermissions extends AbstractPyramusPermissionCollec
   public static final String UPDATE_COURSEASSESSMENT = "UPDATE_COURSEASSESSMENT";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
   public static final String LIST_ALL_STUDENT_COURSEASSESSMENTS = "LIST_ALL_STUDENT_COURSEASSESSMENTS";
   
   @Scope (PermissionScope.COURSE)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
   @DefaultCoursePermissionRoles ({ CourseRoleArchetype.TEACHER })
   public static final String LIST_STUDENT_COURSEASSESSMENTS = "LIST_STUDENT_COURSEASSESSMENTS";
   
