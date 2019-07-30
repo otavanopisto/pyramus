@@ -993,7 +993,7 @@
                     <jsp:param name="titleLocale" value="students.editStudent.usernameTitle"/>
                     <jsp:param name="helpLocale" value="students.editStudent.usernameHelp"/>
                   </jsp:include>                  
-                  <input type="text" name="username" autocomplete="off" value="${username}" size="30">
+                  <input type="text" name="username" autocomplete="new-username" value="${username}" size="30">
                 </div>
                 
                 <div class="genericFormSection">  
@@ -1001,7 +1001,7 @@
                     <jsp:param name="titleLocale" value="students.editStudent.password1Title"/>
                     <jsp:param name="helpLocale" value="students.editStudent.password1Help"/>
                   </jsp:include>                  
-                  <input type="password" class="equals equals-password2" autocomplete="off" name="password1" value="" size="30">
+                  <input type="password" class="equals equals-password2" autocomplete="new-password" name="password1" value="" size="30">
                 </div>
                 
                 <div class="genericFormSection">  
@@ -1009,7 +1009,7 @@
                     <jsp:param name="titleLocale" value="students.editStudent.password2Title"/>
                     <jsp:param name="helpLocale" value="students.editStudent.password2Help"/>
                   </jsp:include>                  
-                  <input type="password" class="equals equals-password1" autocomplete="off" name="password2" value="" size="30">
+                  <input type="password" class="equals equals-password1" autocomplete="new-password" name="password2" value="" size="30">
                 </div>
               </div>
               
