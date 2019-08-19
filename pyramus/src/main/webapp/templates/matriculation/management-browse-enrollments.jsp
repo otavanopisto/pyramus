@@ -40,6 +40,7 @@
                 results[i].email,
                 results[i].state,
                 results[i].numMandatoryCourses,
+                results[i].guider,
                 '']);
             }
             resultsTable.reattachToDom();
@@ -88,7 +89,7 @@
             paramName: 'email'
           }, {
             header : 'Tila',
-            width: 200,
+            width: 150,
             left: 8 + 300 + 8 + 300,
             dataType : 'select',
             editable: false,
@@ -101,10 +102,17 @@
           }, {
             header : 'Pakollisia kursseja',
             width: 150,
-            left: 8 + 300 + 8 + 300 + 8 + 200,
+            left: 8 + 300 + 8 + 300 + 8 + 150,
             dataType : 'text',
             editable: false,
             paramName: 'numMandatoryCourses'
+          }, {
+            header : 'Ohjaaja',
+            width: 150,
+            left: 8 + 300 + 8 + 300 + 8 + 150 + 8 + 150,
+            dataType : 'text',
+            editable: false,
+            paramName: 'guider'
           }, {
             width : 22,
             right : 8,
