@@ -25,7 +25,7 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
     MatriculationExamEnrollment enrollment,
     MatriculationExamSubject subject,
     Boolean mandatory,
-    Boolean repeat,
+    Boolean retry,
     Integer year,
     MatriculationExamTerm term,
     MatriculationExamAttendanceStatus status,
@@ -35,7 +35,7 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
     attendance.setEnrollment(enrollment);
     attendance.setSubject(subject);
     attendance.setMandatory(mandatory);
-    attendance.setRetry(repeat);
+    attendance.setRetry(retry);
     attendance.setYear(year);
     attendance.setTerm(term);
     attendance.setStatus(status);
@@ -99,7 +99,7 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
       MatriculationExamEnrollment enrollment,
       MatriculationExamSubject subject,
       Boolean mandatory,
-      Boolean repeat,
+      Boolean retry,
       Integer year,
       MatriculationExamTerm term,
       MatriculationExamAttendanceStatus status,
@@ -107,7 +107,7 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
     attendance.setEnrollment(enrollment);
     attendance.setSubject(subject);
     attendance.setMandatory(mandatory);
-    attendance.setRetry(repeat);
+    attendance.setRetry(retry);
     attendance.setYear(year);
     attendance.setTerm(term);
     attendance.setStatus(status);
