@@ -421,7 +421,7 @@
                 <jsp:param name="titleLocale" value="matriculation.editEnrollment.message"/>
                 <jsp:param name="helpLocale" value="matriculation.editEnrollment.message.help"/>
               </jsp:include>            
-              <textarea name="message">${message}</textarea>
+              <textarea name="message" cols="80" rows="8">${message}</textarea>
             </div>
 
             <div class="genericFormSection">
