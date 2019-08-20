@@ -944,8 +944,9 @@
                 <jsp:param name="helpLocale" value="students.editStudent.genderHelp"/>
               </jsp:include>            
               <select name="gender">
-                <option value="male" <c:if test="${person.sex == 'MALE'}">selected="selected"</c:if>><fmt:message key="students.editStudent.genderMaleTitle"/></option>
-                <option value="female" <c:if test="${person.sex == 'FEMALE'}">selected="selected"</c:if>><fmt:message key="students.editStudent.genderFemaleTitle"/></option>
+                <option value="MALE" ${person.sex == 'MALE' ? 'selected="selected"' : ''}><fmt:message key="generic.genders.male"/></option>
+                <option value="FEMALE" ${person.sex == 'FEMALE' ? 'selected="selected"' : ''}><fmt:message key="generic.genders.female"/></option>
+                <option value="OTHER" ${person.sex == 'OTHER' ? 'selected="selected"' : ''}><fmt:message key="generic.genders.other"/></option>
               </select>
             </div>
 

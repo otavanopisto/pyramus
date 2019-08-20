@@ -21,8 +21,10 @@ public class PersonAPI {
       sexEntity = Sex.MALE;
     } else if ("f".equals(sex)) {
       sexEntity = Sex.FEMALE;
+    } else if ("o".equals(sex)) {
+      sexEntity = Sex.OTHER;
     } else {
-      throw new IllegalArgumentException("sex must be \"m\" or \"f\"");
+      throw new IllegalArgumentException("sex must be \"m\" or \"f\" or \"o\"");
     }
 
     Person person = personDAO.create(birthday, socialSecurityNumber, sexEntity, basicInfo, secureInfo);

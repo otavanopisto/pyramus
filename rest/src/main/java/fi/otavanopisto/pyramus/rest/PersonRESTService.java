@@ -103,6 +103,9 @@ public class PersonRESTService extends AbstractRESTService {
       case MALE:
         sex = Sex.MALE;
       break;
+      case OTHER:
+        sex = Sex.OTHER;
+      break;
     }
     
     return Response.ok(objectFactory.createModel(personController.createPerson(toDate(entity.getBirthday()), 
@@ -163,6 +166,9 @@ public class PersonRESTService extends AbstractRESTService {
       break;
       case MALE:
         sex = Sex.MALE;
+      break;
+      case OTHER:
+        sex = Sex.OTHER;
       break;
     }
 
