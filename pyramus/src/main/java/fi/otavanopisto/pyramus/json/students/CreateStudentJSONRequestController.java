@@ -91,7 +91,7 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
     
     Date birthday = requestContext.getDate("birthday");
     String ssecId = requestContext.getString("ssecId");
-    Sex sex = "male".equals(requestContext.getRequest().getParameter("gender")) ? Sex.MALE : Sex.FEMALE;
+    Sex sex = (Sex) requestContext.getEnum("gender", Sex.class);
     String basicInfo = requestContext.getString("basicInfo");
     Boolean secureInfo = requestContext.getBoolean("secureInfo");
     String firstName = StringUtils.trim(requestContext.getString("firstName"));

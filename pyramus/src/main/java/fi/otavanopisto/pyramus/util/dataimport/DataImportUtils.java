@@ -199,7 +199,18 @@ public class DataImportUtils {
 
     interpreters.put(Sex.class, new ValueInterpreter<Sex>() {
       public Sex interpret(Object o) {
-        return "male".equalsIgnoreCase((String) o) ? Sex.MALE : Sex.FEMALE;
+        String value = (String) o;
+        
+        switch (value) {
+          case "male":
+            return Sex.MALE;
+          case "female":
+            return Sex.FEMALE;
+          case "other":
+            return Sex.OTHER;
+        }
+        
+        return null;
       }
     });
 

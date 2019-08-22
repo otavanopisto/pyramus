@@ -564,6 +564,9 @@ public class ObjectFactory {
                 case MALE:
                   sex = Sex.MALE;
                 break;
+                case OTHER:
+                  sex = Sex.OTHER;
+                break;
               }
             }
             
