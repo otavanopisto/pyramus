@@ -95,6 +95,11 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       return null;
     }
     
+    if (student.getStudyStartDate() == null) {
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_STUDYSTARTDATE, new Date());
+      return null;
+    }
+
     boolean defaultStudyProgramme = 
         settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId()) == HANDLER_TYPE;
 

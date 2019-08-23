@@ -84,6 +84,11 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       return null;
     }
     
+    if (student.getStudyStartDate() == null) {
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_STUDYSTARTDATE, new Date());
+      return null;
+    }
+    
     AikuistenPerusopetuksenOpiskeluoikeus opiskeluoikeus = new AikuistenPerusopetuksenOpiskeluoikeus();
     opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(handler, student.getId()));
     opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
