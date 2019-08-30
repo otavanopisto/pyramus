@@ -195,6 +195,14 @@ public class MatriculationExamEnrollment {
     this.degreeType = degreeType;
   }
 
+  public boolean isApprovedByGuider() {
+    return approvedByGuider;
+  }
+
+  public void setApprovedByGuider(boolean approvedByGuider) {
+    this.approvedByGuider = approvedByGuider;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
   @TableGenerator(name="MatriculationExamEnrollment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -239,7 +247,7 @@ public class MatriculationExamEnrollment {
   @Column
   private int numMandatoryCourses;
   
-  @Column
+  @Column(nullable = false)
   private boolean restartExam;
   
   @Column
@@ -250,16 +258,19 @@ public class MatriculationExamEnrollment {
   @Column
   private String message;
   
-  @Column
+  @Column(nullable = false)
   private boolean canPublishName;
 
+  @Column(nullable = false)
+  private boolean approvedByGuider;
+  
   @ManyToOne
   private Student student;
   
   @Column
   private Integer candidateNumber;
   
-  @Column
+  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private MatriculationExamEnrollmentState state;
   
