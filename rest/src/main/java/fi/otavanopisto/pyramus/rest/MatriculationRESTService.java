@@ -177,6 +177,7 @@ public class MatriculationRESTService extends AbstractRESTService {
         enrollment.isCanPublishName(),
         student,
         MatriculationExamEnrollmentState.valueOf(enrollment.getState()),
+        false,
         new Date());
         
       for (MatriculationExamAttendance attendance : enrollment.getAttendances()) {

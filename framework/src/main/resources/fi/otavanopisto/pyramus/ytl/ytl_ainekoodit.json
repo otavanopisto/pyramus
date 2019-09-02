@@ -199,7 +199,30 @@
     "ytlOppimäärä": "C",
     "aine": "pohjoissaame, lyhyt oppimäärä",
     "aineKoodi": "SMB3",
-    "matriculationExamSubject": "SAC"
+    "matriculationExamSubject": "SM_DC",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "SMB3" }
+    ]
+  },
+  {
+    "ytlAine": "IC",
+    "ytlOppimäärä": "C",
+    "aine": "inarinsaame, lyhyt oppimäärä",
+    "aineKoodi": "SMB3",
+    "matriculationExamSubject": "SM_ICC",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "SMB3" }
+    ]
+  },
+  {
+    "ytlAine": "Q",
+    "ytlOppimäärä": "C",
+    "aine": "koltansaame, lyhyt oppimäärä",
+    "aineKoodi": "SMB3",
+    "matriculationExamSubject": "SM_QC",
+    "suoritetutKurssit": [
+      { "educationType": "2", "subjectCode": "SMB3" }
+    ]
   },
 
   {

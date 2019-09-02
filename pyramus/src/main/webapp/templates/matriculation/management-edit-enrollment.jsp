@@ -56,7 +56,9 @@
           {value:"ITC", text:"Italia, C-taso"},
           {value:"POC", text:"Portugali, C-taso"},
           {value:"LAC", text:"Latina, C-taso"},
-          {value:"SMC", text:"Saame, C-taso"},
+          {value:"SM_DC", text:"Pohjoissaame, C-taso"},
+          {value:"SM_ICC", text:"Inarinsaame, C-taso"},
+          {value:"SM_QC", text:"Koltansaame, C-taso"},
           {value:"RUA", text:"Ruotsi, A-taso"},
           {value:"RUB", text:"Ruotsi, B-taso"},
           {value:"PS", text:"Psykologia"},
@@ -296,155 +298,147 @@
       <div id="enrollment" class="tabContent">
         <form method="post">
           <div>
-            <div class="genericFormSection">  
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.name"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.name.help"/>
-              </jsp:include>            
-              <input type="text" name="name" value="${name}">
+            <div class="genericViewInfoWapper">
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.name"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.name.help"/>
+                </jsp:include>            
+                <input type="text" name="name" value="${name}" size="50"/>
+              </div>
+  
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.ssn"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.ssn.help"/>
+                </jsp:include>            
+                <input type="text" name="ssn" value="${ssn}" size="15"/>
+              </div>
+  
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.email"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.email.help"/>
+                </jsp:include>            
+                <input type="text" name="email" value="${email}" size="40"/>
+              </div>
+  
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.phone"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.phone.help"/>
+                </jsp:include>            
+                <input type="text" name="phone" value="${phone}" size="20"/>
+              </div>
+  
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.address"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.address.help"/>
+                </jsp:include>            
+                <input type="text" name="address" value="${address}" size="40"/>
+              </div>
+  
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.postalCode"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.postalCode.help"/>
+                </jsp:include>            
+                <input type="text" name="postalCode" value="${postalCode}" size="10"/>
+              </div>
+  
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.postalOffice"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.postalOffice.help"/>
+                </jsp:include>            
+                <input type="text" name="postalOffice" value="${postalOffice}" size="40"/>
+              </div>
             </div>
 
-            <div class="genericFormSection">  
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.ssn"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.ssn.help"/>
-              </jsp:include>            
-              <input type="text" name="ssn" value="${ssn}">
-            </div>
-
-            <div class="genericFormSection">  
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.email"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.email.help"/>
-              </jsp:include>            
-              <input type="text" name="email" value="${email}">
-            </div>
-
-            <div class="genericFormSection">  
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.phone"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.phone.help"/>
-              </jsp:include>            
-              <input type="text" name="phone" value="${phone}">
-            </div>
-
-            <div class="genericFormSection">  
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.address"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.address.help"/>
-              </jsp:include>            
-              <input type="text" name="address" value="${address}">
-            </div>
-
-            <div class="genericFormSection">  
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.postalCode"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.postalCode.help"/>
-              </jsp:include>            
-              <input type="text" name="postalCode" value="${postalCode}">
-            </div>
-
-            <div class="genericFormSection">  
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.postalOffice"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.postalOffice.help"/>
-              </jsp:include>            
-              <input type="text" name="postalOffice" value="${postalOffice}">
-            </div>
-
-            <div class="genericFormSection">
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.nationalStudentNumber"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.nationalStudentNumber.help"/>
-              </jsp:include>            
-              <input type="text" name="nationalStudentNumber" value="${nationalStudentNumber}">
-            </div>
-
-            <div class="genericFormSection">
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.guidanceCounselor"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.guidanceCounselor.help"/>
-              </jsp:include>            
-              <input type="text" name="guidanceCounselor" value="${guidanceCounselor}">
-            </div>
-
-            <div class="genericFormSection">
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.enrollAs"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.enrollAs.help"/>
-              </jsp:include>            
-              <select class="required" name="enrollAs">
-                <option ${enrollAs=='UPPERSECONDARY' ? 'selected="selected"' : ''} value="UPPERSECONDARY">Lukio-opinnot</option>
-                <option ${enrollAs=='VOCATIONAL' ? 'selected="selected"' : ''} value="VOCATIONAL">Ammatilliset opinnot</option>
-                <option ${enrollAs=='UNKNOWN' ? 'selected="selected"' : ''} value="UNKNOWN">Muu tausta</option>
-              </select>
-            </div>
-
-            <div class="genericFormSection">
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.numMandatoryCourses"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.numMandatoryCourses.help"/>
-              </jsp:include>            
-              <input type="text" name="numMandatoryCourses" value="${numMandatoryCourses}">
-            </div>
-
-            <div class="genericFormSection">
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.restartExam"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.restartExam.help"/>
-              </jsp:include>            
-              <input type="checkbox" name="restartExam" value="true" ${restartExam ? 'checked="checked"' : ''}/>
-            </div>
-
-            <div class="genericFormSection">
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.degreeType"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.degreeType.help"/>
-              </jsp:include>            
-              <select class="required" name="degreeType">
-                <option ${enrollment.degreeType=='MATRICULATIONEXAMINATION' ? 'selected="selected"' : ''} value="MATRICULATIONEXAMINATION">Yo-tutkinto</option>
-                <option ${enrollment.degreeType=='MATRICULATIONEXAMINATIONSUPPLEMENT' ? 'selected="selected"' : ''} value="MATRICULATIONEXAMINATIONSUPPLEMENT">Tutkinnon korottaja tai täydentäjä</option>
-                <option ${enrollment.degreeType=='SEPARATEEXAM' ? 'selected="selected"' : ''} value="SEPARATEEXAM">Erillinen koe (ilman yo-tutkintoa)</option>
-              </select>
-            </div>
-
-            <div class="genericFormSection">
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.location"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.location.help"/>
-              </jsp:include>            
-              <input type="text" name="location" value="${location}">
-            </div>
-
-            <div class="genericFormSection">
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.message"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.message.help"/>
-              </jsp:include>            
-              <textarea name="message" cols="80" rows="8">${message}</textarea>
-            </div>
-
-            <div class="genericFormSection">
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.canPublishName"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.canPublishName.help"/>
-              </jsp:include>            
-              <select name="canPublishName">
-                <option ${enrollment.canPublishName ? 'selected="selected"' : ''} value="true">Haluan nimeni julkaistavan valmistujalistauksissa</option>
-                <option ${!enrollment.canPublishName ? 'selected="selected"' : ''} value="false">En halua nimeäni julkaistavan valmistujaislistauksissa</option>
-              </select>
-            </div>
-
-            <div class="genericFormSection">
-              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-                <jsp:param name="titleLocale" value="matriculation.editEnrollment.state"/>
-                <jsp:param name="helpLocale" value="matriculation.editEnrollment.state.help"/>
-              </jsp:include>            
-              <select class="required" name="state">
-                <option ${state=='PENDING' ? 'selected="selected"' : ''} value="PENDING">Jätetty</option>
-                <option ${state=='APPROVED' ? 'selected="selected"' : ''} value="APPROVED">Hyväksytty</option>
-                <option ${state=='REJECTED' ? 'selected="selected"' : ''} value="REJECTED">Hylätty</option>
-              </select>
+            <div class="genericViewInfoWapper">
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.nationalStudentNumber"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.nationalStudentNumber.help"/>
+                </jsp:include>            
+                <input type="text" name="nationalStudentNumber" value="${nationalStudentNumber}">
+              </div>
+  
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.guidanceCounselor"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.guidanceCounselor.help"/>
+                </jsp:include>            
+                <input type="text" name="guidanceCounselor" value="${guidanceCounselor}" size="40"/>
+              </div>
+  
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.enrollAs"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.enrollAs.help"/>
+                </jsp:include>            
+                <select class="required" name="enrollAs">
+                  <option ${enrollAs=='UPPERSECONDARY' ? 'selected="selected"' : ''} value="UPPERSECONDARY">Lukio-opinnot</option>
+                  <option ${enrollAs=='VOCATIONAL' ? 'selected="selected"' : ''} value="VOCATIONAL">Ammatilliset opinnot</option>
+                  <option ${enrollAs=='UNKNOWN' ? 'selected="selected"' : ''} value="UNKNOWN">Muu tausta</option>
+                </select>
+              </div>
+  
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.numMandatoryCourses"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.numMandatoryCourses.help"/>
+                </jsp:include>            
+                <input type="number" name="numMandatoryCourses" value="${numMandatoryCourses}">
+              </div>
+  
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.restartExam"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.restartExam.help"/>
+                </jsp:include>            
+                <input type="checkbox" name="restartExam" value="true" ${restartExam ? 'checked="checked"' : ''}/>
+              </div>
+  
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.degreeType"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.degreeType.help"/>
+                </jsp:include>            
+                <select class="required" name="degreeType">
+                  <option ${enrollment.degreeType=='MATRICULATIONEXAMINATION' ? 'selected="selected"' : ''} value="MATRICULATIONEXAMINATION">Yo-tutkinto</option>
+                  <option ${enrollment.degreeType=='MATRICULATIONEXAMINATIONSUPPLEMENT' ? 'selected="selected"' : ''} value="MATRICULATIONEXAMINATIONSUPPLEMENT">Tutkinnon korottaja tai täydentäjä</option>
+                  <option ${enrollment.degreeType=='SEPARATEEXAM' ? 'selected="selected"' : ''} value="SEPARATEEXAM">Erillinen koe (ilman yo-tutkintoa)</option>
+                </select>
+              </div>
+  
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.location"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.location.help"/>
+                </jsp:include>            
+                <input type="text" name="location" value="${location}">
+              </div>
+  
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.message"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.message.help"/>
+                </jsp:include>            
+                <textarea name="message" cols="80" rows="8">${message}</textarea>
+              </div>
+  
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.canPublishName"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.canPublishName.help"/>
+                </jsp:include>            
+                <select name="canPublishName">
+                  <option ${enrollment.canPublishName ? 'selected="selected"' : ''} value="true">Haluan nimeni julkaistavan valmistujalistauksissa</option>
+                  <option ${!enrollment.canPublishName ? 'selected="selected"' : ''} value="false">En halua nimeäni julkaistavan valmistujaislistauksissa</option>
+                </select>
+              </div>
             </div>
 
             <div class="genericFormSection">
@@ -477,6 +471,28 @@
               <div id="plannedAttendancesTableContainer"></div>
             </div>
             
+            <div class="genericViewInfoWapper">
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.approvedByGuider"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.approvedByGuider.help"/>
+                </jsp:include>            
+                <input type="checkbox" name="approvedByGuider" value="true" ${enrollment.approvedByGuider ? 'checked="checked"' : ''}/>
+              </div>
+
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.state"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.state.help"/>
+                </jsp:include>            
+                <select class="required" name="state">
+                  <option ${state=='PENDING' ? 'selected="selected"' : ''} value="PENDING">Jätetty</option>
+                  <option ${state=='APPROVED' ? 'selected="selected"' : ''} value="APPROVED">Hyväksytty</option>
+                  <option ${state=='REJECTED' ? 'selected="selected"' : ''} value="REJECTED">Hylätty</option>
+                </select>
+              </div>
+            </div>
+
             <button>Tallenna</button>
           </div>
         </form>

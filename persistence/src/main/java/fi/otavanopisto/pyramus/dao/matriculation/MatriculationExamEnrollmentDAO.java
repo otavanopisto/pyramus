@@ -46,6 +46,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     boolean canPublishName,
     Student student,
     MatriculationExamEnrollmentState state,
+    boolean approvedByGuider,
     Date enrollmentDate
   ) {
     EntityManager entityManager = getEntityManager();
@@ -69,6 +70,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     result.setCanPublishName(canPublishName);
     result.setStudent(student);
     result.setState(state);
+    result.setApprovedByGuider(approvedByGuider);
     result.setEnrollmentDate(enrollmentDate);
     
     entityManager.persist(result);
@@ -93,7 +95,8 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     String message,
     boolean canPublishName,
     Student student,
-    MatriculationExamEnrollmentState state
+    MatriculationExamEnrollmentState state,
+    boolean approvedByGuider
   ) {
     EntityManager entityManager = getEntityManager();
 
@@ -114,6 +117,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setCanPublishName(canPublishName);
     enrollment.setStudent(student);
     enrollment.setState(state);
+    enrollment.setApprovedByGuider(approvedByGuider);
     
     entityManager.persist(enrollment);
     return enrollment;
