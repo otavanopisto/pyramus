@@ -246,12 +246,8 @@ public class ApplicationUtils {
     }
   }
   
-  public static Sex resolveGender(String genderValue, String ssnEnd) {
-    if (!StringUtils.isBlank(ssnEnd) && !StringUtils.equalsIgnoreCase(ssnEnd, "XXXX") && ssnEnd.length() == 4) {
-      char c = ssnEnd.charAt(2);
-      return c == '1' || c == '3' || c == '5' || c == '7' || c == '9' ? Sex.MALE : Sex.FEMALE;
-    }
-    return "nainen".equals(genderValue) ? Sex.FEMALE : Sex.MALE;
+  public static Sex resolveGender(String genderValue) {
+    return StringUtils.equals("mies",  genderValue) ? Sex.MALE : StringUtils.equals("nainen",  genderValue) ? Sex.FEMALE : Sex.OTHER;
   }
   
   public static StudentExaminationType resolveStudentExaminationType(String examinationType) {
@@ -517,7 +513,7 @@ public class ApplicationUtils {
       try {
         Date birthday = StringUtils.isEmpty(birthdayStr) ? null : new SimpleDateFormat("d.M.yyyy").parse(birthdayStr);
         String ssn = StringUtils.isBlank(ssnEnd) ? null : ApplicationUtils.constructSSN(birthdayStr, ssnEnd);
-        Sex sex = ApplicationUtils.resolveGender(getFormValue(formData, "field-sex"), ssnEnd);
+        Sex sex = ApplicationUtils.resolveGender(getFormValue(formData, "field-sex"));
         person = personDAO.create(birthday, ssn, sex, null, Boolean.FALSE);
       }
       catch (ParseException e) {
