@@ -149,7 +149,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
 
     Date birthday = requestContext.getDate("birthday");
     String ssecId = requestContext.getString("ssecId");
-    Sex sex = "male".equals(requestContext.getRequest().getParameter("gender")) ? Sex.MALE : Sex.FEMALE;
+    Sex sex = (Sex) requestContext.getEnum("gender", Sex.class);
     String basicInfo = requestContext.getString("basicInfo");
     Long version = requestContext.getLong("version"); 
     Boolean secureInfo = requestContext.getBoolean("secureInfo");

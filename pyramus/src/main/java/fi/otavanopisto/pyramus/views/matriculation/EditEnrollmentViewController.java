@@ -101,7 +101,8 @@ public class EditEnrollmentViewController extends PyramusViewController {
       ObjectUtils.firstNonNull(pageRequestContext.getString("message"), ""),
       pageRequestContext.getBoolean("canPublishName"),
       enrollment.getStudent(),
-      enrollmentState 
+      enrollmentState,
+      pageRequestContext.getBoolean("approvedByGuider")
     );
     
     Integer enrolledAttendances = pageRequestContext.getInteger("enrolledAttendances.rowCount");

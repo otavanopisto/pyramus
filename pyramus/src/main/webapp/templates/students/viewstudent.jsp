@@ -1980,15 +1980,15 @@
                     </jsp:include>
                     <div class="genericViewFormDataText">
                       <c:choose>
-                        <c:when
-                          test="${person.sex != 'FEMALE'}">
-                          <fmt:message
-                            key="students.viewStudent.genderMaleTitle" />
+                        <c:when test="${person.sex == 'MALE'}">
+                          <fmt:message key="generic.genders.male" />
                         </c:when>
-                        <c:otherwise>
-                          <fmt:message
-                            key="students.viewStudent.genderFemaleTitle" />
-                        </c:otherwise>
+                        <c:when test="${person.sex == 'FEMALE'}">
+                          <fmt:message key="generic.genders.female" />
+                        </c:when>
+                        <c:when test="${person.sex == 'OTHER'}">
+                          <fmt:message key="generic.genders.other" />
+                        </c:when>
                       </c:choose>
                     </div>
                   </div>

@@ -944,8 +944,9 @@
                 <jsp:param name="helpLocale" value="students.editStudent.genderHelp"/>
               </jsp:include>            
               <select name="gender">
-                <option value="male" <c:if test="${person.sex == 'MALE'}">selected="selected"</c:if>><fmt:message key="students.editStudent.genderMaleTitle"/></option>
-                <option value="female" <c:if test="${person.sex == 'FEMALE'}">selected="selected"</c:if>><fmt:message key="students.editStudent.genderFemaleTitle"/></option>
+                <option value="MALE" ${person.sex == 'MALE' ? 'selected="selected"' : ''}><fmt:message key="generic.genders.male"/></option>
+                <option value="FEMALE" ${person.sex == 'FEMALE' ? 'selected="selected"' : ''}><fmt:message key="generic.genders.female"/></option>
+                <option value="OTHER" ${person.sex == 'OTHER' ? 'selected="selected"' : ''}><fmt:message key="generic.genders.other"/></option>
               </select>
             </div>
 
@@ -993,7 +994,7 @@
                     <jsp:param name="titleLocale" value="students.editStudent.usernameTitle"/>
                     <jsp:param name="helpLocale" value="students.editStudent.usernameHelp"/>
                   </jsp:include>                  
-                  <input type="text" name="username" autocomplete="off" value="${username}" size="30">
+                  <input type="text" name="username" autocomplete="new-username" value="${username}" size="30">
                 </div>
                 
                 <div class="genericFormSection">  
@@ -1001,7 +1002,7 @@
                     <jsp:param name="titleLocale" value="students.editStudent.password1Title"/>
                     <jsp:param name="helpLocale" value="students.editStudent.password1Help"/>
                   </jsp:include>                  
-                  <input type="password" class="equals equals-password2" autocomplete="off" name="password1" value="" size="30">
+                  <input type="password" class="equals equals-password2" autocomplete="new-password" name="password1" value="" size="30">
                 </div>
                 
                 <div class="genericFormSection">  
@@ -1009,7 +1010,7 @@
                     <jsp:param name="titleLocale" value="students.editStudent.password2Title"/>
                     <jsp:param name="helpLocale" value="students.editStudent.password2Help"/>
                   </jsp:include>                  
-                  <input type="password" class="equals equals-password1" autocomplete="off" name="password2" value="" size="30">
+                  <input type="password" class="equals equals-password1" autocomplete="new-password" name="password2" value="" size="30">
                 </div>
               </div>
               

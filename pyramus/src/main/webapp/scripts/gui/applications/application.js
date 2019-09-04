@@ -220,22 +220,6 @@
       }
     });
     
-    // Allow other sex with valid ssn postfix
-    
-    $('#field-ssn-end').on('change', function() {
-      var valid = isValidSsnEnd($(this).val(), false);
-      var otherOption = $('#field-sex option[value="muu"]');
-      if (valid && otherOption.length == 0) {
-        $('#field-sex').append($('<option>').attr('value', 'muu').text('Muu'));
-      }
-      else {
-        $(otherOption).remove();
-        if ($('#field-sex').val() == 'muu') {
-          $('#field-sex').val('');
-        }
-      }
-    });
-    
     // Dependencies
     
     $('[data-dependencies]').change(function() {

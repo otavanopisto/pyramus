@@ -90,6 +90,11 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       return null;
     }
     
+    if (student.getStudyStartDate() == null) {
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_STUDYSTARTDATE, new Date());
+      return null;
+    }
+    
     LukionOpiskeluoikeus opiskeluoikeus = new LukionOpiskeluoikeus();
     opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(handler, student.getId()));
     opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());

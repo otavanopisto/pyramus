@@ -42,6 +42,7 @@
         <option value="">-- Valitse --</option>
         <option value="mies">Mies</option>
         <option value="nainen">Nainen</option>
+        <option value="muu">Muu</option>
       </select>
     </div>
 
