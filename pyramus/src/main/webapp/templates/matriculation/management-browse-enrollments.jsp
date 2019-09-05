@@ -41,6 +41,7 @@
                 results[i].state,
                 results[i].numMandatoryCourses,
                 results[i].guider,
+                results[i].approvedByGuider ? 1 : 0,
                 '']);
             }
             resultsTable.reattachToDom();
@@ -82,7 +83,7 @@
             paramName: 'name'
           }, {
             header : 'Sähköposti',
-            width: 300,
+            width: 250,
             left: 8 + 300,
             dataType : 'text',
             editable: false,
@@ -90,7 +91,7 @@
           }, {
             header : 'Tila',
             width: 150,
-            left: 8 + 300 + 8 + 300,
+            left: 8 + 300 + 8 + 250,
             dataType : 'select',
             editable: false,
             paramName: 'state',
@@ -101,18 +102,25 @@
             ]
           }, {
             header : 'Pakollisia kursseja',
-            width: 150,
-            left: 8 + 300 + 8 + 300 + 8 + 150,
+            width: 130,
+            left: 8 + 300 + 8 + 250 + 8 + 150,
             dataType : 'text',
             editable: false,
             paramName: 'numMandatoryCourses'
           }, {
             header : 'Ohjaaja',
-            width: 150,
-            left: 8 + 300 + 8 + 300 + 8 + 150 + 8 + 150,
+            width: 200,
+            left: 8 + 300 + 8 + 250 + 8 + 150 + 8 + 130,
             dataType : 'text',
             editable: false,
             paramName: 'guider'
+          }, {
+            header : 'Ohjaajan hyväksymä',
+            width: 100,
+            left: 8 + 300 + 8 + 250 + 8 + 150 + 8 + 130 + 8 + 200,
+            dataType: 'checkbox',
+            editable: false,
+            paramName: 'approvedByGuider'
           }, {
             width : 22,
             right : 8,
