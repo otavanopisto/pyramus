@@ -120,7 +120,7 @@
             left: 8 + 300 + 8 + 250 + 8 + 150 + 8 + 130 + 8 + 200,
             dataType: 'checkbox',
             editable: false,
-            paramName: 'guider'
+            paramName: 'approvedByGuider'
           }, {
             width : 22,
             right : 8,
