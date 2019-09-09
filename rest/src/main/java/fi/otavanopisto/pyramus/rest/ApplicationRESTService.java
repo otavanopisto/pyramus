@@ -388,13 +388,11 @@ public class ApplicationRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    JSONObject formData = JSONObject.fromObject(object);
-    
-    logger.info(String.format("Storing application %s", formData.toString()));
-    
     // Validate key parts of form data
     
     try {
+      JSONObject formData = JSONObject.fromObject(object);
+
       String applicationId = formData.getString("field-application-id");
       if (applicationId == null) {
         logger.log(Level.WARNING, "Refusing application due to missing applicationId");
@@ -572,7 +570,7 @@ public class ApplicationRESTService extends AbstractRESTService {
       return Response.ok(response).build();
     }
     catch (JSONException e) {
-      logger.log(Level.SEVERE, String.format("Refusing application save due to malformatted json: %s", e.toString()));
+      logger.log(Level.SEVERE, String.format("Exception %s processing application json %s", e.getMessage(), object));
       return Response.status(Status.BAD_REQUEST).build();
     }
   }
