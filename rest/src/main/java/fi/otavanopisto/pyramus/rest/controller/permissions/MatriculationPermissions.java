@@ -12,6 +12,10 @@ import fi.otavanopisto.security.Scope;
 public class MatriculationPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ STUDENT })
+  public static final String LIST_EXAMS = "LIST_EXAMS";
+
+  @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ STUDENT, ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String GET_CURRENT_EXAM = "GET_CURRENT_EXAM";
   

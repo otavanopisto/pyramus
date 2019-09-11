@@ -77,10 +77,21 @@ public class MatriculationExam {
     this.examTerm = examTerm;
   }
 
+  public boolean isEnrollmentActive() {
+    return enrollmentActive;
+  }
+
+  public void setEnrollmentActive(boolean enrollmentActive) {
+    this.enrollmentActive = enrollmentActive;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExam")  
   @TableGenerator(name="MatriculationExam", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   private Long id;
+  
+  @Column(nullable = false)
+  private boolean enrollmentActive;
 
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false)

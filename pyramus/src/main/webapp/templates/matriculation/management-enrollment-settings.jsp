@@ -112,6 +112,16 @@
 
           <div class="genericFormSection">  
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="matriculation.settings.enrollmentActive"/>
+            </jsp:include>
+            <select name="enrollmentActive">
+              <option value="true" ${exam.enrollmentActive == true ? 'selected="selected"' : ''}><fmt:message key="terms.yes"/></option>
+              <option value="false" ${exam.enrollmentActive != true ? 'selected="selected"' : ''}><fmt:message key="terms.no"/></option>
+            </select>
+          </div>
+          
+          <div class="genericFormSection">  
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
               <jsp:param name="titleLocale" value="matriculation.settings.startDate"/>
             </jsp:include>                                           
             <input type="text" name="starts" class="ixDateField" value="${exam.starts.time}"/>

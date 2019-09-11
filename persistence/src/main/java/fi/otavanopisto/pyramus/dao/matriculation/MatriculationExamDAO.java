@@ -17,7 +17,8 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
       Date ends, 
       Grade signupGrade,
       Integer examYear,
-      MatriculationExamTerm examTerm
+      MatriculationExamTerm examTerm, 
+      boolean enrollmentActive
   ) {
     MatriculationExam exam = new MatriculationExam();
     exam.setStarts(starts);
@@ -25,6 +26,7 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
     exam.setSignupGrade(signupGrade);
     exam.setExamYear(examYear);
     exam.setExamTerm(examTerm);
+    exam.setEnrollmentActive(enrollmentActive);
     return persist(exam);
   }
   
@@ -35,13 +37,15 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
       Date ends, 
       Grade signupGrade,
       Integer examYear,
-      MatriculationExamTerm examTerm
+      MatriculationExamTerm examTerm,
+      boolean enrollmentActive
   ) {
     exam.setStarts(starts);
     exam.setEnds(ends);
     exam.setSignupGrade(signupGrade);
     exam.setExamYear(examYear);
     exam.setExamTerm(examTerm);
+    exam.setEnrollmentActive(enrollmentActive);
     return persist(exam);
   }
 
