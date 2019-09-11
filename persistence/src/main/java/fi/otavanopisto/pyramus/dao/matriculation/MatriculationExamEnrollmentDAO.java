@@ -14,6 +14,7 @@ import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance_;
@@ -28,30 +29,31 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<MatriculationExamEnrollment> {
 
   public MatriculationExamEnrollment create(
-    String name,
-    String ssn,
-    String email,
-    String phone,
-    String address,
-    String postalCode,
-    String city,
-    Long nationalStudentNumber,
-    String guider,
-    SchoolType enrollAs,
-    DegreeType degreeType,
-    int numMandatoryCourses,
-    boolean restartExam,
-    String location,
-    String message,
-    boolean canPublishName,
-    Student student,
-    MatriculationExamEnrollmentState state,
-    boolean approvedByGuider,
-    Date enrollmentDate
+      MatriculationExam exam,
+      String name,
+      String ssn,
+      String email,
+      String phone,
+      String address,
+      String postalCode,
+      String city,
+      Long nationalStudentNumber,
+      String guider,
+      SchoolType enrollAs,
+      DegreeType degreeType,
+      int numMandatoryCourses,
+      boolean restartExam,
+      String location,
+      String message,
+      boolean canPublishName,
+      Student student,
+      MatriculationExamEnrollmentState state,
+      boolean approvedByGuider,
+      Date enrollmentDate
   ) {
-    EntityManager entityManager = getEntityManager();
     MatriculationExamEnrollment result = new MatriculationExamEnrollment();
 
+    result.setExam(exam);
     result.setName(name);
     result.setSsn(ssn);
     result.setEmail(email);
@@ -73,8 +75,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     result.setApprovedByGuider(approvedByGuider);
     result.setEnrollmentDate(enrollmentDate);
     
-    entityManager.persist(result);
-    return result;
+    return persist(result);
   }
 
   public MatriculationExamEnrollment update(
@@ -98,8 +99,6 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     MatriculationExamEnrollmentState state,
     boolean approvedByGuider
   ) {
-    EntityManager entityManager = getEntityManager();
-
     enrollment.setName(name);
     enrollment.setSsn(ssn);
     enrollment.setEmail(email);
@@ -119,8 +118,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setState(state);
     enrollment.setApprovedByGuider(approvedByGuider);
     
-    entityManager.persist(enrollment);
-    return enrollment;
+    return persist(enrollment);
   }
   
   public List<MatriculationExamEnrollment> listByState(
@@ -146,6 +144,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
   }
   
   public List<MatriculationExamEnrollment> listBy(
+      MatriculationExam exam, 
       MatriculationExamEnrollmentState state,
       boolean below20courses,
       int firstResult,
@@ -157,6 +156,9 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     Root<MatriculationExamEnrollment> root = criteria.from(MatriculationExamEnrollment.class);
     
     List<Predicate> predicates = new ArrayList<>();
+    if (exam != null) {
+      predicates.add(criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.exam), exam));
+    }
     if (state != null) {
       predicates.add(criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.state), state));
     }
@@ -201,14 +203,17 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       .getResultList();
   }
   
-  public MatriculationExamEnrollment findLatestByStudent(Student student) {
+  public MatriculationExamEnrollment findLatestByExamAndStudent(MatriculationExam exam, Student student) {
     EntityManager entityManager = getEntityManager(); 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<MatriculationExamEnrollment> criteria = criteriaBuilder.createQuery(MatriculationExamEnrollment.class);
     Root<MatriculationExamEnrollment> root = criteria.from(MatriculationExamEnrollment.class);
     criteria.select(root);
     criteria.where(
-      criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.student), student)
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.exam), exam),
+        criteriaBuilder.equal(root.get(MatriculationExamEnrollment_.student), student)
+      )
     );
     criteria.orderBy(criteriaBuilder.desc(root.get(MatriculationExamEnrollment_.enrollmentDate)));
     List<MatriculationExamEnrollment> resultList = 

@@ -203,11 +203,22 @@ public class MatriculationExamEnrollment {
     this.approvedByGuider = approvedByGuider;
   }
 
+  public MatriculationExam getExam() {
+    return exam;
+  }
+
+  public void setExam(MatriculationExam exam) {
+    this.exam = exam;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExamEnrollment")  
   @TableGenerator(name="MatriculationExamEnrollment", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   @DocumentId 
   private Long id;
+ 
+  @ManyToOne
+  private MatriculationExam exam;
   
   @Column
   private String name;

@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubjectSettings_;
@@ -17,15 +18,16 @@ import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 @Stateless
 public class MatriculationExamSubjectSettingsDAO extends PyramusEntityDAO<MatriculationExamSubjectSettings> {
 
-  public MatriculationExamSubjectSettings create(MatriculationExamSubject subject, Project project, Date examDate) {
+  public MatriculationExamSubjectSettings create(MatriculationExam exam, MatriculationExamSubject subject, Project project, Date examDate) {
     MatriculationExamSubjectSettings subset = new MatriculationExamSubjectSettings();
+    subset.setExam(exam);
     subset.setSubject(subject);
     subset.setProject(project);
     subset.setExamDate(examDate);
     return persist(subset);
   }
 
-  public MatriculationExamSubjectSettings findBy(MatriculationExamSubject subject) {
+  public MatriculationExamSubjectSettings findBy(MatriculationExam exam, MatriculationExamSubject subject) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -33,7 +35,10 @@ public class MatriculationExamSubjectSettingsDAO extends PyramusEntityDAO<Matric
     Root<MatriculationExamSubjectSettings> root = criteria.from(MatriculationExamSubjectSettings.class);
     criteria.select(root);
     criteria.where(
-        criteriaBuilder.equal(root.get(MatriculationExamSubjectSettings_.subject), subject)
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(MatriculationExamSubjectSettings_.exam), exam),
+            criteriaBuilder.equal(root.get(MatriculationExamSubjectSettings_.subject), subject)
+        )
     );
     
     return getSingleResult(entityManager.createQuery(criteria));

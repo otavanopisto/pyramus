@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>
+    alter table MatriculationExamEnrollment add column exam_id bigint;
+  </sql>
+  <sql>
+    alter table MatriculationExamEnrollment add constraint FK42x7g8a30rpjmjcir4yt0up1r foreign key (exam_id) references MatriculationExam (id);
+  </sql>
+  <sql>
+    update MatriculationExamEnrollment set exam_id = 1;
+  </sql>
+  <sql>
+    alter table MatriculationExamSubjectSettings add column exam_id bigint;
+  </sql>
+  <sql>
+    alter table MatriculationExamSubjectSettings add constraint FK1pq8kcj53uww6wdyv68ybf85s foreign key (exam_id) references MatriculationExam (id);
+  </sql>
+  <sql>
+    update MatriculationExamSubjectSettings set exam_id = 1;
+  </sql>
+  <sql>
+    alter table MatriculationExamSubjectSettings drop index UK_11pqsbxadatp4rxqpx7eeoryj;
+  </sql>
+  <sql>
+    alter table MatriculationExamSubjectSettings add constraint UK1rkucrwue5jyrn8ja2h42u3r3 unique (exam_id, subject);
+  </sql>
+  
+</update>

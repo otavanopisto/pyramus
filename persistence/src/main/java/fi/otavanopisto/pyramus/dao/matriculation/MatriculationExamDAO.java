@@ -1,7 +1,6 @@
 package fi.otavanopisto.pyramus.dao.matriculation;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 
@@ -13,18 +12,14 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 @Stateless
 public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
 
-  public MatriculationExam createOrUpdate(
-    Date starts,
-    Date ends, 
-    Grade signupGrade,
-    Integer examYear,
-    MatriculationExamTerm examTerm
+  public MatriculationExam create(
+      Date starts,
+      Date ends, 
+      Grade signupGrade,
+      Integer examYear,
+      MatriculationExamTerm examTerm
   ) {
-    MatriculationExam exam = get();
-    if (exam == null) {
-      exam = new MatriculationExam();
-      exam.setId(1L);
-    }
+    MatriculationExam exam = new MatriculationExam();
     exam.setStarts(starts);
     exam.setEnds(ends);
     exam.setSignupGrade(signupGrade);
@@ -32,14 +27,22 @@ public class MatriculationExamDAO extends PyramusEntityDAO<MatriculationExam> {
     exam.setExamTerm(examTerm);
     return persist(exam);
   }
-
-  public MatriculationExam get() {
-    List<MatriculationExam> exams = listAll(0, 1);
-    if (exams.size() > 0) {
-      return exams.get(0);
-    } else {
-      return null;
-    }
+  
+  
+  public MatriculationExam update(
+      MatriculationExam exam,
+      Date starts,
+      Date ends, 
+      Grade signupGrade,
+      Integer examYear,
+      MatriculationExamTerm examTerm
+  ) {
+    exam.setStarts(starts);
+    exam.setEnds(ends);
+    exam.setSignupGrade(signupGrade);
+    exam.setExamYear(examYear);
+    exam.setExamTerm(examTerm);
+    return persist(exam);
   }
 
 }

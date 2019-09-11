@@ -29,10 +29,6 @@ public class MatriculationExam {
     return id;
   }
   
-  public void setId(Long id) {
-    this.id = id;
-  }
-  
   public Date getStarts() {
     return starts;
   }
@@ -104,9 +100,6 @@ public class MatriculationExam {
   @ManyToOne
   private Grade signupGrade;
   
-  /* Version required because we persist an entity with a set id, to get rid
-   * of duplication
-   */
   @Version
   @Column(nullable = false)
   private Long version;
