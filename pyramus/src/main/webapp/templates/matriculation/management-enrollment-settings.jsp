@@ -6,21 +6,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
-	<head>
-		<title>YO-ilmoittautumiset</title>
+  <head>
+    <title>YO-ilmoittautumiset</title>
 
-		<jsp:include page="/templates/generic/head_generic.jsp"></jsp:include>
-		<jsp:include page="/templates/generic/scriptaculous_support.jsp"></jsp:include>
-		<jsp:include page="/templates/generic/table_support.jsp"></jsp:include>
-		<jsp:include page="/templates/generic/dialog_support.jsp"></jsp:include>
-		<jsp:include page="/templates/generic/jsonrequest_support.jsp"></jsp:include>
-		<jsp:include page="/templates/generic/tabs_support.jsp"></jsp:include>
-		
-		<script type="text/javascript">
-			function onLoad(event) {
+    <jsp:include page="/templates/generic/head_generic.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/scriptaculous_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/table_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/dialog_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/jsonrequest_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/tabs_support.jsp"></jsp:include>
+    
+    <script type="text/javascript">
+      function onLoad(event) {
         var tabControl = new IxProtoTabs($('tabs'));
         setupSubjectSettingsTable();
-			};
+      };
 
       function setupSubjectSettingsTable() {
         var projectData = JSDATA["projectData"].evalJSON();
@@ -33,7 +33,7 @@
             value: projectData[i].id
           });
         }
-	  
+    
         var subjectSettingsTable = new IxTable($('subjectSettingsTableContainer'), {
           id: 'subjectSettingsTable',
           rowHoverEffect: true,
@@ -76,20 +76,22 @@
         
         return subjectSettingsTable;
       }
-		</script>
-		
-	</head> 
-	<body onload="onLoad(event);">
-		<jsp:include page="/templates/generic/header.jsp"></jsp:include>
-		
-		<h1 class="genericPageHeader">YO-ilmoittautumisten asetukset</h1>
-		
-		<div class="genericFormContainer">
-			<div class="tabLabelsContainer" id="tabs">
-				<a class="tabLabel" href="#settings">Ilmoittautuminen</a>
-			</div>
-			<div id="settings" class="tabContent">
-				<form method="post">
+    </script>
+    
+  </head> 
+  <body onload="onLoad(event);">
+    <jsp:include page="/templates/generic/header.jsp"></jsp:include>
+    
+    <h1 class="genericPageHeader">YO-ilmoittautumisten asetukset</h1>
+    
+    <div class="genericFormContainer">
+      <div class="tabLabelsContainer" id="tabs">
+        <a class="tabLabel" href="#settings">Ilmoittautuminen</a>
+      </div>
+      <div id="settings" class="tabContent">
+        <form method="post">
+          <input type="hidden" name="examId" value="${examId}" />
+        
           <div class="genericFormSection">  
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
               <jsp:param name="titleLocale" value="matriculation.settings.examYear"/>
@@ -108,19 +110,19 @@
             </select>
           </div>
 
-					<div class="genericFormSection">	
-						<jsp:include page="/templates/generic/fragments/formtitle.jsp">
-							<jsp:param name="titleLocale" value="matriculation.settings.startDate"/>
-						</jsp:include>																					 
-						<input type="text" name="starts" class="ixDateField" value="${exam.starts.time}"/>
-					</div>
+          <div class="genericFormSection">  
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="matriculation.settings.startDate"/>
+            </jsp:include>                                           
+            <input type="text" name="starts" class="ixDateField" value="${exam.starts.time}"/>
+          </div>
 
-					<div class="genericFormSection">	
-						<jsp:include page="/templates/generic/fragments/formtitle.jsp">
-							<jsp:param name="titleLocale" value="matriculation.settings.endDate"/>
-						</jsp:include>																					 
-						<input type="text" name="ends" class="ixDateField" value="${exam.ends.time}"/>
-					</div>
+          <div class="genericFormSection">  
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleLocale" value="matriculation.settings.endDate"/>
+            </jsp:include>                                           
+            <input type="text" name="ends" class="ixDateField" value="${exam.ends.time}"/>
+          </div>
 
           <div class="genericFormSection">  
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
@@ -153,12 +155,12 @@
             <div id="subjectSettingsTableContainer"></div>
           </div>
           
-					<div class="genericFormSubmitSection">
-						<input type="submit" value="Tallenna">
-					</div>
-				</form>
-			</div>
-		</div>
-		<jsp:include page="/templates/generic/footer.jsp"></jsp:include>
-	</body>
+          <div class="genericFormSubmitSection">
+            <input type="submit" value="Tallenna">
+          </div>
+        </form>
+      </div>
+    </div>
+    <jsp:include page="/templates/generic/footer.jsp"></jsp:include>
+  </body>
 </html>

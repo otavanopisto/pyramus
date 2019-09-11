@@ -11,7 +11,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
@@ -20,6 +22,9 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 public class SearchEnrollmentsJSONRequestController extends JSONRequestController {
 
   public void process(JSONRequestContext requestContext) {
+    MatriculationExamDAO examDAO = DAOFactory.getInstance().getMatriculationExamDAO();
+    MatriculationExamEnrollmentDAO dao = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
+
     Integer resultsPerPage = NumberUtils.createInteger(requestContext.getRequest().getParameter("maxResults"));
     if (resultsPerPage == null) {
       resultsPerPage = 10;
@@ -30,12 +35,14 @@ public class SearchEnrollmentsJSONRequestController extends JSONRequestControlle
       page = 0;
     }
     
+    Long examId = requestContext.getLong("examId");
+    MatriculationExam exam = examId != null ? examDAO.findById(examId) : null;
+    
     Boolean below20courses = requestContext.getBoolean("below20courses");
     String stateStr = requestContext.getString("state");
     MatriculationExamEnrollmentState state = StringUtils.isNotBlank(stateStr) ? MatriculationExamEnrollmentState.valueOf(stateStr) : null;
     
-    MatriculationExamEnrollmentDAO dao = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
-    List<MatriculationExamEnrollment> enrollments = dao.listBy(state, BooleanUtils.isTrue(below20courses), page * resultsPerPage, resultsPerPage);
+    List<MatriculationExamEnrollment> enrollments = dao.listBy(exam, state, BooleanUtils.isTrue(below20courses), page * resultsPerPage, resultsPerPage);
     
     List<Map<String, Object>> results = new ArrayList<>();
     for (MatriculationExamEnrollment enrollment : enrollments) {
