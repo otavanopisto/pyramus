@@ -49,7 +49,15 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
     List<GradingScale> gradingScales = gradingScaleDAO.listUnarchived();
     pageRequestContext.getRequest().setAttribute("gradingScales", gradingScales);
 
-    MatriculationExam exam = dao.get();
+    MatriculationExam exam;
+    if ("new".equals(pageRequestContext.getString("examId"))) {
+      pageRequestContext.getRequest().setAttribute("examId", pageRequestContext.getString("examId"));
+      exam = null;
+    } else {
+      Long examId = pageRequestContext.getLong("examId");
+      exam = dao.findById(examId);
+      pageRequestContext.getRequest().setAttribute("examId", examId);
+    }
     pageRequestContext.getRequest().setAttribute("exam", exam);
     
     JSONArray subjectsJSON = new JSONArray();
@@ -57,7 +65,7 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
     matriculationExamSubjects.sort(Comparator.comparing(MatriculationExamSubject::toString));
     
     for (MatriculationExamSubject subject : matriculationExamSubjects) {
-      MatriculationExamSubjectSettings subset = matriculationExamSubjectSettingsDAO.findBy(subject);
+      MatriculationExamSubjectSettings subset = exam != null ? matriculationExamSubjectSettingsDAO.findBy(exam, subject) : null;
       
       JSONObject subjectJSON = new JSONObject();
       subjectJSON.put("subjectCode", subject);
@@ -96,7 +104,16 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
     Integer examYear = pageRequestContext.getInteger("examYear");
     MatriculationExamTerm examTerm = StringUtils.isNotBlank(pageRequestContext.getString("examTerm")) ? 
         MatriculationExamTerm.valueOf(pageRequestContext.getString("examTerm")) : null;
-    dao.createOrUpdate(starts, ends, signupGrade, examYear, examTerm);
+
+    MatriculationExam exam;
+    if ("new".equals(pageRequestContext.getString("examId"))) {
+      // Create new
+      exam = dao.create(starts, ends, signupGrade, examYear, examTerm);
+    } else {
+      Long examId = pageRequestContext.getLong("examId");
+      exam = dao.findById(examId);
+      exam = dao.update(exam, starts, ends, signupGrade, examYear, examTerm);
+    }
     
     Long subjectTableRowCount = pageRequestContext.getLong("subjectSettingsTable.rowCount");
     for (int i = 0; i < subjectTableRowCount; i++) {
@@ -106,15 +123,16 @@ public class MatriculationExamSettingsViewController extends PyramusViewControll
       Project project = projectId != null ? projectDAO.findById(projectId) : null;
       Date examDate = pageRequestContext.getDate(colPrefix + ".examDate");
       
-      MatriculationExamSubjectSettings subjectSettings = matriculationExamSubjectSettingsDAO.findBy(subject);
+      MatriculationExamSubjectSettings subjectSettings = matriculationExamSubjectSettingsDAO.findBy(exam, subject);
       if (subjectSettings == null) {
-        matriculationExamSubjectSettingsDAO.create(subject, project, examDate);
+        matriculationExamSubjectSettingsDAO.create(exam, subject, project, examDate);
       } else {
         matriculationExamSubjectSettingsDAO.update(subjectSettings, project, examDate);
       }
     }
     
-    pageRequestContext.setRedirectURL(pageRequestContext.getRequest().getRequestURI());
+    pageRequestContext.setRedirectURL(
+        String.format("%s/matriculation/settings.page?examId=%d", pageRequestContext.getRequest().getContextPath(), exam.getId()));
   }
 
   public UserRole[] getAllowedRoles() {

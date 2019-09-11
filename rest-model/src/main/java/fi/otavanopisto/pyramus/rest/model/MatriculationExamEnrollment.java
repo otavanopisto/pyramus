@@ -172,6 +172,14 @@ public class MatriculationExamEnrollment {
     this.degreeType = degreeType;
   }
 
+  public Long getExamId() {
+    return examId;
+  }
+
+  public void setExamId(Long examId) {
+    this.examId = examId;
+  }
+
   private Long id;
   private String name;
   private String ssn;
@@ -193,4 +201,5 @@ public class MatriculationExamEnrollment {
   private String state;
   private List<MatriculationExamAttendance> attendances;
   private String enrollmentDate;
+  private Long examId;
 }
