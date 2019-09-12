@@ -25,6 +25,7 @@
         JSONRequest.request("matriculation/searchenrollments.json", {
           parameters: {
             page: page,
+            examId: searchForm.examId.value,
             state: searchForm.enrollmentState.value,
             below20courses: below20courses
           },
@@ -152,6 +153,28 @@
       <form id="searchForm" method="post" onSubmit="onSearchEnrollments(event);">
   
         <div id="filters" class="tabContent">
+          <div class="genericFormSection">
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleText" value="Ilmoittautumiskierros"/>
+            </jsp:include>
+            <select id="examId" name="examId">
+              <option value=""></option>
+              <c:forEach var="exam" items="${exams}">
+                <c:choose>
+                  <c:when test="${exam.examTerm == 'SPRING'}">
+                    <c:set var="examTermText"><fmt:message key="terms.seasons.spring" /></c:set>
+                  </c:when>
+                  <c:when test="${exam.examTerm == 'AUTUMN'}">
+                    <c:set var="examTermText"><fmt:message key="terms.seasons.autumn" /></c:set>
+                  </c:when>
+                  <c:otherwise>
+                    <c:set var="examTermText"></c:set>
+                  </c:otherwise>
+                </c:choose>
+                <option value="${exam.id}">${exam.examYear} ${examTermText}</option>
+              </c:forEach>
+            </select>
+          </div>
 
           <div class="genericFormSection">
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">

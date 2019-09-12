@@ -10,12 +10,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import fi.otavanopisto.pyramus.domainmodel.projects.Project;
 
 @Entity
+@Table(uniqueConstraints={
+    @UniqueConstraint(columnNames = {"exam_id", "subject"})
+})
 public class MatriculationExamSubjectSettings {
 
   public Long getId() {
@@ -46,11 +51,22 @@ public class MatriculationExamSubjectSettings {
     this.project = project;
   }
 
+  public MatriculationExam getExam() {
+    return exam;
+  }
+
+  public void setExam(MatriculationExam exam) {
+    this.exam = exam;
+  }
+
   @Id
   @GeneratedValue (strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false, unique = true)
+  @ManyToOne
+  private MatriculationExam exam;
+  
+  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private MatriculationExamSubject subject;
 

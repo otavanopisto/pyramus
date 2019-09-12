@@ -26,12 +26,14 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
+import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
@@ -62,16 +64,17 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
     List<YTLAineKoodi> m = readMapping();
     
     MatriculationExamEnrollmentDAO matriculationExamEnrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
+    MatriculationExamDAO matriculationExamDAO = DAOFactory.getInstance().getMatriculationExamDAO();
     
-    Integer year = binaryRequestContext.getInteger("examYear");
-    MatriculationExamTerm term = (MatriculationExamTerm) binaryRequestContext.getEnum("examTerm", MatriculationExamTerm.class);
+    Long examId = binaryRequestContext.getLong("examId");
+    MatriculationExam exam = matriculationExamDAO.findById(examId);
     
-    String tutkintokerta = String.valueOf(year) + (term == MatriculationExamTerm.SPRING ? "K" : "S");
+    String tutkintokerta = String.valueOf(exam.getExamYear()) + (exam.getExamTerm() == MatriculationExamTerm.SPRING ? "K" : "S");
     Integer koulunumero = binaryRequestContext.getInteger("schoolId");
     YTLSiirtotiedosto ytl = new YTLSiirtotiedosto(tutkintokerta, koulunumero);
 
-    List<MatriculationExamEnrollment> enrollments = matriculationExamEnrollmentDAO.listDistinctByAttendanceTerms(
-        MatriculationExamEnrollmentState.APPROVED, year, term, MatriculationExamAttendanceStatus.ENROLLED);
+    List<MatriculationExamEnrollment> enrollments = matriculationExamEnrollmentDAO.listDistinctByAttendanceTerms(exam,
+        MatriculationExamEnrollmentState.APPROVED, exam.getExamYear(), exam.getExamTerm(), MatriculationExamAttendanceStatus.ENROLLED);
     enrollments = processCandidateNumbers(enrollments);
     enrollments.forEach(enrollment -> ytl.addKokelas(enrollmentToKokelas(enrollment, m)));
     

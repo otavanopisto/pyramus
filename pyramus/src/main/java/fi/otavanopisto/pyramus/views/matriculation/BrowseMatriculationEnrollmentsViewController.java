@@ -9,7 +9,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
-public class YTLJSONReportViewController extends PyramusViewController {
+public class BrowseMatriculationEnrollmentsViewController extends PyramusViewController {
   
   public void process(PageRequestContext pageRequestContext) {
     MatriculationExamDAO matriculationExamDAO = DAOFactory.getInstance().getMatriculationExamDAO();
@@ -17,9 +17,9 @@ public class YTLJSONReportViewController extends PyramusViewController {
     List<MatriculationExam> exams = matriculationExamDAO.listAll();
     pageRequestContext.getRequest().setAttribute("exams", exams);
     
-    pageRequestContext.setIncludeJSP("/templates/matriculation/ytl-json.jsp");
+    pageRequestContext.setIncludeJSP("/templates/matriculation/management-browse-enrollments.jsp");
   }
-  
+
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
   }

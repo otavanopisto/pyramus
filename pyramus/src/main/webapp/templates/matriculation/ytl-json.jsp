@@ -79,8 +79,7 @@
           method: 'post',
           parameters: {
             schoolId: form.schoolId.value,
-            examYear: form.examYear.value,
-            examTerm: form.examTerm.value
+            examId: form.examId.value
           },
           onSuccess: function(response) {
             var report = response.responseJSON;
@@ -126,20 +125,26 @@
             <input type="number" name="schoolId"/>
           </div>
 
-          <div class="genericFormSection">  
+          <div class="genericFormSection">
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-              <jsp:param name="titleLocale" value="matriculation.settings.examYear"/>
-            </jsp:include>                                           
-            <input type="number" name="examYear" value="${currentYear}"/>
-          </div>
-
-          <div class="genericFormSection">  
-            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
-              <jsp:param name="titleLocale" value="matriculation.settings.examTerm"/>
+              <jsp:param name="titleText" value="Ilmoittautumiskierros"/>
             </jsp:include>
-            <select name="examTerm">
-              <option value="SPRING"><fmt:message key="terms.seasons.spring"/></option>
-              <option value="AUTUMN"><fmt:message key="terms.seasons.autumn"/></option>
+            <select id="examId" name="examId">
+              <option value=""></option>
+              <c:forEach var="exam" items="${exams}">
+                <c:choose>
+                  <c:when test="${exam.examTerm == 'SPRING'}">
+                    <c:set var="examTermText"><fmt:message key="terms.seasons.spring" /></c:set>
+                  </c:when>
+                  <c:when test="${exam.examTerm == 'AUTUMN'}">
+                    <c:set var="examTermText"><fmt:message key="terms.seasons.autumn" /></c:set>
+                  </c:when>
+                  <c:otherwise>
+                    <c:set var="examTermText"></c:set>
+                  </c:otherwise>
+                </c:choose>
+                <option value="${exam.id}">${exam.examYear} ${examTermText}</option>
+              </c:forEach>
             </select>
           </div>
 

@@ -124,7 +124,7 @@
         <ul id="GUI_MENU_matriculationItemContainer" class="GUI_MENU_itemContainer">
           <li class="GUI_MENU_top"></li>
           <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/matriculation/browse.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.matriculation.browse"/></a></li>
-          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/matriculation/settings.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.matriculation.settings"/></a></li>
+          <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/matriculation/exams.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.matriculation.browseExams"/></a></li>
           <li class="GUI_MENU_item"><a href="${pageContext.request.contextPath}/matriculation/ytljson.page?resetbreadcrumb=1" class="GUI_MENU_itemLink"><fmt:message key="generic.navigation.matriculation.ytljson"/></a></li>
           <ix:extensionHook name="generic.navigation.matriculationMenu"/>
         </ul>
