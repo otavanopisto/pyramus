@@ -179,8 +179,9 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       .getResultList();
   }
     
-  public List<MatriculationExamEnrollment> listDistinctByAttendanceTerms(MatriculationExamEnrollmentState enrollmentState, 
-      Integer year, MatriculationExamTerm term, MatriculationExamAttendanceStatus attendanceStatus) {
+  public List<MatriculationExamEnrollment> listDistinctByAttendanceTerms(MatriculationExam exam,
+      MatriculationExamEnrollmentState enrollmentState, Integer year, MatriculationExamTerm term, 
+      MatriculationExamAttendanceStatus attendanceStatus) {
     EntityManager entityManager = getEntityManager(); 
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -191,6 +192,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     criteria.select(root.get(MatriculationExamAttendance_.enrollment)).distinct(true);
     criteria.where(
         criteriaBuilder.and(
+            criteriaBuilder.equal(enrollment.get(MatriculationExamEnrollment_.exam), exam),
             criteriaBuilder.equal(enrollment.get(MatriculationExamEnrollment_.state), enrollmentState),
             criteriaBuilder.equal(root.get(MatriculationExamAttendance_.year), year),
             criteriaBuilder.equal(root.get(MatriculationExamAttendance_.term), term),
