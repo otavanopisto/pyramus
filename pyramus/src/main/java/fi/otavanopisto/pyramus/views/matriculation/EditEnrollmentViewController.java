@@ -17,7 +17,6 @@ import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.grading.ProjectAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
-import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamSubjectSettingsDAO;
 import fi.otavanopisto.pyramus.dao.projects.StudentProjectDAO;
@@ -69,7 +68,6 @@ public class EditEnrollmentViewController extends PyramusViewController {
       return;
     }
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
-    MatriculationExamDAO examDAO = DAOFactory.getInstance().getMatriculationExamDAO();
     MatriculationExamEnrollmentDAO enrollmentDAO = DAOFactory.getInstance().getMatriculationExamEnrollmentDAO();
     MatriculationExamAttendanceDAO attendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
     MatriculationExamEnrollment enrollment = enrollmentDAO.findById(id);
@@ -123,7 +121,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
       MatriculationExamAttendance examAttendance;
       if (NEW_ROW_ID.equals(attendanceId)) {
         // NOTE: new ENROLLED attendances are tied to the year and term defined in the exam properties
-        MatriculationExam matriculationExam = examDAO.get();
+        MatriculationExam matriculationExam = enrollment.getExam();
         Integer year = matriculationExam.getExamYear();
         MatriculationExamTerm term = matriculationExam.getExamTerm();
         
@@ -200,11 +198,10 @@ public class EditEnrollmentViewController extends PyramusViewController {
     ProjectAssessmentDAO projectAssessmentDAO = DAOFactory.getInstance().getProjectAssessmentDAO();
     StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();
     StudentProjectModuleDAO studentProjectModuleDAO = DAOFactory.getInstance().getStudentProjectModuleDAO();
-    MatriculationExamDAO matriculationExamDAO = DAOFactory.getInstance().getMatriculationExamDAO();
     MatriculationExamSubjectSettingsDAO matriculationExamSubjectSettingsDAO = DAOFactory.getInstance().getMatriculationExamSubjectSettingsDAO();
     MatriculationExamAttendanceDAO matriculationExamAttendanceDAO = DAOFactory.getInstance().getMatriculationExamAttendanceDAO();
 
-    MatriculationExamSubjectSettings subjectSettings = matriculationExamSubjectSettingsDAO.findBy(subject);
+    MatriculationExamSubjectSettings subjectSettings = matriculationExamSubjectSettingsDAO.findBy(examAttendance.getEnrollment().getExam(), subject);
     if (subjectSettings == null || subjectSettings.getProject() == null) {
       // We cannot really do anything if the settings aren't in place
       return;
@@ -262,7 +259,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
       studentProject = studentProjectDAO.updateOptionality(studentProject, projectOptionality);
     }
 
-    MatriculationExam matriculationExam = matriculationExamDAO.get();
+    MatriculationExam matriculationExam = examAttendance.getEnrollment().getExam();
     
     if (matriculationExam != null && matriculationExam.getSignupGrade() != null && subjectSettings.getExamDate() != null && examAttendance.getProjectAssessment() == null) {
       // Add the exam date

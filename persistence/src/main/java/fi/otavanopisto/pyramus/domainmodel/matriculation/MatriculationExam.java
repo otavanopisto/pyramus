@@ -29,10 +29,6 @@ public class MatriculationExam {
     return id;
   }
   
-  public void setId(Long id) {
-    this.id = id;
-  }
-  
   public Date getStarts() {
     return starts;
   }
@@ -81,10 +77,21 @@ public class MatriculationExam {
     this.examTerm = examTerm;
   }
 
+  public boolean isEnrollmentActive() {
+    return enrollmentActive;
+  }
+
+  public void setEnrollmentActive(boolean enrollmentActive) {
+    this.enrollmentActive = enrollmentActive;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="MatriculationExam")  
   @TableGenerator(name="MatriculationExam", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
   private Long id;
+  
+  @Column(nullable = false)
+  private boolean enrollmentActive;
 
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false)
@@ -104,9 +111,6 @@ public class MatriculationExam {
   @ManyToOne
   private Grade signupGrade;
   
-  /* Version required because we persist an entity with a set id, to get rid
-   * of duplication
-   */
   @Version
   @Column(nullable = false)
   private Long version;
