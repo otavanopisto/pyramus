@@ -225,6 +225,10 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       return ArviointiasteikkoYleissivistava.meanGrade(kurssiarvosanat);
     }
   }
+
+  private boolean isMathSubject(String subjectCode) {
+    return StringUtils.equals(subjectCode, "MAA") || StringUtils.equals(subjectCode, "MAB") || StringUtils.equals(subjectCode, "MAY");
+  }
   
   private OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> getSubject(Student student, EducationType studentEducationType,
       Subject subject, StudentSubjectSelections studentSubjects, Map<String, OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus>> map) {
@@ -236,7 +240,16 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     boolean matchingEducationType = studentEducationType != null && subject.getEducationType() != null && 
         studentEducationType.getId().equals(subject.getEducationType().getId());
     
-    if (matchingEducationType && (StringUtils.equals(subjectCode, "MAA") || StringUtils.equals(subjectCode, "MAB"))) {
+    // MATHEMATICS
+    if (matchingEducationType && isMathSubject(subjectCode)) {
+      if (StringUtils.equals(subjectCode, "MAY") && isMathSubject(studentSubjects.getMath())) {
+        // MAY is mapped to either MAB/MAA unless neither is specified
+        subjectCode = studentSubjects.getMath();
+        if (map.containsKey(subjectCode)) {
+          return map.get(subjectCode);
+        }
+      }
+      
       if (StringUtils.equals(subjectCode, studentSubjects.getMath())) {
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMatematiikka(
             OppiaineMatematiikka.valueOf(subjectCode), isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.MA));
@@ -244,12 +257,6 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       } else
         return null;
     }
-    if (matchingEducationType && StringUtils.equals(subjectCode, "MAY")) {
-      LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMatematiikka(
-          OppiaineMatematiikka.MAY, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.MA));
-      return mapSubject(subject, subjectCode, tunniste, map);
-    }
-    
     
     if (matchingEducationType && StringUtils.equals(subjectCode, "ÄI")) {
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
