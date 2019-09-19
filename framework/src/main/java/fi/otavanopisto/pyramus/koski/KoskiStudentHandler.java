@@ -219,7 +219,7 @@ public abstract class KoskiStudentHandler {
       }
     } else {
       // Student.archived=true -> mitätöity
-      tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(student.getStudyEndDate(), OpiskeluoikeudenTila.mitatoity));
+      tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(new Date(), OpiskeluoikeudenTila.mitatoity));
     }
     
     return null;
