@@ -70,10 +70,11 @@ public class ListKoskiPersonStudiesJSONRequestController extends JSONRequestCont
         for (Student student : students) {
           if (student.getStudyProgramme() != null) {
             KoskiStudyProgrammeHandler handlerType = koskiSettings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
-            KoskiStudentHandler handler = koskiClient.getHandlerType(handlerType);
-            Set<KoskiStudentId> ids = handler.listOids(student);
-            
-            ids.forEach(id -> oidMap.put(id.getOid(), student));
+            KoskiStudentHandler handler = handlerType != null ? koskiClient.getHandlerType(handlerType) : null;
+            if (handler != null) {
+              Set<KoskiStudentId> ids = handler.listOids(student);
+              ids.forEach(id -> oidMap.put(id.getOid(), student));
+            }
           }
         }
         

@@ -62,26 +62,28 @@ public class ListKoskiPersonVariablesJSONRequestController extends JSONRequestCo
       students.sort((a, b) -> Comparator.nullsFirst(Date::compareTo).reversed().compare(a.getStudyStartDate(), b.getStudyStartDate()));
       for (Student student : students) {
         KoskiStudyProgrammeHandler handlerType = koskiSettings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
-        KoskiStudentHandler handler = koskiClient.getHandlerType(handlerType);
+        KoskiStudentHandler handler = handlerType != null ? koskiClient.getHandlerType(handlerType) : null;
         
-        String studentIdentifier = KoskiConsts.getStudentIdentifier(handlerType, student.getId());
-        Set<KoskiStudentId> oids = handler.listOids(student);
-        KoskiStudentId koskiId = oids.stream().filter(oid -> StringUtils.equals(oid.getStudentIdentifier(), studentIdentifier)).findFirst().orElse(null);
-
-        Map<String, Object> studentInfo = new HashMap<>();
-        studentInfo.put("studentId", student.getId());
-        studentInfo.put("studyProgrammeName", student.getStudyProgramme().getName());
-        studentInfo.put("oid", koskiId != null ? koskiId.getOid() : null);
-        studentInfo.put("linkedOid", userVariableDAO.findByUserAndKey(student, KoskiConsts.VariableNames.KOSKI_LINKED_STUDYPERMISSION_ID));
-        studentInfo.put("studyStartDate", student.getStudyStartDate().getTime());
-        studentVariables.add(studentInfo);
+        if (handler != null) {
+          String studentIdentifier = KoskiConsts.getStudentIdentifier(handlerType, student.getId());
+          Set<KoskiStudentId> oids = handler.listOids(student);
+          KoskiStudentId koskiId = oids.stream().filter(oid -> StringUtils.equals(oid.getStudentIdentifier(), studentIdentifier)).findFirst().orElse(null);
+  
+          Map<String, Object> studentInfo = new HashMap<>();
+          studentInfo.put("studentId", student.getId());
+          studentInfo.put("studyProgrammeName", student.getStudyProgramme().getName());
+          studentInfo.put("oid", koskiId != null ? koskiId.getOid() : null);
+          studentInfo.put("linkedOid", userVariableDAO.findByUserAndKey(student, KoskiConsts.VariableNames.KOSKI_LINKED_STUDYPERMISSION_ID));
+          studentInfo.put("studyStartDate", student.getStudyStartDate().getTime());
+          studentVariables.add(studentInfo);
+        }
       }
       
       requestContext.addResponseParameter("personOID", personOid);
       requestContext.addResponseParameter("studentVariables", studentVariables);
     }
     catch (Exception e) {
-      logger.log(Level.SEVERE, "Error loading log entries", e);
+      logger.log(Level.SEVERE, "Error loading person variables", e);
     }
   }
 
