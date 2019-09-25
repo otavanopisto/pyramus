@@ -23,6 +23,8 @@ public abstract class BinaryRequestController implements fi.internetix.smvc.cont
         StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
         StaffMember user = staffDAO.findById(loggedUserId);
         
+        UserUtils.checkManagementOrganizationPermission(user, requestContext.getRequest().getLocale());
+
         Role role = user.getRole();
         
         // TODO Ugly hax

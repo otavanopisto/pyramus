@@ -40,11 +40,12 @@ public abstract class PyramusViewController implements PageController {
       }
       else {
         Long loggedUserId = requestContext.getLoggedUserId();
-        
         UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
         User user = userDAO.findById(loggedUserId);
+        UserUtils.checkManagementOrganizationPermission(user, requestContext.getRequest().getLocale());
+
         UserRole userRole = null;
-        
+
         switch (user.getRole()) {
           case ADMINISTRATOR:
             userRole = UserRole.ADMINISTRATOR;
@@ -75,8 +76,9 @@ public abstract class PyramusViewController implements PageController {
             break;
         }
 
-        if (!contains(roles, userRole))
+        if (!contains(roles, userRole)) {
           throw new AccessDeniedException(requestContext.getRequest().getLocale());
+        }
       }
     }
   }

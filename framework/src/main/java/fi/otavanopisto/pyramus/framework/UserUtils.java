@@ -2,13 +2,18 @@ package fi.otavanopisto.pyramus.framework;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.internetix.smvc.AccessDeniedException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
@@ -191,6 +196,29 @@ public class UserUtils {
     }
     
     return user.getPerson().getId().equals(person.getId());
+  }
+  
+  /**
+   * Checks that the user belongs to the management organization or is an administrator.
+   * @param user
+   * @param locale
+   * @throws AccessDeniedException
+   */
+  public static void checkManagementOrganizationPermission(User user, Locale locale) throws AccessDeniedException {
+    if (user == null) {
+      throw new AccessDeniedException(locale);
+    }
+    
+    if (user.getRole() != Role.ADMINISTRATOR) {
+      DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
+      Defaults defaults = defaultsDAO.getDefaults();
+      Long managementOrganizationId = defaults.getOrganization() != null ? defaults.getOrganization().getId() : null;
+      Long userOrganizationId = (user != null && user.getOrganization() != null) ? user.getOrganization().getId() : null;
+      
+      if (managementOrganizationId != null && !Objects.equals(userOrganizationId, managementOrganizationId)) {
+        throw new AccessDeniedException(locale);
+      }
+    }
   }
   
 }

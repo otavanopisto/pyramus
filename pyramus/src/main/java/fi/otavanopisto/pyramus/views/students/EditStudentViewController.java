@@ -64,6 +64,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.framework.UserUtils;
@@ -78,7 +79,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
 
   public EditStudentViewController() {
     super(
-        true // requireLoggedIn
+        PyramusRequestControllerAccess.REQUIRELOGIN // access
     );
   }
 
