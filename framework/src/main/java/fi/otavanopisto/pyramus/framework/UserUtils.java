@@ -100,6 +100,40 @@ public class UserUtils {
     return role;
   }
   
+  public static UserRole roleToUserRole(Role role) {
+    if (role == null) {
+      return null;
+    }
+    
+    switch (role) {
+      case EVERYONE:
+        return UserRole.EVERYONE;
+      case GUEST:
+        return UserRole.GUEST;
+      case USER:
+        return UserRole.USER;
+      case MANAGER:
+        return UserRole.MANAGER;
+      case ADMINISTRATOR:
+        return UserRole.ADMINISTRATOR;
+      case STUDENT:
+        return UserRole.STUDENT;
+      case TRUSTED_SYSTEM:
+        return UserRole.TRUSTED_SYSTEM;
+      case TEACHER:
+        return UserRole.TEACHER;
+      case STUDY_GUIDER:
+        return UserRole.STUDY_GUIDER;
+      case STUDY_PROGRAMME_LEADER:
+        return UserRole.STUDY_PROGRAMME_LEADER;
+      case CLOSED:
+        return UserRole.CLOSED;
+        
+      default:
+        throw new RuntimeException(String.format("Unknown role %s", role));
+    }
+  }
+  
   public static List<Role> getRoleOrder() {
     List<Role> list = new ArrayList<>();
 

@@ -19,30 +19,13 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 public abstract class PyramusViewController implements PageController {
 
-  // TODO: Remove this and UserRole
   public abstract UserRole[] getAllowedRoles();
 
-  // TODO: Declare abstract
   public String getPermission() {
     return null;
   }
   
   public void authorize(RequestContext requestContext) throws LoginRequiredException, AccessDeniedException {
-    
-    // TODO: Below for permission framework
-//    if (getPermission() != null) {
-//      try {
-//        if (!PyramusRights.hasPermission(getPermission())) {
-//          throw new AccessDeniedException(requestContext.getRequest().getLocale());
-//        }
-//      } catch (NamingException e) {
-//        e.printStackTrace();
-//        throw new AccessDeniedException(requestContext.getRequest().getLocale());
-//      }
-//    }
- 
-    // TODO: Remove old rights code
-    
     UserRole[] roles = getAllowedRoles();
     if (!contains(roles, UserRole.EVERYONE)) {
       if (!requestContext.isLoggedIn()) {
@@ -60,40 +43,11 @@ public abstract class PyramusViewController implements PageController {
         
         UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
         User user = userDAO.findById(loggedUserId);
-        UserRole userRole = null;
+        UserRole userRole = UserUtils.roleToUserRole(user.getRole());
         
-        switch (user.getRole()) {
-          case ADMINISTRATOR:
-            userRole = UserRole.ADMINISTRATOR;
-            break;
-          case EVERYONE:
-            userRole = UserRole.EVERYONE;
-            break;
-          case MANAGER:
-            userRole = UserRole.MANAGER;
-            break;
-          case GUEST:
-          case STUDENT:
-            userRole = UserRole.GUEST;
-            break;
-          case USER:
-            userRole = UserRole.USER;
-            break;
-          case TEACHER:
-            userRole = UserRole.TEACHER;
-            break;
-          case STUDY_GUIDER:
-            userRole = UserRole.STUDY_GUIDER;
-            break;
-          case STUDY_PROGRAMME_LEADER:
-            userRole = UserRole.STUDY_PROGRAMME_LEADER;
-            break;
-          default:
-            break;
-        }
-
-        if (!contains(roles, userRole))
+        if (!contains(roles, userRole)) {
           throw new AccessDeniedException(requestContext.getRequest().getLocale());
+        }
       }
     }
   }

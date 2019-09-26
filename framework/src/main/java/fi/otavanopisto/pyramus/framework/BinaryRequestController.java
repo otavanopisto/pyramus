@@ -5,7 +5,6 @@ import fi.internetix.smvc.LoginRequiredException;
 import fi.internetix.smvc.controllers.RequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 
 public abstract class BinaryRequestController implements fi.internetix.smvc.controllers.BinaryRequestController {
@@ -22,14 +21,11 @@ public abstract class BinaryRequestController implements fi.internetix.smvc.cont
         
         StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
         StaffMember user = staffDAO.findById(loggedUserId);
+        UserRole userRole = UserUtils.roleToUserRole(user.getRole());
         
-        Role role = user.getRole();
-        
-        // TODO Ugly hax
-        UserRole userRole = UserRole.getRole(role.getValue());
-        
-        if (!contains(roles, userRole))
+        if (!contains(roles, userRole)) {
           throw new AccessDeniedException(requestContext.getRequest().getLocale());
+        }
       }
     }
   }
