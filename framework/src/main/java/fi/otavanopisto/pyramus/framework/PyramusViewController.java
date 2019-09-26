@@ -42,40 +42,11 @@ public abstract class PyramusViewController implements PageController {
         Long loggedUserId = requestContext.getLoggedUserId();
         UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
         User user = userDAO.findById(loggedUserId);
+
         UserUtils.checkManagementOrganizationPermission(user, requestContext.getRequest().getLocale());
 
-        UserRole userRole = null;
-
-        switch (user.getRole()) {
-          case ADMINISTRATOR:
-            userRole = UserRole.ADMINISTRATOR;
-            break;
-          case EVERYONE:
-            userRole = UserRole.EVERYONE;
-            break;
-          case MANAGER:
-            userRole = UserRole.MANAGER;
-            break;
-          case GUEST:
-          case STUDENT:
-            userRole = UserRole.GUEST;
-            break;
-          case USER:
-            userRole = UserRole.USER;
-            break;
-          case TEACHER:
-            userRole = UserRole.TEACHER;
-            break;
-          case STUDY_GUIDER:
-            userRole = UserRole.STUDY_GUIDER;
-            break;
-          case STUDY_PROGRAMME_LEADER:
-            userRole = UserRole.STUDY_PROGRAMME_LEADER;
-            break;
-          default:
-            break;
-        }
-
+        UserRole userRole = UserUtils.roleToUserRole(user.getRole());
+        
         if (!contains(roles, userRole)) {
           throw new AccessDeniedException(requestContext.getRequest().getLocale());
         }
