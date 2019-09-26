@@ -23,8 +23,12 @@ alter table StudentGroup add constraint FKeei7sat9kolo6w5y747sfbv2w foreign key 
 alter table Course add column organization bigint;
 alter table Course add constraint FKg5919aifuno8dyhtn8k7a2agb foreign key (organization) references Organization (id);
 
+alter table Defaults add column organization bigint;
+alter table Defaults add constraint FK4lxvrit66p8rteuqyi18bqtoc foreign key (organization) references Organization (id);
+
 /* BELOW FOR DEVELOPMENT VERSION - WHAT TO DO WITH PRODUCTION? */
 
 update StudyProgramme set organization = 1;
 update StudentGroup set organization = 1;
 update Course set organization = 1;
+update Defaults set organization = 1;

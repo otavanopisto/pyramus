@@ -79,12 +79,10 @@ import fi.otavanopisto.pyramus.domainmodel.users.PersonVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
+import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
-import fi.otavanopisto.pyramus.rest.model.Grade;
-import fi.otavanopisto.pyramus.framework.PyramusViewController;
-import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
 import fi.otavanopisto.pyramus.views.students.tor.StudentTOR;
 import fi.otavanopisto.pyramus.views.students.tor.StudentTORController;
@@ -100,7 +98,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
   
   public ViewStudentViewController() {
     super(
-        true // requireLoggedIn
+        PyramusRequestControllerAccess.REQUIRELOGIN // access
     );
   }
 

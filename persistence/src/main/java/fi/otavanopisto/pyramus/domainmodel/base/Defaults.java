@@ -63,6 +63,14 @@ public class Defaults {
     return version;
   }
 
+  public Organization getOrganization() {
+    return organization;
+  }
+
+  public void setOrganization(Organization organization) {
+    this.organization = organization;
+  }
+
   @Id
   private Long id;
 
@@ -81,6 +89,10 @@ public class Defaults {
   @ManyToOne 
   @JoinColumn (name = "courseEnrolmentType")
   private CourseEnrolmentType initialCourseEnrolmentType;
+  
+  @ManyToOne
+  @JoinColumn (name = "organization")
+  private Organization organization;
   
   @Version
   @Column(nullable = false)

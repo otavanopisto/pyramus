@@ -13,23 +13,34 @@ import fi.internetix.smvc.LoginRequiredException;
 import fi.internetix.smvc.controllers.PageController;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 
 public abstract class PyramusViewController2 implements PageController {
 
-  public PyramusViewController2(boolean requireLoggedIn) {
-    this.requireLoggedIn = requireLoggedIn;
+  public PyramusViewController2(PyramusRequestControllerAccess access) {
+    this.access = access;
   }
   
   protected abstract boolean checkAccess(RequestContext requestContext);
 
   @Override
   public void authorize(RequestContext requestContext) throws LoginRequiredException, AccessDeniedException {
-    if (requireLoggedIn && !requestContext.isLoggedIn()) {
-      throwLoginRequiredException(requestContext);
-    }
-    
-    if (!checkAccess(requestContext)) {
-      throw new AccessDeniedException(requestContext.getRequest().getLocale());
+    if (access != PyramusRequestControllerAccess.EVERYONE) {
+      // REQUIRELOGIN is implied at this point unless new Access' are introduced
+      if (!requestContext.isLoggedIn()) {
+        throwLoginRequiredException(requestContext);
+      }
+      
+      Long loggedUserId = requestContext.getLoggedUserId();
+      UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+      User user = userDAO.findById(loggedUserId);
+      UserUtils.checkManagementOrganizationPermission(user, requestContext.getRequest().getLocale());
+
+      if (!checkAccess(requestContext)) {
+        throw new AccessDeniedException(requestContext.getRequest().getLocale());
+      }
     }
   }
 
@@ -63,5 +74,5 @@ public abstract class PyramusViewController2 implements PageController {
     }
   }
 
-  private boolean requireLoggedIn;
+  private PyramusRequestControllerAccess access;
 }
