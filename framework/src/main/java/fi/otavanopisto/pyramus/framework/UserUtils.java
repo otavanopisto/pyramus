@@ -215,7 +215,7 @@ public class UserUtils {
       Long managementOrganizationId = defaults.getOrganization() != null ? defaults.getOrganization().getId() : null;
       Long userOrganizationId = (user != null && user.getOrganization() != null) ? user.getOrganization().getId() : null;
       
-      if (managementOrganizationId != null && !Objects.equals(userOrganizationId, managementOrganizationId)) {
+      if (managementOrganizationId == null || !Objects.equals(userOrganizationId, managementOrganizationId)) {
         throw new AccessDeniedException(locale);
       }
     }
