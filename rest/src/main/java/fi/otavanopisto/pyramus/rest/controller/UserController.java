@@ -12,13 +12,16 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
+import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
@@ -38,7 +41,13 @@ public class UserController {
   
   @Inject
   private UserDAO userDAO;
+
+  @Inject
+  private EmailDAO emailDAO;
   
+  @Inject
+  private StudentDAO studentDAO;
+
   @Inject
   private StaffMemberDAO staffMemberDAO;
   
@@ -70,6 +79,17 @@ public class UserController {
   
   public StaffMember findStaffMemberById(Long userId) {
     return staffMemberDAO.findById(userId);
+  }
+
+  public Email addUserEmail(User user, ContactType contactType, String address, Boolean defaultAddress) {
+    Email email = emailDAO.create(user.getContactInfo(), contactType, defaultAddress, address);
+    if (user.getRole() == Role.STUDENT) {
+      studentDAO.fireUpdate(user.getId());
+    }
+    else {
+      staffMemberDAO.fireUpdate(user.getId());
+    }
+    return email;
   }
 
   public StaffMember findStaffMemberByEmail(String email) {
