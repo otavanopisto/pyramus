@@ -95,7 +95,7 @@ public class MuikkuRESTService {
     Person person = personController.createPerson(null,  null,  null,  null,  Boolean.FALSE);
     StaffMember staffMember = userController.createStaffMember(loggedUser.getOrganization(), payload.getFirstName(), payload.getLastName(), role, person);
     userController.addUserEmail(staffMember, defaults.getUserDefaultContactType(), address, Boolean.TRUE);
-    payload.setId(staffMember.getId());
+    payload.setIdentifier(staffMember.getId().toString());
     
     return Response.ok(payload).build();
   }
