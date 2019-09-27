@@ -17,7 +17,9 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -58,6 +60,14 @@ public class MuikkuRESTService {
   @RESTPermit(MuikkuPermissions.MUIKKU_CREATE_STAFF_MEMBER)
   public Response createUser(StaffMemberPayload payload) {
     
+    // Prerequisites
+    
+    DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
+    Defaults defaults = defaultsDAO.getDefaults();
+    if (defaults.getUserDefaultContactType() == null) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("userDefaultContactType not set in Defaults").build();
+    }
+    
     // Basic payload validation
     
     if (StringUtils.isAnyBlank(payload.getFirstName(), payload.getLastName(), payload.getEmail(), payload.getRole())) {
@@ -84,10 +94,8 @@ public class MuikkuRESTService {
     User loggedUser = sessionController.getUser();    
     Person person = personController.createPerson(null,  null,  null,  null,  Boolean.FALSE);
     StaffMember staffMember = userController.createStaffMember(loggedUser.getOrganization(), payload.getFirstName(), payload.getLastName(), role, person);
-    // TODO Configurable default contact types for? In this case, 3 = Work 
-    ContactType contactType = commonController.findContactTypeById(3L);
-    userController.addUserEmail(staffMember, contactType, address, Boolean.TRUE);
-    payload.setIdentifier(staffMember.getId().toString());
+    userController.addUserEmail(staffMember, defaults.getUserDefaultContactType(), address, Boolean.TRUE);
+    payload.setId(staffMember.getId());
     
     return Response.ok(payload).build();
   }

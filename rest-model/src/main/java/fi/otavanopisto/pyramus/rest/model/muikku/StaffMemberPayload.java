@@ -42,6 +42,15 @@ public class StaffMemberPayload {
     this.identifier = identifier;
   }
 
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  private Long id;
   private String identifier;
   private String firstName;
   private String lastName;

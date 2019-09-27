@@ -71,6 +71,22 @@ public class Defaults {
     this.organization = organization;
   }
 
+  public ContactType getUserDefaultContactType() {
+    return userDefaultContactType;
+  }
+
+  public void setUserDefaultContactType(ContactType userDefaultContactType) {
+    this.userDefaultContactType = userDefaultContactType;
+  }
+
+  public ContactType getStudentDefaultContactType() {
+    return studentDefaultContactType;
+  }
+
+  public void setStudentDefaultContactType(ContactType studentDefaultContactType) {
+    this.studentDefaultContactType = studentDefaultContactType;
+  }
+
   @Id
   private Long id;
 
@@ -89,6 +105,14 @@ public class Defaults {
   @ManyToOne 
   @JoinColumn (name = "courseEnrolmentType")
   private CourseEnrolmentType initialCourseEnrolmentType;
+  
+  @ManyToOne 
+  @JoinColumn (name = "userDefaultContactType")
+  private ContactType userDefaultContactType;
+
+  @ManyToOne 
+  @JoinColumn (name = "studentDefaultContactType")
+  private ContactType studentDefaultContactType;
   
   @ManyToOne
   @JoinColumn (name = "organization")

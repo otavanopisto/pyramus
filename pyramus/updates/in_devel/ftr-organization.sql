@@ -26,9 +26,18 @@ alter table Course add constraint FKg5919aifuno8dyhtn8k7a2agb foreign key (organ
 alter table Defaults add column organization bigint;
 alter table Defaults add constraint FK4lxvrit66p8rteuqyi18bqtoc foreign key (organization) references Organization (id);
 
+alter table Defaults add column studentDefaultContactType bigint;
+alter table Defaults add constraint FKo2u8jfh1xnae7vab3xwoamrnd foreign key (studentDefaultContactType) references ContactType (id);
+
+alter table Defaults add column userDefaultContactType bigint;
+alter table Defaults add constraint FKqfam2uqi4wjws4m9blauq2q54 foreign key (userDefaultContactType) references ContactType (id);
+
+
 /* BELOW FOR DEVELOPMENT VERSION - WHAT TO DO WITH PRODUCTION? */
 
 update StudyProgramme set organization = 1;
 update StudentGroup set organization = 1;
 update Course set organization = 1;
 update Defaults set organization = 1;
+update Defaults set studentDefaultContactType = 1;
+update Defaults set userDefaultContactType = 1;
