@@ -34,17 +34,17 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
-import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
+import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
 import fi.otavanopisto.pyramus.rest.controller.ClientApplicationController;
 import fi.otavanopisto.pyramus.rest.controller.PersonController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
-import fi.otavanopisto.pyramus.rest.model.UserCredentialReset;
 import fi.otavanopisto.pyramus.rest.model.UserCredentials;
+import fi.otavanopisto.pyramus.rest.model.muikku.CredentialResetPayload;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
@@ -366,6 +366,7 @@ public class PersonRESTService extends AbstractRESTService {
   @Path("/resetpasswordbyemail")
   @GET
   @Unsecure
+  @Deprecated // by MuikkuRESTService.requestCredentialReset
   public Response resetPasswordByEmail(@QueryParam(value = "email") String email) {
     Person person = personController.findUniquePersonByEmail(email);
     if (person == null) {
@@ -401,14 +402,15 @@ public class PersonRESTService extends AbstractRESTService {
   @Path("/resetpasswordbyemail")
   @POST
   @Unsecure
-  public Response confirmResetPasswordByEmail(UserCredentialReset reset) {
+  @Deprecated // by MuikkuRESTService.resetCredentials
+  public Response confirmResetPasswordByEmail(CredentialResetPayload reset) {
     PasswordResetRequest resetRequest = passwordResetRequestDAO.findBySecret(reset.getSecret());
     
     if (resetRequest == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    String newPassword = reset.getNewPassword();
+    String newPassword = reset.getPassword();
     Person person = resetRequest.getPerson();
     
     boolean passwordBlank = StringUtils.isBlank(newPassword);
