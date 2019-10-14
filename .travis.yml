@@ -25,7 +25,7 @@ script: mvn verify -Pit
 after_success:
 - if [ $TRAVIS_PULL_REQUEST == false ]; then
     python travis-prepare-maven.py & wait;
-    mvn deploy --settings ~/.m2/trasettings.xml;
+    travis_wait mvn deploy --settings ~/.m2/trasettings.xml;
   fi;
 after_failure:
 - cat pyramus/target/cargo/configurations/wildfly10x/log/server.log
