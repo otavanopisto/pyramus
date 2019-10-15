@@ -23,10 +23,7 @@ before_script:
   - export _JAVA_OPTIONS="-Xmx2048m -Xms512m -Djava.net.preferIPv4Addresses=true -Djava.net.preferIPv4Stack=true"
 script: mvn verify -Pit
 after_success:
-- if [ $TRAVIS_PULL_REQUEST == false ]; then
-    python travis-prepare-maven.py & wait;
-    travis_wait mvn deploy --settings ~/.m2/trasettings.xml;
-  fi;
+- . travis-after-success.sh
 after_failure:
 - cat pyramus/target/cargo/configurations/wildfly10x/log/server.log
 - cat pyramus/target/cargo/configurations/wildfly10x/configuration/standalone.xml
