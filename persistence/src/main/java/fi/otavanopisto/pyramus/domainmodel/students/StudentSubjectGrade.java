@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.domainmodel.students;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
@@ -62,6 +66,22 @@ public class StudentSubjectGrade {
     this.issuer = issuer;
   }
 
+  public Date getGradeDate() {
+    return gradeDate;
+  }
+
+  public void setGradeDate(Date gradeDate) {
+    this.gradeDate = gradeDate;
+  }
+
+  public StaffMember getGradeApprover() {
+    return gradeApprover;
+  }
+
+  public void setGradeApprover(StaffMember gradeApprover) {
+    this.gradeApprover = gradeApprover;
+  }
+
   @Id
   @GeneratedValue (strategy = GenerationType.IDENTITY)
   private Long id; 
@@ -82,6 +102,13 @@ public class StudentSubjectGrade {
   @JoinColumn (name = "grade")
   private Grade grade;
   
+  @Temporal (value=TemporalType.DATE)
+  private Date gradeDate;
+  
+  @ManyToOne
+  @JoinColumn(name="gradeApprover")
+  private StaffMember gradeApprover;
+
   @Lob
   @Basic(fetch = FetchType.LAZY)
   @Column

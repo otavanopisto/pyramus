@@ -231,31 +231,37 @@ public abstract class KoskiStudentHandler {
     return kuvaus;
   }
 
-  protected HenkilovahvistusPaikkakunnalla getVahvistus(Student student, String academyOid) {
-    Organisaatio henkilonOrganisaatio = new OrganisaatioOID(academyOid);
-    
-    StaffMember studyApprover = student.getStudyApprover();
-    
-    if (studyApprover != null) {
-      String nimi = studyApprover.getFirstName() + " " + studyApprover.getLastName();
-      String titteli = studyApprover.getTitle();
+  protected HenkilovahvistusPaikkakunnalla getVahvistus(Student student, StaffMember approver, Date approvalDate, String academyOid) {
+    if (approver != null) {
+      String nimi = approver.getFirstName() + " " + approver.getLastName();
+      String titteli = approver.getTitle();
       
       if (StringUtils.isAnyBlank(nimi, titteli)) {
         koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.MISSING_STUDYAPPROVER, new Date());
         return null;
       }
+
+      if (approvalDate == null) {
+        koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.MISSING_STUDYAPPROVEDATE, new Date());
+        return null;
+      }
       
+      Organisaatio henkilonOrganisaatio = new OrganisaatioOID(academyOid);
       OrganisaatioHenkilo henkilo = new OrganisaatioHenkilo(nimi, kuvaus(titteli), henkilonOrganisaatio);
 
       Organisaatio myontajaOrganisaatio = new OrganisaatioOID(academyOid);
       HenkilovahvistusPaikkakunnalla vahvistus = new HenkilovahvistusPaikkakunnalla(
-          student.getStudyEndDate(), Kunta.K491, myontajaOrganisaatio);
+          approvalDate, Kunta.K491, myontajaOrganisaatio);
       vahvistus.addMyontajaHenkilo(henkilo);
       return vahvistus;
     } else {
       koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.MISSING_STUDYAPPROVER, new Date());
       return null;
     }
+  }
+
+  protected HenkilovahvistusPaikkakunnalla getVahvistus(Student student, String academyOid) {
+    return getVahvistus(student, student.getStudyApprover(), student.getStudyEndDate(), academyOid);
   }
 
   protected String getStudentIdentifier(KoskiStudyProgrammeHandler handler, Long studentId) {
@@ -760,6 +766,10 @@ public abstract class KoskiStudentHandler {
     }
     
     return null;
+  }
+
+  protected StudentSubjectGrade findStudentSubjectGrade(Student student, Subject subject) {
+    return studentSubjectGradeDAO.findBy(student, subject);
   }
 
 }
