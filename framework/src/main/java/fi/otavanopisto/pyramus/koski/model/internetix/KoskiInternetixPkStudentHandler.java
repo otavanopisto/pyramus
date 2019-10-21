@@ -227,12 +227,13 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       if (calculateMeanGrades || hasStudentSubjectGrade) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(oppiaineenSuoritus) ? 
             ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(student, oppiaineenSuoritus.getSubject(), oppiaineenSuoritus.getOppiaineenSuoritus());
+        Date arviointiPvm = (studentSubjectGrade != null && studentSubjectGrade.getGradeDate() != null) ? studentSubjectGrade.getGradeDate() : student.getStudyEndDate();
         
         if (ArviointiasteikkoYleissivistava.isNumeric(aineKeskiarvo)) {
-          KurssinArviointi arviointi = new KurssinArviointiNumeerinen(aineKeskiarvo, student.getStudyEndDate());
+          KurssinArviointi arviointi = new KurssinArviointiNumeerinen(aineKeskiarvo, arviointiPvm);
           oppiaineenSuoritus.getOppiaineenSuoritus().addArviointi(arviointi);
         } else if (ArviointiasteikkoYleissivistava.isLiteral(aineKeskiarvo)) {
-          KurssinArviointi arviointi = new KurssinArviointiSanallinen(aineKeskiarvo, student.getStudyEndDate(), kuvaus("Suoritettu/Hylätty"));
+          KurssinArviointi arviointi = new KurssinArviointiSanallinen(aineKeskiarvo, arviointiPvm, kuvaus("Suoritettu/Hylätty"));
           oppiaineenSuoritus.getOppiaineenSuoritus().addArviointi(arviointi);
         }
       }

@@ -228,7 +228,8 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
             ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(student, lukionOppiaineenSuoritus.getSubject(), lukionOppiaineenSuoritus.getOppiaineenSuoritus());
         
         if (aineKeskiarvo != null) {
-          LukionOppiaineenArviointi arviointi = new LukionOppiaineenArviointi(aineKeskiarvo, student.getStudyEndDate());
+          Date arviointiPvm = (studentSubjectGrade != null && studentSubjectGrade.getGradeDate() != null) ? studentSubjectGrade.getGradeDate() : student.getStudyEndDate();
+          LukionOppiaineenArviointi arviointi = new LukionOppiaineenArviointi(aineKeskiarvo, arviointiPvm);
           lukionOppiaineenSuoritus.getOppiaineenSuoritus().addArviointi(arviointi);
         } else {
           logger.warning(String.format("Unresolved mean grade for person %d.", student.getPerson().getId()));
