@@ -30,7 +30,7 @@ public class CourseAPI {
     this.loggedUserId = loggedUserId;
   }
 
-  public Long create(Long moduleId, Long typeId, String name, String nameExtension, String description, String subjectCode) throws InvalidScriptException {
+  public Long create(Long organizationId, Long moduleId, Long typeId, String name, String nameExtension, String description, String subjectCode) throws InvalidScriptException {
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
@@ -54,8 +54,7 @@ public class CourseAPI {
       throw new InvalidScriptException("Subject by code '" + subjectCode + "' not found.");
     }
     
-    // TODO Default organization?
-    Organization organization = organizationDAO.findById(1L);
+    Organization organization = organizationDAO.findById(organizationId);
     if (organization == null) {
       throw new InvalidScriptException("Default organization not found.");
     }
