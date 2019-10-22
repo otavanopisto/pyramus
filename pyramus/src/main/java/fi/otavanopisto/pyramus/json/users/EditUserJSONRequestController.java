@@ -74,7 +74,19 @@ public class EditUserJSONRequestController extends JSONRequestController {
     Long userId = requestContext.getLong("userId");
 
     StaffMember user = staffDAO.findById(userId);
-    
+
+    if (user.getOrganization() != null) {
+      // Check that the editing user has access to the organization
+      if (!UserUtils.canAccessOrganization(loggedUser, user.getOrganization())) {
+        throw new RuntimeException("Cannot access users' organization");
+      }
+    } else {
+      // Check that the editing user has generic access when users' organization is null
+      if (!UserUtils.canAccessAllOrganizations(loggedUser)) {
+        throw new RuntimeException("Cannot access users' organization");
+      }
+    }
+
     String firstName = requestContext.getString("firstName");
     String lastName = requestContext.getString("lastName");
     String title = requestContext.getString("title");
@@ -88,8 +100,19 @@ public class EditUserJSONRequestController extends JSONRequestController {
     Organization organization = null;
     
     if (organizationId != null) {
-      // TODO Check the logged user can assign the organization
       organization = organizationDAO.findById(organizationId);
+    }
+    
+    if (organization != null) {
+      // Check that the editing user has access to the organization
+      if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
+        throw new RuntimeException("Cannot access organization");
+      }
+    } else {
+      // Check that the editing user can set the organization as null
+      if (!UserUtils.canAccessAllOrganizations(loggedUser)) {
+        throw new RuntimeException("Cannot access organization");
+      }
     }
 
     // #921: Check username
