@@ -97,7 +97,7 @@ public class MuikkuRESTService {
     if (defaults.getUserDefaultContactType() == null) {
       return Response.status(Status.INTERNAL_SERVER_ERROR).entity("userDefaultContactType not set in Defaults").build();
     }
-    
+
     // Basic payload validation
     
     if (StringUtils.isAnyBlank(payload.getFirstName(), payload.getLastName(), payload.getEmail(), payload.getRole())) {
@@ -122,6 +122,9 @@ public class MuikkuRESTService {
     // User creation
     
     User loggedUser = sessionController.getUser();    
+    if (loggedUser.getOrganization() == null) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
+    }
     Person person = personController.createPerson(null,  null,  null,  null,  Boolean.FALSE);
     StaffMember staffMember = userController.createStaffMember(loggedUser.getOrganization(), payload.getFirstName(), payload.getLastName(), role, person);
     userController.addUserEmail(staffMember, defaults.getUserDefaultContactType(), address, Boolean.TRUE);

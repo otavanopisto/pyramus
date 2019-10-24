@@ -14,7 +14,6 @@ import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
-import fi.otavanopisto.pyramus.plugin.auth.AuthenticationException;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.plugin.auth.utils.EncodingUtils;
 
@@ -150,10 +149,11 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
   @Override
   public void updateCredentials(String externalId, String username, String password) {
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
-
     try {
       InternalAuth internalAuth = internalAuthDAO.findById(NumberUtils.createLong(externalId));
-
+      if (internalAuth == null) {
+        throw new IllegalStateException(String.format("InternalAuth for id %s not found", externalId));
+      }
       String passwordEncoded = EncodingUtils.md5EncodeString(password);
       internalAuthDAO.updateUsernameAndPassword(internalAuth, username, passwordEncoded);
     }
