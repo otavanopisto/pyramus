@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
@@ -183,7 +184,7 @@ public class MuikkuRESTService {
     // Validate reset request
     
     PasswordResetRequest resetRequest = passwordResetRequestDAO.findBySecret(hash);
-    if (resetRequest == null) {
+    if (resetRequest == null || isExpired(resetRequest)) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
@@ -216,7 +217,7 @@ public class MuikkuRESTService {
     // Validate reset request
     
     PasswordResetRequest resetRequest = passwordResetRequestDAO.findBySecret(payload.getSecret());
-    if (resetRequest == null) {
+    if (resetRequest == null || isExpired(resetRequest)) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
@@ -257,6 +258,11 @@ public class MuikkuRESTService {
     return Response.noContent().build();
   }
   
+  private boolean isExpired(PasswordResetRequest resetRequest) {
+    Date expiryDate = DateUtils.addHours(new Date(), -2);
+    return resetRequest == null || resetRequest.getDate() == null || expiryDate.after(resetRequest.getDate());
+  }
+
   private String getMessage(String key) {
     Locale locale = Locale.forLanguageTag(httpRequest.getHeader("Accept-Language"));
     ResourceBundle bundle = ResourceBundle.getBundle("messages", locale);
