@@ -47,10 +47,9 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
   
   @Override
   public boolean handlesPermission(Permission permission) {
-    if (permission != null)
-      return PermissionScope.ENVIRONMENT.equals(permission.getScope()) || PermissionScope.COURSE.equals(permission.getScope());
-    else
-      return false;
+    return permission != null 
+        ? PermissionScope.ENVIRONMENT.equals(permission.getScope()) || PermissionScope.COURSE.equals(permission.getScope())
+        : false;
   }
 
   @Override

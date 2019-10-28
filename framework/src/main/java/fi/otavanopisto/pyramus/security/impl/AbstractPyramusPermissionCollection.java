@@ -20,19 +20,11 @@ public class AbstractPyramusPermissionCollection extends AbstractPermissionColle
 
   protected String[] getDefaultRoles(Class<?> collectionClass, String permission) throws NoSuchFieldException {
     DefaultPermissionRoles annotation = collectionClass.getField(permission).getAnnotation(DefaultPermissionRoles.class);
-
-    if (annotation != null)
-      return annotation.value();
-    else
-      return null;
+    return annotation != null ? annotation.value() : null;
   }
   
   protected CourseRoleArchetype[] getDefaultCourseRoles(Class<?> collectionClass, String permission) throws NoSuchFieldException {
     DefaultCoursePermissionRoles annotation = collectionClass.getField(permission).getAnnotation(DefaultCoursePermissionRoles.class);
-
-    if (annotation != null)
-      return annotation.value();
-    else
-      return null;
+    return annotation != null ? annotation.value() : null;
   }
 }

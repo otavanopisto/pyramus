@@ -55,8 +55,9 @@ public class UserUtils {
     }
     
     // if Email is being put into non-unique field, it is always allowed    
-    if (contactType.getNonUnique())
+    if (contactType.getNonUnique()) {
       return true;
+    }
     
     emailAddress = StringUtils.trim(emailAddress);
 
@@ -167,8 +168,9 @@ public class UserUtils {
    * @return
    */
   public static boolean isHigherOrEqualRole(Role r, Role test) {
-    if (r == test)
+    if (r == test) {
       return true;
+    }
 
     List<Role> order = getRoleOrder();
     
@@ -197,8 +199,9 @@ public class UserUtils {
    * @return
    */
   public static boolean isMemberOf(User user, Organization organization) {
-    if (user == null || organization == null)
+    if (user == null || organization == null) {
       return false;
+    }
     
     Organization userOrganization = user.getOrganization();
 
