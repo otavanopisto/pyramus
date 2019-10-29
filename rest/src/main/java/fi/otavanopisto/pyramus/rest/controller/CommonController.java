@@ -402,6 +402,10 @@ public class CommonController {
   public Email findEmailById(Long id) {
     return emailDAO.findById(id);
   }
+
+  public Email findEmailByAddress(String address) {
+    return emailDAO.findByAddress(address);
+  }
   
   public void deleteEmail(Email email) {
     emailDAO.delete(email); 

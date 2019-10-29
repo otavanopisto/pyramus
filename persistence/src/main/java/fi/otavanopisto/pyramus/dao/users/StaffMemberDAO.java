@@ -350,6 +350,10 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     return staffMember;
   }
   
+  public void fireUpdate(Long staffMemberId) {
+    staffMemberUpdatedEvent.fire(new StaffMemberUpdatedEvent(staffMemberId));
+  }
+  
   public StaffMember updateTags(StaffMember staffMember, Set<Tag> tags) {
     staffMember.setTags(tags);
     persist(staffMember);

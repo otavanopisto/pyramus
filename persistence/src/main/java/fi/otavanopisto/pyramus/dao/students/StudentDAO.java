@@ -469,6 +469,10 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     
     return entityManager.createQuery(criteria).getSingleResult() > 0;
   }
+
+  public void fireUpdate(Long studentId) {
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(studentId));
+  }
   
   public Student updatePerson(Student student, Person person) {
     Person oldPerson = student.getPerson();
