@@ -67,6 +67,44 @@
           </select>
         </div>
         
+        <div class="genericFormSection">  
+          <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+            <jsp:param name="titleLocale" value="students.editStudentSubjectGradeDialog.gradeDateTitle"/>
+            <jsp:param name="helpLocale" value="students.editStudentSubjectGradeDialog.gradeDateHelp"/>
+          </jsp:include>
+          <input type="text" name="gradeDate" class="ixDateField" value="${fn:escapeXml(studentSubjectGrade.gradeDate.time)}"/>
+        </div>
+
+        <div class="genericFormSection">      
+          <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+            <jsp:param name="titleLocale" value="students.editStudentSubjectGradeDialog.gradeApproverTitle"/>
+            <jsp:param name="helpLocale" value="students.editStudentSubjectGradeDialog.gradeApproverHelp"/>
+          </jsp:include>
+
+          <select id="gradeApproverId" name="gradeApproverId">
+            <option></option>
+            <c:forEach var="studyApprover" items="${studyApprovers}">
+              <c:choose>
+                <c:when test="${studyApprover.title eq null}">
+                  <c:set var="approverName">${studyApprover.lastName}, ${studyApprover.firstName}</c:set>
+                </c:when>
+                <c:otherwise>
+                  <c:set var="approverName">${studyApprover.lastName}, ${studyApprover.firstName} (${studyApprover.title})</c:set>
+                </c:otherwise>
+              </c:choose>
+
+              <c:choose>
+                <c:when test="${studyApprover.id eq studentSubjectGrade.gradeApprover.id}">
+                  <option value="${studyApprover.id}" selected="selected">${approverName}</option> 
+                </c:when>
+                <c:otherwise>
+                  <option value="${studyApprover.id}">${approverName}</option> 
+                </c:otherwise>
+              </c:choose>
+            </c:forEach>
+          </select>
+        </div>
+
         <div class="genericFormSection">
           <jsp:include page="/templates/generic/fragments/formtitle.jsp">
             <jsp:param name="titleLocale" value="students.editStudentSubjectGradeDialog.explanationTitle" />

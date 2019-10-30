@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.json.students;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,29 +34,22 @@ public class EditStudentSubjectGradeJSONRequestController extends JSONRequestCon
       Long subjectId = requestContext.getLong("subjectId");
       Long gradeId = requestContext.getLong("gradeId");
       String explanation = requestContext.getString("explanation");
+      Date gradeDate = requestContext.getDate("gradeDate");
+      Long gradeApproverId = requestContext.getLong("gradeApproverId");
 
       StaffMember issuer = staffMemberDAO.findById(requestContext.getLoggedUserId());
+      StaffMember gradeApprover = gradeApproverId != null ? staffMemberDAO.findById(gradeApproverId) : null;
 
       Student student = studentDAO.findById(studentId);
       Subject subject = subjectDAO.findById(subjectId);
       Grade grade = gradeId != null ? gradeDAO.findById(gradeId) : null;
-      boolean useComputed = true;
+      boolean useComputed = grade == null;
       
       StudentSubjectGrade studentSubjectGrade = studentSubjectGradeDAO.findBy(student, subject);
-      
-      if (grade != null) {
-        useComputed = false;
-        
-        if (studentSubjectGrade == null) {
-          studentSubjectGrade = studentSubjectGradeDAO.create(student, subject, issuer, grade, explanation);
-        } else {
-          studentSubjectGrade = studentSubjectGradeDAO.updateGrade(studentSubjectGrade, issuer, grade, explanation);
-        }
+      if (studentSubjectGrade == null) {
+        studentSubjectGrade = studentSubjectGradeDAO.create(student, subject, issuer, grade, gradeDate, gradeApprover, explanation);
       } else {
-        // Grade is null, delete if it exists
-        if (studentSubjectGrade != null) {
-          studentSubjectGradeDAO.delete(studentSubjectGrade);
-        }
+        studentSubjectGrade = studentSubjectGradeDAO.updateGrade(studentSubjectGrade, issuer, grade, gradeDate, gradeApprover, explanation);
       }
       
       Map<String, Object> info = new HashMap<>();
