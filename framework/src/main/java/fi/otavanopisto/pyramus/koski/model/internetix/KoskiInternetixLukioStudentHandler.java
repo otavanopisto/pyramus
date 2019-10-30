@@ -29,6 +29,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
@@ -53,7 +54,6 @@ import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
-import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
@@ -132,25 +132,12 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     KoskiStudyProgrammeHandlerParams handlerParams = getHandlerParams(HANDLER_TYPE);
 
     // toimipiste-oid joko a) handlerParams:sta b) studyprogramme-asetuksista c) yleisesti kaikelle asetettu academyIdentifier
-    String departmentIdentifier = StringUtils.isNotBlank(handlerParams.getToimipisteOID()) ? handlerParams.getToimipisteOID() : 
+    String toimipisteOID = StringUtils.isNotBlank(handlerParams.getToimipisteOID()) ? handlerParams.getToimipisteOID() : 
       settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
 
-    OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(departmentIdentifier);
-    Set<OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> oppiaineet = assessmentsToModel(student, studentSubjects, 
-        laskeKeskiarvot, defaultStudyProgramme);
+    assessmentsToModel(opiskeluoikeus, student, studentSubjects, laskeKeskiarvot, sisällytäVahvistus, toimipisteOID, defaultStudyProgramme);
 
     // Aineopiskelija
-    
-    for (OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus> oppiaine : oppiaineet) {
-      LukionOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = LukionOppiaineenOppimaaranSuoritus.from(
-          oppiaine.getOppiaineenSuoritus(), Kieli.FI, toimipiste);
-      oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(HANDLER_TYPE, oppiaine.getOps()));
-      oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
-      if (sisällytäVahvistus) {
-        oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, departmentIdentifier));
-      }
-      opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
-    }
     
     if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
       return null;
@@ -188,7 +175,9 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     return lisatiedot;
   }
 
-  private Set<OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> assessmentsToModel(Student student, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades, boolean defaultStudyProgramme) {
+  private void assessmentsToModel(LukionOpiskeluoikeus opiskeluoikeus, 
+      Student student, StudentSubjectSelections studentSubjects, boolean calculateMeanGrades, boolean sisällytäVahvistus, 
+      String toimipisteOID, boolean defaultStudyProgramme) {
     List<OpiskelijanOPS> opsList = new ArrayList<>();
     opsList.add(OpiskelijanOPS.ops2016);
     opsList.add(OpiskelijanOPS.ops2005);
@@ -202,7 +191,6 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
         credit -> matchingEducationTypeFilter(credit, handlerParams.getEducationTypes());
     Map<OpiskelijanOPS, List<CreditStub>> opsCredits = listCredits(student, true, true, opsList, OpiskelijanOPS.ops2016, predicate);
     
-    Set<OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> results = new HashSet<>();
     Map<String, OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> map = new HashMap<>();
     Set<OppiaineenSuoritusWithCurriculum<LukionOppiaineenSuoritus>> accomplished = new HashSet<>();
 
@@ -231,23 +219,38 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
         continue;
       }
       
+      StudentSubjectGrade studentSubjectGrade = findStudentSubjectGrade(student, lukionOppiaineenSuoritus.getSubject());
+      boolean hasStudentSubjectGrade = studentSubjectGrade != null;
+      
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
-      if (calculateMeanGrades) {
+      if (calculateMeanGrades || hasStudentSubjectGrade) {
         ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(lukionOppiaineenSuoritus) ? 
             ArviointiasteikkoYleissivistava.GRADE_S : getSubjectMeanGrade(student, lukionOppiaineenSuoritus.getSubject(), lukionOppiaineenSuoritus.getOppiaineenSuoritus());
         
         if (aineKeskiarvo != null) {
-          LukionOppiaineenArviointi arviointi = new LukionOppiaineenArviointi(aineKeskiarvo, student.getStudyEndDate());
+          Date arviointiPvm = (studentSubjectGrade != null && studentSubjectGrade.getGradeDate() != null) ? studentSubjectGrade.getGradeDate() : student.getStudyEndDate();
+          LukionOppiaineenArviointi arviointi = new LukionOppiaineenArviointi(aineKeskiarvo, arviointiPvm);
           lukionOppiaineenSuoritus.getOppiaineenSuoritus().addArviointi(arviointi);
         } else {
           logger.warning(String.format("Unresolved mean grade for person %d.", student.getPerson().getId()));
         }
       }
       
-      results.add(lukionOppiaineenSuoritus);
+      LukionOppiaineenSuoritus oppiaineenSuoritus = lukionOppiaineenSuoritus.getOppiaineenSuoritus();
+      
+      LukionOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = LukionOppiaineenOppimaaranSuoritus.from(
+          oppiaineenSuoritus, Kieli.FI, new OrganisaationToimipisteOID(toimipisteOID));
+      oppiaineenOppimaaranSuoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(HANDLER_TYPE, lukionOppiaineenSuoritus.getOps()));
+      oppiaineenOppimaaranSuoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
+
+      if (hasStudentSubjectGrade) {
+        oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, studentSubjectGrade.getGradeApprover(), studentSubjectGrade.getGradeDate(), toimipisteOID));
+      } else if (sisällytäVahvistus) {
+        oppiaineenOppimaaranSuoritus.setVahvistus(getVahvistus(student, toimipisteOID));
+      }
+      
+      opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
     }
-    
-    return results;
   }
 
   private ArviointiasteikkoYleissivistava getSubjectMeanGrade(Student student, Subject subject, LukionOppiaineenSuoritus oppiaineenSuoritus) {

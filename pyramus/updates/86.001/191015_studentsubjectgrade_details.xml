@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+  
+  <sql>
+    alter table StudentSubjectGrade add column gradeDate date;
+  </sql>
+
+  <sql>
+    alter table StudentSubjectGrade add column gradeApprover bigint;
+  </sql>
+  <sql>
+    alter table StudentSubjectGrade add constraint FKhj9tk5bhyamvombymiktqiuq8 foreign key (gradeApprover) references StaffMember (id);
+  </sql>
+  
+</update>

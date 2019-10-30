@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.students;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -37,13 +38,15 @@ public class StudentSubjectGradeDAO extends PyramusEntityDAO<StudentSubjectGrade
   @Removed
   private Event<StudentSubjectGradeEvent> studentSubjectGradeRemovedEvent;
   
-  public StudentSubjectGrade create(Student student, Subject subject, StaffMember issuer, Grade grade, String explanation) {
+  public StudentSubjectGrade create(Student student, Subject subject, StaffMember issuer, Grade grade, Date gradeDate, StaffMember gradeApprover, String explanation) {
     StudentSubjectGrade studentSubjectGrade = new StudentSubjectGrade();
     studentSubjectGrade.setStudent(student);
     studentSubjectGrade.setSubject(subject);
     studentSubjectGrade.setGrade(grade);
     studentSubjectGrade.setIssuer(issuer);
     studentSubjectGrade.setExplanation(explanation);
+    studentSubjectGrade.setGradeDate(gradeDate);
+    studentSubjectGrade.setGradeApprover(gradeApprover);
     
     return fireCreatedEvent(persist(studentSubjectGrade));
   }
@@ -77,10 +80,12 @@ public class StudentSubjectGradeDAO extends PyramusEntityDAO<StudentSubjectGrade
     return getSingleResult(entityManager.createQuery(criteria));
   }
   
-  public StudentSubjectGrade updateGrade(StudentSubjectGrade studentSubjectGrade, StaffMember issuer, Grade grade, String explanation) {
+  public StudentSubjectGrade updateGrade(StudentSubjectGrade studentSubjectGrade, StaffMember issuer, Grade grade, Date gradeDate, StaffMember gradeApprover, String explanation) {
     studentSubjectGrade.setGrade(grade);
     studentSubjectGrade.setIssuer(issuer);
     studentSubjectGrade.setExplanation(explanation);
+    studentSubjectGrade.setGradeDate(gradeDate);
+    studentSubjectGrade.setGradeApprover(gradeApprover);
     return fireUpdatedEvent(persist(studentSubjectGrade));
   }
 

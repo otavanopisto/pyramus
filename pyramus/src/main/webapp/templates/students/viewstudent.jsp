@@ -695,7 +695,9 @@
               var subjectId = uploadForm.elements["subjectId"].value;
               var gradeId = uploadForm.elements["gradeId"].value;
               var explanation = uploadForm.elements["explanation"].value;
-
+              var gradeDate = uploadForm.elements["gradeDate"].value;
+              var gradeApproverId = uploadForm.elements["gradeApproverId"].value;
+                
               dlg.disableOkButton();
 
               JSONRequest.request("students/editstudentsubjectgrade.json", {
@@ -703,7 +705,9 @@
                   studentId: studentId,
                   subjectId: subjectId,
                   gradeId: gradeId,
-                  explanation: explanation
+                  explanation: explanation,
+                  gradeDate: gradeDate,
+                  gradeApproverId: gradeApproverId
                 },
                 onSuccess: function (jsonResponse) {
                   var results = jsonResponse.results;
@@ -726,7 +730,7 @@
           }
         });
         
-        dialog.setSize("400px", "300px");
+        dialog.setSize("400px", "400px");
         dialog.open();
       }
       
