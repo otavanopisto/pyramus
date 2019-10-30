@@ -219,7 +219,6 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
         continue;
       }
 
-      // Tarviiko tämä määritellä erikseen että oppiaine on suoritettu? 
       StudentSubjectGrade studentSubjectGrade = findStudentSubjectGrade(student, oppiaineenSuoritus.getSubject());
       boolean hasStudentSubjectGrade = studentSubjectGrade != null;
 
