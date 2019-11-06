@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
-import fi.otavanopisto.pyramus.PyramusUIPermissions;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -72,6 +71,7 @@ import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -91,7 +91,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
     Long loggedUserId = requestContext.getLoggedUserId();
     User user = userDAO.findById(loggedUserId);
 
-    if (!Permissions.instance().hasEnvironmentPermission(user, PyramusUIPermissions.EDIT_STUDENT)) {
+    if (!Permissions.instance().hasEnvironmentPermission(user, PyramusViewPermissions.EDIT_STUDENT)) {
       return false;
     } else {
       if (UserUtils.canAccessAllOrganizations(user)) {

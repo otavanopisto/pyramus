@@ -11,7 +11,6 @@ import java.util.Map;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
-import fi.otavanopisto.pyramus.PyramusUIPermissions;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -28,6 +27,7 @@ import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
+import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 
 /**
  * The controller responsible of the View Student Group view of the application.
@@ -49,7 +49,7 @@ public class ViewStudentGroupViewController extends PyramusViewController2 imple
     StudentGroup studentGroup = studentGroupDAO.findById(requestContext.getLong("studentgroup"));
 
     return 
-        Permissions.instance().hasEnvironmentPermission(loggedUser, PyramusUIPermissions.VIEW_STUDENTGROUP) &&
+        Permissions.instance().hasEnvironmentPermission(loggedUser, PyramusViewPermissions.VIEW_STUDENTGROUP) &&
         UserUtils.canAccessOrganization(loggedUser, studentGroup.getOrganization());
   }
 

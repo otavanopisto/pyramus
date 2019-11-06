@@ -14,7 +14,6 @@ import org.hibernate.StaleObjectStateException;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
-import fi.otavanopisto.pyramus.PyramusUIPermissions;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -78,6 +77,7 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
+import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 
 public class EditStudentJSONRequestController extends JSONRequestController2 {
 
@@ -95,7 +95,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
     Long loggedUserId = requestContext.getLoggedUserId();
     User user = userDAO.findById(loggedUserId);
 
-    if (!Permissions.instance().hasEnvironmentPermission(user, PyramusUIPermissions.EDIT_STUDENT)) {
+    if (!Permissions.instance().hasEnvironmentPermission(user, PyramusViewPermissions.EDIT_STUDENT)) {
       return false;
     } else {
       if (UserUtils.canAccessAllOrganizations(user)) {

@@ -91,14 +91,12 @@ public class CompositeRESTService {
   @GET
   @RESTPermit(handling = Handling.INLINE)
   public Response listAssessmentRequestsByCourse(@PathParam("COURSEID") Long courseId, @QueryParam("courseStudentIds") String courseStudentIds) {
-    // TODO Security
     Course course = courseController.findCourseById(courseId);
     
     if (course == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    // TODO: Is this correct? If user has this permission but there's several different organizations at the course?
     if (!sessionController.hasPermission(CourseAssessmentPermissions.LIST_STUDENT_COURSEASSESSMENTS, course)) {
       return Response.status(Status.FORBIDDEN).build();
     }

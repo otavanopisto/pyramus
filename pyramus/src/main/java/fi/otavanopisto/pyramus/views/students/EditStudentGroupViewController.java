@@ -10,7 +10,6 @@ import java.util.Locale;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
-import fi.otavanopisto.pyramus.PyramusUIPermissions;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -30,6 +29,7 @@ import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -55,7 +55,7 @@ public class EditStudentGroupViewController extends PyramusViewController2 imple
     StudentGroup studentGroup = studentGroupDAO.findById(requestContext.getLong("studentgroup"));
 
     return 
-        Permissions.instance().hasEnvironmentPermission(loggedUser, PyramusUIPermissions.EDIT_STUDENTGROUP) &&
+        Permissions.instance().hasEnvironmentPermission(loggedUser, PyramusViewPermissions.EDIT_STUDENTGROUP) &&
         UserUtils.canAccessOrganization(loggedUser, studentGroup.getOrganization());
   }
   

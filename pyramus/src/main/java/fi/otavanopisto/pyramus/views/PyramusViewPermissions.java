@@ -16,6 +16,22 @@ public class PyramusViewPermissions extends AbstractPyramusPermissionCollection 
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String SEARCH_STUDENTS = "SEARCH_STUDENTS";
   
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String VIEW_STUDENT = "VIEW_STUDENT";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String EDIT_STUDENT = "EDIT_STUDENT";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String VIEW_STUDENTGROUP = "VIEW_STUDENTGROUP";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String EDIT_STUDENTGROUP = "EDIT_STUDENTGROUP";
+  
   @Override
   public List<String> listPermissions() {
     return super.listPermissions(PyramusViewPermissions.class);

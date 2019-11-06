@@ -13,7 +13,6 @@ import org.hibernate.StaleObjectStateException;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
-import fi.otavanopisto.pyramus.PyramusUIPermissions;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
@@ -35,6 +34,7 @@ import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
+import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 
 /**
  * The controller responsible of modifying an existing student group.
@@ -58,7 +58,7 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
     StudentGroup studentGroup = studentGroupDAO.findById(requestContext.getLong("studentGroupId"));
 
     return 
-        Permissions.instance().hasEnvironmentPermission(loggedUser, PyramusUIPermissions.EDIT_STUDENTGROUP) &&
+        Permissions.instance().hasEnvironmentPermission(loggedUser, PyramusViewPermissions.EDIT_STUDENTGROUP) &&
         UserUtils.canAccessOrganization(loggedUser, studentGroup.getOrganization());
   }
   

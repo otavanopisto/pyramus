@@ -61,7 +61,7 @@ public class SaveStudyProgrammesJSONRequestController extends JSONRequestControl
           StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
           
           if (!UserUtils.canAccessOrganization(loggedUser, studyProgramme.getOrganization())) {
-            throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Can not access student group from another organization.");
+            throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Can not access study programme from another organization.");
           }
           
           studyProgrammeDAO.update(studyProgramme, organization, name, category, code);

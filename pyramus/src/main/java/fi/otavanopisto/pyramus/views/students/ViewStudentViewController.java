@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
-import fi.otavanopisto.pyramus.PyramusUIPermissions;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -84,6 +83,7 @@ import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 import fi.otavanopisto.pyramus.views.students.tor.StudentTOR;
 import fi.otavanopisto.pyramus.views.students.tor.StudentTORController;
 import net.sf.json.JSONArray;
@@ -110,7 +110,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
     Long loggedUserId = requestContext.getLoggedUserId();
     User user = userDAO.findById(loggedUserId);
 
-    if (!Permissions.instance().hasEnvironmentPermission(user, PyramusUIPermissions.VIEW_STUDENT)) {
+    if (!Permissions.instance().hasEnvironmentPermission(user, PyramusViewPermissions.VIEW_STUDENT)) {
       return false;
     } else {
       if (UserUtils.canAccessAllOrganizations(user)) {
