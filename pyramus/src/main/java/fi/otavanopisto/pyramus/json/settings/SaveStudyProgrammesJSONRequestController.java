@@ -57,7 +57,7 @@ public class SaveStudyProgrammesJSONRequestController extends JSONRequestControl
         if (studyProgrammeId == -1) {
           studyProgrammeDAO.create(organization, name, category, code); 
         }
-        else if (modified) {
+        else {
           StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
           
           if (!UserUtils.canAccessOrganization(loggedUser, studyProgramme.getOrganization())) {

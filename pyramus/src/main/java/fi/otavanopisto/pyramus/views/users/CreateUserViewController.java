@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.views.users;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -12,13 +13,16 @@ import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactURLTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
@@ -40,6 +44,9 @@ public class CreateUserViewController extends PyramusViewController implements B
     ContactURLTypeDAO contactURLTypeDAO = DAOFactory.getInstance().getContactURLTypeDAO();
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    
+    StaffMember loggedUser = staffMemberDAO.findById(pageRequestContext.getLoggedUserId());
     
     Long studentId = pageRequestContext.getLong("studentId");
     boolean hasInternalAuthenticationStrategies = AuthenticationProviderVault.getInstance().hasInternalStrategies();
@@ -65,7 +72,12 @@ public class CreateUserViewController extends PyramusViewController implements B
     List<ContactType> contactTypes = contactTypeDAO.listUnarchived();
     Collections.sort(contactTypes, new StringAttributeComparator("getName"));
 
-    List<Organization> organizations = organizationDAO.listUnarchived();
+    List<Organization> organizations;
+    if (UserUtils.canAccessAllOrganizations(loggedUser)) {
+      organizations = organizationDAO.listUnarchived();
+    } else {
+      organizations = Arrays.asList(loggedUser.getOrganization());
+    }
     Collections.sort(organizations, new StringAttributeComparator("getName"));
 
     pageRequestContext.getRequest().setAttribute("contactTypes", contactTypes);

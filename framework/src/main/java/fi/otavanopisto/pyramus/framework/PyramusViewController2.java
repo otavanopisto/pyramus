@@ -1,6 +1,5 @@
 package fi.otavanopisto.pyramus.framework;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,13 +65,5 @@ public abstract class PyramusViewController2 implements PageController {
     jsData.put(name, value);
   }
   
-  protected void sendError(RequestContext requestContext, int response) {
-    try {
-      requestContext.getResponse().sendError(response);
-    }
-    catch (IOException e) {
-    }
-  }
-
   private PyramusRequestControllerAccess access;
 }
