@@ -15,7 +15,7 @@ public class ManageOrganizationsViewController extends PyramusViewController imp
   }
 
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.ADMINISTRATOR };
   }
 
   public String getName(Locale locale) {
