@@ -6,11 +6,12 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.Organization;
+import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -40,12 +41,13 @@ public class AdminPasswordSetupWizardViewController extends SetupWizardControlle
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
+    Defaults defaults = defaultsDAO.getDefaults();
     
     InternalAuth internalAuth = internalAuthDAO.create(username, passwordMD5);
     Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
     userIdentificationDAO.create(person, "internal", String.valueOf(internalAuth.getId()));
-    Organization organization = null;
-    User user = userDAO.create(organization, firstName, lastName, Role.ADMINISTRATOR, person, false);
+    User user = userDAO.create(defaults.getOrganization(), firstName, lastName, Role.ADMINISTRATOR, person, false);
     personDAO.updateDefaultUser(person, user);
   }
 

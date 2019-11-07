@@ -2,20 +2,19 @@ package fi.otavanopisto.pyramus.views.system.setupwizard;
 
 import java.util.List;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.math.NumberUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
+import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.Organization;
+import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class StudyProgrammesSetupWizardViewController extends SetupWizardController {
   
@@ -47,7 +46,8 @@ public class StudyProgrammesSetupWizardViewController extends SetupWizardControl
   public void save(PageRequestContext requestContext) throws SetupWizardException {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     StudyProgrammeCategoryDAO studyProgrammeCategoryDAO = DAOFactory.getInstance().getStudyProgrammeCategoryDAO();
-    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
+    DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
+    Defaults defaults = defaultsDAO.getDefaults();
 
     int rowCount = NumberUtils.createInteger(requestContext.getRequest().getParameter("studyProgrammesTable.rowCount")).intValue();
     for (int i = 0; i < rowCount; i++) {
@@ -56,21 +56,15 @@ public class StudyProgrammesSetupWizardViewController extends SetupWizardControl
       String name = requestContext.getString(colPrefix + ".name");
       String code = requestContext.getString(colPrefix + ".code");
       Long categoryId = requestContext.getLong(colPrefix + ".category");
-      Long organizationId = requestContext.getLong(colPrefix + ".organization");
       
       StudyProgrammeCategory category = null;
-      Organization organization = null;
       
       if (categoryId != null) {
         category = studyProgrammeCategoryDAO.findById(categoryId);
       }
       
-      if (organizationId != null) {
-        organization = organizationDAO.findById(organizationId);
-      }
-      
       if (studyProgrammeId == -1) {
-        studyProgrammeDAO.create(organization, name, category, code); 
+        studyProgrammeDAO.create(defaults.getOrganization(), name, category, code); 
       }
     }
   }
