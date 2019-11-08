@@ -150,35 +150,6 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
     }
   }
   
-//  @Test
-//  public void testListStudents() throws NoSuchFieldException {
-//    Response response = given().headers(getAuthHeaders())
-//        .get("/students/students");
-//
-//    assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTS);
-//    
-//    if (response.statusCode() == 200) {
-//      if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-//        // For group restricted roles there should be only one result student
-//        response.then().body("id.size()", is(1));
-//      } else {
-//        response.then().body("id.size()", is(4));
-//      }
-//    }
-//  }
-//
-//  @Test
-//  public void testListStudentsByEmail() throws NoSuchFieldException {
-//    Response response = given().headers(getAuthHeaders())
-//        .get("/students/students?email=student1@bogusmail.com");
-//
-//    if (roleIsAllowed(getRole(), studentPermissions, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-//      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTS, 204);
-//    } else {
-//      assertOk(response, studentPermissions, StudentPermissions.LIST_STUDENTS);
-//    }
-//  }
-  
   @ParameterizedTest
   @EnumSource(Role.class)
   public void testFindStudent(Role role) throws NoSuchFieldException {
@@ -197,16 +168,6 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
       tools().deleteStudent(student);
     }
   }
-  
-//  @Test
-//  public void testFindStudentGuider() throws NoSuchFieldException {
-//    Response response = given().headers(getAuthHeaders())
-//        .get("/students/students/{ID}", SECONDARY_TEST_STUDENT_ID);
-//
-//    // This should be ok for all roles as the group restricted study guider can
-//    // also access this user via studentgroup 2.
-//    assertOk(response, studentPermissions, StudentPermissions.FIND_STUDENT);
-//  }
   
   @ParameterizedTest
   @EnumSource(Role.class)
@@ -261,67 +222,6 @@ public class StudentCrossOrganizationPermissionsTestsIT extends AbstractRESTPerm
       tools().deleteStudent(student);
     }
   }
-  
-//  @Test
-//  public void testUpdateStudentOwner() throws NoSuchFieldException {
-//    if (Role.STUDENT.name().equals(this.role)) {
-//      Long studentId = getUserIdForRole(Role.STUDENT.name());
-//
-//      Response response = given().headers(getAdminAuthHeaders())
-//          .get("/students/students/{ID}", studentId);
-//      
-//      Student oldData = response.as(Student.class);
-//      
-//      Long personId = oldData.getPersonId(); // new Long(response.body().jsonPath().getInt("personId"));
-//
-//      Map<String, String> updateVariables = new HashMap<>();
-//      updateVariables.put("TV2", "abc");
-//      updateVariables.put("TV3", "edf");
-//      
-//      Student updateStudent = new Student(studentId, 
-//        personId, 
-//        "updated firstName", // firstName
-//        "updated lastName", // lastName
-//        "updated nickname", // nickname
-//        "updated additional", // additionalInfo 
-//        "updated additional contact info", // additionalInfo 
-//        2l, // nationalityId 
-//        2l, //languageId
-//        2l, //municipalityId
-//        2l, // schoolId
-//        2l, // activityTypeId
-//        2l, // examinationTypeId
-//        2l, // educationalLevelId
-//        getDate(2030, 11, 2), // studyTimeEnd
-//        1l, // studyProgrammeId
-//        null, // curriculumId
-//        2d, // previousStudies
-//        "updated education", // education
-//        Boolean.TRUE, // lodging
-//        getDate(2020, 2, 3), // studyStartDate
-//        getDate(2033, 1, 2), // studyEndDate
-//        2l, // studyEndReasonId, 
-//        "updated studyEndText", // studyEndText, 
-//        updateVariables, // variables
-//        Arrays.asList("tag2", "tag3"),  // tags, 
-//        Boolean.FALSE //archived
-//      );
-//      
-//      response = given().headers(getAuthHeaders())
-//        .contentType("application/json")
-//        .body(updateStudent)
-//        .put("/students/students/{ID}", studentId);
-//      
-//      response.then().assertThat().statusCode(200);
-//      
-//      if (response.statusCode() == 200) {
-//        response = given().headers(getAdminAuthHeaders())
-//            .contentType("application/json")
-//            .body(oldData)
-//            .put("/students/students/{ID}", studentId);
-//      }
-//    }
-//  }  
   
   @ParameterizedTest
   @EnumSource(Role.class)

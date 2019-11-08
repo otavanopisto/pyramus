@@ -2250,8 +2250,6 @@ public class StudentRESTService extends AbstractRESTService {
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build();
 
-//    tsekkaa list_couseassessment
-    
     if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_ALL_STUDENT_COURSEASSESSMENTS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }

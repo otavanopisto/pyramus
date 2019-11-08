@@ -65,7 +65,7 @@ public class EnvironmentPermissionResolver extends AbstractPermissionResolver im
     if (PermissionScope.COURSE.equals(permission.getScope()) && (contextReference != null)) {
       Course course = resolveCourse(contextReference);
       if (course != null) {
-        allowed = allowed || hasCourseAccess(course, userEntity, permission);
+        allowed = hasCourseAccess(course, userEntity, permission);
       }
     }
     
