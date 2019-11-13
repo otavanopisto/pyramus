@@ -242,20 +242,30 @@ public class UserUtils {
    * @throws AccessDeniedException
    */
   public static void checkManagementOrganizationPermission(User user, Locale locale) throws AccessDeniedException {
-    if (user == null) {
+    if (!hasManagementOrganizationAccess(user)) {
       throw new AccessDeniedException(locale);
     }
+  }
+
+  public static boolean hasManagementOrganizationAccess(User user) {
+    if (user == null) {
+      return false;
+    }
     
-    if (user.getRole() != Role.ADMINISTRATOR) {
+    if (user.getRole() == Role.ADMINISTRATOR) {
+      return true;
+    } else {
       DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
       Defaults defaults = defaultsDAO.getDefaults();
       Long managementOrganizationId = defaults.getOrganization() != null ? defaults.getOrganization().getId() : null;
       Long userOrganizationId = (user != null && user.getOrganization() != null) ? user.getOrganization().getId() : null;
       
-      if (managementOrganizationId == null || !Objects.equals(userOrganizationId, managementOrganizationId)) {
-        throw new AccessDeniedException(locale);
+      if (managementOrganizationId != null && Objects.equals(userOrganizationId, managementOrganizationId)) {
+        return true;
       }
     }
+    
+    return false;
   }
   
 }
