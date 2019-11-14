@@ -4,19 +4,17 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-import java.util.Arrays;
+import java.time.OffsetDateTime;
 import java.util.List;
 
-import java.time.OffsetDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import io.restassured.response.Response;
-
 import fi.otavanopisto.pyramus.rest.controller.permissions.CalendarPermissions;
 import fi.otavanopisto.pyramus.rest.model.AcademicTerm;
+import io.restassured.response.Response;
 
 @RunWith(Parameterized.class)
 public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
@@ -59,18 +57,14 @@ public class CalendarPermissionsTestsIT extends AbstractRESTPermissionsTest {
 
   @Test
   public void testPermissionsListAcademicTerms() throws NoSuchFieldException {
-    String[] permissions = new CalendarPermissions().getDefaultRoles(fi.otavanopisto.pyramus.rest.controller.permissions.CalendarPermissions.LIST_ACADEMICTERMS);
-    List<String> allowedRolesList = Arrays.asList(permissions);
-    
-    assertOk("/calendar/academicTerms", allowedRolesList);
+    assertOk(given().headers(getAuthHeaders())
+        .get("/calendar/academicTerms"), calendarPermissions, CalendarPermissions.LIST_ACADEMICTERMS);
   }
   
   @Test
   public void testPermissionsFindAcademicTerm() throws NoSuchFieldException{
-    String[] permissions = new CalendarPermissions().getDefaultRoles(fi.otavanopisto.pyramus.rest.controller.permissions.CalendarPermissions.FIND_ACADEMICTERM);
-    List<String> allowedRolesList = Arrays.asList(permissions);
-    
-    assertOk("/calendar/academicTerms/1", allowedRolesList); 
+    assertOk(given().headers(getAuthHeaders())
+        .get("/calendar/academicTerms/{ID}", 1), calendarPermissions, CalendarPermissions.FIND_ACADEMICTERM);
   }
   
   @Test
