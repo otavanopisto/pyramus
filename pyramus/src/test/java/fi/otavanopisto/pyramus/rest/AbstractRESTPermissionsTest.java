@@ -196,7 +196,9 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 
   public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission,
       int successStatusCode) throws NoSuchFieldException {
-    int expectedStatusCode = roleIsAllowed(getRole(), permissionCollection, permission) ? successStatusCode : 403;
+    // EVERYONE role connects without any credentials and is thus blocked by SecurityFilter
+    int expectedStatusCode = !isCurrentRole(Role.EVERYONE) && roleIsAllowed(getRole(), permissionCollection, permission) 
+        ? successStatusCode : 403;
 
     assertPermission(permission, expectedStatusCode, response.statusCode());
   }
@@ -219,16 +221,6 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     }
 
     return data;
-
-    // return Arrays.asList(new Object[][] {
-    // { Role.EVERYONE.name() },
-    // { Role.GUEST.name() },
-    // { Role.USER.name() },
-    // { Role.STUDENT.name() },
-    // { Role.MANAGER.name() },
-    // { Role.ADMINISTRATOR.name() }
-    // }
-    // );
   }
 
   protected String getRole() {
