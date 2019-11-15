@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -9,7 +10,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermissions;
+import fi.otavanopisto.pyramus.rest.model.Organization;
 import fi.otavanopisto.pyramus.rest.model.StudyProgramme;
 import io.restassured.response.Response;
 
@@ -30,15 +33,14 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
     return getGeneratedRoleData();
   }
   
-  private Long organizationId = 1l;
+  private static Long TEST_ORGANIZATION_ID = 1L;
+  private static Long TEST_CATEGORY_ID = 1L;
 
-  // TODO Check for 403 when needed
-  
   private StudyProgrammePermissions studyProgrammePermissions = new StudyProgrammePermissions();
   
   @Test
   public void testCreateStudyProgramme() throws NoSuchFieldException {
-    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, "TST", "create", 1l, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, TEST_ORGANIZATION_ID, "TST", "create", TEST_CATEGORY_ID, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -70,10 +72,31 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
 
     assertOk(response, studyProgrammePermissions, StudyProgrammePermissions.FIND_STUDYPROGRAMME);
   }
-  
+
+  @Test
+  public void testCantFindStudyProgrammeFromAnotherOrganization() throws NoSuchFieldException {
+    // Administrator and trusted system have access to different organization studyprogrammes
+    if (!isCurrentRole(Role.ADMINISTRATOR, Role.TRUSTED_SYSTEM)) {
+      Organization organization = tools().createOrganization("testCantFindStudyProgrammeFromAnotherOrganization");
+      try {
+        StudyProgramme studyProgramme = tools().createStudyProgramme(organization.getId(), "TSTX", "testCantFindStudyProgrammeFromAnotherOrganization", TEST_CATEGORY_ID);
+        try {
+          Response response = given().headers(getAuthHeaders())
+            .get("/students/studyProgrammes/{ID}", studyProgramme.getId());
+
+          assertEquals(String.format("Role %s can access studyprogramme it shouldn't be able to.", getRole()), 403, response.statusCode());
+        } finally {
+          tools().deleteStudyProgramme(studyProgramme);
+        }
+      } finally {
+        tools().deleteOrganization(organization);
+      }
+    }
+  }
+
   @Test
   public void testUpdateStudyProgramme() throws NoSuchFieldException {
-    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, "NOT", "Not Updated", 1l, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, TEST_ORGANIZATION_ID, "NOT", "Not Updated", TEST_CATEGORY_ID, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -82,7 +105,7 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
 
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      StudyProgramme updateStudyProgramme = new StudyProgramme(id, organizationId, "UPD", "Updated", 2l, Boolean.FALSE);
+      StudyProgramme updateStudyProgramme = new StudyProgramme(id, TEST_ORGANIZATION_ID, "UPD", "Updated", 2l, Boolean.FALSE);
 
       response = given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -98,7 +121,7 @@ public class StudyProgrammePermissionTestsIT extends AbstractRESTPermissionsTest
   
   @Test
   public void testDeleteStudyProgramme() throws NoSuchFieldException {
-    StudyProgramme studyProgramme = new StudyProgramme(null, organizationId, "TST", "create type", 1l, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, TEST_ORGANIZATION_ID, "TST", "create type", TEST_CATEGORY_ID, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
