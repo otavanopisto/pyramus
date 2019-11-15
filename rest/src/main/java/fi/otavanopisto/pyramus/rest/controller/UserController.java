@@ -11,6 +11,8 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
@@ -82,6 +84,13 @@ public class UserController {
   }
 
   public Email addUserEmail(User user, ContactType contactType, String address, Boolean defaultAddress) {
+    // Trim the email address
+    address = StringUtils.trim(address);
+
+    if (StringUtils.isBlank(address)) {
+      throw new IllegalArgumentException("Email cannot be blank.");
+    }
+    
     Email email = emailDAO.create(user.getContactInfo(), contactType, defaultAddress, address);
     if (user.getRole() == Role.STUDENT) {
       studentDAO.fireUpdate(user.getId());
