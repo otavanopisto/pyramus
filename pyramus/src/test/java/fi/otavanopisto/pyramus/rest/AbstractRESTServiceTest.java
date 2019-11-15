@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.certificate;
 import static io.restassured.RestAssured.given;
 
 import java.lang.reflect.Type;
+import java.time.OffsetDateTime;
 import java.util.Map;
 
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -25,6 +26,24 @@ import fi.otavanopisto.pyramus.AbstractIntegrationTest;
 
 public abstract class AbstractRESTServiceTest extends AbstractIntegrationTest {
 
+  public AbstractRESTServiceTest() {
+    this.tools = new AbstractRESTServiceTestTools(new AbstractRestServicePermissionsTestI() {
+      private AbstractRESTServiceTest pack;
+      @Override
+      public OffsetDateTime getDate(int year, int monthOfYear, int dayOfMonth) {
+        return pack.getDate(year, monthOfYear, dayOfMonth);
+      }
+      @Override
+      public Map<String, String> getAdminAuthHeaders() {
+        return pack.getAuthHeaders();
+      }
+      private AbstractRestServicePermissionsTestI init(AbstractRESTServiceTest p) {
+        this.pack = p;
+        return this;
+      }
+    }.init(this));
+  }
+  
   @Before
   public void setupRestAssured() {
 
@@ -106,6 +125,11 @@ public abstract class AbstractRESTServiceTest extends AbstractIntegrationTest {
     this.userId = userId;
   }
 
+  protected AbstractRESTServiceTestTools tools() {
+    return tools;
+  }
+
+  private AbstractRESTServiceTestTools tools;
   private String sessionId;
   private String accessToken;
   private Long userId;
