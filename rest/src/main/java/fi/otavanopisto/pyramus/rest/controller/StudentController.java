@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +32,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
@@ -243,8 +245,8 @@ public class StudentController {
 
   /* Email */
 
-  public List<Student> listStudents(String email, List<StudentGroup> groups, Boolean archived, Integer firstResult, Integer maxResults) {
-    return studentDAO.listBy(email, groups, archived, firstResult, maxResults);
+  public List<Student> listStudents(Collection<Organization> organizations, String email, List<StudentGroup> groups, Boolean archived, Integer firstResult, Integer maxResults) {
+    return studentDAO.listBy(organizations, email, groups, archived, firstResult, maxResults);
   }
 
   public Email addStudentEmail(Student student, ContactType contactType, String address, Boolean defaultAddress) throws UserEmailInUseException {

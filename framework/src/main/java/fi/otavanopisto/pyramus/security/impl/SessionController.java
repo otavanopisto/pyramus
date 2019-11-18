@@ -36,12 +36,6 @@ public interface SessionController {
   public boolean isLoggedIn();
   
   /**
-   * Returns whether logged user is a super user
-   * @return whether logged user is a super user
-   */
-  public boolean isSuperuser();
-
-  /**
    * Logs user in
    * 
    * @param userId user id

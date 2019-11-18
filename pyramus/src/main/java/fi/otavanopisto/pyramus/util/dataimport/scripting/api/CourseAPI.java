@@ -9,11 +9,13 @@ import java.util.List;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.CourseBaseVariableDAO;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseTypeDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
@@ -28,13 +30,14 @@ public class CourseAPI {
     this.loggedUserId = loggedUserId;
   }
 
-  public Long create(Long moduleId, Long typeId, String name, String nameExtension, String description, String subjectCode) throws InvalidScriptException {
+  public Long create(Long organizationId, Long moduleId, Long typeId, String name, String nameExtension, String description, String subjectCode) throws InvalidScriptException {
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
     CourseDAO courseDAO = DAOFactory.getInstance().getCourseDAO();
     SubjectDAO subjectDAO = DAOFactory.getInstance().getSubjectDAO();
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
     CourseTypeDAO courseTypeDAO = DAOFactory.getInstance().getCourseTypeDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     
     Module module = moduleDAO.findById(moduleId);
     if (module == null) {
@@ -49,6 +52,11 @@ public class CourseAPI {
     Subject subject = subjectDAO.findByCode(subjectCode);
     if (subject == null) {
       throw new InvalidScriptException("Subject by code '" + subjectCode + "' not found.");
+    }
+    
+    Organization organization = organizationDAO.findById(organizationId);
+    if (organization == null) {
+      throw new InvalidScriptException("Default organization not found.");
     }
 
     CourseType type = typeId != null ? courseTypeDAO.findById(typeId) : null;
@@ -67,7 +75,7 @@ public class CourseAPI {
     BigDecimal courseFee = null;
     Currency courseFeeCurrency = null;
     
-    return courseDAO.create(module, name, nameExtension, courseState, type, subject, module.getCourseNumber(), beginDate, endDate, 
+    return courseDAO.create(module, organization, name, nameExtension, courseState, type, subject, module.getCourseNumber(), beginDate, endDate, 
         module.getCourseLength().getUnits(), module.getCourseLength().getUnit(), distanceTeachingDays, localTeachingDays, 
         teachingHours, distanceTeachingHours, planningHours, assessingHours, description, module.getMaxParticipantCount(), 
         courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser).getId();

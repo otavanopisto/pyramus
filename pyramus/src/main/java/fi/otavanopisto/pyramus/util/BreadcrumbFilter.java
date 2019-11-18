@@ -16,6 +16,7 @@ import fi.internetix.smvc.controllers.RequestControllerMapper;
 import fi.otavanopisto.pyramus.breadcrumbs.BreadcrumbHandler;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
+import fi.otavanopisto.pyramus.framework.PyramusViewController2;
 
 public class BreadcrumbFilter implements Filter {
 
@@ -39,7 +40,7 @@ public class BreadcrumbFilter implements Filter {
   //      }
         RequestController requestController = RequestControllerMapper.getRequestController(controllerName);
   
-        if (requestController instanceof PyramusViewController && requestController instanceof Breadcrumbable) {
+        if ((requestController instanceof PyramusViewController || requestController instanceof PyramusViewController2) && requestController instanceof Breadcrumbable) {
           BreadcrumbHandler breadcrumbHandler = getBreadcrumbHandler(httpRequest);
           if (request.getParameter("resetbreadcrumb") != null) {
             breadcrumbHandler.clear();

@@ -27,6 +27,7 @@ import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.courses.BasicCourseResourceDAO;
@@ -56,6 +57,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -76,6 +78,7 @@ import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.usertypes.MonetaryAmount;
 
 /** A JSON request controller responsible for creating courses.
@@ -253,6 +256,14 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
     CourseStaffMemberRoleDAO courseStaffMemberRoleDAO = DAOFactory.getInstance().getCourseStaffMemberRoleDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+
+    User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
+    Organization organization = organizationDAO.findById(requestContext.getLong("organizationId"));
+    if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
+      throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid organization.");
+    }
     
     // Course basic information
 
@@ -279,7 +290,6 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
     Double distanceTeachingHours = requestContext.getDouble("distanceTeachingHours");
     Double planningHours = requestContext.getDouble("planningHours");
     Double assessingHours = requestContext.getDouble("assessingHours");
-    User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
     String tagsText = requestContext.getString("tags");
     BigDecimal courseFee = requestContext.getBigDecimal("courseFee");
     Currency courseFeeCurrency = requestContext.getCurrency("courseFeeCurrency");
@@ -306,7 +316,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       }
     }
     
-    Course course = courseDAO.create(module, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
+    Course course = courseDAO.create(module, organization, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
         courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, planningHours, 
         assessingHours, description, maxParticipantCount, courseFee, courseFeeCurrency, enrolmentTimeEnd, loggedUser);
 
@@ -497,7 +507,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
       Long enrolmentTypeId = requestContext.getLong(colPrefix + ".enrolmentType");
       Long participationTypeId = requestContext.getLong(colPrefix + ".participationType");
       Boolean lodging = requestContext.getBoolean(colPrefix + ".lodging");
-      String organization = null;
+      String organizationName = null;
       String additionalInfo = null;
       Room room = null;
       BigDecimal lodgingFee = null;
@@ -512,7 +522,7 @@ public class CreateCourseJSONRequestController extends JSONRequestController {
 
       try {
         courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, optionality, null, 
-            organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, reservationFee, reservationFeeCurrency, Boolean.FALSE);
+            organizationName, additionalInfo, room, lodgingFee, lodgingFeeCurrency, reservationFee, reservationFeeCurrency, Boolean.FALSE);
       } catch (DuplicateCourseStudentException dcse) {
         Locale locale = requestContext.getRequest().getLocale();
         throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 

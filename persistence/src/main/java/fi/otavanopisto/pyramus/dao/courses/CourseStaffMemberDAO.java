@@ -15,12 +15,12 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRole;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember_;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember_;
 import fi.otavanopisto.pyramus.events.CourseStaffMemberCreatedEvent;
 import fi.otavanopisto.pyramus.events.CourseStaffMemberDeletedEvent;
 import fi.otavanopisto.pyramus.events.CourseStaffMemberUpdatedEvent;
-import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember_;
 
 @Stateless
 public class CourseStaffMemberDAO extends PyramusEntityDAO<CourseStaffMember> {
@@ -64,6 +64,23 @@ public class CourseStaffMemberDAO extends PyramusEntityDAO<CourseStaffMember> {
     );
     
     return entityManager.createQuery(criteria).getResultList();
+  }
+
+  public CourseStaffMember findByCourseAndStaffMember(Course course, StaffMember staffMember) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CourseStaffMember> criteria = criteriaBuilder.createQuery(CourseStaffMember.class);
+    Root<CourseStaffMember> root = criteria.from(CourseStaffMember.class);
+    
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.and(
+            criteriaBuilder.equal(root.get(CourseStaffMember_.course), course),
+            criteriaBuilder.equal(root.get(CourseStaffMember_.staffMember), staffMember)
+        ));
+    
+    return getSingleResult(entityManager.createQuery(criteria));
   }
 
   public CourseStaffMember updateRole(CourseStaffMember courseStaffMember, CourseStaffMemberRole role) {

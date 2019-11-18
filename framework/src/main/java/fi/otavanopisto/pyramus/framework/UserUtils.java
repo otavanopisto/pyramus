@@ -2,19 +2,27 @@ package fi.otavanopisto.pyramus.framework;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.internetix.smvc.AccessDeniedException;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.security.impl.Permissions;
+import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 
 public class UserUtils {
 
@@ -47,8 +55,9 @@ public class UserUtils {
     }
     
     // if Email is being put into non-unique field, it is always allowed    
-    if (contactType.getNonUnique())
+    if (contactType.getNonUnique()) {
       return true;
+    }
     
     emailAddress = StringUtils.trim(emailAddress);
 
@@ -56,7 +65,7 @@ public class UserUtils {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
 
     StaffMember staffMember = staffMemberDAO.findByUniqueEmail(emailAddress);
-    List<Student> students = studentDAO.listBy(emailAddress, null, null, null, null);
+    List<Student> students = studentDAO.listBy(null, emailAddress, null, null, null, null);
 
     if (personId != null) {
       // True, if found matches the person, or if not found at all 
@@ -159,8 +168,9 @@ public class UserUtils {
    * @return
    */
   public static boolean isHigherOrEqualRole(Role r, Role test) {
-    if (r == test)
+    if (r == test) {
       return true;
+    }
 
     List<Role> order = getRoleOrder();
     
@@ -176,6 +186,86 @@ public class UserUtils {
         (editor.getPerson().getId().equals(whose.getId())) ||
         ((editor.getRole() == Role.STUDY_PROGRAMME_LEADER) && (UserUtils.getHighestPersonRole(whose) != Role.MANAGER && UserUtils.getHighestPersonRole(whose) != Role.ADMINISTRATOR)) ||
         ((editor.getRole() == Role.MANAGER) && (UserUtils.getHighestPersonRole(whose) != Role.ADMINISTRATOR));
+  }
+
+  /**
+   * Checks if the user is member of an organization.
+   * 
+   * Checks only the users' organization against given organization. Does not check if the
+   * users' person has an user that might have access to the organization. Should it?
+   * 
+   * @param user
+   * @param organization
+   * @return
+   */
+  public static boolean isMemberOf(User user, Organization organization) {
+    if (user == null || organization == null) {
+      return false;
+    }
+    
+    Organization userOrganization = user.getOrganization();
+
+    return organization != null && userOrganization != null && organization.getId().equals(userOrganization.getId());
+  }
+ 
+  public static boolean canAccessAllOrganizations(User user) {
+    return user != null ? Permissions.instance().hasEnvironmentPermission(user, OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS) : false;
+  }
+
+  /**
+   * Returns true if user can access all organizations or is member of the given organization.
+   */
+  public static boolean canAccessOrganization(User user, Organization organization) {
+    return canAccessAllOrganizations(user) || isMemberOf(user, organization);
+  }
+  
+  public static boolean isAdmin(User user) {
+    return user != null && user.getRole() == Role.ADMINISTRATOR;
+  }
+
+  public static boolean isOwnerOf(User user, Person person) {
+    if (user == null) {
+      throw new IllegalArgumentException("User cannot be null");
+    }
+    
+    if (person == null) {
+      throw new IllegalArgumentException("Person cannot be null");
+    }
+    
+    return user.getPerson().getId().equals(person.getId());
+  }
+  
+  /**
+   * Checks that the user belongs to the management organization or is an administrator.
+   * @param user
+   * @param locale
+   * @throws AccessDeniedException
+   */
+  public static void checkManagementOrganizationPermission(User user, Locale locale) throws AccessDeniedException {
+    if (!hasManagementOrganizationAccess(user)) {
+      throw new AccessDeniedException(locale);
+    }
+  }
+
+  public static boolean hasManagementOrganizationAccess(User user) {
+    if (user == null) {
+      return false;
+    }
+    
+    if (user.getRole() == Role.ADMINISTRATOR) {
+      return true;
+    } else {
+      DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
+      Defaults defaults = defaultsDAO.getDefaults();
+      Long managementOrganizationId = defaults.getOrganization() != null ? defaults.getOrganization().getId() : null;
+      Long userOrganizationId = (user != null && user.getOrganization() != null) ? user.getOrganization().getId() : null;
+      
+      if (managementOrganizationId != null && Objects.equals(userOrganizationId, managementOrganizationId)) {
+        return true;
+      }
+    }
+    
+    return false;
   }
   
 }

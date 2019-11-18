@@ -75,6 +75,14 @@ public class InternalAuthDAO extends PyramusEntityDAO<InternalAuth> {
     entityManager.persist(internalAuth);
     return internalAuth;
   }
+
+  public InternalAuth updateUsernameAndPassword(InternalAuth internalAuth, String username, String password) {
+    EntityManager entityManager = getEntityManager();
+    internalAuth.setUsername(username);
+    internalAuth.setPassword(password);
+    entityManager.persist(internalAuth);
+    return internalAuth;
+  }
   
   public void setInternalAuthPassword(InternalAuth internalAuth, String password) {
     EntityManager entityManager = getEntityManager();

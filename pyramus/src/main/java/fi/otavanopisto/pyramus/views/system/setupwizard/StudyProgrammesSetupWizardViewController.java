@@ -2,18 +2,19 @@ package fi.otavanopisto.pyramus.views.system.setupwizard;
 
 import java.util.List;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.math.NumberUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeCategoryDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgrammeCategory;
 import fi.otavanopisto.pyramus.util.JSONArrayExtractor;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class StudyProgrammesSetupWizardViewController extends SetupWizardController {
   
@@ -45,6 +46,8 @@ public class StudyProgrammesSetupWizardViewController extends SetupWizardControl
   public void save(PageRequestContext requestContext) throws SetupWizardException {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     StudyProgrammeCategoryDAO studyProgrammeCategoryDAO = DAOFactory.getInstance().getStudyProgrammeCategoryDAO();
+    DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
+    Defaults defaults = defaultsDAO.getDefaults();
 
     int rowCount = NumberUtils.createInteger(requestContext.getRequest().getParameter("studyProgrammesTable.rowCount")).intValue();
     for (int i = 0; i < rowCount; i++) {
@@ -61,7 +64,7 @@ public class StudyProgrammesSetupWizardViewController extends SetupWizardControl
       }
       
       if (studyProgrammeId == -1) {
-        studyProgrammeDAO.create(name, category, code); 
+        studyProgrammeDAO.create(defaults.getOrganization(), name, category, code); 
       }
     }
   }

@@ -9,17 +9,11 @@ import org.apache.commons.lang.math.NumberUtils;
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.RequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.base.EmailDAO;
-import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
-import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
-import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
-import fi.otavanopisto.pyramus.plugin.auth.AuthenticationException;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.plugin.auth.utils.EncodingUtils;
 
@@ -30,47 +24,6 @@ public class InternalAuthenticationStrategy implements InternalAuthenticationPro
 
   private static Logger logger = Logger.getLogger(InternalAuthenticationStrategy.class.getName());
   
-  /**
-   * Creates a new user.
-   * 
-   * @param firstName The first name of the user
-   * @param lastName The last name of the user
-   * @param email The email address of the user
-   * @param username The username of the user
-   * @param password The password of the user
-   * @param role The role of the user
-   * 
-   * @return The created user
-   */
-  public User createUser(String firstName, String lastName, String email, String username, String password, Role role) {
-    StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
-    InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
-    EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
-    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
-    
-    // Trim the email address
-    email = email != null ? email.trim() : null;
-
-    try {
-      String passwordEncoded = EncodingUtils.md5EncodeString(password);
-      internalAuthDAO.create(username, passwordEncoded);
-      
-      // TODO: Should not create always
-      Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
-      //FIXME: Create identification? / set default?
-      User user = userDAO.create(firstName, lastName, role, person, false);
-      // TODO Default contact type?
-      emailDAO.create(user.getContactInfo(), null, Boolean.TRUE, email);
-      return user;
-    }
-    catch (UnsupportedEncodingException e) {
-      throw new SmvcRuntimeException(e);
-    }
-    catch (NoSuchAlgorithmException e) {
-      throw new SmvcRuntimeException(e);
-    }
-  }
-
   /**
    * Returns the username of a user corresponding to the given identifier, or <code>null</code> if
    * not found.
@@ -154,8 +107,8 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
   public String createCredentials(String username, String password) {
     InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
     try {
-      String newPasswordEncoded = EncodingUtils.md5EncodeString(password);
-      InternalAuth internalAuth = internalAuthDAO.create(username, newPasswordEncoded);
+      String passwordEncoded = EncodingUtils.md5EncodeString(password);
+      InternalAuth internalAuth = internalAuthDAO.create(username, passwordEncoded);
       String externalId = internalAuth.getId().toString();
       return externalId;
     }
@@ -182,8 +135,8 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
     try {
       InternalAuth internalAuth = internalAuthDAO.findById(NumberUtils.createLong(externalId));
 
-      String newPasswordEncoded = EncodingUtils.md5EncodeString(password);
-      internalAuthDAO.updatePassword(internalAuth, newPasswordEncoded);
+      String passwordEncoded = EncodingUtils.md5EncodeString(password);
+      internalAuthDAO.updatePassword(internalAuth, passwordEncoded);
     }
     catch (UnsupportedEncodingException e) {
       throw new SmvcRuntimeException(e);
@@ -193,19 +146,23 @@ InternalAuth internalAuth = internalAuthDAO.findByUsernameAndPassword(username, 
     }
   }
 
-  /**
-   * Updates the credentials of the user corresponding to the given identifer.
-   * 
-   * @param externalId The user identifier
-   * @param currentPassword The current password of the user
-   * @param newUsername The new username of the user
-   * @param newPassword The new password of the user
-   * 
-   * @throws AuthenticationException If the current password is invalid
-   */
-  public void updateCredentials(String externalId, String currentPassword, String newUsername, String newPassword)
-      throws AuthenticationException {
-    
+  @Override
+  public void updateCredentials(String externalId, String username, String password) {
+    InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
+    try {
+      InternalAuth internalAuth = internalAuthDAO.findById(NumberUtils.createLong(externalId));
+      if (internalAuth == null) {
+        throw new IllegalStateException(String.format("InternalAuth for id %s not found", externalId));
+      }
+      String passwordEncoded = EncodingUtils.md5EncodeString(password);
+      internalAuthDAO.updateUsernameAndPassword(internalAuth, username, passwordEncoded);
+    }
+    catch (UnsupportedEncodingException e) {
+      throw new SmvcRuntimeException(e);
+    }
+    catch (NoSuchAlgorithmException e) {
+      throw new SmvcRuntimeException(e);
+    }
   }
 
   /**

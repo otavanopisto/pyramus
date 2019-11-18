@@ -2,9 +2,12 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.Stateful;
@@ -32,6 +35,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
+import fi.otavanopisto.pyramus.domainmodel.Archived;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
@@ -43,6 +48,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
@@ -71,6 +77,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
@@ -115,6 +122,7 @@ import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
+import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 
 @Path("/students")
 @Produces("application/json")
@@ -192,6 +200,9 @@ public class StudentRESTService extends AbstractRESTService {
   @Inject
   private AssessmentController assessmentController;
 
+  @Inject
+  private OrganizationDAO organizationDAO;
+  
   @Path("/languages")
   @POST
   @RESTPermit(LanguagePermissions.CREATE_LANGUAGE)
@@ -834,34 +845,33 @@ public class StudentRESTService extends AbstractRESTService {
     String name = entity.getName();
     String code = entity.getCode();
     Long categoryId = entity.getCategoryId();
+    Long organizationId = entity.getOrganizationId();
 
-    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null) {
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null || organizationId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    StudyProgrammeCategory programmeCategory = studyProgrammeCategoryController.findStudyProgrammeCategoryById(categoryId);
-    if (programmeCategory == null) {
+    StudyProgrammeCategory studyProgrammeCategory = studyProgrammeCategoryController.findStudyProgrammeCategoryById(categoryId);
+    Organization organization = organizationDAO.findById(organizationId);
+
+    if (studyProgrammeCategory == null || organization == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    return Response.ok(objectFactory.createModel(studyProgrammeController.createStudyProgramme(name, code, programmeCategory))).build();
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), organization)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    StudyProgramme studyProgramme = studyProgrammeController.createStudyProgramme(organization, name, code, studyProgrammeCategory);
+    return Response.ok(objectFactory.createModel(studyProgramme)).build();
   }
 
   @Path("/studyProgrammes")
   @GET
   @RESTPermit(StudyProgrammePermissions.LIST_STUDYPROGRAMMES)
   public Response listStudyProgrammes(@DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
-    List<StudyProgramme> studyProgrammes;
-    if (filterArchived) {
-      studyProgrammes = studyProgrammeController.listUnarchivedStudyProgrammes();
-    } else {
-      studyProgrammes = studyProgrammeController.listStudyProgrammes();
-    }
-
-    if (studyProgrammes.isEmpty()) {
-      return Response.noContent().build();
-    }
-
+    List<StudyProgramme> studyProgrammes = studyProgrammeController.listAccessibleStudyProgrammes(
+        sessionController.getUser(), filterArchived ? Archived.UNARCHIVED : Archived.BOTH);
     return Response.ok(objectFactory.createModel(studyProgrammes)).build();
   }
 
@@ -870,14 +880,14 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(StudyProgrammePermissions.FIND_STUDYPROGRAMME)
   public Response findStudyProgrammeById(@PathParam("ID") Long id, @Context Request request) {
     StudyProgramme studyProgramme = studyProgrammeController.findStudyProgrammeById(id);
-    if (studyProgramme == null) {
+    if (studyProgramme == null || studyProgramme.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (studyProgramme.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studyProgramme.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
     }
-
+    
     EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(studyProgramme.getVersion())));
     ResponseBuilder builder = request.evaluatePreconditions(tag);
     if (builder != null) {
@@ -906,8 +916,9 @@ public class StudentRESTService extends AbstractRESTService {
     String name = entity.getName();
     String code = entity.getCode();
     Long categoryId = entity.getCategoryId();
+    Long organizationId = entity.getOrganizationId();
 
-    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null) {
+    if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null || organizationId == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
@@ -916,7 +927,20 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    return Response.ok().entity(objectFactory.createModel(studyProgrammeController.updateStudyProgramme(studyProgramme, name, code, programmeCategory)))
+    Organization organization = organizationDAO.findById(organizationId);
+    if (organization == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    // User needs to be member of both the previous organization and the new one
+    if (!(UserUtils.canAccessOrganization(sessionController.getUser(), studyProgramme.getOrganization()) 
+        && UserUtils.canAccessOrganization(sessionController.getUser(), organization))) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
+    studyProgramme = studyProgrammeController.updateStudyProgramme(studyProgramme, organization, name, code, programmeCategory);
+    
+    return Response.ok().entity(objectFactory.createModel(studyProgramme))
         .build();
   }
 
@@ -945,12 +969,18 @@ public class StudentRESTService extends AbstractRESTService {
     String name = entity.getName();
     String description = entity.getDescription();
     OffsetDateTime beginDate = entity.getBeginDate();
+    Long organizationId = entity.getOrganizationId();
 
-    if (StringUtils.isBlank(name)) {
+    if (StringUtils.isBlank(name) || (organizationId == null)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    StudentGroup studentGroup = studentGroupController.createStudentGroup(name, description, toDate(beginDate), sessionController.getUser());
+    Organization organization = organizationDAO.findById(organizationId);
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), organization)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    StudentGroup studentGroup = studentGroupController.createStudentGroup(organization, name, description, toDate(beginDate), sessionController.getUser());
 
     for (String tag : entity.getTags()) {
       studentGroupController.createStudentGroupTag(studentGroup, tag);
@@ -965,9 +995,9 @@ public class StudentRESTService extends AbstractRESTService {
   public Response listStudentGroups(@QueryParam("firstResult") Integer firstResult, @QueryParam("maxResults") Integer maxResults,
       @DefaultValue("false") @QueryParam("filterArchived") boolean filterArchived) {
     List<StudentGroup> studentGroups;
+    User user = sessionController.getUser();
 
     if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
-      User user = sessionController.getUser();
       // List only personal groups if user can't access others
       if (filterArchived) {
         studentGroups = studentGroupController.listUnarchivedStudentGroupsByMember(user, firstResult, maxResults);
@@ -975,11 +1005,7 @@ public class StudentRESTService extends AbstractRESTService {
         studentGroups = studentGroupController.listStudentGroupsByMember(user, firstResult, maxResults);
       }
     } else {
-      if (filterArchived) {
-        studentGroups = studentGroupController.listUnarchivedStudentGroups(firstResult, maxResults);
-      } else {
-        studentGroups = studentGroupController.listStudentGroups(firstResult, maxResults);
-      }
+      studentGroups = studentGroupController.listAccessibleStudentGroups(user, firstResult, maxResults, filterArchived);
     }
     
     if (studentGroups.isEmpty()) {
@@ -1002,6 +1028,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studentGroup.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     if (sessionController.hasPermission(StudentGroupPermissions.FIND_STUDENTGROUP, studentGroup)) {
       return Response.ok(objectFactory.createModel(studentGroup)).build();
     } else {
@@ -1020,21 +1050,30 @@ public class StudentRESTService extends AbstractRESTService {
     String name = entity.getName();
     String description = entity.getDescription();
     OffsetDateTime beginDate = entity.getBeginDate();
+    Long organizationId = entity.getOrganizationId();
 
-    if (StringUtils.isBlank(name)) {
+    if (StringUtils.isBlank(name) || (organizationId == null)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
+    Organization organization = organizationDAO.findById(organizationId);
     StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
-    if (studentGroup == null) {
+    
+    if ((studentGroup == null) || (organization == null) || studentGroup.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (studentGroup.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
+    // Can the user access the new organization?
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), organization)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
-    studentGroupController.updateStudentGroup(studentGroup, name, description, toDate(beginDate), sessionController.getUser());
+    // Can the user access the old organization?
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studentGroup.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
+    studentGroupController.updateStudentGroup(studentGroup, organization, name, description, toDate(beginDate), sessionController.getUser());
     studentGroupController.updateStudentGroupTags(studentGroup, entity.getTags());
 
     return Response.ok(objectFactory.createModel(studentGroup)).build();
@@ -1047,6 +1086,10 @@ public class StudentRESTService extends AbstractRESTService {
     StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
     if (studentGroup == null) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studentGroup.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     if (permanent) {
@@ -1071,12 +1114,12 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
-    if (studentGroup == null) {
+    if (studentGroup == null || studentGroup.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (studentGroup.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studentGroup.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     StaffMember staffMember = userController.findStaffMemberById(entity.getStaffMemberId());
@@ -1094,12 +1137,12 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(StudentGroupPermissions.LIST_STUDENTGROUPSTAFFMEMBERS)
   public Response listStudentGroupStaffMembers(@PathParam("ID") Long id) {
     StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
-    if (studentGroup == null) {
+    if (studentGroup == null || studentGroup.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (studentGroup.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studentGroup.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     List<StudentGroupUser> studentGroupUsers = new ArrayList<>(studentGroup.getUsers());
@@ -1121,6 +1164,10 @@ public class StudentRESTService extends AbstractRESTService {
 
     if (studentGroup.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studentGroup.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     StudentGroupUser studentGroupUser = studentGroupController.findStudentGroupUserById(id);
@@ -1146,6 +1193,10 @@ public class StudentRESTService extends AbstractRESTService {
 
     if (studentGroup.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studentGroup.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     StudentGroupUser studentGroupUser = studentGroupController.findStudentGroupUserById(id);
@@ -1183,6 +1234,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studentGroup.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     Student student = studentController.findStudentById(entity.getStudentId());
     if (student == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -1204,6 +1259,10 @@ public class StudentRESTService extends AbstractRESTService {
 
     if (studentGroup.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studentGroup.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     List<StudentGroupStudent> studentGroupStudents = new ArrayList<>(studentGroup.getStudents());
@@ -1236,6 +1295,10 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
 
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studentGroup.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+
     StudentGroupStudent studentGroupStudent = studentGroupController.findStudentGroupStudentById(id);
     if (studentGroupStudent == null) {
       return Response.status(Status.NOT_FOUND).build();
@@ -1259,6 +1322,10 @@ public class StudentRESTService extends AbstractRESTService {
 
     if (studentGroup.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studentGroup.getOrganization())) {
+      return Response.status(Status.FORBIDDEN).build();
     }
 
     StudentGroupStudent studentGroupStudent = studentGroupController.findStudentGroupStudentById(id);
@@ -1406,6 +1473,12 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!(studyProgramme.getOrganization() != null && UserUtils.isMemberOf(sessionController.getUser(), studyProgramme.getOrganization()))) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
     if (!userController.checkUserVariableKeysExist(entity.getVariables().keySet())) {
       return Response.status(Status.BAD_REQUEST).build();
     }
@@ -1451,12 +1524,18 @@ public class StudentRESTService extends AbstractRESTService {
 
     Boolean archived = filterArchived ? Boolean.FALSE : null;
     email = StringUtils.isNotBlank(email) ? email : null;
+
+    User loggedUser = sessionController.getUser();
+    
+    Collection<Organization> organizations = 
+        sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS) ?
+        null : new HashSet<>(Arrays.asList(loggedUser.getOrganization()));
     
     if (sessionController.hasPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION, null)) {
       List<StudentGroup> groups = studentGroupController.listStudentGroupsByMember(sessionController.getUser());
-      students = studentController.listStudents(email, groups, archived, firstResult, maxResults);
+      students = studentController.listStudents(organizations, email, groups, archived, firstResult, maxResults);
     } else {
-      students = studentController.listStudents(email, null, archived, firstResult, maxResults);
+      students = studentController.listStudents(organizations, email, null, archived, firstResult, maxResults);
     }
 
     if (CollectionUtils.isEmpty(students)) {
@@ -1479,6 +1558,12 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      if (!UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization())) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+    }
+    
     EntityTag tag = new EntityTag(DigestUtils.md5Hex(String.valueOf(student.getVersion())));
 
     ResponseBuilder builder = request.evaluatePreconditions(tag);
@@ -1531,6 +1616,14 @@ public class StudentRESTService extends AbstractRESTService {
     StudyProgramme studyProgramme = studyProgrammeController.findStudyProgrammeById(studyProgrammeId);
     if (studyProgramme == null) {
       return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    if (!sessionController.hasEnvironmentPermission(OrganizationPermissions.ACCESS_ALL_ORGANIZATIONS)) {
+      // Needs to be member of both organizations
+      if (!(UserUtils.isMemberOf(sessionController.getUser(), studyProgramme.getOrganization()) &&
+          UserUtils.isMemberOf(sessionController.getUser(), student.getOrganization()))) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
     }
     
     if (!userController.checkUserVariableKeysExist(entity.getVariables().keySet())) {
@@ -1741,20 +1834,22 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/")
   @POST
-  @RESTPermit(CourseAssessmentPermissions.CREATE_COURSEASSESSMENT)
+  @RESTPermit(handling = Handling.INLINE)
   public Response createCourseAssessment(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId,
       fi.otavanopisto.pyramus.rest.model.CourseAssessment entity) {
-
+    if (!sessionController.isLoggedIn()) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
     if (entity == null) {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
     Student student = studentController.findStudentById(studentId);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
     
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
-
     Course course = courseController.findCourseById(courseId);
     
     if (course == null) {
@@ -1765,6 +1860,23 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).entity("Course is archived").build();
     }
 
+    if (!sessionController.hasPermission(CourseAssessmentPermissions.CREATE_COURSEASSESSMENT, course)) {
+      return Response.status(Status.FORBIDDEN).build();
+    } else {
+      // User has the required permission, check if it's restricted to limited group of students 
+      if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+        StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+        
+        if (staffMember != null) {
+          if (!(courseController.isCourseStaffMember(course, staffMember) || studentController.isStudentGuider(staffMember, student))) {
+            return Response.status(Status.FORBIDDEN).build();
+          }
+        } else {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      }
+    }
+    
     CourseStudent courseStudent = courseController.findCourseStudentById(entity.getCourseStudentId());
     
     if(courseStudent == null){
@@ -1800,25 +1912,35 @@ public class StudentRESTService extends AbstractRESTService {
   @GET
   @RESTPermit(handling = Handling.INLINE)
   public Response listCourseAssessments(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId) {
+    if (!sessionController.isLoggedIn()) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
     
     Student student = studentController.findStudentById(studentId);
-
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
-
-    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENT, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
-      return Response.status(Status.FORBIDDEN).build();
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
     }
 
     Course course = courseController.findCourseById(courseId);
-    
-    if (course == null) {
+    if (course == null || course.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
-
-    if (course.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
+    
+    if (!(UserUtils.isOwnerOf(sessionController.getUser(), student.getPerson()) || sessionController.hasPermission(CourseAssessmentPermissions.LIST_STUDENT_COURSEASSESSMENTS, course))) {
+      return Response.status(Status.FORBIDDEN).build();
+    } else {
+      // User has the required permission, check if it's restricted to limited group of students 
+      if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+        StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+        
+        if (staffMember != null) {
+          if (!(courseController.isCourseStaffMember(course, staffMember) || studentController.isStudentGuider(staffMember, student))) {
+            return Response.status(Status.FORBIDDEN).build();
+          }
+        } else {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      }
     }
     
     List<CourseAssessment> courseAssessments = assessmentController.listByCourseAndStudent(course, student);
@@ -1830,27 +1952,37 @@ public class StudentRESTService extends AbstractRESTService {
   @GET
   @RESTPermit(handling = Handling.INLINE)
   public Response findCourseAssessmentById(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
-    
-    Student student = studentController.findStudentById(studentId);
-
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
-
-    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.FIND_COURSEASSESSMENT, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
+    if (!sessionController.isLoggedIn()) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    Course course = courseController.findCourseById(courseId);
-    
-    if (course == null) {
+    Student student = studentController.findStudentById(studentId);
+    if (student == null || student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (course.getArchived()) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null || course.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
+    if (!(UserUtils.isOwnerOf(sessionController.getUser(), student.getPerson()) || sessionController.hasPermission(CourseAssessmentPermissions.FIND_COURSEASSESSMENT, course))) {
+      return Response.status(Status.FORBIDDEN).build();
+    } else {
+      // User has the required permission, check if it's restricted to limited group of students 
+      if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+        StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+        
+        if (staffMember != null) {
+          if (!(courseController.isCourseStaffMember(course, staffMember) || studentController.isStudentGuider(staffMember, student))) {
+            return Response.status(Status.FORBIDDEN).build();
+          }
+        } else {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      }
+    }
+
     CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(id);
     if (!course.getId().equals(courseAssessment.getCourseStudent().getCourse().getId())) {
       return Response.status(Status.NOT_FOUND).entity("Could not find a course assessment for course student course").build();
@@ -1865,15 +1997,22 @@ public class StudentRESTService extends AbstractRESTService {
   
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/{ID:[0-9]*}")
   @PUT
-  @RESTPermit(CourseAssessmentPermissions.UPDATE_COURSEASSESSMENT)
+  @RESTPermit(handling = Handling.INLINE)
   public Response updateCourseAssessment(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id, 
       fi.otavanopisto.pyramus.rest.model.CourseAssessment entity) {
+    if (!sessionController.isLoggedIn()) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
     
     Student student = studentController.findStudentById(studentId);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
     Course course = courseController.findCourseById(courseId);
     CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(id);
 
-    if(courseAssessment == null){
+    if (courseAssessment == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
@@ -1881,18 +2020,27 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.BAD_REQUEST).build();
     }
 
-    Status studentStatus = checkStudent(student);
-    if (studentStatus != Status.OK)
-      return Response.status(studentStatus).build();
-
-    if (course == null) {
+    if (course == null || course.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
 
-    if (course.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
+    if (!sessionController.hasPermission(CourseAssessmentPermissions.UPDATE_COURSEASSESSMENT, course)) {
+      return Response.status(Status.FORBIDDEN).build();
+    } else {
+      // User has the required permission, check if it's restricted to limited group of students 
+      if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+        StaffMember staffMember = sessionController.getUser() instanceof StaffMember ? (StaffMember) sessionController.getUser() : null;
+        
+        if (staffMember != null) {
+          if (!(courseController.isCourseStaffMember(course, staffMember) || studentController.isStudentGuider(staffMember, student))) {
+            return Response.status(Status.FORBIDDEN).build();
+          }
+        } else {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      }
     }
-
+    
     CourseStudent courseStudent = courseController.findCourseStudentById(entity.getCourseStudentId());
     
     if(courseStudent == null){
@@ -1918,12 +2066,22 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID}/assessments/{ID}")
   @DELETE
-  @RESTPermit(CourseAssessmentPermissions.DELETE_COURSEASSESSMENT)
-  public Response deleteCourseAssessment(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId, @PathParam("ID") Long id) {
+  @RESTPermit(handling = Handling.INLINE)
+  public Response deleteCourseAssessment(
+      @PathParam("STUDENTID") Long studentId, 
+      @PathParam("COURSEID") Long courseId, 
+      @PathParam("ID") Long id,
+      @DefaultValue("false") @QueryParam("permanent") Boolean permanent
+      ) {
     
     Student student = studentController.findStudentById(studentId);
     Course course = courseController.findCourseById(courseId);
 
+    if (Boolean.TRUE.equals(permanent) && !UserUtils.isAdmin(sessionController.getUser())) {
+      // Allow permanent deletion only for admins
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
     Status studentStatus = checkStudent(student);
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build();
@@ -1936,13 +2094,21 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(id);
-    
-    if(courseAssessment == null){
-     return Response.status(Status.NOT_FOUND).build(); 
+    if (!sessionController.hasPermission(CourseAssessmentPermissions.DELETE_COURSEASSESSMENT, course)) {
+      return Response.status(Status.FORBIDDEN).build();
     }
     
-    assessmentController.deleteCourseAssessment(courseAssessment);
+    CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(id);
+    
+    if (courseAssessment == null) {
+      return Response.status(Status.NOT_FOUND).build(); 
+    }
+    
+    if (Boolean.TRUE.equals(permanent)) {
+      assessmentController.deleteCourseAssessment(courseAssessment);
+    } else {
+      assessmentController.archiveCourseAssessment(courseAssessment);
+    }
     
     return Response.noContent().build();
   }
@@ -2084,7 +2250,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build();
 
-    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_ALL_STUDENT_COURSEASSESSMENTS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -2103,7 +2269,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (studentStatus != Status.OK)
       return Response.status(studentStatus).build();
 
-    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENT, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_ALL_STUDENT_COURSEASSESSMENTS, StudentPermissions.STUDENT_OWNER }, student, Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
@@ -2123,7 +2289,7 @@ public class StudentRESTService extends AbstractRESTService {
     if (student.getArchived()) {
       return Response.status(Status.NOT_FOUND).build();
     }
-    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENT, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
+    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_ALL_STUDENT_COURSEASSESSMENTS, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
       return Response.status(Status.FORBIDDEN).build();
     }
     List<CourseAssessment> courseAssessments = assessmentController.listByStudent(student);
@@ -2147,17 +2313,31 @@ public class StudentRESTService extends AbstractRESTService {
       @QueryParam("to") ISO8601Timestamp to,
       @QueryParam("onlyPassingGrades") @DefaultValue("false") boolean onlyPassingGrades) {
     
-    Student student = studentController.findStudentById(studentId);
-    if (student == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    if (student.getArchived()) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-    if (!restSecurity.hasPermission(new String[] { CourseAssessmentPermissions.LIST_COURSEASSESSMENT, PersonPermissions.PERSON_OWNER }, student.getPerson(), Style.OR)) {
+    User loggedUser = sessionController.getUser();
+    if (loggedUser == null) {
       return Response.status(Status.FORBIDDEN).build();
     }
     
+    Student student = studentController.findStudentById(studentId);
+    if (student == null || student.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    if (!(UserUtils.isOwnerOf(loggedUser, student.getPerson()) || sessionController.hasEnvironmentPermission(CourseAssessmentPermissions.LIST_ALL_STUDENT_COURSEASSESSMENTS))) {
+      return Response.status(Status.FORBIDDEN).build();
+    } else {
+      // User has the required permission, check if it's restricted to limited group of students 
+      if (sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION)) {
+        if (loggedUser instanceof StaffMember) {        
+          if (!studentController.isStudentGuider((StaffMember) loggedUser, student)) {
+            return Response.status(Status.FORBIDDEN).build();
+          }
+        } else {
+          return Response.status(Status.FORBIDDEN).build();
+        }
+      }
+    }
+
     Boolean passingGrade = onlyPassingGrades ? Boolean.TRUE : null;
     
     Date fromDate = from != null ? from.getDate() : null;

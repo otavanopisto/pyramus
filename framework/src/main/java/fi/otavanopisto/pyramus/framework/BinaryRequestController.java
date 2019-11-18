@@ -21,8 +21,10 @@ public abstract class BinaryRequestController implements fi.internetix.smvc.cont
         
         StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
         StaffMember user = staffDAO.findById(loggedUserId);
-        UserRole userRole = UserUtils.roleToUserRole(user.getRole());
         
+        UserUtils.checkManagementOrganizationPermission(user, requestContext.getRequest().getLocale());
+
+        UserRole userRole = UserUtils.roleToUserRole(user.getRole());
         if (!contains(roles, userRole)) {
           throw new AccessDeniedException(requestContext.getRequest().getLocale());
         }

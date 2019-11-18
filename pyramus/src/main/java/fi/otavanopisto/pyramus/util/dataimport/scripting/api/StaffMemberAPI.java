@@ -3,9 +3,11 @@ package fi.otavanopisto.pyramus.util.dataimport.scripting.api;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -13,17 +15,23 @@ import fi.otavanopisto.pyramus.util.dataimport.scripting.InvalidScriptException;
 
 public class StaffMemberAPI {
   
-  public Long create(String firstName, String lastName, String role, Long personId)
+  public Long create(String firstName, String lastName, String role, Long personId, Long organizationId)
                          throws InvalidScriptException {
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
 
     Person person = personDAO.findById(personId);
     if (person == null) {
       throw new InvalidScriptException("Person not found");
     }
+
+    Organization organization = organizationId != null ? organizationDAO.findById(organizationId) : null;
+    if (organization == null) {
+      throw new InvalidScriptException("Organization not found");
+    }
     
-    StaffMember staffMember = staffMemberDAO.create(firstName, lastName, Role.valueOf(role), person, false);
+    StaffMember staffMember = staffMemberDAO.create(organization, firstName, lastName, Role.valueOf(role), person, false);
     if (staffMember == null) {
       throw new InvalidScriptException("Failed to create new staff member");
     } else {

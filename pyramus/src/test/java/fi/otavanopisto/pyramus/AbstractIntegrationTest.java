@@ -120,55 +120,55 @@ public abstract class AbstractIntegrationTest {
     return DriverManager.getConnection(getJdbcUrl(), getJdbcUsername(), getJdbcPassword());
   }
 
-  protected String getAppUrl() {
+  protected static String getAppUrl() {
     return getAppUrl(false);
   }
 
-  protected String getAppUrl(boolean secure) {
+  protected static String getAppUrl(boolean secure) {
     return (secure ? "https://" : "http://") + getHost() + ':' + (secure ? getPortHttps() : getPortHttp());
   }
 
-  protected String getJdbcDriver() {
+  protected static String getJdbcDriver() {
     return System.getProperty("it.jdbc.driver");
   }
 
-  protected String getJdbcUrl() {
+  protected static String getJdbcUrl() {
     return System.getProperty("it.jdbc.url");
   }
 
-  protected String getJdbcJndi() {
+  protected static String getJdbcJndi() {
     return System.getProperty("it.jdbc.jndi");
   }
 
-  protected String getJdbcUsername() {
+  protected static String getJdbcUsername() {
     return System.getProperty("it.jdbc.username");
   }
 
-  protected String getJdbcPassword() {
+  protected static String getJdbcPassword() {
     return System.getProperty("it.jdbc.password");
   }
 
-  protected String getHost() {
+  protected static String getHost() {
     return System.getProperty("it.host");
   }
 
-  protected int getPortHttp() {
+  protected static int getPortHttp() {
     return Integer.parseInt(System.getProperty("it.port.http"));
   }
 
-  protected int getPortHttps() {
+  protected static int getPortHttps() {
     return Integer.parseInt(System.getProperty("it.port.https"));
   }
 
-  protected String getKeystoreFile() {
+  protected static String getKeystoreFile() {
     return System.getProperty("it.keystore.file");
   }
 
-  protected String getKeystoreAlias() {
+  protected static String getKeystoreAlias() {
     return System.getProperty("it.keystore.alias");
   }
 
-  protected String getKeystorePass() {
+  protected static String getKeystorePass() {
     return System.getProperty("it.keystore.storepass");
   }
 
@@ -179,7 +179,7 @@ public abstract class AbstractIntegrationTest {
     return localDateTime.atOffset(offset);
   }
   
-  protected OffsetDateTime getDate(int year, int monthOfYear, int dayOfMonth) {
+  public OffsetDateTime getDate(int year, int monthOfYear, int dayOfMonth) {
     return getDateToOffsetDateTime(year, monthOfYear, dayOfMonth);
   }
 }

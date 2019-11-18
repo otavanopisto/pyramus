@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.views.users;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -7,18 +8,21 @@ import java.util.Locale;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactURLTypeDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -28,7 +32,9 @@ import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.framework.EntityProperty;
+import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
@@ -53,8 +59,16 @@ public class EditUserViewController extends PyramusViewController implements Bre
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     ContactURLTypeDAO contactURLTypeDAO = DAOFactory.getInstance().getContactURLTypeDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
 
+    StaffMember loggedUser = staffDAO.findById(pageRequestContext.getLoggedUserId());
+    
     StaffMember user = staffDAO.findById(pageRequestContext.getLong("userId"));
+    
+    if (!UserUtils.canAccessOrganization(loggedUser, user.getOrganization())) {
+      throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Cannot access users' organization.");
+    }
+    
     String username = "";
     boolean hasInternalAuthenticationStrategies = AuthenticationProviderVault.getInstance().hasInternalStrategies();
     if (hasInternalAuthenticationStrategies) {
@@ -102,6 +116,14 @@ public class EditUserViewController extends PyramusViewController implements Bre
       variables.add(variable);
     }
     setJsDataVariable(pageRequestContext, "variables", variables.toString());
+
+    List<Organization> organizations;
+    if (UserUtils.canAccessAllOrganizations(loggedUser)) {
+      organizations = organizationDAO.listUnarchived();
+    } else {
+      organizations = Arrays.asList(loggedUser.getOrganization());
+    }
+    Collections.sort(organizations, new StringAttributeComparator("getName"));
     
     JSONArray propertiesJSON = new JSONArray();
     for (EntityProperty prop : StaffMemberProperties.listProperties()) {
@@ -122,6 +144,7 @@ public class EditUserViewController extends PyramusViewController implements Bre
     pageRequestContext.getRequest().setAttribute("username", username);
     pageRequestContext.getRequest().setAttribute("contactTypes", contactTypes);
     pageRequestContext.getRequest().setAttribute("contactURLTypes", contactURLTypes);
+    pageRequestContext.getRequest().setAttribute("organizations", organizations);
     
     pageRequestContext.setIncludeJSP("/templates/users/edituser.jsp");
   }

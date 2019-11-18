@@ -89,10 +89,18 @@ public class CompositeRESTService {
 
   @Path("/course/{COURSEID:[0-9]*}/assessmentRequests")
   @GET
-  @RESTPermit(CourseAssessmentPermissions.LIST_COURSEASSESSMENT)
+  @RESTPermit(handling = Handling.INLINE)
   public Response listAssessmentRequestsByCourse(@PathParam("COURSEID") Long courseId, @QueryParam("courseStudentIds") String courseStudentIds) {
-    // TODO Security
     Course course = courseController.findCourseById(courseId);
+    
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (!sessionController.hasPermission(CourseAssessmentPermissions.LIST_STUDENT_COURSEASSESSMENTS, course)) {
+      return Response.status(Status.FORBIDDEN).build();
+    }
+    
     List<CourseStudent> courseStudents;
     if (courseStudentIds != null) {
       courseStudents = new ArrayList<CourseStudent>();

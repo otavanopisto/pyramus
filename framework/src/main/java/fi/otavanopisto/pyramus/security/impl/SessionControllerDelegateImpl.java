@@ -31,11 +31,6 @@ public class SessionControllerDelegateImpl implements SessionControllerDelegate 
   }
 
   @Override
-  public boolean isSuperuser() {
-    return implementation.isSuperuser();
-  }
-
-  @Override
   public void logout() {
     implementation.logout();
   }

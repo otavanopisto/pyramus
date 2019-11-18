@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.rest.controller.permissions;
 import java.util.List;
 
 import fi.otavanopisto.pyramus.security.impl.AbstractPyramusPermissionCollection;
+import fi.otavanopisto.pyramus.security.impl.CourseRoleArchetype;
 import fi.otavanopisto.pyramus.security.impl.DefaultPermissionRoles;
 import fi.otavanopisto.pyramus.security.impl.PermissionScope;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
@@ -16,11 +17,11 @@ public class StudyProgrammePermissions extends AbstractPyramusPermissionCollecti
   public static final String CREATE_STUDYPROGRAMME = "CREATE_STUDYPROGRAMME";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ EVERYONE })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TEACHER, STUDY_GUIDER, STUDY_PROGRAMME_LEADER, STUDENT, TRUSTED_SYSTEM })
   public static final String LIST_STUDYPROGRAMMES = "LIST_STUDYPROGRAMMES";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ EVERYONE })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, TEACHER, STUDY_GUIDER, STUDY_PROGRAMME_LEADER, STUDENT, TRUSTED_SYSTEM })
   public static final String FIND_STUDYPROGRAMME = "FIND_STUDYPROGRAMME";
   
   @Scope (PermissionScope.ENVIRONMENT)
@@ -56,5 +57,10 @@ public class StudyProgrammePermissions extends AbstractPyramusPermissionCollecti
   @Override
   public PermissionFeature[] listPermissionFeatures(String permission) throws NoSuchFieldException, SecurityException {
     return super.listPermissionFeatures(StudyProgrammePermissions.class, permission);
+  }
+
+  @Override
+  public CourseRoleArchetype[] getDefaultCourseRoles(String permission) throws NoSuchFieldException {
+    return super.getDefaultCourseRoles(StudyProgrammePermissions.class, permission);
   }
 }

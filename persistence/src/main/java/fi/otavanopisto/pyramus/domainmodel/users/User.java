@@ -36,6 +36,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import fi.otavanopisto.pyramus.domainmodel.base.ContactInfo;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.security.ContextReference;
@@ -138,7 +139,12 @@ public class User implements fi.otavanopisto.security.User, ContextReference {
   public Role getRole() {
     return Role.EVERYONE;
   }
-  
+
+  @Transient
+  public Organization getOrganization() {
+    return null;
+  }
+
   public Person getPerson() {
     return person;
   }

@@ -40,7 +40,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     Course course = createCourse("Create test", OffsetDateTime.now(), OffsetDateTime.now(),
         "Course for testing course creation", Boolean.FALSE, 111, 222l,
         OffsetDateTime.now(), OffsetDateTime.now(), "Extension", 333d, 444d, 468d, 555d, 666d,
-        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, null);
+        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, null, 1L);
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -64,7 +64,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     Course course = createCourse("Create test", OffsetDateTime.now(), OffsetDateTime.now(),
         "Course for testing course creation", Boolean.FALSE, 111, 222l,
         OffsetDateTime.now(), OffsetDateTime.now(), "Extension", 333d, 444d, 468d, 555d, 666d,
-        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, Arrays.asList("tag1", "tag2", "tag3"));
+        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, Arrays.asList("tag1", "tag2", "tag3"), 1L);
 
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -102,7 +102,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     Course course = createCourse("Update test", OffsetDateTime.now(), OffsetDateTime.now(),
         "Course for testing course updating", Boolean.FALSE, 111, 222l,
         OffsetDateTime.now(), OffsetDateTime.now(), "Extension", 333d, 444d, 468d, 555d, 666d,
-        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, null);
+        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, null, 1L);
 
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -131,7 +131,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
         "Course for testing course updating", Boolean.FALSE, 111, 222l,
         OffsetDateTime.now(), OffsetDateTime.now(), "Extension", 333d, 444d, 468d, 555d, 666d,
         777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, Arrays.asList(
-            "tag1", "tag2", "tag3"));
+            "tag1", "tag2", "tag3"), 1L);
 
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -160,7 +160,7 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
     Course course = createCourse("Update test", OffsetDateTime.now(), OffsetDateTime.now(),
         "Course for testing course updating", Boolean.FALSE, 111, 222l,
         OffsetDateTime.now(), OffsetDateTime.now(), "Extension", 333d, 444d, 468d, 555d, 666d,
-        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, null);
+        777d, OffsetDateTime.now(), 1l, 1l, 1l, null, 777d, 1l, 1l, 1l, null, null, null, 1L);
 
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -187,10 +187,10 @@ public class CoursePermissionsTestsIT extends AbstractRESTPermissionsTest {
       Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Set<Long> curriculumIds, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
-      Map<String, String> variables, List<String> tags) {
+      Map<String, String> variables, List<String> tags, Long organizationId) {
     return new Course(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
-        creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
+        creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags, organizationId);
   }
   
 }

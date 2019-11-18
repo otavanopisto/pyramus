@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.internetix.smvc.controllers.RequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.breadcrumbs.Breadcrumbable;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -47,6 +48,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
@@ -74,10 +76,14 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.PersonVariableKey;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
-import fi.otavanopisto.pyramus.framework.PyramusViewController;
-import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.PyramusRequestControllerAccess;
+import fi.otavanopisto.pyramus.framework.PyramusViewController2;
+import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.security.impl.Permissions;
 import fi.otavanopisto.pyramus.util.StringAttributeComparator;
+import fi.otavanopisto.pyramus.views.PyramusViewPermissions;
 import fi.otavanopisto.pyramus.views.students.tor.StudentTOR;
 import fi.otavanopisto.pyramus.views.students.tor.StudentTORController;
 import net.sf.json.JSONArray;
@@ -85,22 +91,46 @@ import net.sf.json.JSONObject;
 
 /**
  * ViewController for editing student information.
- * 
- * @author antti.viljakainen
  */
-public class ViewStudentViewController extends PyramusViewController implements Breadcrumbable {
-
+public class ViewStudentViewController extends PyramusViewController2 implements Breadcrumbable {
+  
   private static final Logger logger = Logger.getLogger(ViewStudentViewController.class.getName());
-      
-  /**
-   * Returns allowed roles for this page. Allowed are UserRole.MANAGER and UserRole.ADMINISTRATOR.
-   * 
-   * @return allowed roles
-   */
-  public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
+  
+  public ViewStudentViewController() {
+    super(
+        PyramusRequestControllerAccess.REQUIRELOGIN // access
+    );
   }
 
+  @Override
+  protected boolean checkAccess(RequestContext requestContext) {
+    UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+    PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+
+    Long loggedUserId = requestContext.getLoggedUserId();
+    User user = userDAO.findById(loggedUserId);
+
+    if (!Permissions.instance().hasEnvironmentPermission(user, PyramusViewPermissions.VIEW_STUDENT)) {
+      return false;
+    } else {
+      if (UserUtils.canAccessAllOrganizations(user)) {
+        return true;
+      } else {
+        Long personId = requestContext.getLong("person");
+        Person person = personDAO.findById(personId);
+        
+        for (Student student : person.getStudents()) {
+          if (UserUtils.isMemberOf(user, student.getOrganization())) {
+            // Having one common organization is enough - though the view may not allow editing all
+            return true;
+          }
+        }
+
+        return false;
+      }
+    }
+  }
+  
   /**
    * Processes the page request.
    * 
@@ -141,6 +171,9 @@ public class ViewStudentViewController extends PyramusViewController implements 
     PersonVariableDAO personVariableDAO = DAOFactory.getInstance().getPersonVariableDAO();
     PersonVariableKeyDAO personVariableKeyDAO = DAOFactory.getInstance().getPersonVariableKeyDAO();
 
+    Long loggedUserId = pageRequestContext.getLoggedUserId();
+    StaffMember loggedUser = staffMemberDAO.findById(loggedUserId);
+    
     Long personId = pageRequestContext.getLong("person");
     
     Person person = personDAO.findById(personId);
@@ -150,7 +183,9 @@ public class ViewStudentViewController extends PyramusViewController implements 
     StaffMember staffMember = staffMemberDAO.findByPerson(person);
     pageRequestContext.getRequest().setAttribute("staffMember", staffMember);
     
-    List<Student> students = studentDAO.listByPerson(person);
+    List<Student> students = UserUtils.canAccessAllOrganizations(loggedUser) ?
+        studentDAO.listByPerson(person) : studentDAO.listByPersonAndOrganization(person, loggedUser.getOrganization());
+    
     Collections.sort(students, new Comparator<Student>() {
       @Override
       public int compare(Student o1, Student o2) {
@@ -184,7 +219,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
           return o1class < o2class ? -1 : o1class == o2class ? 0 : 1;
       }
     });
-    
+
     Map<Long, Boolean> studentHasImage = new HashMap<>();
     Map<Long, List<CourseStudent>> courseStudents = new HashMap<>();
     Map<Long, List<StudentContactLogEntry>> contactEntries = new HashMap<>();
@@ -246,9 +281,7 @@ public class ViewStudentViewController extends PyramusViewController implements 
       curriculumsJSON.add(obj);
     }
     
-    for (int i = 0; i < students.size(); i++) {
-      Student student = students.get(i);
-
+    for (Student student : students) {
       /**
        * Fetch courses this student is part of and sort the courses by course name
        */
@@ -616,6 +649,9 @@ public class ViewStudentViewController extends PyramusViewController implements 
 
             case TransferCredit:
               allStudentTransferCredits.add(((TransferCredit) creditLink.getCredit()));
+            break;
+            
+            case ProjectAssessment:
             break;
           }
         }

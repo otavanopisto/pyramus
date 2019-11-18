@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -14,18 +15,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
-import io.restassured.mapper.factory.Jackson2ObjectMapperFactory;
+import io.restassured.path.json.mapper.factory.Jackson2ObjectMapperFactory;
 import io.restassured.response.Response;
 
 import fi.otavanopisto.pyramus.AbstractIntegrationTest;
@@ -33,33 +36,31 @@ import fi.otavanopisto.pyramus.Common;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.security.impl.PyramusPermissionCollection;
 
-public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest {
+public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTest implements AbstractRestServicePermissionsTestI{
 
-  @Before
-  public void setupRestAssured() {
-
+  public AbstractRESTPermissionsTest() {
+    this.tools = new AbstractRESTServiceTestTools(this);
+  }
+  
+  static {
     RestAssured.baseURI = getAppUrl(true) + "/1";
     RestAssured.port = getPortHttps();
     RestAssured.authentication = certificate(getKeystoreFile(), getKeystorePass());
 
     RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
         ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory() {
-
-          @SuppressWarnings("rawtypes")
           @Override
-          public com.fasterxml.jackson.databind.ObjectMapper create(Class cls, String charset) {
+          public com.fasterxml.jackson.databind.ObjectMapper create(Type cls, String charset) {
             com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
             objectMapper.registerModule(new JSR310Module());
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
             return objectMapper;
           }
         }));
-
   }
 
   @Before
   public void createAccessTokens() {
-
     OAuthClientRequest tokenRequest = null;
 
     if (!Role.EVERYONE.name().equals(role)) {
@@ -107,8 +108,8 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     }
   }
 	
-  @Before
-  public void testConnection() throws IOException {
+  @BeforeClass
+  public static void testConnection() throws IOException {
     Socket socket = new Socket();
     try {
       socket.connect(new InetSocketAddress(getHost(), getPortHttp()), 0);
@@ -118,7 +119,6 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
       socket.close();
     }
   }
-
 	
   public String getAccessToken() {
     return accessToken;
@@ -165,7 +165,7 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   public boolean roleIsAllowed(String role, PyramusPermissionCollection permissionCollection, String permission) throws NoSuchFieldException {
     List<String> allowedRoles = Arrays.asList(permissionCollection.getDefaultRoles(permission));
 
-    return roleIsAllowed(getRole(), allowedRoles);
+    return roleIsAllowed(role, allowedRoles);
   }
 	
   public boolean roleIsAllowed(String role, List<String> allowedRoles) {
@@ -182,14 +182,11 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
   }
 
   public void assertOk(String path, List<String> allowedRoles) {
-    if (!Role.EVERYONE.name().equals(getRole())) {
-      if (roleIsAllowed(getRole(), allowedRoles)) {
-        given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(200);
-      } else {
-        given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(403);
-      }
-    } else
-      given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(400);
+    if (roleIsAllowed(getRole(), allowedRoles)) {
+      given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(200);
+    } else {
+      given().headers(getAuthHeaders()).get(path).then().assertThat().statusCode(403);
+    }
   }
 
   public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission)
@@ -199,17 +196,20 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
 
   public void assertOk(Response response, PyramusPermissionCollection permissionCollection, String permission,
       int successStatusCode) throws NoSuchFieldException {
-    if (!Role.EVERYONE.name().equals(getRole())) {
-      int expectedStatusCode = roleIsAllowed(getRole(), permissionCollection, permission) ? successStatusCode : 403;
+    // EVERYONE role connects without any credentials and is thus blocked by SecurityFilter
+    int expectedStatusCode = !isCurrentRole(Role.EVERYONE) && roleIsAllowed(getRole(), permissionCollection, permission) 
+        ? successStatusCode : 403;
 
-      assertThat(
-          String.format("Status code <%d> didn't match expected code <%d> when Role = %s, Permission = %s",
-              response.statusCode(), expectedStatusCode, getRole(), permission),
-          response.statusCode(), is(expectedStatusCode));
-    } else
-      response.then().assertThat().statusCode(400);
+    assertPermission(permission, expectedStatusCode, response.statusCode());
   }
 
+  public void assertPermission(String permission, int expectedStatusCode, int statusCode) throws NoSuchFieldException {
+    assertThat(
+        String.format("Status code <%d> didn't match expected code <%d> when Role = %s, Permission = %s",
+            statusCode, expectedStatusCode, getRole(), permission),
+        statusCode, is(expectedStatusCode));
+  }
+  
   public static List<Object[]> getGeneratedRoleData() {
     // The parameter generator returns a List of
     // arrays. Each array has two elements: { role }.
@@ -221,16 +221,6 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     }
 
     return data;
-
-    // return Arrays.asList(new Object[][] {
-    // { Role.EVERYONE.name() },
-    // { Role.GUEST.name() },
-    // { Role.USER.name() },
-    // { Role.STUDENT.name() },
-    // { Role.MANAGER.name() },
-    // { Role.ADMINISTRATOR.name() }
-    // }
-    // );
   }
 
   protected String getRole() {
@@ -241,7 +231,22 @@ public abstract class AbstractRESTPermissionsTest extends AbstractIntegrationTes
     this.role = role;
   }
 
+  protected boolean isCurrentRole(Role... roles) {
+    for (Role role : roles) {
+      if (StringUtils.equals(role.toString(), getRole())) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
+  protected AbstractRESTServiceTestTools tools() {
+    return tools;
+  }
+  
   protected String role;
   private String accessToken;
   private String adminAccessToken;
+  private AbstractRESTServiceTestTools tools;
 }

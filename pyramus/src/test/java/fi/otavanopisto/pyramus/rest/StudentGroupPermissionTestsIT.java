@@ -19,6 +19,8 @@ import fi.otavanopisto.pyramus.rest.model.StudentGroup;
 @RunWith(Parameterized.class)
 public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
 
+  private static final Long TEST_ORGANIZATION_ID = 1l;
+  
   public StudentGroupPermissionTestsIT(String role) {
     this.role = role;
   }
@@ -48,6 +50,7 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
         null, 
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE,
+        TEST_ORGANIZATION_ID, // organizationId
         Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
@@ -96,6 +99,7 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
         null, 
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE,
+        TEST_ORGANIZATION_ID, // organizationId
         Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
@@ -115,6 +119,7 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
           null, 
           Arrays.asList("tag2", "tag3"), 
           Boolean.FALSE,
+          TEST_ORGANIZATION_ID, // organizationId
           Boolean.FALSE);
       
       response = given().headers(getAuthHeaders())
@@ -141,6 +146,7 @@ public class StudentGroupPermissionTestsIT extends AbstractRESTPermissionsTest {
         null, 
         Arrays.asList("tag1", "tag2"), 
         Boolean.FALSE,
+        TEST_ORGANIZATION_ID, // organizationId
         Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())

@@ -36,6 +36,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
@@ -206,7 +207,8 @@ public class ObjectFactory {
                 entity.getMaxParticipantCount(), beginDate, endDate, entity.getNameExtension(), 
                 entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingHours(), 
                 entity.getDistanceTeachingDays(), entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, 
-                creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags);
+                creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags,
+                entity.getOrganization() == null ? null : entity.getOrganization().getId());
           }
         }, 
         
@@ -526,7 +528,8 @@ public class ObjectFactory {
           @Override
           public Object map(StudyProgramme entity) {
             Long categoryId = entity.getCategory() != null ? entity.getCategory().getId() : null;
-            return new fi.otavanopisto.pyramus.rest.model.StudyProgramme(entity.getId(), entity.getCode(), entity.getName(), categoryId, entity.getArchived());
+            Long organizationId = entity.getOrganization() != null ? entity.getOrganization().getId() : null;
+            return new fi.otavanopisto.pyramus.rest.model.StudyProgramme(entity.getId(), organizationId, entity.getCode(), entity.getName(), categoryId, entity.getArchived());
           }
         },
         
@@ -535,6 +538,7 @@ public class ObjectFactory {
           public Object map(StudentGroup entity) {
             Long creatorId = entity.getCreator().getId();
             Long lastModifierId = entity.getLastModifier() != null ? entity.getLastModifier().getId() : null;
+            Long organizationId = entity.getOrganization() != null ? entity.getOrganization().getId() : null;
 
             List<String> tags = new ArrayList<>();
             
@@ -547,7 +551,7 @@ public class ObjectFactory {
 
             return new fi.otavanopisto.pyramus.rest.model.StudentGroup(entity.getId(), entity.getName(), entity.getDescription(), 
               toOffsetDateTime(entity.getBeginDate()), creatorId, toOffsetDateTime(entity.getCreated()), lastModifierId, 
-              toOffsetDateTime(entity.getLastModified()), tags, entity.getGuidanceGroup(), entity.getArchived() 
+              toOffsetDateTime(entity.getLastModified()), tags, entity.getGuidanceGroup(), organizationId, entity.getArchived() 
             );
           }
         },
@@ -760,8 +764,9 @@ public class ObjectFactory {
           UserRole role = UserRole.valueOf(entity.getRole().name());
           String additionalContactInfo = entity.getContactInfo() != null ? entity.getContactInfo().getAdditionalInfo() : null;
           Long personId = entity.getPerson() != null ? entity.getPerson().getId() : null;
+          Long organizationId = entity.getOrganization() != null ? entity.getOrganization().getId() : null;
           
-          return new fi.otavanopisto.pyramus.rest.model.StaffMember(entity.getId(), personId, additionalContactInfo, 
+          return new fi.otavanopisto.pyramus.rest.model.StaffMember(entity.getId(), personId, organizationId, additionalContactInfo, 
               entity.getFirstName(), entity.getLastName(), entity.getTitle(), role, tags, variables);
         }
       },
@@ -770,6 +775,13 @@ public class ObjectFactory {
         @Override
         public Object map(fi.otavanopisto.pyramus.domainmodel.base.Curriculum entity) {
           return new Curriculum(entity.getId(), entity.getName(), entity.getArchived());
+        }
+      },
+      
+      new Mapper<fi.otavanopisto.pyramus.domainmodel.base.Organization>() {
+        @Override
+        public Object map(Organization entity) {
+          return new fi.otavanopisto.pyramus.rest.model.Organization(entity.getId(), entity.getName(), entity.getArchived());
         }
       }
     );
