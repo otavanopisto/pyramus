@@ -20,6 +20,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
@@ -29,6 +30,8 @@ import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit;
@@ -78,12 +81,14 @@ import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 
 public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
 
-  public static final String USERVARIABLE_EXTENDEDSTUDYTIME = "extendedStudyTime";
   public static final String USERVARIABLE_UNDER18STARTREASON = "under18studyStartReason";
   private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.aineopiskelulukio;
 
   @Inject
   private Logger logger;
+  
+  @Inject
+  private StudentStudyPeriodDAO studentStudyPeriodDAO;
   
   @Override
   protected boolean isPakollinenOppiaine(Student student, KoskiOppiaineetYleissivistava oppiaine) {
@@ -155,7 +160,8 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
   }
 
   private LukionOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
-    boolean pidennettyPaattymispaiva = Boolean.valueOf(userVariableDAO.findByUserAndKey(student, USERVARIABLE_EXTENDEDSTUDYTIME));
+    List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
+    boolean pidennettyPaattymispaiva = studyPeriods.stream().anyMatch(studyPeriod -> studyPeriod.getPeriodType() == StudentStudyPeriodType.PROLONGED_STUDYENDDATE);
     boolean ulkomainenVaihtoopiskelija = false;
     boolean yksityisopiskelija = false;
     boolean oikeusMaksuttomaanAsuntolapaikkaan = settings.isFreeLodging(student.getStudyProgramme().getId());
