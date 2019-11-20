@@ -37,6 +37,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Email_;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Person_;
 import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
@@ -158,12 +159,12 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public SearchResult<Person> searchPersonsBasic(int resultsPerPage, int page, String queryText) {
-    return searchPersonsBasic(resultsPerPage, page, queryText, PersonFilter.ACTIVE_STUDENTS);
+  public SearchResult<Person> searchPersonsBasic(int resultsPerPage, int page, String queryText, Organization organization) {
+    return searchPersonsBasic(resultsPerPage, page, queryText, PersonFilter.ACTIVE_STUDENTS, organization);
   }
 
-  public SearchResult<Person> searchPersonsBasic(int resultsPerPage, int page, String queryText, PersonFilter studentFilter) {
-    return searchPersonsBasic(resultsPerPage, page, queryText, studentFilter, null, null);
+  public SearchResult<Person> searchPersonsBasic(int resultsPerPage, int page, String queryText, PersonFilter studentFilter, Organization organization) {
+    return searchPersonsBasic(resultsPerPage, page, queryText, studentFilter, null, null, organization);
   }
   
   /**
@@ -184,7 +185,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
   }
   
   @SuppressWarnings("unchecked")
-  public SearchResult<Person> searchPersonsBasic(int resultsPerPage, int page, String queryText, PersonFilter studentFilter, StudyProgramme studyProgramme, StudentGroup studentGroup) {
+  public SearchResult<Person> searchPersonsBasic(int resultsPerPage, int page, String queryText, PersonFilter studentFilter, StudyProgramme studyProgramme, StudentGroup studentGroup, Organization organization) {
     int firstResult = page * resultsPerPage;
 
     StringBuilder queryBuilder = new StringBuilder();
@@ -203,10 +204,11 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, false, queryText, "activeLastNames", "inactiveLastNames", "staffMemberLastNames");
           addTokenizedSearchCriteria(queryBuilder, false, lucenizeEmailSearchTerm(queryText), "activeEmails", "inactiveEmails", "staffMemberEmails");
           addTokenizedSearchCriteria(queryBuilder, false, queryText, "activeTags", "inactiveTags", "staffMemberTags");
-          
           queryBuilder.append(")");
         }
         
+        if (organization != null)
+          addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "inactiveOrganizationIds", "activeOrganizationIds", "staffMemberOrganizations");
         if (studyProgramme != null)
           addTokenizedSearchCriteria(queryBuilder, "inactiveStudyProgrammeIds", "activeStudyProgrammeIds", studyProgramme.getId().toString(), true);
 
@@ -237,6 +239,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           queryBuilder.append(")");
         }
 
+        if (organization != null)
+          addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "inactiveOrganizationIds");
         if (studyProgramme != null)
           addTokenizedSearchCriteria(queryBuilder, "inactiveStudyProgrammeIds", studyProgramme.getId().toString(), true);
 
@@ -260,6 +264,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           queryBuilder.append(")");
         }
 
+        if (organization != null)
+          addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "activeOrganizationIds");
         if (studyProgramme != null)
           addTokenizedSearchCriteria(queryBuilder, "activeStudyProgrammeIds", studyProgramme.getId().toString(), true);
 
@@ -277,6 +283,9 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           
           queryBuilder.append(")");
 
+          if (organization != null)
+            addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "staffMemberOrganizations");
+          
           addTokenizedSearchCriteria(queryBuilder, "staff", "true", false, 0f);
         }
       break;
@@ -350,7 +359,7 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
   public SearchResult<Person> searchPersons(int resultsPerPage, int page, String firstName, String lastName, String nickname, String tags, 
       String education, String email, Sex sex, String ssn, String addressCity, String addressCountry, String addressPostalCode, String addressStreetAddress,
       String phone, StudyProgramme studyProgramme, Language language, Nationality nationality, Municipality municipality,
-      String title, PersonFilter personFilter) {
+      String title, PersonFilter personFilter, Organization organization) {
 
     int firstResult = page * resultsPerPage;
 
@@ -408,6 +417,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
         if (language != null)
           addTokenizedSearchCriteria(queryBuilder, "inactiveLanguageIds", "activeLanguageIds", language.getId().toString(), true);
 
+        if (organization != null)
+          addTokenizedSearchCriteria(queryBuilder, true, organization.getId().toString(), "inactiveOrganizationIds", "activeOrganizationIds", "staffMemberOrganizations");
       break;
       case INACTIVE_STUDENTS:
 
@@ -450,6 +461,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "inactiveMunicipalityIds", municipality.getId().toString(), true);
         if (language != null)
           addTokenizedSearchCriteria(queryBuilder, "inactiveLanguageIds", language.getId().toString(), true);
+        if (organization != null)
+          addTokenizedSearchCriteria(queryBuilder, "inactiveOrganizationIds", organization.getId().toString(), true);
       break;
       case ACTIVE_STUDENTS:
         
@@ -491,6 +504,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, "activeMunicipalityIds", municipality.getId().toString(), true);
         if (language != null)
           addTokenizedSearchCriteria(queryBuilder, "activeLanguageIds", language.getId().toString(), true);
+        if (organization != null)
+          addTokenizedSearchCriteria(queryBuilder, "activeOrganizationIds", organization.getId().toString(), true);
       break;
       
       case STAFFMEMBERS:
@@ -514,6 +529,8 @@ public class PersonDAO extends PyramusEntityDAO<Person> {
           addTokenizedSearchCriteria(queryBuilder, true, addressStreetAddress, "staffMemberStreetAddresses");
         if (!StringUtils.isBlank(phone))
           addTokenizedSearchCriteria(queryBuilder, true, phone, "staffMemberPhones");
+        if (organization != null)
+          addTokenizedSearchCriteria(queryBuilder, true, "staffMemberOrganizations", organization.getId().toString());
       break;
     }
 

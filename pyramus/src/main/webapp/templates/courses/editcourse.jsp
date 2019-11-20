@@ -1525,6 +1525,25 @@
       
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="terms.organization"/>
+              </jsp:include>                  
+              <select name="organizationId" class="required">
+                <option value=""></option>
+                <c:forEach items="${organizations}" var="organization">
+                  <c:choose>
+                    <c:when test="${course.organization.id == organization.id}">
+                      <option value="${organization.id}" selected="selected">${organization.name}</option>
+                    </c:when>
+                    <c:otherwise>
+                      <option value="${organization.id}">${organization.name}</option>
+                    </c:otherwise>
+                  </c:choose>
+                </c:forEach>
+              </select>
+            </div>
+
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="courses.editCourse.nameTitle"/>
                 <jsp:param name="helpLocale" value="courses.editCourse.nameHelp"/>
               </jsp:include>    

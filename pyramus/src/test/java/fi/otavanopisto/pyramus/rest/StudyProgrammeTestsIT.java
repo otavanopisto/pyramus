@@ -5,17 +5,68 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.rest.model.Organization;
 import fi.otavanopisto.pyramus.rest.model.StudyProgramme;
+import io.restassured.response.Response;
 
 public class StudyProgrammeTestsIT extends AbstractRESTServiceTest {
 
+  private Organization organization;
+  
+  @Before
+  public void initialize() {
+    organization = tools().createOrganization(getClass().getSimpleName());
+  }
+  
+  @After
+  public void deinitialize() {
+    tools().deleteOrganization(organization);
+  }
+
+  @Test
+  public void testCreateIncompleteStudyProgramme() {
+    StudyProgramme studyProgramme;
+    Long organizationId = organization.getId();
+    String code = "TST";
+    String name = "create";
+    Long category = 1L;
+    
+    // null organization
+    studyProgramme = new StudyProgramme(null, null, code, name, category, Boolean.FALSE);
+    given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
+    // missing organization
+    studyProgramme = new StudyProgramme(null, 0L, code, name, category, Boolean.FALSE);
+    given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
+
+    // null code
+    studyProgramme = new StudyProgramme(null, organizationId, null, name, category, Boolean.FALSE);
+    given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
+    // missing code
+    studyProgramme = new StudyProgramme(null, organizationId, "", name, category, Boolean.FALSE);
+    given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
+
+    // null name
+    studyProgramme = new StudyProgramme(null, organizationId, code, null, category, Boolean.FALSE);
+    given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
+    // missing name
+    studyProgramme = new StudyProgramme(null, organizationId, code, "", category, Boolean.FALSE);
+    given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
+
+    // null category
+    studyProgramme = new StudyProgramme(null, organizationId, code, name, null, Boolean.FALSE);
+    given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
+    // missing category
+    studyProgramme = new StudyProgramme(null, organizationId, code, name, 0L, Boolean.FALSE);
+    given().headers(getAuthHeaders()).contentType("application/json").body(studyProgramme).post("/students/studyProgrammes").then().statusCode(400);
+  }
+
   @Test
   public void testCreateStudyProgramme() {
-    StudyProgramme studyProgramme = new StudyProgramme(null, "TST", "create", 1l, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organization.getId(), "TST", "create", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -71,7 +122,7 @@ public class StudyProgrammeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateStudyProgramme() {
-    StudyProgramme studyProgramme = new StudyProgramme(null, "NOT", "Not Updated", 1l, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organization.getId(), "NOT", "Not Updated", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -87,7 +138,7 @@ public class StudyProgrammeTestsIT extends AbstractRESTServiceTest {
     
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      StudyProgramme updateStudyProgramme = new StudyProgramme(id, "UPD", "Updated", 2l, Boolean.FALSE);
+      StudyProgramme updateStudyProgramme = new StudyProgramme(id, organization.getId(), "UPD", "Updated", 2l, Boolean.FALSE);
 
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -111,7 +162,7 @@ public class StudyProgrammeTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteStudyProgramme() {
-    StudyProgramme studyProgramme = new StudyProgramme(null, "TST", "create type", 1l, Boolean.FALSE);
+    StudyProgramme studyProgramme = new StudyProgramme(null, organization.getId(), "TST", "create type", 1l, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")

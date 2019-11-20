@@ -41,6 +41,7 @@ import fi.otavanopisto.pyramus.dao.base.LoginLogDAO;
 import fi.otavanopisto.pyramus.dao.base.MagicKeyDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
@@ -709,6 +710,10 @@ public class DAOFactory {
     return (CurriculumDAO) findByClass(CurriculumDAO.class);
   }
   
+  public OrganizationDAO getOrganizationDAO() {
+    return (OrganizationDAO) findByClass(OrganizationDAO.class);
+  }
+
   /* File */
   
   public FileDAO getFileDAO() {

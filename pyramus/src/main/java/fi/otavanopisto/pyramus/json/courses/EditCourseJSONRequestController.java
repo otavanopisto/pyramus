@@ -27,6 +27,7 @@ import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.courses.BasicCourseResourceDAO;
@@ -57,6 +58,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.BasicCourseResource;
@@ -80,10 +82,12 @@ import fi.otavanopisto.pyramus.domainmodel.resources.Resource;
 import fi.otavanopisto.pyramus.domainmodel.resources.ResourceType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.persistence.usertypes.MonetaryAmount;
 
 /**
@@ -265,7 +269,15 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     CourseTypeDAO courseTypeDAO = DAOFactory.getInstance().getCourseTypeDAO();
     CurriculumDAO curriculumDAO = DAOFactory.getInstance().getCurriculumDAO();
     ModuleDAO moduleDAO = DAOFactory.getInstance().getModuleDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
+    User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
+    Organization organization = organizationDAO.findById(requestContext.getLong("organizationId"));
+    if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
+      throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid organization.");
+    }
+
     // Course basic information
 
     Long courseId = requestContext.getLong("course");
@@ -323,7 +335,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     
     StaffMember staffMember = userDAO.findById(requestContext.getLoggedUserId());
 
-    courseDAO.update(course, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
+    courseDAO.update(course, organization, name, nameExtension, courseState, courseType, subject, courseNumber, beginDate, endDate,
         courseLength, courseLengthTimeUnit, distanceTeachingDays, localTeachingDays, teachingHours, distanceTeachingHours, 
         planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, staffMember);
     
@@ -656,7 +668,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
       if (courseStudentId == -1) {
         /* New student */
         Student student = studentDAO.findById(studentId);
-        String organization = null;
+        String organizationName = null;
         String additionalInfo = null;
         Room room = null;
         BigDecimal lodgingFee = null;
@@ -666,7 +678,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
 
         try {
           courseStudent = courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, 
-              optionality, null, organization, additionalInfo, room, lodgingFee, lodgingFeeCurrency, reservationFee, reservationFeeCurrency, Boolean.FALSE);
+              optionality, null, organizationName, additionalInfo, room, lodgingFee, lodgingFeeCurrency, reservationFee, reservationFeeCurrency, Boolean.FALSE);
         } catch (DuplicateCourseStudentException dcse) {
           Locale locale = requestContext.getRequest().getLocale();
           throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 

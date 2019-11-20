@@ -21,28 +21,30 @@ public abstract class PyramusViewController implements PageController {
 
   public abstract UserRole[] getAllowedRoles();
 
-  public String getPermission() {
-    return null;
+  protected void throwLoginRequiredException(RequestContext requestContext) {
+    HttpServletRequest request = requestContext.getRequest();
+    StringBuilder currentUrl = new StringBuilder(request.getRequestURL());
+    String queryString = request.getQueryString();
+    if (!StringUtils.isBlank(queryString)) {
+      currentUrl.append('?');
+      currentUrl.append(queryString);
+    }
+    throw new LoginRequiredException(currentUrl.toString());
   }
   
   public void authorize(RequestContext requestContext) throws LoginRequiredException, AccessDeniedException {
     UserRole[] roles = getAllowedRoles();
     if (!contains(roles, UserRole.EVERYONE)) {
       if (!requestContext.isLoggedIn()) {
-        HttpServletRequest request = requestContext.getRequest();
-        StringBuilder currentUrl = new StringBuilder(request.getRequestURL());
-        String queryString = request.getQueryString();
-        if (!StringUtils.isBlank(queryString)) {
-          currentUrl.append('?');
-          currentUrl.append(queryString);
-        }
-        throw new LoginRequiredException(currentUrl.toString());
+        throwLoginRequiredException(requestContext);
       }
       else {
         Long loggedUserId = requestContext.getLoggedUserId();
-        
         UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
         User user = userDAO.findById(loggedUserId);
+
+        UserUtils.checkManagementOrganizationPermission(user, requestContext.getRequest().getLocale());
+
         UserRole userRole = UserUtils.roleToUserRole(user.getRole());
         
         if (!contains(roles, userRole)) {

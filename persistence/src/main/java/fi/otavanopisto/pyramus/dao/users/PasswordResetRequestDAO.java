@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
@@ -63,6 +64,20 @@ public class PasswordResetRequestDAO extends PyramusEntityDAO<PasswordResetReque
   @Override
   public void delete(PasswordResetRequest request) {
     super.delete(request);
+  }
+
+  public int deleteExpired(Date expiryDate) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaDelete<PasswordResetRequest> criteria = criteriaBuilder.createCriteriaDelete(PasswordResetRequest.class);
+    Root<PasswordResetRequest> root = criteria.from(PasswordResetRequest.class);
+
+    criteria.where(
+        criteriaBuilder.lessThan(root.get(PasswordResetRequest_.date), expiryDate)
+    );
+    
+    return entityManager.createQuery(criteria).executeUpdate();
   }
   
 }

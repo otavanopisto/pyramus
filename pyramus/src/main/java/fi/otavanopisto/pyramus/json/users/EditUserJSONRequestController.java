@@ -16,6 +16,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
@@ -26,6 +27,7 @@ import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
@@ -63,6 +65,7 @@ public class EditUserJSONRequestController extends JSONRequestController {
     TagDAO tagDAO = DAOFactory.getInstance().getTagDAO();
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
 
     Long loggedUserId = requestContext.getLoggedUserId();
     StaffMember loggedUser = staffDAO.findById(loggedUserId);
@@ -71,7 +74,19 @@ public class EditUserJSONRequestController extends JSONRequestController {
     Long userId = requestContext.getLong("userId");
 
     StaffMember user = staffDAO.findById(userId);
-    
+
+    if (user.getOrganization() != null) {
+      // Check that the editing user has access to the organization
+      if (!UserUtils.canAccessOrganization(loggedUser, user.getOrganization())) {
+        throw new RuntimeException("Cannot access users' organization");
+      }
+    } else {
+      // Check that the editing user has generic access when users' organization is null
+      if (!UserUtils.canAccessAllOrganizations(loggedUser)) {
+        throw new RuntimeException("Cannot access users' organization");
+      }
+    }
+
     String firstName = requestContext.getString("firstName");
     String lastName = requestContext.getString("lastName");
     String title = requestContext.getString("title");
@@ -81,6 +96,25 @@ public class EditUserJSONRequestController extends JSONRequestController {
     String password2 = requestContext.getString("password2");
     String tagsText = requestContext.getString("tags");
     
+    Long organizationId = requestContext.getLong("organizationId");
+    Organization organization = null;
+    
+    if (organizationId != null) {
+      organization = organizationDAO.findById(organizationId);
+    }
+    
+    if (organization != null) {
+      // Check that the editing user has access to the organization
+      if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
+        throw new RuntimeException("Cannot access organization");
+      }
+    } else {
+      // Check that the editing user can set the organization as null
+      if (!UserUtils.canAccessAllOrganizations(loggedUser)) {
+        throw new RuntimeException("Cannot access organization");
+      }
+    }
+
     // #921: Check username
     if (!StringUtils.isBlank(username)) {
       InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
@@ -118,6 +152,8 @@ public class EditUserJSONRequestController extends JSONRequestController {
         }
       }
     }
+    
+    staffDAO.update(user, organization, firstName, lastName, role);
 
     if (Role.ADMINISTRATOR.equals(loggedUserRole)) {
       Integer propertyCount = requestContext.getInteger("propertiesTable.rowCount");
@@ -131,7 +167,6 @@ public class EditUserJSONRequestController extends JSONRequestController {
       }
     }
 
-    staffDAO.update(user, firstName, lastName, role);
     staffDAO.updateTitle(user, title);
     
     // SSN

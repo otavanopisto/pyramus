@@ -11,7 +11,8 @@ import fi.otavanopisto.pyramus.dao.students.StudentGroupUserDAO;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.security.impl.SessionController;
+import fi.otavanopisto.pyramus.security.impl.Permissions;
+import fi.otavanopisto.pyramus.security.impl.PyramusPermissionFeatures;
 import fi.otavanopisto.security.ContextReference;
 import fi.otavanopisto.security.PermissionFeature;
 import fi.otavanopisto.security.PermissionFeatureHandler;
@@ -30,12 +31,12 @@ public class OnlyOwnGroupsPermissionFeature implements PermissionFeatureHandler 
   private StudentGroupStudentDAO studentGroupStudentDAO;
   
   @Inject
-  private SessionController sessionController;
+  private Permissions permissionController;
   
   @Override
   public boolean hasPermission(String perm, fi.otavanopisto.security.User user, ContextReference contextReference, boolean allowed) {
     // By default the permission needs to be allowed. This feature only disallows permission.
-    if (!allowed || !sessionController.hasEnvironmentPermission(StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION))
+    if (!allowed || !permissionController.hasEnvironmentPermission(user, StudentPermissions.FEATURE_OWNED_GROUP_STUDENTS_RESTRICTION))
       return allowed;
    
     if (contextReference instanceof StudentGroup) {

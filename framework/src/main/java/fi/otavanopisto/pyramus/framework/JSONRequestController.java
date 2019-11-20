@@ -21,10 +21,13 @@ public abstract class JSONRequestController implements fi.internetix.smvc.contro
         
         StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
         StaffMember user = userDAO.findById(loggedUserId);
+
+        UserUtils.checkManagementOrganizationPermission(user, requestContext.getRequest().getLocale());
+
         UserRole userRole = UserUtils.roleToUserRole(user.getRole());
-        
-        if (!contains(roles, userRole))
+        if (!contains(roles, userRole)) {
           throw new AccessDeniedException(requestContext.getRequest().getLocale());
+        }
       }
     }
   }

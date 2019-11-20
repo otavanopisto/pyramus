@@ -14,11 +14,11 @@ import org.hibernate.search.jpa.Search;
 public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
 
   @SuppressWarnings("unchecked")
-  public List<T> listUnarchived(Integer firstResult, Integer maxResults) {
+  public List<T> listByArchived(boolean archived, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     Class<?> genericTypeClass = getGenericTypeClass();
     Query query = entityManager.createQuery("select o from " + genericTypeClass.getName() + " o where archived=:archived");
-    query.setParameter("archived", Boolean.FALSE);
+    query.setParameter("archived", archived);
     
     if (firstResult != null) {
       query.setFirstResult(firstResult);
@@ -31,8 +31,16 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
     return query.getResultList();
   }
   
+  public List<T> listUnarchived(Integer firstResult, Integer maxResults) {
+    return listByArchived(false, firstResult, maxResults);
+  }
+  
   public List<T> listUnarchived() {
-    return listUnarchived(null, null);
+    return listByArchived(false, null, null);
+  }
+  
+  public List<T> listArchived() {
+    return listByArchived(true, null, null);
   }
   
   public void forceReindex(T o) {

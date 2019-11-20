@@ -19,7 +19,7 @@ public class IdentityImpl implements Identity {
 
   @Override
   public boolean isAdmin() {
-    return sessionController.isSuperuser();
+    return false;
   }
 
   @Override

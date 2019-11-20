@@ -30,6 +30,7 @@ import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
@@ -56,12 +57,13 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
 //  @Inject
 //  private Event<StudentGroupArchivedEvent> studentGroupRemovedEvent;
   
-  public StudentGroup create(String name, String description, Date beginDate, User creatingUser, Boolean guidanceGroup) {
+  public StudentGroup create(Organization organization, String name, String description, Date beginDate, User creatingUser, Boolean guidanceGroup) {
     EntityManager entityManager = getEntityManager();
 
     Date now = new Date(System.currentTimeMillis());
     
     StudentGroup studentGroup = new StudentGroup();
+    studentGroup.setOrganization(organization);
     studentGroup.setName(name);
     studentGroup.setDescription(description);
     studentGroup.setBeginDate(beginDate);
@@ -93,9 +95,10 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     return studentGroup;
   }
 
-  public StudentGroup update(StudentGroup studentGroup, String name, String description, Date beginDate, User updatingUser) {
+  public StudentGroup update(StudentGroup studentGroup, Organization organization, String name, String description, Date beginDate, User updatingUser) {
     EntityManager entityManager = getEntityManager();
 
+    studentGroup.setOrganization(organization);
     studentGroup.setName(name);
     studentGroup.setDescription(description);
     studentGroup.setBeginDate(beginDate);
@@ -161,7 +164,7 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
   }
 
   @SuppressWarnings("unchecked")
-  public SearchResult<StudentGroup> searchStudentGroups(int resultsPerPage, int page, String name, 
+  public SearchResult<StudentGroup> searchStudentGroups(int resultsPerPage, int page, Organization organization, String name, 
       String tags, String description, User user, Date timeframeStart, Date timeframeEnd, 
       boolean filterArchived) {
     int firstResult = page * resultsPerPage;
@@ -190,6 +193,10 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     
     if (user != null) {
       addTokenizedSearchCriteria(queryBuilder, "users.staffMember.id", user.getId().toString(), true);
+    }
+    
+    if (organization != null) {
+      addTokenizedSearchCriteria(queryBuilder, "organization.id", organization.getId().toString(), true);
     }
     
     if (timeframeS != null && timeframeE != null) {
@@ -250,7 +257,7 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
   }
 
   @SuppressWarnings("unchecked")
-  public SearchResult<StudentGroup> searchStudentGroupsBasic(int resultsPerPage, int page, String text) {
+  public SearchResult<StudentGroup> searchStudentGroupsBasic(int resultsPerPage, int page, Organization organization, String text) {
     int firstResult = page * resultsPerPage;
 
     StringBuilder queryBuilder = new StringBuilder();
@@ -262,6 +269,10 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
       queryBuilder.append(")");
     }
 
+    if (organization != null) {
+      addTokenizedSearchCriteria(queryBuilder, "organization.id", organization.getId().toString(), true);
+    }
+    
     EntityManager entityManager = getEntityManager();
     FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
@@ -319,6 +330,36 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
       predicates.add(criteriaBuilder.equal(studentGroup.get(StudentGroup_.archived), archived));
     
     criteria.select(root.get(StudentGroupUser_.studentGroup));
+    criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+    
+    TypedQuery<StudentGroup> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+   
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+  
+    return query.getResultList();
+  }
+
+  public List<StudentGroup> listByOrganization(Organization organization, Integer firstResult, Integer maxResults, Boolean archived) {
+    EntityManager entityManager = getEntityManager(); 
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StudentGroup> criteria = criteriaBuilder.createQuery(StudentGroup.class);
+    Root<StudentGroup> root = criteria.from(StudentGroup.class);
+
+    List<Predicate> predicates = new ArrayList<Predicate>();
+    predicates.add(criteriaBuilder.equal(root.get(StudentGroup_.organization), organization));
+    
+    if (archived != null) {
+      predicates.add(criteriaBuilder.equal(root.get(StudentGroup_.archived), archived));
+    }
+    
+    criteria.select(root);
     criteria.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
     
     TypedQuery<StudentGroup> query = entityManager.createQuery(criteria);

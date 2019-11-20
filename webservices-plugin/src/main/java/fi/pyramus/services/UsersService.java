@@ -18,6 +18,7 @@ import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -51,7 +52,9 @@ public class UsersService extends PyramusService {
     Person person = personDAO.create(null, null, null, null, Boolean.FALSE);
     userIdentificationDAO.create(person, authProvider, externalId);
     Role userRole = EnumType.valueOf(Role.class, role);
-    StaffMember staffMember = staffMemberDAO.create(firstName, lastName, userRole, person, false);
+    // TODO organization
+    Organization organization = null;
+    StaffMember staffMember = staffMemberDAO.create(organization , firstName, lastName, userRole, person, false);
     personDAO.updateDefaultUser(person, staffMember);
     validateEntity(staffMember);
     return EntityFactoryVault.buildFromDomainObject(staffMember);
@@ -62,7 +65,8 @@ public class UsersService extends PyramusService {
     StaffMemberDAO staffDAO = DAOFactory.getInstance().getStaffMemberDAO();
     StaffMember user = staffDAO.findById(userId);
     Role userRole = EnumType.valueOf(Role.class, role);
-    staffDAO.update(user, firstName, lastName, userRole);
+    Organization organization = user.getOrganization();
+    staffDAO.update(user, organization, firstName, lastName, userRole);
     validateEntity(user);
   }
 

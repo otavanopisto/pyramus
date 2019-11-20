@@ -49,7 +49,6 @@
 		<module>rest</module>
 		<module>pyramus</module>
 		<module>reports</module>
-		<module>webservices-plugin</module>
 		<module>smvcj</module>
 		<module>webhooks</module>
 		<module>muikku-plugin</module>

@@ -9,6 +9,11 @@ insert into
 values 
   (1, 1, 'it'),
   (2, 2, 'TestAuth');
+
+insert into
+  Organization (id, name, archived)
+values
+  (1, 'Common Test Organization', false);
   
 insert into 
   ContactType (id, name, version, nonUnique, archived)
@@ -110,18 +115,18 @@ update Person p
 set p.defaultUser_id = p.id;
   
 insert into
-  StaffMember (id, role, title)
+  StaffMember (id, organization, role, title)
 values 
-  (1, 'GUEST', null),
-  (2, 'GUEST', null),
-  (5, 'USER', null),
-  (6, 'MANAGER', null),
-  (7, 'ADMINISTRATOR', null),
-  (9, 'TRUSTED_SYSTEM', null),
-  (10, 'STUDY_GUIDER', null),
-  (11, 'TEACHER', null),
-  (12, 'STUDY_PROGRAMME_LEADER', null),
-  (14, 'CLOSED', null);
+  (1, 1, 'GUEST', null),
+  (2, 1, 'GUEST', null),
+  (5, 1, 'USER', null),
+  (6, 1, 'MANAGER', null),
+  (7, 1, 'ADMINISTRATOR', null),
+  (9, 1, 'TRUSTED_SYSTEM', null),
+  (10, 1, 'STUDY_GUIDER', null),
+  (11, 1, 'TEACHER', null),
+  (12, 1, 'STUDY_PROGRAMME_LEADER', null),
+  (14, 1, 'CLOSED', null);
   
 insert into 
   AcademicTerm (id, name, startDate, endDate, archived, version)
@@ -389,17 +394,17 @@ values
   (2, 'StudyProgrammeCategory #2', 2, 1, false);   
    
 insert into 
-  StudyProgramme (id, code, name, category, version, archived)
+  StudyProgramme (id, organization, code, name, category, version, archived)
 values 
-  (1, 'TST1', 'StudyProgramme #1', 1, 1, false),
-  (2, 'TST2', 'StudyProgramme #2', 2, 1, false);     
+  (1, 1, 'TST1', 'StudyProgramme #1', 1, 1, false),
+  (2, 1, 'TST2', 'StudyProgramme #2', 2, 1, false);     
    
 insert into 
-  StudentGroup (id, name, description, creator, lastModifier, beginDate, created, lastModified, version, archived, guidanceGroup)
+  StudentGroup (id, name, description, creator, lastModifier, beginDate, created, lastModified, version, archived, guidanceGroup, organization)
 values 
-  (1, 'StudentGroup #1', 'Group of students #1', 1, 1, PARSEDATETIME('1 1 2010', 'd M yyyy'), PARSEDATETIME('2 2 2010', 'd M yyyy'), PARSEDATETIME('3 3 2010', 'd M yyyy'), 1, false, false),
-  (2, 'StudentGroup #2', 'Group of students #2', 1, 1, PARSEDATETIME('4 4 2010', 'd M yyyy'), PARSEDATETIME('5 5 2010', 'd M yyyy'), PARSEDATETIME('6 6 2010', 'd M yyyy'), 1, false, false),
-  (3, 'StudentGroup #3', 'Group of students #3', 1, 1, PARSEDATETIME('4 4 2010', 'd M yyyy'), PARSEDATETIME('5 5 2012', 'd M yyyy'), PARSEDATETIME('6 6 2012', 'd M yyyy'), 1, false, false);  
+  (1, 'StudentGroup #1', 'Group of students #1', 1, 1, PARSEDATETIME('1 1 2010', 'd M yyyy'), PARSEDATETIME('2 2 2010', 'd M yyyy'), PARSEDATETIME('3 3 2010', 'd M yyyy'), 1, false, false, 1),
+  (2, 'StudentGroup #2', 'Group of students #2', 1, 1, PARSEDATETIME('4 4 2010', 'd M yyyy'), PARSEDATETIME('5 5 2010', 'd M yyyy'), PARSEDATETIME('6 6 2010', 'd M yyyy'), 1, false, false, 1),
+  (3, 'StudentGroup #3', 'Group of students #3', 1, 1, PARSEDATETIME('4 4 2010', 'd M yyyy'), PARSEDATETIME('5 5 2012', 'd M yyyy'), PARSEDATETIME('6 6 2012', 'd M yyyy'), 1, false, false, 1);  
   
 insert into
   StudentActivityType (id, name, version, archived)
@@ -485,7 +490,8 @@ values
   (3, 1000, 1),
   (4, 1000, 1),
   (5, 1000, 1),
-  (6, 1000, 1);
+  (6, 1000, 1),
+  (7, 1001, 1);
   
 insert into 
   CourseStaffMember (id, staffMember_id, role_id)
@@ -499,7 +505,8 @@ insert into
   CourseStudent (id, archived, enrolmentTime, lodging, optionality, billingDetails, enrolmentType, participationType, student)
 values
   (5, false, PARSEDATETIME('1 1 2010', 'd M yyyy'), false, 'OPTIONAL', null, 1, 1, 3),
-  (6, false, PARSEDATETIME('1 1 2011', 'd M yyyy'), true, 'MANDATORY', null, 2, 2, 4);
+  (6, false, PARSEDATETIME('1 1 2011', 'd M yyyy'), true, 'MANDATORY', null, 2, 2, 4),
+  (7, false, PARSEDATETIME('1 1 2012', 'd M yyyy'), true, 'MANDATORY', null, 2, 2, 13);
 
 insert into
   Credit (id, archived, verbalAssessment, date, creditType, version, assessor_id, grade)

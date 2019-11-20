@@ -5,15 +5,11 @@ import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
 import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
-import fi.otavanopisto.pyramus.dao.security.PermissionDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
-import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.security.ContextReference;
 
@@ -23,7 +19,7 @@ import fi.otavanopisto.security.ContextReference;
 public class SessionControllerImpl implements SessionController {
   
   @Inject
-  private PermissionDAO permissionDAO;
+  private Permissions permissions;
   
   @Override
   public void logout() {
@@ -54,27 +50,7 @@ public class SessionControllerImpl implements SessionController {
 
   @Override
   public boolean hasPermission(String permissionName, ContextReference contextReference) {
-    Permission permission = permissionDAO.findByName(permissionName);
-    PermissionResolver permissionResolver = getPermissionResolver(permission);
-    
-    if (isLoggedIn()) {
-      return isSuperuser() || permissionResolver.hasPermission(permission, contextReference, getUser());
-    } else {
-      return permissionResolver.hasEveryonePermission(permission, contextReference);
-    }
-  }
-  
-  @Inject
-  @Any
-  private Instance<PermissionResolver> permissionResolvers;
-  
-  private PermissionResolver getPermissionResolver(Permission permission) {
-    for (PermissionResolver resolver : permissionResolvers) {
-      if (resolver.handlesPermission(permission))
-        return resolver;
-    }
-    
-    return null;
+    return permissions.hasPermission(getUser(), permissionName, contextReference);
   }
   
   private Locale locale;
@@ -89,11 +65,6 @@ public class SessionControllerImpl implements SessionController {
       return userDAO.findById(loggedUserId);
     } else
       return null;
-  }
-
-  @Override
-  public boolean isSuperuser() {
-    return false;
   }
 
   @Override

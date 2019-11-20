@@ -2,23 +2,28 @@ package fi.otavanopisto.pyramus.rest.filter;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 
+import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplicationAccessToken;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.rest.annotation.Unsecure;
 import fi.otavanopisto.pyramus.rest.controller.OauthController;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
@@ -39,9 +44,6 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
   private OauthController oauthController;
   
   @Inject
-  private Logger logger;
-  
-  @Inject
   private SessionControllerDelegate sessionControllerDelegate;
   
   @Inject
@@ -50,6 +52,9 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
 
   @Inject
   private RESTSecurity restSecurity;
+  
+  @Inject
+  private UserDAO userDAO;
   
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -61,32 +66,66 @@ public class SecurityFilter implements javax.ws.rs.container.ContainerRequestFil
       requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build());
     } else {
       if (!method.isAnnotationPresent(Unsecure.class)) {
-        try {
-          OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
-          String accessToken = oauthRequest.getAccessToken();
-  
-          ClientApplicationAccessToken clientApplicationAccessToken = oauthController.findByAccessToken(accessToken);
-          if (clientApplicationAccessToken == null) {
-            logger.warning(String.format("REST call failed. No ClientApplicationAccessToken for %s", accessToken));
+        if (hasApiAccess()) {
+          if (!restSecurity.hasPermission(method)) {
             requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
-          } else {
-            Long currentTime = System.currentTimeMillis() / 1000L;
-            if (currentTime > clientApplicationAccessToken.getExpires()) {
-              logger.warning(String.format("REST call failed. Time %d but token %s expired %d", currentTime, accessToken, (clientApplicationAccessToken.getExpires() * 1000L)));
-              requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
-            } else {
-              if (!restSecurity.hasPermission(method)) {
-                requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
-              }
-            }
           }
-        } catch (OAuthProblemException e) {
-          requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST).entity(e.getMessage()).build());
-        } catch (OAuthSystemException e) {
-          requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build());
+        } else {
+          requestContext.abortWith(Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build());
         }
       }
     }
   }
+
+  private boolean hasApiAccess() {
+    return hasOAuthApiAccess() || hasSessionApiAccess();
+  }
   
+  private boolean hasOAuthApiAccess() {
+    try {
+      OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
+      String accessToken = oauthRequest.getAccessToken();
+
+      ClientApplicationAccessToken clientApplicationAccessToken = oauthController.findByAccessToken(accessToken);
+      if (clientApplicationAccessToken == null) {
+        return false;
+      } else {
+        Long currentTime = System.currentTimeMillis() / 1000L;
+        if (currentTime > clientApplicationAccessToken.getExpires()) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    } catch (OAuthProblemException e) {
+      return false;
+    } catch (OAuthSystemException e) {
+      return false;
+    }
+  }
+  
+  private boolean hasSessionApiAccess() {
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+      Long loggedUserId = (Long) session.getAttribute("loggedUserId");
+      if (loggedUserId != null) {
+        User loggedUser = userDAO.findById(loggedUserId);
+        if (loggedUser != null) {
+          Role[] allowedRoles = new Role[] {
+              Role.ADMINISTRATOR,
+              Role.MANAGER,
+              Role.STUDY_PROGRAMME_LEADER,
+              Role.STUDY_GUIDER,
+              Role.TEACHER
+          };
+          
+          return UserUtils.hasManagementOrganizationAccess(loggedUser) && ArrayUtils.contains(allowedRoles, loggedUser.getRole());
+        } else {
+          return false;
+        }
+      }
+    }
+    
+    return false;
+  }
 }

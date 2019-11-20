@@ -14,6 +14,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
 import fi.otavanopisto.pyramus.dao.base.ContactTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
@@ -21,11 +22,13 @@ import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
+import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
+import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -55,6 +58,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     UserIdentificationDAO userIdentificationDAO = DAOFactory.getInstance().getUserIdentificationDAO();
+    OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
 
     Long personId = requestContext.getLong("personId");
     
@@ -81,7 +85,15 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     String username = requestContext.getString("username");
     String password = requestContext.getString("password1");
     String password2 = requestContext.getString("password2");
-    
+    Long organizationId = requestContext.getLong("organizationId");
+
+    User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
+    Organization organization = organizationId != null ? organizationDAO.findById(organizationId) : null;
+
+    if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
+      throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid organization.");
+    }
+
     Set<Tag> tagEntities = new HashSet<>();
     if (!StringUtils.isBlank(tagsText)) {
       List<String> tags = Arrays.asList(tagsText.split("[\\ ,]"));
@@ -98,7 +110,7 @@ public class CreateUserJSONRequestController extends JSONRequestController {
     // User
 
     Person person = personId != null ? personDAO.findById(personId) : personDAO.create(null, null, null, null, Boolean.FALSE);
-    StaffMember user = userDAO.create(firstName, lastName, role, person, false);
+    StaffMember user = userDAO.create(organization, firstName, lastName, role, person, false);
     if (title != null)
       userDAO.updateTitle(user, title);
     
