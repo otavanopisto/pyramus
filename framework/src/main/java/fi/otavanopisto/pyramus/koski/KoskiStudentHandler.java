@@ -199,14 +199,10 @@ public abstract class KoskiStudentHandler {
             }
           break; 
           case PROLONGED_STUDYENDDATE:
-            // Pidennetty päättymispäivä on aina muuta kautta rahoitettu
+            // Pidennetty päättymispäivä on aina muuta kautta rahoitettu ja päättymispäivää ei raportoida Koskeen
             OpiskeluoikeusJakso pidennettyPäättymispäiväjakso = new OpiskeluoikeusJakso(period.getBegin(), OpiskeluoikeudenTila.lasna);
             pidennettyPäättymispäiväjakso.setOpintojenRahoitus(new KoodistoViite<>(OpintojenRahoitus.K6));
             tila.addOpiskeluoikeusJakso(pidennettyPäättymispäiväjakso);
-            
-            if (period.getEnd() != null) {
-              tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(period.getEnd(), OpiskeluoikeudenTila.lasna));
-            }
           break;
         }
       }
