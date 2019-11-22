@@ -2288,6 +2288,28 @@
                   </c:choose>
 
                   <c:choose>
+                    <c:when test="${!empty studentStudyPeriods[student.id]}">
+                      <div class="genericFormSection">
+                        <jsp:include
+                          page="/templates/generic/fragments/formtitle.jsp">
+                          <jsp:param name="titleLocale"
+                            value="students.viewStudent.studyPeriodsTitle" />
+                          <jsp:param name="helpLocale"
+                            value="students.viewStudent.studyPeriodsHelp" />
+                        </jsp:include>
+                        <div class="genericViewFormDataText">
+                          <c:forEach var="period" items="${studentStudyPeriods[student.id]}">
+                            <div>
+                              <fmt:message key="generic.studentStudyPeriods.${period.periodType}"/>
+                              <fmt:formatDate value="${period.begin}"/> - <fmt:formatDate value="${period.end}"/>
+                            </div>
+                          </c:forEach>
+                        </div>
+                      </div>
+                    </c:when>
+                  </c:choose>
+
+                  <c:choose>
                     <c:when test="${!empty student.studyEndDate}">
                       <div class="genericFormSection">
                         <jsp:include
