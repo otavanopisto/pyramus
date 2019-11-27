@@ -79,7 +79,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     String education = oldStudent.getEducation();
     Nationality nationality = oldStudent.getNationality();
     School school = oldStudent.getSchool();
-    StudyProgramme studyProgramme = null; // student.getStudyProgramme();
+    StudyProgramme studyProgramme = oldStudent.getStudyProgramme();
     StudentStudyEndReason studyEndReason = null; // student.getStudyEndReason();
     Curriculum curriculum = oldStudent.getCurriculum();
 
