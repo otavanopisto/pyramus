@@ -16,7 +16,6 @@
     <header class="application-header">
       <div class="application-header__content">
         <div class="application-header__logo">
-          <div class="application-header__logo-text">Otavan<br/>Opist<span class="application-header__logo-branding">o...</span></div>
         </div>
       </div>
     </header>
@@ -45,7 +44,7 @@
           </section>
           
           <main class="application-content application-content--credentials">
-            <p>Tervetuloa opiskelemaan Otavan Opistoon! Lähetämme Sinulle piakkoin lisätietoja opintojen aloittamisesta.</p>
+            <p>Tervetuloa opiskelemaan! Lähetämme Sinulle piakkoin lisätietoja opintojen aloittamisesta.</p>
           </main>
         </c:otherwise>
       </c:choose>

@@ -304,9 +304,7 @@ public class OnnistuuClient {
       baseUrl.append(":");
       baseUrl.append(httpRequest.getServerPort());
       
-      String documentPath = StringUtils.equals(line, "aikuislukio")
-          ? "/templates/applications/document-staff-signed-otava.html"
-          : "/templates/applications/document-staff-signed-otavia.html"; 
+      String documentPath = isOpistoLine(line) ? "/templates/applications/document-staff-signed-otava.html" : "/templates/applications/document-staff-signed-otavia.html"; 
 
       // Staff signed document skeleton
 
@@ -333,15 +331,15 @@ public class OnnistuuClient {
         primarySignerId = signer.getId();
       }
       if (primarySignerId.equals(signer.getId())) {
-        document = StringUtils.replace(document, "[DOCUMENT-PRIMARY-SIGNER]", getSignature(signer));
+        document = StringUtils.replace(document, "[DOCUMENT-PRIMARY-SIGNER]", getSignature(signer, line));
         document = StringUtils.replace(document, "[DOCUMENT-SECONDARY-SIGNER]", "");
       }
       else {
         StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
         StaffMember primarySigner = staffMemberDAO.findById(primarySignerId);
-        document = StringUtils.replace(document, "[DOCUMENT-PRIMARY-SIGNER]", getSignature(primarySigner));
+        document = StringUtils.replace(document, "[DOCUMENT-PRIMARY-SIGNER]", getSignature(primarySigner, line));
         document = StringUtils.replace(document, "[DOCUMENT-SECONDARY-SIGNER]",
-            "<p>Puolesta</p>" + getSignature(signer));
+            "<p>Puolesta</p>" + getSignature(signer, line));
       }
 
       // Convert to PDF
@@ -378,9 +376,7 @@ public class OnnistuuClient {
       baseUrl.append(":");
       baseUrl.append(httpRequest.getServerPort());
 
-      String documentPath = StringUtils.equals(line, "aikuislukio")
-          ? "/templates/applications/document-student-signed-otava.html"
-          : "/templates/applications/document-student-signed-otavia.html"; 
+      String documentPath = isOpistoLine(line) ? "/templates/applications/document-student-signed-otava.html" : "/templates/applications/document-student-signed-otavia.html"; 
 
       // Applicant signed document skeleton
 
@@ -412,14 +408,24 @@ public class OnnistuuClient {
     }
   }
 
-  private String getSignature(StaffMember staffMember) {
+  private String getSignature(StaffMember staffMember, String line) {
     StringBuffer sb = new StringBuffer();
     sb.append(String.format("<p>%s</p>", staffMember.getFullName()));
     if (!StringUtils.isBlank(staffMember.getTitle())) {
       sb.append(String.format("<p>%s</p>", StringUtils.capitalize(staffMember.getTitle())));
     }
-    sb.append("<p>Otavan Opisto</p>");
+    if (isOpistoLine(line)) {
+      sb.append("<p>Otavan Opisto</p>");
+    }
+    else {
+      sb.append("<p>Otavia</p>");
+    }
+    
     return sb.toString();
+  }
+  
+  private boolean isOpistoLine(String line) {
+    return StringUtils.equals(line, "aikuislukio");
   }
 
   private static final OnnistuuClient INSTANCE = new OnnistuuClient();

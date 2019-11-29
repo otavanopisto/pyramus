@@ -30,7 +30,6 @@
     <header class="application-header">
       <div class="application-header__content">
         <div class="application-header__logo">
-          <div class="application-header__logo-text">Otavan<br/>Opist<span class="application-header__logo-branding">o...</span></div>
         </div>
       </div>
     </header>
