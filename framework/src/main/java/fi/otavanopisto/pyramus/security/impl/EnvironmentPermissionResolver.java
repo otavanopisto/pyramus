@@ -3,7 +3,7 @@ package fi.otavanopisto.pyramus.security.impl;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -26,7 +26,7 @@ import fi.otavanopisto.security.PermissionFeatureHandler;
 import fi.otavanopisto.security.PermissionFeatureLiteral;
 import fi.otavanopisto.security.User;
 
-@Stateless
+@ApplicationScoped
 public class EnvironmentPermissionResolver extends AbstractPermissionResolver implements PermissionResolver {
 
   @Inject
