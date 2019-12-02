@@ -2,14 +2,14 @@ package fi.otavanopisto.pyramus.security.impl;
 
 import java.util.Date;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 
 import fi.otavanopisto.pyramus.domainmodel.security.Permission;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.security.ContextReference;
 import fi.otavanopisto.security.User;
 
-@Stateless
+@ApplicationScoped
 public class StudentOwnerPermissionResolver extends AbstractPermissionResolver implements PermissionResolver {
 
   @Override
