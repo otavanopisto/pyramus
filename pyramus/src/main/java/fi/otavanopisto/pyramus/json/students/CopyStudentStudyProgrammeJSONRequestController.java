@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.AddressDAO;
@@ -12,6 +13,7 @@ import fi.otavanopisto.pyramus.dao.base.ContactInfoDAO;
 import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
+import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.grading.CourseAssessmentDAO;
 import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
@@ -35,9 +37,11 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
+import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 
 public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestController {
 
@@ -52,14 +56,30 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     TransferCreditDAO transferCreditDAO = DAOFactory.getInstance().getTransferCreditDAO();
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
+    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
 
     Long studentId = requestContext.getLong("studentId");
     Student oldStudent = studentDAO.findById(studentId);
+    
+    StaffMember loggedUser = userDAO.findById(requestContext.getLoggedUserId());
+    
+    if (!UserUtils.canAccessOrganization(loggedUser, oldStudent.getOrganization())) {
+      throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Cannot access specified student");
+    }
+    
+    Long newStudyProgrammeId = requestContext.getLong("newStudyProgrammeId");
+    StudyProgramme newStudyProgramme = studyProgrammeDAO.findById(newStudyProgrammeId);
+    
+    if (newStudyProgramme == null) {
+      throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, "New Study Programme not defined");
+    }
+    
+    if (!UserUtils.canAccessOrganization(loggedUser, newStudyProgramme.getOrganization())) {
+      throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Cannot access specified study programme");
+    }
 
     Boolean linkCredits = requestContext.getBoolean("linkCredits");
     Boolean setAsDefaultUser = requestContext.getBoolean("setAsDefaultUser");
-    
-    User loggedUser = userDAO.findById(requestContext.getLoggedUserId());
     
     Person person = oldStudent.getPerson();
     String firstName = oldStudent.getFirstName();
@@ -79,7 +99,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     String education = oldStudent.getEducation();
     Nationality nationality = oldStudent.getNationality();
     School school = oldStudent.getSchool();
-    StudyProgramme studyProgramme = oldStudent.getStudyProgramme();
+    StudyProgramme studyProgramme = newStudyProgramme; // oldStudent.getStudyProgramme();
     StudentStudyEndReason studyEndReason = null; // student.getStudyEndReason();
     Curriculum curriculum = oldStudent.getCurriculum();
 
