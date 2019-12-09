@@ -870,7 +870,7 @@
     <div id="editStudentEditFormContainer"> 
       <div class="genericFormContainer"> 
 
-        <form action="editstudent.json" method="post" ix:jsonform="true" ix:useglasspane="true">
+        <form action="editstudent.json" method="post" ix:jsonform="true" ix:useglasspane="true" autocomplete="off">
           <input type="hidden" name="version" value="${person.version}"/>
         
           <div class="tabLabelsContainer" id="tabs">
