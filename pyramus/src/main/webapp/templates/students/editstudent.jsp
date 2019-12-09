@@ -763,14 +763,15 @@
               centered : true,
               showOk : true,  
               showCancel : true,
+              disableOk: true,
               title : '<fmt:message key="students.copyStudyProgrammePopup.dialogTitle"/>',
               okLabel : '<fmt:message key="students.copyStudyProgrammePopup.okLabel"/>',
               cancelLabel : '<fmt:message key="students.copyStudyProgrammePopup.cancelLabel"/>'
             });
 
-            var dHeight = studentHasCredits ? "240px" : "160px";
+            var dHeight = studentHasCredits ? "320px" : "240px";
             
-            dialog.setSize("340px", dHeight);
+            dialog.setSize("360px", dHeight);
             dialog.addDialogListener( function(event) {
               var dlg = event.dialog;
           
@@ -782,10 +783,14 @@
 
                   var defaultUserCheckBox = pelem.down("input[name='defaultUserCheckBox']");
                   var setAsDefaultUser = defaultUserCheckBox.checked == true ? true : false;
+
+                  var newStudyProgrammeIdSelect = pelem.down("select[name='newStudyProgrammeId']");
+                  var newStudyProgrammeId = newStudyProgrammeIdSelect.value;
                   
                   JSONRequest.request("students/copystudyprogramme.json", {
                     parameters: {
                       studentId: studentId,
+                      newStudyProgrammeId: newStudyProgrammeId,
                       linkCredits: linkCredits,
                       setAsDefaultUser: setAsDefaultUser
                     },

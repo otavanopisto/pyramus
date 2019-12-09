@@ -8,9 +8,33 @@
 <html>
   <head>
     <jsp:include page="/templates/generic/head_generic.jsp"></jsp:include>
+    
+    <script type="text/javascript">
+      function onStudyProgrammeChange() {
+        var newStudyProgrammeIdSelect = document.getElementById("newStudyProgrammeId");
+        var newStudyProgrammeId = newStudyProgrammeIdSelect.value;
+        if (newStudyProgrammeId > 0) {
+          getDialog().enableOkButton();
+        } else {
+          getDialog().disableOkButton();
+        }
+      }
+    </script>
   </head>
   <body>
     <div class="studyProgrammeCopyPopupContainer">
+      <div>           
+        <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+          <jsp:param name="titleLocale" value="terms.studyProgramme"/>
+        </jsp:include>            
+        <select class="required" name="newStudyProgrammeId" id="newStudyProgrammeId" onchange="onStudyProgrammeChange();">
+          <option></option>           
+          <c:forEach var="studyProgramme" items="${studyProgrammes}">
+            <option value="${studyProgramme.id}">${studyProgramme.name}</option> 
+          </c:forEach>
+        </select>
+      </div>
+    
       <c:choose>
         <c:when test="${courseAssessmentCount + transferCreditCount + creditLinkCount gt 0}">
           <div><fmt:message key="students.copyStudyProgrammePopup.dialogMessage">
