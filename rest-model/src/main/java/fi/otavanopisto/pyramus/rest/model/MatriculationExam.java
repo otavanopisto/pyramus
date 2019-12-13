@@ -42,10 +42,19 @@ public class MatriculationExam {
     this.enrolled = enrolled;
   }
 
+  public Long getEnrollmentDate() {
+    return enrollmentDate;
+  }
+
+  public void setEnrollmentDate(Long enrollmentDate) {
+    this.enrollmentDate = enrollmentDate;
+  }
+
   private Long id;
   private Long starts;
   private Long ends;
   private boolean eligible;
   private boolean enrolled;
+  private Long enrollmentDate;
 }
 
