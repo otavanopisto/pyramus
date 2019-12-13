@@ -316,11 +316,6 @@ public class MatriculationRESTService extends AbstractRESTService {
     return false;
   }
 
-  private boolean isEnrolled(Student student, MatriculationExam exam) {
-    return student == null ? false :
-        matriculationExamEnrollmentDao.findLatestByExamAndStudent(exam, student) != null;
-  }
-  
   private fi.otavanopisto.pyramus.rest.model.MatriculationExam restModel(MatriculationExam exam, Student student) {
     fi.otavanopisto.pyramus.rest.model.MatriculationExam result = new fi.otavanopisto.pyramus.rest.model.MatriculationExam();
     result.setId(exam.getId());
@@ -328,10 +323,15 @@ public class MatriculationRESTService extends AbstractRESTService {
     result.setEnds(exam.getEnds().getTime());
     if (student != null) {
       result.setEligible(isEligible(student, exam));
-      result.setEnrolled(isEnrolled(student, exam));
+      
+      MatriculationExamEnrollment examEnrollment = matriculationExamEnrollmentDao.findLatestByExamAndStudent(exam, student);
+      result.setEnrolled(examEnrollment != null);
+      result.setEnrollmentDate((examEnrollment != null && examEnrollment.getEnrollmentDate() != null) ? 
+          examEnrollment.getEnrollmentDate().getTime() : null);
     } else {
       result.setEligible(false);
       result.setEnrolled(false);
+      result.setEnrollmentDate(null);
     }
     return result;
   }
