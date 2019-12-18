@@ -41,13 +41,15 @@ public class PersonController {
   }
   
   public Person findPersonById(Long id) {
-    Person person = personDAO.findById(id);
-    return person;
+    return personDAO.findById(id);
+  }
+  
+  public Person findBySsn(String ssn) {
+    return personDAO.findBySSN(ssn);
   }
   
   public Person findUniquePersonByEmail(String email) {
-    Person person = personDAO.findByUniqueEmail(email);
-    return person;
+    return personDAO.findByUniqueEmail(email);
   }
   
   public Person updatePerson(Person person, Date birthday, String socialSecurityNumber, Sex sex, String basicInfo, Boolean secureInfo) {

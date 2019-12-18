@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest;
 
 import java.security.SecureRandom;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -23,33 +24,41 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
+import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PasswordResetRequestDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Defaults;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
+import fi.otavanopisto.pyramus.domainmodel.students.Sex;
+import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.PasswordResetRequest;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
+import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.controller.ClientApplicationController;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.PersonController;
+import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MuikkuPermissions;
 import fi.otavanopisto.pyramus.rest.model.muikku.CredentialResetPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StaffMemberPayload;
+import fi.otavanopisto.pyramus.rest.model.muikku.StudentPayload;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/muikku")
@@ -70,6 +79,9 @@ public class MuikkuRESTService {
 
   @Inject
   private UserController userController;
+
+  @Inject
+  private StudentController studentController;
 
   @Inject
   private SessionController sessionController;
@@ -98,6 +110,10 @@ public class MuikkuRESTService {
     if (defaults.getUserDefaultContactType() == null) {
       return Response.status(Status.INTERNAL_SERVER_ERROR).entity("userDefaultContactType not set in Defaults").build();
     }
+    User loggedUser = sessionController.getUser();    
+    if (loggedUser.getOrganization() == null) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
+    }
 
     // Basic payload validation
     
@@ -122,14 +138,112 @@ public class MuikkuRESTService {
     
     // User creation
     
-    User loggedUser = sessionController.getUser();    
-    if (loggedUser.getOrganization() == null) {
-      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
-    }
     Person person = personController.createPerson(null,  null,  null,  null,  Boolean.FALSE);
     StaffMember staffMember = userController.createStaffMember(loggedUser.getOrganization(), payload.getFirstName(), payload.getLastName(), role, person);
     userController.addUserEmail(staffMember, defaults.getUserDefaultContactType(), address, Boolean.TRUE);
     payload.setIdentifier(staffMember.getId().toString());
+    
+    return Response.ok(payload).build();
+  }
+
+  @Path("/students")
+  @POST
+  @RESTPermit(MuikkuPermissions.MUIKKU_CREATE_STUDENT)
+  public Response createStudent(StudentPayload payload) {
+    
+    // Prerequisites
+    
+    DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
+    Defaults defaults = defaultsDAO.getDefaults();
+    if (defaults.getStudentDefaultContactType() == null) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("studentDefaultContactType not set in Defaults").build();
+    }
+    User loggedUser = sessionController.getUser();    
+    if (loggedUser.getOrganization() == null) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
+    }
+
+    // Basic payload validation
+    
+    if (StringUtils.isAnyBlank(payload.getFirstName(), payload.getLastName(), payload.getEmail())) {
+      return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
+    }
+    Sex sex = null;
+    if (!StringUtils.isBlank(payload.getGender())) {
+      try {
+        sex = Sex.valueOf(payload.getGender());
+      }
+      catch (IllegalArgumentException e) {
+        return Response.status(Status.BAD_REQUEST).entity(String.format("Invalid payload gender %s", payload.getGender())).build();
+      }
+    }
+    
+    // Study programme validation
+    
+    if (StringUtils.isBlank(payload.getStudyProgrammeIdentifier()) || !NumberUtils.isNumber(payload.getStudyProgrammeIdentifier())) {
+      return Response.status(Status.BAD_REQUEST).entity("Invalid payload study programme").build();
+    }
+    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
+    StudyProgramme studyProgramme = studyProgrammeDAO.findById(Long.valueOf(payload.getStudyProgrammeIdentifier()));
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studyProgramme.getOrganization())) {
+      return Response.status(Status.BAD_REQUEST).entity("No study programme access").build();
+    }
+    
+    // Birthday generation if SSN present
+
+    Date birthday = null;
+    if (!StringUtils.isBlank(payload.getSsn())) {
+      try {
+        birthday = new SimpleDateFormat("ddMMyy").parse(payload.getSsn().substring(0, 6));
+      }
+      catch (Exception e) {
+        return Response.status(Status.BAD_REQUEST).entity("Invalid payload SSN").build();
+      }
+    }
+    
+    // Check if user exists based on email or (possible) SSN
+    
+    String address = StringUtils.trim(StringUtils.lowerCase(payload.getEmail()));
+    Email email = commonController.findEmailByAddress(address);
+    if (email != null) {
+      return Response.status(Status.CONFLICT).entity(getMessage("error.emailInUse")).build();
+    }
+    String ssn = null;
+    if (!StringUtils.isBlank(payload.getSsn())) {
+      ssn = StringUtils.upperCase(payload.getSsn());
+      Person person = personController.findBySsn(ssn);
+      if (person != null) {
+        return Response.status(Status.CONFLICT).entity(getMessage("error.ssnInUse")).build();
+      }
+    }
+    
+    // Student creation
+    
+    Person person = personController.createPerson(birthday, ssn, sex, null, Boolean.FALSE);
+    Student student = studentController.createStudent(
+        person,
+        payload.getFirstName(),
+        payload.getLastName(),
+        null, // nickname
+        null, // additionalInfo
+        null, // studyTimeEnd
+        null, // activityType
+        null, // examinationType
+        null, // educationalLevel
+        null, // education
+        null, // nationality
+        null, // municipality
+        null, // language
+        null, // school
+        studyProgramme,
+        null, // curriculum
+        null, // previousStudies
+        null, // studyStartDate (TODO should this be immediately set to current date?) 
+        null, // studyEndDate
+        null, // studyEndReason
+        null); // studyEndText
+    userController.addUserEmail(student, defaults.getStudentDefaultContactType(), address, Boolean.TRUE);
+    payload.setIdentifier(student.getId().toString());
     
     return Response.ok(payload).build();
   }
