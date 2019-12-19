@@ -2,6 +2,9 @@ package fi.otavanopisto.pyramus.rest.model;
 
 public class MatriculationEligibilities {
 
+  public MatriculationEligibilities() {
+  }
+  
   public MatriculationEligibilities(boolean upperSecondarySchoolCurriculum) {
     this.upperSecondarySchoolCurriculum = upperSecondarySchoolCurriculum;
   }
