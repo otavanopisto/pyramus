@@ -50,9 +50,11 @@ import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MatriculationPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
+import fi.otavanopisto.pyramus.rest.model.MatriculationEligibilities;
 import fi.otavanopisto.pyramus.rest.model.MatriculationExamAttendance;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
+import fi.otavanopisto.security.LoggedIn;
 
 @Path("/matriculation")
 @Produces(MediaType.APPLICATION_JSON)
@@ -94,10 +96,22 @@ public class MatriculationRESTService extends AbstractRESTService {
   @Inject
   private StudentGroupStudentDAO studentGroupStudentDAO;
 
+  @Path("/eligibility")
+  @GET
+  @LoggedIn
+  @RESTPermit(handling = Handling.INLINE)
+  public Response listEligibilities() {
+    User loggedUser = sessionController.getUser();
+    
+    boolean upperSecondarySchoolCurriculum = loggedUser instanceof Student ? hasGroupEligibility((Student) loggedUser) : false;
+    
+    return Response.ok(new MatriculationEligibilities(upperSecondarySchoolCurriculum)).build();
+  }
+  
   @Path("/exams")
   @GET
   @RESTPermit(MatriculationPermissions.LIST_EXAMS)
-  public Response listEligibleExams(@QueryParam("onlyEligible") Boolean onlyEligible) {
+  public Response listExams(@QueryParam("onlyEligible") Boolean onlyEligible) {
     User loggedUser = sessionController.getUser();
     Student student = loggedUser instanceof Student ? (Student) loggedUser : null;
     List<MatriculationExam> exams = matriculationExamDao.listAll();
@@ -278,17 +292,16 @@ public class MatriculationRESTService extends AbstractRESTService {
 
   private boolean isEligible(Student student, MatriculationExam matriculationExam) {
     return student == null ? false :
-      isVisible(matriculationExam, student) && hasGroupAccess(student, matriculationExam);
+      isVisible(matriculationExam, student) && hasGroupEligibility(student);
   }
 
   /**
    * Returns true if student is in one of the groups mentioned in the setting.
    * 
    * @param student
-   * @param matriculationExam
    * @return
    */
-  private boolean hasGroupAccess(Student student, MatriculationExam matriculationExam) {
+  private boolean hasGroupEligibility(Student student) {
     if (student != null) {
       String eligibleGroupsStr = SettingUtils.getSettingValue(SETTING_ELIGIBLE_GROUPS);
       
