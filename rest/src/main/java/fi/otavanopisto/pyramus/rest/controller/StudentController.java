@@ -263,6 +263,21 @@ public class StudentController {
     return emailDAO.create(student.getContactInfo(), contactType, defaultAddress, address);
   }
   
+  public Email updateStudentEmail(Student student, Email email, ContactType contactType, String address, Boolean defaultAddress) throws UserEmailInUseException {
+    // Trim the email address
+    address = StringUtils.trim(address);
+
+    if (StringUtils.isBlank(address)) {
+      throw new IllegalArgumentException("Email cannot be blank.");
+    }
+    
+    if (!UserUtils.isAllowedEmail(address, contactType, student.getPerson().getId())) {
+      throw new UserEmailInUseException();
+    }
+    
+    return emailDAO.update(email, contactType, defaultAddress, address);
+  }
+  
   /* Address */
 
   public Address addStudentAddress(Student student, ContactType contactType, Boolean defaultAddress, String name, String streetAddress, String postalCode, String city, String country) {
@@ -277,6 +292,10 @@ public class StudentController {
 
   public PhoneNumber addStudentPhoneNumber(Student student, ContactType contactType, String number, Boolean defaultNumber) {
     return phoneNumberDAO.create(student.getContactInfo(), contactType, defaultNumber, number);
+  }
+  
+  public PhoneNumber updateStudentPhoneNumber(PhoneNumber phoneNumber, ContactType contactType, String number, Boolean defaultNumber) {
+    return phoneNumberDAO.update(phoneNumber, contactType, defaultNumber, number);
   }
   
   /* ContactURL */
@@ -308,6 +327,6 @@ public class StudentController {
   public void deleteLodgingPeriod(StudentLodgingPeriod period) {
     studentLodgingPeriodDAO.delete(period);
   }
-  
+
 }
 
