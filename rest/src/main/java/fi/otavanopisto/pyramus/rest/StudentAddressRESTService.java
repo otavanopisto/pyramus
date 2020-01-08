@@ -150,12 +150,8 @@ public class StudentAddressRESTService extends AbstractRESTService {
       return Response.status(studentStatus).build();
     }
 
-    if (!restSecurity.hasPermission(
-          new String[] { StudentPermissions.UPDATE_STUDENTADDRESS },
-          student)
-        && !restSecurity.hasPermission(
-            new String[] { StudentPermissions.STUDENT_OWNER },
-            student )) {
+    if (!restSecurity.hasPermission(new String[] { StudentPermissions.UPDATE_STUDENTADDRESS }, student)
+        && !restSecurity.hasPermission(new String[] { StudentPermissions.STUDENT_OWNER }, student)) {
       return Response.status(Status.FORBIDDEN).build();
     }
 
