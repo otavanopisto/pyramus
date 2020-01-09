@@ -65,6 +65,44 @@ public class StudentEmailTestsIT extends AbstractRESTServiceTest {
   }  
 
   @Test
+  public void testUpdateStudentEmail() {
+    Email email = new Email(null, 1l, Boolean.FALSE, "bogus@norealmail.org");
+    
+    Response response = given().headers(getAuthHeaders())
+      .contentType("application/json")
+      .body(email)
+      .post("/students/students/{ID}/emails", TEST_STUDENT_ID);
+
+    response.then()
+      .statusCode(200)
+      .body("id", not(is((Long) null)))
+      .body("address", is(email.getAddress()))
+      .body("contactTypeId", is(email.getContactTypeId().intValue()))
+      .body("defaultAddress", is( email.getDefaultAddress()));
+      
+    long id = response.body().jsonPath().getLong("id");
+    try {
+      Email updatedEmail = new Email(id, 1l, Boolean.FALSE, "jinxed@example.org");
+      
+      given().headers(getAuthHeaders())
+        .contentType("application/json")
+        .body(updatedEmail)
+        .put("/students/students/{ID}/emails/{EMAILID}", TEST_STUDENT_ID, id)
+        .then()
+        .statusCode(200)
+        .body("id", not(is((Long) null)))
+        .body("address", is(updatedEmail.getAddress()))
+        .body("contactTypeId", is(updatedEmail.getContactTypeId().intValue()))
+        .body("defaultAddress", is(updatedEmail.getDefaultAddress()));
+    } finally {
+      given().headers(getAuthHeaders())
+        .delete("/students/students/{STUDENTID}/emails/{ID}", TEST_STUDENT_ID, id)
+        .then()
+        .statusCode(204);
+    }
+  }
+  
+  @Test
   public void testDeleteStudentEmail() {
     Email email = new Email(null, 1l, Boolean.FALSE, "bogus@norealmail.org");
     

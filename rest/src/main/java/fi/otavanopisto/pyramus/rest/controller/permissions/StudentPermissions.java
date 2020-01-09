@@ -100,6 +100,10 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   public static final String FIND_STUDENTEMAIL = "FIND_STUDENTEMAIL";
   
   @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String UPDATE_STUDENTEMAIL = "UPDATE_STUDENTEMAIL";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String DELETE_STUDENTEMAIL = "DELETE_STUDENTEMAIL";
   
@@ -142,6 +146,10 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
   public static final String FIND_STUDENTPHONENUMBER = "FIND_STUDENTPHONENUMBER";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  public static final String UPDATE_STUDENTPHONENUMBER = "UPDATE_STUDENTPHONENUMBER";
   
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR })
