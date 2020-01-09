@@ -5,7 +5,7 @@
 <!-- Footer starts -->
 
 <div id="GUI_footerContainer">
-  <a href="http://otavanopisto.fi/resources/public/tietosuojaselosteet/opiskelijarekisteri_tietosuojaseloste.pdf" target="top" class="privacy-policy-link">Opiskelija- ja opintotietorekisterin tietosuojaseloste</a>
+  <a href="https://otavanopisto.fi/wp-content/uploads/2020/01/opiskelijarekisteri_tietosuojaseloste.pdf" target="top" class="privacy-policy-link">Opiskelija- ja opintotietorekisterin tietosuojaseloste</a>
 </div>
 
 <!-- Footer ends -->
