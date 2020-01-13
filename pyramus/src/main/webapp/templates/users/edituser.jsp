@@ -506,7 +506,7 @@
                 <jsp:param name="titleLocale" value="terms.organization"/>
                 <jsp:param name="helpLocale" value="users.editUser.organizationHelp"/>
               </jsp:include>                  
-              <select name="organizationId">
+              <select name="organizationId" class="required">
                 <option value=""></option>
                 <c:forEach items="${organizations}" var="organization">
                   <c:choose>
