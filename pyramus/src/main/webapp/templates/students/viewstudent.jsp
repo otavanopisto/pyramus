@@ -211,7 +211,7 @@
         return variablesTable;
       }
 
-      function initPersonVariablesTable(studentId) {
+      function initPersonVariablesTable(studentId, personVariables) {
         var variablesTable = new IxTable($('personVariablesTableContainer.' + studentId), {
           id : "personVariablesTable." + studentId,
           columns : [{
@@ -229,6 +229,30 @@
           }]
         });
 
+        if (personVariables && personVariables.length > 0) {
+          for (var i = 0, l = personVariables.length; i < l; i++) {
+            var rowNumber = variablesTable.addRow([
+              personVariables[i].name,
+              personVariables[i].value
+            ]);
+  
+            switch (personVariables[i].type) {
+              case 'NUMBER':
+                variablesTable.setCellDataType(rowNumber, 1, 'text');
+              break;
+              case 'DATE':
+                variablesTable.setCellDataType(rowNumber, 1, 'date');
+              break;
+              case 'BOOLEAN':
+                variablesTable.setCellDataType(rowNumber, 1, 'checkbox');
+              break;
+              default:
+                variablesTable.setCellDataType(rowNumber, 1, 'text');
+              break;
+            }
+          }
+        }
+        
         return variablesTable;
       }
 
@@ -1499,29 +1523,7 @@
           }
           
           if (personVariables && personVariables.length > 0) {
-            var personVariablesTable = initPersonVariablesTable(${student.id});
-            
-            for (var i = 0, l = personVariables.length; i < l; i++) {
-              var rowNumber = personVariablesTable.addRow([
-                personVariables[i].name,
-                personVariables[i].value
-              ]);
-
-              switch (personVariables[i].type) {
-                case 'NUMBER':
-                  personVariablesTable.setCellDataType(rowNumber, 1, 'text');
-                break;
-                case 'DATE':
-                  personVariablesTable.setCellDataType(rowNumber, 1, 'date');
-                break;
-                case 'BOOLEAN':
-                  personVariablesTable.setCellDataType(rowNumber, 1, 'checkbox');
-                break;
-                default:
-                  personVariablesTable.setCellDataType(rowNumber, 1, 'text');
-                break;
-              }
-            }
+            initPersonVariablesTable(${student.id}, personVariables);
           }
         </c:forEach>
         
