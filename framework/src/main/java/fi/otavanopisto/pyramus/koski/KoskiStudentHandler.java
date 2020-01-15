@@ -113,6 +113,7 @@ public abstract class KoskiStudentHandler {
   private StudentStudyPeriodDAO studentStudyPeriodDAO;
   
   public abstract void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid);
+  public abstract void removeOid(KoskiStudyProgrammeHandler handler, Student student, String oid);
   public abstract Set<KoskiStudentId> listOids(Student student);
   
   protected void saveOrValidateOid(Student student, String oid) {
@@ -124,6 +125,16 @@ public abstract class KoskiStudentHandler {
       // Validate the oid is the same
       if (!StringUtils.equals(studyOid, oid))
         throw new RuntimeException(String.format("Returned study permit oid %s doesn't match the saved oid %s.", oid, studyOid));
+    }
+  }
+
+  protected void removeOid(Student student, String oid) {
+    String storedStudyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
+    
+    if (StringUtils.equals(storedStudyOid, oid)) {
+      userVariableDAO.setUserVariable(student, KOSKI_STUDYPERMISSION_ID, "");
+    } else {
+      logger.severe(String.format("removeOid failed for student %d with oid %s", student.getId(), oid));
     }
   }
 
@@ -150,6 +161,20 @@ public abstract class KoskiStudentHandler {
       // Validate the oid is the same
       if (!StringUtils.equals(koskiStudentId.getOid(), oid))
         throw new RuntimeException(String.format("Returned study permit oid %s doesn't match the saved oid %s.", oid, koskiStudentId.getOid()));
+    }
+  }
+
+  protected void removeInternetixOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
+    String studentIdentifier = getStudentIdentifier(handler, student.getId());
+    
+    Set<KoskiStudentId> oids = loadInternetixOids(student);
+    oids.removeIf(koskiStudentId -> StringUtils.equals(koskiStudentId.getStudentIdentifier(), studentIdentifier) && StringUtils.equals(koskiStudentId.getOid(), oid));
+    
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      userVariableDAO.setUserVariable(student, KOSKI_INTERNETIX_STUDYPERMISSION_ID, mapper.writeValueAsString(oids));
+    } catch (Exception ex) {
+      logger.severe(String.format("Serialization failed for student %s", student.getId()));
     }
   }
 

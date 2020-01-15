@@ -381,6 +381,15 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
   }
 
   @Override
+  public void removeOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
+    if (handler == HANDLER_TYPE) {
+      removeOid(student, oid);
+    } else {
+      logger.severe(String.format("removeOid called with wrong handler %s, expected %s ", handler, HANDLER_TYPE));
+    }
+  }
+  
+  @Override
   public Set<KoskiStudentId> listOids(Student student) {
     String oid = userVariableDAO.findByUserAndKey(student, KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID);
     if (StringUtils.isNotBlank(oid)) {
@@ -389,5 +398,5 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends KoskiStudentHand
       return new HashSet<>();
     }
   }
-  
+
 }

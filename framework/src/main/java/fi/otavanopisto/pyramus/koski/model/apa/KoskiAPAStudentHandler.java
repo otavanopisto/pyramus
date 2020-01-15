@@ -334,7 +334,20 @@ public class KoskiAPAStudentHandler extends KoskiStudentHandler {
 
   @Override
   public void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
-    saveOrValidateOid(student, oid);
+    if (handler == HANDLER_TYPE) {
+      saveOrValidateOid(student, oid);
+    } else {
+      logger.severe(String.format("saveOrValidateOid called with wrong handler %s, expected %s ", handler, HANDLER_TYPE));
+    }
+  }
+  
+  @Override
+  public void removeOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
+    if (handler == HANDLER_TYPE) {
+      removeOid(student, oid);
+    } else {
+      logger.severe(String.format("removeOid called with wrong handler %s, expected %s ", handler, HANDLER_TYPE));
+    }
   }
   
   @Override

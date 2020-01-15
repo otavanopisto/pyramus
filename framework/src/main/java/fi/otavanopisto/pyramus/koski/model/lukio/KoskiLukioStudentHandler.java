@@ -454,6 +454,15 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       logger.severe(String.format("saveOrValidateOid called with wrong handler %s, expected %s ", handler, HANDLER_TYPE));
     }
   }
+
+  @Override
+  public void removeOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
+    if (handler == HANDLER_TYPE) {
+      removeOid(student, oid);
+    } else {
+      logger.severe(String.format("removeOid called with wrong handler %s, expected %s ", handler, HANDLER_TYPE));
+    }
+  }
   
   @Override
   public Set<KoskiStudentId> listOids(Student student) {
