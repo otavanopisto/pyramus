@@ -211,9 +211,9 @@
         return variablesTable;
       }
 
-      function initPersonVariablesTable() {
-        var variablesTable = new IxTable($('personVariablesTableContainer'), {
-          id : "personVariablesTable",
+      function initPersonVariablesTable(studentId, personVariables) {
+        var variablesTable = new IxTable($('personVariablesTableContainer.' + studentId), {
+          id : "personVariablesTable." + studentId,
           columns : [{
             left : 8,
             width: 160,
@@ -229,6 +229,30 @@
           }]
         });
 
+        if (personVariables && personVariables.length > 0) {
+          for (var i = 0, l = personVariables.length; i < l; i++) {
+            var rowNumber = variablesTable.addRow([
+              personVariables[i].name,
+              personVariables[i].value
+            ]);
+  
+            switch (personVariables[i].type) {
+              case 'NUMBER':
+                variablesTable.setCellDataType(rowNumber, 1, 'text');
+              break;
+              case 'DATE':
+                variablesTable.setCellDataType(rowNumber, 1, 'date');
+              break;
+              case 'BOOLEAN':
+                variablesTable.setCellDataType(rowNumber, 1, 'checkbox');
+              break;
+              default:
+                variablesTable.setCellDataType(rowNumber, 1, 'text');
+              break;
+            }
+          }
+        }
+        
         return variablesTable;
       }
 
@@ -1096,36 +1120,10 @@
         var curriculumContainer = JSDATA["curriculums"].evalJSON();
         var studentVariablesContainer = JSDATA["studentVariables"].evalJSON();
         var studentAssessmentsContainer = JSDATA["studentAssessments"].evalJSON();
+        var personVariables = JSDATA["personVariables"].evalJSON();
 
         Event.observe($('koski-status'), 'click', toggleKoskiLogDetailsVisibility);
         loadLogEntries(${person.id});
-        
-        var personVariables = JSDATA["personVariables"].evalJSON();
-        if (personVariables && personVariables.length > 0) {
-          var personVariablesTable = initPersonVariablesTable();
-          
-          for (var i = 0, l = personVariables.length; i < l; i++) {
-            var rowNumber = personVariablesTable.addRow([
-              personVariables[i].name,
-              personVariables[i].value
-            ]);
-
-            switch (personVariables[i].type) {
-              case 'NUMBER':
-                personVariablesTable.setCellDataType(rowNumber, 1, 'text');
-              break;
-              case 'DATE':
-                personVariablesTable.setCellDataType(rowNumber, 1, 'date');
-              break;
-              case 'BOOLEAN':
-                personVariablesTable.setCellDataType(rowNumber, 1, 'checkbox');
-              break;
-              default:
-                personVariablesTable.setCellDataType(rowNumber, 1, 'text');
-              break;
-            }
-          }
-        }
         
         <c:forEach var="student" items="${students}">
           // Setup basics
@@ -1522,6 +1520,10 @@
                 break;
               }
             }
+          }
+          
+          if (personVariables && personVariables.length > 0) {
+            initPersonVariablesTable(${student.id}, personVariables);
           }
         </c:forEach>
         
@@ -2440,7 +2442,7 @@
                           <jsp:param name="titleLocale" value="students.viewStudent.personVariablesTitle" />
                           <jsp:param name="helpLocale" value="students.viewStudent.personVariablesHelp" />
                         </jsp:include>
-                        <div id="personVariablesTableContainer"></div>
+                        <div id="personVariablesTableContainer.${student.id}"></div>
                       </div>
                     </c:when>
                   </c:choose>
