@@ -41,7 +41,8 @@ public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
       oos.add(lukio);
     }
 
-    if (oos.isEmpty()) {
+    // Log a warning if non-archived student couldn't be translated to a model
+    if (oos.isEmpty() && Boolean.FALSE.equals(student.getArchived())) {
       koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
     }
     
