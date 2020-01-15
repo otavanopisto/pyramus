@@ -309,8 +309,6 @@ public class KoskiClient {
                 } else {
                   // For archived student the studypermission oid is cleared as Koski doesn't want to receive this id ever again
                   handler.removeOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
-                  
-//                  userVariableDAO.setUserVariable(reportedStudent, KOSKI_STUDYPERMISSION_ID, null);
                 }
               } else {
                 logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id couldn't be parsed (Person %d).", person.getId()));
