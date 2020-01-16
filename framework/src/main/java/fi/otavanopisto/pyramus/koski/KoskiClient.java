@@ -33,7 +33,6 @@ import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
-import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonLog;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
@@ -62,7 +61,6 @@ import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
 @ApplicationScoped
 public class KoskiClient {
 
-  private static final String KOSKI_STUDYPERMISSION_ID = "koski.studypermission-id";
   private static final String KOSKI_HENKILO_OID = "koski.henkilo-oid";
   
   private static final String KOSKI_SETTINGKEY_BASEURL = "koski.baseUrl";
@@ -86,9 +84,6 @@ public class KoskiClient {
   @Inject
   private StudentDAO studentDAO;
   
-  @Inject 
-  private UserVariableDAO userVariableDAO;
-
   @Inject
   private KoskiPersonLogDAO koskiPersonLogDAO;
   
@@ -308,13 +303,12 @@ public class KoskiClient {
               if (sourceSystemId != null) {
                 Student reportedStudent = studentDAO.findById(sourceSystemId.getStudentId());
                 
+                KoskiStudentHandler handler = getHandlerType(sourceSystemId.getHandler());
                 if (!reportedStudent.getArchived()) {
-                  KoskiStudentHandler handler = getHandlerType(sourceSystemId.getHandler());
-                  
                   handler.saveOrValidateOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
                 } else {
                   // For archived student the studypermission oid is cleared as Koski doesn't want to receive this id ever again
-                  userVariableDAO.setUserVariable(reportedStudent, KOSKI_STUDYPERMISSION_ID, null);
+                  handler.removeOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
                 }
               } else {
                 logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id couldn't be parsed (Person %d).", person.getId()));

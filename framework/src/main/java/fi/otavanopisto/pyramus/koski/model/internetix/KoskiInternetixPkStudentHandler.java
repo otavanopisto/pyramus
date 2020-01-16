@@ -419,6 +419,11 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
   }
   
   @Override
+  public void removeOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
+    removeInternetixOid(handler, student, oid);
+  }
+  
+  @Override
   public Set<KoskiStudentId> listOids(Student student) {
     return loadInternetixOids(student);
   }

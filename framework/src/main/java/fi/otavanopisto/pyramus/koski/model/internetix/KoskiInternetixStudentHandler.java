@@ -66,6 +66,22 @@ public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
   }
 
   @Override
+  public void removeOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
+    switch (handler) {
+      case aineopiskeluperusopetus:
+        pkHandler.removeOid(handler, student, oid);
+      break;
+      case aineopiskelulukio:
+        lukioHandler.removeOid(handler, student, oid);
+      break;
+      
+      default:
+        logger.warning("Unknown handler type.");
+      break;
+    }
+  }
+
+  @Override
   public Set<KoskiStudentId> listOids(Student student) {
     return loadInternetixOids(student);
   }
