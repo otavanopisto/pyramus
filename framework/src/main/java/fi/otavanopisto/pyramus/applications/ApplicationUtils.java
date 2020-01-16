@@ -142,6 +142,10 @@ public class ApplicationUtils {
     return null;
   }
   
+  public static boolean isOtaviaLine(String line) {
+    return !StringUtils.equals(line, "aikuislukio");
+  }
+  
   public static boolean isValidLine(String line) {
     return applicationLineUiValue(line) != null;
   }
