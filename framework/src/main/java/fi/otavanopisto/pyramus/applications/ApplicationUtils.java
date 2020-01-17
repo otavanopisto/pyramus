@@ -177,6 +177,22 @@ public class ApplicationUtils {
     return nationality == null ? null : nationality.getName();
   }
   
+  public static String previousStudiesInternetixUiValue(String value) {
+    if (value != null) {
+      switch (value) {
+      case "perus":
+        return "Peruskoulu (tai vastaava)";
+      case "lukio":
+        return "Lukion oppimäärä tai 4 vuotta lukio-opintoja";
+      case "ei":
+        return "En ole suorittanut mitään näistä";
+      default:
+        return null;
+      }
+    }
+    return null;
+  }
+
   public static String previousStudiesUiValue(String value) {
     if (value != null) {
       switch (value) {
@@ -581,6 +597,21 @@ public class ApplicationUtils {
         null, // study end reason
         null, // study end text
         Boolean.FALSE); // archived
+    
+    // #1079: Aineopiskelu; yleissivistävä koulutustausta
+    
+    String internetixStudies = getFormValue(formData, "field-previous-studies-aineopiskelu");
+    if (StringUtils.isNotBlank(internetixStudies)) {
+      if (StringUtils.equals(internetixStudies, "perus")) {
+        student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: peruskoulu");
+      }
+      else if (StringUtils.equals(internetixStudies, "lukio")) {
+        student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: lukio");
+      }
+      else if (StringUtils.equals(internetixStudies, "ei")) {
+        student = studentDAO.updateEducation(student, "Yleissivistävä koulutustausta: ei mitään");
+      }
+    }
     
     // Main contact type
     

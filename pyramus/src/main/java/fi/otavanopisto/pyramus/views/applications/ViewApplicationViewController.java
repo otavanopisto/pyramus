@@ -136,6 +136,9 @@ public class ViewApplicationViewController extends PyramusViewController {
       fields = new LinkedHashMap<>();
       sections.put("Hakemiseen vaadittavat lisätiedot", fields);
       
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-aineopiskelu"))) {
+        fields.put("Yleissivistävä koulutustausta", ApplicationUtils.previousStudiesInternetixUiValue(getFormValue(formData, "field-previous-studies-aineopiskelu")));
+      }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies"))) {
         fields.put("Aiemmat opinnot", getFormValue(formData, "field-previous-studies"));
       }
