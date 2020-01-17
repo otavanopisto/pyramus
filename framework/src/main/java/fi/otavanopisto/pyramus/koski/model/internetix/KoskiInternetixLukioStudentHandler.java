@@ -163,7 +163,7 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
     boolean pidennettyPaattymispaiva = studyPeriods.stream().anyMatch(studyPeriod -> studyPeriod.getPeriodType() == StudentStudyPeriodType.PROLONGED_STUDYENDDATE);
     boolean ulkomainenVaihtoopiskelija = false;
-    boolean yksityisopiskelija = false;
+    boolean yksityisopiskelija = settings.isYksityisopiskelija(student.getStudyProgramme().getId());
     boolean oikeusMaksuttomaanAsuntolapaikkaan = settings.isFreeLodging(student.getStudyProgramme().getId());
     LukionOpiskeluoikeudenLisatiedot lisatiedot = new LukionOpiskeluoikeudenLisatiedot(
         pidennettyPaattymispaiva, ulkomainenVaihtoopiskelija, yksityisopiskelija, oikeusMaksuttomaanAsuntolapaikkaan);
