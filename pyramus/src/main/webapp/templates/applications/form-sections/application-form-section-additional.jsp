@@ -41,6 +41,16 @@
       <p>Koulutuksessa voit korottaa peruskoulun päättötodistuksen arvosanoja.</p>
     </div>
 
+    <div class="form-section__field-container field-previous-studies-aineopiskelu dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
+      <label for="field-previous-studies-aineopiskelu" class="required">Yleissivistävä koulutustausta</label>
+      <select name="field-previous-studies-aineopiskelu" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        <option value="">-- Valitse --</option>
+        <option value="perus">Peruskoulu (tai vastaava)</option>
+        <option value="lukio">Lukion oppimäärä tai 4 vuotta lukio-opintoja</option>
+        <option value="ei">En ole suorittanut mitään näistä</option>
+      </select>
+    </div>
+
     <div class="form-section__field-container field-previous-studies dependent" data-dependent-field="field-line" data-dependent-values="nettipk,aikuislukio,bandilinja,laakislinja,kasvatustieteet" style="display:none;">
       <label for="field-previous-studies" class="required">Aiemmat opinnot (listaa myös keskeytyneet)</label>
       <textarea name="field-previous-studies" rows="5" cols="40" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true"></textarea>

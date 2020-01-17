@@ -497,6 +497,11 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setStudyApprover(approver);
     return persist(student);
   }
+
+  public Student updateEducation(Student student, String education) {
+    student.setEducation(education);
+    return persist(student);
+  }
   
   public Student removeTag(Student student, Tag tag) {
     student.removeTag(tag);
