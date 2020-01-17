@@ -142,17 +142,22 @@ public class UpdateApplicationStateJSONRequestController extends JSONRequestCont
           signUpUrl.append("/applications/accept.page?application=");
           signUpUrl.append(application.getApplicationId());
           
-          String subject = "Hyväksyminen Otavan Opiston opiskelijaksi";
+          String lineOrganization = ApplicationUtils.isOtaviaLine(application.getLine()) ? "Otavian" : "Otavan Opiston";
+          String signerOrganization = ApplicationUtils.isOtaviaLine(application.getLine()) ? "Otavia" : "Otavan Opisto";
+          
+          String subject = String.format("Hyväksyminen %s opiskelijaksi", lineOrganization);
           String content = IOUtils.toString(requestContext.getServletContext().getResourceAsStream(
               "/templates/applications/mails/mail-accept-study-place.html"), "UTF-8");
           content = String.format(content,
               nickname,
+              lineOrganization,
               line.toLowerCase(),
               staffDocUrl,
               staffDocUrl,
               signUpUrl.toString(),
               signUpUrl.toString(),
-              staffMember.getFullName());
+              staffMember.getFullName(),
+              signerOrganization);
           
           // Send mail to applicant (and possible guardian)
           

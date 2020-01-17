@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import fi.internetix.smvc.controllers.RequestContext;
+import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
@@ -304,7 +305,7 @@ public class OnnistuuClient {
       baseUrl.append(":");
       baseUrl.append(httpRequest.getServerPort());
       
-      String documentPath = isOpistoLine(line) ? "/templates/applications/document-staff-signed-otava.html" : "/templates/applications/document-staff-signed-otavia.html"; 
+      String documentPath = ApplicationUtils.isOtaviaLine(line) ? "/templates/applications/document-staff-signed-otavia.html" : "/templates/applications/document-staff-signed-otava.html"; 
 
       // Staff signed document skeleton
 
@@ -376,7 +377,7 @@ public class OnnistuuClient {
       baseUrl.append(":");
       baseUrl.append(httpRequest.getServerPort());
 
-      String documentPath = isOpistoLine(line) ? "/templates/applications/document-student-signed-otava.html" : "/templates/applications/document-student-signed-otavia.html"; 
+      String documentPath = ApplicationUtils.isOtaviaLine(line) ? "/templates/applications/document-student-signed-otavia.html" : "/templates/applications/document-student-signed-otava.html"; 
 
       // Applicant signed document skeleton
 
@@ -414,20 +415,16 @@ public class OnnistuuClient {
     if (!StringUtils.isBlank(staffMember.getTitle())) {
       sb.append(String.format("<p>%s</p>", StringUtils.capitalize(staffMember.getTitle())));
     }
-    if (isOpistoLine(line)) {
-      sb.append("<p>Otavan Opisto</p>");
+    if (ApplicationUtils.isOtaviaLine(line)) {
+      sb.append("<p>Otavia</p>");
     }
     else {
-      sb.append("<p>Otavia</p>");
+      sb.append("<p>Otavan Opisto</p>");
     }
     
     return sb.toString();
   }
   
-  private boolean isOpistoLine(String line) {
-    return StringUtils.equals(line, "aikuislukio");
-  }
-
   private static final OnnistuuClient INSTANCE = new OnnistuuClient();
   private static final String SETTINGKEY_CLIENTIDENTIFIER = "applications.onnistuuClientIdentifier";
   private static final String SETTINGKEY_SECRETKEY = "applications.onnistuuSecretKey";
