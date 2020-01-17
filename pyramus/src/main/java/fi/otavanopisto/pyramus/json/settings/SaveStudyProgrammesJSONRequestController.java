@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.json.settings;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.SmvcRuntimeException;
 import fi.internetix.smvc.controllers.JSONRequestContext;
@@ -38,6 +39,7 @@ public class SaveStudyProgrammesJSONRequestController extends JSONRequestControl
         String code = jsonRequestContext.getString(colPrefix + ".code");
         Long categoryId = jsonRequestContext.getLong(colPrefix + ".category");
         Long organizationId = jsonRequestContext.getLong(colPrefix + ".organization");
+        boolean hasEvaluationFees = StringUtils.equals("1", jsonRequestContext.getString(colPrefix + ".hasEvaluationFees"));
         
         StudyProgrammeCategory category = null;
         Organization organization = null;
@@ -55,7 +57,7 @@ public class SaveStudyProgrammesJSONRequestController extends JSONRequestControl
         }
         
         if (studyProgrammeId == -1) {
-          studyProgrammeDAO.create(organization, name, category, code); 
+          studyProgrammeDAO.create(organization, name, category, code, hasEvaluationFees); 
         }
         else {
           StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
@@ -64,7 +66,7 @@ public class SaveStudyProgrammesJSONRequestController extends JSONRequestControl
             throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Can not access study programme from another organization.");
           }
           
-          studyProgrammeDAO.update(studyProgramme, organization, name, category, code);
+          studyProgrammeDAO.update(studyProgramme, organization, name, category, code, hasEvaluationFees);
         }
       }
     }

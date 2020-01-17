@@ -84,10 +84,18 @@ function onLoad(event) {
         {
           header : getLocale().getText("settings.studyProgrammes.studyProgrammesTableCodeHeader"),
           left : 346 + 200 + 8 + 200 + 8,
-          right : 8 + 22 + 8,
+          right : 8 + 22 + 8 + 100 + 8,
           dataType : 'text',
           editable : false,
           paramName : 'code'
+        },
+        {
+          header : getLocale().getText("settings.studyProgrammes.studyProgrammesTableHasEvaluationFeesHeader"),
+          width: 100,
+          right : 8 + 22 + 8,
+          dataType : 'checkbox',
+          editable : false,
+          paramName : 'hasEvaluationFees'
         },
         {
           right : 8,
@@ -163,7 +171,8 @@ function onLoad(event) {
   var rows = new Array();
   for (var i = 0, l = studyProgrammes.length; i < l; i++) {
     var studyProgramme = studyProgrammes[i];
-    rows.push([ '', jsonEscapeHTML(studyProgramme.name), studyProgramme.organizationId, studyProgramme.categoryId, studyProgramme.code, '', '', studyProgramme.id, 0 ]);
+    var hasEvaluationFees = studyProgramme.hasEvaluationFees == true ? "1" : "";
+    rows.push([ '', jsonEscapeHTML(studyProgramme.name), studyProgramme.organizationId, studyProgramme.categoryId, studyProgramme.code, hasEvaluationFees, '', '', studyProgramme.id, 0 ]);
   }
   studyProgrammeTable.addRows(rows);
 

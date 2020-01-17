@@ -394,10 +394,10 @@ values
   (2, 'StudyProgrammeCategory #2', 2, 1, false);   
    
 insert into 
-  StudyProgramme (id, organization, code, name, category, version, archived)
+  StudyProgramme (id, organization, code, name, category, version, hasEvaluationFees, archived)
 values 
-  (1, 1, 'TST1', 'StudyProgramme #1', 1, 1, false),
-  (2, 1, 'TST2', 'StudyProgramme #2', 2, 1, false);     
+  (1, 1, 'TST1', 'StudyProgramme #1', 1, 1, false, false),
+  (2, 1, 'TST2', 'StudyProgramme #2', 2, 1, false, false);     
    
 insert into 
   StudentGroup (id, name, description, creator, lastModifier, beginDate, created, lastModified, version, archived, guidanceGroup, organization)

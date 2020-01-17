@@ -842,6 +842,7 @@ public class StudentRESTService extends AbstractRESTService {
     String code = entity.getCode();
     Long categoryId = entity.getCategoryId();
     Long organizationId = entity.getOrganizationId();
+    boolean hasEvaluationFees = entity.getHasEvaluationFees() != null ? entity.getHasEvaluationFees().booleanValue() : false;
 
     if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null || organizationId == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -858,7 +859,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    StudyProgramme studyProgramme = studyProgrammeController.createStudyProgramme(organization, name, code, studyProgrammeCategory);
+    StudyProgramme studyProgramme = studyProgrammeController.createStudyProgramme(organization, name, code, studyProgrammeCategory, hasEvaluationFees);
     return Response.ok(objectFactory.createModel(studyProgramme)).build();
   }
 
@@ -913,6 +914,7 @@ public class StudentRESTService extends AbstractRESTService {
     String code = entity.getCode();
     Long categoryId = entity.getCategoryId();
     Long organizationId = entity.getOrganizationId();
+    boolean hasEvaluationFees = entity.getHasEvaluationFees() != null ? entity.getHasEvaluationFees().booleanValue() : false;
 
     if (StringUtils.isBlank(name) || StringUtils.isBlank(code) || categoryId == null || organizationId == null) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -934,7 +936,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
     
-    studyProgramme = studyProgrammeController.updateStudyProgramme(studyProgramme, organization, name, code, programmeCategory);
+    studyProgramme = studyProgrammeController.updateStudyProgramme(studyProgramme, organization, name, code, programmeCategory, hasEvaluationFees);
     
     return Response.ok().entity(objectFactory.createModel(studyProgramme))
         .build();

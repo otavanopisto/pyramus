@@ -17,7 +17,7 @@ public class StudyProgrammeAPI {
     this.loggedUserId = loggedUserId;
   }
 
-  public Long create(String name, Long categoryId, String code, Long organizationId) throws InvalidScriptException {
+  public Long create(String name, Long categoryId, String code, Long organizationId, boolean hasEvaluationFees) throws InvalidScriptException {
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     
     StudyProgrammeCategory category = null;
@@ -33,7 +33,7 @@ public class StudyProgrammeAPI {
       throw new InvalidScriptException("Organization not found.");
     }
     
-    return (DAOFactory.getInstance().getStudyProgrammeDAO().create(organization, name, category, code).getId());
+    return (DAOFactory.getInstance().getStudyProgrammeDAO().create(organization, name, category, code, hasEvaluationFees).getId());
   }
   
   public Long findIdByCode(String code) {
