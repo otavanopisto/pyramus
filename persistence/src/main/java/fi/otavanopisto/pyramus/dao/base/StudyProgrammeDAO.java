@@ -20,7 +20,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme_;
 @Stateless
 public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
 
-  public StudyProgramme create(Organization organization, String name, StudyProgrammeCategory category, String code) {
+  public StudyProgramme create(Organization organization, String name, StudyProgrammeCategory category, String code, boolean hasEvaluationFees) {
     EntityManager entityManager = getEntityManager();
 
     StudyProgramme studyProgramme = new StudyProgramme();
@@ -28,6 +28,7 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
     studyProgramme.setName(name);
     studyProgramme.setCategory(category);
     studyProgramme.setCode(code);
+    studyProgramme.setHasEvaluationFees(hasEvaluationFees);
     entityManager.persist(studyProgramme);
 
     return studyProgramme;
@@ -84,11 +85,12 @@ public class StudyProgrammeDAO extends PyramusEntityDAO<StudyProgramme> {
   }
 
   public StudyProgramme update(StudyProgramme studyProgramme, Organization organization, String name, 
-      StudyProgrammeCategory category, String code) {
+      StudyProgrammeCategory category, String code, boolean hasEvaluationFees) {
     studyProgramme.setOrganization(organization);
     studyProgramme.setName(name);
     studyProgramme.setCategory(category);
     studyProgramme.setCode(code);
+    studyProgramme.setHasEvaluationFees(hasEvaluationFees);
     return persist(studyProgramme);
   }
   

@@ -56,6 +56,7 @@ public class StudyProgrammesSetupWizardViewController extends SetupWizardControl
       String name = requestContext.getString(colPrefix + ".name");
       String code = requestContext.getString(colPrefix + ".code");
       Long categoryId = requestContext.getLong(colPrefix + ".category");
+      boolean hasEvaluationFees = false;
       
       StudyProgrammeCategory category = null;
       
@@ -64,7 +65,7 @@ public class StudyProgrammesSetupWizardViewController extends SetupWizardControl
       }
       
       if (studyProgrammeId == -1) {
-        studyProgrammeDAO.create(defaults.getOrganization(), name, category, code); 
+        studyProgrammeDAO.create(defaults.getOrganization(), name, category, code, hasEvaluationFees); 
       }
     }
   }

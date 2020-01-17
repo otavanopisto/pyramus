@@ -111,6 +111,14 @@ public class StudyProgramme implements ArchivableEntity {
     this.organization = organization;
   }
 
+  public Boolean getHasEvaluationFees() {
+    return hasEvaluationFees;
+  }
+
+  public void setHasEvaluationFees(Boolean hasEvaluationFees) {
+    this.hasEvaluationFees = hasEvaluationFees;
+  }
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="StudyProgramme")  
   @TableGenerator(name="StudyProgramme", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -133,6 +141,10 @@ public class StudyProgramme implements ArchivableEntity {
   @ManyToOne
   @JoinColumn (name = "category")
   private StudyProgrammeCategory category;
+
+  @NotNull
+  @Column(nullable = false)
+  private Boolean hasEvaluationFees;
 
   @NotNull
   @Column(nullable = false)
