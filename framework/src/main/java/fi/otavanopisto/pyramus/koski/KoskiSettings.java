@@ -113,6 +113,10 @@ public class KoskiSettings {
         freeLodgingStudyProgrammes.add(studyProgrammeId);
       }
       
+      if (studyProgramme.has("yksityisopiskelija") && studyProgramme.getBoolean("yksityisopiskelija")) {
+        yksityisopiskelijaStudyProgrammes.add(studyProgrammeId);
+      }
+      
       if (EnumUtils.isValidEnum(KoskiStudyProgrammeHandler.class, studyProgramme.getString("handler"))) {
         KoskiStudyProgrammeHandler handlerType = KoskiStudyProgrammeHandler.valueOf(studyProgramme.getString("handler"));
         handlerTypes.put(studyProgrammeId, handlerType);
@@ -178,6 +182,10 @@ public class KoskiSettings {
   
   public boolean isFreeLodging(Long studyProgrammeId) {
     return freeLodgingStudyProgrammes.contains(studyProgrammeId);
+  }
+  
+  public boolean isYksityisopiskelija(Long studyProgrammeId) {
+    return yksityisopiskelijaStudyProgrammes.contains(studyProgrammeId);
   }
   
   private String getSetting(String settingName) {
@@ -272,6 +280,7 @@ public class KoskiSettings {
   private boolean testEnvironment;
   private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
   private Set<Long> freeLodgingStudyProgrammes = new HashSet<Long>();
+  private Set<Long> yksityisopiskelijaStudyProgrammes = new HashSet<Long>();
   private Map<Long, KoskiStudyProgrammeHandler> handlerTypes = new HashMap<>();
   private Map<Long, OpintojenRahoitus> opintojenRahoitus = new HashMap<>();
   private Map<Long, String> toimipisteOIDt = new HashMap<>();
