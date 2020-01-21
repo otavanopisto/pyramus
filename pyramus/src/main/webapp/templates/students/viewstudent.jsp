@@ -1342,7 +1342,7 @@
               var curriculums = "";
               if (cAs.curriculums && (cAs.curriculums.length > 0)) {
                 curriculums = cAs.curriculums[0].curriculumName;
-                for (var currInd = 0, currLen = cAs.curriculums.length; currInd < currLen; currInd++) {
+                for (var currInd = 1, currLen = cAs.curriculums.length; currInd < currLen; currInd++) {
                   curriculums = curriculums + ", " + cAs.curriculums[currInd].curriculumName;
                 }
               }
