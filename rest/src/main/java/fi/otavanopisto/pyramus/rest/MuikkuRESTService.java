@@ -346,6 +346,12 @@ public class MuikkuRESTService {
         }
       }
     }
+    else {
+      UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(provider.getName(), resetRequest.getPerson());
+      if (userIdentification != null) {
+        internalAuth = internalAuthDAO.findById(Long.valueOf(userIdentification.getExternalId()));
+      }
+    }
 
     // Change the credentials
     
