@@ -7,7 +7,9 @@
 
   <input type="hidden" id="field-application-id" name="field-application-id" value="${applicationId}" data-preload="${preload}" data-parsley-excluded="true"/>
   
-  <jsp:include page="/templates/applications/form-sections/application-form-section-selection.jsp"></jsp:include>
+  <jsp:include page="/templates/applications/form-sections/application-form-section-selection.jsp">
+    <jsp:param name="includeHandlerLines" value="${param.includeHandlerLines}"/>
+  </jsp:include>
   
   <jsp:include page="/templates/applications/form-sections/application-form-section-personal-info.jsp"></jsp:include>
   
