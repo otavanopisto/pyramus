@@ -65,7 +65,11 @@ public class ViewApplicationViewController extends PyramusViewController {
       sections.put("Perustiedot", fields);
       
       fields.put("Muokkaustunnus", application.getReferenceCode());
-      fields.put("Linja", ApplicationUtils.applicationLineUiValue(getFormValue(formData, "field-line")));
+      String applicationLine = getFormValue(formData, "field-line");
+      fields.put("Linja", ApplicationUtils.applicationLineUiValue(applicationLine));
+      if (StringUtils.equals("nettilukio",  applicationLine)) {
+        fields.put("Yksityisopiskelu", StringUtils.equals("kylla", getFormValue(formData, "field-nettilukioprivate")) ? "Kyllä" : "Ei");
+      }
       fields.put("Nimi", String.format("%s, %s", getFormValue(formData, "field-last-name"), getFormValue(formData, "field-first-names")));
       if (StringUtils.isNotBlank(getFormValue(formData, "field-nickname"))) {
         fields.put("Kutsumanimi", getFormValue(formData, "field-nickname"));

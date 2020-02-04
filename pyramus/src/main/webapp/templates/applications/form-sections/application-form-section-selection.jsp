@@ -18,5 +18,18 @@
     <!--<option value="laakislinja" data-underage-support="false" data-attachment-support="false">Lääkislinja</option>-->
     <option value="mk" data-underage-support="true" data-attachment-support="true">Maahanmuuttajakoulutukset</option>
   </select>
+    
+  <c:if test="${param.includeHandlerLines eq 'true'}">
+    <div data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-nettilukioprivate" name="field-nettilukioprivate" value="kylla">
+        </div>
+        <div class="field-row-label">
+          <label for="field-nettilukioprivate">Yksityisopiskelija</label>
+        </div>
+      </div>
+    </div>
+  </c:if>
 
 </section>

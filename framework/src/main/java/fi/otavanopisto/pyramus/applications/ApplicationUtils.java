@@ -312,13 +312,13 @@ public class ApplicationUtils {
     }
   }
   
-  public static StudyProgramme resolveStudyProgramme(String line, String foreignLine) {
+  public static StudyProgramme resolveStudyProgramme(String line, String foreignLine, boolean nettilukioPrivate) {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case "aineopiskelu":
       return studyProgrammeDAO.findById(13L); // Internetix/lukio
     case "nettilukio":
-      return studyProgrammeDAO.findById(6L); // Nettilukio
+      return nettilukioPrivate ? studyProgrammeDAO.findById(38L) : studyProgrammeDAO.findById(6L); // Nettilukio/yksityisopiskelu or Nettilukio
     case "nettipk":
       return studyProgrammeDAO.findById(7L); // Nettiperuskoulu
     case "aikuislukio":
@@ -351,8 +351,7 @@ public class ApplicationUtils {
   
   public static void sendNotifications(Application application, HttpServletRequest request, StaffMember staffMember, boolean newApplication, String notificationPostfix, boolean doLogEntry) {
     ApplicationNotificationDAO applicationNotificationDAO = DAOFactory.getInstance().getApplicationNotificationDAO();
-    List<ApplicationNotification> notifications = applicationNotificationDAO.listByNullOrLineAndState(
-        application.getLine(), application.getState());
+    List<ApplicationNotification> notifications = applicationNotificationDAO.listByNullOrLineAndState(application.getLine(), application.getState());
     Set<String> emails = new HashSet<>();
     for (ApplicationNotification notification : notifications) {
       Set<User> users = notification.getUsers();
@@ -546,7 +545,8 @@ public class ApplicationUtils {
     
     StudyProgramme studyProgramme = ApplicationUtils.resolveStudyProgramme(
         getFormValue(formData, "field-line"),
-        getFormValue(formData, "field-foreign-line"));
+        getFormValue(formData, "field-foreign-line"),
+        StringUtils.equals("kylla", getFormValue(formData, "field-nettilukioprivate")));
     if (studyProgramme == null) {
       logger.severe(String.format("Unable to resolve study programme of application entity %d", application.getId()));
       return null;
