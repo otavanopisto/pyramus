@@ -207,9 +207,9 @@ public abstract class KoskiStudentHandler {
 
   protected StudyEndReasonMapping opiskelujaksot(Student student, OpiskeluoikeusTila tila, OpintojenRahoitus rahoitus) {
     if (!Boolean.TRUE.equals(student.getArchived())) {
-      OpiskeluoikeusJakso jakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
-      jakso.setOpintojenRahoitus(new KoodistoViite<>(rahoitus));
-      tila.addOpiskeluoikeusJakso(jakso);
+      OpiskeluoikeusJakso opintojenAlkamisjakso = new OpiskeluoikeusJakso(student.getStudyStartDate(), OpiskeluoikeudenTila.lasna);
+      opintojenAlkamisjakso.setOpintojenRahoitus(new KoodistoViite<>(rahoitus));
+      tila.addOpiskeluoikeusJakso(opintojenAlkamisjakso);
   
       List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
       studyPeriods.sort(Comparator.comparing(StudentStudyPeriod::getBegin));
@@ -220,7 +220,9 @@ public abstract class KoskiStudentHandler {
             tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(period.getBegin(), OpiskeluoikeudenTila.valiaikaisestikeskeytynyt));
   
             if (period.getEnd() != null) {
-              tila.addOpiskeluoikeusJakso(new OpiskeluoikeusJakso(period.getEnd(), OpiskeluoikeudenTila.lasna));
+              OpiskeluoikeusJakso väliaikaisenKeskeytymisenPäättymisenJälkeinenLäsnäoloJakso = new OpiskeluoikeusJakso(period.getEnd(), OpiskeluoikeudenTila.lasna);
+              väliaikaisenKeskeytymisenPäättymisenJälkeinenLäsnäoloJakso.setOpintojenRahoitus(new KoodistoViite<>(rahoitus));
+              tila.addOpiskeluoikeusJakso(väliaikaisenKeskeytymisenPäättymisenJälkeinenLäsnäoloJakso);
             }
           break; 
           case PROLONGED_STUDYENDDATE:
@@ -243,8 +245,9 @@ public abstract class KoskiStudentHandler {
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.MISSING_STUDYENDREASONMAPPING, new Date());
         }
         
-        tila.addOpiskeluoikeusJakso(
-            new OpiskeluoikeusJakso(student.getStudyEndDate(), opintojenLopetusTila));
+        OpiskeluoikeusJakso opintojenPäättymisjakso = new OpiskeluoikeusJakso(student.getStudyEndDate(), opintojenLopetusTila);
+        opintojenPäättymisjakso.setOpintojenRahoitus(new KoodistoViite<>(rahoitus));
+        tila.addOpiskeluoikeusJakso(opintojenPäättymisjakso);
         
         return studyEndReasonMapping;
       }
