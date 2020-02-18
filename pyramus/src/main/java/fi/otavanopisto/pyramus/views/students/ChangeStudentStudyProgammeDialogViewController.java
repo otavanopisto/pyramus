@@ -47,6 +47,15 @@ public class ChangeStudentStudyProgammeDialogViewController extends PyramusViewC
 
     Student student = studentDAO.findById(studentId);
 
+    if (!UserUtils.canAccessOrganization(loggedUser, student.getOrganization())) {
+      try {
+        requestContext.getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
+      } catch (Exception e) {
+        logger.log(Level.SEVERE, "Error sending response", e);
+      }
+      return;
+    }
+    
     List<StudyProgramme> studyProgrammes = UserUtils.canAccessAllOrganizations(loggedUser) ? 
         studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), Archived.UNARCHIVED);
     Collections.sort(studyProgrammes, new StringAttributeComparator("getName"));
