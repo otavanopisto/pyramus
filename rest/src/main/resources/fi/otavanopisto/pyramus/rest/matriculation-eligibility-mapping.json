@@ -58,7 +58,7 @@
       "education-subtype": "pakollinen",
       "transfer-credit-only-mandatory": true
     },
-    "HI": { 
+    "HI": {
       "comment": "Historia OPS2016, 2 pakollista kurssia",
       "passing-grades": 2,
       "education-type": "lukio",
@@ -67,7 +67,7 @@
     }
   },
   "2005": {
-    "HI": { 
+    "HI": {
       "comment": "Yhteiskuntaoppi OPS2005 ja muut pakolliset reaaliaineet 1 pakollinen kurssi / kirjoitettava aine",
       "passing-grades": 1,
       "education-type": "lukio",
@@ -75,5 +75,4 @@
       "transfer-credit-only-mandatory": true
     }
   }
-  
 }
