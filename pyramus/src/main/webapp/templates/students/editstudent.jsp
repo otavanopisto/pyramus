@@ -1034,22 +1034,7 @@
                   <jsp:param name="titleLocale" value="students.editStudent.studyProgrammeTitle"/>
                   <jsp:param name="helpLocale" value="students.editStudent.studyProgrammeHelp"/>
                 </jsp:include>            
-                <select class="required" name="studyProgramme.${student.id}">
-                  <option></option>           
-                  <c:forEach var="studyProgramme" items="${studyProgrammes}">
-                    <c:choose>
-                      <c:when test="${studyProgramme.id eq student.studyProgramme.id}">
-                        <option value="${studyProgramme.id}" selected="selected">${studyProgramme.name}</option> 
-                      </c:when>
-                      <c:otherwise>
-                        <option value="${studyProgramme.id}">${studyProgramme.name}</option> 
-                      </c:otherwise>
-                    </c:choose>
-                  </c:forEach>
-                  <c:if test="${student.studyProgramme.archived}">
-                    <option value="${student.studyProgramme.id}" selected="selected">${student.studyProgramme.name}*</option>
-                  </c:if>
-                </select>
+                <div>${student.studyProgramme.name}<c:if test="${student.studyProgramme.archived}"> *</c:if></div>
               </div>
   
               <div class="genericFormSection">           
