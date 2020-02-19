@@ -153,7 +153,8 @@ public abstract class KoskiStudentHandler {
       
       ObjectMapper mapper = new ObjectMapper();
       try {
-        userVariableDAO.setUserVariable(student, KOSKI_INTERNETIX_STUDYPERMISSION_ID, mapper.writeValueAsString(oids));
+        String variableValue = CollectionUtils.isNotEmpty(oids) ? mapper.writeValueAsString(oids) : "";
+        userVariableDAO.setUserVariable(student, KOSKI_INTERNETIX_STUDYPERMISSION_ID, variableValue);
       } catch (Exception ex) {
         logger.severe(String.format("Serialization failed for student %s", student.getId()));
       }
