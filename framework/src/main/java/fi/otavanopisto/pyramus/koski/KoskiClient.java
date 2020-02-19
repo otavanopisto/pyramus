@@ -4,6 +4,8 @@ import java.io.StringWriter;
 import java.net.ConnectException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -47,10 +49,6 @@ import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.Oppija;
-import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.KoskiAikuistenPerusopetuksenStudentHandler;
-import fi.otavanopisto.pyramus.koski.model.apa.KoskiAPAStudentHandler;
-import fi.otavanopisto.pyramus.koski.model.internetix.KoskiInternetixStudentHandler;
-import fi.otavanopisto.pyramus.koski.model.lukio.KoskiLukioStudentHandler;
 import fi.otavanopisto.pyramus.koski.model.result.KoskiErrorMessageBody;
 import fi.otavanopisto.pyramus.koski.model.result.OpiskeluoikeusReturnVal;
 import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
@@ -88,16 +86,7 @@ public class KoskiClient {
   private KoskiPersonLogDAO koskiPersonLogDAO;
   
   @Inject
-  private KoskiAPAStudentHandler apaHandler;
-
-  @Inject
-  private KoskiLukioStudentHandler lukioHandler;
-  
-  @Inject
-  private KoskiInternetixStudentHandler internetixHandler;
-
-  @Inject
-  private KoskiAikuistenPerusopetuksenStudentHandler aikuistenPerusopetuksenHandler;
+  private KoskiController koskiController;
   
   private String getBaseUrl() {
     return getSetting(KOSKI_SETTINGKEY_BASEURL);
@@ -152,42 +141,71 @@ public class KoskiClient {
   /**
    * Invalidates a study permit in Koski.
    */
-  public void invalidateStudyOid(Person person, String studyPermitOid) throws Exception {
+  public boolean invalidateStudyOid(Person person, String studyPermitOid) throws Exception {
+    return invalidateStudyOid(person, Arrays.asList(studyPermitOid));
+  }
+  
+  /**
+   * Invalidates a set of study permits in Koski.
+   */
+  public boolean invalidateStudyOid(Person person, Collection<String> studyPermitOids) throws Exception {
+    logger.log(Level.INFO, String.format("Invalidating OIDs %s for person %d", studyPermitOids, person.getId()));
+    
     String oppijaOid = personVariableDAO.findByPersonAndKey(person, KOSKI_HENKILO_OID);
     Oppija oppija = findOppijaByOid(oppijaOid);
     
-    // Remove study permits that don't have matching oid
-    oppija.getOpiskeluoikeudet().removeIf(opiskeluoikeus -> !StringUtils.equals(opiskeluoikeus.getOid(), studyPermitOid));
+    long matchingOIDs = oppija.getOpiskeluoikeudet().stream()
+        .filter(opiskeluoikeus -> studyPermitOids.contains(opiskeluoikeus.getOid()))
+        .filter(opiskeluoikeus -> getLahdejarjestelma(opiskeluoikeus) == Lahdejarjestelma.pyramus)
+        .count();
     
-    // There should be the one study permit left to be invalidated
-    if (oppija.getOpiskeluoikeudet().size() == 1) {
-      Opiskeluoikeus opiskeluoikeus = oppija.getOpiskeluoikeudet().get(0);
-      
-      if (opiskeluoikeus.getLahdejarjestelmanId() != null &&
-          opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma() != null &&
-          opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma().getValue() == Lahdejarjestelma.pyramus) {
-        SourceSystemId sourceSystemId = parseSource(opiskeluoikeus.getLahdejarjestelmanId().getId());
-        if (sourceSystemId != null) {
-          // Having multiple periods is going to cause problems invalidating due to date checks in Koski
-          opiskeluoikeus.getTila().getOpiskeluoikeusjaksot().clear();
-          
-          Date invalidationDate = opiskeluoikeus.getPaattymispaiva() != null ? opiskeluoikeus.getPaattymispaiva() : 
-            opiskeluoikeus.getAlkamispaiva() != null ? opiskeluoikeus.getAlkamispaiva() : new Date();
-          opiskeluoikeus.getTila().addOpiskeluoikeusJakso(
-              new OpiskeluoikeusJakso(invalidationDate, OpiskeluoikeudenTila.mitatoity));
-        
-          if (updatePersonToKoski(oppija, person, oppijaOid)) {
-            Student reportedStudent = studentDAO.findById(sourceSystemId.getStudentId());
-            KoskiStudentHandler handler = getHandlerType(sourceSystemId.getHandler());
-            handler.saveOrValidateOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
+    // Remove study permits that don't have matching oid
+    oppija.getOpiskeluoikeudet().removeIf(opiskeluoikeus -> !studyPermitOids.contains(opiskeluoikeus.getOid()) || getLahdejarjestelma(opiskeluoikeus) != Lahdejarjestelma.pyramus);
+    
+    // There were n matching OIDs that should still be present there (just to be as certain about removing just the wanted ones as possible) 
+    if (oppija.getOpiskeluoikeudet().size() == matchingOIDs) {
+      for (Opiskeluoikeus opiskeluoikeus : oppija.getOpiskeluoikeudet()) {
+        if (getLahdejarjestelma(opiskeluoikeus) == Lahdejarjestelma.pyramus) {
+          SourceSystemId sourceSystemId = parseSource(opiskeluoikeus.getLahdejarjestelmanId().getId());
+          if (sourceSystemId != null) {
+            // Having multiple periods is going to cause problems invalidating due to date checks in Koski
+            opiskeluoikeus.getTila().getOpiskeluoikeusjaksot().clear();
+            
+            Date invalidationDate = opiskeluoikeus.getPaattymispaiva() != null ? opiskeluoikeus.getPaattymispaiva() : 
+              opiskeluoikeus.getAlkamispaiva() != null ? opiskeluoikeus.getAlkamispaiva() : new Date();
+            opiskeluoikeus.getTila().addOpiskeluoikeusJakso(
+                new OpiskeluoikeusJakso(invalidationDate, OpiskeluoikeudenTila.mitatoity));
+          } else {
+            String emsg = String.format("Could not invalidate student oid because returned source system id couldn't be parsed (Person %d).", person.getId());
+            logger.log(Level.WARNING, emsg);
+            koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date(), emsg);
+            return false;
           }
         } else {
-          logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id couldn't be parsed (Person %d).", person.getId()));
+          String emsg = String.format("Could not invalidate student oid because source system is not Pyramus (Person %d).", person.getId());
+          logger.log(Level.WARNING, emsg);
+          koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date(), emsg);
+          return false;
         }
       }
+      
+      return updatePersonToKoski(oppija, person, oppijaOid);
     }
+    
+    if (matchingOIDs > 0) {
+      String emsg = String.format("Unexpected error filtering study permits for invalidation (Person %d).", person.getId());
+      logger.log(Level.WARNING, emsg);
+      koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date(), emsg);
+    }
+    
+    return false;
   }
 
+  public Lahdejarjestelma getLahdejarjestelma(Opiskeluoikeus opiskeluoikeus) {
+    return (opiskeluoikeus.getLahdejarjestelmanId() != null && opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma() != null)
+        ? opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma().getValue() : null;
+  }
+  
   /**
    * Updates Person to Koski.
    */
@@ -237,7 +255,7 @@ public class KoskiClient {
       
       for (Student s : person.getStudents()) {
         if (settings.isReportedStudent(s)) {
-          List<Opiskeluoikeus> opiskeluoikeudet = studentToOpiskeluoikeus(s);
+          List<Opiskeluoikeus> opiskeluoikeudet = koskiController.studentToOpiskeluoikeus(s);
           for (Opiskeluoikeus o : opiskeluoikeudet) {
             if (o != null) {
               oppija.addOpiskeluoikeus(o);
@@ -295,6 +313,11 @@ public class KoskiClient {
               throw new RuntimeException("Returned person oid doesn't match the saved oid");
           }
 
+          Set<SourceSystemId> invalidatedSourceSystemIds = oppija.getOpiskeluoikeudet().stream()
+            .filter(opiskeluoikeus -> opiskeluoikeus.getTila().getOpiskeluoikeusjaksot().stream().anyMatch(opiskeluoikeusjakso -> opiskeluoikeusjakso.getTila().getValue() == OpiskeluoikeudenTila.mitatoity))
+            .map(opiskeluoikeus -> parseSource(opiskeluoikeus.getLahdejarjestelmanId().getId()))
+            .collect(Collectors.toSet());
+          
           for (OpiskeluoikeusReturnVal opiskeluoikeus : oppijaReturnVal.getOpiskeluoikeudet()) {
             if (opiskeluoikeus.getLahdejarjestelmanId() != null && 
                 opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma() != null &&
@@ -303,12 +326,12 @@ public class KoskiClient {
               if (sourceSystemId != null) {
                 Student reportedStudent = studentDAO.findById(sourceSystemId.getStudentId());
                 
-                KoskiStudentHandler handler = getHandlerType(sourceSystemId.getHandler());
-                if (!reportedStudent.getArchived()) {
-                  handler.saveOrValidateOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
-                } else {
-                  // For archived student the studypermission oid is cleared as Koski doesn't want to receive this id ever again
+                KoskiStudentHandler handler = koskiController.getStudentHandler(sourceSystemId.getHandler());
+                if (reportedStudent.getArchived() || invalidatedSourceSystemIds.contains(sourceSystemId)) {
+                  // For archived or invalidated student the studypermission oid is cleared as Koski doesn't want to receive this id ever again
                   handler.removeOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
+                } else {
+                  handler.saveOrValidateOid(sourceSystemId.getHandler(), reportedStudent, opiskeluoikeus.getOid());
                 }
               } else {
                 logger.log(Level.WARNING, String.format("Could not update student oid because returned source system id couldn't be parsed (Person %d).", person.getId()));
@@ -371,24 +394,6 @@ public class KoskiClient {
     return null;
   }
 
-  public KoskiStudentHandler getHandlerType(KoskiStudyProgrammeHandler handler) {
-    switch (handler) {
-      case aikuistenperusopetus:
-        return aikuistenPerusopetuksenHandler;
-      case lukio:
-        return lukioHandler;
-      case aineopiskeluperusopetus:
-      case aineopiskelulukio:
-        return internetixHandler;
-      case aikuistenperusopetuksenalkuvaihe:
-        return apaHandler;
-
-      default:
-        logger.severe(String.format("Handler for type %s couldn't be determined.", handler));
-        return null;
-    }
-  }
-
   class SourceSystemId {
     public SourceSystemId(KoskiStudyProgrammeHandler handler, Long studentId) {
       this.handler = handler;
@@ -403,6 +408,21 @@ public class KoskiClient {
       return handler;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+      if (obj instanceof SourceSystemId) {
+        SourceSystemId comp = (SourceSystemId) obj;
+        return this.handler == comp.handler && Objects.equals(this.studentId, comp.studentId);
+      } else {
+        return false;
+      }
+    }
+    
+    @Override
+    public int hashCode() {
+      return Objects.hash(handler, studentId);
+    }
+    
     private final KoskiStudyProgrammeHandler handler;
     private final Long studentId;
   }
@@ -436,29 +456,9 @@ public class KoskiClient {
     return null;
   }
 
-  private List<Opiskeluoikeus> studentToOpiskeluoikeus(Student student) {
-    KoskiStudyProgrammeHandler handler = settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
-    switch (handler) {
-      case aikuistenperusopetus:
-        return asList(aikuistenPerusopetuksenHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.aikuistenperusopetus));
-      case lukio:
-        return asList(lukioHandler.studentToModel(student, settings.getAcademyIdentifier(), KoskiStudyProgrammeHandler.lukio));
-      case aineopiskeluperusopetus:
-      case aineopiskelulukio:
-        return internetixHandler.studentToModel(student, settings.getAcademyIdentifier());
-      case aikuistenperusopetuksenalkuvaihe:
-        return asList(apaHandler.studentToModel(student, settings.getAcademyIdentifier()));
-
-      default:
-        logger.log(Level.WARNING, String.format("Student %d with studyprogramme %s was not reported to Koski because no handler was specified.", 
-            student.getId(), student.getStudyProgramme().getName()));
-        return null;
-    }
+  public void invalidateAllStudentOIDs(Student student) throws Exception {
+    Set<String> studentOIDs = koskiController.listStudentOIDs(student);
+    invalidateStudyOid(student.getPerson(), studentOIDs);
   }
-
-  private <T> List<T> asList(T o) {
-    List<T> list = new ArrayList<T>();
-    list.add(o);
-    return list;
-  }
+  
 }

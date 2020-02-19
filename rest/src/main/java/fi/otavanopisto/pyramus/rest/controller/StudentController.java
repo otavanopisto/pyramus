@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
@@ -52,10 +54,14 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
+import fi.otavanopisto.pyramus.koski.KoskiClient;
 
 @Dependent
 @Stateless
 public class StudentController {
+
+  @Inject
+  private Logger logger;
   
   @Inject
   private StudentDAO studentDAO;
@@ -89,6 +95,9 @@ public class StudentController {
   
   @Inject
   private CreditLinkDAO creditLinkDAO;
+
+  @Inject
+  private KoskiClient koskiClient;
   
   public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
@@ -133,13 +142,24 @@ public class StudentController {
   
   public Student updateStudent(Student student, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
       StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, String education,
-      Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, Curriculum curriculum, 
+      Nationality nationality, Municipality municipality, Language language, School school, Curriculum curriculum, 
       Double previousStudies, Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, String studyEndText) {
     
     studentDAO.update(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd, activityType, examinationType, educationalLevel,
-        education, nationality, municipality, language, school, studyProgramme, curriculum, previousStudies, studyStartDate, studyEndDate, 
+        education, nationality, municipality, language, school, curriculum, previousStudies, studyStartDate, studyEndDate, 
         studyEndReason, studyEndText);
     
+    return student;
+  }
+
+  public Student updateStudyProgramme(Student student, StudyProgramme studyProgramme) {
+    try {
+      koskiClient.invalidateAllStudentOIDs(student);
+    } catch (Exception ex) {
+      logger.log(Level.SEVERE, String.format("Invalidation of study permits for student %d failed", student.getId()), ex);
+    }
+    
+    studentDAO.updateStudyProgramme(student, studyProgramme);
     return student;
   }
 

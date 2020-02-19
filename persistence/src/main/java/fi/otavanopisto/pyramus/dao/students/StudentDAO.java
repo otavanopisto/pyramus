@@ -180,7 +180,7 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
   
   public void update(Student student, String firstName, String lastName, String nickname, String additionalInfo,
       Date studyTimeEnd, StudentActivityType activityType, StudentExaminationType examinationType, StudentEducationalLevel educationalLevel, 
-      String education, Nationality nationality, Municipality municipality, Language language, School school, StudyProgramme studyProgramme, 
+      String education, Nationality nationality, Municipality municipality, Language language, School school, 
       Curriculum curriculum, Double previousStudies, Date studyStartDate, Date studyEndDate, StudentStudyEndReason studyEndReason, 
       String studyEndText) {
     EntityManager entityManager = getEntityManager();
@@ -198,7 +198,6 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     student.setMunicipality(municipality);
     student.setLanguage(language);
     student.setSchool(school);
-    student.setStudyProgramme(studyProgramme);
     student.setPreviousStudies(previousStudies);
     student.setStudyStartDate(studyStartDate);
     student.setStudyEndDate(studyEndDate);
@@ -231,6 +230,13 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
   public void updateCurriculum(Student student, Curriculum curriculum) {
     EntityManager entityManager = getEntityManager();
     student.setCurriculum(curriculum);
+    entityManager.persist(student);
+    studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
+  }
+
+  public void updateStudyProgramme(Student student, StudyProgramme studyProgramme) {
+    EntityManager entityManager = getEntityManager();
+    student.setStudyProgramme(studyProgramme);
     entityManager.persist(student);
     studentUpdatedEvent.fire(new StudentUpdatedEvent(student.getId()));
   }
