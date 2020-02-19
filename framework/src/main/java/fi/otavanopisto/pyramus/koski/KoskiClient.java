@@ -149,6 +149,8 @@ public class KoskiClient {
    * Invalidates a set of study permits in Koski.
    */
   public boolean invalidateStudyOid(Person person, Collection<String> studyPermitOids) throws Exception {
+    logger.log(Level.INFO, String.format("Invalidating OIDs %s for person %d", studyPermitOids, person.getId()));
+    
     String oppijaOid = personVariableDAO.findByPersonAndKey(person, KOSKI_HENKILO_OID);
     Oppija oppija = findOppijaByOid(oppijaOid);
     
