@@ -28,7 +28,7 @@
           <input type="checkbox" id="field-privacy" name="field-privacy" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
         </div>
         <div class="field-row-label">
-          <label for="field-privacy" class="required">Olen lukenut <a href="https://otavanopisto.fi/wp-content/uploads/2020/01/opiskelijarekisteri_tietosuojaseloste.pdf" target="top" class="summary-privacy-link">tietosuojaselosteen</a> ja hyväksyn, että tietoni tallennetaan Otavian oppilashallintojärjestelmään sekä verkko-oppimisympäristöön.</label>
+          <label for="field-privacy" class="required">Olen lukenut <a href="https://otavia.fi/wp-content/uploads/2020/02/Opiskelija-ja-opintotietorekisterin-tietosuojaseloste_Otavia.pdf" target="top" class="summary-privacy-link">tietosuojaselosteen</a> ja hyväksyn, että tietoni tallennetaan Otavian oppilashallintojärjestelmään sekä verkko-oppimisympäristöön.</label>
         </div>
       </div>
     </div>
