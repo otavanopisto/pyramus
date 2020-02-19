@@ -38,7 +38,10 @@ public class KoskiController {
   @Inject
   private KoskiAikuistenPerusopetuksenStudentHandler aikuistenPerusopetuksenHandler;
 
-  public Set<String> listAllStudentOIDs(Student student) {
+  /**
+   * Lists student OIDs with the currently active handler for it (i.e. the ones that should currently be in use)
+   */
+  public Set<String> listStudentOIDs(Student student) {
     KoskiStudyProgrammeHandler handlerType = settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
     KoskiStudentHandler studentHandler = getStudentHandler(handlerType);
     Set<KoskiStudentId> koskiStudentIds = studentHandler.listOids(student);

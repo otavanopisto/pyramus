@@ -190,6 +190,12 @@ public class KoskiClient {
       return updatePersonToKoski(oppija, person, oppijaOid);
     }
     
+    if (matchingOIDs > 0) {
+      String emsg = String.format("Unexpected error filtering study permits for invalidation (Person %d).", person.getId());
+      logger.log(Level.WARNING, emsg);
+      koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date(), emsg);
+    }
+    
     return false;
   }
 
@@ -449,7 +455,7 @@ public class KoskiClient {
   }
 
   public void invalidateAllStudentOIDs(Student student) throws Exception {
-    Set<String> studentOIDs = koskiController.listAllStudentOIDs(student);
+    Set<String> studentOIDs = koskiController.listStudentOIDs(student);
     invalidateStudyOid(student.getPerson(), studentOIDs);
   }
   
