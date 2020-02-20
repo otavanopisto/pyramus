@@ -25,8 +25,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
-import fi.otavanopisto.pyramus.koski.KoskiClient;
 import fi.otavanopisto.pyramus.koski.KoskiConsts;
+import fi.otavanopisto.pyramus.koski.KoskiController;
 import fi.otavanopisto.pyramus.koski.KoskiSettings;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
@@ -54,15 +54,15 @@ public class ListKoskiPersonVariablesJSONRequestController extends JSONRequestCo
       Person person = personDAO.findById(personId);
       String personOid = personVariableDAO.findByPersonAndKey(person, KoskiConsts.VariableNames.KOSKI_HENKILO_OID);
       
-      KoskiClient koskiClient = CDI.current().select(KoskiClient.class).get();
       KoskiSettings koskiSettings = CDI.current().select(KoskiSettings.class).get();
+      KoskiController koskiController = CDI.current().select(KoskiController.class).get();
 
       List<Map<String, Object>> studentVariables = new ArrayList<>();
       List<Student> students = studentDAO.listByPerson(person);
       students.sort((a, b) -> Comparator.nullsFirst(Date::compareTo).reversed().compare(a.getStudyStartDate(), b.getStudyStartDate()));
       for (Student student : students) {
         KoskiStudyProgrammeHandler handlerType = koskiSettings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
-        KoskiStudentHandler handler = handlerType != null ? koskiClient.getHandlerType(handlerType) : null;
+        KoskiStudentHandler handler = handlerType != null ? koskiController.getStudentHandler(handlerType) : null;
         
         if (handler != null) {
           String studentIdentifier = KoskiConsts.getStudentIdentifier(handlerType, student.getId());

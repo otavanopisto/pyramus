@@ -29,7 +29,6 @@ import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
 import fi.otavanopisto.pyramus.dao.base.SchoolDAO;
-import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentActivityTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
@@ -55,7 +54,6 @@ import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
-import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -128,7 +126,6 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
     MunicipalityDAO municipalityDAO = DAOFactory.getInstance().getMunicipalityDAO();
     NationalityDAO nationalityDAO = DAOFactory.getInstance().getNationalityDAO();
     SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
-    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     AddressDAO addressDAO = DAOFactory.getInstance().getAddressDAO();
     ContactInfoDAO contactInfoDAO = DAOFactory.getInstance().getContactInfoDAO();
     EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
@@ -295,14 +292,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
   
       entityId = requestContext.getLong("school." + student.getId());
       School school = entityId != null && entityId > 0 ? schoolDAO.findById(entityId) : null;
-  
-      entityId = requestContext.getLong("studyProgramme." + student.getId());
-      StudyProgramme studyProgramme = entityId != null && entityId > 0 ? studyProgrammeDAO.findById(entityId) : null;
-      
-      if (!UserUtils.canAccessOrganization(loggedUser, studyProgramme.getOrganization())) {
-        throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid studyprogramme.");
-      }
-  
+
       entityId = requestContext.getLong("studyEndReason." + student.getId());
       StudentStudyEndReason studyEndReason = entityId == null ? null : studyEndReasonDAO.findById(entityId);
   
@@ -394,7 +384,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
 
       studentDAO.update(student, firstName, lastName, nickname, additionalInfo, studyTimeEnd,
           activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, 
-          studyProgramme, curriculum, previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText);
+          curriculum, previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText);
       
       studentDAO.updateApprover(student, approver);
       
@@ -496,9 +486,10 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
           phoneNumberDAO.delete(phoneNumber);
         }
       }
-      
+
+      Long studyProgrammeId = student.getStudyProgramme() != null ? student.getStudyProgramme().getId() : null;
       // #4226: Remove applications of nettipk/nettilukio students when their studies end
-      if (studiesEnded && (studyProgramme.getId() == 6L || studyProgramme.getId() == 7L)) {
+      if (studiesEnded && studyProgrammeId != null && (studyProgrammeId == 6L || studyProgrammeId == 7L)) {
         ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
         Application application = applicationDAO.findByStudent(student);
         if (application != null) {

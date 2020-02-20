@@ -1645,9 +1645,10 @@ public class StudentRESTService extends AbstractRESTService {
     // TODO lodging cannot be updated via boolean
     
     studentController.updateStudent(student, firstName, lastName, nickname, entity.getAdditionalInfo(), toDate(entity.getStudyTimeEnd()),
-        activityType, examinationType, educationalLevel, entity.getEducation(), nationality, municipality, language, school, studyProgramme, curriculum,
+        activityType, examinationType, educationalLevel, entity.getEducation(), nationality, municipality, language, school, curriculum,
         entity.getPreviousStudies(), toDate(entity.getStudyStartDate()), toDate(entity.getStudyEndDate()), studyEndReason, entity.getStudyEndText());
 
+    studentController.updateStudyProgramme(student, studyProgramme);
     studentController.updateStudentPerson(student, person);
     userController.updateUserVariables(student, entity.getVariables());
     studentController.updateStudentTags(student, entity.getTags());
