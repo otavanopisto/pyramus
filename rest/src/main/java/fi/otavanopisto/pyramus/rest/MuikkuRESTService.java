@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -71,6 +73,9 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 @RequestScoped
 public class MuikkuRESTService {
 
+  @Resource
+  private SessionContext sessionContext;
+  
   @Inject
   private CommonController commonController;
 
@@ -197,7 +202,8 @@ public class MuikkuRESTService {
     try {
       email = userController.updateStaffMemberEmail(staffMember, email, email.getContactType(), address, email.getDefaultAddress());
     } catch (UserEmailInUseException e) {
-      // TODO this doesn't rollback the change to staffmember(?)
+      // Set the transaction as rollback only
+      sessionContext.setRollbackOnly();
       return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.emailInUse")).build();
     }
 
