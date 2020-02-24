@@ -14,10 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -46,6 +48,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserIdentification;
+import fi.otavanopisto.pyramus.framework.UserEmailInUseException;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
 import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
@@ -68,9 +71,6 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 @RequestScoped
 public class MuikkuRESTService {
 
-  @Inject
-  private HttpServletRequest httpRequest;
-  
   @Inject
   private CommonController commonController;
 
@@ -101,10 +101,9 @@ public class MuikkuRESTService {
   @Path("/users")
   @POST
   @RESTPermit(MuikkuPermissions.MUIKKU_CREATE_STAFF_MEMBER)
-  public Response createUser(StaffMemberPayload payload) {
+  public Response createUser(@Context HttpServletRequest request, StaffMemberPayload payload) {
     
     // Prerequisites
-    
     DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
     Defaults defaults = defaultsDAO.getDefaults();
     if (defaults.getUserDefaultContactType() == null) {
@@ -133,7 +132,7 @@ public class MuikkuRESTService {
     String address = StringUtils.trim(StringUtils.lowerCase(payload.getEmail()));
     Email email = commonController.findEmailByAddress(address);
     if (email != null) {
-      return Response.status(Status.CONFLICT).entity(getMessage("error.emailInUse")).build();
+      return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.emailInUse")).build();
     }
     
     // User creation
@@ -146,10 +145,79 @@ public class MuikkuRESTService {
     return Response.ok(payload).build();
   }
 
+  @Path("/users/{IDENTIFIER}")
+  @PUT
+  @RESTPermit(MuikkuPermissions.MUIKKU_UPDATE_STAFF_MEMBER)
+  public Response updateUser(@Context HttpServletRequest request, @PathParam("IDENTIFIER") String identifier, StaffMemberPayload payload) {
+    
+    // Basic payload validation
+    
+    if (!StringUtils.equals(payload.getIdentifier(), identifier)) {
+      return Response.status(Status.BAD_REQUEST).entity("Payload identifier doesn't match path identifier").build();
+    }
+    
+    if (StringUtils.isAnyBlank(payload.getFirstName(), payload.getLastName(), payload.getEmail(), payload.getRole())) {
+      return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
+    }
+    
+    // Endpoint only supports creation of managers and teachers
+    
+    Role role = Role.valueOf(payload.getRole());
+    if (role != Role.MANAGER && role != Role.TEACHER) {
+      return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", payload.getRole())).build();
+    }
+    
+    // Find user
+    
+    Long staffMemberId = Long.valueOf(payload.getIdentifier());
+    StaffMember staffMember = userController.findStaffMemberById(staffMemberId);
+    
+    if (staffMember == null || !UserUtils.canAccessOrganization(sessionController.getUser(), staffMember.getOrganization())) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    List<Email> staffMemberEmails = userController.listStaffMemberEmails(staffMember);
+    
+    if (staffMemberEmails.size() != 1) {
+      return Response.status(Status.BAD_REQUEST).entity("User has several emails").build();
+    }
+    
+    Email email = staffMemberEmails.get(0);
+    
+    String address = StringUtils.trim(StringUtils.lowerCase(payload.getEmail()));
+    if (!UserUtils.isAllowedEmail(address, email.getContactType(), staffMember.getPerson().getId())) {
+      return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.emailInUse")).build();
+    }
+
+    // Update user
+    
+    staffMember = userController.updateStaffMember(staffMember, staffMember.getOrganization(), payload.getFirstName(), payload.getLastName(), role);
+    
+    // Update email
+    try {
+      email = userController.updateStaffMemberEmail(staffMember, email, email.getContactType(), address, email.getDefaultAddress());
+    } catch (UserEmailInUseException e) {
+      // TODO this doesn't rollback the change to staffmember(?)
+      return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.emailInUse")).build();
+    }
+
+    return Response.ok(toRestModel(staffMember, email)).build();
+  }
+
+  private StaffMemberPayload toRestModel(StaffMember staffMember, Email email) {
+    StaffMemberPayload payload = new StaffMemberPayload();
+    payload.setIdentifier(staffMember.getId().toString());
+    payload.setFirstName(staffMember.getFirstName());
+    payload.setLastName(staffMember.getLastName());
+    payload.setEmail(email.getAddress());
+    payload.setRole(staffMember.getRole().toString());
+    return payload;
+  }
+
   @Path("/students")
   @POST
   @RESTPermit(MuikkuPermissions.MUIKKU_CREATE_STUDENT)
-  public Response createStudent(StudentPayload payload) {
+  public Response createStudent(@Context HttpServletRequest request, StudentPayload payload) {
     
     // Prerequisites
     
@@ -206,14 +274,14 @@ public class MuikkuRESTService {
     String address = StringUtils.trim(StringUtils.lowerCase(payload.getEmail()));
     Email email = commonController.findEmailByAddress(address);
     if (email != null) {
-      return Response.status(Status.CONFLICT).entity(getMessage("error.emailInUse")).build();
+      return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.emailInUse")).build();
     }
     String ssn = null;
     if (!StringUtils.isBlank(payload.getSsn())) {
       ssn = StringUtils.upperCase(payload.getSsn());
       Person person = personController.findBySsn(ssn);
       if (person != null) {
-        return Response.status(Status.CONFLICT).entity(getMessage("error.ssnInUse")).build();
+        return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.ssnInUse")).build();
       }
     }
     
@@ -318,7 +386,7 @@ public class MuikkuRESTService {
   @Path("/resetCredentials")
   @POST
   @RESTPermit(MuikkuPermissions.MUIKKU_RESET_CREDENTIALS)
-  public Response resetCredentials(CredentialResetPayload payload) {
+  public Response resetCredentials(@Context HttpServletRequest request, CredentialResetPayload payload) {
 
     // Resolve internal authentication provider
 
@@ -342,7 +410,7 @@ public class MuikkuRESTService {
       UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId(provider.getName(), internalAuth.getId().toString());
       if (userIdentification != null) {
         if (!userIdentification.getPerson().getId().equals(resetRequest.getPerson().getId())) {
-          return Response.status(Status.CONFLICT).entity(getMessage("error.usernameInUse")).build();
+          return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.usernameInUse")).build();
         }
       }
     }
@@ -383,8 +451,7 @@ public class MuikkuRESTService {
     return resetRequest == null || resetRequest.getDate() == null || expiryDate.after(resetRequest.getDate());
   }
 
-  private String getMessage(String key) {
-    Locale locale = Locale.forLanguageTag(httpRequest.getHeader("Accept-Language"));
+  private String getMessage(Locale locale, String key) {
     ResourceBundle bundle = ResourceBundle.getBundle("messages", locale);
     return bundle.getString(key);
   }

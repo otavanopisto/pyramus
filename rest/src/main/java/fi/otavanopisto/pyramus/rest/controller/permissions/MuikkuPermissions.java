@@ -17,6 +17,10 @@ public class MuikkuPermissions extends AbstractPyramusPermissionCollection imple
   public static final String MUIKKU_CREATE_STAFF_MEMBER = "MUIKKU_CREATE_STAFF_MEMBER";
 
   @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  public static final String MUIKKU_UPDATE_STAFF_MEMBER = "MUIKKU_UPDATE_STAFF_MEMBER";
+
+  @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
   public static final String MUIKKU_CREATE_STUDENT = "MUIKKU_CREATE_STUDENT";
 
