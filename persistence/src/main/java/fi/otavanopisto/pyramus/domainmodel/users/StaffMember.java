@@ -21,13 +21,14 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
+import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 
 @Entity
 @Indexed
 @Cache (usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @PrimaryKeyJoinColumn(name="id")
-public class StaffMember extends User {
+public class StaffMember extends User implements ArchivableEntity {
   
   public void setRole(Role role) {
     this.role = role;

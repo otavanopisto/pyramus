@@ -28,6 +28,10 @@ public class UserPermissions extends AbstractPyramusPermissionCollection impleme
   public static final String FIND_STAFFMEMBER = "FIND_STAFFMEMBER";
 
   @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  public static final String DELETE_STAFFMEMBER = "DELETE_STAFFMEMBER";
+
+  @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
   public static final String LIST_STAFFMEMBER_EMAILS = "LIST_STAFFMEMBER_EMAILS";
 
