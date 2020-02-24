@@ -24,6 +24,7 @@ import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 import fi.otavanopisto.pyramus.koski.KoskiClient;
 import fi.otavanopisto.pyramus.koski.KoskiConsts;
+import fi.otavanopisto.pyramus.koski.KoskiController;
 import fi.otavanopisto.pyramus.koski.KoskiSettings;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
@@ -58,6 +59,7 @@ public class ListKoskiPersonStudiesJSONRequestController extends JSONRequestCont
       
       KoskiClient koskiClient = CDI.current().select(KoskiClient.class).get();
       KoskiSettings koskiSettings = CDI.current().select(KoskiSettings.class).get();
+      KoskiController koskiController = CDI.current().select(KoskiController.class).get();
       
       // Find student info from Koski
       OppijaReturnVal koskiStudent = koskiClient.findPersonByOid(personOid);
@@ -70,7 +72,7 @@ public class ListKoskiPersonStudiesJSONRequestController extends JSONRequestCont
         for (Student student : students) {
           if (student.getStudyProgramme() != null) {
             KoskiStudyProgrammeHandler handlerType = koskiSettings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
-            KoskiStudentHandler handler = handlerType != null ? koskiClient.getHandlerType(handlerType) : null;
+            KoskiStudentHandler handler = handlerType != null ? koskiController.getStudentHandler(handlerType) : null;
             if (handler != null) {
               Set<KoskiStudentId> ids = handler.listOids(student);
               ids.forEach(id -> oidMap.put(id.getOid(), student));

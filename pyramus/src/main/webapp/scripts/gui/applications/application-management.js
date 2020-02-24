@@ -522,7 +522,7 @@
         data: {
           id: id,
           state: state,
-          lockApplication: state == 'PROCESSING',
+          lockApplication: state == 'PROCESSING' || state == 'TRANSFERRED_AS_STUDENT' || state == 'REJECTED',
           setHandler: !$('#info-application-handler-value').attr('data-handler-id'),
           removeHandler: state == 'PENDING'
         },

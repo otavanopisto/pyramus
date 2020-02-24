@@ -65,6 +65,14 @@
         
         basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
           iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
+          text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsChangeStudyProgrammeLabel"/>',
+          onclick: function (event) {
+            openChangeStudyProgrammeDialog(studentId);
+          }
+        }));
+        
+        basicTabRelatedActionsHoverMenu.addItem(new IxHoverMenuClickableItem({
+          iconURL: GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
           text: '<fmt:message key="students.viewStudent.basicTabRelatedActionsEditStudentImageLabel"/>',
           onclick: function (event) {
             openEditStudentImageDialog(studentId);
@@ -1624,6 +1632,48 @@
         dialog.setSize("640px", "450px");
         dialog.addDialogListener(function(event) {
           switch (event.name) {
+            case 'cancelClick':
+            break;
+          }
+        });
+        
+        dialog.open();
+      }
+      
+      function openChangeStudyProgrammeDialog(studentId) {
+        var dialog = new IxDialog({
+          id : 'changeStudyProgrammeDialog',
+          contentURL : GLOBAL_contextPath + '/students/changestudentstudyprogrammedialog.page?studentId=' + studentId,
+          centered : true,
+          showOk : true,
+          showCancel : true,
+          title : '<fmt:message key="students.changeStudentStudyProgrammeDialog.dialogTitle"/>',
+          okLabel : '<fmt:message key="generic.dialog.save"/>', 
+          cancelLabel : '<fmt:message key="generic.dialog.cancel"/>' 
+        });
+        
+        dialog.setSize("640px", "200px");
+        dialog.addDialogListener(function(event) {
+          var dlg = event.dialog;
+          switch (event.name) {
+            case 'okClick':
+              event.preventDefault(true);
+              dlg.disableOkButton();
+
+              var contentDoc = dlg.getContentDocument();
+              var uploadForm = contentDoc.getElementById("changeStudentStudyProgrammeForm");
+              var studyProgrammeId = uploadForm.elements["studyProgrammeId"].value;
+              
+              JSONRequest.request("students/changestudentstudyprogramme.json", {
+                parameters: {
+                  studentId: studentId,
+                  studyProgrammeId: studyProgrammeId
+                },
+                onSuccess: function (jsonResponse) {
+                  window.location.reload(true);
+                }
+              }); 
+            break;
             case 'cancelClick':
             break;
           }
