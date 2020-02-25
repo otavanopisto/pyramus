@@ -517,6 +517,11 @@ insert into
   CourseAssessment (id, courseStudent)
 values
   (1, 5);
+
+insert into Defaults 
+  (id, educationalTimeUnit, courseState, version, courseParticipationType, courseEnrolmentType, organization, studentDefaultContactType, userDefaultContactType)
+values
+  (1, 1, 1, 1, 1, 1, 1, 1, 1);
   
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'Person', max(id) + 1 from Person;
 insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'User', max(id) + 1 from User;

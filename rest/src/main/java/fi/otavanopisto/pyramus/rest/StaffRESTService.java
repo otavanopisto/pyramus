@@ -8,6 +8,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -106,6 +107,26 @@ public class StaffRESTService extends AbstractRESTService {
         .cacheControl(cacheControl)
         .tag(tag)
         .build();
+  }
+
+  @Path("/members/{ID:[0-9]*}")
+  @DELETE
+  @RESTPermit (UserPermissions.DELETE_STAFFMEMBER)
+  public Response deleteStaffMember(@PathParam("ID") Long id, @Context Request request, 
+      @DefaultValue("false") @QueryParam("permanent") Boolean permanent) {
+    StaffMember staffMember = userController.findStaffMemberById(id);
+    
+    if (staffMember == null || staffMember.getArchived()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    
+    if (permanent) {
+      userController.deleteStaffMember(staffMember);
+    } else {
+      userController.archiveStaffMember(staffMember);
+    }
+    
+    return Response.noContent().build();
   }
 
   @Path("/members/{ID:[0-9]*}/emails")
