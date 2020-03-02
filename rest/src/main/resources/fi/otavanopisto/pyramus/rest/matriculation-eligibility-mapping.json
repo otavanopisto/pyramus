@@ -1,79 +1,237 @@
 {
   "any": {
     "ÄI": { 
-      "comment": "Äidinkieli, 4 pakollista kurssia",
-      "passing-grades": 4,
-      "education-type": "lukio",
-      "education-subtype": "pakollinen",
-      "transfer-credit-only-mandatory": true
-    },
-    "ENA": {
-      "comment": "Vieras kieli, pitkä oppimäärä (englanti) 5 pakollista kurssia",
+      "comment": "Äidinkieli, 5 pakollista kurssia",
       "passing-grades": 5,
       "education-type": "lukio",
       "education-subtype": "pakollinen",
       "transfer-credit-only-mandatory": true
     },
-    "RAB3": {
-      "comment": "Vieras kieli, lyhyt oppimäärä (esim. ranska, saksa, espanja italia), 2 kurssia (näissä ei ole pakollisia kursseja)",
-      "passing-grades": 2,
-      "education-type": "lukio",
-      "education-subtype": null,
-      "transfer-credit-only-mandatory": false
-    },
-    "RUB": {
-      "comment": "Toinen kotimainen kieli (ruotsi), 4 pakollista kurssia",
-      "passing-grades": 4,
+    "S2": { 
+      "comment": "Suomi toisena kielenä, 5 pakollista kurssia",
+      "passing-grades": 5,
       "education-type": "lukio",
       "education-subtype": "pakollinen",
       "transfer-credit-only-mandatory": true
     },
-    "MAB": {
-      "comment": "Matematiikka, lyhyt 5 pakollista kurssia",
+    "ENA": {
+      "comment": "Englanti, pitkä oppimäärä, 6 pakollista kurssia",
+      "passing-grades": 6,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "RAA": {
+      "comment": "Ranska, pitkä oppimäärä, 6 pakollista kurssia",
+      "passing-grades": 6,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "EAA": {
+      "comment": "Espanja, pitkä oppimäärä, 6 pakollista kurssia",
+      "passing-grades": 6,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "SAA": {
+      "comment": "Saksa, pitkä oppimäärä, 6 pakollista kurssia",
+      "passing-grades": 6,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "VEA": {
+      "comment": "Venäjä, pitkä oppimäärä, 6 pakollista kurssia",
+      "passing-grades": 6,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "RUA": {
+      "comment": "Ruotsi, pitkä oppimäärä, 5 pakollista kurssia",
+      "passing-grades": 5,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "RUB1": {
+      "comment": "Ruotsi, keskipitkä oppimäärä, 5 pakollista kurssia",
       "passing-grades": 5,
       "education-type": "lukio",
       "education-subtype": "pakollinen",
       "transfer-credit-only-mandatory": true
     },
     "MAA": {
-      "comment": "Matematiikka, pitkä 9 pakollista kurssia",
+      "comment": "Matematiikka, pitkä, 9 pakollista kurssia (10 kun MAY)",
       "passing-grades": 9,
       "education-type": "lukio",
       "education-subtype": "pakollinen",
       "transfer-credit-only-mandatory": true
     },
-    "PS": {
-      "comment": "muut valinnaiset reaaliaineet (PS+TE) 2 valtakunnallista syventävää kurssia / kirjoitettava aine",
-      "passing-grades": 2,
+    "MAB": {
+      "comment": "Matematiikka, lyhyt, 5 pakollista kurssia (6 kun MAY)",
+      "passing-grades": 5,
       "education-type": "lukio",
-      "education-subtype": "valtakunnallinensyventava",
-      "transfer-credit-only-mandatory": false
-    }
-  },
-  "2016": {
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "UE": {
+      "comment": "Uskonto, evankelilais-luterilainen, 1 pakollinen kurssi",
+      "passing-grades": 1,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "UO": {
+      "comment": "Uskonto, ortodoksinen, 1 pakollinen kurssi",
+      "passing-grades": 1,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "ET": {
+      "comment": "Elämänkatsomustieto, 1 pakollinen kurssi",
+      "passing-grades": 1,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
     "YH": {
-      "comment": "Yhteiskuntaoppi OPS2016, 2 pakollista kurssia",
+      "comment": "Yhteiskuntaoppi, 2 pakollista kurssia",
       "passing-grades": 2,
       "education-type": "lukio",
       "education-subtype": "pakollinen",
       "transfer-credit-only-mandatory": true
     },
-    "HI": { 
-      "comment": "Historia OPS2016, 2 pakollista kurssia",
+    "KE": {
+      "comment": "Kemia, 1 pakollinen kurssi",
+      "passing-grades": 1,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "GE": {
+      "comment": "Maantiede, 1 pakollinen kurssi",
+      "passing-grades": 1,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "TE": {
+      "comment": "Terveystieto, 2 kurssia",
+      "passing-grades": 2,
+      "education-type": "lukio",
+      "education-subtype": null,
+      "transfer-credit-only-mandatory": false
+    },
+    "PS": {
+      "comment": "Psykologia, 2 kurssia",
+      "passing-grades": 2,
+      "education-type": "lukio",
+      "education-subtype": null,
+      "transfer-credit-only-mandatory": false
+    },
+    "FI": {
+      "comment": "Filosofia, 1 pakollinen kurssi",
+      "passing-grades": 1,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "HI": {
+      "comment": "Historia, 2 pakollista kurssia",
       "passing-grades": 2,
       "education-type": "lukio",
       "education-subtype": "pakollinen",
       "transfer-credit-only-mandatory": true
+    },
+    "FY": {
+      "comment": "Fysiikka, 1 pakollinen kurssi",
+      "passing-grades": 1,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "BI": {
+      "comment": "Biologia, 1 pakollinen kurssi",
+      "passing-grades": 1,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true
+    },
+    "ENB3": {
+      "comment": "Englanti, lyhyt oppimäärä, 3 kurssia",
+      "passing-grades": 3,
+      "education-type": "lukio",
+      "education-subtype": null,
+      "transfer-credit-only-mandatory": false
+    },
+    "RAB3": {
+      "comment": "Ranska, lyhyt oppimäärä, 3 kurssia",
+      "passing-grades": 3,
+      "education-type": "lukio",
+      "education-subtype": null,
+      "transfer-credit-only-mandatory": false
+    },
+    "EAB3": {
+      "comment": "Espanja, lyhyt oppimäärä, 3 kurssia",
+      "passing-grades": 3,
+      "education-type": "lukio",
+      "education-subtype": null,
+      "transfer-credit-only-mandatory": false
+    },
+    "SAB3": {
+      "comment": "Saksa, lyhyt oppimäärä, 3 kurssia",
+      "passing-grades": 3,
+      "education-type": "lukio",
+      "education-subtype": null,
+      "transfer-credit-only-mandatory": false
+    },
+    "VEB3": {
+      "comment": "Venäjä, lyhyt oppimäärä, 3 kurssia",
+      "passing-grades": 3,
+      "education-type": "lukio",
+      "education-subtype": null,
+      "transfer-credit-only-mandatory": false
+    },
+    "IAB3": {
+      "comment": "Italia, lyhyt oppimäärä, 3 kurssia",
+      "passing-grades": 3,
+      "education-type": "lukio",
+      "education-subtype": null,
+      "transfer-credit-only-mandatory": false
+    },
+    "POB3": {
+      "comment": "Portugali, lyhyt oppimäärä, 3 kurssia",
+      "passing-grades": 3,
+      "education-type": "lukio",
+      "education-subtype": null,
+      "transfer-credit-only-mandatory": false
+    },
+    "LAB3": {
+      "comment": "Latina, lyhyt oppimäärä, 3 kurssia",
+      "passing-grades": 3,
+      "education-type": "lukio",
+      "education-subtype": null,
+      "transfer-credit-only-mandatory": false
+    },
+    "SMB3": {
+      "comment": "Saame, lyhyt oppimäärä, 3 kurssia",
+      "passing-grades": 3,
+      "education-type": "lukio",
+      "education-subtype": null,
+      "transfer-credit-only-mandatory": false
     }
   },
   "2005": {
     "HI": { 
-      "comment": "Yhteiskuntaoppi OPS2005 ja muut pakolliset reaaliaineet 1 pakollinen kurssi / kirjoitettava aine",
+      "comment": "Historia (OPS 2005), 1 pakollinen kurssi",
       "passing-grades": 1,
       "education-type": "lukio",
       "education-subtype": "pakollinen",
       "transfer-credit-only-mandatory": true
     }
-  }
-  
+  }  
 }
