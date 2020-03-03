@@ -81,6 +81,7 @@ import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.resources.Resource;
 import fi.otavanopisto.pyramus.domainmodel.resources.ResourceType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
@@ -340,6 +341,11 @@ public class EditCourseJSONRequestController extends JSONRequestController {
         planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, staffMember);
     
     courseDAO.updateCurriculums(course, curriculums);
+
+    if (Role.ADMINISTRATOR.equals(loggedUser.getRole())) {
+      Boolean isCourseTemplate = requestContext.getBoolean("isCourseTemplate");
+      courseDAO.updateCourseTemplate(course, Boolean.TRUE.equals(isCourseTemplate));
+    }
     
     Long moduleId = requestContext.getLong("moduleId");
     Long currentModuleId = course.getModule() != null ? course.getModule().getId() : null;

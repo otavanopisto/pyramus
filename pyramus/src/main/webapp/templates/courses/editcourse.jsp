@@ -1523,6 +1523,19 @@
               <input type="hidden" id="moduleId" name="moduleId" value="${course.module.id}" />
             </div>
       
+            <c:if test="${loggedUserRole == 'ADMINISTRATOR'}">
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="courses.editCourse.isCourseTemplateTitle"/>
+                  <jsp:param name="helpLocale" value="courses.editCourse.isCourseTemplateHelp"/>
+                </jsp:include>                  
+                <select name="isCourseTemplate" class="required">
+                  <option ${not course.courseTemplate ? 'selected="selected"' : ''} value="false"><fmt:message key="terms.no" /></option>
+                  <option ${course.courseTemplate ? 'selected="selected"' : ''} value="true"><fmt:message key="terms.yes" /></option>
+                </select>
+              </div>
+            </c:if>
+
             <div class="genericFormSection">
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="terms.organization"/>
