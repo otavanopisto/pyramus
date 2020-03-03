@@ -208,6 +208,16 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     return course;
   }
 
+  public Course updateCourseTemplate(Course course, boolean isCourseTemplate) {
+    course.setCourseTemplate(isCourseTemplate);
+
+    persist(course);
+    
+    courseUpdatedEvent.fire(new CourseUpdatedEvent(course.getId()));
+    
+    return course;
+  }
+
   public Course updateCurriculums(Course course, Set<Curriculum> curriculums) {
     EntityManager entityManager = getEntityManager();
 
