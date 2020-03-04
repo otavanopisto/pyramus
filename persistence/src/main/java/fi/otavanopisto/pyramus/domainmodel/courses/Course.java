@@ -388,6 +388,7 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   private BigDecimal courseFee;
   
   private Currency courseFeeCurrency;
-  
+
+  @Field (analyze = Analyze.NO)
   private boolean courseTemplate;
 }

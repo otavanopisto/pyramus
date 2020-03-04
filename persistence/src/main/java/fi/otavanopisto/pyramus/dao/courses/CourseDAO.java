@@ -371,15 +371,16 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
 
   public SearchResult<Course> searchCourses(int resultsPerPage, int page, String name, String tags, String nameExtension,
       String description, CourseState courseState, Subject subject, SearchTimeFilterMode timeFilterMode,
-      Date timeframeStart, Date timeframeEnd, boolean filterArchived) {
+      Date timeframeStart, Date timeframeEnd, boolean filterArchived, CourseTemplateFilter courseTemplateFilter) {
     return searchCourses(resultsPerPage, page, name, tags, nameExtension, description, courseState, subject, timeFilterMode,
-        timeframeStart, timeframeEnd, null, null, filterArchived);
+        timeframeStart, timeframeEnd, null, null, filterArchived, courseTemplateFilter);
   }
   
   @SuppressWarnings("unchecked")
   public SearchResult<Course> searchCourses(int resultsPerPage, int page, String name, String tags, String nameExtension,
       String description, CourseState courseState, Subject subject, SearchTimeFilterMode timeFilterMode,
-      Date timeframeStart, Date timeframeEnd, EducationType educationType, EducationSubtype educationSubtype, boolean filterArchived) {
+      Date timeframeStart, Date timeframeEnd, EducationType educationType, EducationSubtype educationSubtype, boolean filterArchived,
+      CourseTemplateFilter courseTemplateFilter) {
     int firstResult = page * resultsPerPage;
 
     String timeframeS = null;
@@ -475,6 +476,18 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
       }
     }
 
+    switch (courseTemplateFilter) {
+      case LIST_COURSES:
+        addTokenizedSearchCriteria(queryBuilder, "courseTemplate", Boolean.FALSE.toString(), true);
+      break;
+      case LIST_TEMPLATES:
+        addTokenizedSearchCriteria(queryBuilder, "courseTemplate", Boolean.TRUE.toString(), true);
+      break;
+      case LIST_ALL:
+        // No restrictions
+      break;
+    }
+    
     EntityManager entityManager = getEntityManager();
     FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
@@ -521,5 +534,10 @@ public class CourseDAO extends PyramusEntityDAO<Course> {
     super.archive(course, user);
     courseArchivedEvent.fire(new CourseArchivedEvent(course.getId()));
   }
-  
+
+  public enum CourseTemplateFilter {
+    LIST_ALL,
+    LIST_COURSES,
+    LIST_TEMPLATES
+  }
 }

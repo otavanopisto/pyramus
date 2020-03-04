@@ -12,6 +12,7 @@ import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseDAO.CourseTemplateFilter;
 import fi.otavanopisto.pyramus.dao.courses.CourseStudentDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
@@ -37,7 +38,7 @@ public class SearchStudentProjectCoursesJSONRequestController extends JSONReques
     String name = requestContext.getString("name");
     String tags = requestContext.getString("tags");
     
-    SearchResult<Course> searchResult = courseDAO.searchCourses(resultsPerPage, page, name, tags, null, null, null, null, null, null, null, true);
+    SearchResult<Course> searchResult = courseDAO.searchCourses(resultsPerPage, page, name, tags, null, null, null, null, null, null, null, true, CourseTemplateFilter.LIST_COURSES);
 
     List<Map<String, Object>> results = new ArrayList<>();
     List<Course> courses = searchResult.getResults();

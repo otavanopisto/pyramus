@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.base.AcademicTermDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseDAO.CourseTemplateFilter;
 import fi.otavanopisto.pyramus.domainmodel.base.AcademicTerm;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -45,7 +46,7 @@ public class CalendarController {
   }
   
   public SearchResult<Course> findCoursesByTerm(int resultsPerPage, int page, SearchTimeFilterMode timeFilterMode, Date timeframeStart, Date timeframeEnd, boolean filterArchived) {
-    SearchResult<Course> courses = courseDAO.searchCourses(resultsPerPage, page, null, null, null, null, null, null, timeFilterMode, timeframeStart, timeframeEnd, filterArchived);
+    SearchResult<Course> courses = courseDAO.searchCourses(resultsPerPage, page, null, null, null, null, null, null, timeFilterMode, timeframeStart, timeframeEnd, filterArchived, CourseTemplateFilter.LIST_COURSES);
     return courses;
   }
   
