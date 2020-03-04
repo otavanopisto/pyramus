@@ -2082,13 +2082,21 @@
       
           <div id="students" class="tabContentixTableFormattedData hiddenTab">
             <div class="courseStudentsTableContainer">
-              <div class="genericTableAddRowContainer">
-                <span class="genericTableAddRowLinkContainer" onclick="openSearchStudentsDialog();"><fmt:message key="courses.editCourse.addStudentLink"/></span>
-              </div>
-                
-              <div id="noStudentsAddedMessageContainer" class="genericTableNotAddedMessageContainer">
-                <span><fmt:message key="courses.editCourse.noStudentsAddedPreFix"/> <span onclick="openSearchStudentsDialog();" class="genericTableAddRowLink"><fmt:message key="courses.editCourse.noStudentsAddedClickHereLink"/></span>.</span>
-              </div>
+            
+              <c:choose>
+                <c:when test="${course.courseTemplate}">
+                  <div><fmt:message key="courses.editCourse.courseTemplateCannotHaveStudentsMessage"/></div>
+                </c:when>
+                <c:otherwise>
+                  <div class="genericTableAddRowContainer">
+                    <span class="genericTableAddRowLinkContainer" onclick="openSearchStudentsDialog();"><fmt:message key="courses.editCourse.addStudentLink"/></span>
+                  </div>
+                    
+                  <div id="noStudentsAddedMessageContainer" class="genericTableNotAddedMessageContainer">
+                    <span><fmt:message key="courses.editCourse.noStudentsAddedPreFix"/> <span onclick="openSearchStudentsDialog();" class="genericTableAddRowLink"><fmt:message key="courses.editCourse.noStudentsAddedClickHereLink"/></span>.</span>
+                  </div>
+                </c:otherwise>
+              </c:choose>
             
               <div id="courseStudentsTable"> </div>
 

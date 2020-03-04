@@ -273,6 +273,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
+    Locale locale = requestContext.getRequest().getLocale();
     User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
     Organization organization = organizationDAO.findById(requestContext.getLong("organizationId"));
     if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
@@ -682,11 +683,15 @@ public class EditCourseJSONRequestController extends JSONRequestController {
         BigDecimal reservationFee = null;
         Currency reservationFeeCurrency = null;
 
+        if (course.isCourseTemplate()) {
+          throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 
+              Messages.getInstance().getText(locale, "generic.errors.cannotAddStudentsToCourseTemplate"));
+        }
+        
         try {
           courseStudent = courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, 
               optionality, null, organizationName, additionalInfo, room, lodgingFee, lodgingFeeCurrency, reservationFee, reservationFeeCurrency, Boolean.FALSE);
         } catch (DuplicateCourseStudentException dcse) {
-          Locale locale = requestContext.getRequest().getLocale();
           throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 
               Messages.getInstance().getText(locale, "generic.errors.duplicateCourseStudent", new Object[] { student.getFullName() }));
         }
@@ -701,7 +706,6 @@ public class EditCourseJSONRequestController extends JSONRequestController {
           try {
             courseStudentDAO.update(courseStudent, student, enrolmentType, participationType, enrolmentDate, lodging, optionality);
           } catch (DuplicateCourseStudentException dcse) {
-            Locale locale = requestContext.getRequest().getLocale();
             throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 
                 Messages.getInstance().getText(locale, "generic.errors.duplicateCourseStudent", new Object[] { student.getFullName() }));
           }
