@@ -753,7 +753,7 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       courseAssessments.put(student.getId(), courseAssessmentsByStudent);
       contactEntries.put(student.getId(), listStudentContactEntries);
       transferCredits.put(student.getId(), transferCreditsByStudent);
-      studentGroups.put(student.getId(), studentGroupDAO.listByStudent(student));
+      studentGroups.put(student.getId(), studentGroupDAO.listByStudent(student, null, null, false));
       studentProjects.put(student.getId(), studentProjectBeans);
       studentLodgingPeriods.put(student.getId(), studentLodgingPeriodDAO.listByStudent(student));
       studentStudyPeriods.put(student.getId(), studentStudyPeriodDAO.listByStudent(student));
