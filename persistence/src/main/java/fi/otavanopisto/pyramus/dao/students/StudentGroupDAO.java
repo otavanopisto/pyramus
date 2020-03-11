@@ -30,6 +30,7 @@ import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
+import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -41,6 +42,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser_;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup_;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.events.StudentGroupArchivedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupCreatedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupUpdatedEvent;
 import fi.otavanopisto.pyramus.persistence.search.SearchResult;
@@ -54,8 +56,8 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
   @Inject
   private Event<StudentGroupUpdatedEvent> studentGroupUpdatedEvent;
   
-//  @Inject
-//  private Event<StudentGroupArchivedEvent> studentGroupRemovedEvent;
+  @Inject
+  private Event<StudentGroupArchivedEvent> studentGroupRemovedEvent;
   
   public StudentGroup create(Organization organization, String name, String description, Date beginDate, User creatingUser, Boolean guidanceGroup) {
     EntityManager entityManager = getEntityManager();
@@ -373,6 +375,15 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     }
   
     return query.getResultList();
+  }
+
+  @Override
+  public void archive(ArchivableEntity entity, User modifier) {
+    super.archive(entity, modifier);
+    if (entity instanceof StudentGroup) {
+      StudentGroup studentGroup = (StudentGroup) entity;
+      studentGroupRemovedEvent.fire(new StudentGroupArchivedEvent(studentGroup.getId()));
+    }
   }
   
 }
