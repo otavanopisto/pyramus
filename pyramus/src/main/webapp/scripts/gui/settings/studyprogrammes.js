@@ -5,7 +5,7 @@ var studyProgrammes = JSDATA["studyProgrammes"].evalJSON();
 
 function addStudyProgrammesTableRow() {
   var table = getIxTableById('studyProgrammesTable');
-  var rowIndex = table.addRow([ '', '', '', '', '', '', '', -1, 1 ]);
+  var rowIndex = table.addRow([ '', '', '', '', '', '', '', '', -1, 1 ]);
   for ( var i = 0; i < table.getColumnCount(); i++) {
     table.setCellEditable(rowIndex, i, true);
   }
