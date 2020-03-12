@@ -29,6 +29,7 @@ import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamAttendanceDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamDAO;
 import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
@@ -243,6 +244,21 @@ public class YTLReportBinaryRequestController extends BinaryRequestController {
         }
       } else {
         logger.warning(String.format("Specified educationtype %d was not found", ytlAKSK.getEducationType()));
+      }
+    }
+
+    /**
+     * MAY lisätään ainevalinnan mukaan joko pitkän tai lyhyen matematiikan kurssilukumäärään
+     */
+    if (StringUtils.equals(ytlAineKoodi.getYtlAine(), "M") || StringUtils.equals(ytlAineKoodi.getYtlAine(), "N")) {
+      UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
+      String valittuMatematiikka = userVariableDAO.findByUserAndKey(student, "lukioMatematiikka");
+      if ((StringUtils.equals(ytlAineKoodi.getYtlAine(), "M") && StringUtils.equals(valittuMatematiikka, "MAA")) || 
+          (StringUtils.equals(ytlAineKoodi.getYtlAine(), "N") && StringUtils.equals(valittuMatematiikka, "MAB"))) {
+        TORSubject torSubject = tor.findSubject("MAY");
+        if (torSubject != null) {
+          kurssiLukumäärä += torSubject.getPassedCoursesCount();
+        }
       }
     }
     
