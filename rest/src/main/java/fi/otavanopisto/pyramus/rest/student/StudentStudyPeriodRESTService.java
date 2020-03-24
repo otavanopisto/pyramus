@@ -34,7 +34,7 @@ import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 
-@Path("/students/students")
+@Path("/students")
 @Produces("application/json")
 @Consumes("application/json")
 @Stateful
@@ -56,7 +56,7 @@ public class StudentStudyPeriodRESTService extends AbstractRESTService {
   @Inject
   private StudentStudyPeriodDAO studentStudyPeriodDAO;
   
-  @Path("/{STUDENTID:[0-9]*}/studyPeriods")
+  @Path("/students/{STUDENTID:[0-9]*}/studyPeriods")
   @POST
   @RESTPermit (StudentPermissions.CREATE_STUDENTSTUDYPERIOD)
   public Response createStudentStudyPeriod(@PathParam("STUDENTID") Long studentId, fi.otavanopisto.pyramus.rest.model.students.StudentStudyPeriod entity) {
@@ -79,7 +79,7 @@ public class StudentStudyPeriodRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(studentStudyPeriod)).build();
   }
 
-  @Path("/{STUDENTID:[0-9]*}/studyPeriods")
+  @Path("/students/{STUDENTID:[0-9]*}/studyPeriods")
   @GET
   @RESTPermit (StudentPermissions.LIST_STUDENTSTUDYPERIODS)
   public Response listStudentStudyPeriods(@PathParam("STUDENTID") Long studentId) {
@@ -93,7 +93,7 @@ public class StudentStudyPeriodRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(studyPeriods)).build();
   }
   
-  @Path("/{STUDENTID:[0-9]*}/studyPeriods/{PERIODID:[0-9]*}")
+  @Path("/students/{STUDENTID:[0-9]*}/studyPeriods/{PERIODID:[0-9]*}")
   @GET
   @RESTPermit (StudentPermissions.FIND_STUDENTSTUDYPERIOD)
   public Response findStudentStudyPeriod(@PathParam("STUDENTID") Long studentId, @PathParam("PERIODID") Long periodId) {
@@ -111,7 +111,7 @@ public class StudentStudyPeriodRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(studentStudyPeriod)).build();
   }
 
-  @Path("/{STUDENTID:[0-9]*}/studyPeriods/{PERIODID:[0-9]*}")
+  @Path("/students/{STUDENTID:[0-9]*}/studyPeriods/{PERIODID:[0-9]*}")
   @PUT
   @RESTPermit (StudentPermissions.UPDATE_STUDENTSTUDYPERIOD)
   public Response updateStudentStudyPeriod(@PathParam("STUDENTID") Long studentId, @PathParam("PERIODID") Long periodId,
@@ -140,7 +140,7 @@ public class StudentStudyPeriodRESTService extends AbstractRESTService {
     return Response.ok(objectFactory.createModel(studentStudyPeriod)).build();
   }
   
-  @Path("/{STUDENTID:[0-9]*}/studyPeriods/{PERIODID:[0-9]*}")
+  @Path("/students/{STUDENTID:[0-9]*}/studyPeriods/{PERIODID:[0-9]*}")
   @DELETE
   @RESTPermit (StudentPermissions.DELETE_STUDENTSTUDYPERIOD)
   public Response deleteStudentStudyPeriod(@PathParam("STUDENTID") Long studentId, @PathParam("PERIODID") Long periodId) {
