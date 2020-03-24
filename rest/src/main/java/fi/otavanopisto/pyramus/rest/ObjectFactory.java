@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.rest;
 import java.lang.reflect.ParameterizedType;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -77,6 +78,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
@@ -91,6 +93,7 @@ import fi.otavanopisto.pyramus.rest.model.Sex;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType;
 import fi.otavanopisto.pyramus.rest.model.UserRole;
 import fi.otavanopisto.pyramus.rest.model.VariableType;
+import fi.otavanopisto.pyramus.rest.model.students.StudentStudyPeriodType;
 
 @ApplicationScoped
 public class ObjectFactory {
@@ -782,6 +785,20 @@ public class ObjectFactory {
         @Override
         public Object map(Organization entity) {
           return new fi.otavanopisto.pyramus.rest.model.Organization(entity.getId(), entity.getName(), entity.getArchived());
+        }
+      },
+      
+      new Mapper<fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod>() {
+        @Override
+        public Object map(StudentStudyPeriod entity) {
+          Long studentId = entity.getStudent() != null ? entity.getStudent().getId() : null;
+          StudentStudyPeriodType type = entity.getPeriodType() != null ? StudentStudyPeriodType.valueOf(entity.getPeriodType().toString()) : null;
+          
+          LocalDate begin = entity.getBegin() != null ? Instant.ofEpochMilli(entity.getBegin().getTime()).atZone(ZoneId.systemDefault()).toLocalDate() : null;
+          LocalDate end = entity.getEnd() != null ? Instant.ofEpochMilli(entity.getEnd().getTime()).atZone(ZoneId.systemDefault()).toLocalDate() : null;
+                    
+          return new fi.otavanopisto.pyramus.rest.model.students.StudentStudyPeriod(entity.getId(), studentId, 
+              type, begin, end);
         }
       }
     );
