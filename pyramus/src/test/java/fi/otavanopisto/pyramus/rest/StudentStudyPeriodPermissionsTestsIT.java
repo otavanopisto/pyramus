@@ -20,7 +20,7 @@ import fi.otavanopisto.pyramus.rest.model.students.StudentStudyPeriodType;
 
 
 /**
- * Tests of permissions used in StudentRESTService
+ * Tests of permissions used in StudentStudyPeriodRESTService
  */
 @TestInstance(Lifecycle.PER_CLASS)
 public class StudentStudyPeriodPermissionsTestsIT extends AbstractRESTPermissionsTestJUnit5 {
