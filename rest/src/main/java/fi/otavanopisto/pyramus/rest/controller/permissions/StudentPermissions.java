@@ -192,11 +192,11 @@ public class StudentPermissions extends AbstractPyramusPermissionCollection impl
   public static final String CREATE_STUDENTSTUDYPERIOD = "CREATE_STUDENTSTUDYPERIOD";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
   public static final String LIST_STUDENTSTUDYPERIODS = "LIST_STUDENTSTUDYPERIODS";
   
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TRUSTED_SYSTEM })
   public static final String FIND_STUDENTSTUDYPERIOD = "FIND_STUDENTSTUDYPERIOD";
   
   @Scope (PermissionScope.ENVIRONMENT)
