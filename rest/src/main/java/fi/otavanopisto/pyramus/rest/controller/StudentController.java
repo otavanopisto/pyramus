@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -153,13 +154,20 @@ public class StudentController {
   }
 
   public Student updateStudyProgramme(Student student, StudyProgramme studyProgramme) {
-    try {
-      koskiClient.invalidateAllStudentOIDs(student);
-    } catch (Exception ex) {
-      logger.log(Level.SEVERE, String.format("Invalidation of study permits for student %d failed", student.getId()), ex);
+    Long oldStudyProgrammeId = student.getStudyProgramme() != null ? student.getStudyProgramme().getId() : null;
+    Long newStudyProgrammeId = studyProgramme != null ? studyProgramme.getId() : null;
+
+    // Do nothing if studyprogramme has not changed
+    if (!Objects.equals(oldStudyProgrammeId, newStudyProgrammeId)) {
+      try {
+        koskiClient.invalidateAllStudentOIDs(student);
+      } catch (Exception ex) {
+        logger.log(Level.SEVERE, String.format("Invalidation of study permits for student %d failed", student.getId()), ex);
+      }
+      
+      studentDAO.updateStudyProgramme(student, studyProgramme);
     }
     
-    studentDAO.updateStudyProgramme(student, studyProgramme);
     return student;
   }
 

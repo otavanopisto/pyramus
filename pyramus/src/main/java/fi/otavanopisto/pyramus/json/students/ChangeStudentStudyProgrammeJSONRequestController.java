@@ -35,12 +35,15 @@ public class ChangeStudentStudyProgrammeJSONRequestController extends JSONReques
     Long studyProgrammeId = requestContext.getLong("studyProgrammeId");
     Student student = studentDAO.findById(studentId);
     StudyProgramme studyProgramme = studyProgrammeDAO.findById(studyProgrammeId);
-    
+
     if (!(UserUtils.canAccessOrganization(loggedUser, student.getOrganization()) && 
         UserUtils.canAccessOrganization(loggedUser, studyProgramme.getOrganization()))) {
       throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid studyprogramme.");
     }
 
+    Long oldStudyProgrammeId = student.getStudyProgramme() != null ? student.getStudyProgramme().getId() : null;
+    logger.info(String.format("Changing study programme for student %d from %d to %d.", studentId, oldStudyProgrammeId, studyProgrammeId));
+    
     KoskiClient client = CDI.current().select(KoskiClient.class).get();
     try {
       client.invalidateAllStudentOIDs(student);
