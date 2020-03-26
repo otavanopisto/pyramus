@@ -25,6 +25,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -149,6 +150,11 @@ public class KoskiClient {
    * Invalidates a set of study permits in Koski.
    */
   public boolean invalidateStudyOid(Person person, Collection<String> studyPermitOids) throws Exception {
+    if (CollectionUtils.isEmpty(studyPermitOids)) {
+      logger.log(Level.INFO, String.format("Invalidation called with no oids for person %d", person.getId()));
+      return true;
+    }
+    
     logger.log(Level.INFO, String.format("Invalidating OIDs %s for person %d", studyPermitOids, person.getId()));
     
     String oppijaOid = personVariableDAO.findByPersonAndKey(person, KOSKI_HENKILO_OID);
@@ -456,9 +462,9 @@ public class KoskiClient {
     return null;
   }
 
-  public void invalidateAllStudentOIDs(Student student) throws Exception {
+  public boolean invalidateAllStudentOIDs(Student student) throws Exception {
     Set<String> studentOIDs = koskiController.listStudentOIDs(student);
-    invalidateStudyOid(student.getPerson(), studentOIDs);
+    return invalidateStudyOid(student.getPerson(), studentOIDs);
   }
   
 }
