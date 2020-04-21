@@ -660,6 +660,17 @@
                   if (course.credits && course.credits.length > 0) {
                     var credit = course.credits[0];
 
+                    if (credit.passingGrade == false) {
+                      // Credit is not a passing grade, try to see if there is a passing grade in the list to override this
+                      // This is not necessarily the "best grade" but at least it's passing
+                      for (var crindx = 1; crindx < course.credits.length; crindx++) {
+                        if (course.credits[crindx].passingGrade == true) {
+                          credit = course.credits[crindx];
+                          break;
+                        }
+                      }
+                    }
+
                     var gradeContainer = gradesContainer.appendChild(new Element("span", {className: "studentSubjectCreditsGradeContainer"}));
                     var gradeElement = gradeContainer.appendChild(new Element("span", {className: "studentSubjectCreditsGrade"}));
                     
