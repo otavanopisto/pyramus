@@ -156,13 +156,26 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
     String password2 = requestContext.getString("password2");
 
     if (UserUtils.allowEditCredentials(loggedUser, person)) {
-      if (!person.getVersion().equals(version))
+      if (!person.getVersion().equals(version)) {
         throw new StaleObjectStateException(Person.class.getName(), person.getId());
+      }
   
       boolean usernameBlank = StringUtils.isBlank(username);
       boolean passwordBlank = StringUtils.isBlank(password);
   
-      if (!usernameBlank||!passwordBlank) {
+      if (usernameBlank && passwordBlank) {
+        // #1108: Existing credential deletion
+        UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson("internal", person);
+        if (userIdentification != null && NumberUtils.isNumber(userIdentification.getExternalId())) {
+          InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
+          InternalAuth internalAuth = internalAuthDAO.findById(new Long(userIdentification.getExternalId()));
+          if (internalAuth != null) {
+            internalAuthDAO.delete(internalAuth);
+          }
+          userIdentificationDAO.delete(userIdentification);
+        }
+      }
+      else if (!usernameBlank||!passwordBlank) {
         if (!passwordBlank && !password.equals(password2)) {
           throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
         }
