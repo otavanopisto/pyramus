@@ -46,6 +46,7 @@
             timeframeEnd: searchForm.timeframeEnd.value,
             educationType: educationType, 
             educationSubtype: educationSubtype, 
+            courseTemplateFilter: searchForm.courseTemplateFilter.value,
             activeTab: searchForm.activeTab.value,
             page: page
           },
@@ -360,6 +361,18 @@
                   </select>
                 </div>
 
+                <div class="genericFormSection">  
+                  <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                    <jsp:param name="titleLocale" value="courses.searchCourses.courseTemplateFilterTitle"/>
+                    <jsp:param name="helpLocale" value="courses.searchCourses.courseTemplateFilterHelp"/>
+                  </jsp:include>    
+                  <select name="courseTemplateFilter">
+                    <option value="LIST_ALL"><fmt:message key="courses.searchCourses.filter.listAll" /></option>
+                    <option value="LIST_COURSES"><fmt:message key="courses.searchCourses.filter.listCourses" /></option>
+                    <option value="LIST_TEMPLATES"><fmt:message key="courses.searchCourses.filter.listTemplates" /></option>
+                  </select>
+                </div>
+                
               </div>
 
             </div>

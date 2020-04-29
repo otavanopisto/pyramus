@@ -644,6 +644,10 @@ public class CourseRESTService extends AbstractRESTService {
       return Response.status(Status.NOT_FOUND).build();
     }
     
+    if (course.isCourseTemplate()) {
+      return Response.status(Status.BAD_REQUEST).entity("Cannot add student to a course template").build();
+    }
+    
     Student student = studentController.findStudentById(entity.getStudentId());
     if (student == null) {
       return Response.status(Status.BAD_REQUEST).entity("could not find the student #" + entity.getStudentId()).build();

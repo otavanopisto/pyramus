@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseDAO.CourseTemplateFilter;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.projects.ProjectDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
@@ -52,7 +53,7 @@ public class TagController {
   }
   
   public SearchResult<Course> findCoursesByTag(int resultsPerPage, int page, String tags, boolean filterArchived) {
-    SearchResult<Course> courses = courseDAO.searchCourses(resultsPerPage, page, null, tags, null, null, null, null, null, null, null, filterArchived);
+    SearchResult<Course> courses = courseDAO.searchCourses(resultsPerPage, page, null, tags, null, null, null, null, null, null, null, filterArchived, CourseTemplateFilter.LIST_COURSES);
     return courses;
   }
   

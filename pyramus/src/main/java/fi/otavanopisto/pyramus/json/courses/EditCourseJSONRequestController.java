@@ -81,6 +81,7 @@ import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.resources.Resource;
 import fi.otavanopisto.pyramus.domainmodel.resources.ResourceType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
@@ -272,6 +273,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     OrganizationDAO organizationDAO = DAOFactory.getInstance().getOrganizationDAO();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
+    Locale locale = requestContext.getRequest().getLocale();
     User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
     Organization organization = organizationDAO.findById(requestContext.getLong("organizationId"));
     if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
@@ -340,6 +342,11 @@ public class EditCourseJSONRequestController extends JSONRequestController {
         planningHours, assessingHours, description, maxParticipantCount, enrolmentTimeEnd, staffMember);
     
     courseDAO.updateCurriculums(course, curriculums);
+
+    if (Role.ADMINISTRATOR.equals(loggedUser.getRole())) {
+      Boolean isCourseTemplate = requestContext.getBoolean("isCourseTemplate");
+      courseDAO.updateCourseTemplate(course, Boolean.TRUE.equals(isCourseTemplate));
+    }
     
     Long moduleId = requestContext.getLong("moduleId");
     Long currentModuleId = course.getModule() != null ? course.getModule().getId() : null;
@@ -676,11 +683,15 @@ public class EditCourseJSONRequestController extends JSONRequestController {
         BigDecimal reservationFee = null;
         Currency reservationFeeCurrency = null;
 
+        if (course.isCourseTemplate()) {
+          throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 
+              Messages.getInstance().getText(locale, "generic.errors.cannotAddStudentsToCourseTemplate"));
+        }
+        
         try {
           courseStudent = courseStudentDAO.create(course, student, enrolmentType, participationType, enrolmentDate, lodging, 
               optionality, null, organizationName, additionalInfo, room, lodgingFee, lodgingFeeCurrency, reservationFee, reservationFeeCurrency, Boolean.FALSE);
         } catch (DuplicateCourseStudentException dcse) {
-          Locale locale = requestContext.getRequest().getLocale();
           throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 
               Messages.getInstance().getText(locale, "generic.errors.duplicateCourseStudent", new Object[] { student.getFullName() }));
         }
@@ -695,7 +706,6 @@ public class EditCourseJSONRequestController extends JSONRequestController {
           try {
             courseStudentDAO.update(courseStudent, student, enrolmentType, participationType, enrolmentDate, lodging, optionality);
           } catch (DuplicateCourseStudentException dcse) {
-            Locale locale = requestContext.getRequest().getLocale();
             throw new SmvcRuntimeException(PyramusStatusCode.UNDEFINED, 
                 Messages.getInstance().getText(locale, "generic.errors.duplicateCourseStudent", new Object[] { student.getFullName() }));
           }

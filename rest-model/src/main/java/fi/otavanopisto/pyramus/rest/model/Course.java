@@ -14,17 +14,17 @@ public class Course {
       Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Set<Long> curriculumIds, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
-      Map<String, String> variables, List<String> tags, Long organizationId) {
+      Map<String, String> variables, List<String> tags, Long organizationId, boolean courseTemplate) {
     this(null, name, created, lastModified, description, archived, courseNumber, maxParticipantCount, beginDate, endDate, 
         nameExtension, localTeachingDays, teachingHours, distanceTeachingHours, distanceTeachingDays, assessingHours, planningHours, enrolmentTimeEnd, 
-        creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags, organizationId);
+        creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags, organizationId, courseTemplate);
   }
 
   public Course(Long id, String name, OffsetDateTime created, OffsetDateTime lastModified, String description, Boolean archived, Integer courseNumber, 
       Long maxParticipantCount, OffsetDateTime beginDate, OffsetDateTime endDate, String nameExtension, Double localTeachingDays, Double teachingHours,
       Double distanceTeachingHours, Double distanceTeachingDays, Double assessingHours, Double planningHours, OffsetDateTime enrolmentTimeEnd, Long creatorId,
       Long lastModifierId, Long subjectId, Set<Long> curriculumIds, Double length, Long lengthUnitId, Long moduleId, Long stateId, Long typeId, 
-      Map<String, String> variables, List<String> tags, Long organizationId) {
+      Map<String, String> variables, List<String> tags, Long organizationId, boolean courseTemplate) {
     super();
     this.id = id;
     this.organizationId = organizationId;
@@ -57,6 +57,7 @@ public class Course {
     this.typeId = typeId;
     this.tags = tags;
     this.variables = variables;
+    this.courseTemplate = courseTemplate;
   }
 
   public Long getId() {
@@ -299,6 +300,14 @@ public class Course {
     this.organizationId = organizationId;
   }
 
+  public boolean isCourseTemplate() {
+    return courseTemplate;
+  }
+
+  public void setCourseTemplate(boolean courseTemplate) {
+    this.courseTemplate = courseTemplate;
+  }
+
   private Long id;
   private Long organizationId;
   private String name;
@@ -329,4 +338,5 @@ public class Course {
   private Map<String, String> variables;
   private List<String> tags;
   private Set<Long> curriculumIds;
+  private boolean courseTemplate;
 }

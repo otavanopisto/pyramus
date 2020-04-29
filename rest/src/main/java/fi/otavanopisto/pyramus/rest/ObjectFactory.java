@@ -211,7 +211,7 @@ public class ObjectFactory {
                 entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingHours(), 
                 entity.getDistanceTeachingDays(), entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, 
                 creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags,
-                entity.getOrganization() == null ? null : entity.getOrganization().getId());
+                entity.getOrganization() == null ? null : entity.getOrganization().getId(), entity.isCourseTemplate());
           }
         }, 
         

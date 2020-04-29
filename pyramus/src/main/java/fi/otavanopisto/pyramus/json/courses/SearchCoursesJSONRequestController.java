@@ -17,6 +17,7 @@ import fi.otavanopisto.pyramus.dao.base.EducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseDAO.CourseTemplateFilter;
 import fi.otavanopisto.pyramus.dao.courses.CourseStateDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
@@ -138,11 +139,13 @@ public class SearchCoursesJSONRequestController extends JSONRequestController {
       if (educationSubtypeId != null) {
         educationSubtype = educationSubtypeDAO.findById(educationSubtypeId);
       }
+
+      CourseTemplateFilter courseTemplateFilter = (CourseTemplateFilter) requestContext.getEnum("courseTemplateFilter", CourseTemplateFilter.class);
       
       SearchTimeFilterMode timeFilterMode = (SearchTimeFilterMode) requestContext.getEnum("timeframeMode", SearchTimeFilterMode.class);
       
       searchResult = courseDAO.searchCourses(resultsPerPage, page, name, tags, nameExtension, description, courseState,
-          subject, timeFilterMode, timeframeStart, timeframeEnd, educationType, educationSubtype, true);
+          subject, timeFilterMode, timeframeStart, timeframeEnd, educationType, educationSubtype, true, courseTemplateFilter);
     }
     else {
       String text = requestContext.getRequest().getParameter("text");

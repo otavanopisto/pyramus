@@ -305,6 +305,14 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
     this.courseFeeCurrency = courseFeeCurrency;
   }
 
+  public boolean isCourseTemplate() {
+    return courseTemplate;
+  }
+
+  public void setCourseTemplate(boolean courseTemplate) {
+    this.courseTemplate = courseTemplate;
+  }
+
   @ManyToOne
   @JoinColumn(name="module")
   private Module module;
@@ -380,4 +388,7 @@ public class Course extends CourseBase implements ArchivableEntity, ContextRefer
   private BigDecimal courseFee;
   
   private Currency courseFeeCurrency;
+
+  @Field (analyze = Analyze.NO)
+  private boolean courseTemplate;
 }
