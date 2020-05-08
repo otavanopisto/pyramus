@@ -653,6 +653,10 @@ public class CourseController {
     return courseVariableKey;
   }
 
+  public Course updateCourseTemplate(Course course, boolean isCourseTemplate) {
+    return courseDAO.updateCourseTemplate(course, isCourseTemplate);
+  }
+
   public void deleteCourseVariableKey(CourseBaseVariableKey courseVariableKey) {
     courseBaseVariableKeyDAO.delete(courseVariableKey);
   }
@@ -674,4 +678,5 @@ public class CourseController {
   public boolean isCourseStaffMember(Course course, StaffMember staffMember) {
     return courseStaffMemberDAO.findByCourseAndStaffMember(course, staffMember) != null;
   }
+
 }
