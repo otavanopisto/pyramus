@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.json.students;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.enterprise.inject.spi.CDI;
 
 import fi.internetix.smvc.Severity;
@@ -14,6 +17,8 @@ import fi.otavanopisto.pyramus.koski.KoskiClient;
 
 public class InvalidateKoskiStudyPermitJSONRequestController extends JSONRequestController {
   
+  private static final Logger logger = Logger.getLogger(InvalidateKoskiStudyPermitJSONRequestController.class.getName());
+  
   public void process(JSONRequestContext requestContext) {
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     
@@ -26,6 +31,7 @@ public class InvalidateKoskiStudyPermitJSONRequestController extends JSONRequest
     try {
       client.invalidateStudyOid(person, oid);
     } catch (Exception e) {
+      logger.log(Level.SEVERE, "Invalidation failed", e);
       requestContext.addMessage(
           Severity.ERROR, 
           Messages.getInstance().getText(requestContext.getRequest().getLocale(), "students.invalidateKoskiOID.errorMessage", new String[] { e.getMessage() }));

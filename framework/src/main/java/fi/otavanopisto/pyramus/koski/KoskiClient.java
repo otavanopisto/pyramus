@@ -164,6 +164,16 @@ public class KoskiClient {
         .filter(opiskeluoikeus -> studyPermitOids.contains(opiskeluoikeus.getOid()))
         .filter(opiskeluoikeus -> getLahdejarjestelma(opiskeluoikeus) == Lahdejarjestelma.pyramus)
         .count();
+
+    if (matchingOIDs == 0) {
+      logger.log(Level.WARNING, String.format("No matching OIDs were found (Person %d). Aborting.", person.getId()));
+      return false;
+    }
+    
+    if (matchingOIDs != studyPermitOids.size()) {
+      logger.log(Level.WARNING, String.format("Specified OID(s) were not present (Person %d). Aborting.", person.getId()));
+      return false;
+    }
     
     // Remove study permits that don't have matching oid
     oppija.getOpiskeluoikeudet().removeIf(opiskeluoikeus -> !studyPermitOids.contains(opiskeluoikeus.getOid()) || getLahdejarjestelma(opiskeluoikeus) != Lahdejarjestelma.pyramus);
@@ -196,10 +206,8 @@ public class KoskiClient {
       }
       
       return updatePersonToKoski(oppija, person, oppijaOid);
-    }
-    
-    if (matchingOIDs > 0) {
-      String emsg = String.format("Unexpected error filtering study permits for invalidation (Person %d).", person.getId());
+    } else {
+      String emsg = String.format("Unexpected error filtering study permits for invalidation (person=%d, n=%d).", person.getId(), matchingOIDs);
       logger.log(Level.WARNING, emsg);
       koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date(), emsg);
     }
