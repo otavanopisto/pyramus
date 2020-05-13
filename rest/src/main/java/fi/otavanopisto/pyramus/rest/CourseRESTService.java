@@ -59,6 +59,7 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseType;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessmentRequest;
 import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
@@ -168,6 +169,7 @@ public class CourseRESTService extends AbstractRESTService {
     OffsetDateTime endDate = courseEntity.getEndDate();
     Double courseLength = courseEntity.getLength();
     EducationalTimeUnit courseLengthTimeUnit = null;
+    boolean courseTemplate = courseEntity.isCourseTemplate();
     
     if (courseLength != null) {
       if (courseEntity.getLengthUnitId() == null) {
@@ -178,6 +180,10 @@ public class CourseRESTService extends AbstractRESTService {
       if (courseLengthTimeUnit == null) {
         return Response.status(Status.BAD_REQUEST).entity("length unit is invalid").build();
       }
+    }
+    
+    if (courseTemplate && Role.ADMINISTRATOR == user.getRole()) {
+      return Response.status(Status.BAD_REQUEST).entity("Insufficient credentials to create a course template.").build();
     }
     
     Double distanceTeachingDays = courseEntity.getDistanceTeachingDays();
@@ -217,6 +223,10 @@ public class CourseRESTService extends AbstractRESTService {
     
     if (courseEntity.getVariables() != null) {
       course = courseController.updateCourseVariables(course, courseEntity.getVariables());
+    }
+    
+    if (courseTemplate) {
+      course = courseController.updateCourseTemplate(course, courseTemplate);
     }
     
     return Response.ok().entity(objectFactory.createModel(course)).build();
