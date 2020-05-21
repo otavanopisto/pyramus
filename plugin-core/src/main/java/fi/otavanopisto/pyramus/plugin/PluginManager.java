@@ -61,7 +61,7 @@ public class PluginManager {
     mavenClient = new MavenClient(getPluginDirectory(), System.getProperty("pyramus.workspace"));
     
     // Maven Central repository is always present
-    mavenClient.addRepository(new RemoteRepository("central", "default", "http://repo.maven.apache.org/maven2"));
+    mavenClient.addRepository(new RemoteRepository("central", "default", "https://repo.maven.apache.org/maven2"));
 
     for (PluginRepository repository : pluginRepositories) {
       mavenClient.addRepository(repository.getRepositoryId(), repository.getUrl());
