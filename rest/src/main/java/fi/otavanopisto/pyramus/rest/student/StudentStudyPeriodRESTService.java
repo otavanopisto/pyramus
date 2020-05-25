@@ -113,7 +113,7 @@ public class StudentStudyPeriodRESTService extends AbstractRESTService {
         (sessionController.hasEnvironmentPermission(StudentPermissions.FIND_STUDENTSTUDYPERIOD) && hasAccessToStudent(student))) {
       StudentStudyPeriod studentStudyPeriod = studentStudyPeriodDAO.findById(periodId);
       
-      if (studentStudyPeriod == null) {
+      if (studentStudyPeriod == null || !studentStudyPeriod.getStudent().getId().equals(student.getId())) {
         return Response.status(Status.NOT_FOUND).build();
       }
       
