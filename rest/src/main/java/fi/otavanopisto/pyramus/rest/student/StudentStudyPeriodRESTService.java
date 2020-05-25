@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.rest.student;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -42,6 +43,9 @@ import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions
 @RequestScoped
 public class StudentStudyPeriodRESTService extends AbstractRESTService {
 
+  @Inject
+  private Logger logger;
+  
   @Inject
   private SessionController sessionController;
 
@@ -113,7 +117,11 @@ public class StudentStudyPeriodRESTService extends AbstractRESTService {
         (sessionController.hasEnvironmentPermission(StudentPermissions.FIND_STUDENTSTUDYPERIOD) && hasAccessToStudent(student))) {
       StudentStudyPeriod studentStudyPeriod = studentStudyPeriodDAO.findById(periodId);
       
-      if (studentStudyPeriod == null || !studentStudyPeriod.getStudent().getId().equals(student.getId())) {
+      if (studentStudyPeriod != null && !studentStudyPeriod.getStudent().getId().equals(student.getId())) {
+        logger.severe(String.format("User %d attempted access to a study period %d with non-matching student %d.", 
+            (sessionController.getUser() != null ? sessionController.getUser().getId() : null), periodId, studentId));
+        return Response.status(Status.FORBIDDEN).build();
+      } else if (studentStudyPeriod == null) {
         return Response.status(Status.NOT_FOUND).build();
       }
       
