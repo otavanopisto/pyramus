@@ -7,12 +7,14 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import io.restassured.response.Response;
+import fi.otavanopisto.pyramus.Common;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
 import fi.otavanopisto.pyramus.rest.model.students.StudentStudyPeriod;
@@ -65,7 +67,7 @@ public class StudentStudyPeriodPermissionsTestsIT extends AbstractRESTPermission
 
   @ParameterizedTest
   @EnumSource(Role.class)
-  public void testListStudents(Role role) throws NoSuchFieldException {
+  public void testListStudentStudyPeriods(Role role) throws NoSuchFieldException {
     StudentStudyPeriod studentStudyPeriod = new StudentStudyPeriod(
         null,
         TEST_STUDENT_ID,
@@ -88,8 +90,43 @@ public class StudentStudyPeriodPermissionsTestsIT extends AbstractRESTPermission
   
       assertOk(role, response, studentPermissions, StudentPermissions.FIND_STUDENTSTUDYPERIOD);
     } finally {    
-      response = given().headers(getAdminAuthHeaders())
-        .delete("/students/students/{STUDENTID}/studyPeriods/{PERIODID}", TEST_STUDENT_ID, id);
+      given().headers(getAdminAuthHeaders())
+        .delete("/students/students/{STUDENTID}/studyPeriods/{PERIODID}", TEST_STUDENT_ID, id)
+        .then()
+        .statusCode(204);
+    }
+  }
+
+  @Test
+  public void testListStudentStudyPeriodsAsOwner() throws NoSuchFieldException {
+    Long studentId = Common.getUserId(Role.STUDENT);
+    
+    StudentStudyPeriod studentStudyPeriod = new StudentStudyPeriod(
+        null,
+        studentId,
+        StudentStudyPeriodType.TEMPORARILY_SUSPENDED,
+        LocalDate.of(2000, 1, 1),
+        LocalDate.of(2000, 12, 31)
+    );
+
+    Response response = given().headers(getAdminAuthHeaders())
+        .contentType("application/json")
+        .body(studentStudyPeriod)
+        .post("/students/students/{STUDENTID}/studyPeriods", studentId);
+    
+    assertEquals(200, response.getStatusCode());
+
+    long id = response.body().jsonPath().getLong("id");
+    try {
+      given().headers(getAuthHeaders(Role.STUDENT))
+        .get("/students/students/{STUDENTID}/studyPeriods", studentId)
+        .then()
+        .statusCode(200);
+    } finally {    
+      given().headers(getAdminAuthHeaders())
+        .delete("/students/students/{STUDENTID}/studyPeriods/{PERIODID}", studentId, id)
+        .then()
+        .statusCode(204);
     }
   }
   
@@ -118,8 +155,43 @@ public class StudentStudyPeriodPermissionsTestsIT extends AbstractRESTPermission
   
       assertOk(role, response, studentPermissions, StudentPermissions.FIND_STUDENTSTUDYPERIOD);
     } finally {    
-      response = given().headers(getAdminAuthHeaders())
-        .delete("/students/students/{STUDENTID}/studyPeriods/{PERIODID}", TEST_STUDENT_ID, id);
+      given().headers(getAdminAuthHeaders())
+        .delete("/students/students/{STUDENTID}/studyPeriods/{PERIODID}", TEST_STUDENT_ID, id)
+        .then()
+        .statusCode(204);
+    }
+  }
+  
+  @Test
+  public void testFindStudentStudyPeriodsAsOwner() throws NoSuchFieldException {
+    Long studentId = Common.getUserId(Role.STUDENT);
+    
+    StudentStudyPeriod studentStudyPeriod = new StudentStudyPeriod(
+        null,
+        studentId,
+        StudentStudyPeriodType.TEMPORARILY_SUSPENDED,
+        LocalDate.of(2000, 1, 1),
+        LocalDate.of(2000, 12, 31)
+    );
+
+    Response response = given().headers(getAdminAuthHeaders())
+        .contentType("application/json")
+        .body(studentStudyPeriod)
+        .post("/students/students/{STUDENTID}/studyPeriods", studentId);
+    
+    assertEquals(200, response.getStatusCode());
+
+    long id = response.body().jsonPath().getLong("id");
+    try {
+      given().headers(getAuthHeaders(Role.STUDENT))
+        .get("/students/students/{STUDENTID}/studyPeriods/{PERIODID}", studentId, id)
+        .then()
+        .statusCode(200);
+    } finally {    
+      given().headers(getAdminAuthHeaders())
+        .delete("/students/students/{STUDENTID}/studyPeriods/{PERIODID}", studentId, id)
+        .then()
+        .statusCode(204);
     }
   }
   

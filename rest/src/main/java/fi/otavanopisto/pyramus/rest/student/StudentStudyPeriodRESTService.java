@@ -26,6 +26,7 @@ import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.rest.AbstractRESTService;
 import fi.otavanopisto.pyramus.rest.ObjectFactory;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
+import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.StudentPermissions;
@@ -81,34 +82,45 @@ public class StudentStudyPeriodRESTService extends AbstractRESTService {
 
   @Path("/students/{STUDENTID:[0-9]*}/studyPeriods")
   @GET
-  @RESTPermit (StudentPermissions.LIST_STUDENTSTUDYPERIODS)
+  @RESTPermit (handling = Handling.INLINE)
   public Response listStudentStudyPeriods(@PathParam("STUDENTID") Long studentId) {
     Student student = studentController.findStudentById(studentId);
-    
-    if (!hasAccessToStudent(student)) {
-      return Response.status(Status.FORBIDDEN).build();
+
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).build();
     }
     
-    List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
-    return Response.ok(objectFactory.createModel(studyPeriods)).build();
+    if (UserUtils.isOwnerOf(sessionController.getUser(), student.getPerson()) ||
+        (sessionController.hasEnvironmentPermission(StudentPermissions.LIST_STUDENTSTUDYPERIODS) && hasAccessToStudent(student))) {
+      List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
+      return Response.ok(objectFactory.createModel(studyPeriods)).build();
+    } else {
+      return Response.status(Status.FORBIDDEN).build();
+    }
   }
   
   @Path("/students/{STUDENTID:[0-9]*}/studyPeriods/{PERIODID:[0-9]*}")
   @GET
-  @RESTPermit (StudentPermissions.FIND_STUDENTSTUDYPERIOD)
+  @RESTPermit (handling = Handling.INLINE)
   public Response findStudentStudyPeriod(@PathParam("STUDENTID") Long studentId, @PathParam("PERIODID") Long periodId) {
     Student student = studentController.findStudentById(studentId);
-    StudentStudyPeriod studentStudyPeriod = studentStudyPeriodDAO.findById(periodId);
-    
-    if (student == null || studentStudyPeriod == null) {
+
+    if (student == null) {
       return Response.status(Status.NOT_FOUND).build();
     }
     
-    if (!hasAccessToStudent(student)) {
+    if (UserUtils.isOwnerOf(sessionController.getUser(), student.getPerson()) ||
+        (sessionController.hasEnvironmentPermission(StudentPermissions.FIND_STUDENTSTUDYPERIOD) && hasAccessToStudent(student))) {
+      StudentStudyPeriod studentStudyPeriod = studentStudyPeriodDAO.findById(periodId);
+      
+      if (studentStudyPeriod == null) {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+      
+      return Response.ok(objectFactory.createModel(studentStudyPeriod)).build();
+    } else {
       return Response.status(Status.FORBIDDEN).build();
     }
-    
-    return Response.ok(objectFactory.createModel(studentStudyPeriod)).build();
   }
 
   @Path("/students/{STUDENTID:[0-9]*}/studyPeriods/{PERIODID:[0-9]*}")
