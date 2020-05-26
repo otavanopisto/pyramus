@@ -18,7 +18,7 @@ public abstract class AbstractCourseBasicPageHookController implements PageHookC
       Object courseObject = pageContext.getRequest().getAttribute("course");
       if (courseObject instanceof Course) {
         Long courseId = ((Course) courseObject).getId();
-        pageContext.getRequest().setAttribute("muikkuWorkspaceUrl", String.format("http://%s/pyramusWorkspaceRedirect?courseId=%d", muikkuHost, courseId));
+        pageContext.getRequest().setAttribute("muikkuWorkspaceUrl", String.format("https://%s/pyramusWorkspaceRedirect?courseId=%d", muikkuHost, courseId));
         pageHookContext.setIncludeFtl("/plugin/muikku/editcoursebasichook.ftl");
       }
     }
