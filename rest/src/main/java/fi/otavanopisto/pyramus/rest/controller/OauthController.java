@@ -54,7 +54,9 @@ public class OauthController {
   }
   
   public ClientApplicationAccessToken refresh(ClientApplicationAccessToken clientApplicationAccessToken, Long expires, String accessToken){
-    return clientApplicationAccessTokenDAO.updateAccessToken(clientApplicationAccessTokenDAO.updateExpires(clientApplicationAccessToken, expires), accessToken);
+    clientApplicationAccessTokenDAO.updateAccessToken(clientApplicationAccessToken, accessToken);
+    clientApplicationAccessTokenDAO.updateExpires(clientApplicationAccessToken, expires);
+    return clientApplicationAccessToken;
   }
 
   public ClientApplicationAccessToken renewAccessToken(ClientApplicationAccessToken clientApplicationAccessToken, Long expires, String accessToken, String refreshToken) {
