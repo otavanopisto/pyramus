@@ -128,7 +128,7 @@ public class MuikkuRESTService {
     // Endpoint only supports creation of managers and teachers
     
     Role role = Role.valueOf(payload.getRole());
-    if (role != Role.MANAGER && role != Role.TEACHER) {
+    if (role != Role.MANAGER && role != Role.TEACHER && role != Role.STUDY_GUIDER && role != Role.STUDY_PROGRAMME_LEADER) {
       return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", payload.getRole())).build();
     }
     
@@ -165,10 +165,16 @@ public class MuikkuRESTService {
       return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
     }
     
-    // Endpoint only supports creation of managers and teachers
+    // Test allowed roles
     
-    Role role = Role.valueOf(payload.getRole());
-    if (role != Role.MANAGER && role != Role.TEACHER) {
+    Role role;
+    try {
+      role = Role.valueOf(payload.getRole());
+      if (role != Role.MANAGER && role != Role.TEACHER && role != Role.STUDY_GUIDER && role != Role.STUDY_PROGRAMME_LEADER) {
+        return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", payload.getRole())).build();
+      }
+    }
+    catch (Exception e) {
       return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", payload.getRole())).build();
     }
     
