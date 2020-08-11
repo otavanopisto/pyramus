@@ -74,10 +74,10 @@ public class MuikkuRestServicePermissionsTestsIT extends AbstractRESTPermissions
     List<Arguments> testRoles = new ArrayList<>();
 
     // Roles that the endpoint allows for staffmembers
-    EnumSet<Role> creatableRoles = EnumSet.of(Role.MANAGER, Role.TEACHER);
+    EnumSet<Role> creatableRoles = EnumSet.of(Role.MANAGER, Role.TEACHER, Role.STUDY_GUIDER, Role.STUDY_PROGRAMME_LEADER);
     EnumSet<Role> nonCreatableRoles = EnumSet.complementOf(creatableRoles);
     // Roles that are allowed to access the endpoint
-    EnumSet<Role> allowedRoles = EnumSet.of(Role.ADMINISTRATOR, Role.MANAGER, Role.STUDY_PROGRAMME_LEADER);
+    EnumSet<Role> allowedRoles = EnumSet.of(Role.ADMINISTRATOR, Role.MANAGER);
     EnumSet<Role> notAllowedRoles = EnumSet.complementOf(allowedRoles);
 
     // For each creatable role, test that allowed role can create them and non-allowed get 403
@@ -100,10 +100,10 @@ public class MuikkuRestServicePermissionsTestsIT extends AbstractRESTPermissions
     List<Arguments> testRoles = new ArrayList<>();
 
     // Roles that the endpoint allows for staffmembers
-    EnumSet<Role> creatableRoles = EnumSet.of(Role.MANAGER, Role.TEACHER);
+    EnumSet<Role> creatableRoles = EnumSet.of(Role.MANAGER, Role.TEACHER, Role.STUDY_PROGRAMME_LEADER, Role.STUDY_GUIDER);
     EnumSet<Role> nonCreatableRoles = EnumSet.complementOf(creatableRoles);
     // Roles that are allowed to access the endpoint
-    EnumSet<Role> allowedRoles = EnumSet.of(Role.ADMINISTRATOR);
+    EnumSet<Role> allowedRoles = EnumSet.of(Role.ADMINISTRATOR, Role.MANAGER);
     EnumSet<Role> notAllowedRoles = EnumSet.complementOf(allowedRoles);
 
     // Test only starting from the creatable roles. Creation tests check for errors attempting to create with invalid role.
