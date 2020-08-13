@@ -33,6 +33,7 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.base.DefaultsDAO;
+import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.users.InternalAuthDAO;
 import fi.otavanopisto.pyramus.dao.users.PasswordResetRequestDAO;
@@ -144,6 +145,7 @@ public class MuikkuRESTService {
     
     Person person = personController.createPerson(null,  null,  null,  null,  Boolean.FALSE);
     StaffMember staffMember = userController.createStaffMember(loggedUser.getOrganization(), payload.getFirstName(), payload.getLastName(), role, person);
+    personController.updatePersonDefaultUser(person, staffMember);
     userController.addUserEmail(staffMember, defaults.getUserDefaultContactType(), address, Boolean.TRUE);
     payload.setIdentifier(staffMember.getId().toString());
     
@@ -318,14 +320,143 @@ public class MuikkuRESTService {
         studyProgramme,
         null, // curriculum
         null, // previousStudies
-        null, // studyStartDate (TODO should this be immediately set to current date?) 
+        new Date(), // studyStartDate 
         null, // studyEndDate
         null, // studyEndReason
         null); // studyEndText
+    personController.updatePersonDefaultUser(person, student);
     userController.addUserEmail(student, defaults.getStudentDefaultContactType(), address, Boolean.TRUE);
     payload.setIdentifier(student.getId().toString());
     
     return Response.ok(payload).build();
+  }
+  
+  @Path("/students/{IDENTIFIER}")
+  @PUT
+  @RESTPermit(MuikkuPermissions.MUIKKU_UPDATE_STUDENT)
+  public Response updateStudent(@Context HttpServletRequest request, @PathParam("IDENTIFIER") String identifier, StudentPayload payload) {
+    
+    // Prerequisites
+    
+    DefaultsDAO defaultsDAO = DAOFactory.getInstance().getDefaultsDAO();
+    Defaults defaults = defaultsDAO.getDefaults();
+    if (defaults.getStudentDefaultContactType() == null) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("studentDefaultContactType not set in Defaults").build();
+    }
+    User loggedUser = sessionController.getUser();    
+    if (loggedUser.getOrganization() == null) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
+    }
+
+    // Find student
+    
+    Long studentId = Long.valueOf(payload.getIdentifier());
+    Student student = studentController.findStudentById(studentId);
+    if (student == null) {
+      return Response.status(Status.NOT_FOUND).entity(String.format("No student for identifier %s", identifier)).build();
+    }
+
+    // Basic payload validation
+    
+    if (!StringUtils.equals(payload.getIdentifier(), identifier)) {
+      return Response.status(Status.BAD_REQUEST).entity("Payload identifier doesn't match path identifier").build();
+    }
+    if (StringUtils.isAnyBlank(payload.getFirstName(), payload.getLastName(), payload.getEmail())) {
+      return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
+    }
+    Sex sex = null;
+    if (!StringUtils.isBlank(payload.getGender())) {
+      try {
+        sex = Sex.valueOf(payload.getGender());
+      }
+      catch (IllegalArgumentException e) {
+        return Response.status(Status.BAD_REQUEST).entity(String.format("Invalid payload gender %s", payload.getGender())).build();
+      }
+    }
+    
+    // Study programme validation
+    
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), student.getStudyProgramme().getOrganization())) {
+      return Response.status(Status.BAD_REQUEST).entity("No study programme access").build();
+    }
+    if (StringUtils.isBlank(payload.getStudyProgrammeIdentifier()) || !NumberUtils.isNumber(payload.getStudyProgrammeIdentifier())) {
+      return Response.status(Status.BAD_REQUEST).entity("Invalid payload study programme").build();
+    }
+    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
+    StudyProgramme studyProgramme = studyProgrammeDAO.findById(Long.valueOf(payload.getStudyProgrammeIdentifier()));
+    if (!UserUtils.canAccessOrganization(sessionController.getUser(), studyProgramme.getOrganization())) {
+      return Response.status(Status.BAD_REQUEST).entity("No study programme access").build();
+    }
+    
+    // Birthday generation if SSN present
+
+    Date birthday = null;
+    if (!StringUtils.isBlank(payload.getSsn())) {
+      try {
+        birthday = new SimpleDateFormat("ddMMyy").parse(payload.getSsn().substring(0, 6));
+      }
+      catch (Exception e) {
+        return Response.status(Status.BAD_REQUEST).entity("Invalid payload SSN").build();
+      }
+    }
+    
+    // Check that email and (possible) SSN belong to the student being edited
+    
+    String address = StringUtils.trim(StringUtils.lowerCase(payload.getEmail()));
+    Email newEmail = commonController.findEmailByAddress(address);
+    if (newEmail != null) {
+      Person person = personController.findUniquePersonByEmail(address);
+      if (person != null && !person.getId().equals(student.getPerson().getId())) {
+        return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.emailInUse")).build();
+      }
+    }
+    String ssn = null;
+    if (!StringUtils.isBlank(payload.getSsn())) {
+      ssn = StringUtils.upperCase(payload.getSsn());
+      Person person = personController.findBySsn(ssn);
+      if (person != null && !person.getId().equals(student.getPerson().getId())) {
+        return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.ssnInUse")).build();
+      }
+    }
+    
+    // Update
+    
+    Person person = student.getPerson();
+    person = personController.updatePerson(person, birthday, ssn, sex, person.getBasicInfo(), person.getSecureInfo());
+    student = studentController.updateStudent(
+        student,
+        payload.getFirstName(),
+        payload.getLastName(),
+        student.getNickname(),
+        student.getAdditionalInfo(),
+        student.getStudyTimeEnd(),
+        student.getActivityType(),
+        student.getExaminationType(),
+        student.getEducationalLevel(),
+        student.getEducation(),
+        student.getNationality(),
+        student.getMunicipality(),
+        student.getLanguage(),
+        student.getSchool(),
+        student.getCurriculum(),
+        student.getPreviousStudies(),
+        student.getStudyStartDate(),
+        student.getStudyEndDate(),
+        student.getStudyEndReason(),
+        student.getStudyEndText());
+    if (!student.getStudyProgramme().getId().equals(studyProgramme.getId())) {
+      student = studentController.updateStudyProgramme(student, studyProgramme);
+    }
+    if (newEmail == null) {
+      EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
+      Email existingEmail = emailDAO.findByContactInfoAndDefaultAddress(student.getContactInfo(), Boolean.TRUE);
+      if (existingEmail != null) {
+        emailDAO.delete(existingEmail);
+      }
+      userController.addUserEmail(student, defaults.getStudentDefaultContactType(), address, Boolean.TRUE);
+    }
+
+    return Response.ok(payload).build();    
   }
   
   @Path("/requestCredentialReset")

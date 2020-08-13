@@ -25,6 +25,10 @@ public class MuikkuPermissions extends AbstractPyramusPermissionCollection imple
   public static final String MUIKKU_CREATE_STUDENT = "MUIKKU_CREATE_STUDENT";
 
   @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String MUIKKU_UPDATE_STUDENT = "MUIKKU_UPDATE_STUDENT";
+
+  @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ TRUSTED_SYSTEM })
   public static final String MUIKKU_REQUEST_CREDENTIAL_RESET = "MUIKKU_REQUEST_CREDENTIAL_RESET";
 
