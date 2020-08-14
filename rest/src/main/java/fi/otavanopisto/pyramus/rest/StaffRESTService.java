@@ -125,7 +125,7 @@ public class StaffRESTService extends AbstractRESTService {
     }
     
     if (permanent) {
-      List<Email> emails = staffMember.getContactInfo().getEmails();
+      List<Email> emails = userController.listStaffMemberEmails(staffMember);
       for (Email email : emails) {
         commonController.deleteEmail(email);
       }
