@@ -184,9 +184,12 @@ public class MuikkuRESTService {
     
     Long staffMemberId = Long.valueOf(payload.getIdentifier());
     StaffMember staffMember = userController.findStaffMemberById(staffMemberId);
-    
     if (staffMember == null || !UserUtils.canAccessOrganization(sessionController.getUser(), staffMember.getOrganization())) {
       return Response.status(Status.NOT_FOUND).build();
+    }
+    Role existingRole = staffMember.getRole();
+    if (existingRole != Role.MANAGER && existingRole != Role.TEACHER && existingRole != Role.STUDY_GUIDER && existingRole != Role.STUDY_PROGRAMME_LEADER) {
+      return Response.status(Status.BAD_REQUEST).entity(String.format("Unsupported role %s", existingRole)).build();
     }
 
     List<Email> staffMemberEmails = userController.listStaffMemberEmails(staffMember);
@@ -354,6 +357,12 @@ public class MuikkuRESTService {
     Student student = studentController.findStudentById(studentId);
     if (student == null) {
       return Response.status(Status.NOT_FOUND).entity(String.format("No student for identifier %s", identifier)).build();
+    }
+    if (student.getPerson().getDefaultUser() == null) {
+      return Response.status(Status.BAD_REQUEST).entity(String.format("Student %s has no default user set", identifier)).build();
+    }
+    if (!studentId.equals(student.getPerson().getDefaultUser().getId())) {
+      return Response.status(Status.BAD_REQUEST).entity(String.format("Student %s is not set as default", identifier)).build();
     }
 
     // Basic payload validation
