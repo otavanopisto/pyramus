@@ -35,6 +35,7 @@ import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Style;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
+import fi.otavanopisto.pyramus.rest.controller.PersonController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.PersonPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
@@ -49,6 +50,9 @@ public class StaffRESTService extends AbstractRESTService {
 
   @Inject
   private UserController userController;
+
+  @Inject
+  private PersonController personController;
 
   @Inject
   private CommonController commonController;
@@ -121,6 +125,13 @@ public class StaffRESTService extends AbstractRESTService {
     }
     
     if (permanent) {
+      List<Email> emails = userController.listStaffMemberEmails(staffMember);
+      for (Email email : emails) {
+        commonController.deleteEmail(email);
+      }
+      if (staffMember.getPerson().getDefaultUser() != null && id.equals(staffMember.getPerson().getDefaultUser().getId())) {
+        personController.updatePersonDefaultUser(staffMember.getPerson(), null);
+      }
       userController.deleteStaffMember(staffMember);
     } else {
       userController.archiveStaffMember(staffMember);
