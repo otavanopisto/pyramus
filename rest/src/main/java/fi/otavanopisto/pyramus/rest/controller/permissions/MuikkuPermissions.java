@@ -13,16 +13,20 @@ import fi.otavanopisto.security.Scope;
 public class MuikkuPermissions extends AbstractPyramusPermissionCollection implements PyramusPermissionCollection {
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
   public static final String MUIKKU_CREATE_STAFF_MEMBER = "MUIKKU_CREATE_STAFF_MEMBER";
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
   public static final String MUIKKU_UPDATE_STAFF_MEMBER = "MUIKKU_UPDATE_STAFF_MEMBER";
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
   public static final String MUIKKU_CREATE_STUDENT = "MUIKKU_CREATE_STUDENT";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER })
+  public static final String MUIKKU_UPDATE_STUDENT = "MUIKKU_UPDATE_STUDENT";
 
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ TRUSTED_SYSTEM })
