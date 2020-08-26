@@ -54,6 +54,8 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescription;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
@@ -800,7 +802,28 @@ public class ObjectFactory {
           return new fi.otavanopisto.pyramus.rest.model.students.StudentStudyPeriod(entity.getId(), studentId, 
               type, begin, end);
         }
+      },
+      
+      new Mapper<fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudentGroup>() {
+        @Override
+        public Object map(CourseSignupStudentGroup entity) {
+          Long courseId = entity.getCourse() != null ? entity.getCourse().getId() : null;
+          Long studentGroupId = entity.getStudentGroup() != null ? entity.getStudentGroup().getId() : null;
+          String studentGroupName = entity.getStudentGroup() != null ? entity.getStudentGroup().getName() : null;
+          return new fi.otavanopisto.pyramus.rest.model.course.CourseSignupStudentGroup(entity.getId(), courseId, studentGroupId, studentGroupName);
+        }
+      },
+      
+      new Mapper<fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudyProgramme>() {
+        @Override
+        public Object map(CourseSignupStudyProgramme entity) {
+          Long courseId = entity.getCourse() != null ? entity.getCourse().getId() : null;
+          Long studyProgrammeId = entity.getStudyProgramme() != null ? entity.getStudyProgramme().getId() : null;
+          String studyProgrammeName = entity.getStudyProgramme() != null ? entity.getStudyProgramme().getName() : null;
+          return new fi.otavanopisto.pyramus.rest.model.course.CourseSignupStudyProgramme(entity.getId(), courseId, studyProgrammeId, studyProgrammeName);
+        }
       }
+      
     );
   }
 

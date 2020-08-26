@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
 
@@ -28,6 +29,7 @@ import fi.otavanopisto.pyramus.dao.base.EducationSubtypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationTypeDAO;
 import fi.otavanopisto.pyramus.dao.base.EducationalTimeUnitDAO;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
+import fi.otavanopisto.pyramus.dao.base.StudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.base.SubjectDAO;
 import fi.otavanopisto.pyramus.dao.base.TagDAO;
 import fi.otavanopisto.pyramus.dao.courses.BasicCourseResourceDAO;
@@ -38,6 +40,8 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudentGroupDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStateDAO;
@@ -49,6 +53,7 @@ import fi.otavanopisto.pyramus.dao.courses.StudentCourseResourceDAO;
 import fi.otavanopisto.pyramus.dao.modules.ModuleDAO;
 import fi.otavanopisto.pyramus.dao.resources.ResourceDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.accommodation.Room;
 import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
@@ -59,6 +64,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationalTimeUnit;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
+import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.base.Tag;
 import fi.otavanopisto.pyramus.domainmodel.courses.BasicCourseResource;
@@ -69,6 +75,8 @@ import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescription;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseDescriptionCategory;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseEnrolmentType;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseParticipationType;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMember;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseStaffMemberRole;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseState;
@@ -81,9 +89,9 @@ import fi.otavanopisto.pyramus.domainmodel.modules.Module;
 import fi.otavanopisto.pyramus.domainmodel.resources.Resource;
 import fi.otavanopisto.pyramus.domainmodel.resources.ResourceType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
-import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.exception.DuplicateCourseStudentException;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
@@ -274,7 +282,7 @@ public class EditCourseJSONRequestController extends JSONRequestController {
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     
     Locale locale = requestContext.getRequest().getLocale();
-    User loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
+    StaffMember loggedUser = staffMemberDAO.findById(requestContext.getLoggedUserId());
     Organization organization = organizationDAO.findById(requestContext.getLong("organizationId"));
     if (!UserUtils.canAccessOrganization(loggedUser, organization)) {
       throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid organization.");
@@ -712,8 +720,95 @@ public class EditCourseJSONRequestController extends JSONRequestController {
         }
       }
     }
+
+    processSignupStudyProgrammes(requestContext, course, loggedUser);
+    processSignupStudentGroups(requestContext, course, loggedUser);
     
     requestContext.setRedirectURL(requestContext.getReferer(true));
+  }
+
+  private void processSignupStudentGroups(JSONRequestContext requestContext, Course course, StaffMember loggedUser) {
+    CourseSignupStudentGroupDAO courseSignupStudentGroupDAO = DAOFactory.getInstance().getCourseSignupStudentGroupDAO();
+    StudentGroupDAO studentGroupDAO = DAOFactory.getInstance().getStudentGroupDAO();
+    
+    List<CourseSignupStudentGroup> signupStudentGroups = courseSignupStudentGroupDAO.listByCourse(course);
+    
+    Integer studentGroupsRowCount = requestContext.getInteger("signupStudentGroupsTable.rowCount");
+    
+    if (studentGroupsRowCount != null) {
+      Set<Long> studentGroupIdsPresent = new HashSet<>();
+      for (int i = 0; i < studentGroupsRowCount; i++) {
+        Long studentGroupId = requestContext.getLong(String.format("signupStudentGroupsTable.%d.studentGroupId", i));
+        if (studentGroupId != null) {
+          studentGroupIdsPresent.add(studentGroupId);
+        }
+      }
+
+      // Create missing groups
+      studentGroupIdsPresent.forEach(studentGroupId -> {
+        if (signupStudentGroups.stream().noneMatch(signupStudentGroup -> Objects.equals(signupStudentGroup.getStudentGroup().getId(), studentGroupId))) {
+          StudentGroup studentGroup = studentGroupDAO.findById(studentGroupId);
+          if ((studentGroup != null) && UserUtils.canAccessOrganization(loggedUser, studentGroup.getOrganization())) {
+            courseSignupStudentGroupDAO.create(course, studentGroup);
+          } else {            
+            throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid organization.");
+          }
+        }
+      });
+      
+      // Remove groups that don't exist anymore
+      signupStudentGroups.stream()
+        .filter(signupStudentGroup -> !studentGroupIdsPresent.contains(signupStudentGroup.getStudentGroup().getId()))
+        .forEach(signupStudentGroup -> {
+          if (UserUtils.canAccessOrganization(loggedUser, signupStudentGroup.getStudentGroup().getOrganization())) {
+            courseSignupStudentGroupDAO.delete(signupStudentGroup); 
+          } else {            
+            throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid organization.");
+          }
+        });
+    }
+  }
+  
+  private void processSignupStudyProgrammes(JSONRequestContext requestContext, Course course, StaffMember loggedUser) {
+    CourseSignupStudyProgrammeDAO courseSignupStudyProgrammeDAO = DAOFactory.getInstance().getCourseSignupStudyProgrammeDAO();
+    StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
+    
+    List<CourseSignupStudyProgramme> signupStudyProgrammes = courseSignupStudyProgrammeDAO.listByCourse(course);
+    
+    Integer studyProgrammesRowCount = requestContext.getInteger("signupStudyProgrammesTable.rowCount");
+    
+    if (studyProgrammesRowCount != null) {
+      Set<Long> studyProgrammeIdsPresent = new HashSet<>();
+      for (int i = 0; i < studyProgrammesRowCount; i++) {
+        Long studyProgrammeId = requestContext.getLong(String.format("signupStudyProgrammesTable.%d.studyProgrammeId", i));
+        if (studyProgrammeId != null) {
+          studyProgrammeIdsPresent.add(studyProgrammeId);
+        }
+      }
+
+      // Create missing groups
+      studyProgrammeIdsPresent.forEach(studentGroupId -> {
+        if (signupStudyProgrammes.stream().noneMatch(signupStudentGroup -> Objects.equals(signupStudentGroup.getStudyProgramme().getId(), studentGroupId))) {
+          StudyProgramme studyProgramme = studyProgrammeDAO.findById(studentGroupId);
+          if ((studyProgramme != null) && UserUtils.canAccessOrganization(loggedUser, studyProgramme.getOrganization())) {
+            courseSignupStudyProgrammeDAO.create(course, studyProgramme);
+          } else {            
+            throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid organization.");
+          }
+        }
+      });
+      
+      // Remove groups that don't exist anymore
+      signupStudyProgrammes.stream()
+        .filter(signupStudyProgramme -> !studyProgrammeIdsPresent.contains(signupStudyProgramme.getStudyProgramme().getId()))
+        .forEach(signupStudyProgramme -> {
+          if (UserUtils.canAccessOrganization(loggedUser, signupStudyProgramme.getStudyProgramme().getOrganization())) {
+            courseSignupStudyProgrammeDAO.delete(signupStudyProgramme);
+          } else {            
+            throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid organization.");
+          }
+        });
+    }
   }
 
   /** Returns the user roles allowed to access this controller.
