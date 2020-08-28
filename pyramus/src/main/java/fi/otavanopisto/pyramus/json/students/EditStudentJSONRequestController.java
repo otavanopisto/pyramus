@@ -162,10 +162,11 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
   
       boolean usernameBlank = StringUtils.isBlank(username);
       boolean passwordBlank = StringUtils.isBlank(password);
-  
+
+      UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson("internal", person);
+      
       if (usernameBlank && passwordBlank) {
         // #1108: Existing credential deletion
-        UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson("internal", person);
         if (userIdentification != null && NumberUtils.isNumber(userIdentification.getExternalId())) {
           InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
           InternalAuth internalAuth = internalAuthDAO.findById(new Long(userIdentification.getExternalId()));
@@ -175,16 +176,19 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
           userIdentificationDAO.delete(userIdentification);
         }
       }
-      else if (!usernameBlank||!passwordBlank) {
+      else if (!usernameBlank || !passwordBlank) {
         if (!passwordBlank && !password.equals(password2)) {
           throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
+        }
+        if (!usernameBlank && passwordBlank) {
+          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.nopassword"));
         }
 
         // #921: Check username
         InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
         InternalAuth internalAuth = internalAuthDAO.findByUsername(username);
         if (internalAuth != null) {
-          UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId("internal", internalAuth.getId().toString());
+          userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId("internal", internalAuth.getId().toString());
           if (userIdentification != null && !person.getId().equals(userIdentification.getPerson().getId())) {
             throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
           }
@@ -195,7 +199,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         if (internalAuthenticationProviders.size() == 1) {
           InternalAuthenticationProvider internalAuthenticationProvider = internalAuthenticationProviders.get(0);
           if (internalAuthenticationProvider != null) {
-            UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), person);
+            userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), person);
             
             if (internalAuthenticationProvider.canUpdateCredentials()) {
               if (userIdentification == null) {
