@@ -683,6 +683,9 @@ public class ApplicationRESTService extends AbstractRESTService {
   }
 
   private boolean isApplicationCall(String referer) {
+    if (StringUtils.isEmpty(referer)) {
+      return false;
+    }
     try {
       URI refererUri = new URI(referer);
       URI baseUri = uri.getBaseUri();
