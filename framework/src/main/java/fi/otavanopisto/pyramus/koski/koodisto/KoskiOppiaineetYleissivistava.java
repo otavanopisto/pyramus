@@ -4,9 +4,11 @@ import fi.otavanopisto.pyramus.koski.KoodistoEnum;
 
 @KoodistoEnum("koskioppiaineetyleissivistava")
 public enum KoskiOppiaineetYleissivistava {
+  A,
   A1,
   A2,
   AI,
+  AOM,
   B1,
   B2,
   B3,
@@ -25,9 +27,10 @@ public enum KoskiOppiaineetYleissivistava {
   MA,
   MU,
   OP,
+  OPA,
   PS,
   TE,
+  XX,
   YH,
-  YL,
-  OPA
+  YL
 }
