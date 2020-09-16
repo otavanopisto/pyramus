@@ -180,9 +180,6 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         if (!passwordBlank && !password.equals(password2)) {
           throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
         }
-        if (!usernameBlank && passwordBlank) {
-          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.nopassword"));
-        }
 
         // #921: Check username
         InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
@@ -192,6 +189,9 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
           if (userIdentification != null && !person.getId().equals(userIdentification.getPerson().getId())) {
             throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
           }
+        }
+        else if (!usernameBlank && passwordBlank) {
+          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.nopassword"));
         }
         
         // TODO: Support for multiple internal authentication providers
