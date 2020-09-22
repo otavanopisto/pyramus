@@ -17,11 +17,11 @@ public class CourseSignupGroupPermissions extends AbstractPyramusPermissionColle
   public static final String CREATE_SIGNUP_STUDYPROGRAMME = "CREATE_SIGNUP_STUDYPROGRAMME";
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_SIGNUP_STUDYPROGRAMMES = "LIST_SIGNUP_STUDYPROGRAMMES";
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_SIGNUP_STUDYPROGRAMME = "FIND_SIGNUP_STUDYPROGRAMME";
 
   @Scope (PermissionScope.ENVIRONMENT)
@@ -33,11 +33,11 @@ public class CourseSignupGroupPermissions extends AbstractPyramusPermissionColle
   public static final String CREATE_SIGNUP_STUDENTGROUP = "CREATE_SIGNUP_STUDENTGROUP";
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String LIST_SIGNUP_STUDENTGROUPS = "LIST_SIGNUP_STUDENTGROUPS";
 
   @Scope (PermissionScope.ENVIRONMENT)
-  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER })
+  @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, TRUSTED_SYSTEM })
   public static final String FIND_SIGNUP_STUDENTGROUP = "FIND_SIGNUP_STUDENTGROUP";
 
   @Scope (PermissionScope.ENVIRONMENT)
