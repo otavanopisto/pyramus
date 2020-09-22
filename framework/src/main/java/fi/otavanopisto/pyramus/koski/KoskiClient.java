@@ -37,6 +37,7 @@ import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
+import fi.otavanopisto.pyramus.domainmodel.base.PersonStudentComparator;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonLog;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
@@ -248,7 +249,7 @@ public class KoskiClient {
         return;
       }
       
-      Student latestStudent = person.getLatestStudent();
+      Student latestStudent = resolveLatestStudent(person);
       
       if (latestStudent == null) {
         logger.severe(String.format("Could not resolve latest student for person %d.", person.getId()));
@@ -291,6 +292,24 @@ public class KoskiClient {
     }
   }
   
+  private Student resolveLatestStudent(Person person) {
+    Student student = person.getLatestStudent();
+    if (student != null) {
+      return student;
+    } else {
+      List<Student> students = person.getStudents();
+      if (CollectionUtils.isNotEmpty(students)) {
+        return students.stream()
+          .sorted(new PersonStudentComparator())
+          .findFirst()
+          .orElse(null);
+      } else {
+        logger.log(Level.WARNING, String.format("Could not resolve latest student for person %d", person != null ? person.getId() : null));
+        return null;
+      }
+    }
+  }
+
   private boolean updatePersonToKoski(Oppija oppija, Person person, String personOid) {
     try {
       String uri = String.format("%s/oppija", getBaseUrl());
@@ -471,8 +490,12 @@ public class KoskiClient {
   }
 
   public boolean invalidateAllStudentOIDs(Student student) throws Exception {
-    Set<String> studentOIDs = koskiController.listStudentOIDs(student);
-    return invalidateStudyOid(student.getPerson(), studentOIDs);
+    if (settings.isEnabledStudyProgramme(student.getStudyProgramme())) {
+      Set<String> studentOIDs = koskiController.listStudentOIDs(student);
+      return invalidateStudyOid(student.getPerson(), studentOIDs);
+    } else {
+      return false;
+    }
   }
   
 }
