@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.Test;
 
@@ -73,4 +74,23 @@ public class TORCreditTests {
     assertTrue(third.equals(list.get(2).getDate()));
   }
 
+  @Test
+  public void testDateOrderingNullsFirst() {
+    List<TORCredit> list = new ArrayList<>();
+
+    Date first = null;
+    Date second = date(2010, 2, 2);
+    Date third = date(2010, 3, 3);
+    
+    list.add(new TORCredit(1l, "8", 8d, second, TORCreditType.COURSEASSESSMENT, true));
+    list.add(new TORCredit(1l, "8", 8d, first, TORCreditType.COURSEASSESSMENT, true));
+    list.add(new TORCredit(1l, "8", 8d, third, TORCreditType.COURSEASSESSMENT, true));
+
+    Collections.sort(list);
+    
+    assertTrue(Objects.equals(first, list.get(0).getDate()));
+    assertTrue(Objects.equals(second, list.get(1).getDate()));
+    assertTrue(Objects.equals(third, list.get(2).getDate()));
+  }
+  
 }

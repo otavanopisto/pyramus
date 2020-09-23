@@ -70,9 +70,9 @@ public class TORCredit implements Comparable<TORCredit> {
    * this object.
    * 
    * Comparison logic is as follows:
-   * * numericGrades are compared
-   * * passingGrades are compared
-   * * dates are compared
+   * * numericGrades are compared (smaller ["lesser"] at top)
+   * * passingGrades are compared (false at top)
+   * * dates are compared (nulls first, smaller at top)
    * 
    * Each step may stop the comparison if values exist for both and they are different. 
    * 0 is returned if all steps are passed and everything was equal until that point.
@@ -113,9 +113,9 @@ public class TORCredit implements Comparable<TORCredit> {
         return 0;
       } else {
         if (date == null) {
-          return 1;
-        } else {
           return -1;
+        } else {
+          return 1;
         }
       }
     }
