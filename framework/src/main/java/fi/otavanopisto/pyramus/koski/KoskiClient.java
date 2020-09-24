@@ -160,10 +160,15 @@ public class KoskiClient {
     
     String oppijaOid = personVariableDAO.findByPersonAndKey(person, KOSKI_HENKILO_OID);
     Oppija oppija = findOppijaByOid(oppijaOid);
+
+    // Remove non-compatible entities
+    oppija.getOpiskeluoikeudet().removeIf(opiskeluoikeus -> getLahdejarjestelma(opiskeluoikeus) != Lahdejarjestelma.pyramus);
+    oppija.getOpiskeluoikeudet().removeIf(opiskeluoikeus -> opiskeluoikeus.getOid() == null);
     
     long matchingOIDs = oppija.getOpiskeluoikeudet().stream()
-        .filter(opiskeluoikeus -> studyPermitOids.contains(opiskeluoikeus.getOid()))
+        .filter(opiskeluoikeus -> opiskeluoikeus.getOid() != null)
         .filter(opiskeluoikeus -> getLahdejarjestelma(opiskeluoikeus) == Lahdejarjestelma.pyramus)
+        .filter(opiskeluoikeus -> studyPermitOids.contains(opiskeluoikeus.getOid()))
         .count();
 
     if (matchingOIDs == 0) {
