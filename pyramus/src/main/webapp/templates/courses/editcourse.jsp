@@ -1232,23 +1232,34 @@
           studentsTable.showCell(event.row, studentsTable.getNamedColumnIndex("removeButton"));
         });
 
+        var noStudentsAddedMessageContainer = $('noStudentsAddedMessageContainer');
+        var editCourseStudentsTotalContainer = $('editCourseStudentsTotalContainer');
+        
         <c:choose>
           <c:when test="${fn:length(courseStudents) gt 0}">
-            $('noStudentsAddedMessageContainer').setStyle({
-              display: 'none'
-            });
-            $('editCourseStudentsTotalContainer').setStyle({
-              display: ''
-            });
+            if (noStudentsAddedMessageContainer) {
+              noStudentsAddedMessageContainer.setStyle({
+                display: 'none'
+              });
+            }
+            if (editCourseStudentsTotalContainer) {
+              editCourseStudentsTotalContainer.setStyle({
+                display: ''
+              });
+            }
             $('editCourseStudentsTotalValue').innerHTML = studentsTable.getRowCount(); 
           </c:when>
           <c:otherwise>
-            $('editCourseStudentsTotalContainer').setStyle({
-              display: 'none'
-            });
-            $('noStudentsAddedMessageContainer').setStyle({
-              display: ''
-            });
+            if (editCourseStudentsTotalContainer) {
+              editCourseStudentsTotalContainer.setStyle({
+                display: 'none'
+              });
+            }
+            if (noStudentsAddedMessageContainer) {
+              noStudentsAddedMessageContainer.setStyle({
+                display: ''
+              });
+            }
           </c:otherwise>
         </c:choose>
       }
