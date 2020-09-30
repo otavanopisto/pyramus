@@ -233,5 +233,23 @@
       "education-subtype": "pakollinen",
       "transfer-credit-only-mandatory": true
     }
-  }  
+  },
+  "OPS 2016": {
+    "MAA": {
+      "comment": "Matematiikka, pitkä, 10 pakollista kurssia (mukaanlukien MAY1)",
+      "passing-grades": 10,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true,
+      "included-subjects": ["MAY"]
+    },
+    "MAB": {
+      "comment": "Matematiikka, lyhyt, 6 pakollista kurssia (mukaanlukien MAY1)",
+      "passing-grades": 5,
+      "education-type": "lukio",
+      "education-subtype": "pakollinen",
+      "transfer-credit-only-mandatory": true,
+      "included-subjects": ["MAY"]
+    }
+  }
 }

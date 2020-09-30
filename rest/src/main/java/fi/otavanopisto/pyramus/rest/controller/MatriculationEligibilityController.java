@@ -1,31 +1,22 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationSubtype;
-import fi.otavanopisto.pyramus.domainmodel.base.CourseEducationType;
-import fi.otavanopisto.pyramus.domainmodel.base.CourseOptionality;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationSubtype;
 import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
-import fi.otavanopisto.pyramus.domainmodel.courses.Course;
-import fi.otavanopisto.pyramus.domainmodel.courses.CourseStudent;
-import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
-import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilityCurriculumMapping;
 import fi.otavanopisto.pyramus.rest.matriculation.MatriculationEligibilityMapping;
@@ -48,9 +39,6 @@ public class MatriculationEligibilityController {
   @Inject
   private CommonController commonController;
   
-  @Inject
-  private CourseController courseController;
-
   @Inject
   private AssessmentController assessmentController;
   
@@ -101,7 +89,6 @@ public class MatriculationEligibilityController {
     MatriculationEligibilitySubjectMapping mapping = getMatriculationMapping(curriculum.getName(), subject);
     if (mapping == null) {
       mapping = getMatriculationMapping(ANY_CURRICULUM, subject);
-      curriculum = null;
     }
     
     if (mapping == null) {
@@ -143,6 +130,20 @@ public class MatriculationEligibilityController {
     
     int acceptedCourseCount = assessmentController.getAcceptedCourseCount(student, subject, educationType, educationSubtype, curriculum);
     int acceptedTransferCreditCount = assessmentController.getAcceptedTransferCreditCount(student, subject, mapping.getTransferCreditOnlyMandatory(), curriculum);
+
+    if (CollectionUtils.isNotEmpty(mapping.getIncludedSubjects())) {
+      for (String includedSubjectCode : mapping.getIncludedSubjects()) {
+        Subject includedSubject = commonController.findSubjectByCode(includedSubjectCode);
+
+        if (includedSubject != null) {
+          acceptedCourseCount += assessmentController.getAcceptedCourseCount(student, includedSubject, educationType, educationSubtype, curriculum);
+          acceptedTransferCreditCount += assessmentController.getAcceptedTransferCreditCount(student, includedSubject, mapping.getTransferCreditOnlyMandatory(), curriculum);
+        } else {
+          logger.log(Level.SEVERE, String.format("Failed to resolve includedSubject %s for subject %s", includedSubjectCode, subjectCode));
+        }
+      }
+    }
+    
     return new StudentMatriculationEligibilityResult(requirePassingGrades, acceptedCourseCount, acceptedTransferCreditCount, acceptedCourseCount + acceptedTransferCreditCount >= requirePassingGrades);
   }
   
