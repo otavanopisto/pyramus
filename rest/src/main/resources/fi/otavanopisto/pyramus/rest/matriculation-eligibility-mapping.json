@@ -245,7 +245,7 @@
     },
     "MAB": {
       "comment": "Matematiikka, lyhyt, 6 pakollista kurssia (mukaanlukien MAY1)",
-      "passing-grades": 5,
+      "passing-grades": 6,
       "education-type": "lukio",
       "education-subtype": "pakollinen",
       "transfer-credit-only-mandatory": true,
