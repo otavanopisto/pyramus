@@ -162,8 +162,8 @@ public class KoskiClient {
     Oppija oppija = findOppijaByOid(oppijaOid);
 
     // Remove non-compatible entities
+    oppija.getOpiskeluoikeudet().removeIf(opiskeluoikeus -> (opiskeluoikeus == null || opiskeluoikeus.getOid() == null));
     oppija.getOpiskeluoikeudet().removeIf(opiskeluoikeus -> getLahdejarjestelma(opiskeluoikeus) != Lahdejarjestelma.pyramus);
-    oppija.getOpiskeluoikeudet().removeIf(opiskeluoikeus -> opiskeluoikeus.getOid() == null);
     
     long matchingOIDs = oppija.getOpiskeluoikeudet().stream()
         .filter(opiskeluoikeus -> opiskeluoikeus.getOid() != null)
@@ -222,7 +222,7 @@ public class KoskiClient {
   }
 
   public Lahdejarjestelma getLahdejarjestelma(Opiskeluoikeus opiskeluoikeus) {
-    return (opiskeluoikeus.getLahdejarjestelmanId() != null && opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma() != null)
+    return (opiskeluoikeus != null && opiskeluoikeus.getLahdejarjestelmanId() != null && opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma() != null)
         ? opiskeluoikeus.getLahdejarjestelmanId().getLahdejarjestelma().getValue() : null;
   }
   
