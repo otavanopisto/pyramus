@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -254,15 +255,20 @@ public class CreateStudentJSONRequestController extends JSONRequestController {
       }
     }
     
-    // Student variables
+    // Student variables, create the defaults first and modify if modified
+
+    userVariableDAO.createDefaultValueVariables(student);
 
     Integer variableCount = requestContext.getInteger("variablesTable.rowCount");
     if (variableCount != null) {
       for (int i = 0; i < variableCount; i++) {
         String colPrefix = "variablesTable." + i;
-        String variableKey = requestContext.getRequest().getParameter(colPrefix + ".key");
-        String variableValue = requestContext.getRequest().getParameter(colPrefix + ".value");
-        userVariableDAO.setUserVariable(student, variableKey, variableValue);
+        Long edited = requestContext.getLong(colPrefix + ".edited");
+        if (Objects.equals(new Long(1), edited)) {
+          String variableKey = requestContext.getRequest().getParameter(colPrefix + ".key");
+          String variableValue = requestContext.getRequest().getParameter(colPrefix + ".value");
+          userVariableDAO.setUserVariable(student, variableKey, variableValue);
+        }
       }
     }
     

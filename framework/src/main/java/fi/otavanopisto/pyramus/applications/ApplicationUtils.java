@@ -50,6 +50,7 @@ import fi.otavanopisto.pyramus.dao.system.ConfigurationDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLog;
@@ -521,6 +522,7 @@ public class ApplicationUtils {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
     ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     
@@ -601,6 +603,8 @@ public class ApplicationUtils {
         null, // study end reason
         null, // study end text
         Boolean.FALSE); // archived
+    
+    userVariableDAO.createDefaultValueVariables(student);
     
     // #1079: Aineopiskelu; yleissivistävä koulutustausta
     

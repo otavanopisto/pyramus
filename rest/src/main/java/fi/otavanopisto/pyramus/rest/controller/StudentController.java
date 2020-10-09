@@ -26,6 +26,7 @@ import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
@@ -98,6 +99,9 @@ public class StudentController {
   private CreditLinkDAO creditLinkDAO;
 
   @Inject
+  private UserVariableDAO userVariableDAO;
+  
+  @Inject
   private KoskiClient koskiClient;
   
   public Student createStudent(Person person, String firstName, String lastName, String nickname, String additionalInfo, Date studyTimeEnd,
@@ -114,6 +118,8 @@ public class StudentController {
     if (person.getDefaultUser() == null) {
       personDAO.updateDefaultUser(person, student);
     }
+    
+    userVariableDAO.createDefaultValueVariables(student);
     
     return student;
   }
