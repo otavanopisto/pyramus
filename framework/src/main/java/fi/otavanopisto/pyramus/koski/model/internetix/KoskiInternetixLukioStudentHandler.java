@@ -81,6 +81,7 @@ import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 
 public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
 
+  public static final String USERVARIABLE_UNDER18START = "lukioAlle18v";
   public static final String USERVARIABLE_UNDER18STARTREASON = "under18studyStartReason";
   private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.aineopiskelulukio;
 
@@ -168,9 +169,12 @@ public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
     LukionOpiskeluoikeudenLisatiedot lisatiedot = new LukionOpiskeluoikeudenLisatiedot(
         pidennettyPaattymispaiva, ulkomainenVaihtoopiskelija, yksityisopiskelija, oikeusMaksuttomaanAsuntolapaikkaan);
 
-    String under18startReason = userVariableDAO.findByUserAndKey(student, USERVARIABLE_UNDER18STARTREASON);
-    if (StringUtils.isNotBlank(under18startReason))
-      lisatiedot.setAlle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy(kuvaus(under18startReason));
+    if (StringUtils.equals(userVariableDAO.findByUserAndKey(student, USERVARIABLE_UNDER18START), "1")) {
+      String under18startReason = userVariableDAO.findByUserAndKey(student, USERVARIABLE_UNDER18STARTREASON);
+      if (StringUtils.isNotBlank(under18startReason)) {
+        lisatiedot.setAlle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy(kuvaus(under18startReason));
+      }
+    }
     
     List<StudentLodgingPeriod> lodgingPeriods = lodgingPeriodDAO.listByStudent(student);
     for (StudentLodgingPeriod lodgingPeriod : lodgingPeriods) {
