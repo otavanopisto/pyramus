@@ -38,7 +38,9 @@ public class UserVariableDAO extends PyramusEntityDAO<UserVariable> {
     List<UserVariableKey> defaultValueVariables = variableKeyDAO.listByExistingDefaultValue();
     
     for (UserVariableKey defaultValueVariable : defaultValueVariables) {
-      create(user, defaultValueVariable, defaultValueVariable.getDefaultValueOnCreation());
+      if (StringUtils.isNotBlank(defaultValueVariable.getDefaultValueOnCreation())) {
+        create(user, defaultValueVariable, defaultValueVariable.getDefaultValueOnCreation());
+      }
     }
   }
 
