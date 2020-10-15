@@ -56,6 +56,9 @@ import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.model.HenkilovahvistusPaikkakunnalla;
+import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
+import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
+import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.LahdeJarjestelmaID;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
@@ -65,6 +68,7 @@ import fi.otavanopisto.pyramus.koski.model.Oppilaitos;
 import fi.otavanopisto.pyramus.koski.model.Organisaatio;
 import fi.otavanopisto.pyramus.koski.model.OrganisaatioHenkilo;
 import fi.otavanopisto.pyramus.koski.model.OrganisaatioOID;
+import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
 import fi.otavanopisto.pyramus.koski.model.SisaltavaOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.settings.KoskiStudyProgrammeHandlerParams;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
@@ -808,4 +812,33 @@ public abstract class KoskiStudentHandler {
     return studentSubjectGradeDAO.findBy(student, subject);
   }
 
+  protected <T extends KurssinSuoritus> T luoKurssiSuoritus(T suoritus, CreditStub courseCredit) {
+    CreditStubCredit parasArvosana = courseCredit.getCredits().getBestCredit();
+    
+    if (parasArvosana != null) {
+      if (parasArvosana.getType() == Type.RECOGNIZED) {
+        OsaamisenTunnustaminen tunnustettu = new OsaamisenTunnustaminen(kuvaus("Hyväksiluku"));
+        suoritus.setTunnustettu(tunnustettu);
+      }
+      
+      ArviointiasteikkoYleissivistava arvosana = getArvosana(parasArvosana.getGrade());
+      
+      KurssinArviointi arviointi = null;
+      if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
+        arviointi =  new KurssinArviointiNumeerinen(arvosana, parasArvosana.getDate());
+      } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
+        arviointi = new KurssinArviointiSanallinen(arvosana, parasArvosana.getDate(), kuvaus(parasArvosana.getGrade().getName()));
+      } else {
+        logger.log(Level.SEVERE, String.format("Grade %s is neither numeric nor literal", arvosana));
+        return null;
+      }
+
+      suoritus.addArviointi(arviointi);
+      return suoritus;
+    } else {
+      // Kurssisuoritus ohitetaan jos arvosanaa ei ole
+      return null;
+    }
+  }
+  
 }

@@ -28,8 +28,6 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.koski.CreditStub;
-import fi.otavanopisto.pyramus.koski.CreditStubCredit;
-import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
@@ -51,7 +49,6 @@ import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
-import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinSuoritus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunniste;
@@ -365,34 +362,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
       
     AikuistenPerusopetuksenKurssinSuoritus suoritus = new AikuistenPerusopetuksenKurssinSuoritus(tunniste);
 
-    // Hyväksilukutieto on hölmössä paikassa; jos kaikki arvosanat ovat hyväksilukuja, tallennetaan 
-    // tieto hyväksilukuna - ongelmallista, jos hyväksiluettua kurssia on korotettu 
-    if (courseCredit.getCredits().stream().allMatch(credit -> credit.getType() == Type.RECOGNIZED)) {
-      OsaamisenTunnustaminen tunnustettu = new OsaamisenTunnustaminen(kuvaus("Hyväksiluku"));
-      suoritus.setTunnustettu(tunnustettu);
-    }
-
-    for (CreditStubCredit credit : courseCredit.getCredits()) {
-      ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());
-
-      KurssinArviointi arviointi = null;
-      if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
-        arviointi =  new KurssinArviointiNumeerinen(arvosana, credit.getDate());
-      } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
-        arviointi = new KurssinArviointiSanallinen(arvosana, credit.getDate(), kuvaus(credit.getGrade().getName()));
-      }
-      
-      if (arviointi != null) {
-        suoritus.addArviointi(arviointi);
-      }
-    }
-    
-    // Don't report the course if there's no credits
-    if (CollectionUtils.isEmpty(suoritus.getArviointi())) {
-      return null;
-    }
-    
-    return suoritus;
+    return luoKurssiSuoritus(suoritus, courseCredit);
   }
 
   private ArviointiasteikkoYleissivistava getSubjectMeanGrade(Student student, Subject subject, AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus) {

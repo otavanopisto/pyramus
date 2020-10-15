@@ -1,8 +1,6 @@
 package fi.otavanopisto.pyramus.koski;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 
@@ -29,7 +27,7 @@ public class CreditStub {
     credits.sort(Comparator.nullsFirst(Comparator.comparing(CreditStubCredit::getDate)));
   }
   
-  public List<CreditStubCredit> getCredits() {
+  public CreditStubCredits getCredits() {
     return credits;
   }
 
@@ -45,7 +43,7 @@ public class CreditStub {
     this.courseNumber = courseNumber;
   }
 
-  private final List<CreditStubCredit> credits = new ArrayList<>();
+  private final CreditStubCredits credits = new CreditStubCredits();
   private final String courseCode;
   private final String courseName;
   private final Subject subject;
