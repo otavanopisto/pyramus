@@ -60,6 +60,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentFunding;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
@@ -275,6 +276,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       Date studyEndDate = requestContext.getDate("studyEndDate." + student.getId());
       String studyEndText = requestContext.getString("studyEndText." + student.getId());
       String tagsText = requestContext.getString("tags." + student.getId());
+      StudentFunding funding = (StudentFunding) requestContext.getEnum("funding." + student.getId(), StudentFunding.class);
       
       Set<Tag> tagEntities = new HashSet<>();
       if (!StringUtils.isBlank(tagsText)) {
@@ -404,6 +406,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
           curriculum, previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText);
       
       studentDAO.updateApprover(student, approver);
+      studentDAO.updateFunding(student, funding);
       
       // Tags
 
