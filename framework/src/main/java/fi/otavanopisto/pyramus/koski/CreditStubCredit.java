@@ -4,6 +4,8 @@ import java.util.Date;
 
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
+import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditFunding;
 
 public class CreditStubCredit {
 
@@ -31,6 +33,10 @@ public class CreditStubCredit {
 
   public Credit getCredit() {
     return credit;
+  }
+  
+  public TransferCreditFunding getTransferCreditFunding() {
+    return credit instanceof TransferCredit ? ((TransferCredit) credit).getFunding() : null;
   }
 
   private final Credit credit;
