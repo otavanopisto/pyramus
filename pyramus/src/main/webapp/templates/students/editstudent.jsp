@@ -1060,6 +1060,19 @@
                 </select>
               </div>
   
+              <div class="genericFormSection">                                
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="students.studentFunding.ui.title"/>
+                  <jsp:param name="helpLocale" value="students.studentFunding.ui.help"/>
+                </jsp:include>
+            
+                <select name="funding.${student.id}">
+                  <option value=""><fmt:message key="students.studentFunding.defaultFunding"/></option>
+                  <option value="GOVERNMENT_FUNDING" ${student.funding == 'GOVERNMENT_FUNDING' ? 'selected="selected"' : ''}><fmt:message key="students.studentFunding.governmentFunding"/></option>
+                  <option value="OTHER_FUNDING" ${student.funding == 'OTHER_FUNDING' ? 'selected="selected"' : ''}><fmt:message key="students.studentFunding.otherFunding"/></option>
+                </select>
+              </div>
+            
               <div class="genericFormSection">           
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="students.editStudent.firstNameTitle"/>

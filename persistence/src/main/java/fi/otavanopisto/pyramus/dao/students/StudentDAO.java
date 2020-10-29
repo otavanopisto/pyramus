@@ -47,6 +47,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentFunding;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent_;
@@ -509,6 +510,11 @@ public class StudentDAO extends PyramusEntityDAO<Student> {
     return persist(student);
   }
   
+  public Student updateFunding(Student student, StudentFunding funding) {
+    student.setFunding(funding);
+    return persist(student);
+  }
+
   public Student removeTag(Student student, Tag tag) {
     student.removeTag(tag);
     persist(student);

@@ -841,4 +841,28 @@ public abstract class KoskiStudentHandler {
     }
   }
   
+  protected OpintojenRahoitus opintojenRahoitus(Student student) {
+    if (student != null) {
+      if (student.getFunding() != null) {
+        switch (student.getFunding()) {
+          case GOVERNMENT_FUNDING:
+            return OpintojenRahoitus.K1;
+          case OTHER_FUNDING:
+            return OpintojenRahoitus.K6;
+        }
+      }
+
+      // Rahoitus; jos määritetty jokin kiinteä arvo, käytetään sitä
+      OpintojenRahoitus opintojenRahoitus = settings.getOpintojenRahoitus(student.getStudyProgramme().getId());
+      if (opintojenRahoitus == null) {
+        // Jos kiinteää rahoitusarvoa ei ole määritetty, rahoitus määräytyy oppilaitoksen mukaan
+        opintojenRahoitus = student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6;
+      }
+    
+      return opintojenRahoitus;
+    } else {
+      return null;
+    }
+  }
+
 }
