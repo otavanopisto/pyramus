@@ -22,6 +22,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditFunding;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit_;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
@@ -47,7 +48,7 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
   
   public TransferCredit create(String courseName, Integer courseNumber, Double courseLength, EducationalTimeUnit courseLengthUnit, 
       School school, Subject subject, CourseOptionality optionality, Student student, StaffMember assessingUser, Grade grade, 
-      Date date, String verbalAssessment, Curriculum curriculum, boolean offCurriculum) {
+      Date date, String verbalAssessment, Curriculum curriculum, boolean offCurriculum, TransferCreditFunding funding) {
     TransferCredit transferCredit = new TransferCredit();
     
     EducationalLength length = new EducationalLength();
@@ -67,6 +68,7 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
     transferCredit.setVerbalAssessment(verbalAssessment);
     transferCredit.setCurriculum(curriculum);
     transferCredit.setOffCurriculum(offCurriculum);
+    transferCredit.setFunding(funding);
     transferCredit.setArchived(Boolean.FALSE);
     
     EntityManager entityManager = getEntityManager();
@@ -162,7 +164,8 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
   
   public TransferCredit update(TransferCredit transferCredit, String courseName, Integer courseNumber, Double courseLength, 
       EducationalTimeUnit courseLengthUnit, School school, Subject subject, CourseOptionality optionality, Student student, 
-      StaffMember assessingUser, Grade grade, Date date, String verbalAssessment, Curriculum curriculum, boolean offCurriculum) {
+      StaffMember assessingUser, Grade grade, Date date, String verbalAssessment, Curriculum curriculum, boolean offCurriculum, 
+      TransferCreditFunding funding) {
     EntityManager entityManager = getEntityManager();
     
     EducationalLength courseEducationalLength = transferCredit.getCourseLength();
@@ -182,6 +185,7 @@ public class TransferCreditDAO extends PyramusEntityDAO<TransferCredit> {
     transferCredit.setVerbalAssessment(verbalAssessment);
     transferCredit.setCurriculum(curriculum);
     transferCredit.setOffCurriculum(offCurriculum);
+    transferCredit.setFunding(funding);
     entityManager.persist(transferCredit);
     
     if (student != null)

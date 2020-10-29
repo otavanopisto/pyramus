@@ -26,7 +26,7 @@
       function addTransferCreditsTableRow() {
         var table = getIxTableById('transferCreditsTable');
         
-        rowIndex = table.addRow(['', '', -1, 0, 0, -1, '', -1, -1, '', '', ${loggedUserId}, new Date().getTime(), '', '', -1], true);
+        rowIndex = table.addRow(['', '', -1, 0, 0, -1, '', -1, -1, '', '', '', ${loggedUserId}, new Date().getTime(), '', '', -1], true);
         
         var subjectColumnIndex = table.getNamedColumnIndex('subject');
         var schoolColumnIndex = table.getNamedColumnIndex('school');
@@ -88,6 +88,7 @@
                 template.courseUnit,          
                 -1,
                 template.curriculumId,
+                '',
                 '',
                 ${loggedUserId},           
                 new Date().getTime(), 
@@ -157,7 +158,7 @@
           }, {
             header : '<fmt:message key="grading.manageTransferCredits.transferCreditsTableCourseNameHeader"/>',
             left: 4 + 22 + 4,
-            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 80 + 3 + 120 + 3 + 100 + 4 + 80 + 3 + 120 + 3 + 72 + 4 + 57 + 3 + 110 + 4,
+            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 35 + 3 + 80 + 3 + 120 + 3 + 100 + 4 + 80 + 3 + 120 + 3 + 72 + 4 + 57 + 3 + 110 + 4,
             dataType: 'autoComplete',
             required: true,
             editable: false,
@@ -198,7 +199,7 @@
           }, {
             header : '<fmt:message key="grading.manageTransferCredits.transferCreditsTableCourseOptionalityHeader"/>',
             width: 110,
-            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 80 + 3 + 120 + 3 + 100 + 4 + 80 + 3 + 120 + 3 + 72 + 4 + 57 + 3,
+            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 35 + 3 + 80 + 3 + 120 + 3 + 100 + 4 + 80 + 3 + 120 + 3 + 72 + 4 + 57 + 3,
             dataType: 'select',
             required: true,
             editable: false,
@@ -226,7 +227,7 @@
           }, {
             header : '<fmt:message key="grading.manageTransferCredits.transferCreditsTableCourseNumberHeader"/>',
             width : 57,
-            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 80 + 3 + 120 + 3 + 100 + 4 + 80 + 3 + 120 + 3 + 72 + 4,
+            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 35 + 3 + 80 + 3 + 120 + 3 + 100 + 4 + 80 + 3 + 120 + 3 + 72 + 4,
             dataType: 'number',
             editorClassNames: "number",
             editable: false,
@@ -234,7 +235,7 @@
           }, {
             header : '<fmt:message key="grading.manageTransferCredits.transferCreditsTableGradeHeader"/>',
             width : 72,
-            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 80 + 3 + 120 + 3 + 100 + 4 + 80 + 3 + 120 + 3, 
+            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 35 + 3 + 80 + 3 + 120 + 3 + 100 + 4 + 80 + 3 + 120 + 3, 
             dataType: 'select',
             editable: false,
             required: true,
@@ -261,7 +262,7 @@
           }, {
             header : '<fmt:message key="grading.manageTransferCredits.transferCreditsTableSubjectHeader"/>',
             width : 120,
-            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 80 + 3 + 120 + 3 + 100 + 4 + 80 + 3,
+            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 35 + 3 + 80 + 3 + 120 + 3 + 100 + 4 + 80 + 3,
             dataType: 'autoCompleteSelect',
             autoCompleteParamName: 'subjectId',
             editable: false,
@@ -288,7 +289,7 @@
           }, {
             header : '<fmt:message key="grading.manageTransferCredits.transferCreditsTableLengthHeader"/>',
             width : 80,
-            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 80 + 3 + 120 + 3 + 100 + 4,
+            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 35 + 3 + 80 + 3 + 120 + 3 + 100 + 4,
             dataType: 'number',
             required: true,
             editable: false,
@@ -312,7 +313,7 @@
           }, {
             header : '<fmt:message key="grading.manageTransferCredits.transferCreditsTableLengthUnitHeader"/>',
             width : 100,
-            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 80 + 3 + 120 + 3,
+            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 35 + 3 + 80 + 3 + 120 + 3,
             dataType: 'select',
             required: true,
             editable: false,
@@ -332,7 +333,7 @@
           }, {
             header : '<fmt:message key="grading.manageTransferCredits.transferCreditsTableSchoolHeader"/>',
             width : 120,
-            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 80 + 3,
+            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 35 + 3 + 80 + 3,
             dataType: 'autoCompleteSelect',
             autoCompleteParamName: 'schoolId',
             required: true,
@@ -359,7 +360,7 @@
           }, {
             header : '<fmt:message key="grading.manageTransferCredits.transferCreditsTableCourseCurriculumHeader"/>',
             width: 80,
-            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3,
+            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3 + 35 + 3,
             dataType: 'select',
             required: false,
             editable: false,
@@ -380,6 +381,21 @@
             required: false,
             editable: false,
             paramName: 'offCurriculum',
+            contextMenu: [
+              {
+                text: '<fmt:message key="generic.action.copyValues"/>',
+                onclick: new IxTable_COPYVALUESTOCOLUMNACTION(true)
+              }
+            ]            
+          }, {
+            header : '<fmt:message key="grading.manageTransferCredits.transferCreditsTableFundingHeader"/>',
+            headerTooltip: '<fmt:message key="grading.manageTransferCredits.transferCreditsTableFundingTooltip"/>',
+            width: 35,
+            right: 4 + 22 + 4 + 141 + 4 + 110 + 3 + 35 + 3,
+            dataType: 'checkbox',
+            required: false,
+            editable: false,
+            paramName: 'funding',
             contextMenu: [
               {
                 text: '<fmt:message key="generic.action.copyValues"/>',
@@ -524,6 +540,15 @@
               <c:set var="offCurriculum"></c:set>
             </c:otherwise>
           </c:choose>
+
+          <c:choose>
+            <c:when test="${transferCredit.funding eq 'GOVERNMENT_FUNDING'}">
+              <c:set var="funding">1</c:set>
+            </c:when>
+            <c:otherwise>
+              <c:set var="funding"></c:set>
+            </c:otherwise>
+          </c:choose>
         
           rowIndex = transferCreditsTable.addRow([
             '',
@@ -537,6 +562,7 @@
             ${transferCredit.school.id},                     
             '${transferCredit.curriculum.id}',
             '${offCurriculum}',
+            '${funding}',
             ${transferCredit.assessor.id},
             ${transferCredit.date.time},                     
             '',

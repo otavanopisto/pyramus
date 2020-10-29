@@ -19,6 +19,7 @@ import fi.otavanopisto.pyramus.domainmodel.base.School;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditFunding;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
@@ -56,6 +57,8 @@ public class SaveTransferCreditsJSONRequestController extends JSONRequestControl
       Long userId = jsonRequestContext.getLong(colPrefix + ".user");
       Long curriculumId = jsonRequestContext.getLong(colPrefix + ".curriculum");
       boolean offCurriculum = new Long(1).equals(jsonRequestContext.getLong(colPrefix + ".offCurriculum"));
+      TransferCreditFunding funding = new Long(1).equals(jsonRequestContext.getLong(colPrefix + ".funding"))
+          ? TransferCreditFunding.GOVERNMENT_FUNDING : null;
       
       Grade grade = gradeDAO.findById(gradeId);
       Subject subject = subjectDAO.findById(subjectId);
@@ -69,10 +72,11 @@ public class SaveTransferCreditsJSONRequestController extends JSONRequestControl
       if (id != null && id >= 0) {
         transferCredit = transferCreditDAO.findById(id);
         transferCreditDAO.update(transferCredit, courseName, courseNumber, courseLength, timeUnit, school, subject, 
-            courseOptionality, student, staffMember, grade, date, transferCredit.getVerbalAssessment(), curriculum, offCurriculum);
+            courseOptionality, student, staffMember, grade, date, transferCredit.getVerbalAssessment(), curriculum, 
+            offCurriculum, funding);
       } else {
         transferCredit = transferCreditDAO.create(courseName, courseNumber, courseLength, timeUnit, school, subject, 
-            courseOptionality, student, staffMember, grade, date, "", curriculum, offCurriculum);
+            courseOptionality, student, staffMember, grade, date, "", curriculum, offCurriculum, funding);
       }
     }
     
