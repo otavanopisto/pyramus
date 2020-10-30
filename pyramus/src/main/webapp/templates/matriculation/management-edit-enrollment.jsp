@@ -32,7 +32,13 @@
           {value: "SPRING2020", text: "Kevät 2020"},
           {value: "AUTUMN2020", text: "Syksy 2020"},
           {value: "SPRING2021", text: "Kevät 2021"},
-          {value: "AUTUMN2021", text: "Syksy 2021"}
+          {value: "AUTUMN2021", text: "Syksy 2021"},
+          {value: "SPRING2022", text: "Kevät 2022"},
+          {value: "AUTUMN2022", text: "Syksy 2022"},
+          {value: "SPRING2023", text: "Kevät 2023"},
+          {value: "AUTUMN2023", text: "Syksy 2023"},
+          {value: "SPRING2024", text: "Kevät 2024"},
+          {value: "AUTUMN2024", text: "Syksy 2024"}
         ];
         var subjectOptions = [
           {value:"AI", text:"Äidinkieli"},
