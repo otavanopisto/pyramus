@@ -30,6 +30,15 @@ public class OsaamisenTunnustaminen {
     this.osaaminen = osaaminen;
   }
 
+  public boolean isRahoituksenPiirissä() {
+    return rahoituksenPiirissä;
+  }
+
+  public void setRahoituksenPiirissä(boolean rahoituksenPiirissä) {
+    this.rahoituksenPiirissä = rahoituksenPiirissä;
+  }
+
   private Object osaaminen;
   private Kuvaus selite;
+  private boolean rahoituksenPiirissä = false;
 }

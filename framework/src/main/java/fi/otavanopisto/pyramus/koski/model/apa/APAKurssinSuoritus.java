@@ -6,13 +6,14 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
+import fi.otavanopisto.pyramus.koski.KurssinSuoritus;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class APAKurssinSuoritus {
+public class APAKurssinSuoritus implements KurssinSuoritus {
 
   public APAKurssinSuoritus() {
   }
@@ -21,10 +22,12 @@ public class APAKurssinSuoritus {
     koulutusmoduuli = tunniste;
   }
   
+  @Override
   public void addArviointi(KurssinArviointi arviointi) {
     this.arviointi.add(arviointi);
   }
   
+  @Override
   public List<KurssinArviointi> getArviointi() {
     return arviointi;
   }
@@ -49,10 +52,12 @@ public class APAKurssinSuoritus {
     this.suorituskieli = suorituskieli;
   }
 
+  @Override
   public OsaamisenTunnustaminen getTunnustettu() {
     return tunnustettu;
   }
 
+  @Override
   public void setTunnustettu(OsaamisenTunnustaminen tunnustettu) {
     this.tunnustettu = tunnustettu;
   }
