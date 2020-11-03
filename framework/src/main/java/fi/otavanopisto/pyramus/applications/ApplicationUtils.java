@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -347,6 +348,77 @@ public class ApplicationUtils {
       }
     default:
       return null;
+    }
+  }
+  
+  public static String generateReferenceCode(String lastName, String initialReferenceCode) {
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    String referenceCode = initialReferenceCode == null ? RandomStringUtils.randomAlphabetic(6).toUpperCase() : initialReferenceCode; 
+    while (applicationDAO.findByLastNameAndReferenceCode(lastName, referenceCode) != null) {
+      referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
+    }
+    return referenceCode;
+  }
+  
+  public static void sendApplicationModifiedMail(Application application, HttpServletRequest httpRequest, String oldSurname) {
+
+    // Mail to the applicant
+
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    String line = formData.getString("field-line");
+    String surname = application.getLastName();
+    String referenceCode = application.getReferenceCode();
+    String applicantMail = application.getEmail();
+    String guardianMail = formData.getString("field-underage-email");
+    try {
+
+      // #769: Do not mail application edit instructions to Internetix applicants 
+      if (!StringUtils.equals(application.getLine(), "aineopiskelu")) {
+
+        // Modification mail subject and content
+        
+        String subject = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+            String.format("/templates/applications/mails/mail-modified-%s-subject.txt", line)), "UTF-8");
+        String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+            String.format("/templates/applications/mails/mail-modified-%s-content.html", line)), "UTF-8");
+        
+        if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
+          logger.log(Level.SEVERE, String.format("Modification mail for line %s not defined", line));
+          return;
+        }
+
+        // Replace the dynamic parts of the mail content (old surname, new surname, edit link, surname and reference code)
+
+        StringBuilder viewUrl = new StringBuilder();
+        viewUrl.append(httpRequest.getScheme());
+        viewUrl.append("://");
+        viewUrl.append(httpRequest.getServerName());
+        viewUrl.append(":");
+        viewUrl.append(httpRequest.getServerPort());
+        viewUrl.append("/applications/edit.page");
+
+        content = String.format(content, oldSurname, surname, viewUrl, surname, referenceCode);
+
+        // Send mail to applicant or, for minors, applicant and guardian
+
+        if (StringUtils.isEmpty(guardianMail)) {
+          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content);
+        }
+        else {
+          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content);
+        }
+
+        // #879: Add sent modification mail to application log
+        
+        ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+        applicationLogDAO.create(application,
+            ApplicationLogType.HTML,
+            String.format("<p>Hakijalle lähetettiin sähköpostia:</p><p><b>%s</b></p>%s", subject, content),
+            null);
+      }
+    }
+    catch (IOException e) {
+      logger.log(Level.SEVERE, "Unable to retrieve modification mail template", e);
     }
   }
   
