@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,9 +47,6 @@ public class AssessmentController {
   
   @Inject
   private TransferCreditDAO transferCreditDAO;
-  
-  @Inject
-  private CourseController courseController;
   
   public CourseAssessment createCourseAssessment(CourseStudent courseStudent, StaffMember assessingUser, Grade grade, Date date, String verbalAssessment){
     CourseAssessment courseAssessment = courseAssessmentDAO.create(courseStudent, assessingUser, grade, date, verbalAssessment);
@@ -190,20 +188,22 @@ public class AssessmentController {
    * @return student passing grade count in matching courses
    */
   public int getAcceptedCourseCount(Student student, Subject subject, EducationType educationType, EducationSubtype educationSubtype, Curriculum curriculum) {
-    int result = 0;
-    Set<Course> courses = getAcceptedCourses(student, subject, educationType, educationSubtype, curriculum);
+    Set<CourseAssessment> acceptedCourses = getAcceptedCourseAssessments(student, subject, educationType, educationSubtype, curriculum);
+    Set<CourseAssessment> acceptedLinkedCourses = getAcceptedLinkedCourseAssessments(student, subject, educationType, educationSubtype, curriculum);
     
-    for (Course course : courses) {
-      boolean hasPassedGrade = listByCourseAndStudent(course, student).stream().map(CourseAssessment::getGrade).filter(Grade::getPassingGrade).count() > 0;
+    Set<String> courseCodes = new HashSet<>();
+    
+    acceptedCourses.stream()
+      .filter(courseAssessment -> courseAssessment.getGrade().getPassingGrade())
+      .forEach(courseAssessment -> courseCodes.add(courseCode(courseAssessment.getCourseStudent().getCourse())));
       
-      if (hasPassedGrade) {
-        result++;
-      }
-    }
+    acceptedLinkedCourses.stream()
+      .filter(courseAssessment -> courseAssessment.getGrade().getPassingGrade())
+      .forEach(courseAssessment -> courseCodes.add(courseCode(courseAssessment.getCourseStudent().getCourse())));
     
-    return result;
+    return courseCodes.size();
   }
-  
+
   /**
    * Counts how many transfer credits with passing grade student has with given curriculum, subject and mandatority
    * 
@@ -226,9 +226,23 @@ public class AssessmentController {
       transferCredits = listTransferCreditsByStudentAndSubjectAndCurriculumAndOptionality(student, subject, curriculum, transferCreditOptionality);
     }
     
-    return (int) transferCredits.stream()
+    Set<String> courseCodes = new HashSet<>();
+    
+    transferCredits.stream()
       .filter(transferCredit -> transferCredit.getGrade().getPassingGrade())
-      .count();
+      .forEach(transferCredit -> courseCodes.add(courseCode(transferCredit)));
+    
+    // Add course codes from linked credits 
+    List<CreditLink> creditLinks = creditLinkDAO.listLinkedTransferCredits(student, subject, curriculum);
+    
+    creditLinks.stream()
+      .map(creditLink -> ((TransferCredit) creditLink.getCredit()))
+      .filter(transferCredit -> transferCreditOptionality != null ? transferCredit.getOptionality() == transferCreditOptionality : true)
+      .filter(transferCredit -> transferCredit.getGrade().getPassingGrade())
+      .forEach(transferCredit -> courseCodes.add(courseCode(transferCredit)));
+    
+
+    return courseCodes.size();
   }
   
   /**
@@ -243,26 +257,25 @@ public class AssessmentController {
    * @param curriculum curriculum entity
    * @return set of matched courses
    */
-  public Set<Course> getAcceptedCourses(Student student, Subject subject, EducationType educationType, EducationSubtype educationSubtype, Curriculum curriculum) {
-    List<CourseStudent> courseStudents = null;
+  private Set<CourseAssessment> getAcceptedCourseAssessments(Student student, Subject subject, EducationType educationType, EducationSubtype educationSubtype, Curriculum curriculum) {
+    List<CourseAssessment> courseAssessments = courseAssessmentDAO.listByStudentAndSubjectAndCurriculum(student, subject, curriculum);
     
-    if (subject != null && curriculum != null) {      
-      courseStudents = courseController.listByStudentAndCourseSubjectAndCourseCurriculum(student, subject, curriculum);
-    } else if (subject != null) {
-      courseStudents = courseController.listByStudentAndCourseSubject(student, subject);
-    } else if (curriculum != null) {
-      courseStudents = courseController.listByStudentAndCourseCurriculum(student, curriculum);
-    } else {
-      courseStudents = courseController.listByStudent(student);
-    }
-    
-    return courseStudents.stream()
-      .filter(courseStudent -> filterCourseStudentByEducationType(educationType, educationSubtype, courseStudent))
-      .map(CourseStudent::getCourse)
+    return courseAssessments.stream()
+      .filter(courseAssessment -> filterCourseStudentByEducationType(educationType, educationSubtype, courseAssessment.getCourseStudent()))
       .distinct()
       .collect(Collectors.toSet());
   }
 
+  private Set<CourseAssessment> getAcceptedLinkedCourseAssessments(Student student, Subject subject, EducationType educationType, EducationSubtype educationSubtype, Curriculum curriculum) {
+    List<CreditLink> creditLinks = creditLinkDAO.listLinkedCourseAssessments(student, subject, curriculum);
+    
+    return creditLinks.stream()
+      .map(creditLink -> ((CourseAssessment) creditLink.getCredit()))
+      .filter(courseAssessment -> filterCourseStudentByEducationType(educationType, educationSubtype, courseAssessment.getCourseStudent()))
+      .distinct()
+      .collect(Collectors.toSet());
+  }
+  
   /**
    * Returns whether course student course has appropriate educationType and educationSubtype
    * 
@@ -295,6 +308,30 @@ public class AssessmentController {
      }
 
      return true;
+  }
+
+  private String courseCode(Course course) {
+    StringBuilder str = new StringBuilder();
+    if (course.getSubject() != null) {
+      str.append(course.getSubject().getCode());
+      
+      if (course.getCourseNumber() != null) {
+        str.append(course.getCourseNumber());
+      }
+    }
+    return str.length() > 0 ? str.toString() : null;
+  }
+
+  private String courseCode(TransferCredit transferCredit) {
+    StringBuilder str = new StringBuilder();
+    if (transferCredit.getSubject() != null) {
+      str.append(transferCredit.getSubject().getCode());
+      
+      if (transferCredit.getCourseNumber() != null) {
+        str.append(transferCredit.getCourseNumber());
+      }
+    }
+    return str.length() > 0 ? str.toString() : null;
   }
 
 }
