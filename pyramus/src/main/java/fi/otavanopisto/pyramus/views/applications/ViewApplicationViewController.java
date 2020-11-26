@@ -316,6 +316,8 @@ public class ViewApplicationViewController extends PyramusViewController {
       return "Lukion päättötodistus";
     case "yo":
       return "YO-tutkinto";
+    case "yo_ammatillinen":
+      return "YO-tutkinto ammatillisen tutkinnon pohjalta";
     case "molemmat":
       return "Lukion päättötodistus ja YO-tutkinto";
     default:

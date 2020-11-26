@@ -104,7 +104,8 @@
         <option value="">-- Valitse --</option>
         <option value="lukio">Lukion päättötodistus</option>
         <option value="yo">YO-tutkinto</option>
-        <option value="molemmat">Molemmat</option>
+        <option value="molemmat">Lukion päättötodistus ja YO-tutkinto</option>
+        <option value="yo_ammatillinen">YO-tutkinto ammatillisen tutkinnon pohjalta</option>
       </select>
     </div>
 
