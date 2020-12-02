@@ -68,7 +68,6 @@
         <option value="muu">Muu</option>
       </select>
     </div>
-
     <div class="form-section__field-container field-previous-studies-nettilukio-school dependent" data-dependent-field="field-previous-studies-nettilukio" data-dependent-values="lukio" style="display:none;">
       <label for="field-previous-studies-nettilukio-school" class="required">Oppilaitos</label>
       <input type="text" name="field-previous-studies-nettilukio-school" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
@@ -82,6 +81,19 @@
     <div class="form-section__field-container field-previous-studies-nettilukio-other dependent" data-dependent-field="field-previous-studies-nettilukio" data-dependent-values="muu" style="display:none;">
       <label for="field-previous-studies-nettilukio-other" class="required">Kerro tarkemmin</label>
       <input type="text" name="field-previous-studies-nettilukio-other" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+    </div>
+
+    <div class="form-section__field-container field-previous-matriculation-exams-nettilukio dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+      <label for="field-previous-matriculation-exams-nettilukio" class="required">Oletko suorittanut aiemmin yo-kokeita?</label>
+      <select name="field-previous-matriculation-exams-nettilukio" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true" data-dependencies="true">
+        <option value="">-- Valitse --</option>
+        <option value="kylla">Kyllä</option>
+        <option value="en">En</option>
+      </select>
+    </div>
+    <div class="form-section__field-container field-previous-matriculation-exams-nettilukio-when dependent" data-dependent-field="field-previous-matriculation-exams-nettilukio" data-dependent-values="kylla" style="display:none;">
+      <label for="field-previous-matriculation-exams-nettilukio-when" class="required">Milloin olet viimeksi osallistunut yo-kokeisiin?</label>
+      <input type="text" name="field-previous-matriculation-exams-nettilukio-when" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
     </div>
 
     <div class="form-section__field-container field-other-school dependent" data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk,aikuislukio" style="display:none;">
