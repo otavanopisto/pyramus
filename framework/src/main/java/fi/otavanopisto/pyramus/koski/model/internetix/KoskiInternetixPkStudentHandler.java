@@ -126,6 +126,10 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     // Aineopiskelija
 
     if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
+      if (StringUtils.isNotEmpty(studyOid)) {
+        koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.EXISTING_INTERNETIX_STUDYPERMIT_WITHOUT_CREDITS, new Date(), studyOid);
+      }
+      
       return null;
     }
     
