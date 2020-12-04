@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -314,13 +315,22 @@ public class ApplicationUtils {
     }
   }
   
-  public static StudyProgramme resolveStudyProgramme(String line, String foreignLine, boolean nettilukioPrivate) {
+  public static StudyProgramme resolveStudyProgramme(String line, String foreignLine, AlternativeLine nettilukioAlternative) {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case "aineopiskelu":
       return studyProgrammeDAO.findById(13L); // Internetix/lukio
-    case "nettilukio":
-      return nettilukioPrivate ? studyProgrammeDAO.findById(38L) : studyProgrammeDAO.findById(6L); // Nettilukio/yksityisopiskelu or Nettilukio
+    case "nettilukio": {
+      if (nettilukioAlternative == AlternativeLine.PRIVATE) {
+        return studyProgrammeDAO.findById(38L); // Nettilukio/yksityisopiskelu
+      }
+      
+      if (nettilukioAlternative == AlternativeLine.YO) {
+        return studyProgrammeDAO.findById(39L); // Aineopiskelu/yo-tutkinto
+      }
+      
+      return studyProgrammeDAO.findById(6L); // Nettilukio
+    }
     case "nettipk":
       return studyProgrammeDAO.findById(7L); // Nettiperuskoulu
     case "aikuislukio":
@@ -620,7 +630,7 @@ public class ApplicationUtils {
     StudyProgramme studyProgramme = ApplicationUtils.resolveStudyProgramme(
         getFormValue(formData, "field-line"),
         getFormValue(formData, "field-foreign-line"),
-        StringUtils.equals("kylla", getFormValue(formData, "field-nettilukioprivate")));
+        EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines")));
     if (studyProgramme == null) {
       logger.severe(String.format("Unable to resolve study programme of application entity %d", application.getId()));
       return null;

@@ -9,9 +9,11 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.otavanopisto.pyramus.applications.AlternativeLine;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -68,7 +70,9 @@ public class ViewApplicationViewController extends PyramusViewController {
       String applicationLine = getFormValue(formData, "field-line");
       fields.put("Linja", ApplicationUtils.applicationLineUiValue(applicationLine));
       if (StringUtils.equals("nettilukio",  applicationLine)) {
-        fields.put("Yksityisopiskelu", StringUtils.equals("kylla", getFormValue(formData, "field-nettilukioprivate")) ? "Kyllä" : "Ei");
+        AlternativeLine altLine = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
+        fields.put("Yksityisopiskelu", AlternativeLine.PRIVATE == altLine ? "Kyllä" : "Ei");
+        fields.put("Aineopiskelu/yo-tutkinto", AlternativeLine.YO == altLine ? "Kyllä" : "Ei");
       }
       fields.put("Nimi", String.format("%s, %s", getFormValue(formData, "field-last-name"), getFormValue(formData, "field-first-names")));
       if (StringUtils.isNotBlank(getFormValue(formData, "field-nickname"))) {
@@ -157,6 +161,12 @@ public class ViewApplicationViewController extends PyramusViewController {
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-studies-nettilukio-other"))) {
         fields.put("Kerro tarkemmin", getFormValue(formData, "field-previous-studies-nettilukio-other"));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-matriculation-exams-nettilukio"))) {
+        fields.put("Oletko suorittanut aiemmin yo-kokeita?", simpleBooleanUiValue(getFormValue(formData, "field-previous-matriculation-exams-nettilukio")));
+      }
+      if (StringUtils.isNotBlank(getFormValue(formData, "field-previous-matriculation-exams-nettilukio-when"))) {
+        fields.put("Milloin olet viimeksi osallistunut yo-kokeisiin?", getFormValue(formData, "field-previous-matriculation-exams-nettilukio-when"));
       }
       if (StringUtils.isNotBlank(getFormValue(formData, "field-other-school"))) {
         fields.put("Opiskelee toisessa oppilaitoksessa", simpleBooleanUiValue(getFormValue(formData, "field-other-school")));
@@ -316,6 +326,8 @@ public class ViewApplicationViewController extends PyramusViewController {
       return "Lukion päättötodistus";
     case "yo":
       return "YO-tutkinto";
+    case "yo_ammatillinen":
+      return "YO-tutkinto ammatillisen tutkinnon pohjalta";
     case "molemmat":
       return "Lukion päättötodistus ja YO-tutkinto";
     default:
