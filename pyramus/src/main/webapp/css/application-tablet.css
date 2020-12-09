@@ -168,6 +168,7 @@ input[type="checkbox"]:checked::after {
 .privacy-policy,
 .course-fees,
 .nettilukio-promise,
+.nettilukio-contactpromise,
 .aineopiskelu-promise,
 .nettipk-promise {
   border-radius: 5px;
@@ -186,6 +187,7 @@ input[type="checkbox"]:checked::after {
 .privacy-policy__close,
 .course-fees__close,
 .nettilukio-promise__close,
+.nettilukio-contactpromise__close,
 .aineopiskelu-promise__close,
 .nettipk-promise__close {
   background-color: transparent;
