@@ -119,6 +119,7 @@ import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
+import fi.otavanopisto.security.LoggedIn;
 
 @Path("/students")
 @Produces("application/json")
@@ -1015,6 +1016,7 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Path("/studentGroups/{ID:[0-9]*}")
   @GET
+  @LoggedIn
   @RESTPermit(handling = Handling.INLINE)
   public Response findStudentGroup(@PathParam("ID") Long id) {
     StudentGroup studentGroup = studentGroupController.findStudentGroupById(id);
@@ -1030,7 +1032,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    if (sessionController.hasPermission(StudentGroupPermissions.FIND_STUDENTGROUP, studentGroup)) {
+    if (sessionController.hasPermission(StudentGroupPermissions.FIND_STUDENTGROUP, studentGroup) || studentGroupController.isMember(sessionController.getUser(), studentGroup)) {
       return Response.ok(objectFactory.createModel(studentGroup)).build();
     } else {
       return Response.status(Status.FORBIDDEN).build();
