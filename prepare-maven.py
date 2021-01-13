@@ -33,3 +33,4 @@ if (("OOM2_USER" in os.environ) and ("OOM2_PASSWORD" in os.environ)):
 else:
   print("no secure environment variables available, skipping deployment")
   sys.exit()
+
