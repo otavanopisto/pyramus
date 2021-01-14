@@ -1,7 +1,7 @@
 name: REST tests
 on: 
   pull_request:
-    branches: [develop, master]
+    branches: [develop]
 jobs:
   testing:
     runs-on: ubuntu-latest
