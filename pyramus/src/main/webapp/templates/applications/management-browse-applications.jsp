@@ -22,6 +22,7 @@
         var searchForm = $("searchForm");
         JSONRequest.request("applications/searchapplications.json", {
           parameters: {
+            applicantName: searchForm.applicantName.value,
             line: searchForm.applicationLine.value,
             state: searchForm.applicationState.value,
             page: page
@@ -144,6 +145,12 @@
       <form id="searchForm" method="post" onSubmit="onSearchApplications(event);">
   
         <div id="filters" class="tabContent">
+          <div class="genericFormSection">  
+            <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+              <jsp:param name="titleText" value="Nimi"/>
+            </jsp:include>                
+            <input type="text" name="applicantName" class="basicSearchQueryField" size="40">
+          </div>
 
           <div class="genericFormSection">
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
