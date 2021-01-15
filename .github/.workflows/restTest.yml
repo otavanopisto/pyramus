@@ -21,4 +21,8 @@ jobs:
       - name: Set Pyramus host
         run: echo "127.0.0.1 dev.pyramus.fi" | sudo tee -a /etc/hosts
       - name: Test REST
-        run: mvn verify -Pit
+        run: |
+            pushd .
+            cd pyramus
+            mvn verify -Pit
+            popd
