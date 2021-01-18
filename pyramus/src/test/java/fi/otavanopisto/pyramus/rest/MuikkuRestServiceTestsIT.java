@@ -12,6 +12,15 @@ import fi.otavanopisto.pyramus.rest.model.muikku.StaffMemberPayload;
 
 public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
 
+  private long getStaffMemberPersonId(Long staffMemberId) {
+    Response response = given().headers(getAuthHeaders())
+        .get("/staff/members/{ID}", staffMemberId);
+      
+    response.then().statusCode(200);
+    
+    return response.body().jsonPath().getLong("personId");
+  }
+  
   @Test
   public void testCreateStaffMember() {
     Role testStaffMemberRole = Role.MANAGER;
@@ -35,10 +44,16 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
       .body("email", is(payload.getEmail()))
       .body("role", is(testStaffMemberRole.toString()));
       
-    long id = response.body().jsonPath().getLong("identifier");
+    long staffMemberId = response.body().jsonPath().getLong("identifier");
+    long personId = getStaffMemberPersonId(staffMemberId);
     
     given().headers(getAuthHeaders())
-      .delete("/staff/members/{ID}?permanent=true", id)
+      .delete("/staff/members/{ID}?permanent=true", staffMemberId)
+      .then()
+      .statusCode(204);
+    
+    given().headers(getAuthHeaders())
+      .delete("/persons/persons/{ID}", personId)
       .then()
       .statusCode(204);
   }
@@ -62,7 +77,8 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
       .statusCode(200)
       .body("identifier", not(is((Long) null)));
       
-    long id = response.body().jsonPath().getLong("identifier");
+    long staffMemberId = response.body().jsonPath().getLong("identifier");
+    long personId = getStaffMemberPersonId(staffMemberId);
     
     try {
       payload.setIdentifier(null);
@@ -78,7 +94,12 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
           .statusCode(409);
     } finally {
       given().headers(getAuthHeaders())
-        .delete("/staff/members/{ID}?permanent=true", id)
+        .delete("/staff/members/{ID}?permanent=true", staffMemberId)
+        .then()
+        .statusCode(204);
+      
+      given().headers(getAuthHeaders())
+        .delete("/persons/persons/{ID}", personId)
         .then()
         .statusCode(204);
     }
@@ -107,11 +128,12 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
       .body("email", is(payload.getEmail()))
       .body("role", is(testStaffMemberRole.toString()));
       
-    long id = response.body().jsonPath().getLong("identifier");
+    long staffMemberId = response.body().jsonPath().getLong("identifier");
+    long personId = getStaffMemberPersonId(staffMemberId);
     try {
       Role testUpdatedStaffMemberRole = Role.MANAGER;
       payload = new StaffMemberPayload();
-      payload.setIdentifier(String.valueOf(id));
+      payload.setIdentifier(String.valueOf(staffMemberId));
       payload.setRole(testUpdatedStaffMemberRole.toString());
       payload.setFirstName("Muikku");
       payload.setLastName("Manager");
@@ -120,7 +142,7 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
       given().headers(getAuthHeaders())
         .contentType("application/json")
         .body(payload)
-        .put("/muikku/users/{ID}", id)
+        .put("/muikku/users/{ID}", staffMemberId)
         .then()
         .statusCode(200)
         .body("identifier", is(payload.getIdentifier()))
@@ -130,7 +152,12 @@ public class MuikkuRestServiceTestsIT extends AbstractRESTServiceTest {
         .body("role", is(testUpdatedStaffMemberRole.toString()));
     } finally {
       given().headers(getAuthHeaders())
-        .delete("/staff/members/{ID}?permanent=true", id)
+        .delete("/staff/members/{ID}?permanent=true", staffMemberId)
+        .then()
+        .statusCode(204);
+
+      given().headers(getAuthHeaders())
+        .delete("/persons/persons/{ID}", personId)
         .then()
         .statusCode(204);
     }

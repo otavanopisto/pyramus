@@ -40,7 +40,9 @@ public class AbstractRESTServiceTestTools {
   
   public void deletePerson(Person person) {
     given().headers(getAdminAuthHeaders())
-      .delete("/persons/persons/{ID}", person.getId());
+      .delete("/persons/persons/{ID}", person.getId())
+      .then()
+      .statusCode(204);
   }
   
   public Student createStudent(Long personId, Long studyProgrammeId) {
