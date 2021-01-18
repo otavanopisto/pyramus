@@ -256,6 +256,11 @@
       $('.nettilukio-promise').toggle();
     });
 
+    $('.nettilukio-contactpromise-link, .nettilukio-contactpromise__close, .nettilukio-contactpromise-overlay').on('click', function() {
+      $('.nettilukio-contactpromise-overlay').toggle();
+      $('.nettilukio-contactpromise').toggle();
+    });
+
     $('.aineopiskelu-promise-link, .aineopiskelu-promise__close, .aineopiskelu-promise-overlay').on('click', function() {
       $('.aineopiskelu-promise-overlay').toggle();
       $('.aineopiskelu-promise').toggle();

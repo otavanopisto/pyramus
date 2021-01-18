@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fi.otavanopisto.pyramus</groupId>
   <artifactId>bom</artifactId>
-  <version>0.7.144-SNAPSHOT</version>
+  <version>0.7.145-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Pyramus BOM</name>
   <url>https://github.com/otavanopisto/pyramus/</url>
@@ -41,7 +41,7 @@
     <junit4.version>4.13.1</junit4.version>
     
     <!-- JUnit5 -->
-    <junit5.version>5.4.2</junit5.version>
+    <junit5.version>5.7.0</junit5.version>
 
     <!-- REST-assured -->
 
@@ -92,7 +92,7 @@
 
     <!-- Pyramus -->
 
-    <pyramus.version>0.7.144-SNAPSHOT</pyramus.version>
+    <pyramus.version>0.7.145-SNAPSHOT</pyramus.version>
 
     <!-- Webapp-permission -->
 

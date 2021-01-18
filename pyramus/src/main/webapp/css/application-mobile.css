@@ -433,6 +433,7 @@ b {
 
 .course-fees-overlay,
 .nettilukio-promise-overlay,
+.nettilukio-contactpromise-overlay,
 .aineopiskelu-promise-overlay,
 .nettipk-promise-overlay {
   position: fixed;
@@ -447,6 +448,7 @@ b {
 
 .course-fees,
 .nettilukio-promise,
+.nettilukio-contactpromise,
 .aineopiskelu-promise,
 .nettipk-promise {
   background: #fff;
@@ -465,6 +467,7 @@ b {
 
 .course-fees__close,
 .nettilukio-promise__close,
+.nettilukio-contactpromise__close,
 .aineopiskelu-promise__close,
 .nettipk-promise__close {
   background-color: #009fe3;
