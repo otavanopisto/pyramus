@@ -88,6 +88,13 @@ public class OnnistuuClient {
     payload.put("authService", authService);
     String json = payload.toString();
     
+    // #1174: Since the document might already have been signed (timeout while waiting for Visma Sign API to confirm it),
+    // check the invitation status before trying to sign, which would fail due to an existing signature...
+    
+    if (isSigned(invitationId)) {
+      return returnUrl;
+    }
+    
     // Call
 
     Entity<String> entity = Entity.entity(json, MediaType.APPLICATION_JSON);
