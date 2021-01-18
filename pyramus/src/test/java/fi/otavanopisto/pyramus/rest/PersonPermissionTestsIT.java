@@ -48,7 +48,9 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
       int id = response.body().jsonPath().getInt("id");
       
       given().headers(getAdminAuthHeaders())
-        .delete("/persons/persons/{ID}", id);
+        .delete("/persons/persons/{ID}", id)
+        .then()
+        .statusCode(204);
     }
   }
   
@@ -89,7 +91,9 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
       assertOk(response, personPermissions, PersonPermissions.UPDATE_PERSON);
     } finally {
       given().headers(getAdminAuthHeaders())
-        .delete("/persons/persons/{ID}", id);
+        .delete("/persons/persons/{ID}", id)
+        .then()
+        .statusCode(204);
     }
   }
   
@@ -111,7 +115,9 @@ public class PersonPermissionTestsIT extends AbstractRESTPermissionsTest {
     
     if (response.getStatusCode() != 204) {
       given().headers(getAdminAuthHeaders())
-        .delete("/persons/persons/{ID}", id);
+        .delete("/persons/persons/{ID}", id)
+        .then()
+        .statusCode(204);
     }
   }
   
