@@ -176,5 +176,17 @@ public class StudentGroupController {
     else
       return listStudentGroupsByStudent((Student) user, firstResult, maxResults, false);
   }
+
+  public boolean isMember(User user, StudentGroup studentGroup) {
+    if (user instanceof Student) {
+      return studentGroupStudentDAO.findByStudentGroupAndStudent(studentGroup, (Student) user) != null;
+    }
+    
+    if (user instanceof StaffMember) {
+      return studentGroupUserDAO.findByStudentGroupAndStaffMember(studentGroup, (StaffMember) user) != null;
+    }
+    
+    throw new IllegalArgumentException("Given user is of unrecognizable type.");
+  }
   
 }

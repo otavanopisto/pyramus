@@ -34,7 +34,6 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit;
-import fi.otavanopisto.pyramus.koski.CreditStubCredit.Type;
 import fi.otavanopisto.pyramus.koski.KoskiConsts;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
@@ -54,18 +53,16 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
-import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
-import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
-import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 
 public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
+  public static final String USERVARIABLE_UNDER18START = "lukioAlle18v";
   public static final String USERVARIABLE_UNDER18STARTREASON = "under18studyStartReason";
   private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.lukio;
 
@@ -110,13 +107,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
     opiskeluoikeus.setLisatiedot(getLisatiedot(student));
 
-    // Rahoitus; jos määritetty jokin kiinteä arvo, käytetään sitä
-    OpintojenRahoitus opintojenRahoitus = settings.getOpintojenRahoitus(student.getStudyProgramme().getId());
-    if (opintojenRahoitus == null) {
-      // Jos kiinteää rahoitusarvoa ei ole määritetty, rahoitus määräytyy oppilaitoksen mukaan
-      opintojenRahoitus = student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6;
-    }
-
+    OpintojenRahoitus opintojenRahoitus = opintojenRahoitus(student);
     StudyEndReasonMapping lopetusSyy = opiskelujaksot(student, opiskeluoikeus.getTila(), opintojenRahoitus);
     boolean laskeKeskiarvot = lopetusSyy != null ? lopetusSyy.getLaskeAinekeskiarvot() : false;
     boolean sisällytäVahvistus = lopetusSyy != null ? lopetusSyy.getSisällytäVahvistaja() : false;
@@ -159,9 +150,12 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
     LukionOpiskeluoikeudenLisatiedot lisatiedot = new LukionOpiskeluoikeudenLisatiedot(
         pidennettyPaattymispaiva, ulkomainenVaihtoopiskelija, yksityisopiskelija, oikeusMaksuttomaanAsuntolapaikkaan);
 
-    String under18startReason = userVariableDAO.findByUserAndKey(student, USERVARIABLE_UNDER18STARTREASON);
-    if (StringUtils.isNotBlank(under18startReason))
-      lisatiedot.setAlle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy(kuvaus(under18startReason));
+    if (StringUtils.equals(userVariableDAO.findByUserAndKey(student, USERVARIABLE_UNDER18START), "1")) {
+      String under18startReason = userVariableDAO.findByUserAndKey(student, USERVARIABLE_UNDER18STARTREASON);
+      if (StringUtils.isNotBlank(under18startReason)) {
+        lisatiedot.setAlle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy(kuvaus(under18startReason));
+      }
+    }
     
     List<StudentLodgingPeriod> lodgingPeriods = lodgingPeriodDAO.listByStudent(student);
     for (StudentLodgingPeriod lodgingPeriod : lodgingPeriods) {
@@ -370,34 +364,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
       
     LukionKurssinSuoritus suoritus = new LukionKurssinSuoritus(tunniste);
 
-    // Hyväksilukutieto on hölmössä paikassa; jos kaikki arvosanat ovat hyväksilukuja, tallennetaan 
-    // tieto hyväksilukuna - ongelmallista, jos hyväksiluettua kurssia on korotettu 
-    if (courseCredit.getCredits().stream().allMatch(credit -> credit.getType() == Type.RECOGNIZED)) {
-      OsaamisenTunnustaminen tunnustettu = new OsaamisenTunnustaminen(kuvaus("Hyväksiluku"));
-      suoritus.setTunnustettu(tunnustettu);
-    }
-
-    for (CreditStubCredit credit : courseCredit.getCredits()) {
-      ArviointiasteikkoYleissivistava arvosana = getArvosana(credit.getGrade());
-  
-      KurssinArviointi arviointi = null;
-      if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
-        arviointi =  new KurssinArviointiNumeerinen(arvosana, credit.getDate());
-      } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
-        arviointi = new KurssinArviointiSanallinen(arvosana, credit.getDate(), kuvaus(credit.getGrade().getName()));
-      }
-
-      if (arviointi != null) {
-        suoritus.addArviointi(arviointi);
-      }
-    }
-
-    // Don't report the course if there's no credits
-    if (CollectionUtils.isEmpty(suoritus.getArviointi())) {
-      return null;
-    }
-    
-    return suoritus;
+    return luoKurssiSuoritus(suoritus, courseCredit);
   }
 
   private LukionKurssinTyyppi findCourseType(Student student, CreditStub courseCredit, boolean national, LukionKurssinTyyppi ... allowedValues) {

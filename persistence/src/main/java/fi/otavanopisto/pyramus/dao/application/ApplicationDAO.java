@@ -66,7 +66,7 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
   }
   
   @SuppressWarnings("unchecked")
-  public SearchResult<Application> searchApplications(int resultsPerPage, int page, String line, ApplicationState state, boolean filterArchived) {
+  public SearchResult<Application> searchApplications(int resultsPerPage, int page, String applicantName, String line, ApplicationState state, boolean filterArchived) {
     int firstResult = page * resultsPerPage;
 
     StringBuilder queryBuilder = new StringBuilder();
@@ -75,6 +75,12 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     }
     if (state != null) {
       addTokenizedSearchCriteria(queryBuilder, "state", state.toString(), true);
+    }
+
+    if (!StringUtils.isBlank(applicantName)) {
+      queryBuilder.append("+(");
+      addTokenizedSearchCriteria(queryBuilder, true, applicantName, "firstName", "lastName");
+      queryBuilder.append(")");
     }
     
     EntityManager entityManager = getEntityManager();

@@ -66,6 +66,14 @@ public class UserVariableKey {
     return version;
   }
 
+  public String getDefaultValueOnCreation() {
+    return defaultValueOnCreation;
+  }
+
+  public void setDefaultValueOnCreation(String defaultValueOnCreation) {
+    this.defaultValueOnCreation = defaultValueOnCreation;
+  }
+
   @Id 
   @GeneratedValue(strategy=GenerationType.TABLE, generator="UserVariableKey")  
   @TableGenerator(name="UserVariableKey", allocationSize=1, table = "hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "sequence_next_hi_value")
@@ -89,6 +97,8 @@ public class UserVariableKey {
   @Enumerated (EnumType.STRING)  
   @Field (analyze = Analyze.NO, store = Store.NO)
   private VariableType variableType;
+
+  private String defaultValueOnCreation;
 
   @Version
   @Column(nullable = false)

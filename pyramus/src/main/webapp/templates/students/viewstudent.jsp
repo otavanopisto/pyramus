@@ -2261,6 +2261,31 @@
                   </c:choose>
 
                   <c:choose>
+                    <c:when test="${!empty student.funding}">
+                      <div class="genericFormSection">
+                        <jsp:include
+                          page="/templates/generic/fragments/formtitle.jsp">
+                          <jsp:param name="titleLocale"
+                            value="students.studentFunding.ui.title" />
+                          <jsp:param name="helpLocale"
+                            value="students.studentFunding.ui.help" />
+                        </jsp:include>
+                        <c:choose>
+                          <c:when test="${student.funding eq 'GOVERNMENT_FUNDING'}">
+                            <fmt:message key="students.studentFunding.governmentFunding" />
+                          </c:when>
+                          <c:when test="${student.funding eq 'OTHER_FUNDING'}">
+                            <fmt:message key="students.studentFunding.otherFunding" />
+                          </c:when>
+                          <c:otherwise>
+                            <fmt:message key="students.studentFunding.defaultFunding" />
+                          </c:otherwise>
+                        </c:choose>
+                      </div>
+                    </c:when>
+                  </c:choose>
+
+                  <c:choose>
                     <c:when
                       test="${fn:length(studentGroups[student.id]) gt 0}">
                       <div class="genericFormSection">

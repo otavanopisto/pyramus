@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -281,6 +283,14 @@ public class Student extends User implements ArchivableEntity {
     this.studyApprover = studyApprover;
   }
 
+  public StudentFunding getFunding() {
+    return funding;
+  }
+
+  public void setFunding(StudentFunding funding) {
+    this.funding = funding;
+  }
+
   private String nickname;
     
   @Lob
@@ -350,4 +360,7 @@ public class Student extends User implements ArchivableEntity {
   @ManyToOne
   @JoinColumn(name="studyApprover")
   private StaffMember studyApprover;
+  
+  @Enumerated (EnumType.STRING)
+  private StudentFunding funding;
 }

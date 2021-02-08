@@ -10,6 +10,7 @@ import fi.otavanopisto.pyramus.dao.base.EmailDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentLodgingPeriodDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
@@ -39,6 +40,7 @@ public class StudentAPI {
     ContactTypeDAO contactTypeDAO = DAOFactory.getInstance().getContactTypeDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudentLodgingPeriodDAO studentLodgingPeriodDAO = DAOFactory.getInstance().getStudentLodgingPeriodDAO();
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     email = email != null ? email.trim() : null;
     
     Person personEntity = null;
@@ -96,6 +98,8 @@ public class StudentAPI {
         examinationTypeEntity, educationalLevelEntity, education, nationalityEntity, municipalityEntity, languageEntity, school, studyProgramme,
         null, previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText, false);
     
+    userVariableDAO.createDefaultValueVariables(student);
+
     if (lodging && studyStartDate != null)
       studentLodgingPeriodDAO.create(student, studyStartDate, studyEndDate);
     

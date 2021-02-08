@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
+import fi.otavanopisto.pyramus.koski.KurssinSuoritus;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
@@ -14,7 +15,7 @@ import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LukionKurssinSuoritus {
+public class LukionKurssinSuoritus implements KurssinSuoritus {
 
   public LukionKurssinSuoritus() {
   }
@@ -39,10 +40,12 @@ public class LukionKurssinSuoritus {
     this.suoritettuSuullisenaKielikokeena = suoritettuSuullisenaKielikokeena;
   }
   
+  @Override
   public void addArviointi(KurssinArviointi arviointi) {
     this.arviointi.add(arviointi);
   }
   
+  @Override
   public List<KurssinArviointi> getArviointi() {
     return arviointi;
   }
@@ -55,10 +58,12 @@ public class LukionKurssinSuoritus {
     return koulutusmoduuli;
   }
 
+  @Override
   public OsaamisenTunnustaminen getTunnustettu() {
     return tunnustettu;
   }
 
+  @Override
   public void setTunnustettu(OsaamisenTunnustaminen tunnustettu) {
     this.tunnustettu = tunnustettu;
   }

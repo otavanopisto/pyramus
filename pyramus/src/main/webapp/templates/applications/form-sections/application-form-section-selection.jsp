@@ -23,10 +23,19 @@
     <div data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
       <div class="field-row-flex">
         <div class="field-row-element">
-          <input type="checkbox" id="field-nettilukioprivate" name="field-nettilukioprivate" value="kylla">
+          <input type="radio" id="field-nettilukio_alternativelines_private" name="field-nettilukio_alternativelines" value="PRIVATE">
         </div>
         <div class="field-row-label">
-          <label for="field-nettilukioprivate">Yksityisopiskelija</label>
+          <label for="field-nettilukio_alternativelines_private">Yksityisopiskelija</label>
+        </div>
+      </div>
+      
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="radio" id="field-nettilukio_alternativelines_yo" name="field-nettilukio_alternativelines" value="YO">
+        </div>
+        <div class="field-row-label">
+          <label for="field-nettilukio_alternativelines_yo">Aineopiskelu/yo-tutkinto</label>
         </div>
       </div>
     </div>

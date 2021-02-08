@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.JSONRequestContext;
@@ -122,8 +121,11 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
         requestContext.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
       }
-      boolean referenceCodeModified = !StringUtils.equals(application.getLastName(), lastName);
-      String referenceCode = referenceCodeModified ? generateReferenceCode(lastName, application.getReferenceCode()) : application.getReferenceCode(); 
+      boolean referenceCodeModified = !StringUtils.equalsIgnoreCase(application.getLastName(), lastName);
+      String oldSurname = referenceCodeModified ? application.getLastName() : lastName;
+      String referenceCode = referenceCodeModified
+          ? ApplicationUtils.generateReferenceCode(lastName, application.getReferenceCode())
+          : application.getReferenceCode(); 
       boolean lineChanged = !StringUtils.equals(line, application.getLine());
       String oldLine = application.getLine();
       application = applicationDAO.update(
@@ -151,6 +153,9 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
             staffMember);
         ApplicationUtils.sendNotifications(application, requestContext.getRequest(), staffMember, true, null, false);
       }
+      if (referenceCodeModified) {
+        ApplicationUtils.sendApplicationModifiedMail(application, requestContext.getRequest(), oldSurname);
+      }
       
       String redirecUrl = requestContext.getRequest().getContextPath() + "/applications/view.page?application=" + application.getId();
       requestContext.setRedirectURL(redirecUrl);
@@ -177,15 +182,6 @@ public class SaveApplicationJSONRequestController extends JSONRequestController 
       reader.close();
     }
     return sb.toString();
-  }
-
-  private String generateReferenceCode(String lastName, String initialReferenceCode) {
-    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
-    String referenceCode = initialReferenceCode;
-    while (applicationDAO.findByLastNameAndReferenceCode(lastName, referenceCode) != null) {
-      referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
-    }
-    return referenceCode;
   }
 
 }

@@ -40,9 +40,14 @@ public class MuikkuRestServicePermissionsTestsIT extends AbstractRESTPermissions
     
     if (response.getStatusCode() == 200) {
       long staffMemberId = response.body().jsonPath().getLong("identifier");
+      long personId = getStaffMemberPersonId(staffMemberId);
       
       given().headers(getAdminAuthHeaders())
-        .delete("/staff/members/{ID}?permanent=true", staffMemberId);
+        .delete("/staff/members/{ID}?permanent=true", staffMemberId)
+        .then().statusCode(204);
+      given().headers(getAdminAuthHeaders())
+        .delete("/persons/persons/{ID}", personId)
+        .then().statusCode(204);
     }
   }
 
@@ -56,6 +61,7 @@ public class MuikkuRestServicePermissionsTestsIT extends AbstractRESTPermissions
 
     if (response.getStatusCode() == 200) {
       long staffMemberId = response.body().jsonPath().getLong("identifier");
+      long personId = getStaffMemberPersonId(staffMemberId);
       
       response = testUpdateStaffMemberWithOptions(modifierRole, staffMemberId, updatedRole);
       
@@ -65,7 +71,11 @@ public class MuikkuRestServicePermissionsTestsIT extends AbstractRESTPermissions
           response.statusCode(), is(expectedStatusCode));
       
       given().headers(getAdminAuthHeaders())
-        .delete("/staff/members/{ID}?permanent=true", staffMemberId);
+        .delete("/staff/members/{ID}?permanent=true", staffMemberId)
+        .then().statusCode(204);
+      given().headers(getAdminAuthHeaders())
+        .delete("/persons/persons/{ID}", personId)
+        .then().statusCode(204);
     }
   }
 
@@ -152,4 +162,13 @@ public class MuikkuRestServicePermissionsTestsIT extends AbstractRESTPermissions
         .put("/muikku/users/{ID}", staffMemberId);
   }
 
+  private long getStaffMemberPersonId(Long staffMemberId) {
+    Response response = given().headers(getAdminAuthHeaders())
+        .get("/staff/members/{ID}", staffMemberId);
+      
+    response.then().statusCode(200);
+    
+    return response.body().jsonPath().getLong("personId");
+  }
+  
 }

@@ -60,6 +60,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentEducationalLevel;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentFunding;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyEndReason;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
@@ -162,10 +163,11 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
   
       boolean usernameBlank = StringUtils.isBlank(username);
       boolean passwordBlank = StringUtils.isBlank(password);
-  
+
+      UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson("internal", person);
+      
       if (usernameBlank && passwordBlank) {
         // #1108: Existing credential deletion
-        UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson("internal", person);
         if (userIdentification != null && NumberUtils.isNumber(userIdentification.getExternalId())) {
           InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
           InternalAuth internalAuth = internalAuthDAO.findById(new Long(userIdentification.getExternalId()));
@@ -175,7 +177,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
           userIdentificationDAO.delete(userIdentification);
         }
       }
-      else if (!usernameBlank||!passwordBlank) {
+      else if (!usernameBlank || !passwordBlank) {
         if (!passwordBlank && !password.equals(password2)) {
           throw new SmvcRuntimeException(PyramusStatusCode.PASSWORD_MISMATCH, "Passwords don't match");
         }
@@ -184,10 +186,13 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         InternalAuthDAO internalAuthDAO = DAOFactory.getInstance().getInternalAuthDAO();
         InternalAuth internalAuth = internalAuthDAO.findByUsername(username);
         if (internalAuth != null) {
-          UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId("internal", internalAuth.getId().toString());
+          userIdentification = userIdentificationDAO.findByAuthSourceAndExternalId("internal", internalAuth.getId().toString());
           if (userIdentification != null && !person.getId().equals(userIdentification.getPerson().getId())) {
             throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.usernameInUse"));
           }
+        }
+        else if (!usernameBlank && passwordBlank) {
+          throw new RuntimeException(Messages.getInstance().getText(requestContext.getRequest().getLocale(), "generic.errors.nopassword"));
         }
         
         // TODO: Support for multiple internal authentication providers
@@ -195,7 +200,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
         if (internalAuthenticationProviders.size() == 1) {
           InternalAuthenticationProvider internalAuthenticationProvider = internalAuthenticationProviders.get(0);
           if (internalAuthenticationProvider != null) {
-            UserIdentification userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), person);
+            userIdentification = userIdentificationDAO.findByAuthSourceAndPerson(internalAuthenticationProvider.getName(), person);
             
             if (internalAuthenticationProvider.canUpdateCredentials()) {
               if (userIdentification == null) {
@@ -271,6 +276,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
       Date studyEndDate = requestContext.getDate("studyEndDate." + student.getId());
       String studyEndText = requestContext.getString("studyEndText." + student.getId());
       String tagsText = requestContext.getString("tags." + student.getId());
+      StudentFunding funding = (StudentFunding) requestContext.getEnum("funding." + student.getId(), StudentFunding.class);
       
       Set<Tag> tagEntities = new HashSet<>();
       if (!StringUtils.isBlank(tagsText)) {
@@ -400,6 +406,7 @@ public class EditStudentJSONRequestController extends JSONRequestController2 {
           curriculum, previousStudies, studyStartDate, studyEndDate, studyEndReason, studyEndText);
       
       studentDAO.updateApprover(student, approver);
+      studentDAO.updateFunding(student, funding);
       
       // Tags
 

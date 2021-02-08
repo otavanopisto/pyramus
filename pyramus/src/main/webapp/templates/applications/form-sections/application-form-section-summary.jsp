@@ -55,6 +55,19 @@
       </div>
     </div>
 
+    <div class="summary-container field-nettilukio-contactpromise dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+      <div class="field-row-flex">
+        <div class="field-row-element">
+          <input type="checkbox" id="field-nettilukio-contactpromise" name="field-nettilukio-contactpromise" value="kylla" data-parsley-required-if-shown="true" data-parsley-validate-if-empty="true">
+        </div>
+        <div class="field-row-label">
+          <label for="field-nettilukio-contactpromise" class="required">
+            Olen lukenut ja hyväksyn periaatteet <a href="#" class="nettilukio-contactpromise-link">yhteydenpidosta ja asioinnista Nettilukiossa</a>.
+          </label>
+        </div>
+      </div>
+    </div>
+
     <div class="summary-container field-aineopiskelu-promise dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
       <div class="field-row-flex">
         <div class="field-row-element">
@@ -90,6 +103,15 @@
       <h3>Opintojen eteneminen</h3>
       <p>Tärkeää on, että opintosi meillä etenevät. Suositus on, että jätät ensimmäisen kurssin arvioitavaksi kolmen kuukauden kuluessa opintojesi aloituksesta ja vuosittain opintosi etenevät vähintään viiden kurssin verran. Opintojesi tulee mielellään edetä tasaisesti, niin ettei välillä ole useita kuukausia ilman kurssisuoritusta.</p>
       <p>Jos sinulle tulee jostakin syystä tilanne, ettet pysty opiskelemaan tai haluat erota nettilukiosta, ota heti yhteyttä omaan ohjaajaasi.</p>
+    </div>
+
+    <div class="nettilukio-contactpromise-overlay" style="display:none;">
+    </div>
+    <div class="nettilukio-contactpromise" style="display:none;">
+      <div class="nettilukio-contactpromise__close"></div>
+      <h3>Yhteydenpito ja asiointi Nettilukiossa</h3>
+      <p>Nettilukion asioissa viestintä tapahtuu ensisijaisesti oppimisympäristö Muikun viestijärjestelmän ja sähköpostin kautta, ja opiskelija on velvollinen seuraamaan näitä Nettilukion sähköisiä viestintäkanavia koko opintojensa ajan.</p> 
+      <p>Opintojen aikana on mahdollista käyttää muitakin yhteydenpitokanavia Nettilukion opettajien, ohjaajien, rehtorin tai toimiston kanssa asioidessa. Kaikista opiskelun käytäntöihin, ylioppilaskirjoitusten käytäntöihin tai opiskeluoikeuteen liittyvistä asioista tiedotetaan kuitenkin ensisijaisesti oppimisympäristön ja sähköpostin kautta. Erilaiset todistukset ja lausunnot lähetetään tarvittaessa turvasähköpostin välityksellä.</p>
     </div>
 
     <div class="aineopiskelu-promise-overlay" style="display:none;">

@@ -21,7 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -50,6 +52,7 @@ import fi.otavanopisto.pyramus.dao.system.ConfigurationDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
 import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationAttachment;
 import fi.otavanopisto.pyramus.domainmodel.application.ApplicationLog;
@@ -312,13 +315,22 @@ public class ApplicationUtils {
     }
   }
   
-  public static StudyProgramme resolveStudyProgramme(String line, String foreignLine, boolean nettilukioPrivate) {
+  public static StudyProgramme resolveStudyProgramme(String line, String foreignLine, AlternativeLine nettilukioAlternative) {
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
     switch (line) {
     case "aineopiskelu":
       return studyProgrammeDAO.findById(13L); // Internetix/lukio
-    case "nettilukio":
-      return nettilukioPrivate ? studyProgrammeDAO.findById(38L) : studyProgrammeDAO.findById(6L); // Nettilukio/yksityisopiskelu or Nettilukio
+    case "nettilukio": {
+      if (nettilukioAlternative == AlternativeLine.PRIVATE) {
+        return studyProgrammeDAO.findById(38L); // Nettilukio/yksityisopiskelu
+      }
+      
+      if (nettilukioAlternative == AlternativeLine.YO) {
+        return studyProgrammeDAO.findById(39L); // Aineopiskelu/yo-tutkinto
+      }
+      
+      return studyProgrammeDAO.findById(6L); // Nettilukio
+    }
     case "nettipk":
       return studyProgrammeDAO.findById(7L); // Nettiperuskoulu
     case "aikuislukio":
@@ -346,6 +358,77 @@ public class ApplicationUtils {
       }
     default:
       return null;
+    }
+  }
+  
+  public static String generateReferenceCode(String lastName, String initialReferenceCode) {
+    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
+    String referenceCode = initialReferenceCode == null ? RandomStringUtils.randomAlphabetic(6).toUpperCase() : initialReferenceCode; 
+    while (applicationDAO.findByLastNameAndReferenceCode(lastName, referenceCode) != null) {
+      referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
+    }
+    return referenceCode;
+  }
+  
+  public static void sendApplicationModifiedMail(Application application, HttpServletRequest httpRequest, String oldSurname) {
+
+    // Mail to the applicant
+
+    JSONObject formData = JSONObject.fromObject(application.getFormData());
+    String line = formData.getString("field-line");
+    String surname = application.getLastName();
+    String referenceCode = application.getReferenceCode();
+    String applicantMail = application.getEmail();
+    String guardianMail = formData.getString("field-underage-email");
+    try {
+
+      // #769: Do not mail application edit instructions to Internetix applicants 
+      if (!StringUtils.equals(application.getLine(), "aineopiskelu")) {
+
+        // Modification mail subject and content
+        
+        String subject = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+            String.format("/templates/applications/mails/mail-modified-%s-subject.txt", line)), "UTF-8");
+        String content = IOUtils.toString(httpRequest.getServletContext().getResourceAsStream(
+            String.format("/templates/applications/mails/mail-modified-%s-content.html", line)), "UTF-8");
+        
+        if (StringUtils.isBlank(subject) || StringUtils.isBlank(content)) {
+          logger.log(Level.SEVERE, String.format("Modification mail for line %s not defined", line));
+          return;
+        }
+
+        // Replace the dynamic parts of the mail content (old surname, new surname, edit link, surname and reference code)
+
+        StringBuilder viewUrl = new StringBuilder();
+        viewUrl.append(httpRequest.getScheme());
+        viewUrl.append("://");
+        viewUrl.append(httpRequest.getServerName());
+        viewUrl.append(":");
+        viewUrl.append(httpRequest.getServerPort());
+        viewUrl.append("/applications/edit.page");
+
+        content = String.format(content, oldSurname, surname, viewUrl, surname, referenceCode);
+
+        // Send mail to applicant or, for minors, applicant and guardian
+
+        if (StringUtils.isEmpty(guardianMail)) {
+          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, subject, content);
+        }
+        else {
+          Mailer.sendMail(Mailer.JNDI_APPLICATION, Mailer.HTML, null, applicantMail, guardianMail, subject, content);
+        }
+
+        // #879: Add sent modification mail to application log
+        
+        ApplicationLogDAO applicationLogDAO = DAOFactory.getInstance().getApplicationLogDAO();
+        applicationLogDAO.create(application,
+            ApplicationLogType.HTML,
+            String.format("<p>Hakijalle lähetettiin sähköpostia:</p><p><b>%s</b></p>%s", subject, content),
+            null);
+      }
+    }
+    catch (IOException e) {
+      logger.log(Level.SEVERE, "Unable to retrieve modification mail template", e);
     }
   }
   
@@ -521,6 +604,7 @@ public class ApplicationUtils {
     StudentDAO studentDAO = DAOFactory.getInstance().getStudentDAO();
     SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
     ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     
@@ -546,7 +630,7 @@ public class ApplicationUtils {
     StudyProgramme studyProgramme = ApplicationUtils.resolveStudyProgramme(
         getFormValue(formData, "field-line"),
         getFormValue(formData, "field-foreign-line"),
-        StringUtils.equals("kylla", getFormValue(formData, "field-nettilukioprivate")));
+        EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines")));
     if (studyProgramme == null) {
       logger.severe(String.format("Unable to resolve study programme of application entity %d", application.getId()));
       return null;
@@ -601,6 +685,8 @@ public class ApplicationUtils {
         null, // study end reason
         null, // study end text
         Boolean.FALSE); // archived
+    
+    userVariableDAO.createDefaultValueVariables(student);
     
     // #1079: Aineopiskelu; yleissivistävä koulutustausta
     

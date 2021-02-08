@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.koski;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -43,11 +44,15 @@ public class KoskiController {
    */
   public Set<String> listStudentOIDs(Student student) {
     KoskiStudyProgrammeHandler handlerType = settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
-    KoskiStudentHandler studentHandler = getStudentHandler(handlerType);
-    Set<KoskiStudentId> koskiStudentIds = studentHandler.listOids(student);
-    return koskiStudentIds.stream()
-        .map(koskiStudentId -> koskiStudentId.getOid())
-        .collect(Collectors.toSet());
+    KoskiStudentHandler studentHandler = handlerType != null ? getStudentHandler(handlerType) : null;
+    if (studentHandler != null) {
+      Set<KoskiStudentId> koskiStudentIds = studentHandler.listOids(student);
+      return koskiStudentIds.stream()
+          .map(koskiStudentId -> koskiStudentId.getOid())
+          .collect(Collectors.toSet());
+    } else {
+      return Collections.emptySet();
+    }
   }
   
   public KoskiStudentHandler getStudentHandler(KoskiStudyProgrammeHandler handlerType) {

@@ -19,6 +19,7 @@ import fi.otavanopisto.pyramus.dao.grading.CreditLinkDAO;
 import fi.otavanopisto.pyramus.dao.grading.TransferCreditDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
+import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
 import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
 import fi.otavanopisto.pyramus.domainmodel.base.Email;
@@ -57,6 +58,7 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
     StaffMemberDAO userDAO = DAOFactory.getInstance().getStaffMemberDAO();
     PersonDAO personDAO = DAOFactory.getInstance().getPersonDAO();
     StudyProgrammeDAO studyProgrammeDAO = DAOFactory.getInstance().getStudyProgrammeDAO();
+    UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
 
     Long studentId = requestContext.getLong("studentId");
     Student oldStudent = studentDAO.findById(studentId);
@@ -107,6 +109,10 @@ public class CopyStudentStudyProgrammeJSONRequestController extends JSONRequestC
         activityType, examinationType, educationalLevel, education, nationality, municipality, language, school, 
         studyProgramme, curriculum, previousStudies,studyStartTime, studyEndTime, studyEndReason, studyEndText, 
         false);
+    
+    // Variables are not copied, but the default values are applied
+    
+    userVariableDAO.createDefaultValueVariables(newStudent);
     
     // Contact info
     

@@ -35,6 +35,7 @@ public class SearchApplicationsJSONRequestController extends JSONRequestControll
       page = 0;
     }
     
+    String applicantName = requestContext.getString("applicantName");
     String line = requestContext.getString("line");
     String stateStr = requestContext.getString("state");
     ApplicationState state = null;
@@ -42,7 +43,7 @@ public class SearchApplicationsJSONRequestController extends JSONRequestControll
       state = ApplicationState.valueOf(stateStr);
     }
     
-    SearchResult<Application> searchResult = applicationDAO.searchApplications(resultsPerPage, page, line, state, Boolean.TRUE);
+    SearchResult<Application> searchResult = applicationDAO.searchApplications(resultsPerPage, page, applicantName, line, state, Boolean.TRUE);
 
     List<Map<String, Object>> results = new ArrayList<>();
     List<Application> applications = searchResult.getResults();

@@ -82,14 +82,16 @@ public class ListKoskiPersonStudiesJSONRequestController extends JSONRequestCont
         
         for (OpiskeluoikeusReturnVal studyPermit : koskiStudent.getOpiskeluoikeudet()) {
           String oid = studyPermit.getOid();
-          Student student = oidMap.get(oid);
-          
-          Map<String, Object> studyPermitInfo = new HashMap<>();
-          studyPermitInfo.put("oid", oid);
-          studyPermitInfo.put("linkedStudyProgrammeName", student != null ? student.getStudyProgramme().getName() : null);
-          studyPermitInfo.put("linkedStudyProgrammeStartDate", student != null ? student.getStudyStartDate().getTime() : null);
-          studyPermitInfo.put("linkedStudentId", student != null ? student.getId() : null);
-          studyPermitIds.add(studyPermitInfo);
+          if (oid != null) {
+            Student student = oidMap.get(oid);
+            
+            Map<String, Object> studyPermitInfo = new HashMap<>();
+            studyPermitInfo.put("oid", oid);
+            studyPermitInfo.put("linkedStudyProgrammeName", student != null ? student.getStudyProgramme().getName() : null);
+            studyPermitInfo.put("linkedStudyProgrammeStartDate", student != null ? student.getStudyStartDate().getTime() : null);
+            studyPermitInfo.put("linkedStudentId", student != null ? student.getId() : null);
+            studyPermitIds.add(studyPermitInfo);
+          }
         }
         
       }

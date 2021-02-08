@@ -41,6 +41,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.grading.CreditLink;
 import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
+import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditFunding;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
@@ -56,6 +57,9 @@ import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.model.HenkilovahvistusPaikkakunnalla;
+import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
+import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
+import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.LahdeJarjestelmaID;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
@@ -65,6 +69,7 @@ import fi.otavanopisto.pyramus.koski.model.Oppilaitos;
 import fi.otavanopisto.pyramus.koski.model.Organisaatio;
 import fi.otavanopisto.pyramus.koski.model.OrganisaatioHenkilo;
 import fi.otavanopisto.pyramus.koski.model.OrganisaatioOID;
+import fi.otavanopisto.pyramus.koski.model.OsaamisenTunnustaminen;
 import fi.otavanopisto.pyramus.koski.model.SisaltavaOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.settings.KoskiStudyProgrammeHandlerParams;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
@@ -228,9 +233,9 @@ public abstract class KoskiStudentHandler {
             }
           break; 
           case PROLONGED_STUDYENDDATE:
-            // Pidennetty päättymispäivä on aina muuta kautta rahoitettu ja päättymispäivää ei raportoida Koskeen
+            // Pidennetty päättymispäivä - päättymispäivää ei raportoida Koskeen / rahoitus sama kuin normaalitilanteessa
             OpiskeluoikeusJakso pidennettyPäättymispäiväjakso = new OpiskeluoikeusJakso(period.getBegin(), OpiskeluoikeudenTila.lasna);
-            pidennettyPäättymispäiväjakso.setOpintojenRahoitus(new KoodistoViite<>(OpintojenRahoitus.K6));
+            pidennettyPäättymispäiväjakso.setOpintojenRahoitus(new KoodistoViite<>(rahoitus));
             tila.addOpiskeluoikeusJakso(pidennettyPäättymispäiväjakso);
           break;
         }
@@ -806,6 +811,64 @@ public abstract class KoskiStudentHandler {
 
   protected StudentSubjectGrade findStudentSubjectGrade(Student student, Subject subject) {
     return studentSubjectGradeDAO.findBy(student, subject);
+  }
+
+  protected <T extends KurssinSuoritus> T luoKurssiSuoritus(T suoritus, CreditStub courseCredit) {
+    CreditStubCredit parasArvosana = courseCredit.getCredits().getBestCredit();
+    
+    if (parasArvosana != null) {
+      if (parasArvosana.getType() == Type.RECOGNIZED) {
+        OsaamisenTunnustaminen tunnustettu = new OsaamisenTunnustaminen(kuvaus("Hyväksiluku"));
+        
+        if (parasArvosana.getTransferCreditFunding() == TransferCreditFunding.GOVERNMENT_FUNDING) {
+          tunnustettu.setRahoituksenPiirissä(true);
+        }
+        
+        suoritus.setTunnustettu(tunnustettu);
+      }
+      
+      ArviointiasteikkoYleissivistava arvosana = getArvosana(parasArvosana.getGrade());
+      
+      KurssinArviointi arviointi = null;
+      if (ArviointiasteikkoYleissivistava.isNumeric(arvosana)) {
+        arviointi =  new KurssinArviointiNumeerinen(arvosana, parasArvosana.getDate());
+      } else if (ArviointiasteikkoYleissivistava.isLiteral(arvosana)) {
+        arviointi = new KurssinArviointiSanallinen(arvosana, parasArvosana.getDate(), kuvaus(parasArvosana.getGrade().getName()));
+      } else {
+        logger.log(Level.SEVERE, String.format("Grade %s is neither numeric nor literal", arvosana));
+        return null;
+      }
+
+      suoritus.addArviointi(arviointi);
+      return suoritus;
+    } else {
+      // Kurssisuoritus ohitetaan jos arvosanaa ei ole
+      return null;
+    }
+  }
+  
+  protected OpintojenRahoitus opintojenRahoitus(Student student) {
+    if (student != null) {
+      if (student.getFunding() != null) {
+        switch (student.getFunding()) {
+          case GOVERNMENT_FUNDING:
+            return OpintojenRahoitus.K1;
+          case OTHER_FUNDING:
+            return OpintojenRahoitus.K6;
+        }
+      }
+
+      // Rahoitus; jos määritetty jokin kiinteä arvo, käytetään sitä
+      OpintojenRahoitus opintojenRahoitus = settings.getOpintojenRahoitus(student.getStudyProgramme().getId());
+      if (opintojenRahoitus == null) {
+        // Jos kiinteää rahoitusarvoa ei ole määritetty, rahoitus määräytyy oppilaitoksen mukaan
+        opintojenRahoitus = student.getSchool() == null ? OpintojenRahoitus.K1 : OpintojenRahoitus.K6;
+      }
+    
+      return opintojenRahoitus;
+    } else {
+      return null;
+    }
   }
 
 }

@@ -2,8 +2,6 @@ package fi.otavanopisto.pyramus.views.students.tor;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -49,7 +47,7 @@ public class TORCourse {
   }
 
   public void sort() {
-    Collections.sort(credits, Comparator.comparing(TORCredit::getDate, Comparator.nullsLast(Date::compareTo)).reversed());
+    Collections.sort(credits, Collections.reverseOrder());
   }
 
   public boolean isPassed() {

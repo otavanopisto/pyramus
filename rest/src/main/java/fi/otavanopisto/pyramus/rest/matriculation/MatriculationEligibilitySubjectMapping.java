@@ -1,5 +1,8 @@
 package fi.otavanopisto.pyramus.rest.matriculation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -24,6 +27,13 @@ public class MatriculationEligibilitySubjectMapping {
 
   @JsonProperty("transfer-credit-only-mandatory")
   private Boolean transferCreditOnlyMandatory;
+  
+  @JsonProperty(value = "included-subjects", required = false)
+  private List<String> includedSubjects;
+  
+  public MatriculationEligibilitySubjectMapping() {
+    includedSubjects = new ArrayList<>();
+  }
   
   /**
    * Returns comment
@@ -113,6 +123,18 @@ public class MatriculationEligibilitySubjectMapping {
    */
   public void setTransferCreditOnlyMandatory(Boolean transferCreditOnlyMandatory) {
     this.transferCreditOnlyMandatory = transferCreditOnlyMandatory;
+  }
+
+  public void addIncludedSubject(String subject) {
+    this.includedSubjects.add(subject);
+  }
+  
+  public List<String> getIncludedSubjects() {
+    return includedSubjects;
+  }
+
+  public void setIncludedSubjects(List<String> includedSubjects) {
+    this.includedSubjects = includedSubjects;
   }
   
 }

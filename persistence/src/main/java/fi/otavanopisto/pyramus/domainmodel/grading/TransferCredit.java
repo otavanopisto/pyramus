@@ -100,6 +100,14 @@ public class TransferCredit extends Credit {
     this.offCurriculum = offCurriculum;
   }
 
+  public TransferCreditFunding getFunding() {
+    return funding;
+  }
+
+  public void setFunding(TransferCreditFunding funding) {
+    this.funding = funding;
+  }
+
   @ManyToOne  
   @JoinColumn(name="student")
   private Student student;
@@ -119,6 +127,10 @@ public class TransferCredit extends Credit {
   @Enumerated (EnumType.STRING)
   private CourseOptionality optionality;
 
+  @Column (nullable = true)
+  @Enumerated (EnumType.STRING)
+  private TransferCreditFunding funding;
+  
   @ManyToOne
   @JoinColumn(name = "school")
   private School school;

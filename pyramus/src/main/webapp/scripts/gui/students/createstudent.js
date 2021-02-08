@@ -382,7 +382,9 @@ function onLoad(event) {
         onclick : function(event) {
           var table = event.tableComponent;
           var valueColumn = table.getNamedColumnIndex('value');
+          var editable = table.isCellEditable(event.row, valueColumn) == false;
           table.setCellEditable(event.row, valueColumn, table.isCellEditable(event.row, valueColumn) == false);
+          table.setCellValue(event.row, table.getNamedColumnIndex('edited'), editable ? "1" : "0");
         }
       }, {
         dataType : 'hidden',
@@ -400,6 +402,10 @@ function onLoad(event) {
         dataType : 'text',
         editable : false,
         paramName : 'value'
+      }, {
+        dataType: 'hidden',
+        editable: false,
+        paramName: 'edited'
       } ]
     });
 
@@ -407,7 +413,7 @@ function onLoad(event) {
     variablesTable.detachFromDom();
     for ( var i = 0, l = variableKeys.length; i < l; i++) {
       var rowNumber = variablesTable.addRow([ '', jsonEscapeHTML(variableKeys[i].variableKey),
-                                              jsonEscapeHTML(variableKeys[i].variableName), '' ]);
+                                              jsonEscapeHTML(variableKeys[i].variableName), '', 0 ]);
       var dataType;
       switch (variableKeys[i].variableType) {
         case 'NUMBER':

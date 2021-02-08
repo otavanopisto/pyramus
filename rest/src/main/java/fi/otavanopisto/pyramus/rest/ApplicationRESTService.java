@@ -425,8 +425,8 @@ public class ApplicationRESTService extends AbstractRESTService {
       
       ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
       
-      String referenceCode = generateReferenceCode(lastName);
       Application application = applicationDAO.findByApplicationId(applicationId);
+      String referenceCode = ApplicationUtils.generateReferenceCode(lastName, application == null ? null : application.getReferenceCode());
 
       // #765: Prevent multiple (active) applications with same e-mail
       
@@ -499,8 +499,12 @@ public class ApplicationRESTService extends AbstractRESTService {
         }
       }
       else {
-        if (!StringUtils.equals(application.getLastName(), lastName)) {
-          referenceCode = generateReferenceCode(lastName);
+        String oldSurname = null;
+        boolean referenceCodeModified = false;
+        if (!StringUtils.equalsIgnoreCase(application.getLastName(), lastName)) {
+          referenceCodeModified = true;
+          oldSurname = application.getLastName();
+          referenceCode = ApplicationUtils.generateReferenceCode(lastName, application.getReferenceCode());
         }
         else {
           referenceCode = application.getReferenceCode();
@@ -530,6 +534,9 @@ public class ApplicationRESTService extends AbstractRESTService {
               notification,
               null);
           ApplicationUtils.sendNotifications(application, httpRequest, null, true, null, false);
+        }
+        if (referenceCodeModified) {
+          ApplicationUtils.sendApplicationModifiedMail(application, httpRequest, oldSurname);
         }
       }
 
@@ -683,6 +690,9 @@ public class ApplicationRESTService extends AbstractRESTService {
   }
 
   private boolean isApplicationCall(String referer) {
+    if (StringUtils.isEmpty(referer)) {
+      return false;
+    }
     try {
       URI refererUri = new URI(referer);
       URI baseUri = uri.getBaseUri();
@@ -748,15 +758,6 @@ public class ApplicationRESTService extends AbstractRESTService {
     return StringUtils.stripEnd(StringUtils.stripStart(StringUtils.strip(filename, "\\/:*?\"<>|"), "."), ".");
   }
   
-  private String generateReferenceCode(String lastName) {
-    ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
-    String referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
-    while (applicationDAO.findByLastNameAndReferenceCode(lastName, referenceCode) != null) {
-      referenceCode = RandomStringUtils.randomAlphabetic(6).toUpperCase();
-    }
-    return referenceCode;
-  }
-
   /**
    * Handles post-processing related to a new application. Sends a confirmation e-mail to the
    * applicant, a notification e-mail to application handlers, and adds an application log entry.  

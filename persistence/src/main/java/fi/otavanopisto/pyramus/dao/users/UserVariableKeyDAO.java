@@ -60,6 +60,20 @@ public class UserVariableKeyDAO extends PyramusEntityDAO<UserVariableKey> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
+  public List<UserVariableKey> listByExistingDefaultValue() {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<UserVariableKey> criteria = criteriaBuilder.createQuery(UserVariableKey.class);
+    Root<UserVariableKey> root = criteria.from(UserVariableKey.class);
+    criteria.select(root);
+    criteria.where(
+        criteriaBuilder.isNotNull(root.get(UserVariableKey_.defaultValueOnCreation))
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
   public UserVariableKey findByVariableKey(String key) {
     EntityManager entityManager = getEntityManager(); 
     
@@ -89,5 +103,4 @@ public class UserVariableKeyDAO extends PyramusEntityDAO<UserVariableKey> {
     return persist(userVariableKey);
   }
 
-  
 }
