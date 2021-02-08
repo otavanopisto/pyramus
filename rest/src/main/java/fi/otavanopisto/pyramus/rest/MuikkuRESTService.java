@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -14,6 +16,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -45,6 +48,9 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.clientapplications.ClientApplication;
 import fi.otavanopisto.pyramus.domainmodel.students.Sex;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupStudent;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentGroupUser;
 import fi.otavanopisto.pyramus.domainmodel.users.InternalAuth;
 import fi.otavanopisto.pyramus.domainmodel.users.PasswordResetRequest;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
@@ -60,10 +66,13 @@ import fi.otavanopisto.pyramus.rest.controller.ClientApplicationController;
 import fi.otavanopisto.pyramus.rest.controller.CommonController;
 import fi.otavanopisto.pyramus.rest.controller.PersonController;
 import fi.otavanopisto.pyramus.rest.controller.StudentController;
+import fi.otavanopisto.pyramus.rest.controller.StudentGroupController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MuikkuPermissions;
 import fi.otavanopisto.pyramus.rest.model.muikku.CredentialResetPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StaffMemberPayload;
+import fi.otavanopisto.pyramus.rest.model.muikku.StudentGroupMembersPayload;
+import fi.otavanopisto.pyramus.rest.model.muikku.StudentGroupPayload;
 import fi.otavanopisto.pyramus.rest.model.muikku.StudentPayload;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
@@ -76,6 +85,9 @@ public class MuikkuRESTService {
 
   @Resource
   private SessionContext sessionContext;
+
+  @Inject
+  private Logger logger;
   
   @Inject
   private CommonController commonController;
@@ -88,6 +100,9 @@ public class MuikkuRESTService {
 
   @Inject
   private StudentController studentController;
+
+  @Inject
+  private StudentGroupController studentGroupController;
 
   @Inject
   private SessionController sessionController;
@@ -219,6 +234,239 @@ public class MuikkuRESTService {
     }
 
     return Response.ok(toRestModel(staffMember, email)).build();
+  }
+
+  @Path("/studentgroups")
+  @POST
+  @RESTPermit(MuikkuPermissions.MUIKKU_CREATE_STUDENT_GROUP)
+  public Response createStudentGroup(@Context HttpServletRequest request, StudentGroupPayload payload) {
+    
+    // Prerequisites
+    User loggedUser = sessionController.getUser();    
+    if (loggedUser.getOrganization() == null) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
+    }
+
+    // Basic payload validation
+    
+    if (StringUtils.isBlank(payload.getName()) || payload.getIsGuidanceGroup() == null) {
+      return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
+    }
+    
+    // Student group creation
+    
+    StudentGroup studentGroup = studentGroupController.createStudentGroup(loggedUser.getOrganization(), payload.getName(), null, null, loggedUser, payload.getIsGuidanceGroup());
+    payload.setIdentifier(studentGroup.getId().toString());
+    
+    return Response.ok(payload).build();
+  }
+
+  @Path("/studentgroups")
+  @PUT
+  @RESTPermit(MuikkuPermissions.MUIKKU_UPDATE_STUDENT_GROUP)
+  public Response updateStudentGroup(@Context HttpServletRequest request, StudentGroupPayload payload) {
+    
+    // Prerequisites
+    User loggedUser = sessionController.getUser();    
+    if (loggedUser.getOrganization() == null) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
+    }
+
+    // Basic payload validation
+    
+    if (StringUtils.isAnyBlank(payload.getIdentifier(), payload.getName()) || payload.getIsGuidanceGroup() == null) {
+      return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
+    }
+
+    // Find student group
+    
+    Long studentGroupId = Long.valueOf(payload.getIdentifier());
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(studentGroupId); 
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).entity(String.format("No student group for identifier %s", payload.getIdentifier())).build();
+    }
+    else if (!UserUtils.canAccessOrganization(loggedUser, studentGroup.getOrganization())) {
+      logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to update user group %d", loggedUser.getId(), studentGroupId));
+      return Response.status(Status.BAD_REQUEST).entity("No student group access").build();
+    }
+    
+    // Student group update
+    
+    studentGroup = studentGroupController.updateStudentGroup(
+        studentGroup,
+        studentGroup.getOrganization(),
+        payload.getName(),
+        studentGroup.getDescription(),
+        studentGroup.getBeginDate(),
+        payload.getIsGuidanceGroup(), 
+        loggedUser);
+    payload.setIdentifier(studentGroup.getId().toString());
+    
+    return Response.ok(payload).build();
+  }
+
+  @Path("/studentgroups/{ID:[0-9]*}")
+  @DELETE
+  @RESTPermit(MuikkuPermissions.MUIKKU_DELETE_STUDENT_GROUP)
+  public Response deleteStudentGroup(@Context HttpServletRequest request, @PathParam("ID") Long id) {
+    
+    // Prerequisites
+    User loggedUser = sessionController.getUser();    
+    if (loggedUser.getOrganization() == null) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
+    }
+
+    // Basic payload validation
+    
+    if (id == null) {
+      return Response.status(Status.BAD_REQUEST).entity("Empty fields in payload").build();
+    }
+
+    // Find student group
+    
+    Long studentGroupId = Long.valueOf(id);
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(studentGroupId); 
+    if (studentGroup == null) {
+      return Response.status(Status.NOT_FOUND).entity(String.format("No student group for identifier %d", id)).build();
+    }
+    else if (!UserUtils.canAccessOrganization(loggedUser, studentGroup.getOrganization())) {
+      logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to delete user group %d", loggedUser.getId(), studentGroupId));
+      return Response.status(Status.BAD_REQUEST).entity("No student group access").build();
+    }
+    
+    // Student group archive
+    
+    studentGroupController.archiveStudentGroup(studentGroup, loggedUser);
+    
+    return Response.noContent().build();
+  }
+
+  @Path("/studentgroupmembers")
+  @POST
+  @RESTPermit(MuikkuPermissions.MUIKKU_ADD_STUDENT_GROUP_MEMBERS)
+  public Response addStudentGroupMembers(@Context HttpServletRequest request, StudentGroupMembersPayload payload) {
+    
+    // Prerequisites
+    User loggedUser = sessionController.getUser();    
+    if (loggedUser.getOrganization() == null) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
+    }
+
+    // Basic payload validation
+    
+    Long groupId = new Long(payload.getGroupIdentifier());
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(groupId);
+    if (studentGroup == null) {
+      return Response.status(Status.BAD_REQUEST).entity(String.format("Student group %d not found", groupId)).build();
+    }
+    else if (!UserUtils.canAccessOrganization(loggedUser, studentGroup.getOrganization())) {
+      logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to access group %d", loggedUser.getId(), groupId));
+      return Response.status(Status.BAD_REQUEST).entity("No student group access").build();
+    }
+    for (String userIdentifier : payload.getUserIdentifiers()) {
+      Long userId = new Long(userIdentifier);
+      StaffMember staffMember = userController.findStaffMemberById(userId);
+      if (staffMember == null) {
+        Student student = studentController.findStudentById(userId);
+        if (student == null) {
+          return Response.status(Status.BAD_REQUEST).entity(String.format("User %d not found", userId)).build();
+        }
+        else if (!UserUtils.canAccessOrganization(loggedUser, student.getOrganization())) {
+          logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to add user %d to group %d", loggedUser.getId(), userId, groupId));
+          return Response.status(Status.BAD_REQUEST).entity("No student access").build();
+        }
+      }
+      else if (!UserUtils.canAccessOrganization(loggedUser, staffMember.getOrganization())) {
+        logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to add user %d to group %d", loggedUser.getId(), userId, groupId));
+        return Response.status(Status.BAD_REQUEST).entity("No staff member access").build();
+      }
+    }
+    
+    // Add user group members
+    
+    for (String userIdentifier : payload.getUserIdentifiers()) {
+      Long userId = new Long(userIdentifier);
+      Student student = studentController.findStudentById(userId);
+      if (student == null) {
+        StaffMember staffMember = userController.findStaffMemberById(userId);
+        StudentGroupUser studentGroupUser = studentGroupController.findStudentGroupUserByStudentGroupAndUser(studentGroup, staffMember);
+        if (studentGroupUser == null) {
+          studentGroupController.createStudentGroupStaffMember(studentGroup, staffMember, loggedUser);
+        }
+      }
+      else {
+        StudentGroupStudent studentGroupStudent = studentGroupController.findStudentGroupStudentByStudentGroupAndStudent(studentGroup, student);
+        if (studentGroupStudent == null) {
+          studentGroupController.createStudentGroupStudent(studentGroup, student, loggedUser);
+        }
+      }
+    }
+    
+    return Response.noContent().build();
+  }
+
+  @Path("/studentgroupmembers")
+  @DELETE
+  @RESTPermit(MuikkuPermissions.MUIKKU_REMOVE_STUDENT_GROUP_MEMBERS)
+  public Response removeStudentGroupMembers(@Context HttpServletRequest request, StudentGroupMembersPayload payload) {
+    
+    // Prerequisites
+    User loggedUser = sessionController.getUser();    
+    if (loggedUser.getOrganization() == null) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Current user lacks organization").build();
+    }
+
+    // Basic payload validation
+    
+    Long groupId = new Long(payload.getGroupIdentifier());
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(groupId);
+    if (studentGroup == null) {
+      return Response.status(Status.BAD_REQUEST).entity(String.format("Student group %d not found", groupId)).build();
+    }
+    else if (!UserUtils.canAccessOrganization(loggedUser, studentGroup.getOrganization())) {
+      logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to access group %d", loggedUser.getId(), groupId));
+      return Response.status(Status.BAD_REQUEST).entity("No student group access").build();
+    }
+    for (String userIdentifier : payload.getUserIdentifiers()) {
+      Long userId = new Long(userIdentifier);
+      StaffMember staffMember = userController.findStaffMemberById(userId);
+      if (staffMember == null) {
+        Student student = studentController.findStudentById(userId);
+        if (student == null) {
+          return Response.status(Status.BAD_REQUEST).entity(String.format("User %d not found", userId)).build();
+        }
+        else if (!UserUtils.canAccessOrganization(loggedUser, student.getOrganization())) {
+          logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to remove user %d from group %d", loggedUser.getId(), userId, groupId));
+          return Response.status(Status.BAD_REQUEST).entity("No student access").build();
+        }
+      }
+      else if (!UserUtils.canAccessOrganization(loggedUser, staffMember.getOrganization())) {
+        logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to remove user %d from group %d", loggedUser.getId(), userId, groupId));
+        return Response.status(Status.BAD_REQUEST).entity("No staff member access").build();
+      }
+    }
+    
+    // Remove user group members
+    
+    for (String userIdentifier : payload.getUserIdentifiers()) {
+      Long userId = new Long(userIdentifier);
+      Student student = studentController.findStudentById(userId);
+      if (student == null) {
+        StaffMember staffMember = userController.findStaffMemberById(userId);
+        StudentGroupUser studentGroupUser = studentGroupController.findStudentGroupUserByStudentGroupAndUser(studentGroup, staffMember);
+        if (studentGroupUser == null) {
+          studentGroupController.deleteStudentGroupUser(studentGroupUser);
+        }
+      }
+      else {
+        StudentGroupStudent studentGroupStudent = studentGroupController.findStudentGroupStudentByStudentGroupAndStudent(studentGroup, student);
+        if (studentGroupStudent == null) {
+          studentGroupController.deleteStudentGroupStudent(studentGroupStudent);
+        }
+      }
+    }
+    
+    return Response.noContent().build();
   }
 
   private StaffMemberPayload toRestModel(StaffMember staffMember, Email email) {

@@ -97,13 +97,14 @@ public class StudentGroupDAO extends PyramusEntityDAO<StudentGroup> {
     return studentGroup;
   }
 
-  public StudentGroup update(StudentGroup studentGroup, Organization organization, String name, String description, Date beginDate, User updatingUser) {
+  public StudentGroup update(StudentGroup studentGroup, Organization organization, String name, String description, Date beginDate, Boolean guidanceGroup, User updatingUser) {
     EntityManager entityManager = getEntityManager();
 
     studentGroup.setOrganization(organization);
     studentGroup.setName(name);
     studentGroup.setDescription(description);
     studentGroup.setBeginDate(beginDate);
+    studentGroup.setGuidanceGroup(guidanceGroup);
 
     studentGroup.setLastModified(new Date(System.currentTimeMillis()));
     studentGroup.setLastModifier(updatingUser);

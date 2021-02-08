@@ -1051,6 +1051,7 @@ public class StudentRESTService extends AbstractRESTService {
     String description = entity.getDescription();
     OffsetDateTime beginDate = entity.getBeginDate();
     Long organizationId = entity.getOrganizationId();
+    Boolean guidanceGroup = entity.getGuidanceGroup();
 
     if (StringUtils.isBlank(name) || (organizationId == null)) {
       return Response.status(Status.BAD_REQUEST).build();
@@ -1073,7 +1074,7 @@ public class StudentRESTService extends AbstractRESTService {
       return Response.status(Status.FORBIDDEN).build();
     }
 
-    studentGroupController.updateStudentGroup(studentGroup, organization, name, description, toDate(beginDate), sessionController.getUser());
+    studentGroupController.updateStudentGroup(studentGroup, organization, name, description, toDate(beginDate), guidanceGroup, sessionController.getUser());
     studentGroupController.updateStudentGroupTags(studentGroup, entity.getTags());
 
     return Response.ok(objectFactory.createModel(studentGroup)).build();
