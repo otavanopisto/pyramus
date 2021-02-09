@@ -324,13 +324,12 @@ public class MuikkuRESTService {
 
     // Find student group
     
-    Long studentGroupId = Long.valueOf(id);
-    StudentGroup studentGroup = studentGroupController.findStudentGroupById(studentGroupId); 
+    StudentGroup studentGroup = studentGroupController.findStudentGroupById(id); 
     if (studentGroup == null) {
       return Response.status(Status.NOT_FOUND).entity(String.format("No student group for identifier %d", id)).build();
     }
     else if (!UserUtils.canAccessOrganization(loggedUser, studentGroup.getOrganization())) {
-      logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to delete user group %d", loggedUser.getId(), studentGroupId));
+      logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to delete user group %d", loggedUser.getId(), id));
       return Response.status(Status.BAD_REQUEST).entity("No student group access").build();
     }
     
