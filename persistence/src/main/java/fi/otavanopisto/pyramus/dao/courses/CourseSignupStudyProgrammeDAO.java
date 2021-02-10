@@ -3,6 +3,8 @@ package fi.otavanopisto.pyramus.dao.courses;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -13,15 +15,24 @@ import fi.otavanopisto.pyramus.domainmodel.base.StudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudyProgramme;
 import fi.otavanopisto.pyramus.domainmodel.courses.CourseSignupStudyProgramme_;
+import fi.otavanopisto.pyramus.events.CourseUpdatedEvent;
 
 @Stateless
 public class CourseSignupStudyProgrammeDAO extends PyramusEntityDAO<CourseSignupStudyProgramme> {
   
+  @Inject
+  private Event<CourseUpdatedEvent> courseUpdatedEvent;
+
   public CourseSignupStudyProgramme create(Course course, StudyProgramme studyProgramme) {
     CourseSignupStudyProgramme courseSignupStudyProgramme = new CourseSignupStudyProgramme();
     courseSignupStudyProgramme.setCourse(course);
     courseSignupStudyProgramme.setStudyProgramme(studyProgramme);
-    return persist(courseSignupStudyProgramme);
+    
+    courseSignupStudyProgramme = persist(courseSignupStudyProgramme);
+    
+    courseUpdatedEvent.fire(new CourseUpdatedEvent(course.getId()));
+    
+    return courseSignupStudyProgramme;
   }
   
   public List<CourseSignupStudyProgramme> listByCourse(Course course) {
@@ -39,6 +50,8 @@ public class CourseSignupStudyProgrammeDAO extends PyramusEntityDAO<CourseSignup
   
   @Override
   public void delete(CourseSignupStudyProgramme courseSignupStudyProgramme) {
+    Long courseId = courseSignupStudyProgramme.getCourse().getId();
     super.delete(courseSignupStudyProgramme);
+    courseUpdatedEvent.fire(new CourseUpdatedEvent(courseId));
   }
 }
