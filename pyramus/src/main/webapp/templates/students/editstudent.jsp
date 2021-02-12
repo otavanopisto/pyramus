@@ -673,10 +673,14 @@
           
         var lodgingPeriods = data.studentLodgingPeriodsContainer[studentId.toString()];
         var lodgingPeriodsTable = initStudentLodgingPeriodsTable(studentId);
-        
+
         if (lodgingPeriods && lodgingPeriods.length > 0) {
+          console.log(studentId);
+          console.log(lodgingPeriods);
+          
+          var lodgingPeriodRows = new Array();
           for (var i = 0, l = lodgingPeriods.length; i < l; i++) {
-            var rowNumber = lodgingPeriodsTable.addRow([
+            lodgingPeriodRows.push([
               lodgingPeriods[i].id,
               lodgingPeriods[i].begin,
               lodgingPeriods[i].end,
@@ -684,14 +688,16 @@
               ''
             ]);
           }
+          lodgingPeriodsTable.addRows(lodgingPeriodRows);
         }
 
         var studyPeriodsTable = initStudentStudyPeriodsTable(studentId);
         var studyPeriods = data.studentStudyPeriodsContainer[studentId.toString()];
 
         if (studyPeriods && studyPeriods.length > 0) {
+          var studyPeriodRows = new Array();
           for (var i = 0, l = studyPeriods.length; i < l; i++) {
-            var rowNumber = studyPeriodsTable.addRow([
+            studyPeriodRows.push([
               studyPeriods[i].id,
               studyPeriods[i].begin,
               studyPeriods[i].type,
@@ -699,6 +705,7 @@
               ''
             ]);
           }
+          studyPeriodsTable.addRows(studyPeriodRows);
         }
 
         Event.observe($('studyEndReason.' + studentId), 'change', _onStudyEndReasonChange);
