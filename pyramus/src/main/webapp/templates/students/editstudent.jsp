@@ -675,9 +675,6 @@
         var lodgingPeriodsTable = initStudentLodgingPeriodsTable(studentId);
 
         if (lodgingPeriods && lodgingPeriods.length > 0) {
-          console.log(studentId);
-          console.log(lodgingPeriods);
-          
           var lodgingPeriodRows = new Array();
           for (var i = 0, l = lodgingPeriods.length; i < l; i++) {
             lodgingPeriodRows.push([
