@@ -340,8 +340,8 @@ public class MuikkuRESTService {
     return Response.noContent().build();
   }
 
-  @Path("/studentgroupmembers")
-  @POST
+  @Path("/addstudentgroupmembers")
+  @PUT
   @RESTPermit(MuikkuPermissions.MUIKKU_ADD_STUDENT_GROUP_MEMBERS)
   public Response addStudentGroupMembers(@Context HttpServletRequest request, StudentGroupMembersPayload payload) {
     
@@ -404,8 +404,8 @@ public class MuikkuRESTService {
     return Response.noContent().build();
   }
 
-  @Path("/studentgroupmembers")
-  @DELETE
+  @Path("/removestudentgroupmembers")
+  @PUT
   @RESTPermit(MuikkuPermissions.MUIKKU_REMOVE_STUDENT_GROUP_MEMBERS)
   public Response removeStudentGroupMembers(@Context HttpServletRequest request, StudentGroupMembersPayload payload) {
     
