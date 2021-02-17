@@ -25,6 +25,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import fi.internetix.smvc.Feature;
 import fi.internetix.smvc.Severity;
 import fi.internetix.smvc.SmvcMessage;
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -293,6 +294,13 @@ public abstract class RequestContext {
     }
     
     return fileItem;
+  }
+  
+  @SuppressWarnings("unchecked")
+  public boolean hasFeature(Feature feature) {
+    HttpSession session = getRequest().getSession(false);
+    Map<String, Boolean> features = session == null ? null : (Map<String, Boolean>) session.getAttribute("loggedUserFeatures");
+    return features != null && features.containsKey(feature.toString());
   }
 
   /**

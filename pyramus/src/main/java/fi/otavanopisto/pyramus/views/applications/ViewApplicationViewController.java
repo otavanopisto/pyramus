@@ -12,7 +12,11 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fi.internetix.smvc.AccessDeniedException;
+import fi.internetix.smvc.Feature;
+import fi.internetix.smvc.LoginRequiredException;
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.internetix.smvc.controllers.RequestContext;
 import fi.otavanopisto.pyramus.applications.AlternativeLine;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
@@ -33,10 +37,6 @@ public class ViewApplicationViewController extends PyramusViewController {
 
   private static final Logger logger = Logger.getLogger(EditApplicationViewController.class.getName());
 
-  public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
-  }
-  
   public void process(PageRequestContext pageRequestContext) {
     try {
 
@@ -268,6 +268,17 @@ public class ViewApplicationViewController extends PyramusViewController {
       logger.log(Level.SEVERE, "Unable to serve error response", e);
       return;
     }
+  }
+
+  @Override
+  public void authorize(RequestContext requestContext) throws LoginRequiredException, AccessDeniedException {
+    if (!requestContext.hasFeature(Feature.APPLICATION_MANAGEMENT)) {
+      throw new AccessDeniedException(requestContext.getRequest().getLocale());
+    }
+  }
+
+  public UserRole[] getAllowedRoles() {
+    return new UserRole[] { UserRole.ADMINISTRATOR };
   }
   
   private String getFormValue(JSONObject object, String key) {

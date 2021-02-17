@@ -8,7 +8,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.math.NumberUtils;
 
+import fi.internetix.smvc.AccessDeniedException;
+import fi.internetix.smvc.Feature;
+import fi.internetix.smvc.LoginRequiredException;
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.internetix.smvc.controllers.RequestContext;
 import fi.otavanopisto.pyramus.applications.ApplicationUtils;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
@@ -86,8 +90,15 @@ public class ManageApplicationViewController extends PyramusViewController {
     }
   }
 
+  @Override
+  public void authorize(RequestContext requestContext) throws LoginRequiredException, AccessDeniedException {
+    if (!requestContext.hasFeature(Feature.APPLICATION_MANAGEMENT)) {
+      throw new AccessDeniedException(requestContext.getRequest().getLocale());
+    }
+  }
+
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.ADMINISTRATOR, UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER };
+    return new UserRole[] { UserRole.ADMINISTRATOR };
   }
 
 }

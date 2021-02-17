@@ -1,10 +1,14 @@
-package fi.otavanopisto.pyramus.views.users;
+package fi.otavanopisto.pyramus.views.applications;
 
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.internetix.smvc.AccessDeniedException;
+import fi.internetix.smvc.Feature;
+import fi.internetix.smvc.LoginRequiredException;
 import fi.internetix.smvc.controllers.PageRequestContext;
+import fi.internetix.smvc.controllers.RequestContext;
 import fi.otavanopisto.pyramus.I18N.Messages;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.users.EmailSignatureDAO;
@@ -56,8 +60,15 @@ public class CreateEmailSignatureViewController extends PyramusViewController {
     pageRequestContext.setRedirectURL(pageRequestContext.getReferer(true));
   }
 
+  @Override
+  public void authorize(RequestContext requestContext) throws LoginRequiredException, AccessDeniedException {
+    if (!requestContext.hasFeature(Feature.APPLICATION_MANAGEMENT)) {
+      throw new AccessDeniedException(requestContext.getRequest().getLocale());
+    }
+  }
+
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.ADMINISTRATOR };
   }
 
   public String getName(Locale locale) {

@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.json.users;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
 import fi.internetix.smvc.SmvcRuntimeException;
@@ -13,12 +14,13 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.features.FeatureManager;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
 public class PoseJSONRequestController extends JSONRequestController {
-  
+
   private static final Logger logger = Logger.getLogger(PoseJSONRequestController.class.getName());
   
   public void process(JSONRequestContext jsonRequestContext) {
@@ -69,11 +71,14 @@ public class PoseJSONRequestController extends JSONRequestController {
       session.setAttribute("loggedUserRole", UserRole.valueOf(role.name()));
       session.setAttribute("loggedUserId", user.getId());
       session.setAttribute("loggedUserName", user.getFullName());
-    } else if (user instanceof Student) {
+      FeatureManager.getInstance().collectFeatures(jsonRequestContext);
+    }
+    else if (user instanceof Student) {
       logger.log(Level.INFO, String.format("User %d posing student %d", jsonRequestContext.getLoggedUserId(), user.getId()));
       session.setAttribute("loggedUserId", user.getId());
       session.setAttribute("loggedUserName", user.getFullName()); 
-    } else {
+    }
+    else {
       logger.log(Level.SEVERE, String.format("User %d was not not a student or a staffMember", userId));
       throw new SmvcRuntimeException(PyramusStatusCode.PAGE_NOT_FOUND, "Requested user could not be found");
     }

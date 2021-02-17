@@ -42,6 +42,18 @@ public class ApplicationNotificationDAO extends PyramusEntityDAO<ApplicationNoti
     return applicationNotification;
   }
   
+  public Long countByUser(User user) {
+    EntityManager entityManager = getEntityManager(); 
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> criteria = criteriaBuilder.createQuery(Long.class);
+    Root<ApplicationNotification> root = criteria.from(ApplicationNotification.class);
+    criteria.select(criteriaBuilder.count(root));
+    criteria.where(
+      criteriaBuilder.isMember(user, root.get(ApplicationNotification_.users))
+    );
+    return entityManager.createQuery(criteria).getSingleResult();
+  }
+  
   public List<ApplicationNotification> listByNullOrLineAndState(String line, ApplicationState state) {
     EntityManager entityManager = getEntityManager(); 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();

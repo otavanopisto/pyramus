@@ -39,6 +39,8 @@ import fi.otavanopisto.pyramus.domainmodel.plugins.PluginRepository;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
 import fi.otavanopisto.pyramus.domainmodel.webhooks.Webhook;
+import fi.otavanopisto.pyramus.features.ApplicationManagementFeature;
+import fi.otavanopisto.pyramus.features.FeatureManager;
 import fi.otavanopisto.pyramus.plugin.PluginDescriptor;
 import fi.otavanopisto.pyramus.plugin.PluginManager;
 import fi.otavanopisto.pyramus.plugin.auth.AuthenticationProviderVault;
@@ -140,6 +142,10 @@ public class PyramusServletContextListener implements ServletContextListener {
       
       // Initializes all configured authentication strategies
       AuthenticationProviderVault.getInstance().initializeStrategies();
+      
+      // Register feature resolvers
+      FeatureManager featureManager = FeatureManager.getInstance();
+      featureManager.registerFeatureResolver(new ApplicationManagementFeature());
       
       if ("development".equals(System.getProperties().getProperty("system.environment"))) {
         trustSelfSignedCerts();

@@ -16,6 +16,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.features.FeatureManager;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -26,7 +27,7 @@ import fi.otavanopisto.pyramus.plugin.auth.InternalAuthenticationProvider;
 import fi.otavanopisto.pyramus.plugin.auth.LocalUserMissingException;
 
 public class ExternalLoginLoginViewController extends PyramusViewController {
-
+  
   public UserRole[] getAllowedRoles() {
     return new UserRole[] { UserRole.EVERYONE };
   }
@@ -56,6 +57,7 @@ public class ExternalLoginLoginViewController extends PyramusViewController {
 
         if (user instanceof StaffMember) {
           session.setAttribute("loggedUserRole", UserRole.valueOf(((StaffMember) user).getRole().name()));
+          FeatureManager.getInstance().collectFeatures(requestContext);
         }
         
         try {

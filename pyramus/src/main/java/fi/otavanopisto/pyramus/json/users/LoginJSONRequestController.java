@@ -14,6 +14,7 @@ import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.domainmodel.users.Role;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.features.FeatureManager;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.PyramusStatusCode;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -72,6 +73,7 @@ public class LoginJSONRequestController extends JSONRequestController {
           session.setAttribute("authenticationProvider", provider.getName());
           if (user instanceof StaffMember) {
             session.setAttribute("loggedUserRole", UserRole.valueOf(((StaffMember) user).getRole().name()));
+            FeatureManager.getInstance().collectFeatures(jsonRequestContext);
           }
           
           try {
