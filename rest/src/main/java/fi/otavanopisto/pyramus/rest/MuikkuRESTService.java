@@ -364,20 +364,10 @@ public class MuikkuRESTService {
     }
     for (String userIdentifier : payload.getUserIdentifiers()) {
       Long userId = new Long(userIdentifier);
-      StaffMember staffMember = userController.findStaffMemberById(userId);
-      if (staffMember == null) {
-        Student student = studentController.findStudentById(userId);
-        if (student == null) {
-          return Response.status(Status.BAD_REQUEST).entity(String.format("User %d not found", userId)).build();
-        }
-        else if (!UserUtils.canAccessOrganization(loggedUser, student.getOrganization())) {
-          logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to add user %d to group %d", loggedUser.getId(), userId, groupId));
-          return Response.status(Status.BAD_REQUEST).entity("No student access").build();
-        }
-      }
-      else if (!UserUtils.canAccessOrganization(loggedUser, staffMember.getOrganization())) {
+      User user = userController.findUserById(userId);
+      if (!UserUtils.canAccessOrganization(loggedUser, user.getOrganization())) {
         logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to add user %d to group %d", loggedUser.getId(), userId, groupId));
-        return Response.status(Status.BAD_REQUEST).entity("No staff member access").build();
+        return Response.status(Status.BAD_REQUEST).entity("No user access").build();
       }
     }
     
@@ -385,18 +375,17 @@ public class MuikkuRESTService {
     
     for (String userIdentifier : payload.getUserIdentifiers()) {
       Long userId = new Long(userIdentifier);
-      Student student = studentController.findStudentById(userId);
-      if (student == null) {
-        StaffMember staffMember = userController.findStaffMemberById(userId);
-        StudentGroupUser studentGroupUser = studentGroupController.findStudentGroupUserByStudentGroupAndUser(studentGroup, staffMember);
-        if (studentGroupUser == null) {
-          studentGroupController.createStudentGroupStaffMember(studentGroup, staffMember, loggedUser);
+      User user = userController.findUserById(userId);
+      if (user instanceof Student) {
+        StudentGroupStudent studentGroupStudent = studentGroupController.findStudentGroupStudentByStudentGroupAndStudent(studentGroup, (Student) user);
+        if (studentGroupStudent == null) {
+          studentGroupController.createStudentGroupStudent(studentGroup, (Student) user, loggedUser);
         }
       }
-      else {
-        StudentGroupStudent studentGroupStudent = studentGroupController.findStudentGroupStudentByStudentGroupAndStudent(studentGroup, student);
-        if (studentGroupStudent == null) {
-          studentGroupController.createStudentGroupStudent(studentGroup, student, loggedUser);
+      else if (user instanceof StaffMember) {
+        StudentGroupUser studentGroupUser = studentGroupController.findStudentGroupUserByStudentGroupAndUser(studentGroup, (StaffMember) user);
+        if (studentGroupUser == null) {
+          studentGroupController.createStudentGroupStaffMember(studentGroup, (StaffMember) user, loggedUser);
         }
       }
     }
@@ -428,20 +417,10 @@ public class MuikkuRESTService {
     }
     for (String userIdentifier : payload.getUserIdentifiers()) {
       Long userId = new Long(userIdentifier);
-      StaffMember staffMember = userController.findStaffMemberById(userId);
-      if (staffMember == null) {
-        Student student = studentController.findStudentById(userId);
-        if (student == null) {
-          return Response.status(Status.BAD_REQUEST).entity(String.format("User %d not found", userId)).build();
-        }
-        else if (!UserUtils.canAccessOrganization(loggedUser, student.getOrganization())) {
-          logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to remove user %d from group %d", loggedUser.getId(), userId, groupId));
-          return Response.status(Status.BAD_REQUEST).entity("No student access").build();
-        }
-      }
-      else if (!UserUtils.canAccessOrganization(loggedUser, staffMember.getOrganization())) {
+      User user = userController.findUserById(userId);
+      if (!UserUtils.canAccessOrganization(loggedUser, user.getOrganization())) {
         logger.log(Level.SEVERE, String.format("Organization mismatch. User %d attempted to remove user %d from group %d", loggedUser.getId(), userId, groupId));
-        return Response.status(Status.BAD_REQUEST).entity("No staff member access").build();
+        return Response.status(Status.BAD_REQUEST).entity("No user access").build();
       }
     }
     
@@ -449,18 +428,17 @@ public class MuikkuRESTService {
     
     for (String userIdentifier : payload.getUserIdentifiers()) {
       Long userId = new Long(userIdentifier);
-      Student student = studentController.findStudentById(userId);
-      if (student == null) {
-        StaffMember staffMember = userController.findStaffMemberById(userId);
-        StudentGroupUser studentGroupUser = studentGroupController.findStudentGroupUserByStudentGroupAndUser(studentGroup, staffMember);
-        if (studentGroupUser == null) {
-          studentGroupController.deleteStudentGroupUser(studentGroupUser);
+      User user = userController.findUserById(userId);
+      if (user instanceof Student) {
+        StudentGroupStudent studentGroupStudent = studentGroupController.findStudentGroupStudentByStudentGroupAndStudent(studentGroup, (Student) user);
+        if (studentGroupStudent != null) {
+          studentGroupController.deleteStudentGroupStudent(studentGroupStudent);
         }
       }
-      else {
-        StudentGroupStudent studentGroupStudent = studentGroupController.findStudentGroupStudentByStudentGroupAndStudent(studentGroup, student);
-        if (studentGroupStudent == null) {
-          studentGroupController.deleteStudentGroupStudent(studentGroupStudent);
+      else if (user instanceof StaffMember) {
+        StudentGroupUser studentGroupUser = studentGroupController.findStudentGroupUserByStudentGroupAndUser(studentGroup, (StaffMember) user);
+        if (studentGroupUser != null) {
+          studentGroupController.deleteStudentGroupUser(studentGroupUser);
         }
       }
     }
