@@ -111,8 +111,10 @@ public class WorklistItem implements ArchivableEntity {
   @NotEmpty
   private String description;
 
+  @Column
   private Double price;
 
+  @Column
   private Double factor;
 
   @ManyToOne 
