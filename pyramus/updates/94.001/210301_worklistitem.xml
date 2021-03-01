@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>
+    create table WorklistItemTemplate (
+      id bigint not null auto_increment,
+      description varchar(255) not null,
+      price double precision,
+      factor double precision,
+      templateType varchar(255) not null,
+      removable bit not null,
+      archived bit not null,
+      primary key (id)
+    );
+  </sql>
+
+  <sql>
+    create table WorklistItem (
+      id bigint not null auto_increment,
+      template_id bigint,
+      owner_id bigint,
+      entryDate datetime not null,
+      description varchar(255) not null,
+      price double precision,
+      factor double precision,
+      courseAssessment_id bigint,
+      archived bit not null,
+      primary key (id));
+  </sql>
+
+  <sql>alter table WorklistItem add constraint FKfwq7riu6jkui2ncrn5ubcummr foreign key (courseAssessment_id) references CourseAssessment (id);</sql>
+  <sql>alter table WorklistItem add constraint FK1n4cc4y5mnh7v05uwpfmtu1wt foreign key (owner_id) references User (id);</sql>
+  <sql>alter table WorklistItem add constraint FKg5k3g9tve372fqo2k249ar8a4 foreign key (template_id) references WorklistItemTemplate (id);</sql>
+  <sql>create index ind_owner_entryDate on WorkListItem (owner_id, entryDate);</sql>
+
+</update>

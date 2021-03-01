@@ -1,8 +1,10 @@
 package fi.otavanopisto.pyramus.rest.controller;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -89,6 +91,15 @@ public class AssessmentController {
   public List<CourseAssessment> listByCourseAndStudent(Course course, Student student){
     return courseAssessmentDAO.listByStudentAndCourse(student, course);
   }
+
+  public boolean isRaisedGrade(CourseAssessment courseAssessment) {
+    Course course = courseAssessment.getCourseStudent().getCourse();
+    Student student = courseAssessment.getStudent();
+    List<CourseAssessment> assessments = listByCourseAndStudent(course, student);
+    assessments.sort(Comparator.comparing(CourseAssessment::getDate));
+    return assessments.size() > 1 && Objects.equals(courseAssessment.getId(), assessments.get(assessments.size() - 1).getId());
+  }
+  
   
   public void archiveCourseAssessment(CourseAssessment courseAssessment) {
     courseAssessmentDAO.archive(courseAssessment);
