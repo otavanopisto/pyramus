@@ -147,7 +147,7 @@ public class WorklistRESTService {
   @Path("/worklistItems/{ID:[0-9]*}")
   @DELETE
   @RESTPermit(handling = Handling.INLINE)
-  public Response updateWorklistItem(@PathParam("ID") Long id) {
+  public Response removeWorklistItem(@PathParam("ID") Long id) {
     
     // Access check; suitable permission or deleting your own item (if template allows it)
 
