@@ -1,10 +1,9 @@
 package fi.otavanopisto.pyramus.rest;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.Month;
-import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,7 +50,6 @@ import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemCourseAssessmentR
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemTemplateRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistSummaryItemRestModel;
-import fi.otavanopisto.pyramus.rest.model.worklist.WorklistSummaryRestModel;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 
 @Path("/worklist")
@@ -173,7 +171,7 @@ public class WorklistRESTService {
   @Path("/worklistItems")
   @GET
   @RESTPermit(handling = Handling.INLINE)
-  public Response listWorklistItemsByOwnerAndTimeframe(@QueryParam("owner") Long ownerId, @QueryParam("beginDate") Date beginDate, @QueryParam("endDate") Date endDate) {
+  public Response listWorklistItemsByOwnerAndTimeframe(@QueryParam("owner") Long ownerId, @QueryParam("beginDate") String beginDate, @QueryParam("endDate") String endDate) {
     
     // Access check; suitable permission or querying for your own items
     
@@ -192,8 +190,19 @@ public class WorklistRESTService {
     if (user ==  null) {
       return Response.status(Status.NOT_FOUND).entity("User not found").build();
     }
-    if ((beginDate == null && endDate != null) || (beginDate != null && endDate == null) || (beginDate != null && endDate != null && beginDate.after(endDate))) {
-      return Response.status(Status.BAD_REQUEST).entity("Invalid timeframe").build();
+    Date begin = null;
+    Date end = null;
+    try {
+      if (!StringUtils.isAnyEmpty(beginDate, endDate)) {
+        begin = java.sql.Timestamp.valueOf(LocalDate.parse(beginDate).atStartOfDay());
+        end = java.sql.Timestamp.valueOf(LocalDate.parse(endDate).atTime(23, 59, 59));
+        if (begin.after(end)) {
+          return Response.status(Status.BAD_REQUEST).entity("Invalid timeframe").build();
+        }
+      }
+    }
+    catch (DateTimeParseException e) {
+      return Response.status(Status.BAD_REQUEST).entity("Invalid time").build();
     }
 
     List<WorklistItem> worklistItems;
@@ -201,7 +210,7 @@ public class WorklistRESTService {
       worklistItems = worklistController.listWorklistItemsByOwner(user);
     }
     else {
-      worklistItems = worklistController.listWorklistItemsByOwnerAndTimeframe(user, beginDate, endDate);
+      worklistItems = worklistController.listWorklistItemsByOwnerAndTimeframe(user, begin, end);
     }
     
     List<WorklistItemRestModel> restItems = new ArrayList<>();
@@ -256,24 +265,16 @@ public class WorklistRESTService {
         monthlyItem = new WorklistSummaryItemRestModel();
         monthlyItem.setDisplayName(displayName);
         c.set(Calendar.DAY_OF_MONTH, 1);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        monthlyItem.setBeginDate(toOffsetDateTime(c.getTime()));
+        monthlyItem.setBeginDate(new java.sql.Date(c.getTimeInMillis()).toLocalDate());
         c.set(Calendar.DATE, c.getActualMaximum(Calendar.DAY_OF_MONTH));
-        c.set(Calendar.HOUR_OF_DAY, 23);
-        c.set(Calendar.MINUTE, 59);
-        c.set(Calendar.SECOND, 59);
-        monthlyItem.setEndDate(toOffsetDateTime(c.getTime()));
+        monthlyItem.setEndDate(new java.sql.Date(c.getTimeInMillis()).toLocalDate());
         monthlyMap.put(displayName,  monthlyItem);
         monthlyItems.add(monthlyItem);
       }
       monthlyItem.incCount();
     }
     
-    WorklistSummaryRestModel restModel = new WorklistSummaryRestModel();
-    restModel.setItems(monthlyItems);
-    return Response.ok(restModel).build();
+    return Response.ok(monthlyItems).build();
   }
   
   private WorklistItemTemplateRestModel createRestModel(WorklistItemTemplate template) {
@@ -290,7 +291,7 @@ public class WorklistRESTService {
   private WorklistItemRestModel createRestModel(WorklistItem worklistItem) {
     WorklistItemRestModel restModel = new WorklistItemRestModel();
     restModel.setId(worklistItem.getId());
-    restModel.setEntryDate(toOffsetDateTime(worklistItem.getEntryDate()));
+    restModel.setEntryDate(worklistItem.getEntryDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
     restModel.setDescription(worklistItem.getDescription());
     restModel.setPrice(worklistItem.getPrice());
     restModel.setFactor(worklistItem.getFactor());
@@ -336,17 +337,6 @@ public class WorklistRESTService {
     restModel.setRaisedGrade(assessmentController.isRaisedGrade(courseAssessment));
     
     return restModel;
-  }
-
-  private OffsetDateTime toOffsetDateTime(Date date) {
-    if (date == null) {
-      return null;
-    }
-    Date tmpDate = new Date(date.getTime()); 
-    Instant instant = tmpDate.toInstant();
-    ZoneId systemId = ZoneId.systemDefault();
-    ZoneOffset offset = systemId.getRules().getOffset(instant);
-    return tmpDate.toInstant().atOffset(offset);
   }
 
 }

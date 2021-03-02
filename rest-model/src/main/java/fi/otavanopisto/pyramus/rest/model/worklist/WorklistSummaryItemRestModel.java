@@ -1,25 +1,25 @@
 package fi.otavanopisto.pyramus.rest.model.worklist;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 
 /**
  * Single month statistics for worklist summary.
  */
 public class WorklistSummaryItemRestModel {
 
-  public OffsetDateTime getBeginDate() {
+  public LocalDate getBeginDate() {
     return beginDate;
   }
 
-  public void setBeginDate(OffsetDateTime beginDate) {
+  public void setBeginDate(LocalDate beginDate) {
     this.beginDate = beginDate;
   }
 
-  public OffsetDateTime getEndDate() {
+  public LocalDate getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(OffsetDateTime endDate) {
+  public void setEndDate(LocalDate endDate) {
     this.endDate = endDate;
   }
 
@@ -44,8 +44,8 @@ public class WorklistSummaryItemRestModel {
   }
 
   private String displayName;
-  private OffsetDateTime beginDate;
-  private OffsetDateTime endDate;
+  private LocalDate beginDate;
+  private LocalDate endDate;
   private int count;
 
 }
