@@ -95,11 +95,9 @@ public class WorklistItem implements ArchivableEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column
   @ManyToOne 
   private WorklistItemTemplate template;
 
-  @Column
   @ManyToOne 
   private User owner;
 
@@ -119,7 +117,6 @@ public class WorklistItem implements ArchivableEntity {
   @Column
   private Double factor;
 
-  @Column
   @ManyToOne 
   private CourseAssessment courseAssessment;
   
