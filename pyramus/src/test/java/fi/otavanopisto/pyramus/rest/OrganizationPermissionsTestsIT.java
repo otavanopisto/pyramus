@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import fi.otavanopisto.pyramus.rest.model.BillingDetails;
 import fi.otavanopisto.pyramus.rest.model.Organization;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 import io.restassured.response.Response;
@@ -29,7 +30,8 @@ public class OrganizationPermissionsTestsIT extends AbstractRESTPermissionsTest 
   
   @Test
   public void testPermissionsCreateOrganization() throws NoSuchFieldException {
-    Organization organization = new Organization(null, getClass().getSimpleName(), Boolean.FALSE);
+    BillingDetails billingDetails = new BillingDetails();
+    Organization organization = new Organization(null, getClass().getSimpleName(), billingDetails, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -64,7 +66,8 @@ public class OrganizationPermissionsTestsIT extends AbstractRESTPermissionsTest 
   
   @Test
   public void testPermissionsUpdateOrganization() throws NoSuchFieldException {
-    Organization organizations = new Organization(null, "Original Organization", Boolean.FALSE);
+    BillingDetails billingDetails = new BillingDetails();
+    Organization organizations = new Organization(null, "Original Organization", billingDetails, Boolean.FALSE);
     
     Response response = given().headers(getAdminAuthHeaders())
       .contentType("application/json")
@@ -73,7 +76,8 @@ public class OrganizationPermissionsTestsIT extends AbstractRESTPermissionsTest 
 
     Long id = response.body().jsonPath().getLong("id");
     try {
-      Organization updateOrganization = new Organization(id, "Updated Organization", Boolean.FALSE);
+      BillingDetails updatedBillingDetails = new BillingDetails();
+      Organization updateOrganization = new Organization(id, "Updated Organization", updatedBillingDetails, Boolean.FALSE);
 
       Response updateResponse = given()
           .headers(getAuthHeaders())
@@ -92,7 +96,8 @@ public class OrganizationPermissionsTestsIT extends AbstractRESTPermissionsTest 
   
   @Test
   public void testPermissionsDeleteOrganization() throws NoSuchFieldException {
-    Organization organization = new Organization(null, "Organization to be deleted", Boolean.FALSE);
+    BillingDetails billingDetails = new BillingDetails();
+    Organization organization = new Organization(null, "Organization to be deleted", billingDetails, Boolean.FALSE);
     
     Response response = given()
         .headers(getAdminAuthHeaders())
