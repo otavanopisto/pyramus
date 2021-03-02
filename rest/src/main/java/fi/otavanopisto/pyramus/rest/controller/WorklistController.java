@@ -96,15 +96,18 @@ public class WorklistController {
   }
   
   public List<WorklistItemTemplate> listWorklistItemTemplates(boolean includeNonCreatable) {
+    List<WorklistItemTemplate> templates;
     if (includeNonCreatable) {
-      return worklistItemTemplateDAO.listUnarchived();
+      templates = worklistItemTemplateDAO.listUnarchived();
     }
     else {
       Set<WorklistItemTemplateType> templateTypes = new HashSet<>();
       templateTypes.add(WorklistItemTemplateType.EDITABLE);
       templateTypes.add(WorklistItemTemplateType.UNEDITABLE);
-      return worklistItemTemplateDAO.listByTemplateTypesAndArchived(templateTypes, false);
+      templates = worklistItemTemplateDAO.listByTemplateTypesAndArchived(templateTypes, false);
     }
+    templates.sort(Comparator.comparing(WorklistItemTemplate::getDescription));
+    return templates;
   }
   
   public List<WorklistItem> listWorklistItemsByOwner(User owner) {
