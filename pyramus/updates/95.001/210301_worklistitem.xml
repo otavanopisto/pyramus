@@ -24,6 +24,7 @@
       price double precision,
       factor double precision,
       courseAssessment_id bigint,
+      locked bit not null,
       archived bit not null,
       primary key (id));
   </sql>

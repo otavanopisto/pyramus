@@ -29,8 +29,17 @@ public class WorklistItemCourseAssessmentRestModel {
     this.raisedGrade = raisedGrade;
   }
 
+  public String getGrade() {
+    return grade;
+  }
+
+  public void setGrade(String grade) {
+    this.grade = grade;
+  }
+
   private String courseName;
   private String studentName;
+  private String grade;
   private Boolean raisedGrade;
 
 }

@@ -135,6 +135,9 @@ public class WorklistRESTService {
     if (!worklistItem.getTemplate().isUserEditable()) { 
       return Response.status(Status.FORBIDDEN).entity("Item is based on a non-editable template").build();
     }
+    if (worklistItem.getLocked()) {
+      return Response.status(Status.FORBIDDEN).entity("Item is locked").build();
+    }
     worklistItem = worklistController.update(worklistItem, payload.getDescription(), payload.getPrice(), payload.getFactor());
     return Response.ok(createRestModel(worklistItem)).build();
   }
@@ -160,6 +163,9 @@ public class WorklistRESTService {
     }
     if (!worklistItem.getTemplate().getRemovable()) { 
       return Response.status(Status.FORBIDDEN).entity("Item is based on a non-removable template").build();
+    }
+    if (worklistItem.getLocked()) {
+      return Response.status(Status.FORBIDDEN).entity("Item is locked").build();
     }
     worklistController.remove(worklistItem, false);
     return Response.noContent().build();
@@ -298,8 +304,8 @@ public class WorklistRESTService {
     if (worklistItem.getCourseAssessment() != null) {
       restModel.setCourseAssessment(createRestModel(worklistItem.getCourseAssessment()));
     }
-    restModel.setEditable(worklistItem.getTemplate().getTemplateType() == WorklistItemTemplateType.EDITABLE);
-    restModel.setRemovable(worklistItem.getTemplate().getRemovable());
+    restModel.setEditable(worklistItem.getTemplate().getTemplateType() == WorklistItemTemplateType.EDITABLE && !worklistItem.getLocked());
+    restModel.setRemovable(worklistItem.getTemplate().getRemovable() && !worklistItem.getLocked());
     return restModel;
   }
   
@@ -332,8 +338,9 @@ public class WorklistRESTService {
     }
     restModel.setCourseName(sb.toString());
     
-    // Raised grade or not
+    // Grade information
     
+    restModel.setGrade(courseAssessment.getGrade().getName());
     restModel.setRaisedGrade(assessmentController.isRaisedGrade(courseAssessment));
     
     return restModel;

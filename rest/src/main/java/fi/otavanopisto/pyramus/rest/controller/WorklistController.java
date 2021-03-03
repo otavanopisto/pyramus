@@ -52,13 +52,17 @@ public class WorklistController {
     if (permanent) {
       List<WorklistItem> worklistItems = worklistItemDAO.listByCourseAssessment(courseAssessment);
       for (WorklistItem worklistItem : worklistItems) {
-        worklistItemDAO.delete(worklistItem);
+        if (!worklistItem.getLocked()) {
+          worklistItemDAO.delete(worklistItem);
+        }
       }
     }
     else {
       List<WorklistItem> worklistItems = worklistItemDAO.listByCourseAssessmentAndArchived(courseAssessment, Boolean.FALSE);
       for (WorklistItem worklistItem : worklistItems) {
-        worklistItemDAO.archive(worklistItem);
+        if (!worklistItem.getLocked()) {
+          worklistItemDAO.archive(worklistItem);
+        }
       }
     }
   }

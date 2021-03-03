@@ -91,6 +91,14 @@ public class WorklistItem implements ArchivableEntity {
     this.archived = archived;
   }
 
+  public Boolean getLocked() {
+    return locked;
+  }
+
+  public void setLocked(Boolean locked) {
+    this.locked = locked;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -119,6 +127,10 @@ public class WorklistItem implements ArchivableEntity {
 
   @ManyToOne 
   private CourseAssessment courseAssessment;
+
+  @NotNull
+  @Column(nullable = false)
+  private Boolean locked = Boolean.FALSE;
   
   @NotNull
   @Column(nullable = false)
