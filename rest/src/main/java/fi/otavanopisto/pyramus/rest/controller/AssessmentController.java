@@ -97,7 +97,7 @@ public class AssessmentController {
     Student student = courseAssessment.getStudent();
     List<CourseAssessment> assessments = listByCourseAndStudent(course, student);
     assessments.sort(Comparator.comparing(CourseAssessment::getDate));
-    return assessments.size() > 1 && Objects.equals(courseAssessment.getId(), assessments.get(assessments.size() - 1).getId());
+    return assessments.size() > 1 && !Objects.equals(courseAssessment.getId(), assessments.get(0).getId());
   }
   
   
