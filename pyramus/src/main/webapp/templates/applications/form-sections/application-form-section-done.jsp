@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
   <section class="form-section section-done submitted" data-skip="true" style="display:none;">
-    <h3 class="form-section__header">Hakemuksesi on vastaanotettu</h3>
+    <h2 class="form-section__header">Hakemuksesi on vastaanotettu</h2>
     <p>Hakemustietojen muokkaaminen jälkikäteen on mahdollista osoitteessa <a href="/applications/edit.page">https://pyramus.otavanopisto.fi/applications/edit.page</a></p>
     <p>Tarvitset seuraavat tiedot hakemuksen muokkaamiseen:</p>
     <p class="important"><span class="important__label">Sukunimi</span><span class="important__data" id="edit-info-last-name"></span></p>
@@ -13,11 +13,11 @@
   </section>
 
   <section class="form-section section-done internetix-submitted" data-skip="true" style="display:none;">
-    <h3 class="form-section__header">Ilmoittautumisesi on tallennettu</h3>
+    <h2 class="form-section__header">Ilmoittautumisesi on tallennettu</h2>
     <p>Koska olet tietojemme mukaan opiskellut meillä aiemminkin, käsittelemme hakemuksesi manuaalisesti. Lähetämme sinulle sähköpostia antamaasi osoitteeseen, kun hakemus on käsitelty.</p>
   </section>
 
   <section class="form-section section-done registered" data-skip="true" style="display:none;">
-    <h3 class="form-section__header">Ilmoittautumisesi on tallennettu</h3>
+    <h2 class="form-section__header">Ilmoittautumisesi on tallennettu</h2>
     <p>Lähetimme antamaasi sähköpostiosoitteeseen ohjeet, joilla voit luoda haluamasi tunnukset Muikku-oppimisympäristöömme.</p>
   </section>

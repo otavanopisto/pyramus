@@ -7,7 +7,7 @@
 
     <div class="application-line"></div>
 
-    <h3 class="form-section__header">Tarkista vielä yhteystietosi</h3>
+    <h2 class="form-section__header">Tarkista vielä yhteystietosi</h2>
 
     <div class="summary-container">
       <label for="summary-name">Nimi</label>

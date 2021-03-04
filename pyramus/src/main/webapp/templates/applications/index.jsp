@@ -5,8 +5,9 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="fi">
   <head>
+    <title>Hae opiskelijaksi Otaviaan</title>
     <meta charset="UTF-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -19,19 +20,20 @@
       </div>
     </header>
 
+    
     <section class="application-description">
-      <div class="application-description__line application-description__line--selection">
-        <div class="application-description__line-header">
+      <header class="application-description__line application-description__line--selection">
+        <h1 class="application-description__line-header">
           Hae opiskelijaksi
-        </div>
+        </h1>
         <div class="application-description__line-content">Valitse haluamasi koulutusohjelma ja siirry täyttämään opiskelijahakemus.</div>
-      </div>
+      </header>
     </section>
-
+    
     <main class="application-selection">
 
-      <div class="application-selection__section-wrapper">
-        <div class="application-selection__section-header">Verkkokoulutukset</div>
+      <section class="application-selection__section-wrapper">
+        <h2 class="application-selection__section-header">Verkkokoulutukset</h2>
         <div class="application-selection__section-container">
           <div class="selection-box selection-box--nettilukio">
             <div class="selection-box__header-image">
@@ -76,10 +78,10 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="application-selection__section-wrapper">
-        <div class="application-selection__section-header">Lähikoulutukset</div>
+      <section class="application-selection__section-wrapper">
+        <h2 class="application-selection__section-header">Lähikoulutukset</h2>
         <div class="application-selection__section-container">
           <div class="selection-box selection-box--aikuislukio">
             <div class="selection-box__header-image">
@@ -110,7 +112,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </main>
     <footer class="application-footer">
       <div class="application-footer__contact">
