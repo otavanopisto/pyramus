@@ -73,6 +73,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariable;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
+import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
@@ -98,6 +99,7 @@ import fi.otavanopisto.pyramus.rest.controller.StudentStudyEndReasonController;
 import fi.otavanopisto.pyramus.rest.controller.StudyProgrammeCategoryController;
 import fi.otavanopisto.pyramus.rest.controller.StudyProgrammeController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
+import fi.otavanopisto.pyramus.rest.controller.WorklistController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.CourseAssessmentPermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.LanguagePermissions;
 import fi.otavanopisto.pyramus.rest.controller.permissions.MunicipalityPermissions;
@@ -133,6 +135,9 @@ public class StudentRESTService extends AbstractRESTService {
 
   @Inject
   private UserController userController;
+
+  @Inject
+  private WorklistController worklistController;
 
   @Inject
   private CommonController commonController;
@@ -1907,6 +1912,13 @@ public class StudentRESTService extends AbstractRESTService {
     
     CourseAssessment courseAssessment = assessmentController.createCourseAssessment(courseStudent, assessor, grade, Date.from(entity.getDate().toInstant()), entity.getVerbalAssessment());
     
+    // #1198: Create a worklist entry for this assessment, if applicable
+    
+    WorklistItemTemplate template = worklistController.getTemplateForCourseAssessment(assessmentController.isRaisedGrade(courseAssessment));
+    if (template != null) {
+      worklistController.create(assessor, template, courseAssessment);
+    }
+    
     return Response.ok(objectFactory.createModel(courseAssessment)).build();
   }
   
@@ -2105,6 +2117,12 @@ public class StudentRESTService extends AbstractRESTService {
     if (courseAssessment == null) {
       return Response.status(Status.NOT_FOUND).build(); 
     }
+
+    // #1198: Remove worklist entries based on this course assessment
+    
+    worklistController.removeByCourseAssessment(courseAssessment, permanent);
+    
+    // Do the actual delete
     
     if (Boolean.TRUE.equals(permanent)) {
       assessmentController.deleteCourseAssessment(courseAssessment);
