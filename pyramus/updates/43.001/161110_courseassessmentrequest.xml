@@ -10,29 +10,29 @@
   </alterTables>
  
   <sql>
-    update courseassessmentrequest
+    update CourseAssessmentRequest
     set handled=true
-    where coursestudent in (
-      select coursestudent from courseassessment
+    where courseStudent in (
+      select courseStudent from CourseAssessment
     );
   </sql>
 
   <sql>
-    update courseassessmentrequest
+    update CourseAssessmentRequest
     set handled=true
     where id in (select carId from (
       select car.id as carId
-      from courseassessmentrequest car, coursestudent cs, student s
+      from CourseAssessmentRequest car, CourseStudent cs, Student s
       where car.coursestudent=cs.id and cs.student=s.id and s.studyEndDate is not null
     ) carQuery);  
   </sql>
 
   <sql>
-    update courseassessmentrequest
+    update CourseAssessmentRequest
     set handled=false
     where id in (select carId from (
       select max(car.id) as carId
-      from courseassessmentrequest car, courseassessment ca, credit c
+      from CourseAssessmentRequest car, CourseAssessment ca, Credit c
       where car.coursestudent=ca.coursestudent and ca.id=c.id and date(car.created) > date(c.date)
       group by car.coursestudent
     ) carQuery);
