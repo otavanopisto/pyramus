@@ -33,7 +33,7 @@ public class WorklistController {
   @Inject
   private WorklistItemTemplateDAO worklistItemTemplateDAO;
   
-  public WorklistItem create(User user, WorklistItemTemplate template, CourseAssessment courseAssessment) {
+  public WorklistItem create(User user, WorklistItemTemplate template, CourseAssessment courseAssessment, User currentUser) {
     return worklistItemDAO.create(
         template,
         user,
@@ -41,11 +41,12 @@ public class WorklistController {
         template.getDescription(),
         template.getPrice(),
         template.getFactor(),
-        courseAssessment);
+        courseAssessment,
+        currentUser);
   }
 
-  public WorklistItem update(WorklistItem worklistItem, String description, Double price, Double factor) {
-    return worklistItemDAO.update(worklistItem, description, price, factor);
+  public WorklistItem update(WorklistItem worklistItem, Date entryDate, String description, Double price, Double factor, User currentUser) {
+    return worklistItemDAO.update(worklistItem, entryDate, description, price, factor, currentUser);
   }
   
   public void removeByCourseAssessment(CourseAssessment courseAssessment, boolean permanent) {

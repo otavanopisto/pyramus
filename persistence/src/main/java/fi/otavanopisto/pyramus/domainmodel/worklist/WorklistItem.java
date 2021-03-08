@@ -99,6 +99,38 @@ public class WorklistItem implements ArchivableEntity {
     this.locked = locked;
   }
 
+  public User getModifier() {
+    return modifier;
+  }
+
+  public void setModifier(User modifier) {
+    this.modifier = modifier;
+  }
+
+  public Date getModified() {
+    return modified;
+  }
+
+  public void setModified(Date modified) {
+    this.modified = modified;
+  }
+
+  public User getCreator() {
+    return creator;
+  }
+
+  public void setCreator(User creator) {
+    this.creator = creator;
+  }
+
+  public Date getCreated() {
+    return created;
+  }
+
+  public void setCreated(Date created) {
+    this.created = created;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -111,7 +143,7 @@ public class WorklistItem implements ArchivableEntity {
 
   @NotNull
   @Column(nullable = false)
-  @Temporal(value=TemporalType.TIMESTAMP)
+  @Temporal(value=TemporalType.DATE)
   private Date entryDate;
 
   @NotNull
@@ -131,6 +163,22 @@ public class WorklistItem implements ArchivableEntity {
   @NotNull
   @Column(nullable = false)
   private Boolean locked = Boolean.FALSE;
+
+  @NotNull
+  @Column(nullable = false)
+  @Temporal(value=TemporalType.TIMESTAMP)
+  private Date created;
+
+  @ManyToOne 
+  private User creator;
+
+  @NotNull
+  @Column(nullable = false)
+  @Temporal(value=TemporalType.TIMESTAMP)
+  private Date modified;
+
+  @ManyToOne 
+  private User modifier;
   
   @NotNull
   @Column(nullable = false)
