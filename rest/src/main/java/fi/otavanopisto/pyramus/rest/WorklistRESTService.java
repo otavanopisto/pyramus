@@ -109,7 +109,7 @@ public class WorklistRESTService {
     
     // Create a worklist item based on the template
     
-    WorklistItem worklistItem = worklistController.create(sessionController.getUser(), template, null);
+    WorklistItem worklistItem = worklistController.create(sessionController.getUser(), template, null, sessionController.getUser());
     return Response.ok(createRestModel(worklistItem)).build();
   }
   
@@ -138,7 +138,13 @@ public class WorklistRESTService {
     if (worklistItem.getLocked()) {
       return Response.status(Status.FORBIDDEN).entity("Item is locked").build();
     }
-    worklistItem = worklistController.update(worklistItem, payload.getDescription(), payload.getPrice(), payload.getFactor());
+    worklistItem = worklistController.update(
+        worklistItem,
+        java.sql.Date.valueOf(payload.getEntryDate()),
+        payload.getDescription(),
+        payload.getPrice(),
+        payload.getFactor(),
+        sessionController.getUser());
     return Response.ok(createRestModel(worklistItem)).build();
   }
 
@@ -297,7 +303,7 @@ public class WorklistRESTService {
   private WorklistItemRestModel createRestModel(WorklistItem worklistItem) {
     WorklistItemRestModel restModel = new WorklistItemRestModel();
     restModel.setId(worklistItem.getId());
-    restModel.setEntryDate(worklistItem.getEntryDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+    restModel.setEntryDate(new Date(worklistItem.getEntryDate().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     restModel.setDescription(worklistItem.getDescription());
     restModel.setPrice(worklistItem.getPrice());
     restModel.setFactor(worklistItem.getFactor());

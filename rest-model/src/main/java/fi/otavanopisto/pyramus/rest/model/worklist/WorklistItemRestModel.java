@@ -1,6 +1,6 @@
 package fi.otavanopisto.pyramus.rest.model.worklist;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Return object when querying worklist items. Includes detailed information
@@ -16,11 +16,11 @@ public class WorklistItemRestModel {
     this.id = id;
   }
 
-  public LocalDateTime getEntryDate() {
+  public LocalDate getEntryDate() {
     return entryDate;
   }
 
-  public void setEntryDate(LocalDateTime entryDate) {
+  public void setEntryDate(LocalDate entryDate) {
     this.entryDate = entryDate;
   }
 
@@ -73,7 +73,7 @@ public class WorklistItemRestModel {
   }
 
   private Long id;
-  private LocalDateTime entryDate;
+  private LocalDate entryDate;
   private String description;
   private Double price;
   private Double factor;
