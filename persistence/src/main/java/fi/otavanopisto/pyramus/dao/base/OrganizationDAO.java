@@ -6,6 +6,8 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.ArchivableEntity;
+import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
+import fi.otavanopisto.pyramus.domainmodel.base.EducationType;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.events.OrganizationArchivedEvent;
@@ -24,18 +26,27 @@ public class OrganizationDAO extends PyramusEntityDAO<Organization> {
   @Inject
   private Event<OrganizationArchivedEvent> organizationArchivedEvent;
 
-  public Organization create(String name) {
+  public Organization create(String name, EducationType educationType) {
     Organization organization = new Organization();
     
     organization.setName(name);
+    organization.setEducationType(educationType);
     organization.setArchived(false);
     organization = persist(organization);
     organizationCreatedEvent.fire(new OrganizationCreatedEvent(organization.getId(), organization.getName()));
     return organization;
   }
 
-  public Organization update(Organization organization, String name) {
+  public Organization update(Organization organization, String name, EducationType educationType) {
     organization.setName(name);
+    organization.setEducationType(educationType);
+    organization = persist(organization);
+    organizationUpdatedEvent.fire(new OrganizationUpdatedEvent(organization.getId(), organization.getName()));
+    return organization;
+  }
+
+  public Organization updateBillingDetails(Organization organization, BillingDetails billingDetails) {
+    organization.setBillingDetails(billingDetails);
     organization = persist(organization);
     organizationUpdatedEvent.fire(new OrganizationUpdatedEvent(organization.getId(), organization.getName()));
     return organization;

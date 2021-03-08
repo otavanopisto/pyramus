@@ -17,12 +17,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.otavanopisto.pyramus.dao.base.OrganizationContactPersonDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationContractPeriodDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Address;
+import fi.otavanopisto.pyramus.domainmodel.base.BillingDetails;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactType;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURL;
 import fi.otavanopisto.pyramus.domainmodel.base.ContactURLType;
@@ -38,6 +42,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.Language;
 import fi.otavanopisto.pyramus.domainmodel.base.Municipality;
 import fi.otavanopisto.pyramus.domainmodel.base.Nationality;
 import fi.otavanopisto.pyramus.domainmodel.base.Organization;
+import fi.otavanopisto.pyramus.domainmodel.base.OrganizationContactPerson;
+import fi.otavanopisto.pyramus.domainmodel.base.OrganizationContractPeriod;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
 import fi.otavanopisto.pyramus.domainmodel.base.PhoneNumber;
 import fi.otavanopisto.pyramus.domainmodel.base.School;
@@ -90,6 +96,7 @@ import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.model.AcademicTerm;
 import fi.otavanopisto.pyramus.rest.model.CourseOptionality;
 import fi.otavanopisto.pyramus.rest.model.Curriculum;
+import fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType;
 import fi.otavanopisto.pyramus.rest.model.ProjectModuleOptionality;
 import fi.otavanopisto.pyramus.rest.model.Sex;
 import fi.otavanopisto.pyramus.rest.model.StudentContactLogEntryType;
@@ -112,6 +119,12 @@ public class ObjectFactory {
   @Inject
   private CourseController courseController;
   
+  @Inject
+  private OrganizationContractPeriodDAO organizationContractPeriodDAO;
+  
+  @Inject
+  private OrganizationContactPersonDAO organizationContactPersonDAO;
+
   @PostConstruct
   public void init() {
     mappers = new HashMap<>();
@@ -786,7 +799,55 @@ public class ObjectFactory {
       new Mapper<fi.otavanopisto.pyramus.domainmodel.base.Organization>() {
         @Override
         public Object map(Organization entity) {
-          return new fi.otavanopisto.pyramus.rest.model.Organization(entity.getId(), entity.getName(), entity.getArchived());
+          BillingDetails billingDetails = entity.getBillingDetails();
+          fi.otavanopisto.pyramus.rest.model.BillingDetails billingDetailsRestModel = null;
+
+          if (billingDetails != null) {
+            billingDetailsRestModel = new fi.otavanopisto.pyramus.rest.model.BillingDetails(
+                billingDetails.getId(),
+                billingDetails.getPersonName(),
+                billingDetails.getCompanyName(),
+                billingDetails.getStreetAddress1(),
+                billingDetails.getStreetAddress2(),
+                billingDetails.getPostalCode(),
+                billingDetails.getCity(),
+                billingDetails.getRegion(),
+                billingDetails.getCountry(),
+                billingDetails.getPhoneNumber(),
+                billingDetails.getEmailAddress(),
+                billingDetails.getCompanyIdentifier(),
+                billingDetails.getReferenceNumber(),
+                billingDetails.getElectronicBillingAddress(),
+                billingDetails.getElectronicBillingOperator(),
+                billingDetails.getNotes()
+            );
+          }
+          
+          List<OrganizationContractPeriod> contractPeriods = organizationContractPeriodDAO.listBy(entity);
+          List<fi.otavanopisto.pyramus.rest.model.OrganizationContractPeriod> contractPeriodsModel = contractPeriods
+              .stream().map(contractPeriod -> {
+                Long id = contractPeriod.getId();
+                LocalDate begin = contractPeriod.getBegin() != null ? new java.sql.Date(contractPeriod.getBegin().getTime()).toLocalDate() : null;
+                LocalDate end = contractPeriod.getEnd() != null ? new java.sql.Date(contractPeriod.getEnd().getTime()).toLocalDate() : null;
+                return new fi.otavanopisto.pyramus.rest.model.OrganizationContractPeriod(id, begin, end);
+              }).collect(Collectors.toList());
+          
+          List<OrganizationContactPerson> contactPersons = organizationContactPersonDAO.listBy(entity);
+          List<fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson> contactPersonsModel = contactPersons
+              .stream().map(contactPerson -> {
+                Long id = contactPerson.getId();
+                OrganizationContactPersonType type = contactPerson.getType() != null ? OrganizationContactPersonType.valueOf(contactPerson.getType().name()) : null;
+                String name = contactPerson.getName();
+                String email = contactPerson.getEmail();
+                String phone = contactPerson.getPhone();
+                String title = contactPerson.getTitle();
+                return new fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson(id, type, name, email, phone, title);
+              }).collect(Collectors.toList());
+          
+          fi.otavanopisto.pyramus.rest.model.Organization organizationModel = new fi.otavanopisto.pyramus.rest.model.Organization(entity.getId(), entity.getName(), billingDetailsRestModel, entity.getArchived());
+          organizationModel.setContactPersons(contactPersonsModel);
+          organizationModel.setContractPeriods(contractPeriodsModel);
+          return organizationModel;
         }
       },
       

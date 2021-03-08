@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>alter table Organization add column billingDetails bigint;</sql>
+  <sql>alter table Organization add column educationType bigint;</sql>
+  
+  <sql>
+    create table OrganizationContactPerson (
+      id bigint not null auto_increment, 
+      type varchar(255),
+      email varchar(255), 
+      name varchar(255), 
+      phone varchar(255), 
+      title varchar(255), 
+      organization bigint not null, 
+      primary key (id)
+    );
+  </sql>
+
+  <sql>
+    create table OrganizationContractPeriod (
+      id bigint not null auto_increment, 
+      begin date not null, 
+      end date, 
+      organization bigint not null, 
+      primary key (id)
+    );
+  </sql>
+
+  <sql>alter table Organization add constraint FKex6ighatu554rxvc575nlufl2 foreign key (billingDetails) references BillingDetails (id);</sql>
+  <sql>alter table Organization add constraint FK3e66u99djs2hwvnyuyqar3bw4 foreign key (educationType) references EducationType (id);</sql>
+  <sql>alter table OrganizationContactPerson add constraint FKa5r5ok06avp63ut96qk2ugjya foreign key (organization) references Organization (id);</sql>
+  <sql>alter table OrganizationContractPeriod add constraint FK7ygyjdddcah88wr4txg6n8sbg foreign key (organization) references Organization (id);</sql>
+
+</update>
