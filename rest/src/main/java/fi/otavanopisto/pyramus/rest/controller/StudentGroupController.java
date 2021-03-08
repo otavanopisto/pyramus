@@ -82,8 +82,8 @@ public class StudentGroupController {
     return studentGroup.getTags();
   }
   
-  public StudentGroup updateStudentGroup(StudentGroup studentGroup, Organization organization, String name, String description, Date beginDate, User user) {
-    return studentGroupDAO.update(studentGroup, organization, name, description, beginDate, user);
+  public StudentGroup updateStudentGroup(StudentGroup studentGroup, Organization organization, String name, String description, Date beginDate, Boolean isGuidanceGroup, User user) {
+    return studentGroupDAO.update(studentGroup, organization, name, description, beginDate, isGuidanceGroup, user);
   }
   
   public StudentGroup archiveStudentGroup(StudentGroup studentGroup, User user) {
@@ -129,6 +129,10 @@ public class StudentGroupController {
     return studentGroupStudentDAO.findById(id);
   }
 
+  public StudentGroupStudent findStudentGroupStudentByStudentGroupAndStudent(StudentGroup group, Student student) {
+    return studentGroupStudentDAO.findByStudentGroupAndStudent(group, student);
+  }
+
   public void deleteStudentGroupStudent(StudentGroupStudent studentGroupStudent) {
     studentGroupStudentDAO.delete(studentGroupStudent);
   }
@@ -145,6 +149,10 @@ public class StudentGroupController {
 
   public StudentGroupUser findStudentGroupUserById(Long id) {
     return studentGroupUserDAO.findById(id);
+  }
+
+  public StudentGroupUser findStudentGroupUserByStudentGroupAndUser(StudentGroup studentGroup, StaffMember staffMember) {
+    return studentGroupUserDAO.findByStudentGroupAndStaffMember(studentGroup, staffMember);
   }
 
   public void deleteStudentGroupUser(StudentGroupUser studentGroupUser) {

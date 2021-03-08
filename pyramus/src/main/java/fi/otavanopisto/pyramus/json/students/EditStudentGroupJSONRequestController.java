@@ -116,16 +116,12 @@ public class EditStudentGroupJSONRequestController extends JSONRequestController
       throw new SmvcRuntimeException(PyramusStatusCode.UNAUTHORIZED, "Invalid organization.");
     }
     
-    studentGroupDAO.update(studentGroup, organization, name, description, beginDate, loggedUser);
+    studentGroupDAO.update(studentGroup, organization, name, description, beginDate, guidanceGroup, loggedUser);
 
     // Tags
 
     studentGroupDAO.setStudentGroupTags(studentGroup, tagEntities);
     
-    // Guidance group
-    
-    studentGroupDAO.updateGuidanceGroup(studentGroup, guidanceGroup);
-
     // Personnel
 
     StudentGroupUser[] users = studentGroup.getUsers().toArray(new StudentGroupUser[0]);

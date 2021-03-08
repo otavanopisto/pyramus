@@ -223,8 +223,11 @@ public class EditStudentViewController extends PyramusViewController2 implements
       
       setJsDataVariable(pageRequestContext, "variables." + student.getId(), variables.toString());
 
+      List<StudentLodgingPeriod> studentLodgingPeriodEntities = studentLodgingPeriodDAO.listByStudent(student);
+      studentLodgingPeriodEntities.sort(Comparator.comparing(StudentLodgingPeriod::getBegin, Comparator.nullsLast(Comparator.naturalOrder())));
+      
       JSONArray lodgingPeriods = new JSONArray(); 
-      for (StudentLodgingPeriod period : studentLodgingPeriodDAO.listByStudent(student)) {
+      for (StudentLodgingPeriod period : studentLodgingPeriodEntities) {
         JSONObject periodJSON = new JSONObject();
         periodJSON.put("id", period.getId());
         periodJSON.put("begin", period.getBegin() != null ? period.getBegin().getTime() : null);
@@ -236,6 +239,8 @@ public class EditStudentViewController extends PyramusViewController2 implements
       }
       
       List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(student);
+      studyPeriods.sort(Comparator.comparing(StudentStudyPeriod::getBegin, Comparator.nullsLast(Comparator.naturalOrder())));
+      
       JSONArray studyPeriodsJSON = new JSONArray();
       for (StudentStudyPeriod studyPeriod : studyPeriods) {
         JSONObject periodJSON = new JSONObject();

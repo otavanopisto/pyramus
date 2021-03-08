@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>create table CourseSignupStudentGroup (id bigint not null auto_increment, course bigint, studentGroup bigint, primary key (id));</sql>
+  <sql>create table CourseSignupStudyProgramme (id bigint not null auto_increment, course bigint, studyProgramme bigint, primary key (id));</sql>
+  
+  <sql>alter table CourseSignupStudentGroup add constraint UK6s5qhjuyvshivw8wrlesqbse8 unique (course, studentGroup);</sql>
+  <sql>alter table CourseSignupStudyProgramme add constraint UK4x08yp3uxmjhf7rxnnj5y5jev unique (course, studyProgramme);</sql>
+  
+  <sql>alter table CourseSignupStudentGroup add constraint FKkx75wvsff8sn3diro4bxxrgmk foreign key (course) references Course (id);</sql>
+  <sql>alter table CourseSignupStudentGroup add constraint FKgf40eud5lkhn8121smruv1woc foreign key (studentGroup) references StudentGroup (id);</sql>
+  <sql>alter table CourseSignupStudyProgramme add constraint FKar6ibjp1fnm5s423ctio16g7g foreign key (course) references Course (id);</sql>
+  <sql>alter table CourseSignupStudyProgramme add constraint FKqnnl7ik69gedm8mk4dody7ojt foreign key (studyProgramme) references StudyProgramme (id);</sql>
+  
+</update>

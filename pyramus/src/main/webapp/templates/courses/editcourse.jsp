@@ -24,6 +24,7 @@
     <jsp:include page="/templates/generic/draftapi_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/validation_support.jsp"></jsp:include>
     <jsp:include page="/templates/generic/hovermenu_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/ajax_support.jsp"></jsp:include>
 
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/courses/editcourse.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/courses/coursecomponenteditor.js"></script>
@@ -1435,6 +1436,7 @@
       }
       
       function onLoad(event) {
+        var courseId = ${course.id};
         var tabControl = new IxProtoTabs($('tabs'));
         var descTabControl = new IxProtoTabs($('descriptionTabs'), {
           <c:if test="${fn:length(courseDescriptionCategories) gt 0}">
@@ -1472,6 +1474,12 @@
         setupOtherCostsTable();
         setupResources();
         setupStudentsTable();
+
+        initializeSignupStudyProgrammesTable($('signupStudyProgrammesTable'), courseId);
+        initializeSignupStudyProgrammeSearchField(courseId, $('searchStudyProgrammesInput'), $('searchStudyProgrammesInputAutoComplete'), $('searchSignupStudyProgrammes_indicator'));
+        
+        initializeSignupStudentGroupsTable($('signupStudentGroupsTable'), courseId);
+        initializeSignupStudentGroupSearchField(courseId, $('searchStudentGroupsInput'), $('searchStudentGroupsInputAutoComplete'), $('searchSignupStudentGroups_indicator'));
         
         //filterOnlyActiveStudents();
       }
@@ -1498,6 +1506,7 @@
             <a class="tabLabel" href="#components"><fmt:message key="courses.editCourse.componentsTabTitle" /></a>
             <a class="tabLabel" href="#costplan"><fmt:message key="courses.editCourse.costPlanTabTitle" /></a>
             <a class="tabLabel" href="#students"><fmt:message key="courses.editCourse.StudentsTabTitle" /></a>
+            <a class="tabLabel" href="#signup"><fmt:message key="courses.editCourse.signupsTabTitle" /></a>
             <ix:extensionHook name="courses.editCourse.tabLabels"/>
           </div>
 
@@ -2117,6 +2126,36 @@
 
             </div>
             <ix:extensionHook name="courses.editCourse.tabs.students"/>
+          </div>
+          
+          <div id="signup" class="tabContent hiddenTab">
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="courses.editCourse.signupStudyProgrammesTitle"/>
+                <jsp:param name="helpLocale" value="courses.editCourse.signupStudyProgrammesHelp"/>
+              </jsp:include>    
+              <input type="text" id="searchStudyProgrammesInput" size="40" />
+              <span id="searchSignupStudyProgrammes_indicator" class="autocomplete_progress_indicator" style="display: none"><img src="${pageContext.request.contextPath}/gfx/progress_small.gif"/></span>
+              <div id="searchStudyProgrammesInputAutoComplete" class="autocomplete_choices"></div>
+            </div>
+
+            <div class="genericFormSection">
+              <div id="signupStudyProgrammesTable"></div>
+            </div>
+
+            <div class="genericFormSection">
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="courses.editCourse.signupStudentGroupsTitle"/>
+                <jsp:param name="helpLocale" value="courses.editCourse.signupStudentGroupsHelp"/>
+              </jsp:include>    
+              <input type="text" id="searchStudentGroupsInput" size="40" />
+              <span id="searchSignupStudentGroups_indicator" class="autocomplete_progress_indicator" style="display: none"><img src="${pageContext.request.contextPath}/gfx/progress_small.gif"/></span>
+              <div id="searchStudentGroupsInputAutoComplete" class="autocomplete_choices"></div>
+            </div>
+
+            <div class="genericFormSection">
+              <div id="signupStudentGroupsTable"></div>
+            </div>
           </div>
       
           <ix:extensionHook name="courses.editCourse.tabs"/>

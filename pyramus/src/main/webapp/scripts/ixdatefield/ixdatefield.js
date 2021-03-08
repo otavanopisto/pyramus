@@ -1,4 +1,5 @@
-var __ixDateFields = new Array(); 
+var __ixDateFields = new Array();
+var __ixDateFieldGeneratedRunningIndex = 0;
 
 IxDateField = Class.create(
   {
@@ -15,7 +16,8 @@ IxDateField = Class.create(
     if (idAttr)
       this._id = idAttr;
     else {
-      this._id = 'ixdf-' + new Date().getTime();
+      __ixDateFieldGeneratedRunningIndex++;
+      this._id = 'ixdf-' + new Date().getTime() + '-' + __ixDateFieldGeneratedRunningIndex;
     }
     
     __ixDateFields.push(this);
