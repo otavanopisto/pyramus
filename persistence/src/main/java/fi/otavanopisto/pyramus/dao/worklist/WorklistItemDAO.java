@@ -27,6 +27,7 @@ public class WorklistItemDAO extends PyramusEntityDAO<WorklistItem> {
     worklistItem.setPrice(price);
     worklistItem.setFactor(factor);
     worklistItem.setCourseAssessment(courseAssessment);
+    worklistItem.setEditableFields(template.getEditableFields());
     worklistItem.setLocked(Boolean.FALSE);
     Date now = new Date();
     worklistItem.setCreator(currentUser);

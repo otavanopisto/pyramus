@@ -1916,7 +1916,15 @@ public class StudentRESTService extends AbstractRESTService {
     
     WorklistItemTemplate template = worklistController.getTemplateForCourseAssessment(assessmentController.isRaisedGrade(courseAssessment));
     if (template != null) {
-      worklistController.create(assessor, template, courseAssessment, sessionController.getUser());
+      worklistController.create(
+          assessor,
+          template,
+          new Date(),
+          template.getDescription(),
+          template.getPrice(),
+          template.getFactor(),
+          courseAssessment,
+          sessionController.getUser());
     }
     
     return Response.ok(objectFactory.createModel(courseAssessment)).build();

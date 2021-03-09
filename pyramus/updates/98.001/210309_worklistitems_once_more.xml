@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>drop table if exists WorklistItem;</sql>
+  <sql>drop table if exists WorklistItemTemplate;</sql>
+
+  <sql>
+    create table WorklistItemTemplate (
+      id bigint not null auto_increment,
+      description varchar(255) not null,
+      price double precision,
+      factor double precision,
+      templateType varchar(255) not null,
+      editableFields varchar(255),
+      removable bit not null,
+      archived bit not null,
+      primary key (id));
+  </sql>
+
+  <sql>
+    create table WorklistItem (
+      id bigint not null auto_increment,
+      template_id bigint,
+      owner_id bigint,
+      entryDate date not null,
+      description varchar(255) not null,
+      price double precision not null,
+      factor double precision not null,
+      courseAssessment_id bigint,
+      editableFields varchar(255),
+      locked bit not null,
+      creator_id bigint,
+      created datetime not null,
+      modifier_id bigint,
+      modified datetime not null,
+      archived bit not null,
+      primary key (id));
+  </sql>
+
+  <sql>alter table WorklistItem add constraint FKfwq7riu6jkui2ncrn5ubcummr foreign key (courseAssessment_id) references CourseAssessment (id);</sql>
+  <sql>alter table WorklistItem add constraint FKgvx1nce7kwxebrbfa0rqfxx8u foreign key (creator_id) references User (id);</sql>
+  <sql>alter table WorklistItem add constraint FKgl8x5thg1v9a7xppy2paf4xjt foreign key (modifier_id) references User (id);</sql>
+  <sql>alter table WorklistItem add constraint FK1n4cc4y5mnh7v05uwpfmtu1wt foreign key (owner_id) references User (id);</sql>
+  <sql>alter table WorklistItem add constraint FKg5k3g9tve372fqo2k249ar8a4 foreign key (template_id) references WorklistItemTemplate (id);</sql>
+  <sql>create index ind_owner_entryDate on WorkListItem (owner_id, entryDate);</sql>
+
+</update>

@@ -1,6 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model.worklist;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * Return object when querying worklist items. Includes detailed information
@@ -56,14 +57,6 @@ public class WorklistItemRestModel {
     this.courseAssessment = courseAssessment;
   }
 
-  public Boolean getEditable() {
-    return editable;
-  }
-
-  public void setEditable(Boolean editable) {
-    this.editable = editable;
-  }
-
   public Boolean getRemovable() {
     return removable;
   }
@@ -72,13 +65,30 @@ public class WorklistItemRestModel {
     this.removable = removable;
   }
 
+  public Set<String> getEditableFields() {
+    return editableFields;
+  }
+
+  public void setEditableFields(Set<String> editableFields) {
+    this.editableFields = editableFields;
+  }
+
+  public Long getTemplateId() {
+    return templateId;
+  }
+
+  public void setTemplateId(Long templateId) {
+    this.templateId = templateId;
+  }
+
   private Long id;
+  private Long templateId;
   private LocalDate entryDate;
   private String description;
   private Double price;
   private Double factor;
   private WorklistItemCourseAssessmentRestModel courseAssessment;
-  private Boolean editable;
+  private Set<String> editableFields;
   private Boolean removable;
 
 }
