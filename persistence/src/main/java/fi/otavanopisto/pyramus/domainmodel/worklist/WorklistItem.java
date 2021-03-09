@@ -1,8 +1,10 @@
 package fi.otavanopisto.pyramus.domainmodel.worklist;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -131,6 +133,14 @@ public class WorklistItem implements ArchivableEntity {
     this.created = created;
   }
 
+  public Set<WorklistItemEditableFields> getEditableFields() {
+    return editableFields;
+  }
+
+  public void setEditableFields(Set<WorklistItemEditableFields> editableFields) {
+    this.editableFields = editableFields;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -151,14 +161,20 @@ public class WorklistItem implements ArchivableEntity {
   @NotEmpty
   private String description;
 
-  @Column
+  @NotNull
+  @Column(nullable = false)
   private Double price;
 
-  @Column
+  @NotNull
+  @Column(nullable = false)
   private Double factor;
 
   @ManyToOne 
   private CourseAssessment courseAssessment;
+
+  @Column
+  @Convert(converter = WorklistItemEditableFieldsConverter.class)
+  private Set<WorklistItemEditableFields> editableFields;
 
   @NotNull
   @Column(nullable = false)

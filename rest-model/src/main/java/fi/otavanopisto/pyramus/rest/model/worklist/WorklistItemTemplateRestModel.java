@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model.worklist;
 
+import java.util.Set;
+
 /**
  * Representation of a worklist item template.
  */
@@ -37,27 +39,18 @@ public class WorklistItemTemplateRestModel {
     this.factor = factor;
   }
 
-  public String getTemplateType() {
-    return templateType;
+  public Set<String> getEditableFields() {
+    return editableFields;
   }
 
-  public void setTemplateType(String templateType) {
-    this.templateType = templateType;
-  }
-
-  public Boolean getRemovable() {
-    return removable;
-  }
-
-  public void setRemovable(Boolean removable) {
-    this.removable = removable;
+  public void setEditableFields(Set<String> editableFields) {
+    this.editableFields = editableFields;
   }
 
   private Long id;
   private String description;
   private Double price;
   private Double factor;
-  private String templateType;
-  private Boolean removable;
+  private Set<String> editableFields;
 
 }

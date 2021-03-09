@@ -7,11 +7,13 @@ import java.time.format.DateTimeParseException;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -38,6 +40,7 @@ import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItem;
+import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemEditableFields;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplateType;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
@@ -92,24 +95,47 @@ public class WorklistRESTService {
   @Path("/worklistItems")
   @POST
   @RESTPermit (WorklistPermissions.CREATE_WORKLISTITEM)
-  public Response createWorklistItem(WorklistItemTemplateRestModel payload) {
+  public Response createWorklistItem(WorklistItemRestModel payload) {
     
     // Payload validation
     
-    if (payload.getId() == null) {
+    if (payload.getTemplateId() == null) {
       return Response.status(Status.BAD_REQUEST).entity("Missing templateId").build(); 
     }
     WorklistItemTemplate template = worklistController.findTemplateById(payload.getId());
     if (template == null) {
       return Response.status(Status.NOT_FOUND).entity("Template not found").build();
     }
-    if (!template.isUserCreatable()) {
+    if (template.getTemplateType() != WorklistItemTemplateType.DEFAULT) {
       return Response.status(Status.BAD_REQUEST).entity("Template is not user-creatable").build();
     }
     
+    // Get values from template or payload, depending on editability
+    
+    String description = template.getEditableFields().contains(WorklistItemEditableFields.DESCRIPTION)
+        ? payload.getDescription()
+        : template.getDescription();
+    Date entryDate = template.getEditableFields().contains(WorklistItemEditableFields.ENTRYDATE)
+        ? java.sql.Date.valueOf(payload.getEntryDate())
+        : new Date();
+    Double price = template.getEditableFields().contains(WorklistItemEditableFields.PRICE)
+        ? payload.getPrice()
+        : template.getPrice();
+    Double factor = template.getEditableFields().contains(WorklistItemEditableFields.FACTOR)
+        ? payload.getFactor()
+        : template.getFactor();
+    
     // Create a worklist item based on the template
     
-    WorklistItem worklistItem = worklistController.create(sessionController.getUser(), template, null, sessionController.getUser());
+    WorklistItem worklistItem = worklistController.create(
+        sessionController.getUser(),
+        template,
+        entryDate,
+        description,
+        price,
+        factor,
+        null,
+        sessionController.getUser());
     return Response.ok(createRestModel(worklistItem)).build();
   }
   
@@ -132,18 +158,36 @@ public class WorklistRESTService {
         return Response.status(Status.FORBIDDEN).build();
       }
     }
-    if (!worklistItem.getTemplate().isUserEditable()) { 
+    if (worklistItem.getTemplate().getTemplateType() != WorklistItemTemplateType.DEFAULT) { 
       return Response.status(Status.FORBIDDEN).entity("Item is based on a non-editable template").build();
     }
     if (worklistItem.getLocked()) {
       return Response.status(Status.FORBIDDEN).entity("Item is locked").build();
     }
+    
+    // Get values from item or payload, depending on editability
+    
+    String description = worklistItem.getEditableFields().contains(WorklistItemEditableFields.DESCRIPTION)
+        ? payload.getDescription()
+        : worklistItem.getDescription();
+    Date entryDate = worklistItem.getEditableFields().contains(WorklistItemEditableFields.ENTRYDATE)
+        ? java.sql.Date.valueOf(payload.getEntryDate())
+        : worklistItem.getEntryDate();
+    Double price = worklistItem.getEditableFields().contains(WorklistItemEditableFields.PRICE)
+        ? payload.getPrice()
+        : worklistItem.getPrice();
+    Double factor = worklistItem.getEditableFields().contains(WorklistItemEditableFields.FACTOR)
+        ? payload.getFactor()
+        : worklistItem.getFactor();
+        
+    // Update the worklist item
+    
     worklistItem = worklistController.update(
         worklistItem,
-        java.sql.Date.valueOf(payload.getEntryDate()),
-        payload.getDescription(),
-        payload.getPrice(),
-        payload.getFactor(),
+        entryDate,
+        description,
+        price,
+        factor,
         sessionController.getUser());
     return Response.ok(createRestModel(worklistItem)).build();
   }
@@ -295,14 +339,14 @@ public class WorklistRESTService {
     restModel.setDescription(template.getDescription());
     restModel.setPrice(template.getPrice());
     restModel.setFactor(template.getFactor());
-    restModel.setTemplateType(template.getTemplateType().toString());
-    restModel.setRemovable(template.getRemovable());
+    restModel.setEditableFields(template.getEditableFields().stream().map(Object::toString).collect(Collectors.toSet()));
     return restModel;
   }
   
   private WorklistItemRestModel createRestModel(WorklistItem worklistItem) {
     WorklistItemRestModel restModel = new WorklistItemRestModel();
     restModel.setId(worklistItem.getId());
+    restModel.setTemplateId(worklistItem.getTemplate().getId());
     restModel.setEntryDate(new Date(worklistItem.getEntryDate().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     restModel.setDescription(worklistItem.getDescription());
     restModel.setPrice(worklistItem.getPrice());
@@ -310,8 +354,14 @@ public class WorklistRESTService {
     if (worklistItem.getCourseAssessment() != null) {
       restModel.setCourseAssessment(createRestModel(worklistItem.getCourseAssessment()));
     }
-    restModel.setEditable(worklistItem.getTemplate().getTemplateType() == WorklistItemTemplateType.EDITABLE && !worklistItem.getLocked());
-    restModel.setRemovable(worklistItem.getTemplate().getRemovable() && !worklistItem.getLocked());
+    if (worklistItem.getLocked()) {
+      restModel.setEditableFields(Collections.emptySet());
+      restModel.setRemovable(Boolean.FALSE);
+    }
+    else {
+      restModel.setEditableFields(worklistItem.getEditableFields().stream().map(Object::toString).collect(Collectors.toSet()));
+      restModel.setRemovable(worklistItem.getTemplate().getRemovable());
+    }
     return restModel;
   }
   

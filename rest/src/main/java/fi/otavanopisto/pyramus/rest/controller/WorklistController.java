@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.rest.controller;
 
 import java.util.Comparator;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,26 +30,19 @@ public class WorklistController {
 
   @Inject
   private WorklistItemDAO worklistItemDAO;
-  
+
   @Inject
   private WorklistItemTemplateDAO worklistItemTemplateDAO;
-  
-  public WorklistItem create(User user, WorklistItemTemplate template, CourseAssessment courseAssessment, User currentUser) {
-    return worklistItemDAO.create(
-        template,
-        user,
-        new Date(),
-        template.getDescription(),
-        template.getPrice(),
-        template.getFactor(),
-        courseAssessment,
-        currentUser);
+
+  public WorklistItem create(User user, WorklistItemTemplate template, Date entryDate, String description, Double price, Double factor,
+      CourseAssessment courseAssessment, User currentUser) {
+    return worklistItemDAO.create(template, user, entryDate, description, price, factor, courseAssessment, currentUser);
   }
 
   public WorklistItem update(WorklistItem worklistItem, Date entryDate, String description, Double price, Double factor, User currentUser) {
     return worklistItemDAO.update(worklistItem, entryDate, description, price, factor, currentUser);
   }
-  
+
   public void removeByCourseAssessment(CourseAssessment courseAssessment, boolean permanent) {
     if (permanent) {
       List<WorklistItem> worklistItems = worklistItemDAO.listByCourseAssessment(courseAssessment);
@@ -70,17 +64,17 @@ public class WorklistController {
 
   public void remove(WorklistItem worklistItem, boolean permanent) {
     if (permanent) {
-     worklistItemDAO.delete(worklistItem); 
+      worklistItemDAO.delete(worklistItem);
     }
     else {
       worklistItemDAO.archive(worklistItem);
     }
   }
-  
+
   public WorklistItemTemplate findTemplateById(Long id) {
     return worklistItemTemplateDAO.findById(id);
   }
-  
+
   public WorklistItemTemplate getTemplateForCourseAssessment(boolean raisedGrade) {
     Set<WorklistItemTemplateType> templateTypes = new HashSet<>();
     if (!raisedGrade) {
@@ -99,30 +93,27 @@ public class WorklistController {
   public WorklistItem findItemById(Long id) {
     return worklistItemDAO.findById(id);
   }
-  
+
   public List<WorklistItemTemplate> listWorklistItemTemplates(boolean includeNonCreatable) {
     List<WorklistItemTemplate> templates;
     if (includeNonCreatable) {
       templates = worklistItemTemplateDAO.listUnarchived();
     }
     else {
-      Set<WorklistItemTemplateType> templateTypes = new HashSet<>();
-      templateTypes.add(WorklistItemTemplateType.EDITABLE);
-      templateTypes.add(WorklistItemTemplateType.UNEDITABLE);
-      templates = worklistItemTemplateDAO.listByTemplateTypesAndArchived(templateTypes, false);
+      templates = worklistItemTemplateDAO.listByTemplateTypesAndArchived(EnumSet.of(WorklistItemTemplateType.DEFAULT), false);
     }
     templates.sort(Comparator.comparing(WorklistItemTemplate::getDescription));
     return templates;
   }
-  
+
   public List<WorklistItem> listWorklistItemsByOwner(User owner) {
-    List<WorklistItem> worklistItems =  worklistItemDAO.listByOwnerAndArchived(owner, false);
+    List<WorklistItem> worklistItems = worklistItemDAO.listByOwnerAndArchived(owner, false);
     worklistItems.sort(Comparator.comparing(WorklistItem::getEntryDate));
     return worklistItems;
   }
-  
+
   public List<WorklistItem> listWorklistItemsByOwnerAndTimeframe(User owner, Date beginDate, Date endDate) {
-    List<WorklistItem> worklistItems =  worklistItemDAO.listByOwnerAndTimeframeAndArchived(owner, beginDate, endDate, false);
+    List<WorklistItem> worklistItems = worklistItemDAO.listByOwnerAndTimeframeAndArchived(owner, beginDate, endDate, false);
     worklistItems.sort(Comparator.comparing(WorklistItem::getEntryDate));
     return worklistItems;
   }
