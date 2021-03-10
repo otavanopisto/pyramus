@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 
@@ -114,9 +115,13 @@ public abstract class PyramusEntityDAO<T> extends GenericDAO<T> {
   }
   
   private String escapeSearchCriteria(String value) {
-    return value
-      .replaceAll("[\\:\\+\\-\\~\\(\\)\\{\\}\\[\\]\\^\\&\\|\\!\\\\]", "\\\\$0")
-      .replaceAll("[*]{1,}", "\\*");
+    // QueryParser also escapes wildcard *, which we want as-is when it's a trailing character 
+    if (StringUtils.endsWith(value, "*")) {
+      return String.format("%s*", QueryParser.escape(value.substring(0, value.length() - 1)));
+    }
+    else {
+      return QueryParser.escape(value);
+    }
   }
   
   private static final String DATERANGE_INFINITY_LOW = "00000000";
