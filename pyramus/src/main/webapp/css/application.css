@@ -35,3 +35,12 @@
 * {
   box-sizing: border-box;
 }
+
+/* For WCAG requirements when we need to add verbose label/title/header that we don't want to display */
+.visually-hidden {
+  height: 1px;
+  left: -10000px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}

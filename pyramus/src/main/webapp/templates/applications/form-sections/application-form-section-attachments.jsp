@@ -7,11 +7,12 @@
 
     <div class="application-line"></div>
     
-    <h3 class="form-section__header">Hakemuksen liitteet</h3>
+    <h2 class="form-section__header">Hakemuksen liitteet</h2>
 
     <div class="form-section__field-container field-attachments">
       <div class="field-attachments__uploader">
         <div class="field-attachments__selector-container">
+          <label class="visually-hidden" for="field-attachments">Liitteet</label>
           <input type="file" id="field-attachments" name="field-attachments" multiple="true" class="field-attachments__selector">
           <div class="field-attachments__description">Lisää liitteitä klikkaamalla tästä tai raahaamalla niitä tähän laatikkoon. Liitteiden suurin sallittu yhteiskoko on 20 MB</div>
         </div>

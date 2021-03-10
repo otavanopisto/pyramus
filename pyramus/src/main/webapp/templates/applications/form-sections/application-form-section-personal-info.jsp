@@ -5,7 +5,7 @@
 
   <section class="form-section section-personal-info" style="display:none;">
 
-    <h3 class="form-section__header">Henkilötiedot</h3>
+    <h2 class="form-section__header">Henkilötiedot</h2>
     
     <div class="form-section__field-container field-last-name">
       <label for="field-last-name" class="required">Sukunimi</label>
@@ -48,27 +48,27 @@
 
     <div class="form-section__field-container field-street-address">
       <label for="field-street-address" class="required">Lähiosoite</label>
-      <input type="text" name="field-street-address" data-parsley-required="true">
+      <input id="field-street-address" type="text" name="field-street-address" data-parsley-required="true">
     </div> 
 
     <div class="form-section__field-container field-zip-code">
       <label for="field-zip-code" class="required">Postinumero</label>
-      <input type="text" name="field-zip-code" data-parsley-required="true">
+      <input id="field-zip-code" type="text" name="field-zip-code" data-parsley-required="true">
     </div> 
 
     <div class="form-section__field-container field-city">
       <label for="field-city" class="required">Postitoimipaikka</label>
-      <input type="text" name="field-city" data-parsley-required="true">
+      <input id="field-city" type="text" name="field-city" data-parsley-required="true">
     </div> 
 
     <div class="form-section__field-container field-country">
       <label for="field-country" class="required">Maa</label>
-      <input type="text" name="field-country" value="Suomi" data-parsley-required="true">
+      <input id="field-country" type="text" name="field-country" value="Suomi" data-parsley-required="true">
     </div> 
 
     <div class="form-section__field-container field-municipality">
       <label for="field-municipality" class="required">Kotikunta</label>
-      <select name="field-municipality" data-parsley-required="true" data-source="/1/applications/municipalities">
+      <select id="field-municipality" name="field-municipality" data-parsley-required="true" data-source="/1/applications/municipalities">
         <option value="">-- Valitse --</option>
         <option value="none">Ei kotikuntaa Suomessa</option>
       </select>
@@ -76,14 +76,14 @@
 
     <div class="form-section__field-container field-nationality">
       <label for="field-nationality" class="required">Kansalaisuus</label>
-      <select name="field-nationality" data-parsley-required="true" data-source="/1/applications/nationalities" data-preselect="Suomi">
+      <select id="field-nationality" name="field-nationality" data-parsley-required="true" data-source="/1/applications/nationalities" data-preselect="Suomi">
         <option value="">-- Valitse --</option>
       </select>
     </div>
 
     <div class="form-section__field-container field-language">
       <label for="field-language" class="required">Äidinkieli</label>
-      <select name="field-language" data-parsley-required="true" data-source="/1/applications/languages" data-preselect="suomi">
+      <select id="field-language" name="field-language" data-parsley-required="true" data-source="/1/applications/languages" data-preselect="suomi">
         <option value="">-- Valitse --</option>
       </select>
     </div>
