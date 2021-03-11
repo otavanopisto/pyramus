@@ -25,3 +25,9 @@ jobs:
         run: python prepare-maven.py
       - name: Deploy
         run: mvn deploy --settings ~/.m2/mySettings.xml
+      - name: Webhook to staging
+        uses: distributhor/workflow-webhook@v1
+        env:
+          webhook_url: ${{ secrets.STAGING_WEBHOOK_URL }}
+          webhook_secret: ${{ secrets.STAGING_WEBHOOK_SECRET }}
+          webhook_auth: "${{ secrets.STAGING_WEBHOOK_USER }}:${{ secrets.STAGING_WEBHOOK_USER_PASS }}"
