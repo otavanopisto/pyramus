@@ -51,7 +51,12 @@ public class WorklistItemTemplateDAO extends PyramusEntityDAO<WorklistItemTempla
     for (WorklistItemTemplateType templateType : templateTypes) {
       inClause.value(templateType);
     }
-    criteria.where(criteriaBuilder.and(inClause, criteriaBuilder.equal(root.get(WorklistItemTemplate_.archived), archived)));
+    criteria.where(
+      criteriaBuilder.and(
+        inClause,
+        criteriaBuilder.equal(root.get(WorklistItemTemplate_.archived), archived)
+      )
+    );
     return entityManager.createQuery(criteria).getResultList();
   }
 
