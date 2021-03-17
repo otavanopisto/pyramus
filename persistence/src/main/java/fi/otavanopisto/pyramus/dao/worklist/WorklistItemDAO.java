@@ -3,6 +3,7 @@ package fi.otavanopisto.pyramus.dao.worklist;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,6 +16,7 @@ import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItem;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItem_;
 
+@Stateless
 public class WorklistItemDAO extends PyramusEntityDAO<WorklistItem> {
 
   public WorklistItem create(WorklistItemTemplate template, User owner, Date entryDate,

@@ -155,6 +155,7 @@ import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.webhooks.WebhookDAO;
+import fi.otavanopisto.pyramus.dao.worklist.WorklistItemTemplateDAO;
 
 public class DAOFactory {
   
@@ -811,6 +812,12 @@ public class DAOFactory {
   
   public KoskiPersonLogDAO getKoskiPersonLogDAO() {
     return (KoskiPersonLogDAO) findByClass(KoskiPersonLogDAO.class);
+  }
+  
+  /* Worklist */
+  
+  public WorklistItemTemplateDAO getWorklistItemTemplateDAO() {
+    return (WorklistItemTemplateDAO) findByClass(WorklistItemTemplateDAO.class);
   }
 
   private String getAppName() throws NamingException {
