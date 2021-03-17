@@ -25,3 +25,5 @@ jobs:
         run: python prepare-maven.py
       - name: Deploy
         run: mvn deploy --settings ~/.m2/mySettings.xml
+      - name: Webhook to staging
+        run: curl -X POST https://${{ secrets.STAGING_WEBHOOK_USER }}:${{ secrets.STAGING_WEBHOOK_USER_PASS }}@${{ secrets.STAGING_WEBHOOK_URL }}
