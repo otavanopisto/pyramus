@@ -1,0 +1,84 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+  <head>
+    <title><fmt:message key="worklist.listWorklistItems.pageTitle"/></title>
+
+    <jsp:include page="/templates/generic/head_generic.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/scriptaculous_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/table_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/jsonrequest_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/tabs_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/dialog_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/searchnavigation_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/validation_support.jsp"></jsp:include>
+    <jsp:include page="/templates/generic/locale_support.jsp"></jsp:include>
+    
+    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gui/worklist/listworklistitems.js">
+    </script>
+    
+  </head> 
+  <body onload="onLoad(event);">
+    <jsp:include page="/templates/generic/header.jsp"></jsp:include>
+    
+    <h1 class="genericPageHeader"><fmt:message key="worklist.listWorklistItems.pageTitle" /></h1>
+    
+    <div id="listWorklistItemsFilterContainer"> 
+      <div class="genericFormContainer"> 
+        <div class="tabLabelsContainer" id="tabs">
+          <a class="tabLabel" href="#listWorklistItems">
+            <fmt:message key="worklist.listWorklistItems.tabListWorklistItems"/>
+          </a>
+        </div>
+        
+        <div id="listWorklistItems" class="tabContent">
+          <form id="filterForm" method="post" onsubmit="onListWorklistItems(event);">
+      
+            <div class="genericFormSection">   
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="worklist.listWorklistItems.staffMember"/>
+              </jsp:include>                                     
+              <select name="staffMember">
+                <c:forEach var="staffMember" items="${staffMembers}">
+                  <option value="${staffMember.id}">${staffMember.lastName}, ${staffMember.firstName}</option>
+                </c:forEach>
+              </select>
+            </div>
+
+            <div class="genericFormSection">   
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="worklist.listWorklistItems.beginDate"/>
+              </jsp:include>
+              <input type="text" name="beginDate" class="ixDateField"/> 
+            </div>
+
+            <div class="genericFormSection">   
+              <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                <jsp:param name="titleLocale" value="worklist.listWorklistItems.endDate"/>
+              </jsp:include>
+              <input type="text" name="endDate" class="ixDateField"/> 
+            </div>
+            
+            <div class="genericFormSubmitSection">
+              <input type="submit" value="<fmt:message key="terms.search"/>">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div id="worklistItemsWrapper" style="display:none;">
+      <div class="searchResultsTitle"><fmt:message key="worklist.listWorklistItems.worklistTitle"/></div>
+      <div id="worklistItemsContainer" class="searchResultsContainer">
+        <div id="worklistItemsTableContainer"></div>
+      </div>
+    </div>
+  
+    <jsp:include page="/templates/generic/footer.jsp"></jsp:include>
+  </body>
+</html>

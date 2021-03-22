@@ -155,6 +155,7 @@ import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.webhooks.WebhookDAO;
+import fi.otavanopisto.pyramus.dao.worklist.WorklistItemDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistItemTemplateDAO;
 
 public class DAOFactory {
@@ -816,6 +817,10 @@ public class DAOFactory {
   
   /* Worklist */
   
+  public WorklistItemDAO getWorklistItemDAO() {
+    return (WorklistItemDAO) findByClass(WorklistItemDAO.class);
+  }
+
   public WorklistItemTemplateDAO getWorklistItemTemplateDAO() {
     return (WorklistItemTemplateDAO) findByClass(WorklistItemTemplateDAO.class);
   }

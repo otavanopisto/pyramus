@@ -249,12 +249,14 @@ public class WorklistRESTService {
     Date begin = null;
     Date end = null;
     try {
-      if (!StringUtils.isAnyEmpty(beginDate, endDate)) {
+      if (!StringUtils.isEmpty(beginDate)) {
         begin = java.sql.Timestamp.valueOf(LocalDate.parse(beginDate).atStartOfDay());
+      }
+      if (!StringUtils.isEmpty(endDate)) {
         end = java.sql.Timestamp.valueOf(LocalDate.parse(endDate).atTime(23, 59, 59));
-        if (begin.after(end)) {
-          return Response.status(Status.BAD_REQUEST).entity("Invalid timeframe").build();
-        }
+      }
+      if (begin != null && end != null && begin.after(end)) {
+        return Response.status(Status.BAD_REQUEST).entity("Invalid timeframe").build();
       }
     }
     catch (DateTimeParseException e) {
@@ -262,12 +264,7 @@ public class WorklistRESTService {
     }
 
     List<WorklistItem> worklistItems;
-    if (beginDate == null) {
-      worklistItems = worklistController.listWorklistItemsByOwner(user);
-    }
-    else {
-      worklistItems = worklistController.listWorklistItemsByOwnerAndTimeframe(user, begin, end);
-    }
+    worklistItems = worklistController.listWorklistItemsByOwnerAndTimeframe(user, begin, end);
     
     List<WorklistItemRestModel> restItems = new ArrayList<>();
     for (WorklistItem worklistItem : worklistItems) {

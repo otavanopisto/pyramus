@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.views.settings;
+package fi.otavanopisto.pyramus.views.worklist;
 
 import java.util.Comparator;
 import java.util.List;
@@ -30,7 +30,7 @@ public class ManageWorklistTemplatesViewController extends PyramusViewController
     templates.sort(Comparator.comparing(WorklistItemTemplate::getDescription));
     String jsonTemplates = new JSONArrayExtractor("id", "description", "price", "factor").extractString(templates);
     this.setJsDataVariable(pageRequestContext, "templates", jsonTemplates);
-    pageRequestContext.setIncludeJSP("/templates/settings/manageworklisttemplates.jsp");
+    pageRequestContext.setIncludeJSP("/templates/worklist/manageworklisttemplates.jsp");
   }
 
   /**
@@ -39,7 +39,7 @@ public class ManageWorklistTemplatesViewController extends PyramusViewController
    * @return The roles allowed to access this page
    */
   public UserRole[] getAllowedRoles() {
-    return new UserRole[] { UserRole.MANAGER, UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
+    return new UserRole[] { UserRole.STUDY_PROGRAMME_LEADER, UserRole.ADMINISTRATOR };
   }
 
   /**
@@ -50,7 +50,7 @@ public class ManageWorklistTemplatesViewController extends PyramusViewController
    * @return The localized name of this page
    */
   public String getName(Locale locale) {
-    return Messages.getInstance().getText(locale, "settings.manageWorklistTemplates.pageTitle");
+    return Messages.getInstance().getText(locale, "worklist.manageWorklistTemplates.pageTitle");
   }
 
 }

@@ -184,7 +184,7 @@ public class SearchStudentsJSONRequestContoller extends JSONRequestController {
     if (searchResult.getTotalHitCount() > 0) {
       statusMessage = Messages.getInstance().getText(
           locale,
-          "students.searchStudents.searchStatus",
+          "students.searchStudentgs.searchStatus",
           new Object[] { searchResult.getFirstResult() + 1, searchResult.getLastResult() + 1,
               searchResult.getTotalHitCount() });
     }

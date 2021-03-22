@@ -173,7 +173,7 @@ body {
  Menu z-index: 20-30
 ******************************/
 
-ul#GUI_MENU_indexContainer,ul#GUI_MENU_userContainer,ul#GUI_MENU_coursesContainer,ul#GUI_MENU_studentsContainer,ul#GUI_MENU_modulesContainer,ul#GUI_MENU_projectsContainer,ul#GUI_MENU_resourcesContainer,ul#GUI_MENU_applicationsContainer,ul#GUI_MENU_matriculationContainer,ul#GUI_MENU_reportsContainer,ul#GUI_MENU_settingsContainer,ul#GUI_MENU_systemContainer,ul#GUI_MENU_helpContainer{
+ul#GUI_MENU_indexContainer,ul#GUI_MENU_userContainer,ul#GUI_MENU_coursesContainer,ul#GUI_MENU_studentsContainer,ul#GUI_MENU_modulesContainer,ul#GUI_MENU_projectsContainer,ul#GUI_MENU_resourcesContainer,ul#GUI_MENU_applicationsContainer,ul#GUI_MENU_matriculationContainer,ul#GUI_MENU_worklistContainer,ul#GUI_MENU_reportsContainer,ul#GUI_MENU_settingsContainer,ul#GUI_MENU_systemContainer,ul#GUI_MENU_helpContainer{
   list-style-type:none;
   padding:0;
   margin:0;
@@ -228,7 +228,7 @@ a.GUI_MENU_itemLink{
   cursor:pointer;
 }
 
-li#GUI_MENU_indexLink,li#GUI_MENU_userLink,li#GUI_MENU_coursesLink,li#GUI_MENU_studentsLink,li#GUI_MENU_modulesLink,li#GUI_MENU_projectsLink,li#GUI_MENU_resourcesLink,li#GUI_MENU_applicationsLink,li#GUI_MENU_matriculationLink,li#GUI_MENU_reportsLink,li#GUI_MENU_settingsLink,li#GUI_MENU_systemLink,li#GUI_MENU_helpLink{
+li#GUI_MENU_indexLink,li#GUI_MENU_userLink,li#GUI_MENU_coursesLink,li#GUI_MENU_studentsLink,li#GUI_MENU_modulesLink,li#GUI_MENU_projectsLink,li#GUI_MENU_resourcesLink,li#GUI_MENU_applicationsLink,li#GUI_MENU_matriculationLink,li#GUI_MENU_worklistLink,li#GUI_MENU_reportsLink,li#GUI_MENU_settingsLink,li#GUI_MENU_systemLink,li#GUI_MENU_helpLink{
   padding:7px 10px 4px 10px;
   margin:0px 0px 0px 0px;
   color:#fff;
@@ -236,7 +236,7 @@ li#GUI_MENU_indexLink,li#GUI_MENU_userLink,li#GUI_MENU_coursesLink,li#GUI_MENU_s
   list-style-type:none;
 }
 
-li#GUI_MENU_userLink:hover,li#GUI_MENU_coursesLink:hover,li#GUI_MENU_studentsLink:hover,li#GUI_MENU_modulesLink:hover,li#GUI_MENU_projectsLink:hover,li#GUI_MENU_resourcesLink:hover,li#GUI_MENU_applicationsLink:hover,li#GUI_MENU_matriculationLink:hover,li#GUI_MENU_reportsLink:hover,li#GUI_MENU_settingsLink:hover,li#GUI_MENU_systemLink:hover{
+li#GUI_MENU_userLink:hover,li#GUI_MENU_coursesLink:hover,li#GUI_MENU_studentsLink:hover,li#GUI_MENU_modulesLink:hover,li#GUI_MENU_projectsLink:hover,li#GUI_MENU_resourcesLink:hover,li#GUI_MENU_applicationsLink:hover,li#GUI_MENU_matriculationLink:hover,li#GUI_MENU_worklistLink:hover,li#GUI_MENU_reportsLink:hover,li#GUI_MENU_settingsLink:hover,li#GUI_MENU_systemLink:hover{
   background:#1e469f;
   padding:6px 9px 3px 9px;
   border-top:1px solid #597DC5;
@@ -250,7 +250,7 @@ li#GUI_MENU_userLink:hover,li#GUI_MENU_coursesLink:hover,li#GUI_MENU_studentsLin
   border-top-right-radius:5px;
 }
 
-ul#GUI_MENU_userItemContainer,ul#GUI_MENU_coursesItemContainer,ul#GUI_MENU_studentsItemContainer,ul#GUI_MENU_modulesItemContainer,ul#GUI_MENU_projectsItemContainer,ul#GUI_MENU_resourcesItemContainer,ul#GUI_MENU_applicationsItemContainer,ul#GUI_MENU_matriculationItemContainer,ul#GUI_MENU_reportsItemContainer,ul#GUI_MENU_settingsItemContainer,ul#GUI_MENU_systemItemContainer{
+ul#GUI_MENU_userItemContainer,ul#GUI_MENU_coursesItemContainer,ul#GUI_MENU_studentsItemContainer,ul#GUI_MENU_modulesItemContainer,ul#GUI_MENU_projectsItemContainer,ul#GUI_MENU_resourcesItemContainer,ul#GUI_MENU_applicationsItemContainer,ul#GUI_MENU_matriculationItemContainer,ul#GUI_MENU_worklistItemContainer,ul#GUI_MENU_reportsItemContainer,ul#GUI_MENU_settingsItemContainer,ul#GUI_MENU_systemItemContainer{
   display:none;
   margin:0;
   padding:0;
@@ -312,6 +312,13 @@ li#GUI_MENU_applicationsLink:hover>ul#GUI_MENU_applicationsItemContainer{
 }
 
 li#GUI_MENU_matriculationLink:hover>ul#GUI_MENU_matriculationItemContainer{
+  margin:3px 0px 0px 0px;
+  display:block;
+  position:absolute;
+  left:0px;
+}
+
+li#GUI_MENU_worklistLink:hover>ul#GUI_MENU_worklistItemContainer{
   margin:3px 0px 0px 0px;
   display:block;
   position:absolute;
