@@ -66,7 +66,20 @@ function onLoad(event) {
           }
           var edited = table.isCellEditable(event.row, table.getNamedColumnIndex("entryDate")) == false;
           if (edited) {
-            
+            var itemId = table.getCellValue(event.row, table.getNamedColumnIndex('worklistItemId'));
+            var entryDate = table.getCellValue(event.row, table.getNamedColumnIndex('entryDate'));
+            var description = table.getCellValue(event.row, table.getNamedColumnIndex('description'));
+            var price = table.getCellValue(event.row, table.getNamedColumnIndex('price'));
+            var factor = table.getCellValue(event.row, table.getNamedColumnIndex('factor'));
+            JSONRequest.request("worklist/editworklistitem.json", {
+              parameters : {
+                itemId : itemId,
+                entryDate : entryDate,
+                description : description,
+                price : price,
+                factor : factor
+              }
+            });
           }
         }
       },
@@ -113,7 +126,20 @@ function onLoad(event) {
         imgsrc : GLOBAL_contextPath + '/gfx/kdb_form.png',
         tooltip : getLocale().getText("worklist.listWorklistItems.assessment"),
         onclick : function(event) {
-          // TODO show assessment info
+          var table = event.tableComponent;
+          var itemId = table.getCellValue(event.row, table.getNamedColumnIndex('worklistItemId'));
+          var url = GLOBAL_contextPath + "/worklist/assessmentinfo.page?itemId=" + itemId;
+          var dialog = new IxDialog({
+            id : 'assessmentInfo',
+            contentURL : url,
+            centered : true,
+            showOk : true,
+            showCancel : false,
+            autoEvaluateSize : true,
+            title : getLocale().getText("worklist.listWorklistItems.assessmentInfo"),
+            okLabel : getLocale().getText("terms.close")
+          });
+          dialog.open();
         },
         paramName : 'assessmentButton'
       },    
@@ -124,7 +150,42 @@ function onLoad(event) {
         imgsrc : GLOBAL_contextPath + '/gfx/edit-delete.png',
         tooltip : getLocale().getText("worklist.listWorklistItems.delete"),
         onclick : function(event) {
-          // archive
+          var table = event.tableComponent;
+          var description = table.getCellValue(event.row, table.getNamedColumnIndex('description'));
+          var itemId = table.getCellValue(event.row, table.getNamedColumnIndex('worklistItemId'));
+          var url = GLOBAL_contextPath + "/simpledialog.page?localeId=worklist.listWorklistItems.archiveConfirmDialogContent&localeParams="
+              + encodeURIComponent(description);
+
+          var dialog = new IxDialog({
+            id : 'confirmRemoval',
+            contentURL : url,
+            centered : true,
+            showOk : true,
+            showCancel : true,
+            autoEvaluateSize : true,
+            title : getLocale().getText("worklist.listWorklistItems.archiveTitle"),
+            okLabel : getLocale().getText("worklist.listWorklistItems.archiveOk"),
+            cancelLabel : getLocale().getText("worklist.listWorklistItems.archiveCancel")
+          });
+
+          dialog.addDialogListener(function(event) {
+            var dlg = event.dialog;
+
+            switch (event.name) {
+              case 'okClick':
+                JSONRequest.request("worklist/archiveworklistitem.json", {
+                  parameters : {
+                    itemId : itemId
+                  },
+                  onSuccess : function(jsonResponse) {
+                    table.deleteRow(event.row);
+                  }
+                });
+              break;
+            }
+          });
+
+          dialog.open();
         },
         paramName : 'removeButton'
       }
