@@ -14,7 +14,6 @@ function doList() {
       for (var i = 0; i < worklistItems.length; i++) {
         table.addRow([
           worklistItems[i].id,
-          worklistItems[i].ownerId,
           '', // edit button
           worklistItems[i].entryDate,
           worklistItems[i].description,
@@ -48,10 +47,6 @@ function onLoad(event) {
       {
         dataType : 'hidden',
         paramName : 'worklistItemId'
-      },
-      {
-        dataType : 'hidden',
-        paramName : 'ownerId'
       },
       {
         left : 8,
@@ -164,8 +159,8 @@ function onLoad(event) {
             showCancel : true,
             autoEvaluateSize : true,
             title : getLocale().getText("worklist.listWorklistItems.archiveTitle"),
-            okLabel : getLocale().getText("worklist.listWorklistItems.archiveOk"),
-            cancelLabel : getLocale().getText("worklist.listWorklistItems.archiveCancel")
+            okLabel : getLocale().getText("terms.remove"),
+            cancelLabel : getLocale().getText("terms.cancel")
           });
 
           dialog.addDialogListener(function(event) {

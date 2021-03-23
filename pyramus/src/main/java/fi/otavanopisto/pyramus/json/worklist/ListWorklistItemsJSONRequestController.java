@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.math.NumberUtils;
-
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -24,7 +22,7 @@ public class ListWorklistItemsJSONRequestController extends JSONRequestControlle
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     WorklistItemDAO worklistItemDAO = DAOFactory.getInstance().getWorklistItemDAO();
 
-    Long staffMemberId = NumberUtils.createLong(requestContext.getRequest().getParameter("staffMemberId"));
+    Long staffMemberId = requestContext.getLong("staffMemberId");
     StaffMember staffMember = staffMemberDAO.findById(staffMemberId);
     Date beginDate = requestContext.getDate("beginDate");
     Date endDate = requestContext.getDate("endDate");
@@ -36,7 +34,6 @@ public class ListWorklistItemsJSONRequestController extends JSONRequestControlle
     for (WorklistItem worklistItem : worklistItems) {
       Map<String, Object> item = new HashMap<>();
       item.put("id",  worklistItem.getId());
-      item.put("ownerId",  worklistItem.getOwner().getId());
       item.put("entryDate",  worklistItem.getEntryDate().getTime());
       item.put("description",  worklistItem.getDescription());
       item.put("price", worklistItem.getPrice());

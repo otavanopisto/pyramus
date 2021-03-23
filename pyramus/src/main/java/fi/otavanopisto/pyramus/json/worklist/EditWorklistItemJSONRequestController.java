@@ -2,8 +2,6 @@ package fi.otavanopisto.pyramus.json.worklist;
 
 import java.util.Date;
 
-import org.apache.commons.lang.math.NumberUtils;
-
 import fi.internetix.smvc.controllers.JSONRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
@@ -19,12 +17,11 @@ public class EditWorklistItemJSONRequestController extends JSONRequestController
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
     WorklistItemDAO worklistItemDAO = DAOFactory.getInstance().getWorklistItemDAO();
 
-    String itemIdStr = requestContext.getRequest().getParameter("itemId");
-    Long itemId = NumberUtils.isNumber(itemIdStr) ? NumberUtils.createLong(itemIdStr) : null;
+    Long itemId = requestContext.getLong("itemId");
     Date entryDate = requestContext.getDate("entryDate");
     String description = requestContext.getRequest().getParameter("description");
-    Double price = NumberUtils.createDouble(requestContext.getRequest().getParameter("price"));
-    Double factor = NumberUtils.createDouble(requestContext.getRequest().getParameter("factor"));
+    Double price = requestContext.getDouble("price");
+    Double factor = requestContext.getDouble("factor");
     Long loggedUserId = requestContext.getLoggedUserId();
     StaffMember loggedUser = staffMemberDAO.findById(loggedUserId);
     

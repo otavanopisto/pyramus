@@ -63,8 +63,8 @@ function onLoad(event) {
               showCancel : true,
               autoEvaluateSize : true,
               title : getLocale().getText("worklist.manageWorklistTemplates.archiveTitle"),
-              okLabel : getLocale().getText("worklist.manageWorklistTemplates.archiveOk"),
-              cancelLabel : getLocale().getText("worklist.manageWorklistTemplates.archiveCancel")
+              okLabel : getLocale().getText("terms.remove"),
+              cancelLabel : getLocale().getText("terms.cancel")
             });
 
             dialog.addDialogListener(function(event) {

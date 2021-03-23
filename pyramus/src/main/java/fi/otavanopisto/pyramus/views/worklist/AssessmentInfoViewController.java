@@ -61,14 +61,9 @@ public class AssessmentInfoViewController extends PyramusViewController {
       requestContext.getRequest().setAttribute("grade", courseAssessment.getGrade().getName());
       List<CourseAssessment> assessments = courseAssessmentDAO.listByStudentAndCourse(student, course);
       assessments.sort(Comparator.comparing(CourseAssessment::getDate));
-      if (assessments.size() > 1 && !Objects.equals(courseAssessment.getId(), assessments.get(0).getId())) {
-        requestContext.getRequest().setAttribute("raise",
-            Messages.getInstance().getText(requestContext.getRequest().getLocale(), "terms.yes", null));
-      }
-      else {
-        requestContext.getRequest().setAttribute("raise",
-            Messages.getInstance().getText(requestContext.getRequest().getLocale(), "terms.no", null));
-      }
+      boolean isRaise = assessments.size() > 1 && !Objects.equals(courseAssessment.getId(), assessments.get(0).getId()); 
+      requestContext.getRequest().setAttribute("raise", Messages.getInstance().getText(
+          requestContext.getRequest().getLocale(), isRaise ? "terms.yes" : "terms.no", null));
     }
     requestContext.setIncludeJSP("/templates/worklist/assessmentinfo.jsp");
   }

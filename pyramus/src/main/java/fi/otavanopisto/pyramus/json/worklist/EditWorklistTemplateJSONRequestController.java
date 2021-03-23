@@ -18,7 +18,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 /**
  * The controller responsible of creating or modifying a worklist template. 
  * 
- * @see fi.otavanopisto.pyramus.views.worklist.EditWorklistItemViewController
+ * @see fi.otavanopisto.pyramus.views.worklist.EditWorklistTemplateViewController
  */
 public class EditWorklistTemplateJSONRequestController extends JSONRequestController {
 
