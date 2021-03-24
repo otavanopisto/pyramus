@@ -102,7 +102,7 @@ public class WorklistRESTService {
     if (payload.getTemplateId() == null) {
       return Response.status(Status.BAD_REQUEST).entity("Missing templateId").build(); 
     }
-    WorklistItemTemplate template = worklistController.findTemplateById(payload.getId());
+    WorklistItemTemplate template = worklistController.findTemplateById(payload.getTemplateId());
     if (template == null) {
       return Response.status(Status.NOT_FOUND).entity("Template not found").build();
     }
