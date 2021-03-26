@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.rest;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
@@ -308,7 +309,8 @@ public class WorklistRESTService {
     List<WorklistItem> worklistItems = worklistController.listWorklistItemsByOwner(user);
     for (WorklistItem worklistItem : worklistItems) {
       c.setTime(worklistItem.getEntryDate());
-      String month = Month.of(c.get(Calendar.MONTH) + 1).getDisplayName(TextStyle.FULL_STANDALONE, request.getLocale());
+      SimpleDateFormat dateFormat = new SimpleDateFormat("LLLL", request.getLocale());
+      String month = StringUtils.capitalize(dateFormat.format(c.getTime()));
       int year = c.get(Calendar.YEAR);
       String displayName = String.format("%s %d", month, year);
       if (monthlyMap.containsKey(displayName)) {
