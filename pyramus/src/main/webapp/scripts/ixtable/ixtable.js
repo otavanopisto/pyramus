@@ -1909,8 +1909,24 @@ IxButtonTableEditorButtonController = Class.create(IxTableEditorController, {
       cellViewer._columnDefinition = columnDefinition;
       
       return cellViewer;
-    } else {
-      throw new Error("Unable to build button without image");
+    }
+    else if (columnDefinition.value) {
+      var cellViewer = new Element("input", {type: 'button', value: columnDefinition.value, style:'width:100%;display:block'});
+      if (columnDefinition.viewerClassNames) {
+        var classNames = columnDefinition.viewerClassNames.split(' ');
+        for (var i = 0, l = classNames.length; i < l; i++) {
+          cellViewer.addClassName(classNames[i]);
+        }
+      }
+      cellViewer._editable = false;
+      cellViewer._dataType = this.getDataType();
+      cellViewer._name = name;
+      cellViewer._columnDefinition = columnDefinition;
+      
+      return cellViewer;
+    }
+    else {
+      throw new Error("Unable to build button without image or value");
     }
   },
   attachContentHandler: function ($super, table, cell, handlerInstance) {

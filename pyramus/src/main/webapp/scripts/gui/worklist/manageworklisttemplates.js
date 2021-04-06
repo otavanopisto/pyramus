@@ -7,7 +7,7 @@ function onLoad(event) {
     id : "worklistTemplatesTable",
     columns : [
         {
-          header : getLocale().getText("settings.manageWorklistTemplates.description"),
+          header : getLocale().getText("worklist.manageWorklistTemplates.description"),
           left : 8,
           width : 300,
           dataType : 'text',
@@ -15,7 +15,7 @@ function onLoad(event) {
           paramName : 'description'
         },
         {
-          header : getLocale().getText("settings.manageWorklistTemplates.price"),
+          header : getLocale().getText("worklist.manageWorklistTemplates.price"),
           left : 8 + 300 + 8,
           width : 50,
           dataType : 'text',
@@ -23,7 +23,7 @@ function onLoad(event) {
           paramName : 'price'
         },
         {
-          header : getLocale().getText("settings.manageWorklistTemplates.factor"),
+          header : getLocale().getText("worklist.manageWorklistTemplates.factor"),
           left : 8 + 300 + 8 + 50 + 8,
           width : 50,
           dataType : 'text',
@@ -35,11 +35,11 @@ function onLoad(event) {
           width : 30,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/accessories-text-editor.png',
-          tooltip : getLocale().getText("settings.manageWorklistTemplates.editTooltip"),
+          tooltip : getLocale().getText("worklist.manageWorklistTemplates.editTooltip"),
           onclick : function(event) {
             var table = event.tableComponent;
             var templateId = table.getCellValue(event.row, table.getNamedColumnIndex('templateId'));
-            redirectTo(GLOBAL_contextPath + '/settings/editworklisttemplate.page?template=' + templateId);
+            redirectTo(GLOBAL_contextPath + '/worklist/editworklisttemplate.page?template=' + templateId);
           }
         },
         {
@@ -47,12 +47,12 @@ function onLoad(event) {
           width : 26,
           dataType : 'button',
           imgsrc : GLOBAL_contextPath + '/gfx/edit-delete.png',
-          tooltip : getLocale().getText("settings.manageWorklistTemplates.removeTooltip"),
+          tooltip : getLocale().getText("worklist.manageWorklistTemplates.removeTooltip"),
           onclick : function(event) {
             var table = event.tableComponent;
             var description = table.getCellValue(event.row, table.getNamedColumnIndex('description'));
             var templateId = table.getCellValue(event.row, table.getNamedColumnIndex('templateId'));
-            var url = GLOBAL_contextPath + "/simpledialog.page?localeId=settings.manageWorklistTemplates.archiveConfirmDialogContent&localeParams="
+            var url = GLOBAL_contextPath + "/simpledialog.page?localeId=worklist.manageWorklistTemplates.archiveConfirmDialogContent&localeParams="
                 + encodeURIComponent(description);
 
             var dialog = new IxDialog({
@@ -62,9 +62,9 @@ function onLoad(event) {
               showOk : true,
               showCancel : true,
               autoEvaluateSize : true,
-              title : getLocale().getText("settings.manageWorklistTemplates.archiveTitle"),
-              okLabel : getLocale().getText("settings.manageWorklistTemplates.archiveOk"),
-              cancelLabel : getLocale().getText("settings.manageWorklistTemplates.archiveCancel")
+              title : getLocale().getText("worklist.manageWorklistTemplates.archiveTitle"),
+              okLabel : getLocale().getText("terms.remove"),
+              cancelLabel : getLocale().getText("terms.cancel")
             });
 
             dialog.addDialogListener(function(event) {
@@ -72,7 +72,7 @@ function onLoad(event) {
 
               switch (event.name) {
                 case 'okClick':
-                  JSONRequest.request("settings/archiveworklisttemplate.json", {
+                  JSONRequest.request("worklist/archiveworklisttemplate.json", {
                     parameters : {
                       templateId : templateId
                     },

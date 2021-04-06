@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.json.settings;
+package fi.otavanopisto.pyramus.json.worklist;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +18,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 /**
  * The controller responsible of creating or modifying a worklist template. 
  * 
- * @see fi.otavanopisto.pyramus.views.settings.CreateSchoolViewController
+ * @see fi.otavanopisto.pyramus.views.worklist.EditWorklistTemplateViewController
  */
 public class EditWorklistTemplateJSONRequestController extends JSONRequestController {
 
@@ -58,7 +58,7 @@ public class EditWorklistTemplateJSONRequestController extends JSONRequestContro
       worklistItemTemplateDAO.updateTemplate(template, templateType, description, price, factor, editableFields, removable);
     }
 
-    String redirectURL = requestContext.getRequest().getContextPath() + "/settings/manageworklisttemplates.page";
+    String redirectURL = requestContext.getRequest().getContextPath() + "/worklist/manageworklisttemplates.page";
     String refererAnchor = requestContext.getRefererAnchor();
     if (!StringUtils.isBlank(refererAnchor)) {
       redirectURL += "#" + refererAnchor;

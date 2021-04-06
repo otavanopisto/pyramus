@@ -1,5 +1,6 @@
 package fi.otavanopisto.pyramus.dao.worklist;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
@@ -59,14 +61,20 @@ public class WorklistItemDAO extends PyramusEntityDAO<WorklistItem> {
     CriteriaQuery<WorklistItem> criteria = criteriaBuilder.createQuery(WorklistItem.class);
     Root<WorklistItem> root = criteria.from(WorklistItem.class);
     criteria.select(root);
-    criteria.where(
-      criteriaBuilder.and(
-        criteriaBuilder.equal(root.get(WorklistItem_.owner), owner),
-        criteriaBuilder.greaterThanOrEqualTo(root.get(WorklistItem_.entryDate), startDate),
-        criteriaBuilder.lessThanOrEqualTo(root.get(WorklistItem_.entryDate), endDate),
-        criteriaBuilder.equal(root.get(WorklistItem_.archived), archived)
-      )
-    );
+    List<Predicate> predicates = new ArrayList<>();
+    if (owner != null) {
+      predicates.add(criteriaBuilder.equal(root.get(WorklistItem_.owner), owner));
+    }
+    if (startDate != null) {
+      predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(WorklistItem_.entryDate), startDate));
+    }
+    if (endDate != null) {
+      predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(WorklistItem_.entryDate), endDate));
+    }
+    if (archived != null) {
+      predicates.add(criteriaBuilder.equal(root.get(WorklistItem_.archived), archived));
+    }
+    criteria.where(criteriaBuilder.and(predicates.stream().toArray(Predicate[]::new)));
     return entityManager.createQuery(criteria).getResultList();
   }
   

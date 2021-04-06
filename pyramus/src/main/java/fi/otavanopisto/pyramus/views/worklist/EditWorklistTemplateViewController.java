@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.views.settings;
+package fi.otavanopisto.pyramus.views.worklist;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -20,7 +20,7 @@ import fi.otavanopisto.pyramus.framework.UserRole;
 /**
  * The controller responsible of the Edit Worklist Template view of the application.
  * 
- * @see fi.otavanopisto.pyramus.json.settings.EditWorklistTemplateJSONRequestController
+ * @see fi.otavanopisto.pyramus.json.worklist.EditWorklistTemplateJSONRequestController
  */
 public class EditWorklistTemplateViewController extends PyramusViewController implements Breadcrumbable {
 
@@ -54,7 +54,7 @@ public class EditWorklistTemplateViewController extends PyramusViewController im
     pageRequestContext.getRequest().setAttribute("priceEditable", fields.contains(WorklistItemEditableFields.PRICE));
     pageRequestContext.getRequest().setAttribute("factorEditable", fields.contains(WorklistItemEditableFields.FACTOR));
 
-    pageRequestContext.setIncludeJSP("/templates/settings/editworklisttemplate.jsp");
+    pageRequestContext.setIncludeJSP("/templates/worklist/editworklisttemplate.jsp");
   }
 
   /**
@@ -74,7 +74,7 @@ public class EditWorklistTemplateViewController extends PyramusViewController im
    * @return The localized name of this page
    */
   public String getName(Locale locale) {
-    return Messages.getInstance().getText(locale, "settings.editWorklistTemplate.pageTitle");
+    return Messages.getInstance().getText(locale, "worklist.editWorklistTemplate.pageTitle");
   }
 
 }

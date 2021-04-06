@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.json.settings;
+package fi.otavanopisto.pyramus.json.worklist;
 
 import org.apache.commons.lang.math.NumberUtils;
 

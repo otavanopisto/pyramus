@@ -162,6 +162,23 @@ public class StaffMemberDAO extends PyramusEntityDAO<StaffMember> {
     
     return query.getResultList();
   }
+  
+  public List<StaffMember> listByOrganizationAndArchived(Organization organization, Boolean archived) {
+    EntityManager entityManager = getEntityManager(); 
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<StaffMember> criteria = criteriaBuilder.createQuery(StaffMember.class);
+    Root<StaffMember> root = criteria.from(StaffMember.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(StaffMember_.organization), organization),
+        criteriaBuilder.equal(root.get(StaffMember_.archived), archived)
+      )
+     );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
 
   public List<StaffMember> listByPerson(Person person) {
     EntityManager entityManager = getEntityManager(); 
