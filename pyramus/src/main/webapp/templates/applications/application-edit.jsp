@@ -5,8 +5,9 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="fi">
   <head>
+    <title>Hae opiskelijaksi Otaviaan</title>
     <meta charset="UTF-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -38,47 +39,47 @@
     </header>
 
     <section class="application-description">
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="" style="display:none;">
-        <div class="application-description__line-header">
+      <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="" style="display:none;">
+        <h1 class="application-description__line-header">
           Hae opiskelijaksi <span class="application-description__line-label">Otaviaan</span>
-        </div>
+        </h1>
         <div class="application-description__line-content">Valitse haluamasi koulutusohjelma ja siirry täyttämään opiskelijahakemus.</div>
-      </div>
+      </header>
 
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
-        <div class="application-description__line-header">
+      <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+        <h1 class="application-description__line-header">
           Olet hakemassa <span class="application-description__line-label--nettilukio">nettilukioon</span>
-        </div>
+        </h1>
         <div class="application-description__line-content">Nettilukiossa opiskelet lukio-opintoja tutkintotavoitteisesti tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Nettilukio on aikuislukio ja tarkoitettu yli 18-vuotiaille opiskelijoille. Alaikäisiä voidaan hyväksyä vain, jos haun taustalla on riittävät perusteet. Toisessa oppilaitoksessa opiskelevat ja yksittäisiä lukiokursseja suorittavat voivat ilmoittautua aineopiskelijaksi.</div>
-      </div>
+      </header>
 
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettipk" style="display:none;">
-        <div class="application-description__line-header">
+      <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="nettipk" style="display:none;">
+        <h1 class="application-description__line-header">
           Olet hakemassa <span class="application-description__line-label--nettiperuskoulu">nettiperuskouluun</span>
-        </div>
+        </h1>
         <div class="application-description__line-content">Nettiperuskoulussa voit opiskella kesken jääneen peruskoulun loppuun tai tehdä koko aikuisten perusopetuksen oppimäärän alusta asti. Nettiperuskoulu on tarkoitettu yli 18-vuotiaille opiskelijoille, joilta puuttuu perusopetuksen päättötodistus.</div>
-      </div>
+      </header>
 
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
-        <div class="application-description__line-header">
+      <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aineopiskelu" style="display:none;">
+        <h1 class="application-description__line-header">
           Olet ilmoittautumassa <span class="application-description__line-label--aineopiskelu">aineopiskelijaksi</span>
-        </div>
+        </h1>
         <div class="application-description__line-content">Aineopiskelijana voit opiskella yksittäisiä lukion ja perusopetuksen kursseja. Aineopiskelijaksi voit ilmoittautua, vaikka opiskelisit samaan aikaan toisessa oppilaitoksessa.</div>
-      </div>
+      </header>
 
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio" style="display:none;">
-        <div class="application-description__line-header">
+      <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="aikuislukio" style="display:none;">
+        <h1 class="application-description__line-header">
           Olet hakemassa <span class="application-description__line-label--aikuislukio">aikuislukioon</span>
-        </div>
+        </h1>
         <div class="application-description__line-content">Aikuislukiossa opiskelet koko lukion oppimäärän tavoitteenasi lukion päättötodistus ja/tai ylioppilastutkinto. Aikuislukiossa voit myös tehdä loppuun aiemmin kesken jääneet toisessa päivä- tai aikuislukiossa aloittamasi lukio-opinnot.</div>
-      </div>
+      </header>
 
-      <div class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
-        <div class="application-description__line-header">
+      <header class="application-description__line form-section__field-container dependent" data-dependent-field="field-line" data-dependent-values="mk" style="display:none;">
+        <h1 class="application-description__line-header">
           Olet hakemassa <span class="application-description__line-label--maahanmuuttajakoulutus">maahanmuuttajakoulutuksiin</span>
-        </div>
+        </h1>
         <div class="application-description__line-content">Maahanmuuttajakoulutukset ovat sellaisia opiskelijoita varten, joiden äidinkieli ei ole suomi ja jotka tarvitsevat peruskoulun päättötodistuksen jatko-opintoja varten.</div>
-      </div>
+      </header>
     </section>
 
     <main class="application-content">

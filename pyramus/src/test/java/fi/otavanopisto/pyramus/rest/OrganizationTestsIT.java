@@ -8,14 +8,15 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 import io.restassured.response.Response;
-
+import fi.otavanopisto.pyramus.rest.model.BillingDetails;
 import fi.otavanopisto.pyramus.rest.model.Organization;
 
 public class OrganizationTestsIT extends AbstractRESTServiceTest {
 
   @Test
   public void testCreateOrganization() {
-    Organization organization = new Organization(null, "create", Boolean.FALSE);
+    BillingDetails billingDetails = new BillingDetails();
+    Organization organization = new Organization(null, "create", billingDetails, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -60,7 +61,8 @@ public class OrganizationTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testUpdateOrganization() {
-    Organization organization = new Organization(null, "Not Updated", Boolean.FALSE);
+    BillingDetails billingDetails = new BillingDetails();
+    Organization organization = new Organization(null, "Not Updated", billingDetails, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")
@@ -74,7 +76,7 @@ public class OrganizationTestsIT extends AbstractRESTServiceTest {
     
     Long id = new Long(response.body().jsonPath().getInt("id"));
     try {
-      Organization updateOrganization = new Organization(id, "Updated", Boolean.FALSE);
+      Organization updateOrganization = new Organization(id, "Updated", billingDetails, Boolean.FALSE);
 
       given().headers(getAuthHeaders())
         .contentType("application/json")
@@ -95,7 +97,8 @@ public class OrganizationTestsIT extends AbstractRESTServiceTest {
   
   @Test
   public void testDeleteOrganization() {
-    Organization organization = new Organization(null, "create type", Boolean.FALSE);
+    BillingDetails billingDetails = new BillingDetails();
+    Organization organization = new Organization(null, "create type", billingDetails, Boolean.FALSE);
     
     Response response = given().headers(getAuthHeaders())
       .contentType("application/json")

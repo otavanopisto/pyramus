@@ -66,7 +66,7 @@ set
 where
     p.id = v.personId
   </sql>
-  <sql>update Person p, UserVariable uv, User u set p.defaultUser_id=u.id where p.id = u.person_id AND u.id = uv.user and uv.variableKey = (select id from uservariablekey where variableKey = 'nexusid') and uv.value is not null</sql>
+  <sql>update Person p, UserVariable uv, User u set p.defaultUser_id=u.id where p.id = u.person_id AND u.id = uv.user and uv.variableKey = (select id from UserVariableKey where variableKey = 'nexusid') and uv.value is not null</sql>
   <sql>update Person p, StaffMember s, User u set p.defaultUser_id=u.id where p.id = u.person_id AND u.id = s.id</sql>
   <sql>insert into hibernate_sequences (sequence_name, sequence_next_hi_value) select 'UserIdentification', coalesce(max(id) + 1, 1) from UserIdentification</sql>
   

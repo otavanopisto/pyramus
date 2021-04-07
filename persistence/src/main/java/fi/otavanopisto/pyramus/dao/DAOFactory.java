@@ -41,6 +41,8 @@ import fi.otavanopisto.pyramus.dao.base.LoginLogDAO;
 import fi.otavanopisto.pyramus.dao.base.MagicKeyDAO;
 import fi.otavanopisto.pyramus.dao.base.MunicipalityDAO;
 import fi.otavanopisto.pyramus.dao.base.NationalityDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationContactPersonDAO;
+import fi.otavanopisto.pyramus.dao.base.OrganizationContractPeriodDAO;
 import fi.otavanopisto.pyramus.dao.base.OrganizationDAO;
 import fi.otavanopisto.pyramus.dao.base.PersonDAO;
 import fi.otavanopisto.pyramus.dao.base.PhoneNumberDAO;
@@ -68,6 +70,8 @@ import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionCategoryDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseDescriptionDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseEnrolmentTypeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseParticipationTypeDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudentGroupDAO;
+import fi.otavanopisto.pyramus.dao.courses.CourseSignupStudyProgrammeDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStaffMemberRoleDAO;
 import fi.otavanopisto.pyramus.dao.courses.CourseStateDAO;
@@ -151,6 +155,8 @@ import fi.otavanopisto.pyramus.dao.users.UserIdentificationDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.dao.webhooks.WebhookDAO;
+import fi.otavanopisto.pyramus.dao.worklist.WorklistItemDAO;
+import fi.otavanopisto.pyramus.dao.worklist.WorklistItemTemplateDAO;
 
 public class DAOFactory {
   
@@ -358,6 +364,14 @@ public class DAOFactory {
 
   public CourseStaffMemberRoleDAO getCourseStaffMemberRoleDAO() {
     return (CourseStaffMemberRoleDAO) findByClass(CourseStaffMemberRoleDAO.class);
+  }
+
+  public CourseSignupStudyProgrammeDAO getCourseSignupStudyProgrammeDAO() {
+    return (CourseSignupStudyProgrammeDAO) findByClass(CourseSignupStudyProgrammeDAO.class);
+  }
+
+  public CourseSignupStudentGroupDAO getCourseSignupStudentGroupDAO() {
+    return (CourseSignupStudentGroupDAO) findByClass(CourseSignupStudentGroupDAO.class);
   }
 
   /* System */
@@ -714,6 +728,14 @@ public class DAOFactory {
     return (OrganizationDAO) findByClass(OrganizationDAO.class);
   }
 
+  public OrganizationContactPersonDAO getOrganizationContactPersonDAO() {
+    return (OrganizationContactPersonDAO) findByClass(OrganizationContactPersonDAO.class);
+  }
+
+  public OrganizationContractPeriodDAO getOrganizationContractPeriodDAO() {
+    return (OrganizationContractPeriodDAO) findByClass(OrganizationContractPeriodDAO.class);
+  }
+
   /* File */
   
   public FileDAO getFileDAO() {
@@ -791,6 +813,16 @@ public class DAOFactory {
   
   public KoskiPersonLogDAO getKoskiPersonLogDAO() {
     return (KoskiPersonLogDAO) findByClass(KoskiPersonLogDAO.class);
+  }
+  
+  /* Worklist */
+  
+  public WorklistItemDAO getWorklistItemDAO() {
+    return (WorklistItemDAO) findByClass(WorklistItemDAO.class);
+  }
+
+  public WorklistItemTemplateDAO getWorklistItemTemplateDAO() {
+    return (WorklistItemTemplateDAO) findByClass(WorklistItemTemplateDAO.class);
   }
 
   private String getAppName() throws NamingException {

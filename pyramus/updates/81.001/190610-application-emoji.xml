@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
   
-  <sql>ALTER TABLE `application` CHANGE `formData` `formData` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</sql>
-  <sql>ALTER TABLE `applicationlog` CHANGE `text` `text` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</sql>
-  <sql>ALTER TABLE `applicationmailtemplate` CHANGE `content` `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</sql>
+  <sql>ALTER TABLE `Application` CHANGE `formData` `formData` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</sql>
+  <sql>ALTER TABLE `ApplicationLog` CHANGE `text` `text` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</sql>
+  <sql>ALTER TABLE `ApplicationMailTemplate` CHANGE `content` `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</sql>
   
 </update>

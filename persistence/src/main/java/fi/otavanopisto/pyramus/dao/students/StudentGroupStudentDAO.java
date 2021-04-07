@@ -80,17 +80,26 @@ public class StudentGroupStudentDAO extends PyramusEntityDAO<StudentGroupStudent
     studentUpdatedEvent.fire(new StudentGroupStudentUpdatedEvent(studentGroupStudent.getId(), studentGroup.getId(), student.getId()));
   }
 
-  public void remove(StudentGroup studentGroup, StudentGroupStudent student, User updatingUser) {
+  public void remove(StudentGroup studentGroup, StudentGroupStudent studentGroupStudent, User updatingUser) {
     EntityManager entityManager = getEntityManager(); 
-    studentGroup.removeStudent(student);
+    studentGroup.removeStudent(studentGroupStudent);
 
     studentGroup.setLastModifier(updatingUser);
     studentGroup.setLastModified(new Date(System.currentTimeMillis()));
 
     entityManager.persist(studentGroup);
-    entityManager.remove(student);
+    entityManager.remove(studentGroupStudent);
 
-    studentRemovedEvent.fire(new StudentGroupStudentRemovedEvent(student.getId(), studentGroup.getId(), student.getStudent().getId()));
+    studentRemovedEvent.fire(new StudentGroupStudentRemovedEvent(studentGroupStudent.getId(), studentGroup.getId(), studentGroupStudent.getStudent().getId()));
+  }
+
+  @Override
+  public void delete(StudentGroupStudent studentGroupStudent) {
+    super.delete(studentGroupStudent);
+    studentRemovedEvent.fire(new StudentGroupStudentRemovedEvent(
+        studentGroupStudent.getId(),
+        studentGroupStudent.getStudentGroup().getId(),
+        studentGroupStudent.getStudent().getId()));
   }
   
 }

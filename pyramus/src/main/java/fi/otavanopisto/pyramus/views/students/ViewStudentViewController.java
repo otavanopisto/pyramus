@@ -749,14 +749,20 @@ public class ViewStudentViewController extends PyramusViewController2 implements
       // Student Image
       studentHasImage.put(student.getId(), imageDAO.findStudentHasImage(student));
 
+      List<StudentLodgingPeriod> studentLodgingPeriodEntities = studentLodgingPeriodDAO.listByStudent(student);
+      studentLodgingPeriodEntities.sort(Comparator.comparing(StudentLodgingPeriod::getBegin, Comparator.nullsLast(Comparator.naturalOrder())));
+      
+      List<StudentStudyPeriod> studentStudyPeriodEntities = studentStudyPeriodDAO.listByStudent(student);
+      studentStudyPeriodEntities.sort(Comparator.comparing(StudentStudyPeriod::getBegin, Comparator.nullsLast(Comparator.naturalOrder())));
+      
       courseStudents.put(student.getId(), courseStudentsByStudent);
       courseAssessments.put(student.getId(), courseAssessmentsByStudent);
       contactEntries.put(student.getId(), listStudentContactEntries);
       transferCredits.put(student.getId(), transferCreditsByStudent);
       studentGroups.put(student.getId(), studentGroupDAO.listByStudent(student, null, null, false));
       studentProjects.put(student.getId(), studentProjectBeans);
-      studentLodgingPeriods.put(student.getId(), studentLodgingPeriodDAO.listByStudent(student));
-      studentStudyPeriods.put(student.getId(), studentStudyPeriodDAO.listByStudent(student));
+      studentLodgingPeriods.put(student.getId(), studentLodgingPeriodEntities);
+      studentStudyPeriods.put(student.getId(), studentStudyPeriodEntities);
       
       try {
         StudentTOR tor = StudentTORController.constructStudentTOR(student);
