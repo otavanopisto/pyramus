@@ -43,7 +43,7 @@
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="worklist.listWorklistItems.staffMember"/>
               </jsp:include>                                     
-              <select name="staffMember">
+              <select name="staffMember" id="staffMember">
                 <c:forEach var="staffMember" items="${staffMembers}">
                   <option value="${staffMember.id}">${staffMember.lastName}, ${staffMember.firstName}</option>
                 </c:forEach>
@@ -75,6 +75,14 @@
     <div id="worklistItemsWrapper" style="display:none;">
       <div class="searchResultsTitle"><fmt:message key="worklist.listWorklistItems.worklistTitle"/></div>
       <div id="worklistItemsContainer" class="searchResultsContainer">
+        <div class="genericFormSection">   
+          <select name="worklistTemplate" id="worklistTemplate">
+            <c:forEach var="worklistTemplate" items="${worklistTemplates}">
+              <option value="${worklistTemplate.id}">${worklistTemplate.description}</option>
+            </c:forEach>
+          </select>
+          <input type="button" id="createNew" name="createNew" value="<fmt:message key="worklist.listWorklistItems.createNew"/>" onClick="createNew();">
+        </div>
         <div id="worklistItemsTableContainer"></div>
       </div>
     </div>

@@ -1916,13 +1916,39 @@ public class StudentRESTService extends AbstractRESTService {
     
     WorklistItemTemplate template = worklistController.getTemplateForCourseAssessment(assessmentController.isRaisedGrade(courseAssessment));
     if (template != null) {
+      
+      // Student display name
+      
+      StringBuilder sb = new StringBuilder();
+      sb.append(student.getFirstName());
+      if (!StringUtils.isEmpty(student.getNickname())) {
+        sb.append(String.format(" \"%s\"", student.getNickname()));
+      }
+      if (!StringUtils.isEmpty(student.getLastName())) {
+        sb.append(String.format(" %s", student.getLastName()));
+      }
+      if (student.getStudyProgramme() != null) {
+        sb.append(String.format(" (%s)", student.getStudyProgramme().getName()));
+      }
+      String studentDisplayName = sb.toString();
+      
+      // Course display name
+      
+      sb = new StringBuilder();
+      sb.append(course.getName());
+      if (!StringUtils.isEmpty(course.getNameExtension())) {
+        sb.append(String.format(" (%s)", course.getNameExtension()));
+      }
+      String courseDisplayName = sb.toString();
+
       worklistController.create(
           assessor,
           template,
           new Date(),
-          template.getDescription(),
+          String.format("%s - %s - %s", template.getDescription(), studentDisplayName, courseDisplayName),
           template.getPrice(),
           template.getFactor(),
+          template.getBillingNumber(),
           courseAssessment,
           sessionController.getUser());
     }

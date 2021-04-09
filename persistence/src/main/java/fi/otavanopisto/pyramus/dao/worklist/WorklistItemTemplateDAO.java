@@ -20,23 +20,25 @@ import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate_;
 public class WorklistItemTemplateDAO extends PyramusEntityDAO<WorklistItemTemplate> {
 
   public WorklistItemTemplate createTemplate(WorklistItemTemplateType templateType, String description, Double price, Double factor,
-      Set<WorklistItemEditableFields> editableFields, Boolean removable) {
+      String billingNumber, Set<WorklistItemEditableFields> editableFields, Boolean removable) {
     WorklistItemTemplate template = new WorklistItemTemplate();
     template.setTemplateType(templateType);
     template.setDescription(description);
     template.setPrice(price);
     template.setFactor(factor);
+    template.setBillingNumber(billingNumber);
     template.setEditableFields(editableFields);
     template.setRemovable(removable);
     return persist(template);
   }
 
   public WorklistItemTemplate updateTemplate(WorklistItemTemplate template, WorklistItemTemplateType templateType, String description, Double price, Double factor,
-      Set<WorklistItemEditableFields> editableFields, Boolean removable) {
+      String billingNumber, Set<WorklistItemEditableFields> editableFields, Boolean removable) {
     template.setTemplateType(templateType);
     template.setDescription(description);
     template.setPrice(price);
     template.setFactor(factor);
+    template.setBillingNumber(billingNumber);
     template.setEditableFields(editableFields);
     template.setRemovable(removable);
     return persist(template);

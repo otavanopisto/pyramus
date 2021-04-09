@@ -53,6 +53,7 @@ public class EditWorklistTemplateViewController extends PyramusViewController im
     pageRequestContext.getRequest().setAttribute("descriptionEditable", fields.contains(WorklistItemEditableFields.DESCRIPTION));
     pageRequestContext.getRequest().setAttribute("priceEditable", fields.contains(WorklistItemEditableFields.PRICE));
     pageRequestContext.getRequest().setAttribute("factorEditable", fields.contains(WorklistItemEditableFields.FACTOR));
+    pageRequestContext.getRequest().setAttribute("billingNumberEditable", fields.contains(WorklistItemEditableFields.BILLING_NUMBER));
 
     pageRequestContext.setIncludeJSP("/templates/worklist/editworklisttemplate.jsp");
   }
