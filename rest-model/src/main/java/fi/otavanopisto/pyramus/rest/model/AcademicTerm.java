@@ -1,10 +1,7 @@
 package fi.otavanopisto.pyramus.rest.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import java.time.OffsetDateTime;
 
-@XmlRootElement
 public class AcademicTerm {
 
   public AcademicTerm() {
