@@ -35,7 +35,15 @@
   <properties>
     <!-- WildFly -->
 
-    <wildfly-spec-api.version>10.0.0.Final</wildfly-spec-api.version>
+    <wildfly.version>22.0.1.Final</wildfly.version>
+<!--     <wildfly-spec-api.version>10.0.0.Final</wildfly-spec-api.version> -->
+
+    <!-- Jakarta, packages not included in the above -->
+    
+    <jakarta-annotation.version>1.3.5</jakarta-annotation.version>
+    <jakarta-concurrent-api.version>1.1.2</jakarta-concurrent-api.version>
+    <jakarta-xml-bind.version>2.3.3</jakarta-xml-bind.version>
+    <jakarta-jms.version>2.0.3</jakarta-jms.version>
 
     <!-- JUnit4 -->
     <junit4.version>4.13.1</junit4.version>
@@ -61,8 +69,11 @@
 
     <!-- Commons -->
 
+    <commons-lang.version>2.6</commons-lang.version>
     <commons-fileupload.version>[1.3.3,)</commons-fileupload.version>
-    <commons-lang3.version>3.2.1</commons-lang3.version>
+    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <commons-collections4.version>4.4</commons-collections4.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
 
     <!-- OpenCSV -->
 
@@ -108,11 +119,35 @@
       <!-- WildFly -->
 
       <dependency>
-        <groupId>org.wildfly</groupId>
-        <artifactId>wildfly-spec-api</artifactId>
-        <version>${wildfly-spec-api.version}</version>
-        <type>pom</type>
+        <groupId>org.wildfly.bom</groupId>
+        <artifactId>wildfly-jakartaee8</artifactId>
         <scope>import</scope>
+        <type>pom</type>
+        <version>${wildfly.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>${jakarta-annotation.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>${jakarta-xml-bind.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>jakarta.enterprise.concurrent</groupId>
+        <artifactId>jakarta.enterprise.concurrent-api</artifactId>
+        <version>${jakarta-concurrent-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>jakarta.jms</groupId>
+        <artifactId>jakarta.jms-api</artifactId>
+        <version>${jakarta-jms.version}</version>
       </dependency>
 
       <!-- OpenId -->
@@ -126,6 +161,12 @@
       <!-- Commons -->
 
       <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>commons-fileupload</groupId>
         <artifactId>commons-fileupload</artifactId>
         <version>${commons-fileupload.version}</version>
@@ -135,6 +176,18 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${commons-lang3.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-collections4</artifactId>
+        <version>${commons-collections4.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>${commons-beanutils.version}</version>
       </dependency>
 
       <!-- OpenCSV -->
