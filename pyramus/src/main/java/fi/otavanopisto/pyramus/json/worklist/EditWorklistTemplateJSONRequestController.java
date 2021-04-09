@@ -34,6 +34,7 @@ public class EditWorklistTemplateJSONRequestController extends JSONRequestContro
     String description = requestContext.getRequest().getParameter("description");
     Double price = NumberUtils.createDouble(requestContext.getRequest().getParameter("price"));
     Double factor = NumberUtils.createDouble(requestContext.getRequest().getParameter("factor"));
+    String billingNumber = requestContext.getString("billingNumber");
     Set<WorklistItemEditableFields> editableFields = new HashSet<>();
     if (requestContext.getRequest().getParameter("dateEditable") != null) {
       editableFields.add(WorklistItemEditableFields.ENTRYDATE);
@@ -47,15 +48,18 @@ public class EditWorklistTemplateJSONRequestController extends JSONRequestContro
     if (requestContext.getRequest().getParameter("factorEditable") != null) {
       editableFields.add(WorklistItemEditableFields.FACTOR);
     }
+    if (requestContext.getRequest().getParameter("billingNumberEditable") != null) {
+      editableFields.add(WorklistItemEditableFields.BILLING_NUMBER);
+    }
     Boolean removable = requestContext.getRequest().getParameter("removable") != null;
     
     WorklistItemTemplateDAO worklistItemTemplateDAO = DAOFactory.getInstance().getWorklistItemTemplateDAO();
     if (templateId == null) {
-      worklistItemTemplateDAO.createTemplate(templateType, description, price, factor, editableFields, removable);
+      worklistItemTemplateDAO.createTemplate(templateType, description, price, factor, billingNumber, editableFields, removable);
     }
     else {
       WorklistItemTemplate template = worklistItemTemplateDAO.findById(templateId);
-      worklistItemTemplateDAO.updateTemplate(template, templateType, description, price, factor, editableFields, removable);
+      worklistItemTemplateDAO.updateTemplate(template, templateType, description, price, factor, billingNumber, editableFields, removable);
     }
 
     String redirectURL = requestContext.getRequest().getContextPath() + "/worklist/manageworklisttemplates.page";

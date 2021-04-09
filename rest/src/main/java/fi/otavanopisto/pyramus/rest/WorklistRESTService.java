@@ -2,10 +2,8 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -125,6 +123,9 @@ public class WorklistRESTService {
     Double factor = template.getEditableFields().contains(WorklistItemEditableFields.FACTOR)
         ? payload.getFactor()
         : template.getFactor();
+    String billingNumber = template.getEditableFields().contains(WorklistItemEditableFields.BILLING_NUMBER)
+        ? payload.getBillingNumber()
+        : template.getBillingNumber();
     
     // Create a worklist item based on the template
     
@@ -135,6 +136,7 @@ public class WorklistRESTService {
         description,
         price,
         factor,
+        billingNumber,
         null,
         sessionController.getUser());
     return Response.ok(createRestModel(worklistItem)).build();
@@ -180,6 +182,9 @@ public class WorklistRESTService {
     Double factor = worklistItem.getEditableFields().contains(WorklistItemEditableFields.FACTOR)
         ? payload.getFactor()
         : worklistItem.getFactor();
+    String billingNumber = worklistItem.getEditableFields().contains(WorklistItemEditableFields.BILLING_NUMBER)
+        ? payload.getBillingNumber()
+        : worklistItem.getBillingNumber();
         
     // Update the worklist item
     
@@ -189,6 +194,7 @@ public class WorklistRESTService {
         description,
         price,
         factor,
+        billingNumber,
         sessionController.getUser());
     return Response.ok(createRestModel(worklistItem)).build();
   }
@@ -338,6 +344,7 @@ public class WorklistRESTService {
     restModel.setDescription(template.getDescription());
     restModel.setPrice(template.getPrice());
     restModel.setFactor(template.getFactor());
+    restModel.setBillingNumber(template.getBillingNumber());
     restModel.setEditableFields(template.getEditableFields().stream().map(Object::toString).collect(Collectors.toSet()));
     return restModel;
   }
@@ -350,6 +357,7 @@ public class WorklistRESTService {
     restModel.setDescription(worklistItem.getDescription());
     restModel.setPrice(worklistItem.getPrice());
     restModel.setFactor(worklistItem.getFactor());
+    restModel.setBillingNumber(worklistItem.getBillingNumber());
     if (worklistItem.getCourseAssessment() != null) {
       restModel.setCourseAssessment(createRestModel(worklistItem.getCourseAssessment()));
     }

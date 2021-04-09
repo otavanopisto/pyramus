@@ -81,6 +81,14 @@ public class WorklistItemTemplate implements ArchivableEntity {
     this.editableFields = editableFields;
   }
 
+  public String getBillingNumber() {
+    return billingNumber;
+  }
+
+  public void setBillingNumber(String billingNumber) {
+    this.billingNumber = billingNumber;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -96,6 +104,9 @@ public class WorklistItemTemplate implements ArchivableEntity {
   @Column
   private Double factor;
   
+  @Column
+  private String billingNumber;
+
   @NotNull
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)

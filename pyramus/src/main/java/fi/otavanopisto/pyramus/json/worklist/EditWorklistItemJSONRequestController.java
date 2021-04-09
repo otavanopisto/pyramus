@@ -22,11 +22,12 @@ public class EditWorklistItemJSONRequestController extends JSONRequestController
     String description = requestContext.getRequest().getParameter("description");
     Double price = requestContext.getDouble("price");
     Double factor = requestContext.getDouble("factor");
+    String billingNumber = requestContext.getString("billingNumber"); 
     Long loggedUserId = requestContext.getLoggedUserId();
     StaffMember loggedUser = staffMemberDAO.findById(loggedUserId);
     
     WorklistItem worklistItem = worklistItemDAO.findById(itemId);
-    worklistItemDAO.update(worklistItem, entryDate, description, price, factor, loggedUser);
+    worklistItemDAO.update(worklistItem, entryDate, description, price, factor, billingNumber, loggedUser);
   }
 
   public UserRole[] getAllowedRoles() {

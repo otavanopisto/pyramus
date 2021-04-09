@@ -81,12 +81,21 @@ public class WorklistItemRestModel {
     this.templateId = templateId;
   }
 
+  public String getBillingNumber() {
+    return billingNumber;
+  }
+
+  public void setBillingNumber(String billingNumber) {
+    this.billingNumber = billingNumber;
+  }
+
   private Long id;
   private Long templateId;
   private LocalDate entryDate;
   private String description;
   private Double price;
   private Double factor;
+  private String billingNumber;
   private WorklistItemCourseAssessmentRestModel courseAssessment;
   private Set<String> editableFields;
   private Boolean removable;

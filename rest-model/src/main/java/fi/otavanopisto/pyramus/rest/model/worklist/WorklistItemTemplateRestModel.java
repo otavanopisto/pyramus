@@ -47,10 +47,19 @@ public class WorklistItemTemplateRestModel {
     this.editableFields = editableFields;
   }
 
+  public String getBillingNumber() {
+    return billingNumber;
+  }
+
+  public void setBillingNumber(String billingNumber) {
+    this.billingNumber = billingNumber;
+  }
+
   private Long id;
   private String description;
   private Double price;
   private Double factor;
+  private String billingNumber;
   private Set<String> editableFields;
 
 }

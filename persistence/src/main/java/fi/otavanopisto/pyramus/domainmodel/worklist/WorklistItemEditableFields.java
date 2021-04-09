@@ -5,6 +5,7 @@ public enum WorklistItemEditableFields {
   ENTRYDATE,
   DESCRIPTION,
   PRICE,
-  FACTOR
+  FACTOR,
+  BILLING_NUMBER
   
 }

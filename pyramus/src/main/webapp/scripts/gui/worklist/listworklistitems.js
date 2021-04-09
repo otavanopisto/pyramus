@@ -19,6 +19,7 @@ function doList() {
           worklistItems[i].description,
           worklistItems[i].price,
           worklistItems[i].factor,
+          worklistItems[i].billingNumber,
           '', // assessment button
           '', // remove button
         ]);
@@ -30,6 +31,39 @@ function doList() {
       $('worklistItemsWrapper').setStyle({
         display : ''
       });
+    }
+  });
+}
+
+function createNew() {
+  var userId = $("staffMember").value;
+  var templateId = $("worklistTemplate").value;
+  JSONRequest.request("worklist/createworklistitem.json", {
+    parameters : {
+      userId : userId,
+      templateId : templateId
+    },
+    onSuccess : function(jsonResponse) {
+      var table = getIxTableById('worklistItemsTable');
+      var worklistItem = jsonResponse.worklistItem;
+      table.addRow([
+        worklistItem.id,
+        '', // edit button
+        worklistItem.entryDate,
+        worklistItem.description,
+        worklistItem.price,
+        worklistItem.factor,
+        worklistItem.billingNumber,
+        '', // assessment button
+        '', // remove button
+      ]);
+      if (!worklistItem.hasAssessment) {
+        table.hideCell(table.getRowCount() - 1, table.getNamedColumnIndex("assessmentButton"));
+      }
+      var row = table.getRowCount() - 1;
+      for (var i = 0; i < table.getColumnCount(); i++) {
+        table.setCellEditable(row, i, table.isCellEditable(row, i) == false);
+      }
     }
   });
 }
@@ -66,13 +100,15 @@ function onLoad(event) {
             var description = table.getCellValue(event.row, table.getNamedColumnIndex('description'));
             var price = table.getCellValue(event.row, table.getNamedColumnIndex('price'));
             var factor = table.getCellValue(event.row, table.getNamedColumnIndex('factor'));
+            var billingNumber = table.getCellValue(event.row, table.getNamedColumnIndex('billingNumber'));
             JSONRequest.request("worklist/editworklistitem.json", {
               parameters : {
                 itemId : itemId,
                 entryDate : entryDate,
                 description : description,
                 price : price,
-                factor : factor
+                factor : factor,
+                billingNumber: billingNumber
               }
             });
           }
@@ -90,7 +126,7 @@ function onLoad(event) {
       {
         header : getLocale().getText("worklist.listWorklistItems.description"),
         left : 8 + 30 + 150 + 8,
-        width : 300,
+        width : 800,
         dataType : 'text',
         editable : false,
         paramName : 'description',
@@ -98,7 +134,7 @@ function onLoad(event) {
       },
       {
         header : getLocale().getText("worklist.listWorklistItems.price"),
-        left : 8 + 30 + 150 + 8 + 300 + 8,
+        right : 8 + 30 + 30 + 150 + 8 + 50 + 8,
         width : 50,
         dataType : 'text',
         editable : false,
@@ -107,11 +143,20 @@ function onLoad(event) {
       },
       {
         header : getLocale().getText("worklist.listWorklistItems.factor"),
-        left : 8 + 30 + 150 + 8 + 300 + 8 + 50 + 8,
+        right : 8 + 30 + 30 + 150 + 8,
         width : 50,
         dataType : 'text',
         editable : false,
         paramName : 'factor',
+        required : true
+      },
+      {
+        header : getLocale().getText("worklist.listWorklistItems.billingNumber"),
+        right: 8 + 30 + 30,
+        width : 150,
+        dataType : 'text',
+        editable : false,
+        paramName : 'billingNumber',
         required : true
       },
       {
