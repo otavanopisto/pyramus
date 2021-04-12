@@ -324,10 +324,10 @@ public class ViewApplicationViewController extends PyramusViewController {
     switch (value) {
     case "lukio":
       return "Lukion päättötodistus";
-    case "yo":
+    case "yo": // #1222 removed from UI but preserved for backward compatibility
       return "YO-tutkinto";
     case "yo_ammatillinen":
-      return "YO-tutkinto ammatillisen tutkinnon pohjalta";
+      return "YO-tutkinto ammatillisen tutkinnon pohjalta (maksullinen opiskelu)";
     case "molemmat":
       return "Lukion päättötodistus ja YO-tutkinto";
     default:
