@@ -38,6 +38,9 @@ import fi.otavanopisto.pyramus.events.StudentGroupStudentRemovedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupStudentUpdatedEvent;
 import fi.otavanopisto.pyramus.events.StudentGroupUpdatedEvent;
 import fi.otavanopisto.pyramus.events.StudentUpdatedEvent;
+import fi.otavanopisto.pyramus.events.StudyProgrammeArchivedEvent;
+import fi.otavanopisto.pyramus.events.StudyProgrammeCreatedEvent;
+import fi.otavanopisto.pyramus.events.StudyProgrammeUpdatedEvent;
 
 public class WebhookEventListeners {
 
@@ -195,6 +198,20 @@ public class WebhookEventListeners {
 
   public void onStaffMemberDeleted(@Observes(during=TransactionPhase.AFTER_SUCCESS) StaffMemberDeletedEvent event) {
     webhooks.sendWebhookNotification(new WebhookStaffMemberDeletePayload(event.getStaffMemberId()));
+  }
+
+  /* StudyProgramme */
+  
+  public void onStudyProgrammeCreated(@Observes StudyProgrammeCreatedEvent event) {
+    webhookPayloadQueue.queuePayload(new WebhookStudyProgrammeCreatePayload(event.getStudyProgrammeId()));
+  }
+
+  public void onStudyProgrammeUpdated(@Observes StudyProgrammeUpdatedEvent event) {
+    webhookPayloadQueue.queuePayload(new WebhookStudyProgrammeUpdatePayload(event.getStudyProgrammeId()));
+  }
+
+  public void onStudyProgrammeArchived(@Observes StudyProgrammeArchivedEvent event) {
+    webhookPayloadQueue.queuePayload(new WebhookStudyProgrammeArchivePayload(event.getStudyProgrammeId()));
   }
 
   /* StudentGroup */
