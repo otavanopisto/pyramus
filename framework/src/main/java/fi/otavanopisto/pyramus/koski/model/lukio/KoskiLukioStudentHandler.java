@@ -62,8 +62,8 @@ import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 
 public class KoskiLukioStudentHandler extends KoskiStudentHandler {
 
-  public static final String USERVARIABLE_UNDER18START = "lukioAlle18v";
-  public static final String USERVARIABLE_UNDER18STARTREASON = "under18studyStartReason";
+  public static final String USERVARIABLE_UNDER18START = KoskiConsts.UserVariables.STARTED_UNDER18;
+  public static final String USERVARIABLE_UNDER18STARTREASON = KoskiConsts.UserVariables.UNDER18_STARTREASON;
   private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.lukio;
 
   @Inject
@@ -287,14 +287,7 @@ public class KoskiLukioStudentHandler extends KoskiStudentHandler {
         Kielivalikoima kieli = Kielivalikoima.valueOf(langCode);
         
         if (kieli != null) {
-          KoskiOppiaineetYleissivistava valinta = 
-              studentSubjects.isALanguage(subjectCode) ? KoskiOppiaineetYleissivistava.A1 :
-                studentSubjects.isA1Language(subjectCode) ? KoskiOppiaineetYleissivistava.A1 :
-                  studentSubjects.isA2Language(subjectCode) ? KoskiOppiaineetYleissivistava.A2 :
-                    studentSubjects.isB1Language(subjectCode) ? KoskiOppiaineetYleissivistava.B1 :
-                      studentSubjects.isB2Language(subjectCode) ? KoskiOppiaineetYleissivistava.B2 :
-                        studentSubjects.isB3Language(subjectCode) ? KoskiOppiaineetYleissivistava.B3 : null;
-          
+          KoskiOppiaineetYleissivistava valinta = studentSubjects.koskiKoodi(subjectCode);
           LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusVierasKieli(valinta, kieli, 
               isPakollinenOppiaine(student, valinta));
           return mapSubject(subject, subjectCode, tunniste, map);

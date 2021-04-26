@@ -35,6 +35,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.koski.CreditStub;
 import fi.otavanopisto.pyramus.koski.CreditStubCredit;
+import fi.otavanopisto.pyramus.koski.KoskiConsts;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
@@ -77,8 +78,8 @@ import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 
 public class KoskiInternetixLukioStudentHandler extends KoskiStudentHandler {
 
-  public static final String USERVARIABLE_UNDER18START = "lukioAlle18v";
-  public static final String USERVARIABLE_UNDER18STARTREASON = "under18studyStartReason";
+  public static final String USERVARIABLE_UNDER18START = KoskiConsts.UserVariables.STARTED_UNDER18;
+  public static final String USERVARIABLE_UNDER18STARTREASON = KoskiConsts.UserVariables.UNDER18_STARTREASON;
   private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.aineopiskelulukio;
 
   @Inject

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KoskiIntegrationSettings {
@@ -55,8 +56,22 @@ public class KoskiIntegrationSettings {
     this.studyEndReasonMapping = studyEndReasonMapping;
   }
 
+  @JsonIgnore
+  public OpintojenLaajuusYksikko getEducationalTimeUnitMapping(Long educationalTimeUnitId) {
+    return educationalTimeUnitMapping.get(educationalTimeUnitId);
+  }
+  
+  public Map<Long, OpintojenLaajuusYksikko> getEducationalTimeUnitMapping() {
+    return educationalTimeUnitMapping;
+  }
+
+  public void setEducationalTimeUnitMapping(Map<Long, OpintojenLaajuusYksikko> educationalTimeUnitMapping) {
+    this.educationalTimeUnitMapping = educationalTimeUnitMapping;
+  }
+
   private String academyIdentifier;
   private Map<KoskiStudyProgrammeHandler, KoskiStudyProgrammeHandlerParams> handlerParams = new HashMap<>();
   private Set<Long> filteredGrades = new HashSet<>();
   private Map<Long, StudyEndReasonMapping> studyEndReasonMapping = new HashMap<>();
+  private Map<Long, OpintojenLaajuusYksikko> educationalTimeUnitMapping = new HashMap<>();
 }

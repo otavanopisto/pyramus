@@ -16,7 +16,7 @@ import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.KoskiAikuistenPerusopetuksenStudentHandler;
 import fi.otavanopisto.pyramus.koski.model.apa.KoskiAPAStudentHandler;
 import fi.otavanopisto.pyramus.koski.model.internetix.KoskiInternetixStudentHandler;
-import fi.otavanopisto.pyramus.koski.model.lukio.KoskiLukioStudentHandler;
+import fi.otavanopisto.pyramus.koski.model.lukio.KoskiLukioStudentHandlerDelegator;
 
 @ApplicationScoped
 public class KoskiController {
@@ -31,7 +31,7 @@ public class KoskiController {
   private KoskiAPAStudentHandler apaHandler;
 
   @Inject
-  private KoskiLukioStudentHandler lukioHandler;
+  private KoskiLukioStudentHandlerDelegator lukioHandler;
   
   @Inject
   private KoskiInternetixStudentHandler internetixHandler;

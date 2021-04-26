@@ -33,7 +33,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentSubjectGradeDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
-import fi.otavanopisto.pyramus.domainmodel.base.Curriculum;
+import fi.otavanopisto.pyramus.domainmodel.base.EducationalLength;
 import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
@@ -54,6 +54,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kunta;
 import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.model.HenkilovahvistusPaikkakunnalla;
@@ -61,6 +62,7 @@ import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
 import fi.otavanopisto.pyramus.koski.model.Kuvaus;
+import fi.otavanopisto.pyramus.koski.model.Laajuus;
 import fi.otavanopisto.pyramus.koski.model.LahdeJarjestelmaID;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
@@ -461,7 +463,11 @@ public abstract class KoskiStudentHandler {
           stub = stubs.get(courseCode);
         }
         
-        stub.addCredit(new CreditStubCredit(ca, Type.CREDIT));
+        Laajuus laajuus = kurssinLaajuus(course);
+        
+        stub.addCredit(new CreditStubCredit(ca, Type.CREDIT, 
+            laajuus != null ? laajuus.getArvo() : 0,
+            laajuus != null ? laajuus.getYksikko().getValue() : null));
       } else {
         logger.log(Level.WARNING, String.format("Couldn't resolve OPS for CourseAssessment %d", ca.getId()));
         koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNRESOLVED_CREDIT_CURRICULUM, new Date(), course.getName());
@@ -488,7 +494,11 @@ public abstract class KoskiStudentHandler {
             stub = stubs.get(courseCode);
           }
           
-          stub.addCredit(new CreditStubCredit(tc, Type.RECOGNIZED));
+          Laajuus laajuus = kurssinLaajuus(tc);
+          
+          stub.addCredit(new CreditStubCredit(tc, Type.RECOGNIZED,
+              laajuus != null ? laajuus.getArvo() : 0,
+              laajuus != null ? laajuus.getYksikko().getValue() : null));
         } else {
           logger.log(Level.WARNING, String.format("Couldn't resolve OPS for TransferCredit %d", tc.getId()));
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNRESOLVED_CREDIT_CURRICULUM, new Date(), tc.getCourseName());
@@ -504,6 +514,7 @@ public abstract class KoskiStudentHandler {
         Integer courseNumber = null;
         String courseName = null;
         OpiskelijanOPS creditOPS = null;
+        Laajuus laajuus = null;
         
         switch (credit.getCreditType()) {
           case CourseAssessment:
@@ -513,6 +524,7 @@ public abstract class KoskiStudentHandler {
             subject = course != null ? course.getSubject() : null;
             courseNumber = course.getCourseNumber();
             courseName = course.getName();
+            laajuus = kurssinLaajuus(course);
 
             creditOPS = resolveSingleOPSFromCredit(ca, orderedOPSs, defaultOPS);
           break;
@@ -522,6 +534,7 @@ public abstract class KoskiStudentHandler {
             subject = tc.getSubject();
             courseNumber = tc.getCourseNumber();
             courseName = tc.getCourseName();
+            laajuus = kurssinLaajuus(tc);
 
             creditOPS = resolveSingleOPSFromCredit(tc, orderedOPSs, defaultOPS);
           break;
@@ -544,7 +557,9 @@ public abstract class KoskiStudentHandler {
             stub = stubs.get(courseCode);
           }
           
-          stub.addCredit(new CreditStubCredit(credit, Type.RECOGNIZED));
+          stub.addCredit(new CreditStubCredit(credit, Type.RECOGNIZED,
+              laajuus != null ? laajuus.getArvo() : 0,
+              laajuus != null ? laajuus.getYksikko().getValue() : null));
         }
       });
     }
@@ -562,6 +577,24 @@ public abstract class KoskiStudentHandler {
     return result;
   }
 
+  protected Laajuus kurssinLaajuus(Course course) {
+    return kurssinLaajuus(course.getCourseLength());
+  }
+
+  protected Laajuus kurssinLaajuus(TransferCredit transferCredit) {
+    return kurssinLaajuus(transferCredit.getCourseLength());
+  }
+
+  protected Laajuus kurssinLaajuus(EducationalLength educationalLength) {
+    if (educationalLength != null && educationalLength.getUnit() != null) {
+      int courseLength = (int) Math.round(educationalLength.getUnits());
+      OpintojenLaajuusYksikko lengthUnit = settings.getSettings().getKoski().getEducationalTimeUnitMapping(educationalLength.getUnit().getId());
+      return new Laajuus(courseLength, lengthUnit);
+    }
+    
+    return null;
+  }
+  
   private boolean isFilteredGrade(Credit credit, Set<Long> filteredGrades) {
     if (credit != null && credit.getGrade() != null) {
       Grade grade = credit.getGrade();
@@ -652,38 +685,9 @@ public abstract class KoskiStudentHandler {
   }
   
   protected OpiskelijanOPS resolveOPS(Student student) {
-    Curriculum curriculum = student.getCurriculum();
-    if (curriculum != null) {
-      return resolveOPS(curriculum.getId().intValue());
-    }
-    return null;
+    return settings.resolveOPS(student);
   }
   
-  protected OpiskelijanOPS resolveOPS(Long curriculumId) {
-    return resolveOPS(curriculumId.intValue());
-  }
-  
-  protected OpiskelijanOPS resolveOPS(Curriculum curriculum) {
-    if (curriculum != null) {
-      return resolveOPS(curriculum.getId().intValue());
-    } else {
-      return null;
-    }
-  }
-  
-  protected OpiskelijanOPS resolveOPS(int curriculumId) {
-    switch (curriculumId) {
-      case 1:
-        return OpiskelijanOPS.ops2016;
-      case 2:
-        return OpiskelijanOPS.ops2005;
-      case 3:
-        return OpiskelijanOPS.ops2018;
-    }
-    
-    return null;
-  }
-
   /**
    * Handles the situation when Student's studies are linked to other studies in another
    * school. Returns false if some of the needed variables for linking is missing, true otherwise.
@@ -738,7 +742,7 @@ public abstract class KoskiStudentHandler {
   protected OpiskelijanOPS resolveSingleOPSFromCredit(CourseAssessment courseAssessment, List<OpiskelijanOPS> orderedOPSs, OpiskelijanOPS defaultOPS) {
     if (courseAssessment.getCourseStudent() != null && courseAssessment.getCourseStudent().getCourse() != null && courseAssessment.getCourseStudent().getCourse().getCurriculums() != null) {
       Set<OpiskelijanOPS> creditOPSs = courseAssessment.getCourseStudent().getCourse().getCurriculums().stream()
-          .map(curriculum -> resolveOPS(curriculum))
+          .map(curriculum -> settings.resolveOPS(curriculum))
           .filter(Objects::nonNull)
           .collect(Collectors.toSet());
 
@@ -767,7 +771,7 @@ public abstract class KoskiStudentHandler {
    */
   protected OpiskelijanOPS resolveSingleOPSFromCredit(TransferCredit transferCredit, List<OpiskelijanOPS> orderedOPSs, OpiskelijanOPS defaultOPS) {
     if (transferCredit.getCurriculum() != null) {
-      OpiskelijanOPS ops = resolveOPS(transferCredit.getCurriculum());
+      OpiskelijanOPS ops = settings.resolveOPS(transferCredit.getCurriculum());
       
       // If the curriculum is in the list, return it
       if (orderedOPSs.contains(ops)) {
@@ -871,4 +875,24 @@ public abstract class KoskiStudentHandler {
     }
   }
 
+  protected Laajuus kurssinLaajuus(Student student, CreditStub stub) {
+    CreditStubCredits credits = stub.getCredits();
+    
+    if (CollectionUtils.isNotEmpty(credits)) {
+      int laajuus = credits.get(0).getCourseLength();
+      OpintojenLaajuusYksikko yksikko = credits.get(0).getCourseLenghtUnit();
+      
+      // Tarkistetaan, ettei arvosanalistassa ole ristiriitaisia arvoja
+      for (int i = 1; i < credits.size(); i++) {
+        if ((credits.get(i).getCourseLength() != laajuus) || (credits.get(i).getCourseLenghtUnit() != yksikko)) {
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.MISSING_STUDYENDREASONMAPPING, new Date());
+        }
+      }
+      
+      return new Laajuus(laajuus, yksikko);
+    }
+    
+    return null;
+  }
+  
 }
