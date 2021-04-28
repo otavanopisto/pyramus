@@ -8,6 +8,7 @@ import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.worklist.WorklistItemDAO;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItem;
+import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemState;
 import fi.otavanopisto.pyramus.framework.JSONRequestController;
 import fi.otavanopisto.pyramus.framework.UserRole;
 
@@ -23,11 +24,13 @@ public class EditWorklistItemJSONRequestController extends JSONRequestController
     Double price = requestContext.getDouble("price");
     Double factor = requestContext.getDouble("factor");
     String billingNumber = requestContext.getString("billingNumber"); 
+    WorklistItemState state = WorklistItemState.valueOf(requestContext.getString("state"));
     Long loggedUserId = requestContext.getLoggedUserId();
     StaffMember loggedUser = staffMemberDAO.findById(loggedUserId);
     
     WorklistItem worklistItem = worklistItemDAO.findById(itemId);
     worklistItemDAO.update(worklistItem, entryDate, description, price, factor, billingNumber, loggedUser);
+    worklistItemDAO.updateState(worklistItem, state);
   }
 
   public UserRole[] getAllowedRoles() {

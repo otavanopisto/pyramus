@@ -43,12 +43,13 @@ public class CreateWorklistItemJSONRequestController extends JSONRequestControll
         loggedUser);
 
     Map<String, Object> item = new HashMap<>();
-    item.put("id",  worklistItem.getId());
-    item.put("entryDate",  worklistItem.getEntryDate().getTime());
-    item.put("description",  worklistItem.getDescription());
+    item.put("id", worklistItem.getId());
+    item.put("entryDate", worklistItem.getEntryDate().getTime());
+    item.put("description", worklistItem.getDescription());
     item.put("price", worklistItem.getPrice());
     item.put("factor", worklistItem.getFactor());
     item.put("billingNumber", worklistItem.getBillingNumber());
+    item.put("state", worklistItem.getState());
     requestContext.addResponseParameter("worklistItem", item);
   }
 
