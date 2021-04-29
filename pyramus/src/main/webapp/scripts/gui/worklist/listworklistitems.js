@@ -80,7 +80,6 @@ function changeState() {
     var price = table.getCellValue(i, table.getNamedColumnIndex('price'));
     var factor = table.getCellValue(i, table.getNamedColumnIndex('factor'));
     var billingNumber = table.getCellValue(i, table.getNamedColumnIndex('billingNumber'));
-    var state = table.getCellValue(i, table.getNamedColumnIndex('state'));
     JSONRequest.request("worklist/editworklistitem.json", {
       parameters : {
         itemId : itemId,
