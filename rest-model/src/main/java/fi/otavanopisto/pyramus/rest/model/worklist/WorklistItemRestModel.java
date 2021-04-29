@@ -89,8 +89,17 @@ public class WorklistItemRestModel {
     this.billingNumber = billingNumber;
   }
 
+  public String getState() {
+    return state;
+  }
+
+  public void setState(String state) {
+    this.state = state;
+  }
+
   private Long id;
   private Long templateId;
+  private String state;
   private LocalDate entryDate;
   private String description;
   private Double price;

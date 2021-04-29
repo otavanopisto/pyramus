@@ -75,13 +75,22 @@
     <div id="worklistItemsWrapper" style="display:none;">
       <div class="searchResultsTitle"><fmt:message key="worklist.listWorklistItems.worklistTitle"/></div>
       <div id="worklistItemsContainer" class="searchResultsContainer">
-        <div class="genericFormSection">   
+        <div class="genericFormSection" style="padding:8px;">   
           <select name="worklistTemplate" id="worklistTemplate">
             <c:forEach var="worklistTemplate" items="${worklistTemplates}">
               <option value="${worklistTemplate.id}">${worklistTemplate.description}</option>
             </c:forEach>
           </select>
           <input type="button" id="createNew" name="createNew" value="<fmt:message key="worklist.listWorklistItems.createNew"/>" onClick="createNew();">
+          <span style="float:right;">
+            <select name="stateChangeDropdown" id="stateChangeDropdown">
+              <option value="ENTERED"><fmt:message key="worklist.listWorklistItems.state.entered"/></option>
+              <option value="PROPOSED"><fmt:message key="worklist.listWorklistItems.state.proposed"/></option>
+              <option value="APPROVED"><fmt:message key="worklist.listWorklistItems.state.approved"/></option>
+              <option value="PAID"><fmt:message key="worklist.listWorklistItems.state.paid"/></option>
+            </select>
+            <input type="button" id="changeStateButton" name="changeStateButton" value="<fmt:message key="worklist.listWorklistItems.changeState"/>" onClick="changeState();">
+          </span>
         </div>
         <div id="worklistItemsTableContainer"></div>
       </div>

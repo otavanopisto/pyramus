@@ -20,6 +20,7 @@ function doList() {
           worklistItems[i].price,
           worklistItems[i].factor,
           worklistItems[i].billingNumber,
+          worklistItems[i].state,
           '', // assessment button
           '', // remove button
         ]);
@@ -54,6 +55,7 @@ function createNew() {
         worklistItem.price,
         worklistItem.factor,
         worklistItem.billingNumber,
+        worklistItem.state,
         '', // assessment button
         '', // remove button
       ]);
@@ -66,6 +68,31 @@ function createNew() {
       }
     }
   });
+}
+
+function changeState() {
+  var table = getIxTableById('worklistItemsTable');
+  var newState = $("stateChangeDropdown").value;
+  for (var i = 0; i < table.getRowCount(); i++) {
+    var itemId = table.getCellValue(i, table.getNamedColumnIndex('worklistItemId'));
+    var entryDate = table.getCellValue(i, table.getNamedColumnIndex('entryDate'));
+    var description = table.getCellValue(i, table.getNamedColumnIndex('description'));
+    var price = table.getCellValue(i, table.getNamedColumnIndex('price'));
+    var factor = table.getCellValue(i, table.getNamedColumnIndex('factor'));
+    var billingNumber = table.getCellValue(i, table.getNamedColumnIndex('billingNumber'));
+    JSONRequest.request("worklist/editworklistitem.json", {
+      parameters : {
+        itemId : itemId,
+        entryDate : entryDate,
+        description : description,
+        price : price,
+        factor : factor,
+        billingNumber: billingNumber,
+        state: newState
+      }
+    });
+    table.setCellValue(i, table.getNamedColumnIndex('state'), newState);
+  }
 }
 
 function onListWorklistItems(event) {
@@ -101,6 +128,7 @@ function onLoad(event) {
             var price = table.getCellValue(event.row, table.getNamedColumnIndex('price'));
             var factor = table.getCellValue(event.row, table.getNamedColumnIndex('factor'));
             var billingNumber = table.getCellValue(event.row, table.getNamedColumnIndex('billingNumber'));
+            var state = table.getCellValue(event.row, table.getNamedColumnIndex('state'));
             JSONRequest.request("worklist/editworklistitem.json", {
               parameters : {
                 itemId : itemId,
@@ -108,7 +136,8 @@ function onLoad(event) {
                 description : description,
                 price : price,
                 factor : factor,
-                billingNumber: billingNumber
+                billingNumber: billingNumber,
+                state: state
               }
             });
           }
@@ -134,7 +163,7 @@ function onLoad(event) {
       },
       {
         header : getLocale().getText("worklist.listWorklistItems.price"),
-        right : 8 + 30 + 30 + 150 + 8 + 50 + 8,
+        right : 8 + 30 + 30 + 150 + 8 + 150 + 8 + 50 + 8,
         width : 50,
         dataType : 'text',
         editable : false,
@@ -143,7 +172,7 @@ function onLoad(event) {
       },
       {
         header : getLocale().getText("worklist.listWorklistItems.factor"),
-        right : 8 + 30 + 30 + 150 + 8,
+        right : 8 + 30 + 30 + 150 + 8 + 150 + 8,
         width : 50,
         dataType : 'text',
         editable : false,
@@ -152,12 +181,41 @@ function onLoad(event) {
       },
       {
         header : getLocale().getText("worklist.listWorklistItems.billingNumber"),
-        right: 8 + 30 + 30,
+        right: 8 + 30 + 30 + 150 + 8,
         width : 150,
         dataType : 'text',
         editable : false,
         paramName : 'billingNumber',
         required : true
+      },
+      {
+        header : getLocale().getText("worklist.listWorklistItems.state"),
+        right: 8 + 30 + 30,
+        width : 150,
+        dataType : 'select',
+        editable : false,
+        paramName : 'state',
+        required : true,
+        options : (function() {
+          var result = [];
+          result.push({
+            text : getLocale().getText("worklist.listWorklistItems.state.entered"),
+            value : 'ENTERED'
+          });
+          result.push({
+            text : getLocale().getText("worklist.listWorklistItems.state.proposed"),
+            value : 'PROPOSED'
+          });
+          result.push({
+            text : getLocale().getText("worklist.listWorklistItems.state.approved"),
+            value : 'APPROVED'
+          });
+          result.push({
+            text : getLocale().getText("worklist.listWorklistItems.state.paid"),
+            value : 'PAID'
+          });
+          return result;
+        })()
       },
       {
         right : 8 + 30,

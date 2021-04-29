@@ -6,6 +6,8 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -93,12 +95,12 @@ public class WorklistItem implements ArchivableEntity {
     this.archived = archived;
   }
 
-  public Boolean getLocked() {
-    return locked;
+  public WorklistItemState getState() {
+    return state;
   }
 
-  public void setLocked(Boolean locked) {
-    this.locked = locked;
+  public void setState(WorklistItemState state) {
+    this.state = state;
   }
 
   public User getModifier() {
@@ -187,9 +189,9 @@ public class WorklistItem implements ArchivableEntity {
   @Convert(converter = WorklistItemEditableFieldsConverter.class)
   private Set<WorklistItemEditableFields> editableFields;
 
-  @NotNull
-  @Column(nullable = false)
-  private Boolean locked = Boolean.FALSE;
+  @Column
+  @Enumerated (EnumType.STRING)
+  private WorklistItemState state;
 
   @NotNull
   @Column(nullable = false)

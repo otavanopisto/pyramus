@@ -39,6 +39,7 @@ public class ListWorklistItemsJSONRequestController extends JSONRequestControlle
       item.put("price", worklistItem.getPrice());
       item.put("factor", worklistItem.getFactor());
       item.put("billingNumber", worklistItem.getBillingNumber());
+      item.put("state",  worklistItem.getState());
       if (worklistItem.getCourseAssessment() != null) {
         item.put("hasAssessment", true);
       }
