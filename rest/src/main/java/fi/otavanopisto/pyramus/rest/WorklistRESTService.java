@@ -34,21 +34,26 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fi.otavanopisto.pyramus.dao.DAOFactory;
+import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.courses.Course;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
+import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItem;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemEditableFields;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemState;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplateType;
+import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.controller.AssessmentController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.WorklistController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.WorklistPermissions;
+import fi.otavanopisto.pyramus.rest.model.worklist.WorklistApproverRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemCourseAssessmentRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemStateChangeRestModel;
@@ -373,6 +378,26 @@ public class WorklistRESTService {
     List<WorklistItem> worklistItems = worklistController.listWorklistItemsByOwnerAndTimeframe(user, beginDate, endDate);
     worklistController.updateState(worklistItems, state, true);
     return Response.noContent().build();    
+  }
+  
+  @Path("/approvers")
+  @GET
+  @RESTPermit (WorklistPermissions.LIST_WORKLISTAPPROVERS)
+  public Response listWorklistApprovers() {
+    List<WorklistApproverRestModel> approvers = new ArrayList<>();
+    StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
+    List<StaffMember> staffMembers = staffMemberDAO.listByProperty(StaffMemberProperties.WORKLIST_APPROVER.getKey(), "1");
+    for (StaffMember staffMember : staffMembers) {
+      approvers.add(createRestModel(staffMember));
+    }
+    return Response.ok(approvers).build();
+  }
+
+  private WorklistApproverRestModel createRestModel(StaffMember staffMember) {
+    WorklistApproverRestModel restModel = new WorklistApproverRestModel();
+    restModel.setName(staffMember.getFullName());
+    restModel.setEmail(staffMember.getPrimaryEmail() == null ? null : staffMember.getPrimaryEmail().getAddress());
+    return restModel;
   }
   
   private WorklistItemTemplateRestModel createRestModel(WorklistItemTemplate template) {

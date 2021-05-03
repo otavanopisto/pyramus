@@ -31,6 +31,10 @@ public class WorklistPermissions extends AbstractPyramusPermissionCollection imp
   @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR, MANAGER, STUDY_PROGRAMME_LEADER, STUDY_GUIDER, TEACHER })
   public static final String LIST_WORKLISTITEMTEMPLATES = "LIST_WORKLISTITEMTEMPLATES";
+
+  @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ TRUSTED_SYSTEM })
+  public static final String LIST_WORKLISTAPPROVERS = "LIST_WORKLISTAPPROVERS";
   
   @Override
   public List<String> listPermissions() {

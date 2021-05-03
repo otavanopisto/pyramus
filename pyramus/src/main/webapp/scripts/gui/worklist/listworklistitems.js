@@ -32,6 +32,10 @@ function doList() {
       $('worklistItemsWrapper').setStyle({
         display : ''
       });
+      var urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('action')) {
+        $('stateChangeDropdown').value = urlParams.get('action');
+      }
     }
   });
 }
@@ -289,4 +293,15 @@ function onLoad(event) {
       }
     ]
   });
+  
+  // Presearch with query parameters
+  
+  var urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('user') && urlParams.has('begin') && urlParams.has('end')) {
+    filterForm.staffMember.value = urlParams.get('user');
+    getIxDateField('beginDate').setTimestamp(new Date(urlParams.get('begin')).getTime());
+    getIxDateField('endDate').setTimestamp(new Date(urlParams.get('end')).getTime());
+    doList();
+  }
+  
 };
