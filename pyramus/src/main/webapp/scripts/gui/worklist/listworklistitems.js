@@ -32,6 +32,10 @@ function doList() {
       $('worklistItemsWrapper').setStyle({
         display : ''
       });
+      var urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('action')) {
+        $('stateChangeDropdown').value = urlParams.get('action');
+      }
     }
   });
 }
