@@ -382,7 +382,7 @@ public class WorklistRESTService {
   
   @Path("/approvers")
   @GET
-  @RESTPermit(handling = Handling.INLINE)
+  @RESTPermit (WorklistPermissions.LIST_WORKLISTAPPROVERS)
   public Response listWorklistApprovers() {
     List<WorklistApproverRestModel> approvers = new ArrayList<>();
     StaffMemberDAO staffMemberDAO = DAOFactory.getInstance().getStaffMemberDAO();
