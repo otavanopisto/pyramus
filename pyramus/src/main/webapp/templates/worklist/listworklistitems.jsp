@@ -54,14 +54,14 @@
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="worklist.listWorklistItems.beginDate"/>
               </jsp:include>
-              <input type="text" name="beginDate" class="ixDateField"/> 
+              <input type="text" ix:datefieldid="beginDate" name="beginDate" class="ixDateField"/> 
             </div>
 
             <div class="genericFormSection">   
               <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                 <jsp:param name="titleLocale" value="worklist.listWorklistItems.endDate"/>
               </jsp:include>
-              <input type="text" name="endDate" class="ixDateField"/> 
+              <input type="text" ix:datefieldid="endDate" name="endDate" class="ixDateField"/> 
             </div>
             
             <div class="genericFormSubmitSection">

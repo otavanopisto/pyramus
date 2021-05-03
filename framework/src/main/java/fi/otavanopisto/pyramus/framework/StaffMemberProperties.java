@@ -12,8 +12,11 @@ public class StaffMemberProperties {
   public static final EntityProperty STUDY_APPROVER = new EntityProperty("studyApprover", 
       VariableType.BOOLEAN, "staffMemberProperties.studyApprover");
 
+  public static final EntityProperty WORKLIST_APPROVER = new EntityProperty("worklistApprover", 
+      VariableType.BOOLEAN, "staffMemberProperties.worklistApprover");
+
   public static List<EntityProperty> listProperties() {
-    return Arrays.asList(STUDY_APPROVER);
+    return Arrays.asList(STUDY_APPROVER, WORKLIST_APPROVER);
   }
   
   public static boolean isProperty(String key) {
