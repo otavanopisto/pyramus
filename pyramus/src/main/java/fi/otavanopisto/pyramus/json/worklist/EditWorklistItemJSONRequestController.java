@@ -29,8 +29,7 @@ public class EditWorklistItemJSONRequestController extends JSONRequestController
     StaffMember loggedUser = staffMemberDAO.findById(loggedUserId);
     
     WorklistItem worklistItem = worklistItemDAO.findById(itemId);
-    worklistItemDAO.update(worklistItem, entryDate, description, price, factor, billingNumber, loggedUser);
-    worklistItemDAO.updateState(worklistItem, state);
+    worklistItemDAO.update(worklistItem, entryDate, description, price, factor, billingNumber, state, loggedUser);
   }
 
   public UserRole[] getAllowedRoles() {

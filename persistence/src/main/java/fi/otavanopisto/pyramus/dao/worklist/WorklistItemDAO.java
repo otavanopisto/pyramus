@@ -108,12 +108,13 @@ public class WorklistItemDAO extends PyramusEntityDAO<WorklistItem> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public WorklistItem update(WorklistItem worklistItem, Date entryDate, String description, Double price, Double factor, String billingNumber, User currentUser) {
+  public WorklistItem update(WorklistItem worklistItem, Date entryDate, String description, Double price, Double factor, String billingNumber, WorklistItemState state, User currentUser) {
     worklistItem.setEntryDate(entryDate);
     worklistItem.setDescription(description);
     worklistItem.setPrice(price);
     worklistItem.setFactor(factor);
     worklistItem.setBillingNumber(billingNumber);
+    worklistItem.setState(state);
     worklistItem.setModified(new Date());
     worklistItem.setModifier(currentUser);
     return persist(worklistItem);

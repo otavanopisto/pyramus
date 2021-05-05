@@ -202,6 +202,7 @@ public class WorklistRESTService {
         price,
         factor,
         billingNumber,
+        WorklistItemState.ENTERED,
         sessionController.getUser());
     return Response.ok(createRestModel(worklistItem)).build();
   }
@@ -349,7 +350,7 @@ public class WorklistRESTService {
    * Only updates items that follow the proper change state flow. 
    */
   @Path("/changeItemsState")
-  @GET
+  @PUT
   @RESTPermit(handling = Handling.INLINE)
   public Response updateWorklistItemsState(WorklistItemStateChangeRestModel stateChange) {
     
