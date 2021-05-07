@@ -15,6 +15,7 @@ import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItem;
+import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemState;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItem_;
 
@@ -33,7 +34,7 @@ public class WorklistItemDAO extends PyramusEntityDAO<WorklistItem> {
     worklistItem.setBillingNumber(billingNumber);
     worklistItem.setCourseAssessment(courseAssessment);
     worklistItem.setEditableFields(template.getEditableFields());
-    worklistItem.setLocked(Boolean.FALSE);
+    worklistItem.setState(WorklistItemState.ENTERED);
     Date now = new Date();
     worklistItem.setCreator(currentUser);
     worklistItem.setCreated(now);
@@ -107,15 +108,21 @@ public class WorklistItemDAO extends PyramusEntityDAO<WorklistItem> {
     return entityManager.createQuery(criteria).getResultList();
   }
 
-  public WorklistItem update(WorklistItem worklistItem, Date entryDate, String description, Double price, Double factor, String billingNumber, User currentUser) {
+  public WorklistItem update(WorklistItem worklistItem, Date entryDate, String description, Double price, Double factor, String billingNumber, WorklistItemState state, User currentUser) {
     worklistItem.setEntryDate(entryDate);
     worklistItem.setDescription(description);
     worklistItem.setPrice(price);
     worklistItem.setFactor(factor);
     worklistItem.setBillingNumber(billingNumber);
+    worklistItem.setState(state);
     worklistItem.setModified(new Date());
     worklistItem.setModifier(currentUser);
     return persist(worklistItem);
+  }
+  
+  public WorklistItem updateState(WorklistItem worklistItem, WorklistItemState state) {
+    worklistItem.setState(state);
+    return persist(worklistItem); 
   }
 
 }

@@ -18,6 +18,7 @@ import fi.otavanopisto.pyramus.dao.worklist.WorklistItemTemplateDAO;
 import fi.otavanopisto.pyramus.domainmodel.grading.CourseAssessment;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItem;
+import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemState;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplateType;
 
@@ -39,15 +40,23 @@ public class WorklistController {
     return worklistItemDAO.create(template, user, entryDate, description, price, factor, billingNumber, courseAssessment, currentUser);
   }
 
-  public WorklistItem update(WorklistItem worklistItem, Date entryDate, String description, Double price, Double factor, String billingNumber, User currentUser) {
-    return worklistItemDAO.update(worklistItem, entryDate, description, price, factor, billingNumber, currentUser);
+  public WorklistItem update(WorklistItem worklistItem, Date entryDate, String description, Double price, Double factor, String billingNumber, WorklistItemState state, User currentUser) {
+    return worklistItemDAO.update(worklistItem, entryDate, description, price, factor, billingNumber, state, currentUser);
+  }
+  
+  public void updateState(List<WorklistItem> worklistItems, WorklistItemState state, boolean enforceChangeLogic) {
+    for (WorklistItem worklistItem : worklistItems) {
+      if (!enforceChangeLogic || isValidStateChange(worklistItem.getState(), state)) {
+        worklistItemDAO.updateState(worklistItem, state);
+      }
+    }
   }
 
   public void removeByCourseAssessment(CourseAssessment courseAssessment, boolean permanent) {
     if (permanent) {
       List<WorklistItem> worklistItems = worklistItemDAO.listByCourseAssessment(courseAssessment);
       for (WorklistItem worklistItem : worklistItems) {
-        if (!worklistItem.getLocked()) {
+        if (worklistItem.getState() == WorklistItemState.ENTERED || worklistItem.getState() == WorklistItemState.PROPOSED) {
           worklistItemDAO.delete(worklistItem);
         }
       }
@@ -55,7 +64,7 @@ public class WorklistController {
     else {
       List<WorklistItem> worklistItems = worklistItemDAO.listByCourseAssessmentAndArchived(courseAssessment, Boolean.FALSE);
       for (WorklistItem worklistItem : worklistItems) {
-        if (!worklistItem.getLocked()) {
+        if (worklistItem.getState() == WorklistItemState.ENTERED || worklistItem.getState() == WorklistItemState.PROPOSED) {
           worklistItemDAO.archive(worklistItem);
         }
       }
@@ -116,6 +125,10 @@ public class WorklistController {
     List<WorklistItem> worklistItems = worklistItemDAO.listByOwnerAndTimeframeAndArchived(owner, beginDate, endDate, false);
     worklistItems.sort(Comparator.comparing(WorklistItem::getEntryDate));
     return worklistItems;
+  }
+  
+  private boolean isValidStateChange(WorklistItemState oldState, WorklistItemState newState) {
+    return newState.ordinal() - 1 == oldState.ordinal();
   }
 
 }
