@@ -26,6 +26,6 @@ jobs:
         run: |
             pushd .
             cd pyramus
-            mvn verify -Pit
+            mvn clean verify --settings ~/.m2/mySettings.xml -Pit
             popd
              
