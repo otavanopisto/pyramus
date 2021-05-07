@@ -16,6 +16,8 @@ jobs:
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+      - name: Prepare maven settings
+        run: python prepare-maven.py
       - name: Build with Maven
         run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
       - name: Set Pyramus host
