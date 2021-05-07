@@ -253,8 +253,9 @@ function onLoad(event) {
         tooltip : getLocale().getText("worklist.listWorklistItems.delete"),
         onclick : function(event) {
           var table = event.tableComponent;
-          var description = table.getCellValue(event.row, table.getNamedColumnIndex('description'));
-          var itemId = table.getCellValue(event.row, table.getNamedColumnIndex('worklistItemId'));
+          var rowIndex = event.row;
+          var description = table.getCellValue(rowIndex, table.getNamedColumnIndex('description'));
+          var itemId = table.getCellValue(rowIndex, table.getNamedColumnIndex('worklistItemId'));
           var url = GLOBAL_contextPath + "/simpledialog.page?localeId=worklist.listWorklistItems.archiveConfirmDialogContent&localeParams="
               + encodeURIComponent(description);
 
@@ -280,7 +281,7 @@ function onLoad(event) {
                     itemId : itemId
                   },
                   onSuccess : function(jsonResponse) {
-                    table.deleteRow(event.row);
+                    table.deleteRow(rowIndex);
                   }
                 });
               break;
