@@ -720,6 +720,10 @@ IxTable = Class.create({
     }
   },
   _deleteRow: function (rowNumber) {
+    if (rowNumber == undefined || rowNumber < 0 || rowNumber > this.getRowCount() - 1) {
+      throw "Invalid row index " + rowNumber;
+    }
+    
     this.fire("beforeRowDelete", {
       tableComponent: this,
       row: rowNumber
