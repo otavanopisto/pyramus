@@ -19,10 +19,10 @@ jobs:
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-      - name: Build with Maven
-        run: mvn install --settings ~/.m2/mySettings.xml -DskipTests=true -Dmaven.javadoc.skip=true -B -V
       - name: Prepare maven settings
         run: python prepare-maven.py
+      - name: Build with Maven
+        run: mvn install --settings ~/.m2/mySettings.xml -DskipTests=true -Dmaven.javadoc.skip=true -B -V
       - name: Deploy
         run: mvn deploy --settings ~/.m2/mySettings.xml
       - name: Webhook to staging
