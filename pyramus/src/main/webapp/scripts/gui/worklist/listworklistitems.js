@@ -27,6 +27,10 @@ function doList() {
         if (!worklistItems[i].hasAssessment) {
           table.hideCell(table.getRowCount() - 1, table.getNamedColumnIndex("assessmentButton"));
         }
+        if (worklistItems[i].state == 'PAID') {
+          table.hideCell(table.getRowCount() - 1, table.getNamedColumnIndex("editButton"));
+          table.hideCell(table.getRowCount() - 1, table.getNamedColumnIndex("removeButton"));
+        }
       }
       table.reattachToDom();
       $('worklistItemsWrapper').setStyle({
@@ -84,17 +88,24 @@ function changeState() {
     var price = table.getCellValue(i, table.getNamedColumnIndex('price'));
     var factor = table.getCellValue(i, table.getNamedColumnIndex('factor'));
     var billingNumber = table.getCellValue(i, table.getNamedColumnIndex('billingNumber'));
-    JSONRequest.request("worklist/editworklistitem.json", {
-      parameters : {
-        itemId : itemId,
-        entryDate : entryDate,
-        description : description,
-        price : price,
-        factor : factor,
-        billingNumber: billingNumber,
-        state: newState
-      }
-    });
+    var state = table.getCellValue(i, table.getNamedColumnIndex('state'));
+    if (state != 'PAID') {
+      JSONRequest.request("worklist/editworklistitem.json", {
+        parameters : {
+          itemId : itemId,
+          entryDate : entryDate,
+          description : description,
+          price : price,
+          factor : factor,
+          billingNumber: billingNumber,
+          state: newState
+        }
+      });
+    }
+    else {
+      table.hideCell(i, table.getNamedColumnIndex("editButton"));
+      table.hideCell(i, table.getNamedColumnIndex("removeButton"));
+    }
     table.setCellValue(i, table.getNamedColumnIndex('state'), newState);
   }
 }
@@ -145,7 +156,8 @@ function onLoad(event) {
               }
             });
           }
-        }
+        },
+      paramName : 'editButton'
       },
       {
         header : getLocale().getText("worklist.listWorklistItems.entryDate"),
