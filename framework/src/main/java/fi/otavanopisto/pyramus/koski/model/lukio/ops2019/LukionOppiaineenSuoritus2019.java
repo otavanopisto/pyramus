@@ -7,27 +7,26 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenArviointi;
 
 @JsonDeserialize(using = JsonDeserializer.None.class)
 public class LukionOppiaineenSuoritus2019 extends LukionOsasuoritus2019 {
 
+  private static final SuorituksenTyyppi TYYPPI = SuorituksenTyyppi.lukionoppiaine;
+  
   public LukionOppiaineenSuoritus2019() {
+    super(TYYPPI);
   }
   
   public LukionOppiaineenSuoritus2019(LukionOppiaineenTunniste2019 koulutusmoduuli, boolean suoritettuErityisenäTutkintona) {
+    super(TYYPPI);
     this.koulutusmoduuli = koulutusmoduuli;
     this.suoritettuErityisenäTutkintona = suoritettuErityisenäTutkintona;
   }
   
   public LukionOppiaineenTunniste2019 getKoulutusmoduuli() {
     return koulutusmoduuli;
-  }
-  
-  public KoodistoViite<SuorituksenTyyppi> getTyyppi() {
-    return tyyppi;
   }
   
   public void addArviointi(LukionOppiaineenArviointi arviointi) {
@@ -54,5 +53,4 @@ public class LukionOppiaineenSuoritus2019 extends LukionOsasuoritus2019 {
   private boolean suoritettuErityisenäTutkintona;
   private LukionOppiaineenTunniste2019 koulutusmoduuli;
   private final List<LukionOppiaineenArviointi> arviointi = new ArrayList<>();
-  private final KoodistoViite<SuorituksenTyyppi> tyyppi = new KoodistoViite<>(SuorituksenTyyppi.lukionoppiaine);
 }

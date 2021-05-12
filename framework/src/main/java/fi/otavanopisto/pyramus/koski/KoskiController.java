@@ -17,6 +17,8 @@ import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.KoskiAikuistenPe
 import fi.otavanopisto.pyramus.koski.model.apa.KoskiAPAStudentHandler;
 import fi.otavanopisto.pyramus.koski.model.internetix.KoskiInternetixStudentHandler;
 import fi.otavanopisto.pyramus.koski.model.lukio.KoskiLukioStudentHandlerDelegator;
+import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.KoskiInternetixLukioStudentHandler2019;
+import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.KoskiLukioStudentHandler2019;
 
 @ApplicationScoped
 public class KoskiController {
@@ -39,6 +41,12 @@ public class KoskiController {
   @Inject
   private KoskiAikuistenPerusopetuksenStudentHandler aikuistenPerusopetuksenHandler;
 
+  @Inject
+  private KoskiLukioStudentHandler2019 lukioHandler2019;
+  
+  @Inject
+  private KoskiInternetixLukioStudentHandler2019 internetixLukioHandler2019;
+  
   /**
    * Lists student OIDs with the currently active handler for it (i.e. the ones that should currently be in use)
    */
@@ -66,6 +74,10 @@ public class KoskiController {
         return internetixHandler;
       case aikuistenperusopetuksenalkuvaihe:
         return apaHandler;
+      case lukio2019:
+        return lukioHandler2019;
+      case aineopiskelulukio2019:
+        return internetixLukioHandler2019;
 
       default:
         logger.severe(String.format("Handler for type %s couldn't be determined.", handlerType));

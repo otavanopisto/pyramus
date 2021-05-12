@@ -1,13 +1,7 @@
 package fi.otavanopisto.pyramus.koski.model.lukio.ops2019;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,21 +22,16 @@ import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 
-public class KoskiLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandler2019 {
+/**
+ * Käsittelijä 2019 (2021) lukion opetussuunnitelman aineopiskelijoille.
+ */
+public class KoskiInternetixLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandler2019 {
 
   public static final String USERVARIABLE_UNDER18START = KoskiConsts.UserVariables.STARTED_UNDER18;
   public static final String USERVARIABLE_UNDER18STARTREASON = KoskiConsts.UserVariables.UNDER18_STARTREASON;
-  private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.lukio2019;
+  private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.aineopiskelulukio2019;
 
-  @Inject
-  private Logger logger;
-
-  public Opiskeluoikeus oppimaaranOpiskeluoikeus(Student student, String academyIdentifier, KoskiStudyProgrammeHandler handler) {
-    if (handler != HANDLER_TYPE) {
-      logger.log(Level.SEVERE, String.format("Wrong handler type %s, expected %s w/person %d.", handler, HANDLER_TYPE, student.getPerson().getId()));
-      return null;
-    }
-    
+  public Opiskeluoikeus oppiaineidenOppimaaranOpiskeluoikeus(Student student, String academyIdentifier) {
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
 
@@ -63,7 +52,7 @@ public class KoskiLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandl
     }
     
     LukionOpiskeluoikeus opiskeluoikeus = new LukionOpiskeluoikeus();
-    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(handler, student.getId()));
+    opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(HANDLER_TYPE, student.getId()));
     opiskeluoikeus.setAlkamispaiva(student.getStudyStartDate());
     opiskeluoikeus.setPaattymispaiva(student.getStudyEndDate());
     if (StringUtils.isNotBlank(studyOid)) {
@@ -83,50 +72,42 @@ public class KoskiLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandl
     EducationType studentEducationType = student.getStudyProgramme() != null && student.getStudyProgramme().getCategory() != null ? 
         student.getStudyProgramme().getCategory().getEducationType() : null;
     
-    // NON-COMMON
-    
     Set<LukionOsasuoritus2019> oppiaineet = assessmentsToModel(ops, student, studentEducationType, studentSubjects, laskeKeskiarvot);
 
-    LukionOppimaaranSuoritus2019 suoritus = new LukionOppimaaranSuoritus2019(
-        LukionOppimaara.aikuistenops, Kieli.FI, toimipiste);
-    suoritus.getKoulutusmoduuli().setPerusteenDiaarinumero(getDiaarinumero(student));
+    LukionOppiaineenOppimaaranSuoritus2019 suoritus = new LukionOppiaineenOppimaaranSuoritus2019(
+        LukionOppimaara.aikuistenops, Kieli.FI, toimipiste, getDiaarinumero(student));
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
     if (sisällytäVahvistus) {
       suoritus.setVahvistus(getVahvistus(student, departmentIdentifier));
     }
     opiskeluoikeus.addSuoritus(suoritus);
     
-    oppiaineet.forEach(oppiaine -> suoritus.addOsasuoritus(oppiaine));
+    for (LukionOsasuoritus2019 oppiaine : oppiaineet) {
+      // Aineopinnot sallivat vain oppiaineen suorituksia
+      if (oppiaine instanceof LukionOppiaineenSuoritus2019) {
+        suoritus.addOsasuoritus((LukionOppiaineenSuoritus2019) oppiaine);
+      } else {
+        String tyyppi = String.valueOf(oppiaine.getTyyppi().getValue());
+        koskiPersonLogDAO.create(student.getPerson(), KoskiPersonState.GENERIC_WARNING, new Date(), tyyppi);
+      }
+    }
     
     return opiskeluoikeus;
   }
 
   @Override
   public void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
-    if (handler == HANDLER_TYPE) {
-      saveOrValidateOid(student, oid);
-    } else {
-      logger.severe(String.format("saveOrValidateOid called with wrong handler %s, expected %s ", handler, HANDLER_TYPE));
-    }
+    saveOrValidateInternetixOid(handler, student, oid);
   }
-
+  
   @Override
   public void removeOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
-    if (handler == HANDLER_TYPE) {
-      removeOid(student, oid);
-    } else {
-      logger.severe(String.format("removeOid called with wrong handler %s, expected %s ", handler, HANDLER_TYPE));
-    }
+    removeInternetixOid(handler, student, oid);
   }
   
   @Override
   public Set<KoskiStudentId> listOids(Student student) {
-    String oid = userVariableDAO.findByUserAndKey(student, KoskiConsts.VariableNames.KOSKI_STUDYPERMISSION_ID);
-    if (StringUtils.isNotBlank(oid)) {
-      return new HashSet<>(Arrays.asList(new KoskiStudentId(getStudentIdentifier(HANDLER_TYPE, student.getId()), oid)));
-    } else {
-      return new HashSet<>();
-    }
+    return loadInternetixOids(student);
   }
-  
+
 }

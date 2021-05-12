@@ -1,4 +1,4 @@
-package fi.otavanopisto.pyramus.koski.lukio;
+package fi.otavanopisto.pyramus.koski.lukio2019;
 
 import java.util.Date;
 
@@ -6,33 +6,33 @@ import fi.otavanopisto.pyramus.koski.AbstractKoskiData;
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
-import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssinTyyppi;
-import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssit;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionOppimaara;
+import fi.otavanopisto.pyramus.koski.koodisto.ModuuliKoodistoLOPS2021;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
+import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
 import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
+import fi.otavanopisto.pyramus.koski.model.Laajuus;
 import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.Oppija;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinSuoritus;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunniste;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnistePaikallinen;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionKurssinTunnisteValtakunnallinenOPS2015;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenArviointi;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritus;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusAidinkieli;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenTunniste;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppimaaranSuoritus;
-import fi.otavanopisto.pyramus.koski.model.lukio.LukionSuoritus;
+import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.LukionOpintojaksonSuoritus2019;
+import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.LukionOpintojaksonTunniste2019;
+import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.LukionOpintojaksonTunnisteMuuModuuli2019;
+import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.LukionOpintojaksonTunnistePaikallinen2019;
+import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.LukionOppiaineenSuoritus2019;
+import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.LukionOppiaineenSuoritusAidinkieli2019;
+import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.LukionOppimaaranSuoritus2019;
 
-public class LukioOppimaaraData extends AbstractKoskiData {
+public class LukioOppimaara2019Data extends AbstractKoskiData {
 
   public static Oppija getTestStudentMinimal() {
     Oppija oppija = new Oppija();
@@ -45,7 +45,7 @@ public class LukioOppimaaraData extends AbstractKoskiData {
     opiskeluoikeus.getTila().addOpiskeluoikeusJakso(jakso);
     
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(ACADEMYOID);
-    LukionSuoritus suoritus = new LukionOppimaaranSuoritus(LukionOppimaara.aikuistenops, Kieli.FI, toimipiste);
+    LukionOppimaaranSuoritus2019 suoritus = new LukionOppimaaranSuoritus2019(LukionOppimaara.aikuistenops, Kieli.FI, toimipiste);
     opiskeluoikeus.addSuoritus(suoritus);
     
     return oppija;
@@ -69,28 +69,28 @@ public class LukioOppimaaraData extends AbstractKoskiData {
     opiskeluoikeus.setLahdejarjestelmanId(getLahdeJarjestelmaID(1l));
     
     OrganisaationToimipiste toimipiste = new OrganisaationToimipisteOID(ACADEMYOID);
-    LukionOppimaaranSuoritus suoritus = new LukionOppimaaranSuoritus(
+    LukionOppimaaranSuoritus2019 suoritus = new LukionOppimaaranSuoritus2019(
         LukionOppimaara.aikuistenops, Kieli.FI, toimipiste);
     opiskeluoikeus.addSuoritus(suoritus);
 
     // Oppiaine
-    LukionOppiaineenTunniste koulutusmoduuli = new LukionOppiaineenSuoritusAidinkieli(
+    LukionOppiaineenSuoritusAidinkieli2019 koulutusmoduuli = new LukionOppiaineenSuoritusAidinkieli2019(
         OppiaineAidinkieliJaKirjallisuus.AI1, true);
-    LukionOppiaineenSuoritus oppiaine = new LukionOppiaineenSuoritus(koulutusmoduuli);
+    LukionOppiaineenSuoritus2019 oppiaine = new LukionOppiaineenSuoritus2019(koulutusmoduuli, false);
     suoritus.addOsasuoritus(oppiaine);
 
     // Oppiaineen arviointi
     oppiaine.addArviointi(new LukionOppiaineenArviointi(ArviointiasteikkoYleissivistava.GRADE_9, paattymispaiva));
     
     // Kurssi 1
-    LukionKurssinTunniste kurssinTunniste = new LukionKurssinTunnisteValtakunnallinenOPS2015(LukionKurssit.ÄI1, LukionKurssinTyyppi.pakollinen);
-    LukionKurssinSuoritus kurssi = new LukionKurssinSuoritus(kurssinTunniste);
+    LukionOpintojaksonTunniste2019 kurssinTunniste = new LukionOpintojaksonTunnisteMuuModuuli2019(ModuuliKoodistoLOPS2021.ÄI1, new Laajuus(2, OpintojenLaajuusYksikko.op), true);
+    LukionOpintojaksonSuoritus2019 kurssi = new LukionOpintojaksonSuoritus2019(kurssinTunniste, SuorituksenTyyppi.lukionvaltakunnallinenmoduuli);
     kurssi.addArviointi(new KurssinArviointiNumeerinen(ArviointiasteikkoYleissivistava.GRADE_9, paattymispaiva));
     oppiaine.addOsasuoritus(kurssi);
     
     // Kurssi 2
-    kurssinTunniste = new LukionKurssinTunnistePaikallinen(new PaikallinenKoodi("ÄI123", kuvaus("ABC")), LukionKurssinTyyppi.syventava, kuvaus("ABC"));
-    kurssi = new LukionKurssinSuoritus(kurssinTunniste);
+    kurssinTunniste = new LukionOpintojaksonTunnistePaikallinen2019(new PaikallinenKoodi("ÄI123", kuvaus("ABC")), new Laajuus(2, OpintojenLaajuusYksikko.op), false, kuvaus("ABC"));
+    kurssi = new LukionOpintojaksonSuoritus2019(kurssinTunniste, SuorituksenTyyppi.lukionpaikallinenopintojakso);
     kurssi.addArviointi(new KurssinArviointiSanallinen(ArviointiasteikkoYleissivistava.GRADE_S, paattymispaiva, kuvaus("S")));
     oppiaine.addOsasuoritus(kurssi);
     

@@ -23,7 +23,7 @@ public class KoskiLukioStudentHandlerDelegator extends KoskiStudentHandler {
   public Opiskeluoikeus studentToModel(Student student, String academyIdentifier, KoskiStudyProgrammeHandler handler) {
     OpiskelijanOPS opiskelijanOPS = settings.resolveOPS(student);
     return opiskelijanOPS == OpiskelijanOPS.ops2019 
-        ? lukioHandler2019.studentToModel(student, academyIdentifier, handler)
+        ? lukioHandler2019.oppimaaranOpiskeluoikeus(student, academyIdentifier, handler)
         : lukioHandler.studentToModel(student, academyIdentifier, handler);
   }
   

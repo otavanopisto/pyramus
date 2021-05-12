@@ -1,6 +1,11 @@
 package fi.otavanopisto.pyramus.koski;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class KoskiConsts {
+
+  public static final List<String> LUKIO2019_DIAARIT = Arrays.asList(new String[] { "OPH-2263-2019", "OPH-2267-2019" });
 
   public static class VariableNames {
     // Persons' oid
