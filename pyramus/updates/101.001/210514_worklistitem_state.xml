@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>delete from WorklistItem where template_id=(select id from WorklistItemTemplate where templateType='GRADE_RAISE');</sql>
+  <sql>delete from WorklistItemTemplate where templateType='GRADE_RAISE';</sql>
+  <sql>create table WorklistBillingSettings (id bigint not null auto_increment, settings longtext, primary key (id));</sql>
+
+</update>

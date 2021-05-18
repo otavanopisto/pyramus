@@ -17,7 +17,7 @@ function doList() {
           '', // edit button
           worklistItems[i].entryDate,
           worklistItems[i].description,
-          worklistItems[i].price,
+          worklistItems[i].price.toFixed(2),
           worklistItems[i].factor,
           worklistItems[i].billingNumber,
           worklistItems[i].state,

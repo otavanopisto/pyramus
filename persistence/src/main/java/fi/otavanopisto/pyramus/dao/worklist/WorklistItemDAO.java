@@ -125,4 +125,9 @@ public class WorklistItemDAO extends PyramusEntityDAO<WorklistItem> {
     return persist(worklistItem); 
   }
 
+  public WorklistItem updatePrice(WorklistItem worklistItem, Double price) {
+    worklistItem.setPrice(price);
+    return persist(worklistItem); 
+  }
+
 }
