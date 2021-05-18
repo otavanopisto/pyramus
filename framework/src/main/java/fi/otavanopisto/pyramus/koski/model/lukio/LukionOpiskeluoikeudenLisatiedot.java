@@ -79,10 +79,36 @@ public class LukionOpiskeluoikeudenLisatiedot {
     this.sisaoppilaitosmainenMajoitus = sisaoppilaitosmainenMajoitus;
   }
 
+  public void addOikeuttaMaksuttomuuteenPidennetty(OikeuttaMaksuttomuuteenPidennetty oikeuttaMaksuttomuuteenPidennetty) {
+    this.oikeuttaMaksuttomuuteenPidennetty.add(oikeuttaMaksuttomuuteenPidennetty);
+  }
+
+  public List<OikeuttaMaksuttomuuteenPidennetty> getOikeuttaMaksuttomuuteenPidennetty() {
+    return oikeuttaMaksuttomuuteenPidennetty;
+  }
+
+  public void setOikeuttaMaksuttomuuteenPidennetty(List<OikeuttaMaksuttomuuteenPidennetty> oikeuttaMaksuttomuuteenPidennetty) {
+    this.oikeuttaMaksuttomuuteenPidennetty = oikeuttaMaksuttomuuteenPidennetty;
+  }
+
+  public void addMaksuttomuus(Maksuttomuus maksuttomuus) {
+    this.maksuttomuus.add(maksuttomuus);
+  }
+
+  public List<Maksuttomuus> getMaksuttomuus() {
+    return maksuttomuus;
+  }
+
+  public void setMaksuttomuus(List<Maksuttomuus> maksuttomuus) {
+    this.maksuttomuus = maksuttomuus;
+  }
+
   private boolean pidennettyPaattymispaiva;
   private boolean ulkomainenVaihtoopiskelija;
   private Kuvaus alle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy;
   private boolean yksityisopiskelija;
   private boolean oikeusMaksuttomaanAsuntolapaikkaan;
   private List<Majoitusjakso> sisaoppilaitosmainenMajoitus = new ArrayList<>();
+  private List<Maksuttomuus> maksuttomuus = new ArrayList<>();
+  private List<OikeuttaMaksuttomuuteenPidennetty> oikeuttaMaksuttomuuteenPidennetty = new ArrayList<>();
 }
