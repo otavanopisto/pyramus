@@ -46,30 +46,22 @@ public class TORSubject extends Subject {
     this.courses = courses;
   }
 
-  public void sort() {
-    Collections.sort(courses, Comparator.comparing(TORCourse::getCourseNumber, Comparator.nullsLast(Integer::compareTo)));
-    courses.forEach(course -> course.sort());
-  }
-  
   public long getPassedCoursesCount() {
     return courses.stream().filter(TORCourse::isPassed).count();
   }
   
   public Double getArithmeticMeanGrade() {
-    Double avg = courses.stream()
-      .filter(torCourse -> torCourse.getLatestCredit() != null)
-      .map(TORCourse::getLatestCredit)
-      .filter(torCredit -> torCredit.getNumericGrade() != null)
-      .mapToDouble(TORCredit::getNumericGrade)
-      .average().orElse(Double.NaN);
-    
-    return avg != null && !Double.isNaN(avg) ? avg : null;
+    return arithmeticMeanGrade;
   }
-
+  
+  public Double getWeightedMeanGrade() {
+    return weightedMeanGrade;
+  }
+  
   public String getComputedMeanGrade() {
-    Double arithmeticMeanGrade = getArithmeticMeanGrade();
-    if (arithmeticMeanGrade != null) {
-      return String.format("%.2f", arithmeticMeanGrade);
+    Double meanGrade = getWeightedMeanGrade();
+    if (meanGrade != null) {
+      return String.format("%.2f", meanGrade);
     }
 
     // Credits may be passing but non-numeric so try to return them
@@ -92,11 +84,59 @@ public class TORSubject extends Subject {
     this.meanGrade = meanGrade;
   }
   
+  protected void postProcess(TORProblems problems) {
+    Collections.sort(courses, Comparator.comparing(TORCourse::getCourseNumber, Comparator.nullsLast(Integer::compareTo)));
+    courses.forEach(course -> course.postProcess());
+    
+    calculateArithmeticMeanGrade();
+    calculateWeightedMeanGrade(problems);
+  }
+  
+  private void calculateArithmeticMeanGrade() {
+    Double avg = courses.stream()
+      .filter(torCourse -> torCourse.getLatestCredit() != null)
+      .map(TORCourse::getLatestCredit)
+      .filter(torCredit -> torCredit.getNumericGrade() != null)
+      .mapToDouble(TORCredit::getNumericGrade)
+      .average().orElse(Double.NaN);
+    
+    this.arithmeticMeanGrade = avg != null && !Double.isNaN(avg) ? avg : null;
+  }
+
+  private void calculateWeightedMeanGrade(TORProblems problems) {
+    Set<TORCourseLengthUnit> courseLengthUnits = courses.stream()
+      .filter(torCourse -> (torCourse.getLatestCredit() != null && torCourse.getLatestCredit().getNumericGrade() != null))
+      .map(TORCourse::getLengthUnit)
+      .collect(Collectors.toSet());
+
+    /**
+     * If there's one length unit, we're good. But there might be 0
+     * if all credits have literate (non numeric) grades.
+     */
+    if (courseLengthUnits.size() > 1) {
+      problems.add(new TORProblem(TORProblemType.INCOMPATIBLE_LENGTHUNITS, this.getCode()));
+    }
+    
+    double totalLength = 0d;
+    double totalWeightedGrade = 0d;
+    
+    for (TORCourse course : courses) {
+      if (course.getLatestCredit() != null && course.getLatestCredit().getNumericGrade() != null) {
+        totalLength += course.getCourseLength();
+        totalWeightedGrade += course.getLatestCredit().getNumericGrade() * course.getCourseLength();
+      }
+    }
+    
+    this.weightedMeanGrade = totalLength > 0 ? totalWeightedGrade / totalLength : null;
+  }
+  
   private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
     Set<Object> seen = ConcurrentHashMap.newKeySet();
     return t -> seen.add(keyExtractor.apply(t));
   }
   
+  private Double arithmeticMeanGrade;
+  private Double weightedMeanGrade;
   private Grade meanGrade;
   private List<TORCourse> courses = new ArrayList<>();
 }

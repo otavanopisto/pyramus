@@ -636,7 +636,19 @@
 
           if (studentSubjectCreditsData) {
             var container = $('subjectCreditsTable.' + studentId);
-  
+
+            for (var i = 0, l = studentSubjectCreditsData.problems.length; i < l; i++) {
+              var problem = studentSubjectCreditsData.problems[i];
+
+              var problemElement = container.appendChild(new Element("div", {className: "studentSubjectCreditsProblem"}));
+              var exclMark = problemElement.appendChild(new Element("div", {className: "studentSubjectCreditsProblemIcon"}));
+              var problemText = problemElement.appendChild(new Element("div", {className: "studentSubjectCreditsProblemText"}));
+
+              var reason = getLocale().getText("student.tor.problems." + problem.type);
+              var details = problem.additionalInfo ? " (" + problem.additionalInfo + ")" : "";
+              problemText.update(reason + details);
+            }
+            
             for (var i = 0, l = studentSubjectCreditsData.subjects.length; i < l; i++) {
               var subject = studentSubjectCreditsData.subjects[i];
               var subjectElement = container.appendChild(new Element("div", {className: "studentSubjectCreditsSubject"}));
