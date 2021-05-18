@@ -1931,11 +1931,12 @@ public class StudentRESTService extends AbstractRESTService {
       CourseBillingRestModel courseBillingRestModel = worklistController.getCourseBillingRestModel();
       if (courseBillingRestModel != null) {
         
-        // Determine billing number (high school if applicable, elementary as fallback)
+        // Determine billing number from student's study programme
+        // (high school if applicable, elementary as fallback)
         
-        boolean isHighSchoolCourse = course.getCourseEducationTypes().stream().anyMatch(
-            cet -> StringUtils.equalsIgnoreCase("lukio", cet.getEducationType().getCode()));
-        String billingNumber = isHighSchoolCourse
+        boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase("lukio",
+            student.getStudyProgramme().getCategory().getEducationType().getCode());
+        String billingNumber = isHighSchoolStudent
             ? courseBillingRestModel.getHighSchoolBillingNumber()
             : courseBillingRestModel.getElementaryBillingNumber();
         
