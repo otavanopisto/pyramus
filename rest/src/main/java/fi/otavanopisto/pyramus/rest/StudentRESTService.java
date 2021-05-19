@@ -9,13 +9,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -1846,7 +1843,7 @@ public class StudentRESTService extends AbstractRESTService {
   @Path("/students/{STUDENTID:[0-9]*}/courses/{COURSEID:[0-9]*}/assessments/")
   @POST
   @RESTPermit(handling = Handling.INLINE)
-  public Response createCourseAssessment(@Context HttpServletRequest request, @PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId,
+  public Response createCourseAssessment(@PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId,
       fi.otavanopisto.pyramus.rest.model.CourseAssessment entity) {
     if (!sessionController.isLoggedIn()) {
       return Response.status(Status.FORBIDDEN).build();
@@ -1936,11 +1933,9 @@ public class StudentRESTService extends AbstractRESTService {
             ? courseBillingRestModel.getHighSchoolBillingNumber()
             : courseBillingRestModel.getElementaryBillingNumber();
         
-        // Description part 1: type
+        // Description part 1: type (not localized because manual worklist items do not support localization, either) 
         
-        String description = isRaisedGrade
-            ? getMessage(request.getLocale(), "terms.raisedGrade")
-            : getMessage(request.getLocale(), "terms.courseAssessment");
+        String description = isRaisedGrade ? "Arvosanan korotus" : "Kurssiarviointi";
 
         // Description part 2: student display name
 
@@ -2914,11 +2909,6 @@ public class StudentRESTService extends AbstractRESTService {
     }
 
     return Status.OK;
-  }
-
-  private String getMessage(Locale locale, String key) {
-    ResourceBundle bundle = ResourceBundle.getBundle("messages", locale);
-    return bundle.getString(key);
   }
 
 }
