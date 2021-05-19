@@ -23,7 +23,7 @@ public class KoskiLukioStudentHandlerDelegator extends KoskiStudentHandler {
   public Opiskeluoikeus studentToModel(Student student, String academyIdentifier, KoskiStudyProgrammeHandler handler) {
     OpiskelijanOPS opiskelijanOPS = settings.resolveOPS(student);
     return opiskelijanOPS == OpiskelijanOPS.ops2019 
-        ? lukioHandler2019.oppimaaranOpiskeluoikeus(student, academyIdentifier, KoskiStudyProgrammeHandler.lukio2019)
+        ? lukioHandler2019.oppimaaranOpiskeluoikeus(student, academyIdentifier, handler)
         : lukioHandler.studentToModel(student, academyIdentifier, handler);
   }
   
@@ -31,7 +31,7 @@ public class KoskiLukioStudentHandlerDelegator extends KoskiStudentHandler {
   public void saveOrValidateOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
     OpiskelijanOPS opiskelijanOPS = settings.resolveOPS(student);
     if (opiskelijanOPS == OpiskelijanOPS.ops2019) {
-      lukioHandler2019.saveOrValidateOid(KoskiStudyProgrammeHandler.lukio2019, student, oid);
+      lukioHandler2019.saveOrValidateOid(handler, student, oid);
     } else {
       lukioHandler.saveOrValidateOid(handler, student, oid);
     }
@@ -41,7 +41,7 @@ public class KoskiLukioStudentHandlerDelegator extends KoskiStudentHandler {
   public void removeOid(KoskiStudyProgrammeHandler handler, Student student, String oid) {
     OpiskelijanOPS opiskelijanOPS = settings.resolveOPS(student);
     if (opiskelijanOPS == OpiskelijanOPS.ops2019) {
-      lukioHandler2019.removeOid(KoskiStudyProgrammeHandler.lukio2019, student, oid);
+      lukioHandler2019.removeOid(handler, student, oid);
     } else {
       lukioHandler.removeOid(handler, student, oid);
     }

@@ -6,8 +6,6 @@ public enum KoskiStudyProgrammeHandler {
   lukio,
   aikuistenperusopetus,
   aineopiskelulukio,
-  aineopiskeluperusopetus,
-  lukio2019,
-  aineopiskelulukio2019
+  aineopiskeluperusopetus
   
 }
