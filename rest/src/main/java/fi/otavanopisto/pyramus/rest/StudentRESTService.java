@@ -1848,10 +1848,6 @@ public class StudentRESTService extends AbstractRESTService {
   @RESTPermit(handling = Handling.INLINE)
   public Response createCourseAssessment(@Context HttpServletRequest request, @PathParam("STUDENTID") Long studentId, @PathParam("COURSEID") Long courseId,
       fi.otavanopisto.pyramus.rest.model.CourseAssessment entity) {
-    
-    System.out.println("NO VOI VITUN VITTU!!! " + request.getLocale());
-    
-    
     if (!sessionController.isLoggedIn()) {
       return Response.status(Status.FORBIDDEN).build();
     }
