@@ -888,7 +888,7 @@ public abstract class KoskiStudentHandler {
       // Tarkistetaan, ettei arvosanalistassa ole ristiriitaisia arvoja
       for (int i = 1; i < credits.size(); i++) {
         if ((credits.get(i).getCourseLength() != laajuus) || (credits.get(i).getCourseLenghtUnit() != yksikko)) {
-          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.MISSING_STUDYENDREASONMAPPING, new Date());
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.CONFLICTING_COURSELENGTH, new Date());
         }
       }
       
