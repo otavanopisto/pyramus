@@ -59,11 +59,11 @@ public class KoskiLukio2019JSONTestsIT extends AbstractKoskiTest {
     if (oppija.getHenkilo() instanceof HenkiloTiedotJaOID) {
       HenkiloTiedotJaOID henkilo = (HenkiloTiedotJaOID) oppija.getHenkilo();
       
-      assertEquals("1.2.246.562.24.00000000010", henkilo.getOid());
-      assertEquals("020655-2479", henkilo.getHetu());
-      assertEquals("Liisa", henkilo.getEtunimet());
-      assertEquals("Lukiolainen", henkilo.getSukunimi());
-      assertEquals("Liisa", henkilo.getKutsumanimi());
+      assertEquals("1.2.246.562.24.00000000118", henkilo.getOid());
+      assertEquals("050200A0138", henkilo.getHetu());
+      assertEquals("Oskari 2019", henkilo.getEtunimet());
+      assertEquals("Opiskelija 2019", henkilo.getSukunimi());
+      assertEquals("Oskari", henkilo.getKutsumanimi());
     }
     
     /**
@@ -75,7 +75,7 @@ public class KoskiLukio2019JSONTestsIT extends AbstractKoskiTest {
     if (oppija.getOpiskeluoikeudet().get(0) instanceof LukionOpiskeluoikeus) {
       LukionOpiskeluoikeus opiskeluoikeus = (LukionOpiskeluoikeus) oppija.getOpiskeluoikeudet().get(0);
       
-      assertEquals(2, opiskeluoikeus.getTila().getOpiskeluoikeusjaksot().size());
+      assertEquals(1, opiskeluoikeus.getTila().getOpiskeluoikeusjaksot().size());
       assertEquals(1, opiskeluoikeus.getSuoritukset().size());
       
       LukionSuoritus lukionSuoritus = opiskeluoikeus.getSuoritukset().iterator().next();

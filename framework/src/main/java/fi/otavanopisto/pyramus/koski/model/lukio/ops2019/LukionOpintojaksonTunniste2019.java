@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.otavanopisto.pyramus.koski.model.Laajuus;
-import fi.otavanopisto.pyramus.koski.model.deserializers.LukionKurssinTunnisteDeserializer;
+import fi.otavanopisto.pyramus.koski.model.deserializers.LukionKurssinTunnisteDeserializer2019;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonDeserialize(using = LukionKurssinTunnisteDeserializer.class)
+@JsonDeserialize(using = LukionKurssinTunnisteDeserializer2019.class)
 public abstract class LukionOpintojaksonTunniste2019 {
 
   public LukionOpintojaksonTunniste2019() {

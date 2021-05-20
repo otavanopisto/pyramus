@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
-import fi.otavanopisto.pyramus.koski.model.deserializers.LukionOsasuoritusDeserializer;
+import fi.otavanopisto.pyramus.koski.model.deserializers.LukionOsasuoritusDeserializer2019;
 
-@JsonDeserialize(using = LukionOsasuoritusDeserializer.class)
+@JsonDeserialize(using = LukionOsasuoritusDeserializer2019.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class LukionOsasuoritus2019 {
 
