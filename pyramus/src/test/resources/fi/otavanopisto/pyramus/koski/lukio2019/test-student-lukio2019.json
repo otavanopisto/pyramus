@@ -25,8 +25,8 @@
   },
   "opiskeluoikeudet" : [ {
     "oid" : "1.2.246.562.15.56586307342",
-    "versionumero" : 2,
-    "aikaleima" : "2021-05-20T14:10:07.712639",
+    "versionumero" : 3,
+    "aikaleima" : "2021-05-20T15:01:13.962589",
     "lähdejärjestelmänId" : {
       "id" : "lukio:17524",
       "lähdejärjestelmä" : {
@@ -185,21 +185,36 @@
       "osasuoritukset" : [ {
         "koulutusmoduuli" : {
           "tunniste" : {
-            "koodiarvo" : "KE",
+            "koodiarvo" : "A",
             "nimi" : {
-              "fi" : "Kemia",
-              "sv" : "Kemi"
+              "fi" : "A-kieli",
+              "sv" : "A-språk"
             },
             "lyhytNimi" : {
-              "fi" : "Kemia",
-              "sv" : "Kemi"
+              "fi" : "A-kieli",
+              "sv" : "A-språk"
             },
             "koodistoUri" : "koskioppiaineetyleissivistava",
             "koodistoVersio" : 1
           },
-          "pakollinen" : true,
+          "kieli" : {
+            "koodiarvo" : "EN",
+            "nimi" : {
+              "fi" : "englanti",
+              "sv" : "engelska",
+              "en" : "English"
+            },
+            "lyhytNimi" : {
+              "fi" : "englanti",
+              "sv" : "engelska",
+              "en" : "English"
+            },
+            "koodistoUri" : "kielivalikoima",
+            "koodistoVersio" : 1
+          },
+          "pakollinen" : false,
           "laajuus" : {
-            "arvo" : 10.0,
+            "arvo" : 38.0,
             "yksikkö" : {
               "koodiarvo" : "2",
               "nimi" : {
@@ -220,15 +235,15 @@
         "osasuoritukset" : [ {
           "koulutusmoduuli" : {
             "tunniste" : {
-              "koodiarvo" : "KE1",
+              "koodiarvo" : "ENA1",
               "nimi" : {
-                "fi" : "Kemia ja minä"
+                "fi" : "Opiskelutaidot ja kieli-identiteetin rakentaminen"
               },
               "koodistoUri" : "moduulikoodistolops2021",
               "koodistoVersio" : 1
             },
             "laajuus" : {
-              "arvo" : 10.0,
+              "arvo" : 38.0,
               "yksikkö" : {
                 "koodiarvo" : "2",
                 "nimi" : {
@@ -245,17 +260,32 @@
                 "koodistoVersio" : 1
               }
             },
-            "pakollinen" : true
+            "pakollinen" : true,
+            "kieli" : {
+              "koodiarvo" : "EN",
+              "nimi" : {
+                "fi" : "englanti",
+                "sv" : "engelska",
+                "en" : "English"
+              },
+              "lyhytNimi" : {
+                "fi" : "englanti",
+                "sv" : "engelska",
+                "en" : "English"
+              },
+              "koodistoUri" : "kielivalikoima",
+              "koodistoVersio" : 1
+            }
           },
           "arviointi" : [ {
             "arvosana" : {
-              "koodiarvo" : "10",
+              "koodiarvo" : "9",
               "nimi" : {
-                "fi" : "erinomainen",
-                "sv" : "utmärkt"
+                "fi" : "kiitettävä",
+                "sv" : "berömlig"
               },
               "lyhytNimi" : {
-                "fi" : "10"
+                "fi" : "9"
               },
               "koodistoUri" : "arviointiasteikkoyleissivistava",
               "koodistoVersio" : 1
@@ -694,6 +724,114 @@
               "fi" : "Lukion paikallinen opintojakso 2019",
               "sv" : "Lukion paikallinen opintojakso 2019",
               "en" : "Lukion paikallinen opintojakso 2019"
+            },
+            "koodistoUri" : "suorituksentyyppi",
+            "koodistoVersio" : 1
+          }
+        } ],
+        "tyyppi" : {
+          "koodiarvo" : "lukionoppiaine",
+          "nimi" : {
+            "fi" : "Lukion oppiaine",
+            "sv" : "Läroämne i gymnasiet",
+            "en" : "General upper secondary education subject"
+          },
+          "koodistoUri" : "suorituksentyyppi",
+          "koodistoVersio" : 1
+        }
+      }, {
+        "koulutusmoduuli" : {
+          "tunniste" : {
+            "koodiarvo" : "KE",
+            "nimi" : {
+              "fi" : "Kemia",
+              "sv" : "Kemi"
+            },
+            "lyhytNimi" : {
+              "fi" : "Kemia",
+              "sv" : "Kemi"
+            },
+            "koodistoUri" : "koskioppiaineetyleissivistava",
+            "koodistoVersio" : 1
+          },
+          "pakollinen" : true,
+          "laajuus" : {
+            "arvo" : 10.0,
+            "yksikkö" : {
+              "koodiarvo" : "2",
+              "nimi" : {
+                "fi" : "opintopistettä",
+                "sv" : "studiepoäng",
+                "en" : "ECTS credits"
+              },
+              "lyhytNimi" : {
+                "fi" : "op",
+                "sv" : "sp",
+                "en" : "ECTS cr"
+              },
+              "koodistoUri" : "opintojenlaajuusyksikko"
+            }
+          }
+        },
+        "suoritettuErityisenäTutkintona" : false,
+        "osasuoritukset" : [ {
+          "koulutusmoduuli" : {
+            "tunniste" : {
+              "koodiarvo" : "KE1",
+              "nimi" : {
+                "fi" : "Kemia ja minä"
+              },
+              "koodistoUri" : "moduulikoodistolops2021",
+              "koodistoVersio" : 1
+            },
+            "laajuus" : {
+              "arvo" : 10.0,
+              "yksikkö" : {
+                "koodiarvo" : "2",
+                "nimi" : {
+                  "fi" : "opintopistettä",
+                  "sv" : "studiepoäng",
+                  "en" : "ECTS credits"
+                },
+                "lyhytNimi" : {
+                  "fi" : "op",
+                  "sv" : "sp",
+                  "en" : "ECTS cr"
+                },
+                "koodistoUri" : "opintojenlaajuusyksikko",
+                "koodistoVersio" : 1
+              }
+            },
+            "pakollinen" : true
+          },
+          "arviointi" : [ {
+            "arvosana" : {
+              "koodiarvo" : "10",
+              "nimi" : {
+                "fi" : "erinomainen",
+                "sv" : "utmärkt"
+              },
+              "lyhytNimi" : {
+                "fi" : "10"
+              },
+              "koodistoUri" : "arviointiasteikkoyleissivistava",
+              "koodistoVersio" : 1
+            },
+            "päivä" : "2021-05-20",
+            "hyväksytty" : true
+          } ],
+          "tunnustettu" : {
+            "selite" : {
+              "fi" : "Hyväksiluku"
+            },
+            "rahoituksenPiirissä" : false
+          },
+          "tyyppi" : {
+            "koodiarvo" : "lukionvaltakunnallinenmoduuli",
+            "nimi" : {
+              "fi" : "Lukion valtakunnallinen moduuli 2019",
+              "sv" : "Lukion valtakunnallinen moduuli 2019",
+              "en" : "Lukion valtakunnallinen moduuli 2019"
             },
             "koodistoUri" : "suorituksentyyppi",
             "koodistoVersio" : 1

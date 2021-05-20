@@ -10,14 +10,24 @@ public class StudentSubjectSelections {
   public StudentSubjectSelections() {
   }
 
-  public KoskiOppiaineetYleissivistava koskiKoodi(String languageCode) {
-    return
-        isALanguage(languageCode) ? KoskiOppiaineetYleissivistava.A1 :
-          isA1Language(languageCode) ? KoskiOppiaineetYleissivistava.A1 :
-            isA2Language(languageCode) ? KoskiOppiaineetYleissivistava.A2 :
-              isB1Language(languageCode) ? KoskiOppiaineetYleissivistava.B1 :
-                isB2Language(languageCode) ? KoskiOppiaineetYleissivistava.B2 :
-                  isB3Language(languageCode) ? KoskiOppiaineetYleissivistava.B3 : null;
+  public KoskiOppiaineetYleissivistava koskiKoodi(OpiskelijanOPS ops, String languageCode) {
+    if (ops == OpiskelijanOPS.ops2019) {
+      return
+          isALanguage(languageCode) ? KoskiOppiaineetYleissivistava.A :
+            isA1Language(languageCode) ? KoskiOppiaineetYleissivistava.A :
+              isA2Language(languageCode) ? KoskiOppiaineetYleissivistava.A :
+                isB1Language(languageCode) ? KoskiOppiaineetYleissivistava.B1 :
+                  isB2Language(languageCode) ? KoskiOppiaineetYleissivistava.B2 :
+                    isB3Language(languageCode) ? KoskiOppiaineetYleissivistava.B3 : null;
+    } else {
+      return
+          isALanguage(languageCode) ? KoskiOppiaineetYleissivistava.A1 :
+            isA1Language(languageCode) ? KoskiOppiaineetYleissivistava.A1 :
+              isA2Language(languageCode) ? KoskiOppiaineetYleissivistava.A2 :
+                isB1Language(languageCode) ? KoskiOppiaineetYleissivistava.B1 :
+                  isB2Language(languageCode) ? KoskiOppiaineetYleissivistava.B2 :
+                    isB3Language(languageCode) ? KoskiOppiaineetYleissivistava.B3 : null;
+    }
   }
   
   public boolean isALanguage(String languageCode) {

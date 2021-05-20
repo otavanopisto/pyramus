@@ -138,7 +138,7 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
     Set<OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus>> accomplished = new HashSet<>();
     
     for (CreditStub credit : credits) {
-      OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> oppiaineenSuoritusWSubject = getSubject(student, studentEducationType, credit.getSubject(), studentSubjects, map);
+      OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> oppiaineenSuoritusWSubject = getSubject(student, ops, studentEducationType, credit.getSubject(), studentSubjects, map);
       collectAccomplishedMarks(credit.getSubject(), oppiaineenSuoritusWSubject, studentSubjects, accomplished);
       
       if (settings.isReportedCredit(credit) && oppiaineenSuoritusWSubject != null) {
@@ -200,7 +200,7 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
     return StringUtils.equals(subjectCode, "MAA") || StringUtils.equals(subjectCode, "MAB") || StringUtils.equals(subjectCode, "MAY");
   }
   
-  private OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> getSubject(Student student, EducationType studentEducationType,
+  private OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> getSubject(Student student, OpiskelijanOPS ops, EducationType studentEducationType,
       Subject subject, StudentSubjectSelections studentSubjects, Map<String, OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus>> map) {
     String subjectCode = subjectCode(subject);
 
@@ -251,7 +251,7 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
         Kielivalikoima kieli = Kielivalikoima.valueOf(langCode);
         
         if (kieli != null) {
-          KoskiOppiaineetYleissivistava valinta = studentSubjects.koskiKoodi(subjectCode);
+          KoskiOppiaineetYleissivistava valinta = studentSubjects.koskiKoodi(ops, subjectCode);
           LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusVierasKieli(valinta, kieli, 
               isPakollinenOppiaine(student, valinta));
           return mapSubject(subject, subjectCode, tunniste, map);
