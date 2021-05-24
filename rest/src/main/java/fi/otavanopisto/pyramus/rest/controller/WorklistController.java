@@ -31,6 +31,7 @@ import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemState;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplateType;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
+import fi.otavanopisto.pyramus.rest.util.PyramusConsts;
 
 @Dependent
 @Stateless
@@ -109,7 +110,7 @@ public class WorklistController {
     if (courseBillingRestModel != null) {
       Set<Curriculum> curriculums = course.getCurriculums();
       if (curriculums != null) {
-        boolean is2021Course = curriculums.stream().anyMatch(curriculum -> StringUtils.equalsIgnoreCase(curriculum.getName(), "OPS 2021"));
+        boolean is2021Course = curriculums.stream().anyMatch(curriculum -> StringUtils.equalsIgnoreCase(curriculum.getName(), PyramusConsts.OPS_2021));
         if (is2021Course) {
           Double price = courseBillingRestModel.getDefault2021Price();
           Double length = course.getCourseLength().getUnits();

@@ -119,6 +119,7 @@ import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
 import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
+import fi.otavanopisto.pyramus.rest.util.PyramusConsts;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
@@ -1927,8 +1928,12 @@ public class StudentRESTService extends AbstractRESTService {
         // Determine billing number from student's study programme
         // (high school if applicable, elementary as fallback)
         
-        boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase("lukio",
-            student.getStudyProgramme().getCategory().getEducationType().getCode());
+        String code = student.getStudyProgramme() != null &&
+            student.getStudyProgramme().getCategory() !=  null &&
+            student.getStudyProgramme().getCategory().getEducationType() != null &&
+            student.getStudyProgramme().getCategory().getEducationType().getCode() != null
+            ? student.getStudyProgramme().getCategory().getEducationType().getCode() : null;
+        boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, code);
         String billingNumber = isHighSchoolStudent
             ? courseBillingRestModel.getHighSchoolBillingNumber()
             : courseBillingRestModel.getElementaryBillingNumber();
