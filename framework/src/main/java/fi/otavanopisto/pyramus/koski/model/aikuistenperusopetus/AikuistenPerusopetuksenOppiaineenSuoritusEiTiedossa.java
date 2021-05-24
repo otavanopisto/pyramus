@@ -7,19 +7,15 @@ import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 
 @JsonDeserialize(using = JsonDeserializer.None.class)
-public class AikuistenPerusopetuksenOppiaineenSuoritusMuu extends AbstractAikuistenPerusopetuksenOppiaineenTunniste {
+public class AikuistenPerusopetuksenOppiaineenSuoritusEiTiedossa extends AikuistenPerusopetuksenOppiaineenTunniste {
 
-  public AikuistenPerusopetuksenOppiaineenSuoritusMuu() {
-  }
-  
-  public AikuistenPerusopetuksenOppiaineenSuoritusMuu(KoskiOppiaineetYleissivistava tunniste, boolean pakollinen) {
-    super(pakollinen);
-    this.tunniste.setValue(tunniste);
+  public AikuistenPerusopetuksenOppiaineenSuoritusEiTiedossa() {
+    super();
   }
   
   public KoodistoViite<KoskiOppiaineetYleissivistava> getTunniste() {
     return tunniste;
   }
   
-  private final KoodistoViite<KoskiOppiaineetYleissivistava> tunniste = new KoodistoViite<>();
+  private final KoodistoViite<KoskiOppiaineetYleissivistava> tunniste = new KoodistoViite<>(KoskiOppiaineetYleissivistava.XX);
 }

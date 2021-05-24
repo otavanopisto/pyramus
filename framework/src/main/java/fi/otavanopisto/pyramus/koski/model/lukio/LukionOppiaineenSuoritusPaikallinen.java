@@ -7,7 +7,7 @@ import fi.otavanopisto.pyramus.koski.model.Kuvaus;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 
 @JsonDeserialize(using = JsonDeserializer.None.class)
-public class LukionOppiaineenSuoritusPaikallinen extends LukionOppiaineenTunniste {
+public class LukionOppiaineenSuoritusPaikallinen extends AbstractLukionOppiaineenTunniste {
 
   public LukionOppiaineenSuoritusPaikallinen() {
   }

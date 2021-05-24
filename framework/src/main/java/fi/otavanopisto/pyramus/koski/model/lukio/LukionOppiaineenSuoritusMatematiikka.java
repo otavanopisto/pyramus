@@ -9,7 +9,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
 
 @JsonDeserialize(using = JsonDeserializer.None.class)
-public class LukionOppiaineenSuoritusMatematiikka extends LukionOppiaineenTunniste {
+public class LukionOppiaineenSuoritusMatematiikka extends AbstractLukionOppiaineenTunniste {
 
   public LukionOppiaineenSuoritusMatematiikka() {
   }
