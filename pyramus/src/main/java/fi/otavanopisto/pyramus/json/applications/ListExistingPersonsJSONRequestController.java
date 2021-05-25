@@ -55,7 +55,7 @@ public class ListExistingPersonsJSONRequestController extends JSONRequestControl
       
       List<Email> emails = emailDAO.listByAddressLowercase(emailAddress);
       for (Email email : emails) {
-        if (email.getContactType() != null && Boolean.FALSE.equals(email.getContactType().getNonUnique())) {
+        if (email.getContactType() == null || Boolean.FALSE.equals(email.getContactType().getNonUnique())) {
           User user = userDAO.findByContactInfo(email.getContactInfo());
           if (user != null) {
             Person person = user.getPerson();

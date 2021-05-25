@@ -410,7 +410,7 @@ public class CommonController {
   public boolean isEmailAvailable(String address) {
     List<Email> emails = emailDAO.listByAddressLowercase(StringUtils.lowerCase(StringUtils.trim(address)));
     for (Email email : emails) {
-      if (email.getContactType() != null && Boolean.FALSE.equals(email.getContactType().getNonUnique())) {
+      if (email.getContactType() == null || Boolean.FALSE.equals(email.getContactType().getNonUnique())) {
         return false;
       }
     }
