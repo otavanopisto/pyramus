@@ -403,12 +403,18 @@ public class CommonController {
     return emailDAO.findById(id);
   }
 
-  public Email findEmailByAddress(String address) {
-    return emailDAO.findByAddress(address);
-  }
-  
   public void deleteEmail(Email email) {
     emailDAO.delete(email); 
+  }
+  
+  public boolean isEmailAvailable(String address) {
+    List<Email> emails = emailDAO.listByAddressLowercase(StringUtils.lowerCase(StringUtils.trim(address)));
+    for (Email email : emails) {
+      if (email.getContactType() != null && Boolean.FALSE.equals(email.getContactType().getNonUnique())) {
+        return false;
+      }
+    }
+    return true;
   }
   
   /* ContactType */

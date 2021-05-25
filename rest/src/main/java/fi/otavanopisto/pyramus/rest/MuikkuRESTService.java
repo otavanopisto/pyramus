@@ -151,8 +151,7 @@ public class MuikkuRESTService {
     // Check if user exists based on email
     
     String address = StringUtils.trim(StringUtils.lowerCase(payload.getEmail()));
-    Email email = commonController.findEmailByAddress(address);
-    if (email != null) {
+    if (!commonController.isEmailAvailable(address)) {
       return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.emailInUse")).build();
     }
     
@@ -514,8 +513,7 @@ public class MuikkuRESTService {
     // Check if user exists based on email or (possible) SSN
     
     String address = StringUtils.trim(StringUtils.lowerCase(payload.getEmail()));
-    Email email = commonController.findEmailByAddress(address);
-    if (email != null) {
+    if (!commonController.isEmailAvailable(address)) {
       return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.emailInUse")).build();
     }
     String ssn = null;
@@ -637,8 +635,8 @@ public class MuikkuRESTService {
     // Check that email and (possible) SSN belong to the student being edited
     
     String address = StringUtils.trim(StringUtils.lowerCase(payload.getEmail()));
-    Email newEmail = commonController.findEmailByAddress(address);
-    if (newEmail != null) {
+    boolean emailAvailable = commonController.isEmailAvailable(address);
+    if (!emailAvailable) {
       Person person = personController.findUniquePersonByEmail(address);
       if (person != null && !person.getId().equals(student.getPerson().getId())) {
         return Response.status(Status.CONFLICT).entity(getMessage(request.getLocale(), "error.emailInUse")).build();
@@ -681,7 +679,7 @@ public class MuikkuRESTService {
     if (!student.getStudyProgramme().getId().equals(studyProgramme.getId())) {
       student = studentController.updateStudyProgramme(student, studyProgramme);
     }
-    if (newEmail == null) {
+    if (emailAvailable) {
       EmailDAO emailDAO = DAOFactory.getInstance().getEmailDAO();
       Email existingEmail = emailDAO.findByContactInfoAndDefaultAddress(student.getContactInfo(), Boolean.TRUE);
       if (existingEmail != null) {
