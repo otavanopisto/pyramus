@@ -72,9 +72,9 @@
       </div>
     </div>
     
-    <div id="worklistItemsWrapper" style="display:none;">
-      <div class="searchResultsTitle"><fmt:message key="worklist.listWorklistItems.worklistTitle"/></div>
-      <div id="worklistItemsContainer" class="searchResultsContainer">
+    <div id="worklistItemsWrapper" class="genericFormContainer" style="display:none;">
+      <!-- <div class="searchResultsTitle"><fmt:message key="worklist.listWorklistItems.worklistTitle"/></div> -->
+      <div id="worklistItemsContainer" class="tabContent">
         <div class="genericFormSection" style="padding:8px;">   
           <select name="worklistTemplate" id="worklistTemplate">
             <c:forEach var="worklistTemplate" items="${worklistTemplates}">
