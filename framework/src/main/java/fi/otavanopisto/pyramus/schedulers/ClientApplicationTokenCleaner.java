@@ -20,6 +20,8 @@ import fi.otavanopisto.pyramus.domainmodel.users.Role;
 @Singleton
 @Startup
 public class ClientApplicationTokenCleaner {
+  
+  private static final int BATCH_SIZE = 1000;
 
   @Inject
   private Logger logger;
@@ -38,13 +40,10 @@ public class ClientApplicationTokenCleaner {
     calendar.add(Calendar.DATE, -1);
     long threshold = calendar.getTimeInMillis() / 1000;
     
-    long tokenCount = clientApplicationAccessTokenDAO.count(); 
-    if (tokenCount > 10000) {
-      logger.severe(String.format("Too many client application access tokens to clean (%d)", tokenCount));
-      return;
+    List<ClientApplicationAccessToken> tokens = clientApplicationAccessTokenDAO.listByExpired(threshold, BATCH_SIZE);
+    if (tokens.size() == BATCH_SIZE) {
+      logger.warning("Client application access tokens possibly piling up");
     }
-    
-    List<ClientApplicationAccessToken> tokens = clientApplicationAccessTokenDAO.listAll();
     for (ClientApplicationAccessToken token : tokens) {
       ClientApplicationAuthorizationCode authCode = token.getClientApplicationAuthorizationCode();
       if (authCode.getUser().getRole() == Role.TRUSTED_SYSTEM) {
