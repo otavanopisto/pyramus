@@ -28,6 +28,7 @@
   <sql>alter table ClientApplicationAuthorizationCode add constraint FK8ong6metbfvnm8ptdhbx1t58h foreign key (app_id) references ClientApplication (id);</sql>
   <sql>alter table ClientApplicationAuthorizationCode add constraint FKa2ukjw2djbnf0xfi65sd6dxc9 foreign key (user_id) references User (id);</sql>
   <sql>create index ind_caac_client_authorization on ClientApplicationAuthorizationCode (app_id, authorizationCode);</sql>
+  <sql>create index ind_caat_expires on ClientApplicationAccessToken (expires);</sql>
 
   <sql>insert into ClientApplicationAuthorizationCode (id, authorizationCode, redirectUrl, app_id, user_id)
        select id, authorizationCode, redirectUrl, app_id, user_id from ClientApplicationAuthorizationCodeTmp;</sql>
