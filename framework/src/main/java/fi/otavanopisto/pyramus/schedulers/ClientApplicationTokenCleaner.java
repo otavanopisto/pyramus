@@ -49,11 +49,9 @@ public class ClientApplicationTokenCleaner {
       if (authCode.getUser().getRole() == Role.TRUSTED_SYSTEM) {
         continue;
       }
-      if (token.getExpires() < threshold) {
-        clientApplicationAccessTokenDAO.delete(token);
-        clientApplicationAuthorizationCodeDAO.delete(authCode);
-        removed++;
-      }
+      clientApplicationAccessTokenDAO.delete(token);
+      clientApplicationAuthorizationCodeDAO.delete(authCode);
+      removed++;
     }
 
     if (removed > 0) {
