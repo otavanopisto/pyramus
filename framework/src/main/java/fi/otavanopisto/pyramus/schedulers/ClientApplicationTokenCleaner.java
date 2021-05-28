@@ -21,7 +21,7 @@ import fi.otavanopisto.pyramus.domainmodel.users.Role;
 @Startup
 public class ClientApplicationTokenCleaner {
   
-  private static final int BATCH_SIZE = 1000;
+  private static final int BATCH_SIZE = 5000;
 
   @Inject
   private Logger logger;
