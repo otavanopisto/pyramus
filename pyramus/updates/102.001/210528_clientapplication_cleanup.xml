@@ -30,11 +30,11 @@
   <sql>create index ind_caac_client_authorization on ClientApplicationAuthorizationCode (app_id, authorizationCode);</sql>
   <sql>create index ind_caac_expires on ClientApplicationAuthorizationCode (expires);</sql>
 
-  <sql>insert into ClientApplicationAccessToken (id, accessToken, expires, refreshToken, app_id, clientApplicationAuthorizationCode)
-       select id, accessToken, expires, refreshToken, app_id, clientApplicationAuthorizationCode from ClientApplicationAccessTokenTmp;</sql>
-
   <sql>insert into ClientApplicationAuthorizationCode (id, authorizationCode, redirectUrl, app_id, user_id)
        select id, authorizationCode, redirectUrl, app_id, user_id from ClientApplicationAuthorizationCodeTmp;</sql>
+
+  <sql>insert into ClientApplicationAccessToken (id, accessToken, expires, refreshToken, app_id, clientApplicationAuthorizationCode)
+       select id, accessToken, expires, refreshToken, app_id, clientApplicationAuthorizationCode from ClientApplicationAccessTokenTmp;</sql>
 
   <sql>drop table ClientApplicationAccessTokenTmp;</sql>
   <sql>drop table ClientApplicationAuthorizationCodeTmp;</sql>
