@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofw.fi/xml/2011/java-xmldb-updater/UpdaterSchema.xsd">
+
+  <sql>create table ClientApplicationAccessTokenTmp (id bigint not null, accessToken varchar(255), expires bigint, refreshToken varchar(255), app_id bigint, clientApplicationAuthorizationCode bigint, primary key (id));</sql>
+  <sql>create table ClientApplicationAuthorizationCodeTmp (id bigint not null, authorizationCode varchar(255), redirectUrl varchar(255), app_id bigint, user_id bigint, primary key (id));</sql>
+
+  <sql>insert into ClientApplicationAccessTokenTmp (id, accessToken, expires, refreshToken, app_id, clientApplicationAuthorizationCode)
+       select id, accessToken, expires, refreshToken, app_id, clientApplicationAuthorizationCode
+       from ClientApplicationAccessToken
+       where clientApplicationAuthorizationCode in (
+         select id from ClientApplicationAuthorizationCode where user_id in (
+           select id from StaffMember where role='TRUSTED_SYSTEM'))
+         or expires > unix_timestamp(now() - interval 1 day);</sql>
+
+  <sql>insert into ClientApplicationAuthorizationCodeTmp (id, authorizationCode, redirectUrl, app_id, user_id)
+       select id, authorizationCode, redirectUrl, app_id, user_id
+       from ClientApplicationAuthorizationCode
+       where id in (
+         select clientApplicationAuthorizationCode from ClientApplicationAccessTokenTmp);</sql>
+  
+  <sql>drop table ClientApplicationAccessToken;</sql>
+  <sql>drop table ClientApplicationAuthorizationCode;</sql>
+
+  <sql>create table ClientApplicationAccessToken (id bigint not null, accessToken varchar(255) not null, expires bigint not null, refreshToken varchar(255) not null, app_id bigint not null, clientApplicationAuthorizationCode bigint, primary key (id));</sql>
+  <sql>create table ClientApplicationAuthorizationCode (id bigint not null, authorizationCode varchar(255) not null, redirectUrl varchar(255) not null, app_id bigint not null, user_id bigint not null, primary key (id));</sql>
+  <sql>alter table ClientApplicationAccessToken add constraint FKj25sd446aqsnnr0vf0rghvjv4 foreign key (app_id) references ClientApplication (id);</sql>
+  <sql>alter table ClientApplicationAccessToken add constraint FKpxrakqfm2bw8b5t9ptf788qqu foreign key (clientApplicationAuthorizationCode) references ClientApplicationAuthorizationCode (id);</sql>
+  <sql>alter table ClientApplicationAuthorizationCode add constraint FK8ong6metbfvnm8ptdhbx1t58h foreign key (app_id) references ClientApplication (id);</sql>
+  <sql>alter table ClientApplicationAuthorizationCode add constraint FKa2ukjw2djbnf0xfi65sd6dxc9 foreign key (user_id) references User (id);</sql>
+  <sql>create index ind_client_authorization on ClientApplicationAuthorizationCode (app_id, authorizationCode);</sql>
+
+  <sql>insert into ClientApplicationAccessToken (id, accessToken, expires, refreshToken, app_id, clientApplicationAuthorizationCode)
+       select id, accessToken, expires, refreshToken, app_id, clientApplicationAuthorizationCode from ClientApplicationAccessTokenTmp;</sql>
+
+  <sql>insert into ClientApplicationAuthorizationCode (id, authorizationCode, redirectUrl, app_id, user_id)
+       select id, authorizationCode, redirectUrl, app_id, user_id from ClientApplicationAuthorizationCodeTmp;</sql>
+
+  <sql>drop table ClientApplicationAccessTokenTmp;</sql>
+  <sql>drop table ClientApplicationAuthorizationCodeTmp;</sql>
+
+</update>
