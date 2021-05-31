@@ -67,6 +67,11 @@ public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
       koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
     }
     
+    // Varoitus, jos aineopiskelijalla on sekä pk:n että lukion opiskeluoikeudet
+    if (oos.size() > 1) {
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.INTERNETIX_BOTH_LINES, new Date());
+    }
+
     return oos;
   }
 
