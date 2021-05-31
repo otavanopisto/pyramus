@@ -21,7 +21,7 @@
   <sql>drop table ClientApplicationAccessToken;</sql>
   <sql>drop table ClientApplicationAuthorizationCode;</sql>
 
-  <sql>create table ClientApplicationAccessToken (id bigint not null, accessToken varchar(255) not null, expires bigint not null, refreshToken varchar(255) not null, app_id bigint not null, clientApplicationAuthorizationCode bigint, primary key (id));</sql>
+  <sql>create table ClientApplicationAccessToken (id bigint not null, accessToken varchar(255) not null, expires bigint not null, refreshToken varchar(255) not null, app_id bigint not null, clientApplicationAuthorizationCode bigint not null, primary key (id));</sql>
   <sql>create table ClientApplicationAuthorizationCode (id bigint not null, authorizationCode varchar(255) not null, redirectUrl varchar(255) not null, app_id bigint not null, user_id bigint not null, primary key (id));</sql>
   <sql>alter table ClientApplicationAccessToken add constraint FKj25sd446aqsnnr0vf0rghvjv4 foreign key (app_id) references ClientApplication (id);</sql>
   <sql>alter table ClientApplicationAccessToken add constraint FKpxrakqfm2bw8b5t9ptf788qqu foreign key (clientApplicationAuthorizationCode) references ClientApplicationAuthorizationCode (id);</sql>
