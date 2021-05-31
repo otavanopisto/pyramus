@@ -117,7 +117,9 @@ import fi.otavanopisto.pyramus.rest.controller.permissions.StudyProgrammePermiss
 import fi.otavanopisto.pyramus.rest.controller.permissions.UserPermissions;
 import fi.otavanopisto.pyramus.rest.model.StudentCourseStats;
 import fi.otavanopisto.pyramus.rest.model.StudentMatriculationEligibility;
+import fi.otavanopisto.pyramus.rest.model.worklist.CourseBillingRestModel;
 import fi.otavanopisto.pyramus.rest.security.RESTSecurity;
+import fi.otavanopisto.pyramus.rest.util.PyramusConsts;
 import fi.otavanopisto.pyramus.rest.util.ISO8601Timestamp;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
@@ -1914,43 +1916,71 @@ public class StudentRESTService extends AbstractRESTService {
     
     // #1198: Create a worklist entry for this assessment, if applicable
     
-    WorklistItemTemplate template = worklistController.getTemplateForCourseAssessment(assessmentController.isRaisedGrade(courseAssessment));
+    boolean isRaisedGrade = assessmentController.isRaisedGrade(courseAssessment);
+    WorklistItemTemplate template = worklistController.getTemplateForCourseAssessment();
     if (template != null) {
       
-      // Student display name
-      
-      StringBuilder sb = new StringBuilder();
-      sb.append(student.getFirstName());
-      if (!StringUtils.isEmpty(student.getNickname())) {
-        sb.append(String.format(" \"%s\"", student.getNickname()));
-      }
-      if (!StringUtils.isEmpty(student.getLastName())) {
-        sb.append(String.format(" %s", student.getLastName()));
-      }
-      if (student.getStudyProgramme() != null) {
-        sb.append(String.format(" (%s)", student.getStudyProgramme().getName()));
-      }
-      String studentDisplayName = sb.toString();
-      
-      // Course display name
-      
-      sb = new StringBuilder();
-      sb.append(course.getName());
-      if (!StringUtils.isEmpty(course.getNameExtension())) {
-        sb.append(String.format(" (%s)", course.getNameExtension()));
-      }
-      String courseDisplayName = sb.toString();
+      // #1228: Use billing settings together with the template to create a proper billing row
 
-      worklistController.create(
-          assessor,
-          template,
-          new Date(),
-          String.format("%s - %s - %s", template.getDescription(), studentDisplayName, courseDisplayName),
-          template.getPrice(),
-          template.getFactor(),
-          template.getBillingNumber(),
-          courseAssessment,
-          sessionController.getUser());
+      CourseBillingRestModel courseBillingRestModel = worklistController.getCourseBillingRestModel();
+      if (courseBillingRestModel != null) {
+        
+        // Determine billing number from student's study programme
+        // (high school if applicable, elementary as fallback)
+        
+        String code = student.getStudyProgramme() != null &&
+            student.getStudyProgramme().getCategory() !=  null &&
+            student.getStudyProgramme().getCategory().getEducationType() != null &&
+            student.getStudyProgramme().getCategory().getEducationType().getCode() != null
+            ? student.getStudyProgramme().getCategory().getEducationType().getCode() : null;
+        boolean isHighSchoolStudent = StringUtils.equalsIgnoreCase(PyramusConsts.STUDYPROGRAMME_LUKIO, code);
+        String billingNumber = isHighSchoolStudent
+            ? courseBillingRestModel.getHighSchoolBillingNumber()
+            : courseBillingRestModel.getElementaryBillingNumber();
+        
+        // Description part 1: type (not localized because manual worklist items do not support localization, either) 
+        
+        String description = isRaisedGrade ? "Arvosanan korotus" : "Kurssiarviointi";
+
+        // Description part 2: student display name
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(student.getFirstName());
+        if (!StringUtils.isEmpty(student.getNickname())) {
+          sb.append(String.format(" \"%s\"", student.getNickname()));
+        }
+        if (!StringUtils.isEmpty(student.getLastName())) {
+          sb.append(String.format(" %s", student.getLastName()));
+        }
+        if (student.getStudyProgramme() != null) {
+          sb.append(String.format(" (%s)", student.getStudyProgramme().getName()));
+        }
+        String studentDisplayName = sb.toString();
+
+        // Description part 3: course display name
+
+        sb = new StringBuilder();
+        sb.append(course.getName());
+        if (!StringUtils.isEmpty(course.getNameExtension())) {
+          sb.append(String.format(" (%s)", course.getNameExtension()));
+        }
+        String courseDisplayName = sb.toString();
+        
+        // Price
+        
+        Double price = worklistController.getCourseBasePrice(course);
+
+        worklistController.create(
+            assessor,
+            template,
+            new Date(),
+            String.format("%s - %s - %s", description, studentDisplayName, courseDisplayName),
+            price,
+            template.getFactor(),
+            billingNumber,
+            courseAssessment,
+            sessionController.getUser());
+      }
     }
     
     return Response.ok(objectFactory.createModel(courseAssessment)).build();
@@ -2885,4 +2915,5 @@ public class StudentRESTService extends AbstractRESTService {
 
     return Status.OK;
   }
+
 }

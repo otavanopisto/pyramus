@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateful;
@@ -50,10 +51,12 @@ import fi.otavanopisto.pyramus.framework.StaffMemberProperties;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit.Handling;
 import fi.otavanopisto.pyramus.rest.controller.AssessmentController;
+import fi.otavanopisto.pyramus.rest.controller.CourseController;
 import fi.otavanopisto.pyramus.rest.controller.UserController;
 import fi.otavanopisto.pyramus.rest.controller.WorklistController;
 import fi.otavanopisto.pyramus.rest.controller.permissions.WorklistPermissions;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistApproverRestModel;
+import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemBilledPriceRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemCourseAssessmentRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemRestModel;
 import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemStateChangeRestModel;
@@ -69,10 +72,16 @@ import fi.otavanopisto.pyramus.security.impl.SessionController;
 public class WorklistRESTService {
 
   @Inject
+  private Logger logger;
+
+  @Inject
   private SessionController sessionController;
 
   @Inject
   private UserController userController;
+
+  @Inject
+  private CourseController courseController;
 
   @Inject
   private AssessmentController assessmentController;
@@ -392,6 +401,64 @@ public class WorklistRESTService {
       approvers.add(createRestModel(staffMember));
     }
     return Response.ok(approvers).build();
+  }
+  
+  @Path("/basePrice")
+  @GET
+  @RESTPermit (WorklistPermissions.ACCESS_WORKLIST_BILLING)
+  public Response getCourseBasePrice(@QueryParam("course") Long courseId) {
+    Course course = courseController.findCourseById(courseId);
+    if (course == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    else {
+      return Response.ok(worklistController.getCourseBasePrice(course)).build();
+    }
+  }
+
+  @Path("/billedPrice")
+  @GET
+  @RESTPermit (WorklistPermissions.ACCESS_WORKLIST_BILLING)
+  public Response getCourseBilledPrice(@QueryParam("courseAssessment") Long courseAssessmentId) {
+    CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(courseAssessmentId);
+    if (courseAssessment != null) {
+      List<WorklistItem> items = worklistController.listByCourseAssessment(courseAssessment);
+      if (items.size() > 1) {
+        logger.severe(String.format("Course assessment %d is associated with multiple worklist items", courseAssessmentId));
+      }
+      else if (items.size() == 1) {
+        WorklistItem item = items.get(0);
+        WorklistItemBilledPriceRestModel billedPrice = new WorklistItemBilledPriceRestModel();
+        billedPrice.setAssessmentIdentifier(courseAssessment.getId().toString());
+        billedPrice.setPrice(item.getPrice());
+        billedPrice.setEditable(item.getState() == WorklistItemState.ENTERED || item.getState() == WorklistItemState.PROPOSED);
+        return Response.ok(billedPrice).build();
+      }
+    }
+    return Response.status(Status.NOT_FOUND).build();
+  }
+
+  @Path("/billedPrice")
+  @PUT
+  @RESTPermit (WorklistPermissions.ACCESS_WORKLIST_BILLING)
+  public Response updateCourseBilledPrice(WorklistItemBilledPriceRestModel payload) {
+    CourseAssessment courseAssessment = assessmentController.findCourseAssessmentById(new Long(payload.getAssessmentIdentifier()));
+    if (courseAssessment != null) {
+      List<WorklistItem> items = worklistController.listByCourseAssessment(courseAssessment);
+      if (items.size() > 1) {
+        logger.severe(String.format("Course assessment %s is associated with multiple worklist items", payload.getAssessmentIdentifier()));
+      }
+      else if (items.size() == 1) {
+        WorklistItem item = items.get(0);
+        if (item.getState() == WorklistItemState.APPROVED || item.getState() == WorklistItemState.PAID) {
+          logger.warning(String.format("Attempted to update price of worklist item %d that is already approved or paid", item.getId()));
+          return Response.status(Status.BAD_REQUEST).build();
+        }
+        worklistController.updateBilledPrice(item, payload.getPrice());
+        return Response.ok(payload).build(); 
+      }
+    }
+    return Response.status(Status.NOT_FOUND).build();
   }
 
   private WorklistApproverRestModel createRestModel(StaffMember staffMember) {
