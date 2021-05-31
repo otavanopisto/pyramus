@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -29,23 +30,48 @@ public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
   public List<Opiskeluoikeus> studentToModel(Student student, String academyIdentifier) {
     List<Opiskeluoikeus> oos = new ArrayList<>();
     
-    Opiskeluoikeus pk = pkHandler.studentToModel(student, academyIdentifier);
+    OpiskeluoikeusInternetix pk = pkHandler.studentToModel(student, academyIdentifier);
     
-    Opiskeluoikeus lukio = lukioHandler.studentToModel(student, academyIdentifier);
+    OpiskeluoikeusInternetix lukio = lukioHandler.studentToModel(student, academyIdentifier);
 
-    if (pk != null) {
-      oos.add(pk);
+    if (pk.isEiSuorituksia() && lukio.isEiSuorituksia()) {
+      // Kummassakaan ei suorituksia -> käytetään linjan mukaista oletusarvona
+      
+      KoskiStudyProgrammeHandler studyProgrammeHandlerType = settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
+
+      switch (studyProgrammeHandlerType) {
+        case aineopiskelulukio:
+          oos.add(lukio.getOpiskeluoikeus());
+        break;
+        
+        case aineopiskeluperusopetus:
+          oos.add(pk.getOpiskeluoikeus());
+        break;
+        
+        default:
+          logger.log(Level.SEVERE, String.format("Handler Type %s didn't match the supported types for student %d", studyProgrammeHandlerType, student.getId()));
+        break;
+      }
+    } else {
+      if (!pk.isEiSuorituksia()) {
+        oos.add(pk.getOpiskeluoikeus());
+      }
+      
+      if (!lukio.isEiSuorituksia()) {
+        oos.add(lukio.getOpiskeluoikeus());
+      }
     }
     
-    if (lukio != null) {
-      oos.add(lukio);
-    }
-
     // Log a warning if non-archived student couldn't be translated to a model
     if (oos.isEmpty() && Boolean.FALSE.equals(student.getArchived())) {
       koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.NO_RESOLVABLE_SUBJECTS, new Date());
     }
     
+    // Varoitus, jos aineopiskelijalla on sekä pk:n että lukion opiskeluoikeudet
+    if (oos.size() > 1) {
+      koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.INTERNETIX_BOTH_LINES, new Date());
+    }
+
     return oos;
   }
 

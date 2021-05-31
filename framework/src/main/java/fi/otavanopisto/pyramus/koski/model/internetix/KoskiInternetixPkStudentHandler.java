@@ -47,7 +47,6 @@ import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
-import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinSuoritus;
@@ -59,6 +58,7 @@ import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusop
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli;
+import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusEiTiedossa;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusMuu;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli;
@@ -83,7 +83,7 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     return handlerParams.isPakollinenOppiaine(oppiaine);
   }
   
-  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
+  public OpiskeluoikeusInternetix studentToModel(Student student, String academyIdentifier) {
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = resolveInternetixOid(student, HANDLER_TYPE);
 
@@ -125,15 +125,18 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
 
     // Aineopiskelija
 
-    if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
-      if (StringUtils.isNotEmpty(studyOid)) {
-        koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.EXISTING_INTERNETIX_STUDYPERMIT_WITHOUT_CREDITS, new Date(), studyOid);
-      }
-      
-      return null;
+    boolean eiSuorituksia = CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset());
+    
+    if (eiSuorituksia) {
+      AikuistenPerusopetuksenOppiaineenTunniste oppiaineenTunniste = new AikuistenPerusopetuksenOppiaineenSuoritusEiTiedossa();
+      AikuistenPerusopetuksenOppiaineenSuoritus oppiaineenSuoritus = new AikuistenPerusopetuksenOppiaineenSuoritus(oppiaineenTunniste );
+
+      PerusopetuksenOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = PerusopetuksenOppiaineenOppimaaranSuoritus.from(
+          oppiaineenSuoritus, PerusopetuksenSuoritusTapa.koulutus, Kieli.FI, new OrganisaationToimipisteOID(toimipisteOID));
+      opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
     }
     
-    return opiskeluoikeus;
+    return new OpiskeluoikeusInternetix(opiskeluoikeus, eiSuorituksia);
   }
   
   private AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
