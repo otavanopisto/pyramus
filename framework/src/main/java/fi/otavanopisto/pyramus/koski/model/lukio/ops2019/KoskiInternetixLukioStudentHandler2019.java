@@ -16,9 +16,9 @@ import fi.otavanopisto.pyramus.koski.StudentSubjectSelections;
 import fi.otavanopisto.pyramus.koski.koodisto.Kieli;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionOppimaara;
 import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
-import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipiste;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
+import fi.otavanopisto.pyramus.koski.model.internetix.OpiskeluoikeusInternetix;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 
@@ -31,7 +31,7 @@ public class KoskiInternetixLukioStudentHandler2019 extends AbstractKoskiLukioSt
   public static final String USERVARIABLE_UNDER18STARTREASON = KoskiConsts.UserVariables.UNDER18_STARTREASON;
   private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.aineopiskelulukio;
 
-  public Opiskeluoikeus oppiaineidenOppimaaranOpiskeluoikeus(Student student, String academyIdentifier) {
+  public OpiskeluoikeusInternetix oppiaineidenOppimaaranOpiskeluoikeus(Student student, String academyIdentifier) {
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = userVariableDAO.findByUserAndKey(student, KOSKI_STUDYPERMISSION_ID);
 
@@ -92,7 +92,7 @@ public class KoskiInternetixLukioStudentHandler2019 extends AbstractKoskiLukioSt
       }
     }
     
-    return opiskeluoikeus;
+    return new OpiskeluoikeusInternetix(opiskeluoikeus, false);
   }
 
   @Override

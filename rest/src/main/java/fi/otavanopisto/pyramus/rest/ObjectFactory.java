@@ -220,13 +220,39 @@ public class ObjectFactory {
               variables.put(entityVariable.getKey().getVariableKey(), entityVariable.getValue());
             };
             
+            // #1257: Course's primary education type and subtype
+            // If the course has subject defined, primary education type is that of the subject.
+            // If no subject is defined, and course has only one education type, that is primary.
+            // Primary subtype exists, if the course has only one subtype belonging to the primary education type.
+
+            EducationType educationType = null;
+            EducationSubtype educationSubtype = null;
+            if (entity.getSubject() != null && entity.getSubject().getEducationType() != null) {
+              educationType = entity.getSubject().getEducationType();
+            }
+            else if (entity.getCourseEducationTypes().size() == 1) {
+              educationType = entity.getCourseEducationTypes().get(0).getEducationType();
+            }
+            if (educationType != null && !entity.getCourseEducationTypes().isEmpty()) {
+              for (CourseEducationType cet : entity.getCourseEducationTypes()) {
+                if (cet.getEducationType().getId().equals(educationType.getId())) {
+                  if (cet.getCourseEducationSubtypes().size() == 1) {
+                    educationSubtype = cet.getCourseEducationSubtypes().get(0).getEducationSubtype();
+                  }
+                  break;
+                }
+              }
+            }
+
             return new fi.otavanopisto.pyramus.rest.model.Course(entity.getId(), entity.getName(), created, 
                 lastModified, entity.getDescription(), entity.getArchived(), entity.getCourseNumber(), 
                 entity.getMaxParticipantCount(), beginDate, endDate, entity.getNameExtension(), 
                 entity.getLocalTeachingDays(), entity.getTeachingHours(), entity.getDistanceTeachingHours(), 
                 entity.getDistanceTeachingDays(), entity.getAssessingHours(), entity.getPlanningHours(), enrolmentTimeEnd, 
                 creatorId, lastModifierId, subjectId, curriculumIds, length, lengthUnitId, moduleId, stateId, typeId, variables, tags,
-                entity.getOrganization() == null ? null : entity.getOrganization().getId(), entity.isCourseTemplate());
+                entity.getOrganization() == null ? null : entity.getOrganization().getId(), entity.isCourseTemplate(),
+                educationType == null ? null : educationType.getId(),
+                educationSubtype == null ? null : educationSubtype.getId());
           }
         }, 
         

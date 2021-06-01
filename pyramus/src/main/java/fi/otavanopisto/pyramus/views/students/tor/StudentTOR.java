@@ -30,10 +30,15 @@ public class StudentTOR {
     this.subjects = subjects;
   }
   
-  public void sort() {
+  public TORProblems getProblems() {
+    return problems;
+  }
+
+  protected void postProcess() {
     Collections.sort(subjects, Comparator.comparing(TORSubject::getName));
-    subjects.forEach(subject -> subject.sort());
+    subjects.forEach(subject -> subject.postProcess(problems));
   }
   
+  private final TORProblems problems = new TORProblems();
   private List<TORSubject> subjects = new ArrayList<>();
 }

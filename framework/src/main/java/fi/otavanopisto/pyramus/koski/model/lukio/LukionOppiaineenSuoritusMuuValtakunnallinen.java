@@ -7,7 +7,7 @@ import fi.otavanopisto.pyramus.koski.KoodistoViite;
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 
 @JsonDeserialize(using = JsonDeserializer.None.class)
-public class LukionOppiaineenSuoritusMuuValtakunnallinen extends LukionOppiaineenTunniste {
+public class LukionOppiaineenSuoritusMuuValtakunnallinen extends AbstractLukionOppiaineenTunniste {
 
   public LukionOppiaineenSuoritusMuuValtakunnallinen() {
   }

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusAidinkieli;
+import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusEiTiedossa;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMatematiikka;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMuuValtakunnallinen;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusPaikallinen;
@@ -36,6 +37,8 @@ public class LukionOppiaineenTunnisteDeserializer extends JsonDeserializer<Lukio
         KoskiOppiaineetYleissivistava subject = KoskiOppiaineetYleissivistava.valueOf(subjectStr);
         
         switch (subject) {
+          case XX:
+            return codec.treeToValue(tree, LukionOppiaineenSuoritusEiTiedossa.class);
           case MA:
             return codec.treeToValue(tree, LukionOppiaineenSuoritusMatematiikka.class);
           case AI:

@@ -8,7 +8,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 
 @JsonDeserialize(using = JsonDeserializer.None.class)
-public class AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli extends AikuistenPerusopetuksenOppiaineenTunniste {
+public class AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli extends AbstractAikuistenPerusopetuksenOppiaineenTunniste {
 
   public AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli() {
   }

@@ -42,7 +42,6 @@
             <select name="templateType" class="required">
               <option value="DEFAULT" <c:if test="${worklistTemplate.templateType eq 'DEFAULT'}">selected="selected"</c:if>><fmt:message key="worklist.editWorklistTemplate.defaultType"/></option>
               <option value="COURSE_ASSESSMENT" <c:if test="${worklistTemplate.templateType eq 'COURSE_ASSESSMENT'}">selected="selected"</c:if>><fmt:message key="worklist.editWorklistTemplate.assessmentType"/></option>
-              <option value="GRADE_RAISE" <c:if test="${worklistTemplate.templateType eq 'GRADE_RAISE'}">selected="selected"</c:if>><fmt:message key="worklist.editWorklistTemplate.gradeType"/></option>
             </select>
           </div>
 

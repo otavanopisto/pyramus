@@ -47,7 +47,6 @@ import fi.otavanopisto.pyramus.koski.koodisto.OpintojenRahoitus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
-import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
 import fi.otavanopisto.pyramus.koski.model.lukio.AbstractKoskiLukioStudentHandler;
@@ -61,6 +60,7 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenArviointi;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenOppimaaranSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusAidinkieli;
+import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusEiTiedossa;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMatematiikka;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusMuuValtakunnallinen;
 import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenSuoritusPaikallinen;
@@ -82,7 +82,7 @@ public class KoskiInternetixLukioStudentHandler extends AbstractKoskiLukioStuden
     return handlerParams.isPakollinenOppiaine(oppiaine);
   }
   
-  public Opiskeluoikeus studentToModel(Student student, String academyIdentifier) {
+  public OpiskeluoikeusInternetix studentToModel(Student student, String academyIdentifier) {
     StudentSubjectSelections studentSubjects = loadStudentSubjectSelections(student, getDefaultSubjectSelections());
     String studyOid = resolveInternetixOid(student, HANDLER_TYPE);
     
@@ -124,15 +124,18 @@ public class KoskiInternetixLukioStudentHandler extends AbstractKoskiLukioStuden
 
     // Aineopiskelija
     
-    if (CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset())) {
-      if (StringUtils.isNotEmpty(studyOid)) {
-        koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.EXISTING_INTERNETIX_STUDYPERMIT_WITHOUT_CREDITS, new Date(), studyOid);
-      }
+    boolean eiSuorituksia = CollectionUtils.isEmpty(opiskeluoikeus.getSuoritukset());
+    
+    if (eiSuorituksia) {
+      LukionOppiaineenTunniste oppiaineenTunniste = new LukionOppiaineenSuoritusEiTiedossa();
+      LukionOppiaineenSuoritus oppiaineenSuoritus = new LukionOppiaineenSuoritus(oppiaineenTunniste);
       
-      return null;
+      LukionOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = LukionOppiaineenOppimaaranSuoritus.from(
+          oppiaineenSuoritus, Kieli.FI, new OrganisaationToimipisteOID(toimipisteOID));
+      opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
     }
     
-    return opiskeluoikeus;
+    return new OpiskeluoikeusInternetix(opiskeluoikeus, eiSuorituksia);
   }
   
   private StudentSubjectSelections getDefaultSubjectSelections() {
