@@ -328,5 +328,22 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
     
     return entityManager.createQuery(criteria).getResultList();
   }
+  
+  public List<Application> listByHandlerAndArchived(StaffMember handler, Boolean archived) {
+    EntityManager entityManager = getEntityManager(); 
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Application> criteria = criteriaBuilder.createQuery(Application.class);
+    Root<Application> root = criteria.from(Application.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Application_.handler), handler),
+        criteriaBuilder.equal(root.get(Application_.archived), archived)
+      )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
 
 }
