@@ -94,6 +94,17 @@
   background-size: contain;
 }
 
+.application-file__deleteicon {
+  background-size: 16px 16px;
+  background-image: url('../gfx/icons/32x32/actions/remove-dark.png');
+  cursor: pointer;
+  flex-basis: 16px;
+  flex-grow: 0;
+  flex-shrink: 1;
+  height: 16px;
+  min-width: 16px;
+}
+
 .application-file__description {
   display: block;
   margin: 10px 0 0;
