@@ -22,7 +22,7 @@
         success: function(files) {
           $('#attachments-title').toggle(files.length > 0);
           for (var i = 0; i < files.length; i++) {
-            attachmentsContainer.append($('<div>').addClass('application-attachment')
+            attachmentsContainer.append($('<div>').attr('data-filename', files[i].name).addClass('application-attachment')
               .append(
                 $('<span>').addClass('icon-attachment'))
               .append(
@@ -30,7 +30,18 @@
                   .attr('href', '/1/applications/getattachment/' + applicationId + '?attachment=' + files[i].name)
                   .attr('target', '_blank')
                   .addClass('attachment-link')
-                  .text(files[i].description||files[i].name)));
+                  .text(files[i].description||files[i].name))
+              .append(
+                  $('<span>').addClass('application-file__deleteicon').on('click', function(event) {
+                    var element = $(event.target).closest('.application-attachment');
+                    $.ajax({
+                      url: '/1/applications/removeattachment/' + applicationId + '?attachment=' + element.attr('data-filename'),
+                      type: 'DELETE',
+                      success: function(data) {
+                        $(element).remove();
+                      }
+                    });
+                  })));
           }
         },
         error: function(err) {
