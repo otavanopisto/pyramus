@@ -413,7 +413,7 @@ public class WorklistRESTService {
     }
     else {
       Double basePrice = worklistController.getCourseBasePrice(course);
-      return basePrice == null ? Response.noContent().build() : Response.ok(basePrice).build();
+      return basePrice == null ? Response.status(Status.NOT_FOUND).build() : Response.ok(basePrice).build();
     }
   }
 
