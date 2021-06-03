@@ -61,7 +61,7 @@ import fi.otavanopisto.pyramus.koski.model.result.OppijaReturnVal;
 @ApplicationScoped
 public class KoskiClient {
 
-  private static final String KOSKI_HENKILO_OID = "koski.henkilo-oid";
+  private static final String KOSKI_HENKILO_OID = KoskiConsts.VariableNames.KOSKI_HENKILO_OID;
   
   private static final String KOSKI_SETTINGKEY_BASEURL = "koski.baseUrl";
   private static final String KOSKI_SETTINGKEY_AUTH = "koski.auth";

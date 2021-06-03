@@ -35,7 +35,7 @@ public class KoodistoViite<T extends Enum<T>> {
   
   @JsonIgnore
   public T getValue() {
-    return Enum.valueOf(koodiarvo.getDeclaringClass(), koodiarvo.name());
+    return koodiarvo != null ? Enum.valueOf(koodiarvo.getDeclaringClass(), koodiarvo.name()) : null;
   }
 
   private Enum<T> koodiarvo;

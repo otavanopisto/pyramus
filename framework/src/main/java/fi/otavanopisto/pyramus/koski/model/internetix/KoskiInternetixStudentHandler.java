@@ -14,7 +14,9 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
+import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
+import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.KoskiInternetixLukioStudentHandler2019;
 
 public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
 
@@ -27,12 +29,18 @@ public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
   @Inject
   private KoskiInternetixLukioStudentHandler lukioHandler;
   
+  @Inject
+  private KoskiInternetixLukioStudentHandler2019 lukio2019Handler;
+  
   public List<Opiskeluoikeus> studentToModel(Student student, String academyIdentifier) {
     List<Opiskeluoikeus> oos = new ArrayList<>();
+    OpiskelijanOPS opiskelijanOPS = settings.resolveOPS(student);
     
     OpiskeluoikeusInternetix pk = pkHandler.studentToModel(student, academyIdentifier);
     
-    OpiskeluoikeusInternetix lukio = lukioHandler.studentToModel(student, academyIdentifier);
+    OpiskeluoikeusInternetix lukio = opiskelijanOPS == OpiskelijanOPS.ops2019
+        ? lukio2019Handler.oppiaineidenOppimaaranOpiskeluoikeus(student, academyIdentifier)
+        : lukioHandler.studentToModel(student, academyIdentifier);
 
     if (pk.isEiSuorituksia() && lukio.isEiSuorituksia()) {
       // Kummassakaan ei suorituksia -> käytetään linjan mukaista oletusarvona

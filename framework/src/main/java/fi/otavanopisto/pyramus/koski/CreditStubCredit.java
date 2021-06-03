@@ -7,12 +7,15 @@ import fi.otavanopisto.pyramus.domainmodel.grading.Grade;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCredit;
 import fi.otavanopisto.pyramus.domainmodel.grading.TransferCreditFunding;
 import fi.otavanopisto.pyramus.koski.koodisto.ArviointiasteikkoYleissivistava;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
 
 public class CreditStubCredit {
 
-  public CreditStubCredit(Credit credit, Type type) {
+  public CreditStubCredit(Credit credit, Type type, int courseLength, OpintojenLaajuusYksikko lengthUnit) {
     this.type = type;
     this.credit = credit;
+    this.courseLength = courseLength;
+    this.courseLenghtUnit = lengthUnit;
   }
   
   public enum Type {
@@ -67,6 +70,16 @@ public class CreditStubCredit {
     return credit instanceof TransferCredit ? ((TransferCredit) credit).getFunding() : null;
   }
 
+  public int getCourseLength() {
+    return courseLength;
+  }
+
+  public OpintojenLaajuusYksikko getCourseLenghtUnit() {
+    return courseLenghtUnit;
+  }
+
   private final Credit credit;
   private final Type type;
+  private final int courseLength;
+  private final OpintojenLaajuusYksikko courseLenghtUnit;
 }
