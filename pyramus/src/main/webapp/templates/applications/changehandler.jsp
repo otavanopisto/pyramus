@@ -37,7 +37,7 @@
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
               <jsp:param name="titleText" value="Keneltä"/>
             </jsp:include> 
-            <select id="sourceStaffMember" name="sourceStaffMember" id="sourceStaffMember">
+            <select id="sourceStaffMember" name="sourceStaffMember">
               <c:forEach var="staffMember" items="${staffMembers}">
                 <option value="${staffMember.id}">${staffMember.lastName}, ${staffMember.firstName}</option>
               </c:forEach>
@@ -49,7 +49,7 @@
             <jsp:include page="/templates/generic/fragments/formtitle.jsp">
               <jsp:param name="titleText" value="Kenelle"/>
             </jsp:include> 
-            <select id="targetStaffMember" name="targetStaffMember" id="targetStaffMember">
+            <select id="targetStaffMember" name="targetStaffMember">
               <c:forEach var="staffMember" items="${staffMembers}">
                 <option value="${staffMember.id}">${staffMember.lastName}, ${staffMember.firstName}</option>
               </c:forEach>
