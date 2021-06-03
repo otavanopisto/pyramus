@@ -1,12 +1,15 @@
 package fi.otavanopisto.pyramus.views.applications;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.otavanopisto.pyramus.dao.DAOFactory;
 import fi.otavanopisto.pyramus.dao.application.ApplicationDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.domainmodel.application.Application;
+import fi.otavanopisto.pyramus.domainmodel.application.ApplicationState;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.framework.PyramusViewController;
 import fi.otavanopisto.pyramus.framework.UserRole;
@@ -20,7 +23,13 @@ public class HandlerStatisticsViewController extends PyramusViewController {
     ApplicationDAO applicationDAO = DAOFactory.getInstance().getApplicationDAO();
     
     StaffMember staffMember = staffMemberDAO.findById(staffMemberId);
-    List<Application> applications = applicationDAO.listByHandlerAndArchived(staffMember, Boolean.FALSE);
+    List<ApplicationState> states = Stream.of(
+        ApplicationState.PROCESSING,
+        ApplicationState.WAITING_STAFF_SIGNATURE,
+        ApplicationState.STAFF_SIGNED,
+        ApplicationState.APPROVED_BY_SCHOOL,
+        ApplicationState.APPROVED_BY_APPLICANT).collect(Collectors.toList());
+    List<Application> applications = applicationDAO.listByHandlerAndStatesAndArchived(staffMember, states, Boolean.FALSE);
     
     int processing = 0;
     int waitingStaffSignature = 0;
