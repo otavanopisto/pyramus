@@ -414,9 +414,8 @@ textarea {
 
 .application-attachment .attachment-link {
   flex-basis: auto;
-  flex-grow: 1;
   flex-shrink: 1;
-  margin: 0 0 0 5px;
+  margin: 0 10px 0 5px;
 }
 
 /* Mail <section> */
