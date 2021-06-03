@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
@@ -323,6 +324,28 @@ public class ApplicationDAO extends PyramusEntityDAO<Application> {
         criteriaBuilder.greaterThanOrEqualTo(root.get(Application_.created), startDate),
         criteriaBuilder.lessThanOrEqualTo(root.get(Application_.created), endDate),
         criteriaBuilder.equal(root.get(Application_.archived), Boolean.FALSE)
+      )
+    );
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
+  public List<Application> listByHandlerAndStatesAndArchived(StaffMember handler, List<ApplicationState> states, Boolean archived) {
+    EntityManager entityManager = getEntityManager(); 
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Application> criteria = criteriaBuilder.createQuery(Application.class);
+    Root<Application> root = criteria.from(Application.class);
+    In<ApplicationState> inClause = criteriaBuilder.in(root.get(Application_.state));
+    for (ApplicationState state : states) {
+      inClause.value(state);
+    }
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Application_.handler), handler),
+        inClause,
+        criteriaBuilder.equal(root.get(Application_.archived), archived)
       )
     );
     
