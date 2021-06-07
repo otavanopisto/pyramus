@@ -93,6 +93,8 @@
           </span>
         </div>
         <div id="worklistItemsTableContainer"></div>
+        
+        <input type="button" onclick="showWorklistReport();" value="<fmt:message key="worklist.listWorklistItems.reportButtonCaption"/>"/>
       </div>
     </div>
   

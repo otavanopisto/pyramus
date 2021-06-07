@@ -150,6 +150,9 @@
         <c:if test="${endDate ne null}">
           viewParametersUrl = viewParametersUrl + "&endDate=${endDate}"; 
         </c:if>
+        <c:if test="${staffMemberId ne null}">
+          viewParametersUrl = viewParametersUrl + "&staffMemberId=${staffMemberId}"; 
+        </c:if>
         
         var dialog = new IxDialog({
           id : 'parametersDialog',
