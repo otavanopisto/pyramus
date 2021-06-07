@@ -240,6 +240,8 @@ public abstract class KoskiStudentHandler {
             pidennettyPäättymispäiväjakso.setOpintojenRahoitus(new KoodistoViite<>(rahoitus));
             tila.addOpiskeluoikeusJakso(pidennettyPäättymispäiväjakso);
           break;
+
+          case COMPULSORY_EDUCATION:
           case EXTENDED_COMPULSORY_EDUCATION:
             // Käsittely lukion opiskeluoikeuden lisätiedoissa, ei vaikuta opiskeluoikeuden tilaan
           break;

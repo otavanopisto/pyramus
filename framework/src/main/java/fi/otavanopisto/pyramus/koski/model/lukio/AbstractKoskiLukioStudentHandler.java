@@ -52,6 +52,16 @@ public abstract class AbstractKoskiLukioStudentHandler extends KoskiStudentHandl
     studyPeriods.sort(Comparator.comparing(StudentStudyPeriod::getBegin));
     
     for (StudentStudyPeriod studyPeriod : studyPeriods) {
+      if (studyPeriod.getPeriodType() == StudentStudyPeriodType.COMPULSORY_EDUCATION) {
+        // Aloituspäivä -> maksuttomuuden alkamispäivä
+        lisatiedot.addMaksuttomuus(new Maksuttomuus(studyPeriod.getBegin(), true));
+
+        // Päättymispäivä -> maksuttomuuden päättymispäivä
+        if (studyPeriod.getEnd() != null) {
+          lisatiedot.addMaksuttomuus(new Maksuttomuus(studyPeriod.getEnd(), false));
+        }
+      }
+
       if (studyPeriod.getPeriodType() == StudentStudyPeriodType.EXTENDED_COMPULSORY_EDUCATION) {
         lisatiedot.addOikeuttaMaksuttomuuteenPidennetty(new OikeuttaMaksuttomuuteenPidennetty(studyPeriod.getBegin(), studyPeriod.getEnd()));
       }
