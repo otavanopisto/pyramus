@@ -1,5 +1,7 @@
 package fi.otavanopisto.pyramus.views.students;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -9,6 +11,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fi.internetix.smvc.controllers.PageRequestContext;
 import fi.internetix.smvc.controllers.RequestContext;
@@ -348,6 +353,8 @@ public class EditStudentViewController extends PyramusViewController2 implements
     }
     studyApprovers.sort(Comparator.comparing(StaffMember::getLastName).thenComparing(StaffMember::getFirstName));
     
+    readUserVariablePresets(pageRequestContext);
+    
     pageRequestContext.getRequest().setAttribute("tags", studentTags);
     pageRequestContext.getRequest().setAttribute("person", person);
     pageRequestContext.getRequest().setAttribute("students", students);
@@ -374,6 +381,40 @@ public class EditStudentViewController extends PyramusViewController2 implements
     pageRequestContext.setIncludeJSP("/templates/students/editstudent.jsp");
   }
 
+  /**
+   * Reads a json from file system and delivers it to frontend. The file is of format
+   * 
+   * {
+   *   "variableKey (from UserVariable.variableKey)": {
+   *     "presets": [
+   *       {
+   *         label: "Lorem ipsum",
+   *         value: "dolor sit amet"
+   *       }
+   *     ]
+   *   }
+   * }
+   *
+   */
+  private void readUserVariablePresets(PageRequestContext pageRequestContext) {
+    String json = null;
+
+    String fileName = System.getProperty("jboss.server.config.dir") + "/pyramus-uservariable-presets.json";
+    File file = new File(fileName);
+    if (file.exists()) {
+      try {
+        json = FileUtils.readFileToString(file);
+      } catch (IOException e) {
+      }
+    }
+    
+    if (StringUtils.isBlank(json)) {
+      json = "{}";
+    }
+    
+    setJsDataVariable(pageRequestContext, "userVariablePresets", json);
+  }
+  
   /**
    * Returns the localized name of this page. Used e.g. for breadcrumb navigation.
    * 

@@ -312,6 +312,48 @@
             paramName: 'name'
           }, {
             left : 30 + 8 + 250 + 8,
+            width : 30,
+            dataType: 'button',
+            imgsrc: GLOBAL_contextPath + '/gfx/overwrite-column-values.png',
+            paramName: 'presetsButton',
+            hidden: true,
+            onclick: function (event) {
+              var table = event.tableComponent;
+              var rowIndex = event.row;
+              var valueColumn = table.getNamedColumnIndex('value');
+
+              var variableKey = table.getCellValue(event.row, table.getNamedColumnIndex('key'));
+
+              var dialog = new IxDialog({
+                id : 'selectUserVariablePresetDialog',
+                contentURL : GLOBAL_contextPath + '/students/selectuservariablepresetdialog.page?variableKey=' + variableKey,
+                centered : true,
+                showOk : false,
+                showCancel : true,
+                title: '<fmt:message key="students.editStudent.selectUserVariablePresetDialog.title"/>',
+                cancelLabel: '<fmt:message key="generic.dialog.cancel"/>'
+              });
+
+              dialog.addDialogListener(function(event) {
+                var dlg = event.dialog;
+                switch (event.name) {
+                  case 'okClick':
+                    event.preventDefault(true);
+
+                    table.setCellEditable(rowIndex, valueColumn, true);
+                    table.setCellValue(rowIndex, valueColumn, event.results);
+                    table.setCellValue(rowIndex, table.getNamedColumnIndex('edited'), "1");
+            
+                    dlg.close();
+                  break;
+                }
+              });
+              
+              dialog.setSize("600px", "300px");
+              dialog.open();
+            }
+          }, {
+            left : 30 + 8 + 250 + 8 + 30 + 8,
             width : 350,
             dataType: 'text',
             editable: false,
@@ -641,32 +683,46 @@
 
       function setupStudent(studentId, data) {
         var variables = JSDATA["variables." + studentId].evalJSON();
+        var variablePresets = JSDATA["userVariablePresets"].evalJSON();
+
         if (variables && variables.length > 0) {
           // Student variables
           var variablesTable = initStudentVariableTable(studentId);
+          var valueColumn = variablesTable.getNamedColumnIndex('value');
 
+          
           for (var i = 0, l = variables.length; i < l; i++) {
             var rowNumber = variablesTable.addRow([
               '',
               variables[i].key,
               variables[i].name,
+              '',
               variables[i].value,
               '0'
             ]);
 
             switch (variables[i].type) {
               case 'NUMBER':
-                variablesTable.setCellDataType(rowNumber, 3, 'text');
+                variablesTable.setCellDataType(rowNumber, valueColumn, 'text');
               break;
               case 'DATE':
-                variablesTable.setCellDataType(rowNumber, 3, 'date');
+                variablesTable.setCellDataType(rowNumber, valueColumn, 'date');
               break;
               case 'BOOLEAN':
-                variablesTable.setCellDataType(rowNumber, 3, 'checkbox');
+                variablesTable.setCellDataType(rowNumber, valueColumn, 'checkbox');
               break;
               default:
-                variablesTable.setCellDataType(rowNumber, 3, 'text');
+                variablesTable.setCellDataType(rowNumber, valueColumn, 'text');
               break;
+            }
+
+            if (variablePresets[variables[i].key]) {
+              var presets = variablePresets[variables[i].key];
+              if (presets.presets) {
+                if (presets.presets.length > 0) {
+                  variablesTable.showCell(rowNumber, variablesTable.getNamedColumnIndex('presetsButton'));
+                }
+              }
             }
           }
         }
