@@ -60,9 +60,18 @@ public class ViewReportViewController extends PyramusViewController implements B
           if (courseId != null)
             pageRequestContext.getRequest().setAttribute("courseId", courseId); 
         break;
+        
+        case Common:
+        break;
       }
     }
 
+    
+    Long staffMemberId = pageRequestContext.getLong("staffMemberId");
+    if (staffMemberId != null) {
+      pageRequestContext.getRequest().setAttribute("staffMemberId", staffMemberId);
+    }
+    
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     
     Date startDate = pageRequestContext.getDate("startDate");

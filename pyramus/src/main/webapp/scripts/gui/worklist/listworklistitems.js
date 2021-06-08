@@ -104,6 +104,17 @@ function onListWorklistItems(event) {
   doList();
 }
 
+function showWorklistReport(event) {
+  var filterForm = $("filterForm");
+  var staffMemberId = filterForm.staffMember.value;
+  var beginDate = filterForm.beginDate.value;
+  var endDate = filterForm.endDate.value;
+  
+  var parameters = "&staffMemberId=" + staffMemberId + "&startDate=" + beginDate + "&endDate=" + endDate;
+  
+  window.open("/reports/viewreport.page?reportId=87" + parameters, "worklist_report");
+}
+
 function onLoad(event) {
   var tabControl = new IxProtoTabs($('tabs'));
   var worklistItemsTable = new IxTable($('worklistItemsTableContainer'), {
