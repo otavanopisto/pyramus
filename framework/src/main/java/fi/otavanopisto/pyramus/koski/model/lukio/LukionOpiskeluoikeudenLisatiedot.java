@@ -42,6 +42,7 @@ public class LukionOpiskeluoikeudenLisatiedot {
     return ulkomainenVaihtoopiskelija;
   }
   
+  @Deprecated
   public boolean isYksityisopiskelija() {
     return yksityisopiskelija;
   }
@@ -67,6 +68,7 @@ public class LukionOpiskeluoikeudenLisatiedot {
     this.ulkomainenVaihtoopiskelija = ulkomainenVaihtoopiskelija;
   }
 
+  @Deprecated
   public void setYksityisopiskelija(boolean yksityisopiskelija) {
     this.yksityisopiskelija = yksityisopiskelija;
   }
@@ -106,7 +108,7 @@ public class LukionOpiskeluoikeudenLisatiedot {
   private boolean pidennettyPaattymispaiva;
   private boolean ulkomainenVaihtoopiskelija;
   private Kuvaus alle18vuotiaanAikuistenLukiokoulutuksenAloittamisenSyy;
-  private boolean yksityisopiskelija;
+  @Deprecated private boolean yksityisopiskelija;
   private boolean oikeusMaksuttomaanAsuntolapaikkaan;
   private List<Majoitusjakso> sisaoppilaitosmainenMajoitus = new ArrayList<>();
   private List<Maksuttomuus> maksuttomuus = new ArrayList<>();
