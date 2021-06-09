@@ -113,8 +113,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
       
       MatriculationExamSubject subject =
         MatriculationExamSubject.valueOf(pageRequestContext.getString("enrolledAttendances." + i + ".subject"));
-      boolean mandatory =
-        "MANDATORY".equals(pageRequestContext.getString("enrolledAttendances." + i + ".mandatority"));
+      Boolean mandatory = parseMandatory(pageRequestContext.getString("enrolledAttendances." + i + ".mandatority"));
       boolean repeat =
         "REPEAT".equals(pageRequestContext.getString("enrolledAttendances." + i + ".repeat"));
       
@@ -151,8 +150,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
       int year = Integer.parseInt(termString.substring(6));
       MatriculationExamSubject subject =
         MatriculationExamSubject.valueOf(pageRequestContext.getString("finishedAttendances." + i + ".subject"));
-      boolean mandatory =
-        "MANDATORY".equals(pageRequestContext.getString("finishedAttendances." + i + ".mandatority"));
+      Boolean mandatory = parseMandatory(pageRequestContext.getString("finishedAttendances." + i + ".mandatority"));
       MatriculationExamGrade grade =
         MatriculationExamGrade.valueOf(pageRequestContext.getString("finishedAttendances." + i + ".grade"));
       
@@ -179,8 +177,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
       int year = Integer.parseInt(termString.substring(6));
       MatriculationExamSubject subject =
         MatriculationExamSubject.valueOf(pageRequestContext.getString("plannedAttendances." + i + ".subject"));
-      boolean mandatory =
-        "MANDATORY".equals(pageRequestContext.getString("plannedAttendances." + i + ".mandatority"));
+      Boolean mandatory = parseMandatory(pageRequestContext.getString("plannedAttendances." + i + ".mandatority"));
       if (NEW_ROW_ID.equals(attendanceId)) {
         attendanceDAO.create(enrollment, subject, mandatory, null, year, term,
           MatriculationExamAttendanceStatus.PLANNED, null);
@@ -194,6 +191,16 @@ public class EditEnrollmentViewController extends PyramusViewController {
     pageRequestContext.setRedirectURL(pageRequestContext.getRequest().getRequestURI() + "?enrollment=" + id);
   }
 
+  private Boolean parseMandatory(String value) {
+    return "MANDATORY".equals(value) ? Boolean.TRUE : 
+      "OPTIONAL".equals(value) ? Boolean.FALSE : null;
+  }
+  
+  private String mandatoryToString(Boolean mandatory) {
+    return Boolean.TRUE.equals(mandatory) ? "MANDATORY" :
+      Boolean.FALSE.equals(mandatory) ? "OPTIONAL" : null;
+  }
+  
   private void createOrUpdateStudentProject(MatriculationExamAttendance examAttendance, Student student, MatriculationExamSubject subject, boolean mandatory, StaffMember loggedUser) {
     ProjectAssessmentDAO projectAssessmentDAO = DAOFactory.getInstance().getProjectAssessmentDAO();
     StudentProjectDAO studentProjectDAO = DAOFactory.getInstance().getStudentProjectDAO();
@@ -318,7 +325,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
                 attendance.getId(),
                 attendance.getTerm().name() + attendance.getYear(),
                 attendance.getSubject().name(),
-                attendance.isMandatory() ? "MANDATORY" : "OPTIONAL",
+                mandatoryToString(attendance.isMandatory()),
                 attendance.isRetry() ? "REPEAT" : "FIRST_TIME",
                 (attendance.getProjectAssessment() != null && attendance.getProjectAssessment().getDate() != null) ? 
                     attendance.getProjectAssessment().getDate().getTime() : null,
@@ -330,7 +337,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
                 attendance.getId(),
                 attendance.getTerm().name() + attendance.getYear(),
                 attendance.getSubject().name(),
-                attendance.isMandatory() ? "MANDATORY" : "OPTIONAL",
+                mandatoryToString(attendance.isMandatory()),
                 attendance.getGrade().name(),
                 ""));
         break;
@@ -340,7 +347,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
                 attendance.getId(),
                 attendance.getTerm().name() + attendance.getYear(),
                 attendance.getSubject().name(),
-                attendance.isMandatory() ? "MANDATORY" : "OPTIONAL",
+                mandatoryToString(attendance.isMandatory()),
                 ""));
         break;
       default:

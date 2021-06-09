@@ -76,6 +76,7 @@
           {value:"MAB", text:"Matematiikka, lyhyt"}
         ];
         var mandatorityOptions = [
+          {value: "", text: ""},
           {value: "MANDATORY", text: "Pakollinen"},
           {value: "OPTIONAL", text: "Valinnainen"}
         ];
