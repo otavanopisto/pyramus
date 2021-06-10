@@ -41,11 +41,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.OrganizationContactPerson;
 import fi.otavanopisto.pyramus.domainmodel.base.OrganizationContactPersonType;
 import fi.otavanopisto.pyramus.domainmodel.base.OrganizationContractPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
-import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
-import fi.otavanopisto.pyramus.rest.controller.OrganizationController;
-import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemTemplateRestModel;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 
@@ -77,8 +74,6 @@ public class OrganizationRESTService extends AbstractRESTService {
   @Inject
   private ObjectFactory objectFactory;
   
-  @Inject 
-  private OrganizationController organizationController;
   
   
   @Path("/")
