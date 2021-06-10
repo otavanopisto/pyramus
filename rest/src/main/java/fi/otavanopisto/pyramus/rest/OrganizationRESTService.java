@@ -41,8 +41,11 @@ import fi.otavanopisto.pyramus.domainmodel.base.OrganizationContactPerson;
 import fi.otavanopisto.pyramus.domainmodel.base.OrganizationContactPersonType;
 import fi.otavanopisto.pyramus.domainmodel.base.OrganizationContractPeriod;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
+import fi.otavanopisto.pyramus.domainmodel.worklist.WorklistItemTemplate;
 import fi.otavanopisto.pyramus.framework.UserUtils;
 import fi.otavanopisto.pyramus.rest.annotation.RESTPermit;
+import fi.otavanopisto.pyramus.rest.controller.OrganizationController;
+import fi.otavanopisto.pyramus.rest.model.worklist.WorklistItemTemplateRestModel;
 import fi.otavanopisto.pyramus.security.impl.SessionController;
 import fi.otavanopisto.pyramus.security.impl.permissions.OrganizationPermissions;
 
@@ -73,6 +76,10 @@ public class OrganizationRESTService extends AbstractRESTService {
 
   @Inject
   private ObjectFactory objectFactory;
+  
+  @Inject 
+  private OrganizationController organizationController;
+  
   
   @Path("/")
   @POST
@@ -296,6 +303,34 @@ public class OrganizationRESTService extends AbstractRESTService {
     }
     
     return Response.noContent().build();
+  }
+  
+  @Path("/{ID:[0-9]*}/contactPerson")
+  @GET
+  @RESTPermit (OrganizationPermissions.FIND_ORGANIZATION)
+  public Response listOrganizationContactPersons(@PathParam("ID") Long organizationId) {
+    Organization organization = organizationDAO.findById(organizationId);
+    if (organization == null || organization.getArchived() || !UserUtils.canAccessOrganization(sessionController.getUser(), organization)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    List<OrganizationContactPerson> contactPersons = organizationContactPersonDAO.listBy(organization);
+    
+    List<fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson> restContactPersons = new ArrayList<>();
+    for (OrganizationContactPerson contactPerson : contactPersons) {
+      restContactPersons.add(createRestModel(contactPerson));
+    }
+    return Response.ok(restContactPersons).build();
+  }
+  
+  private fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson createRestModel(OrganizationContactPerson contactPerson) {
+    fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson restModel = new fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson();
+    fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType type = contactPerson.getType() != null ? fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType.valueOf(contactPerson.getType().name()) : null;
+    restModel.setEmail(contactPerson.getEmail());
+    restModel.setName(contactPerson.getName());
+    restModel.setPhone(contactPerson.getPhone());
+    restModel.setTitle(contactPerson.getTitle());
+    restModel.setType(type);
+    return restModel;
   }
   
 }
