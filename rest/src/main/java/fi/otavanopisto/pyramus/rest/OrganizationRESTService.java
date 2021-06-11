@@ -300,7 +300,7 @@ public class OrganizationRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
   
-  @Path("/{ID:[0-9]*}/contactPerson")
+  @Path("/{ID:[0-9]*}/contactPersons")
   @GET
   @RESTPermit (OrganizationPermissions.FIND_ORGANIZATION)
   public Response listOrganizationContactPersons(@PathParam("ID") Long organizationId) {
