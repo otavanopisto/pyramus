@@ -29,6 +29,10 @@ public class OrganizationPermissions extends AbstractPyramusPermissionCollection
   public static final String FIND_ORGANIZATION = "FIND_ORGANIZATION";
   
   @Scope (PermissionScope.ENVIRONMENT)
+  @DefaultPermissionRoles ({ ADMINISTRATOR, TRUSTED_SYSTEM })
+  public static final String LIST_ORGANIZATION_CONTACT_PERSONS = "LIST_ORGANIZATION_CONTACT_PERSONS";
+  
+  @Scope (PermissionScope.ENVIRONMENT)
   @DefaultPermissionRoles ({ ADMINISTRATOR })
   public static final String UPDATE_ORGANIZATION = "UPDATE_ORGANIZATION";
   

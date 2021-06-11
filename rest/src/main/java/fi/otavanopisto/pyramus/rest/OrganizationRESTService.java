@@ -302,7 +302,7 @@ public class OrganizationRESTService extends AbstractRESTService {
   
   @Path("/{ID:[0-9]*}/contactPersons")
   @GET
-  @RESTPermit (OrganizationPermissions.FIND_ORGANIZATION)
+  @RESTPermit (OrganizationPermissions.LIST_ORGANIZATION_CONTACT_PERSONS)
   public Response listOrganizationContactPersons(@PathParam("ID") Long organizationId) {
     Organization organization = organizationDAO.findById(organizationId);
     if (organization == null || organization.getArchived() || !UserUtils.canAccessOrganization(sessionController.getUser(), organization)) {
