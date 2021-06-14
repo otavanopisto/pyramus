@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +40,7 @@ import fi.otavanopisto.pyramus.koski.koodisto.KoskiOppiaineetYleissivistava;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionKurssinTyyppi;
 import fi.otavanopisto.pyramus.koski.koodisto.LukionMuutOpinnot;
 import fi.otavanopisto.pyramus.koski.koodisto.ModuuliKoodistoLOPS2021;
+import fi.otavanopisto.pyramus.koski.koodisto.OpintojenLaajuusYksikko;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineAidinkieliJaKirjallisuus;
 import fi.otavanopisto.pyramus.koski.koodisto.OppiaineMatematiikka;
 import fi.otavanopisto.pyramus.koski.koodisto.SuorituksenTyyppi;
@@ -91,6 +93,7 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       }
       
       // Valmiille oppiaineelle on rustattava kokonaisarviointi
+
       if (calculateMeanGrades && (lukionOsaSuoritus instanceof LukionOppiaineenSuoritus2019)) {
         LukionOppiaineenSuoritus2019 lukionOppiaineenSuoritus = (LukionOppiaineenSuoritus2019) lukionOsaSuoritus;
         ArviointiasteikkoYleissivistava aineKeskiarvo = accomplished.contains(lukionOppiaineenSuoritusWSubject) ? 
@@ -116,15 +119,35 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
     if (korotettuArvosana != null) {
       return korotettuArvosana;
     } else {
-      List<ArviointiasteikkoYleissivistava> kurssiarvosanat = new ArrayList<>();
+      List<PainotettuArvosana> kurssiarvosanat = new ArrayList<>();
+      EnumSet<OpintojenLaajuusYksikko> yksikot = EnumSet.noneOf(OpintojenLaajuusYksikko.class);
+      
       for (LukionOpintojaksonSuoritus2019 kurssinSuoritus : oppiaineenSuoritus.getOsasuoritukset()) {
-        List<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
-        Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
-        
-        kurssiarvosanat.add(ArviointiasteikkoYleissivistava.bestGrade(arvosanat));
+        if (kurssinSuoritus.getKoulutusmoduuli() != null && kurssinSuoritus.getKoulutusmoduuli().getLaajuus() != null) {
+          List<KurssinArviointi> arvioinnit = kurssinSuoritus.getArviointi();
+          Laajuus laajuus = kurssinSuoritus.getKoulutusmoduuli().getLaajuus();
+
+          OpintojenLaajuusYksikko laajuusYksikko = laajuus.getYksikko().getValue();
+          if (yksikot.isEmpty()) {
+            yksikot.add(laajuusYksikko);
+          } else {
+            if (!yksikot.contains(laajuusYksikko)) {
+              koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.CONFLICTING_COURSELENGTH, new Date(), subject != null ? subject.getCode() : "?");
+            }
+          }
+          
+          int kurssinLaajuus = laajuus.getArvo();
+          
+          Set<ArviointiasteikkoYleissivistava> arvosanat = arvioinnit.stream().map(arviointi -> arviointi.getArvosana().getValue()).collect(Collectors.toSet());
+          ArviointiasteikkoYleissivistava kurssiArvosana = ArviointiasteikkoYleissivistava.bestGrade(arvosanat);
+          kurssiarvosanat.add(new PainotettuArvosana(kurssinLaajuus, kurssiArvosana));
+        } else {
+          // Yleisvirhe, jonka ei pitäisi koskaan toteutua tai jotain on mennyt valmistelussa pieleen
+          koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.GENERIC_ERROR, new Date(), "1001");
+        }
       }
       
-      return ArviointiasteikkoYleissivistava.meanGrade(kurssiarvosanat);
+      return ArviointiasteikkoYleissivistava.weightedMeanGrade(kurssiarvosanat);
     }
   }
 

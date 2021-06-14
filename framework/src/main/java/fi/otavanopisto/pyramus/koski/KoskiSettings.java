@@ -227,6 +227,7 @@ public class KoskiSettings {
     return freeLodgingStudyProgrammes.contains(studyProgrammeId);
   }
   
+  @Deprecated
   public boolean isYksityisopiskelija(Long studyProgrammeId) {
     return yksityisopiskelijaStudyProgrammes.contains(studyProgrammeId);
   }
@@ -327,7 +328,7 @@ public class KoskiSettings {
   private boolean testEnvironment;
   private Set<Long> enabledStudyProgrammes = new HashSet<Long>();
   private Set<Long> freeLodgingStudyProgrammes = new HashSet<Long>();
-  private Set<Long> yksityisopiskelijaStudyProgrammes = new HashSet<Long>();
+  @Deprecated private Set<Long> yksityisopiskelijaStudyProgrammes = new HashSet<Long>();
   private Map<Long, KoskiStudyProgrammeHandler> handlerTypes = new HashMap<>();
   private Map<Long, OpintojenRahoitus> opintojenRahoitus = new HashMap<>();
   private Map<Long, String> toimipisteOIDt = new HashMap<>();

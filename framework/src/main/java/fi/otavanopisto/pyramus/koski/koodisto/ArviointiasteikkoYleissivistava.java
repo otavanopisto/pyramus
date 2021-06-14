@@ -9,6 +9,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import fi.otavanopisto.pyramus.koski.ArviointiasteikkoYleissivistavaComparator;
 import fi.otavanopisto.pyramus.koski.KoodistoEnum;
+import fi.otavanopisto.pyramus.koski.model.lukio.ops2019.PainotettuArvosana;
 
 @KoodistoEnum("arviointiasteikkoyleissivistava")
 public enum ArviointiasteikkoYleissivistava implements 
@@ -68,7 +69,41 @@ public enum ArviointiasteikkoYleissivistava implements
     
     return bestGrade;
   }
-  
+
+  public static ArviointiasteikkoYleissivistava weightedMeanGrade(List<PainotettuArvosana> grades) {
+    if (grades.stream().noneMatch(grade -> ArviointiasteikkoYleissivistava.isNumeric(grade.getArvosana()))) {
+      if (grades.stream().anyMatch(grade -> ArviointiasteikkoYleissivistava.isLiteral(grade.getArvosana()))) {
+        // Literal grade S/H
+        
+        if (grades.stream().anyMatch(grade -> ArviointiasteikkoYleissivistava.GRADE_S == grade.getArvosana())) {
+          return ArviointiasteikkoYleissivistava.GRADE_S;
+        } else {
+          return ArviointiasteikkoYleissivistava.GRADE_H;
+        }
+      } else {
+        return null;
+      }
+    } else {
+      // Numeric grade
+
+      int totalWeight = 0;
+      int gradeSum = 0;
+      
+      for (PainotettuArvosana grade : grades) {
+        if (ArviointiasteikkoYleissivistava.isNumeric(grade.getArvosana())) {
+          gradeSum += Integer.valueOf(grade.getArvosana().toString()) * grade.getKurssinLaajuus();
+          totalWeight += grade.getKurssinLaajuus();
+        }
+      }
+
+      if (totalWeight > 0) {
+        return ArviointiasteikkoYleissivistava.get(String.valueOf(Math.round((double) gradeSum / totalWeight)));
+      } else {
+        return null;
+      }
+    }
+  }
+
   public static ArviointiasteikkoYleissivistava meanGrade(List<ArviointiasteikkoYleissivistava> grades) {
     if (grades.stream().anyMatch(grade -> ArviointiasteikkoYleissivistava.isNumeric(grade))) {
       // Numeric grade
