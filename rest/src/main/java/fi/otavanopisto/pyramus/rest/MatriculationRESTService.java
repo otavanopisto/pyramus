@@ -2,6 +2,7 @@ package fi.otavanopisto.pyramus.rest;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ import fi.otavanopisto.pyramus.dao.matriculation.MatriculationExamEnrollmentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
@@ -42,6 +44,8 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.SchoolType;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriod;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
 import fi.otavanopisto.pyramus.domainmodel.users.UserVariableKey;
 import fi.otavanopisto.pyramus.framework.DateUtils;
@@ -96,16 +100,30 @@ public class MatriculationRESTService extends AbstractRESTService {
   @Inject
   private StudentGroupStudentDAO studentGroupStudentDAO;
 
+  @Inject
+  private StudentStudyPeriodDAO studentStudyPeriodDAO;
+  
   @Path("/eligibility")
   @GET
   @LoggedIn
   @RESTPermit(handling = Handling.INLINE)
   public Response listEligibilities() {
     User loggedUser = sessionController.getUser();
+
+    boolean compulsoryEducation = false;
+    boolean upperSecondarySchoolCurriculum = false;
     
-    boolean upperSecondarySchoolCurriculum = loggedUser instanceof Student ? hasGroupEligibility((Student) loggedUser) : false;
+    if (loggedUser instanceof Student) {
+      Student loggedStudent = (Student) loggedUser;
+      
+      upperSecondarySchoolCurriculum = hasGroupEligibility(loggedStudent);
+          
+      List<StudentStudyPeriod> studyPeriods = studentStudyPeriodDAO.listByStudent(loggedStudent);
+      EnumSet<StudentStudyPeriodType> studyPeriodTypes = EnumSet.of(StudentStudyPeriodType.COMPULSORY_EDUCATION, StudentStudyPeriodType.EXTENDED_COMPULSORY_EDUCATION);
+      compulsoryEducation = studyPeriods.stream().anyMatch(studyPeriod -> studyPeriodTypes.contains(studyPeriod.getPeriodType()));
+    }
     
-    return Response.ok(new MatriculationEligibilities(upperSecondarySchoolCurriculum)).build();
+    return Response.ok(new MatriculationEligibilities(compulsoryEducation, upperSecondarySchoolCurriculum)).build();
   }
   
   @Path("/exams")
