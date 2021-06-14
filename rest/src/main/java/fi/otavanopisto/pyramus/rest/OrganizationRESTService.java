@@ -74,6 +74,8 @@ public class OrganizationRESTService extends AbstractRESTService {
   @Inject
   private ObjectFactory objectFactory;
   
+  
+  
   @Path("/")
   @POST
   @RESTPermit (OrganizationPermissions.CREATE_ORGANIZATION)
@@ -296,6 +298,34 @@ public class OrganizationRESTService extends AbstractRESTService {
     }
     
     return Response.noContent().build();
+  }
+  
+  @Path("/{ID:[0-9]*}/contactPersons")
+  @GET
+  @RESTPermit (OrganizationPermissions.LIST_ORGANIZATION_CONTACT_PERSONS)
+  public Response listOrganizationContactPersons(@PathParam("ID") Long organizationId) {
+    Organization organization = organizationDAO.findById(organizationId);
+    if (organization == null || organization.getArchived() || !UserUtils.canAccessOrganization(sessionController.getUser(), organization)) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    List<OrganizationContactPerson> contactPersons = organizationContactPersonDAO.listBy(organization);
+    
+    List<fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson> restContactPersons = new ArrayList<>();
+    for (OrganizationContactPerson contactPerson : contactPersons) {
+      restContactPersons.add(createRestModel(contactPerson));
+    }
+    return Response.ok(restContactPersons).build();
+  }
+  
+  private fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson createRestModel(OrganizationContactPerson contactPerson) {
+    fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson restModel = new fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson();
+    fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType type = contactPerson.getType() != null ? fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType.valueOf(contactPerson.getType().name()) : null;
+    restModel.setEmail(contactPerson.getEmail());
+    restModel.setName(contactPerson.getName());
+    restModel.setPhone(contactPerson.getPhone());
+    restModel.setTitle(contactPerson.getTitle());
+    restModel.setType(type);
+    return restModel;
   }
   
 }
