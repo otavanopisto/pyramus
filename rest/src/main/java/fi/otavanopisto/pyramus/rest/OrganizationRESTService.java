@@ -320,6 +320,7 @@ public class OrganizationRESTService extends AbstractRESTService {
   private fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson createRestModel(OrganizationContactPerson contactPerson) {
     fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson restModel = new fi.otavanopisto.pyramus.rest.model.OrganizationContactPerson();
     fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType type = contactPerson.getType() != null ? fi.otavanopisto.pyramus.rest.model.OrganizationContactPersonType.valueOf(contactPerson.getType().name()) : null;
+    restModel.setId(contactPerson.getId());
     restModel.setEmail(contactPerson.getEmail());
     restModel.setName(contactPerson.getName());
     restModel.setPhone(contactPerson.getPhone());
