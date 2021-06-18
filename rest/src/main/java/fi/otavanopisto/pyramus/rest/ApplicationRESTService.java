@@ -129,8 +129,8 @@ public class ApplicationRESTService extends AbstractRESTService {
       
       byte[] fileData = getFile(multipart, "file");
       
-      String name = sanitizeFilename(getString(multipart, "name"));
-      String attachmentFolder = sanitizeFilename(getString(multipart, "applicationId"));
+      String name = ApplicationUtils.sanitizeFilename(getString(multipart, "name"));
+      String attachmentFolder = ApplicationUtils.sanitizeFilename(getString(multipart, "applicationId"));
       if (fileData == null || fileData.length == 0 || StringUtils.isEmpty(name) || StringUtils.isEmpty(attachmentFolder)) {
         logger.log(Level.SEVERE, "Application attachment preconditions not met");
         return Response.status(Status.INTERNAL_SERVER_ERROR).build();
@@ -235,8 +235,8 @@ public class ApplicationRESTService extends AbstractRESTService {
     
     // Sanitize folder and file names before retrieval
 
-    applicationId = sanitizeFilename(applicationId);
-    attachment = sanitizeFilename(attachment);
+    applicationId = ApplicationUtils.sanitizeFilename(applicationId);
+    attachment = ApplicationUtils.sanitizeFilename(attachment);
     if (StringUtils.isEmpty(applicationId) || StringUtils.isEmpty(attachment)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
@@ -284,8 +284,8 @@ public class ApplicationRESTService extends AbstractRESTService {
     
     // Sanitize folder and file names before removal
 
-    applicationId = sanitizeFilename(applicationId);
-    attachment = sanitizeFilename(attachment);
+    applicationId = ApplicationUtils.sanitizeFilename(applicationId);
+    attachment = ApplicationUtils.sanitizeFilename(attachment);
     if (StringUtils.isEmpty(applicationId) || StringUtils.isEmpty(attachment)) {
       return Response.status(Status.BAD_REQUEST).build();
     }
@@ -743,19 +743,6 @@ public class ApplicationRESTService extends AbstractRESTService {
       }
     }
     return null;
-  }
-  
-  /**
-   * Sanitizes the given filename so that it can be safely used as part of a file path. The filename
-   * is first stripped of traditional invalid filename characters (\ / : * ? " < > |) and then of all
-   * leading and trailing periods.
-   * 
-   * @param filename Filename to be sanitized
-   * 
-   * @return Sanitized filename
-   */
-  private String sanitizeFilename(String filename) {
-    return StringUtils.stripEnd(StringUtils.stripStart(StringUtils.strip(filename, "\\/:*?\"<>|"), "."), ".");
   }
   
   /**
