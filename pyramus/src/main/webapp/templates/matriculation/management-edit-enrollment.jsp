@@ -93,6 +93,13 @@
           {value: "EXIMIA_CUM_LAUDE_APPROBATUR", text: "Eximia cum laude approbatur"},
           {value: "LAUDATUR", text: "Laudatur"},
           {value: "UNKNOWN", text: "Ei tiedossa"},
+          {value: "K", text: "Keskeytynyt"}
+        ];
+        var fundingOptions = [
+          {value: "", text: ""},
+          {value: "SELF_FUNDED", text: "Omarahoitteinen"},
+          {value: "COMPULSORYEDUCATION_FREE", text: "Oppivelvollinen, maksuton"},
+          {value: "COMPULSORYEDUCATION_FREE_RETRY", text: "Oppivelvollinen, maksuton uusinta"}
         ];
         var tabControl = new IxProtoTabs($('tabs'));
 
@@ -134,9 +141,17 @@
             paramName: 'repeat',
             options: repeatOptions
           }, {
-            header : 'Koepäivämäärä',
+            header : 'Rahoitus',
             width: 200,
             left: 0 + 150 + 8 + 300 + 8 + 300 + 8 + 200 + 8,
+            dataType : 'select',
+            editable: true,
+            paramName: 'funding',
+            options: fundingOptions
+          }, {
+            header : 'Koepäivämäärä',
+            width: 200,
+            left: 0 + 150 + 8 + 300 + 8 + 300 + 8 + 200 + 8 + 200 + 8,
             dataType : 'date',
             editable: false,
             paramName: 'examDate'
@@ -186,9 +201,17 @@
             paramName: 'mandatority',
             options: mandatorityOptions
           }, {
-            header : 'Arvosana',
+            header : 'Rahoitus',
             width: 200,
             left: 0 + 150 + 8 + 300 + 8 + 200 + 8,
+            dataType : 'select',
+            editable: true,
+            paramName: 'funding',
+            options: fundingOptions
+          }, {
+            header : 'Arvosana',
+            width: 200,
+            left: 0 + 150 + 8 + 300 + 8 + 200 + 8 + 200 + 8,
             dataType : 'select',
             editable: true,
             paramName: 'grade',
