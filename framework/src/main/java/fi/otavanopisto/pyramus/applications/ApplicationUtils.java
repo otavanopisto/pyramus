@@ -1022,6 +1022,23 @@ public class ApplicationUtils {
     }
   }
   
+  /**
+   * Sanitizes the given filename so that it can be safely used as part of a file path. The filename
+   * is first stripped of traditional invalid filename characters (\ / : * ? " < > |) and then of all
+   * leading and trailing periods.
+   * 
+   * @param filename Filename to be sanitized
+   * 
+   * @return Sanitized filename
+   */
+  public static String sanitizeFilename(String filename) {
+    filename = StringUtils.trim(filename);
+    if (StringUtils.isEmpty(filename)) {
+      return filename;
+    }
+    return StringUtils.lowerCase(StringUtils.strip(StringUtils.removePattern(filename, "[\\\\/:*?\"<>|]"), "."));
+  }
+
   private static void processSchoolStudentGroups(School school, Student student) {
     ConfigurationDAO configurationDAO = DAOFactory.getInstance().getConfigurationDAO();
     Configuration configuration = configurationDAO.findByName("application");
@@ -1054,19 +1071,6 @@ public class ApplicationUtils {
     
   }
 
-  /**
-   * Sanitizes the given filename so that it can be safely used as part of a file path. The filename
-   * is first stripped of traditional invalid filename characters (\ / : * ? " < > |) and then of all
-   * leading and trailing periods.
-   * 
-   * @param filename Filename to be sanitized
-   * 
-   * @return Sanitized filename
-   */
-  private static String sanitizeFilename(String filename) {
-    return StringUtils.stripEnd(StringUtils.stripStart(StringUtils.strip(filename, "\\/:*?\"<>|"), "."), ".");
-  }
-  
   private static String getFormValue(JSONObject object, String key) {
     return object.has(key) ? object.getString(key) : null;
   }
