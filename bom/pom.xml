@@ -99,7 +99,7 @@
     <webapp-permission.version>1.0.3</webapp-permission.version>
 
     <!-- JSR310 -->
-    <jackson-datatype-jsr310.version>2.5.4</jackson-datatype-jsr310.version>
+    <jackson-datatype-jsr310.version>2.9.8</jackson-datatype-jsr310.version>
   </properties>
 
   <dependencyManagement>
