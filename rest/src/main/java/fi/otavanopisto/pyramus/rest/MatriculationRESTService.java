@@ -35,6 +35,7 @@ import fi.otavanopisto.pyramus.dao.users.UserVariableDAO;
 import fi.otavanopisto.pyramus.dao.users.UserVariableKeyDAO;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.DegreeType;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceFunding;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
@@ -260,6 +261,8 @@ public class MatriculationRESTService extends AbstractRESTService {
       for (MatriculationExamAttendance attendance : enrollment.getAttendances()) {
         MatriculationExamAttendanceStatus status = attendance.getStatus() != null
             ? MatriculationExamAttendanceStatus.valueOf(attendance.getStatus()) : null;
+        MatriculationExamAttendanceFunding funding = attendance.getFunding() != null
+            ? MatriculationExamAttendanceFunding.valueOf(attendance.getFunding()) : null;
             
         MatriculationExam matriculationExam = enrollmentEntity.getExam();
         // NOTE for ENROLLED the default values are taken from the exam properties if they don't exist in the payload
@@ -276,6 +279,7 @@ public class MatriculationRESTService extends AbstractRESTService {
           year,
           term,
           status,
+          funding,
           attendance.getGrade() != null
             ? MatriculationExamGrade.valueOf(attendance.getGrade()) : null);
       }

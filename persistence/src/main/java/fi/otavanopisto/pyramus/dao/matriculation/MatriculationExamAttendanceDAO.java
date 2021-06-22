@@ -11,6 +11,7 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.pyramus.dao.PyramusEntityDAO;
 import fi.otavanopisto.pyramus.domainmodel.grading.ProjectAssessment;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceFunding;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
@@ -29,6 +30,7 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
     Integer year,
     MatriculationExamTerm term,
     MatriculationExamAttendanceStatus status,
+    MatriculationExamAttendanceFunding funding,
     MatriculationExamGrade grade
   ) {
     MatriculationExamAttendance attendance = new MatriculationExamAttendance();
@@ -39,6 +41,7 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
     attendance.setYear(year);
     attendance.setTerm(term);
     attendance.setStatus(status);
+    attendance.setFunding(funding);
     attendance.setGrade(grade);
     return persist(attendance);
   }
@@ -103,6 +106,7 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
       Integer year,
       MatriculationExamTerm term,
       MatriculationExamAttendanceStatus status,
+      MatriculationExamAttendanceFunding funding,
       MatriculationExamGrade grade) {
     attendance.setEnrollment(enrollment);
     attendance.setSubject(subject);
@@ -111,6 +115,7 @@ public class MatriculationExamAttendanceDAO extends PyramusEntityDAO<Matriculati
     attendance.setYear(year);
     attendance.setTerm(term);
     attendance.setStatus(status);
+    attendance.setFunding(funding);
     attendance.setGrade(grade);
     return persist(attendance);
   }
