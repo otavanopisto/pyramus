@@ -33,6 +33,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttend
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceFunding;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
@@ -102,6 +103,7 @@ public class EditEnrollmentViewController extends PyramusViewController {
       pageRequestContext.getBoolean("canPublishName"),
       enrollment.getStudent(),
       enrollmentState,
+      MatriculationExamEnrollmentDegreeStructure.valueOf(pageRequestContext.getString("degreeStructure")),
       pageRequestContext.getBoolean("approvedByGuider")
     );
     
@@ -320,6 +322,8 @@ public class EditEnrollmentViewController extends PyramusViewController {
     pageRequestContext.getRequest().setAttribute("message", enrollment.getMessage());
     pageRequestContext.getRequest().setAttribute("canPublishName", enrollment.isCanPublishName());
     pageRequestContext.getRequest().setAttribute("state", enrollment.getState().name());
+    pageRequestContext.getRequest().setAttribute("degreeStructure", enrollment.getDegreeStructure().name());
+    pageRequestContext.getRequest().setAttribute("enrollmentDate", enrollment.getEnrollmentDate());
     
     List<MatriculationExamAttendance> attendances = attendanceDAO.listByEnrollment(enrollment);
     

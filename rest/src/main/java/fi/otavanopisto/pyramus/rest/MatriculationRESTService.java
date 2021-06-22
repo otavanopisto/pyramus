@@ -38,6 +38,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExam;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceFunding;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamGrade;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamSubject;
@@ -255,6 +256,7 @@ public class MatriculationRESTService extends AbstractRESTService {
         enrollment.isCanPublishName(),
         student,
         MatriculationExamEnrollmentState.valueOf(enrollment.getState()),
+        MatriculationExamEnrollmentDegreeStructure.valueOf(enrollment.getDegreeStructure()),
         false,
         new Date());
         

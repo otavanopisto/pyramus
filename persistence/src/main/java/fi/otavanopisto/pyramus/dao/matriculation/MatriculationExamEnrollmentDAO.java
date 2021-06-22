@@ -19,6 +19,7 @@ import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttend
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendanceStatus;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamAttendance_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment;
+import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentDegreeStructure;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollmentState;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamEnrollment_;
 import fi.otavanopisto.pyramus.domainmodel.matriculation.MatriculationExamTerm;
@@ -48,6 +49,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
       boolean canPublishName,
       Student student,
       MatriculationExamEnrollmentState state,
+      MatriculationExamEnrollmentDegreeStructure degreeStructure,
       boolean approvedByGuider,
       Date enrollmentDate
   ) {
@@ -72,6 +74,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     result.setCanPublishName(canPublishName);
     result.setStudent(student);
     result.setState(state);
+    result.setDegreeStructure(degreeStructure);
     result.setApprovedByGuider(approvedByGuider);
     result.setEnrollmentDate(enrollmentDate);
     
@@ -97,6 +100,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     boolean canPublishName,
     Student student,
     MatriculationExamEnrollmentState state,
+    MatriculationExamEnrollmentDegreeStructure degreeStructure,
     boolean approvedByGuider
   ) {
     enrollment.setName(name);
@@ -116,6 +120,7 @@ public class MatriculationExamEnrollmentDAO extends PyramusEntityDAO<Matriculati
     enrollment.setCanPublishName(canPublishName);
     enrollment.setStudent(student);
     enrollment.setState(state);
+    enrollment.setDegreeStructure(degreeStructure);
     enrollment.setApprovedByGuider(approvedByGuider);
     
     return persist(enrollment);
