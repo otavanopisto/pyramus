@@ -29,19 +29,19 @@ public class YTLSiirtotiedosto {
     this.koulunumero = koulunumero;
   }
 
-  public void addKokelas(Kokelas kokelas) {
+  public void addKokelas(AbstractKokelas kokelas) {
     this.kokelaat.add(kokelas);
   }
   
-  public List<Kokelas> getKokelaat() {
+  public List<AbstractKokelas> getKokelaat() {
     return kokelaat;
   }
 
-  public void setKokelaat(List<Kokelas> kokelaat) {
+  public void setKokelaat(List<AbstractKokelas> kokelaat) {
     this.kokelaat = kokelaat;
   }
 
   private String tutkintokerta;
   private Integer koulunumero;
-  private List<Kokelas> kokelaat = new ArrayList<>();
+  private List<AbstractKokelas> kokelaat = new ArrayList<>();
 }

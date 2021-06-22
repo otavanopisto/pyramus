@@ -331,6 +331,14 @@
             <div class="genericViewInfoWapper">
               <div class="genericFormSection">  
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.enrollmentDate"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.enrollmentDate.help"/>
+                </jsp:include>
+                <div><fmt:formatDate type="date" value="${enrollmentDate}"/></div>
+              </div>
+
+              <div class="genericFormSection">  
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.name"/>
                   <jsp:param name="helpLocale" value="matriculation.editEnrollment.name.help"/>
                 </jsp:include>            
@@ -387,6 +395,18 @@
             </div>
 
             <div class="genericViewInfoWapper">
+              <div class="genericFormSection">
+                <jsp:include page="/templates/generic/fragments/formtitle.jsp">
+                  <jsp:param name="titleLocale" value="matriculation.editEnrollment.degreeStructure"/>
+                  <jsp:param name="helpLocale" value="matriculation.editEnrollment.degreeStructure.help"/>
+                </jsp:include>            
+                <select class="required" name="degreeStructure">
+                  <option></option>
+                  <option ${degreeStructure=='PRE2022' ? 'selected="selected"' : ''} value="PRE2022"><fmt:message key="matriculation.editEnrollment.degreeStructure.PRE2022"/></option>
+                  <option ${degreeStructure=='POST2022' ? 'selected="selected"' : ''} value="POST2022"><fmt:message key="matriculation.editEnrollment.degreeStructure.POST2022"/></option>
+                </select>
+              </div>
+
               <div class="genericFormSection">
                 <jsp:include page="/templates/generic/fragments/formtitle.jsp">
                   <jsp:param name="titleLocale" value="matriculation.editEnrollment.nationalStudentNumber"/>
