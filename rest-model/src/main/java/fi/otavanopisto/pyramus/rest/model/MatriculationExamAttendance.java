@@ -81,6 +81,14 @@ public class MatriculationExamAttendance {
     this.version = version;
   }
 
+  public String getFunding() {
+    return funding;
+  }
+
+  public void setFunding(String funding) {
+    this.funding = funding;
+  }
+
   private Long enrollmentId;
   private String subject;
   private Boolean mandatory;
@@ -88,6 +96,7 @@ public class MatriculationExamAttendance {
   private Integer year;
   private String term;
   private String status;
+  private String funding;
   private String grade;
   private Boolean archived = Boolean.FALSE;
   private Long version;
