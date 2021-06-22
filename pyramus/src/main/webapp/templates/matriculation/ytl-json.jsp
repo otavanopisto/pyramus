@@ -56,6 +56,7 @@
               '<div class="kcell">{{pakollisetKokeet}}</div>' +
               '<div class="kcell">{{ylimääräisetKokeet}}</div>' +
               '<div class="kcell">{{kurssit}}</div>' +
+              '<div class="kcell">{{kokeet2022}}</div>' +
             '</div>', syntax);
         var kokelasTemplateHeaders = {
             'extraClass': "ktablehead",
@@ -70,10 +71,12 @@
             "äidinkielenKoe": "ÄidinkielenKoe",
             "pakollisetKokeet": "Pakolliset kokeet",
             "ylimääräisetKokeet": "Ylimääräiset kokeet",
-            "kurssit": "Suoritetut kurssit"
+            "kurssit": "Suoritetut kurssit",
+            "kokeet2022": "Kokeet 2022 (maksuton)"
         };
 
         var kurssitTemplate = new Template('{{aine}}{{oppimäärä}}({{kursseja}})', syntax);
+        var koe2022Template = new Template('{{koodi}}({{maksu}})', syntax);
 
         new Ajax.Request('/ytl/report.binary', {
           method: 'post',
@@ -91,6 +94,7 @@
             if (report && report.kokelaat) {
               report.kokelaat.each(function (kokelas) {
                 var kurssitContainer = [];
+                var koeContainer = [];
 
                 if (kokelas.suoritetutKurssit) {
                   kokelas.suoritetutKurssit.each(function (kurssit) {
@@ -98,7 +102,15 @@
                   });
                 }
                 
-                container.insert(kokelasTemplate.evaluate(Object.extend({kurssit: kurssitContainer}, kokelas)));
+                if (kokelas.kokeet) {
+                  kokelas.kokeet.each(function (koe) {
+                    var maksu = koe.maksuton ? "kyllä" : "ei";
+                    var koe2 = Object.extend({ maksu: maksu }, koe);
+                    koeContainer.push(koe2022Template.evaluate(koe2));
+                  });
+                }
+                
+                container.insert(kokelasTemplate.evaluate(Object.extend({kurssit: kurssitContainer, kokeet2022: koeContainer}, kokelas)));
               });
             }
           }
