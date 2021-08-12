@@ -3,7 +3,6 @@ package fi.otavanopisto.pyramus.koski;
 import java.io.StringWriter;
 import java.net.ConnectException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -37,17 +36,14 @@ import fi.otavanopisto.pyramus.dao.system.SettingDAO;
 import fi.otavanopisto.pyramus.dao.system.SettingKeyDAO;
 import fi.otavanopisto.pyramus.dao.users.PersonVariableDAO;
 import fi.otavanopisto.pyramus.domainmodel.base.Person;
-import fi.otavanopisto.pyramus.domainmodel.base.PersonStudentComparator;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonLog;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.system.Setting;
 import fi.otavanopisto.pyramus.domainmodel.system.SettingKey;
+import fi.otavanopisto.pyramus.koski.exception.NoLatestStudentException;
 import fi.otavanopisto.pyramus.koski.koodisto.Lahdejarjestelma;
 import fi.otavanopisto.pyramus.koski.koodisto.OpiskeluoikeudenTila;
-import fi.otavanopisto.pyramus.koski.model.Henkilo;
-import fi.otavanopisto.pyramus.koski.model.HenkiloTiedotJaOID;
-import fi.otavanopisto.pyramus.koski.model.HenkiloUusi;
 import fi.otavanopisto.pyramus.koski.model.Opiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.OpiskeluoikeusJakso;
 import fi.otavanopisto.pyramus.koski.model.Oppija;
@@ -253,37 +249,8 @@ public class KoskiClient {
         koskiPersonLogDAO.create(person, KoskiPersonState.NO_UNIQUE_ID, new Date());
         return;
       }
-      
-      Student latestStudent = resolveLatestStudent(person);
-      
-      if (latestStudent == null) {
-        logger.severe(String.format("Could not resolve latest student for person %d.", person.getId()));
-        koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date());
-        return;
-      }
-      
-      Henkilo henkilo;
-      if (StringUtils.isNotBlank(personOid))
-        henkilo = new HenkiloTiedotJaOID(personOid, person.getSocialSecurityNumber(), latestStudent.getFirstName(), latestStudent.getLastName(), getCallname(latestStudent));
-      else
-        henkilo = new HenkiloUusi(person.getSocialSecurityNumber(), latestStudent.getFirstName(), latestStudent.getLastName(), getCallname(latestStudent));
-  
-      Oppija oppija = new Oppija();
-      oppija.setHenkilo(henkilo);
-      
-      List<Student> reportedStudents = new ArrayList<>();
-      
-      for (Student s : person.getStudents()) {
-        if (settings.isReportedStudent(s)) {
-          List<Opiskeluoikeus> opiskeluoikeudet = koskiController.studentToOpiskeluoikeus(s);
-          for (Opiskeluoikeus o : opiskeluoikeudet) {
-            if (o != null) {
-              oppija.addOpiskeluoikeus(o);
-              reportedStudents.add(s);
-            }
-          }
-        }
-      }
+            
+      Oppija oppija = koskiController.personToOppija(person);
       
       if (oppija.getOpiskeluoikeudet().size() == 0) {
         logger.info(String.format("Updating person %d was skipped due to no updateable study permits.", person.getId()));
@@ -291,30 +258,15 @@ public class KoskiClient {
       }
       
       updatePersonToKoski(oppija, person, personOid);
+    } catch (NoLatestStudentException nlse) {
+      logger.severe(String.format("Could not resolve latest student for person %d.", person.getId()));
+      koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date());
     } catch (Exception ex) {
       logger.log(Level.SEVERE, String.format("Unknown error while processing person %d", person != null ? person.getId() : null), ex);
       koskiPersonLogDAO.create(person, KoskiPersonState.UNKNOWN_FAILURE, new Date(), ex.getMessage());
     }
   }
   
-  private Student resolveLatestStudent(Person person) {
-    Student student = person.getLatestStudent();
-    if (student != null) {
-      return student;
-    } else {
-      List<Student> students = person.getStudents();
-      if (CollectionUtils.isNotEmpty(students)) {
-        return students.stream()
-          .sorted(new PersonStudentComparator())
-          .findFirst()
-          .orElse(null);
-      } else {
-        logger.log(Level.WARNING, String.format("Could not resolve latest student for person %d", person != null ? person.getId() : null));
-        return null;
-      }
-    }
-  }
-
   private boolean updatePersonToKoski(Oppija oppija, Person person, String personOid) {
     try {
       String uri = String.format("%s/oppija", getBaseUrl());
@@ -478,20 +430,6 @@ public class KoskiClient {
   private void clearPersonLog(Person person) {
     List<KoskiPersonLog> entries = koskiPersonLogDAO.listByPerson(person);
     entries.forEach(entry -> koskiPersonLogDAO.delete(entry));
-  }
-
-  private String getCallname(Student student) {
-    if (StringUtils.isNotBlank(student.getNickname()) && (StringUtils.containsIgnoreCase(student.getFirstName(), student.getNickname())))
-      return student.getNickname();
-    else {
-      if (StringUtils.isNotBlank(student.getFirstName())) {
-        String[] split = StringUtils.split(StringUtils.trim(student.getFirstName()), ' ');
-        if (split != null && split.length > 0)
-          return split[0];
-      }
-    }
-    
-    return null;
   }
 
   public boolean invalidateAllStudentOIDs(Student student) throws Exception {
