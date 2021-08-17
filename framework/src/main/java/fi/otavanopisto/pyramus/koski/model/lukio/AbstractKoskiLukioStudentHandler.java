@@ -53,13 +53,13 @@ public abstract class AbstractKoskiLukioStudentHandler extends KoskiStudentHandl
     
     for (StudentStudyPeriod studyPeriod : studyPeriods) {
       if (studyPeriod.getPeriodType() == StudentStudyPeriodType.COMPULSORY_EDUCATION) {
-        // Aloituspäivä -> maksuttomuuden alkamispäivä
+        // Maksuttoman oppivelvollisuuden piirissä
         lisatiedot.addMaksuttomuus(new Maksuttomuus(studyPeriod.getBegin(), true));
-
-        // Päättymispäivä -> maksuttomuuden päättymispäivä
-        if (studyPeriod.getEnd() != null) {
-          lisatiedot.addMaksuttomuus(new Maksuttomuus(studyPeriod.getEnd(), false));
-        }
+      }
+      
+      if (studyPeriod.getPeriodType() == StudentStudyPeriodType.NON_COMPULSORY_EDUCATION) {
+        // Ei maksuttoman oppivelvollisuuden piirissä
+        lisatiedot.addMaksuttomuus(new Maksuttomuus(studyPeriod.getBegin(), false));
       }
 
       if (studyPeriod.getPeriodType() == StudentStudyPeriodType.EXTENDED_COMPULSORY_EDUCATION) {
