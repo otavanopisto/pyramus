@@ -242,6 +242,7 @@ public abstract class KoskiStudentHandler {
           break;
 
           case COMPULSORY_EDUCATION:
+          case NON_COMPULSORY_EDUCATION:
           case EXTENDED_COMPULSORY_EDUCATION:
             // Käsittely lukion opiskeluoikeuden lisätiedoissa, ei vaikuta opiskeluoikeuden tilaan
           break;
