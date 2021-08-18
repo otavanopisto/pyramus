@@ -48,6 +48,7 @@ import fi.otavanopisto.pyramus.dao.students.StudentDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentExaminationTypeDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupDAO;
 import fi.otavanopisto.pyramus.dao.students.StudentGroupStudentDAO;
+import fi.otavanopisto.pyramus.dao.students.StudentStudyPeriodDAO;
 import fi.otavanopisto.pyramus.dao.system.ConfigurationDAO;
 import fi.otavanopisto.pyramus.dao.users.StaffMemberDAO;
 import fi.otavanopisto.pyramus.dao.users.UserDAO;
@@ -73,6 +74,7 @@ import fi.otavanopisto.pyramus.domainmodel.students.Student;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentActivityType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentExaminationType;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentGroup;
+import fi.otavanopisto.pyramus.domainmodel.students.StudentStudyPeriodType;
 import fi.otavanopisto.pyramus.domainmodel.system.Configuration;
 import fi.otavanopisto.pyramus.domainmodel.users.StaffMember;
 import fi.otavanopisto.pyramus.domainmodel.users.User;
@@ -605,6 +607,7 @@ public class ApplicationUtils {
     SchoolDAO schoolDAO = DAOFactory.getInstance().getSchoolDAO();
     ApplicationAttachmentDAO applicationAttachmentDAO = DAOFactory.getInstance().getApplicationAttachmentDAO();
     UserVariableDAO userVariableDAO = DAOFactory.getInstance().getUserVariableDAO();
+    StudentStudyPeriodDAO studentStudyPeriodDAO = DAOFactory.getInstance().getStudentStudyPeriodDAO();
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     
@@ -660,6 +663,8 @@ public class ApplicationUtils {
       }
     }
     
+    Date studyStartDate = new Date();
+    
     // Create student
     
     Student student = studentDAO.create(
@@ -680,13 +685,36 @@ public class ApplicationUtils {
         studyProgramme,
         null, // curriculum (TODO can this be resolved?)
         null, // previous studies (double)
-        new Date(), // study start date
+        studyStartDate, // study start date
         null, // study end date
         null, // study end reason
         null, // study end text
         Boolean.FALSE); // archived
     
     userVariableDAO.createDefaultValueVariables(student);
+    
+    // StudyPeriods
+    
+    String compulsoryStudies = getFormValue(formData, "field-nettilukio_compulsory");
+    if (StringUtils.isNotBlank(compulsoryStudies)) {
+      if (StringUtils.equals(compulsoryStudies, "compulsory")) {
+        studentStudyPeriodDAO.create(student, studyStartDate, null, StudentStudyPeriodType.COMPULSORY_EDUCATION);
+      
+        String compulsoryEndDateStr = getFormValue(formData, "field-nettilukio_compulsory_enddate");
+        if (StringUtils.isNotBlank(compulsoryEndDateStr)) {
+          try {
+            Date compulsoryEndDate = StringUtils.isEmpty(compulsoryEndDateStr) ? null : new SimpleDateFormat("d.M.yyyy").parse(compulsoryEndDateStr);
+            studentStudyPeriodDAO.create(student, compulsoryEndDate, null, StudentStudyPeriodType.NON_COMPULSORY_EDUCATION);
+          } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        }
+      } 
+      else if (StringUtils.equals(compulsoryStudies, "non_compulsory")) {
+        studentStudyPeriodDAO.create(student, studyStartDate, null, StudentStudyPeriodType.NON_COMPULSORY_EDUCATION);
+      }
+    }
     
     // #1079: Aineopiskelu; yleissivistävä koulutustausta
     

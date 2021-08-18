@@ -39,6 +39,22 @@
         </div>
       </div>
     </div>
+
+    <div data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+      <div class="form-section__field-container">
+        <label for="field-nettilukio_compulsory">Maksuton oppivelvollisuus</label>
+        <select id="field-nettilukio_compulsory" name="field-nettilukio_compulsory" data-dependencies="true" data-parsley-required="true">
+          <option value="n/a">Ei koske opiskelijaa</option>
+          <option value="compulsory">Opiskelija on maksuttoman oppivelvollisuuden piirissä</option>
+          <option value="non_compulsory">Opiskelija ei kuulu maksuttoman oppivelvollisuuden piiriin</option>
+        </select>
+      </div>
+  
+      <div class="form-section__field-container" data-dependent-field="field-nettilukio_compulsory" data-dependent-values="compulsory" style="display:none;">
+        <label for="field-nettilukio_compulsory_enddate">Maksuton oppivelvollisuus päättynyt alkaen</label>
+        <input type="text" id="field-nettilukio_compulsory_enddate" name="field-nettilukio_compulsory_enddate" data-parsley-date-format="" />
+      </div>
+    </div>
   </c:if>
 
 </section>

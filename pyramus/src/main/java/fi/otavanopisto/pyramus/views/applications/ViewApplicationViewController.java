@@ -73,6 +73,17 @@ public class ViewApplicationViewController extends PyramusViewController {
         AlternativeLine altLine = EnumUtils.getEnum(AlternativeLine.class, getFormValue(formData, "field-nettilukio_alternativelines"));
         fields.put("Yksityisopiskelu", AlternativeLine.PRIVATE == altLine ? "Kyllä" : "Ei");
         fields.put("Aineopiskelu/yo-tutkinto", AlternativeLine.YO == altLine ? "Kyllä" : "Ei");
+
+        String compulsoryStudies = getFormValue(formData, "field-nettilukio_compulsory");
+
+        fields.put("Maksuton oppivelvollisuus", StringUtils.equals(compulsoryStudies, "compulsory") ? "Maksuttoman oppivelvollisuuden piirissä" :
+          StringUtils.equals(compulsoryStudies, "non_compulsory") ? "Ei maksuttoman oppivelvollisuuden piirissä" : "Ei koske opiskelijaa");
+        if (StringUtils.equals(compulsoryStudies, "compulsory")) {
+          String compulsoryEndDateStr = getFormValue(formData, "field-nettilukio_compulsory_enddate");
+          if (StringUtils.isNotBlank(compulsoryEndDateStr)) {
+            fields.put("Maksuton oppivelvollisuus päättynyt alkaen", compulsoryEndDateStr);
+          }
+        }
       }
       fields.put("Nimi", String.format("%s, %s", getFormValue(formData, "field-last-name"), getFormValue(formData, "field-first-names")));
       if (StringUtils.isNotBlank(getFormValue(formData, "field-nickname"))) {
