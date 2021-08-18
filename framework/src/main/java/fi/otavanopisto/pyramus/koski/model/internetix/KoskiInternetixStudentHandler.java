@@ -37,23 +37,29 @@ public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
     OpiskelijanOPS opiskelijanOPS = settings.resolveOPS(student);
     
     OpiskeluoikeusInternetix pk = pkHandler.studentToModel(student, academyIdentifier);
+    boolean pkSuorituksia = pk != null ? !pk.isEiSuorituksia() : false;
     
     OpiskeluoikeusInternetix lukio = opiskelijanOPS == OpiskelijanOPS.ops2019
         ? lukio2019Handler.oppiaineidenOppimaaranOpiskeluoikeus(student, academyIdentifier)
         : lukioHandler.studentToModel(student, academyIdentifier);
-
-    if (pk.isEiSuorituksia() && lukio.isEiSuorituksia()) {
+    boolean lukioSuorituksia = lukio != null ? !lukio.isEiSuorituksia() : false;
+    
+    if (!pkSuorituksia && !lukioSuorituksia) {
       // Kummassakaan ei suorituksia -> käytetään linjan mukaista oletusarvona
       
       KoskiStudyProgrammeHandler studyProgrammeHandlerType = settings.getStudyProgrammeHandlerType(student.getStudyProgramme().getId());
 
       switch (studyProgrammeHandlerType) {
         case aineopiskelulukio:
-          oos.add(lukio.getOpiskeluoikeus());
+          if (lukio != null && lukio.getOpiskeluoikeus() != null) {
+            oos.add(lukio.getOpiskeluoikeus());
+          }
         break;
         
         case aineopiskeluperusopetus:
-          oos.add(pk.getOpiskeluoikeus());
+          if (pk != null && pk.getOpiskeluoikeus() != null) {
+            oos.add(pk.getOpiskeluoikeus());
+          }
         break;
         
         default:
@@ -61,11 +67,11 @@ public class KoskiInternetixStudentHandler extends KoskiStudentHandler {
         break;
       }
     } else {
-      if (!pk.isEiSuorituksia()) {
+      if (pkSuorituksia && pk != null && pk.getOpiskeluoikeus() != null) {
         oos.add(pk.getOpiskeluoikeus());
       }
       
-      if (!lukio.isEiSuorituksia()) {
+      if (lukioSuorituksia && lukio != null && lukio.getOpiskeluoikeus() != null) {
         oos.add(lukio.getOpiskeluoikeus());
       }
     }
