@@ -43,8 +43,8 @@
     <div data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
       <div class="form-section__field-container">
         <label for="field-nettilukio_compulsory">Maksuton oppivelvollisuus</label>
-        <select id="field-nettilukio_compulsory" name="field-nettilukio_compulsory" data-dependencies="true" data-parsley-required="true">
-          <option value="n/a">Ei koske opiskelijaa</option>
+        <select id="field-nettilukio_compulsory" name="field-nettilukio_compulsory" data-dependencies="true">
+          <option value="">Ei koske opiskelijaa</option>
           <option value="compulsory">Opiskelija on maksuttoman oppivelvollisuuden piirissä</option>
           <option value="non_compulsory">Opiskelija ei kuulu maksuttoman oppivelvollisuuden piiriin</option>
         </select>

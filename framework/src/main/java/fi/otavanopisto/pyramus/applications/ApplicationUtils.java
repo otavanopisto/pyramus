@@ -611,6 +611,18 @@ public class ApplicationUtils {
     
     JSONObject formData = JSONObject.fromObject(application.getFormData());
     
+    // Validate that the compulsory end date is in correct format to avoid all database operations in case it isn't
+
+    if (StringUtils.isNotBlank(getFormValue(formData, "field-nettilukio_compulsory_enddate"))) {
+      try {
+        new SimpleDateFormat("d.M.yyyy").parse(getFormValue(formData, "field-nettilukio_compulsory_enddate"));
+      }
+      catch (ParseException e) {
+        logger.severe(String.format("Invalid compulsory end date format in application entity %d", application.getId()));
+        return null;
+      }
+    }
+    
     // Create person (if needed)
     
     if (person == null) {
@@ -706,8 +718,8 @@ public class ApplicationUtils {
             Date compulsoryEndDate = StringUtils.isEmpty(compulsoryEndDateStr) ? null : new SimpleDateFormat("d.M.yyyy").parse(compulsoryEndDateStr);
             studentStudyPeriodDAO.create(student, compulsoryEndDate, null, StudentStudyPeriodType.NON_COMPULSORY_EDUCATION);
           } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.severe(String.format("Invalid compulsory end date format in application entity %d", application.getId()));
+            return null;
           }
         }
       } 
