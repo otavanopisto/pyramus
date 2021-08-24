@@ -533,6 +533,22 @@
           }]
         });
 
+        studentStudyPeriodsTable.addListener("cellValueChange", function (event) {
+          var table = event.tableComponent;
+          var typeColumnIndex = table.getNamedColumnIndex('type');
+          if (event.column == typeColumnIndex) {
+            for (var i = 0, l = studentStudyPeriodTypes.length; i < l; i++) {
+              if (studentStudyPeriodTypes[i].id == event.value) {
+                var endDateColumnIndex = table.getNamedColumnIndex('end');
+
+                studentStudyPeriodTypes[i].beginOnly == true 
+                    ? table.hideCell(event.row, endDateColumnIndex)
+                    : table.showCell(event.row, endDateColumnIndex);
+              }
+            }
+          }
+        });
+          
         return studentStudyPeriodsTable;
       }
         
