@@ -128,7 +128,7 @@
     
     // Custom validators
     
-    Parsley.addValidator('birthdayFormat', {
+    Parsley.addValidator('dateFormat', {
       requirementType: 'string',
       validateString: function(value) {
         var dateRegExp = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/;

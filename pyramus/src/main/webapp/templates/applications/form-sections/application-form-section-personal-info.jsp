@@ -26,7 +26,7 @@
     
     <div class="form-section__field-container field-birthday">
       <label for="field-birthday" class="required">Syntymäaika</label>
-      <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true" data-parsley-birthday-format="">
+      <input type="text" id="field-birthday" name="field-birthday" data-parsley-required="true" data-parsley-date-format="">
       <span class="field-help">Esitysmuoto p.k.vvvv (esim. 15.3.1995)</span>
     </div>
 
