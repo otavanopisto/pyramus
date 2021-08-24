@@ -322,6 +322,7 @@ public class EditStudentViewController extends PyramusViewController2 implements
       JSONObject studyPeriodType = new JSONObject();
       studyPeriodType.put("id", studentStudyPeriodType.toString());
       studyPeriodType.put("displayName", Messages.getInstance().getText(locale, String.format("generic.studentStudyPeriods.%s", studentStudyPeriodType)));
+      studyPeriodType.put("beginOnly", StudentStudyPeriodType.BEGINDATE_ONLY.contains(studentStudyPeriodType));
       studentStudyPeriodTypesJSON.add(studyPeriodType);
     }
     setJsDataVariable(pageRequestContext, "studentStudyPeriodTypes", studentStudyPeriodTypesJSON.toString());
