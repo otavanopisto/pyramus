@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
+import fi.otavanopisto.pyramus.koski.model.lukio.Maksuttomuus;
+import fi.otavanopisto.pyramus.koski.model.lukio.OikeuttaMaksuttomuuteenPidennetty;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot {
@@ -67,6 +69,30 @@ public class AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot {
     this.oikeusMaksuttomaanAsuntolapaikkaan = oikeusMaksuttomaanAsuntolapaikkaan;
   }
 
+  public void addOikeuttaMaksuttomuuteenPidennetty(OikeuttaMaksuttomuuteenPidennetty oikeuttaMaksuttomuuteenPidennetty) {
+    this.oikeuttaMaksuttomuuteenPidennetty.add(oikeuttaMaksuttomuuteenPidennetty);
+  }
+
+  public List<OikeuttaMaksuttomuuteenPidennetty> getOikeuttaMaksuttomuuteenPidennetty() {
+    return oikeuttaMaksuttomuuteenPidennetty;
+  }
+
+  public void setOikeuttaMaksuttomuuteenPidennetty(List<OikeuttaMaksuttomuuteenPidennetty> oikeuttaMaksuttomuuteenPidennetty) {
+    this.oikeuttaMaksuttomuuteenPidennetty = oikeuttaMaksuttomuuteenPidennetty;
+  }
+
+  public void addMaksuttomuus(Maksuttomuus maksuttomuus) {
+    this.maksuttomuus.add(maksuttomuus);
+  }
+
+  public List<Maksuttomuus> getMaksuttomuus() {
+    return maksuttomuus;
+  }
+
+  public void setMaksuttomuus(List<Maksuttomuus> maksuttomuus) {
+    this.maksuttomuus = maksuttomuus;
+  }
+
   private Boolean vuosiluokkiinSitoutumatonOpetus;
   private Boolean vammainen;
   private Boolean vaikeastiVammainen;
@@ -74,4 +100,6 @@ public class AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot {
   private Majoitusjakso majoitusetu;
   private Majoitusjakso oikeusMaksuttomaanAsuntolapaikkaan;
   private final List<Majoitusjakso> sisaoppilaitosmainenMajoitus = new ArrayList<>();
+  private List<Maksuttomuus> maksuttomuus = new ArrayList<>();
+  private List<OikeuttaMaksuttomuuteenPidennetty> oikeuttaMaksuttomuuteenPidennetty = new ArrayList<>();
 }
