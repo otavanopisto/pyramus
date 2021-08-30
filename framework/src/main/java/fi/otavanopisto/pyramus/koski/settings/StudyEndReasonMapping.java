@@ -28,7 +28,16 @@ public class StudyEndReasonMapping {
     this.laskeAinekeskiarvot = laskeAinekeskiarvot;
   }
 
+  public boolean isLukionOppimääräSuoritettu() {
+    return lukionOppimääräSuoritettu;
+  }
+
+  public void setLukionOppimääräSuoritettu(boolean lukionOppimääräSuoritettu) {
+    this.lukionOppimääräSuoritettu = lukionOppimääräSuoritettu;
+  }
+
   private OpiskeluoikeudenTila opiskeluoikeudenTila;
   private boolean sisällytäVahvistaja = false;
   private boolean laskeAinekeskiarvot = false;
+  private boolean lukionOppimääräSuoritettu = false;
 }
