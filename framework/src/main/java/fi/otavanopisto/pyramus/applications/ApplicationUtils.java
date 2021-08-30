@@ -324,7 +324,7 @@ public class ApplicationUtils {
       return studyProgrammeDAO.findById(13L); // Internetix/lukio
     case "nettilukio": {
       if (nettilukioAlternative == AlternativeLine.PRIVATE) {
-        return studyProgrammeDAO.findById(38L); // Nettilukio/yksityisopiskelu
+        return studyProgrammeDAO.findById(45L); // Nettilukio/yksityisopiskelu (aineopiskelu)
       }
       
       if (nettilukioAlternative == AlternativeLine.YO) {
