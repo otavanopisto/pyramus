@@ -52,6 +52,23 @@ import fi.otavanopisto.pyramus.koski.model.lukio.LukionOppiaineenArviointi;
 
 public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoskiLukioStudentHandler {
 
+  private static final EnumSet<KoskiOppiaineetYleissivistava> VALTAKUNNALLISETOPPIAINEET2019 = EnumSet.of(
+      KoskiOppiaineetYleissivistava.BI,
+      KoskiOppiaineetYleissivistava.ET,
+      KoskiOppiaineetYleissivistava.FI,
+      KoskiOppiaineetYleissivistava.FY,
+      KoskiOppiaineetYleissivistava.GE,
+      KoskiOppiaineetYleissivistava.HI,
+      KoskiOppiaineetYleissivistava.KE,
+      KoskiOppiaineetYleissivistava.KU,
+      KoskiOppiaineetYleissivistava.LI,
+      KoskiOppiaineetYleissivistava.MU,
+      KoskiOppiaineetYleissivistava.OP,
+      KoskiOppiaineetYleissivistava.PS,
+      KoskiOppiaineetYleissivistava.TE,
+      KoskiOppiaineetYleissivistava.YH
+  );
+
   @Inject
   private Logger logger;
 
@@ -248,10 +265,9 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
         return null;
     }
     
-    if (matchingEducationType && EnumUtils.isValidEnum(KoskiOppiaineetYleissivistava.class, StringUtils.upperCase(subjectCode))) {
+    if (matchingEducationType && isValtakunnallinenOppiaine2019(subjectCode)) {
       // Common national subject
 
-      // TODO: kaikkia aineita ei tunneta 2019
       KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.valueOf(StringUtils.upperCase(subjectCode));
       LukionOppiaineenTunniste2019 tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen2019(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
       return mapSubject(subject, subjectCode, tunniste, map);
@@ -262,6 +278,14 @@ public abstract class AbstractKoskiLukioStudentHandler2019 extends AbstractKoski
       LukionOppiaineenSuoritusPaikallinen2019 tunniste = new LukionOppiaineenSuoritusPaikallinen2019(paikallinenKoodi, false, kuvaus(subject.getName()));
       return mapSubject(subject, subjectCode, tunniste, map);
     }
+  }
+
+  protected boolean isValtakunnallinenOppiaine2019(String subjectCode) {
+    String subjectCodeUpper = StringUtils.upperCase(subjectCode);
+    
+    return EnumUtils.isValidEnum(KoskiOppiaineetYleissivistava.class, subjectCodeUpper)
+      ? VALTAKUNNALLISETOPPIAINEET2019.contains(KoskiOppiaineetYleissivistava.valueOf(subjectCodeUpper))
+      : false;
   }
 
   private OppiaineenSuoritusWithSubject<LukionOsasuoritus2019> mapSubject(Subject subject, String subjectCode, LukionOppiaineenTunniste2019 tunniste, Map<String, OppiaineenSuoritusWithSubject<LukionOsasuoritus2019>> map) {
