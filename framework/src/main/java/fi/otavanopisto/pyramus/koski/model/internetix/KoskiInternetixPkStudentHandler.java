@@ -1,13 +1,11 @@
 package fi.otavanopisto.pyramus.koski.model.internetix;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -25,10 +23,8 @@ import fi.otavanopisto.pyramus.domainmodel.base.Subject;
 import fi.otavanopisto.pyramus.domainmodel.grading.Credit;
 import fi.otavanopisto.pyramus.domainmodel.koski.KoskiPersonState;
 import fi.otavanopisto.pyramus.domainmodel.students.Student;
-import fi.otavanopisto.pyramus.domainmodel.students.StudentLodgingPeriod;
 import fi.otavanopisto.pyramus.domainmodel.students.StudentSubjectGrade;
 import fi.otavanopisto.pyramus.koski.CreditStub;
-import fi.otavanopisto.pyramus.koski.KoskiStudentHandler;
 import fi.otavanopisto.pyramus.koski.KoskiStudentId;
 import fi.otavanopisto.pyramus.koski.KoskiStudyProgrammeHandler;
 import fi.otavanopisto.pyramus.koski.OpiskelijanOPS;
@@ -46,15 +42,14 @@ import fi.otavanopisto.pyramus.koski.koodisto.PerusopetuksenSuoritusTapa;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointi;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiNumeerinen;
 import fi.otavanopisto.pyramus.koski.model.KurssinArviointiSanallinen;
-import fi.otavanopisto.pyramus.koski.model.Majoitusjakso;
 import fi.otavanopisto.pyramus.koski.model.OrganisaationToimipisteOID;
 import fi.otavanopisto.pyramus.koski.model.PaikallinenKoodi;
+import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AbstractAikuistenPerusopetuksenHandler;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinSuoritus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunniste;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnisteOPS2015;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnistePV2017;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenKurssinTunnistePaikallinen;
-import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOpiskeluoikeus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritus;
 import fi.otavanopisto.pyramus.koski.model.aikuistenperusopetus.AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli;
@@ -70,7 +65,7 @@ import fi.otavanopisto.pyramus.koski.settings.StudyEndReasonMapping;
 /**
  * Käsittelee Internetix-/aineopiskelijan peruskoulukurssien osuuden.
  */
-public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
+public class KoskiInternetixPkStudentHandler extends AbstractAikuistenPerusopetuksenHandler {
 
   private static final KoskiStudyProgrammeHandler HANDLER_TYPE = KoskiStudyProgrammeHandler.aineopiskeluperusopetus;
   
@@ -139,31 +134,6 @@ public class KoskiInternetixPkStudentHandler extends KoskiStudentHandler {
     return new OpiskeluoikeusInternetix(opiskeluoikeus, eiSuorituksia);
   }
   
-  private AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot getLisatiedot(Student student) {
-    AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot lisatiedot = new AikuistenPerusopetuksenOpiskeluoikeudenLisatiedot();
-    
-    lisatiedot.setVuosiluokkiinSitoutumatonOpetus(true);
-    
-    List<StudentLodgingPeriod> lodgingPeriods = lodgingPeriodDAO.listByStudent(student);
-    for (StudentLodgingPeriod lodgingPeriod : lodgingPeriods) {
-      lisatiedot.addSisaoppilaitosmainenMajoitus(new Majoitusjakso(lodgingPeriod.getBegin(), lodgingPeriod.getEnd()));
-    }
-    
-    if (!lodgingPeriods.isEmpty()) {
-      Date minBeginDate = lodgingPeriods.stream().map(StudentLodgingPeriod::getBegin).filter(Objects::nonNull)
-          .min(Comparator.nullsLast(Date::compareTo)).orElse(null);
-      
-      if (minBeginDate != null) {
-        Date maxEndDate = lodgingPeriods.stream().map(StudentLodgingPeriod::getEnd).filter(Objects::nonNull)
-            .max(Comparator.nullsLast(Date::compareTo)).orElse(null);
-        
-        lisatiedot.setOikeusMaksuttomaanAsuntolapaikkaan(new Majoitusjakso(minBeginDate, maxEndDate));
-      }
-    }
-    
-    return lisatiedot;
-  }
-
   private StudentSubjectSelections getDefaultSubjectSelections() {
     StudentSubjectSelections studentSubjects = new StudentSubjectSelections();
     studentSubjects.setPrimaryLanguage("äi");

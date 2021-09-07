@@ -65,6 +65,7 @@ public class KoskiInternetixLukioStudentHandler2019 extends AbstractKoskiLukioSt
     StudyEndReasonMapping lopetusSyy = opiskelujaksot(student, opiskeluoikeus.getTila(), opintojenRahoitus);
     boolean laskeKeskiarvot = lopetusSyy != null ? lopetusSyy.getLaskeAinekeskiarvot() : false;
     boolean sisällytäVahvistus = lopetusSyy != null ? lopetusSyy.getSisällytäVahvistaja() : false;
+    boolean lukionOppimääräSuoritettu = lopetusSyy != null ? lopetusSyy.isLukionOppimääräSuoritettu() : false;
 
     String departmentIdentifier = settings.getToimipisteOID(student.getStudyProgramme().getId(), academyIdentifier);
     
@@ -77,6 +78,7 @@ public class KoskiInternetixLukioStudentHandler2019 extends AbstractKoskiLukioSt
     LukionOppiaineenOppimaaranSuoritus2019 suoritus = new LukionOppiaineenOppimaaranSuoritus2019(
         LukionOppimaara.aikuistenops, Kieli.FI, toimipiste, getDiaarinumero(student));
     suoritus.setTodistuksellaNakyvatLisatiedot(getTodistuksellaNakyvatLisatiedot(student));
+    suoritus.setLukionOppimaaraSuoritettu(lukionOppimääräSuoritettu);
     if (sisällytäVahvistus) {
       suoritus.setVahvistus(getVahvistus(student, departmentIdentifier));
     }

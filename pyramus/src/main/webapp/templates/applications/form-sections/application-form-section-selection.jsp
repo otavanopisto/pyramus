@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div data-dependent-field="field-line" data-dependent-values="nettilukio" style="display:none;">
+    <div data-dependent-field="field-line" data-dependent-values="nettilukio,nettipk" style="display:none;">
       <div class="form-section__field-container">
         <label for="field-nettilukio_compulsory">Maksuton oppivelvollisuus</label>
         <select id="field-nettilukio_compulsory" name="field-nettilukio_compulsory" data-dependencies="true">
