@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -54,7 +55,17 @@ public class LukionOppiaineenOppimaaranSuoritus extends LukionSuoritus {
     return osasuoritukset;
   }
   
+  @JsonProperty("lukionOppimääräSuoritettu")
+  public boolean isLukionOppimaaraSuoritettu() {
+    return lukionOppimaaraSuoritettu;
+  }
+
+  public void setLukionOppimaaraSuoritettu(boolean lukionOppimaaraSuoritettu) {
+    this.lukionOppimaaraSuoritettu = lukionOppimaaraSuoritettu;
+  }
+
   private LukionOppiaineenTunniste koulutusmoduuli;
   private final List<LukionOppiaineenArviointi> arviointi = new ArrayList<>();
   private final List<LukionKurssinSuoritus> osasuoritukset = new ArrayList<>();
+  private boolean lukionOppimaaraSuoritettu;
 }

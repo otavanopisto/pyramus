@@ -113,6 +113,7 @@ public class KoskiInternetixLukioStudentHandler extends AbstractKoskiLukioStuden
     StudyEndReasonMapping lopetusSyy = opiskelujaksot(student, opiskeluoikeus.getTila(), opintojenRahoitus);
     boolean laskeKeskiarvot = lopetusSyy != null ? lopetusSyy.getLaskeAinekeskiarvot() : false;
     boolean sisällytäVahvistus = lopetusSyy != null ? lopetusSyy.getSisällytäVahvistaja() : false;
+    boolean lukionOppimääräSuoritettu = lopetusSyy != null ? lopetusSyy.isLukionOppimääräSuoritettu() : false;
 
     KoskiStudyProgrammeHandlerParams handlerParams = getHandlerParams(HANDLER_TYPE);
 
@@ -132,6 +133,7 @@ public class KoskiInternetixLukioStudentHandler extends AbstractKoskiLukioStuden
       
       LukionOppiaineenOppimaaranSuoritus oppiaineenOppimaaranSuoritus = LukionOppiaineenOppimaaranSuoritus.from(
           oppiaineenSuoritus, Kieli.FI, new OrganisaationToimipisteOID(toimipisteOID));
+      oppiaineenOppimaaranSuoritus.setLukionOppimaaraSuoritettu(lukionOppimääräSuoritettu);
       opiskeluoikeus.addSuoritus(oppiaineenOppimaaranSuoritus);
     }
     
