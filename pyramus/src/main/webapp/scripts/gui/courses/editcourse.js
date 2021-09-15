@@ -100,7 +100,12 @@ function initializeSignupStudyProgrammesTable(tableContainerElement, courseId) {
       var rows = [];
       
       for (var i = 0; i < ret.length; i++) {
-        rows.push([jsonEscapeHTML(ret[i].studyProgrammeName), '', ret[i].studyProgrammeId]);
+        var studyProgrammeName = jsonEscapeHTML(ret[i].studyProgrammeName);
+        if (ret[i].organization) {
+          studyProgrammeName = studyProgrammeName + " (" + jsonEscapeHTML(ret[i].organization.name) + ")"
+        }
+        
+        rows.push([studyProgrammeName, '', ret[i].studyProgrammeId]);
       }
       
       if (rows.length > 0) {
@@ -159,7 +164,12 @@ function initializeSignupStudentGroupsTable(tableContainerElement, courseId) {
       var rows = [];
       
       for (var i = 0; i < ret.length; i++) {
-        rows.push([ret[i].studentGroupName, '', ret[i].studentGroupId]);
+        var studentGroupName = jsonEscapeHTML(ret[i].studentGroupName);
+        if (ret[i].organization) {
+          studentGroupName = studentGroupName + " (" + jsonEscapeHTML(ret[i].organization.name) + ")"
+        }
+        
+        rows.push([studentGroupName, '', ret[i].studentGroupId]);
       }
       
       if (rows.length > 0) {

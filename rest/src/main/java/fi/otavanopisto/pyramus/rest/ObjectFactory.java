@@ -897,7 +897,13 @@ public class ObjectFactory {
           Long courseId = entity.getCourse() != null ? entity.getCourse().getId() : null;
           Long studentGroupId = entity.getStudentGroup() != null ? entity.getStudentGroup().getId() : null;
           String studentGroupName = entity.getStudentGroup() != null ? entity.getStudentGroup().getName() : null;
-          return new fi.otavanopisto.pyramus.rest.model.course.CourseSignupStudentGroup(entity.getId(), courseId, studentGroupId, studentGroupName);
+
+          Organization studentGroupOrganization = entity.getStudentGroup() != null ? entity.getStudentGroup().getOrganization() : null;
+          fi.otavanopisto.pyramus.rest.model.OrganizationBasicInfo organization = studentGroupOrganization != null
+              ? new fi.otavanopisto.pyramus.rest.model.OrganizationBasicInfo(studentGroupOrganization.getId(), studentGroupOrganization.getName(), studentGroupOrganization.getArchived())
+              : null;
+
+          return new fi.otavanopisto.pyramus.rest.model.course.CourseSignupStudentGroup(entity.getId(), courseId, studentGroupId, studentGroupName, organization);
         }
       },
       
@@ -907,7 +913,13 @@ public class ObjectFactory {
           Long courseId = entity.getCourse() != null ? entity.getCourse().getId() : null;
           Long studyProgrammeId = entity.getStudyProgramme() != null ? entity.getStudyProgramme().getId() : null;
           String studyProgrammeName = entity.getStudyProgramme() != null ? entity.getStudyProgramme().getName() : null;
-          return new fi.otavanopisto.pyramus.rest.model.course.CourseSignupStudyProgramme(entity.getId(), courseId, studyProgrammeId, studyProgrammeName);
+
+          Organization studyProgrammeOrganization = entity.getStudyProgramme() != null ? entity.getStudyProgramme().getOrganization() : null;
+          fi.otavanopisto.pyramus.rest.model.OrganizationBasicInfo organization = studyProgrammeOrganization != null
+              ? new fi.otavanopisto.pyramus.rest.model.OrganizationBasicInfo(studyProgrammeOrganization.getId(), studyProgrammeOrganization.getName(), studyProgrammeOrganization.getArchived())
+              : null;
+              
+          return new fi.otavanopisto.pyramus.rest.model.course.CourseSignupStudyProgramme(entity.getId(), courseId, studyProgrammeId, studyProgrammeName, organization);
         }
       }
       
