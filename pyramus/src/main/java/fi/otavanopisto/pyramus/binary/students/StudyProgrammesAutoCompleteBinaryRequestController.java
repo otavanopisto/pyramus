@@ -30,12 +30,14 @@ public class StudyProgrammesAutoCompleteBinaryRequestController extends BinaryRe
     resultBuilder.append("<ul>");
 
     if (!StringUtils.isBlank(binaryRequestContext.getString("text"))) {
-      final String text = QueryParser.escape(StringUtils.trim(binaryRequestContext.getString("text")));
+      final String text = QueryParser.escape(StringUtils.lowerCase(StringUtils.trim(binaryRequestContext.getString("text"))));
 
       StaffMember loggedUser = staffMemberDAO.findById(binaryRequestContext.getLoggedUserId());
       
       List<StudyProgramme> studyProgrammes = UserUtils.canAccessAllOrganizations(loggedUser) ? 
           studyProgrammeDAO.listUnarchived() : studyProgrammeDAO.listByOrganization(loggedUser.getOrganization(), Archived.UNARCHIVED);
+      
+      // Filter studyProgramme list, sort it and convert to return type
       
       studyProgrammes.stream()
         .filter(studyProgramme -> {
@@ -66,15 +68,20 @@ public class StudyProgrammesAutoCompleteBinaryRequestController extends BinaryRe
   }
   
   private void addResult(StringBuilder resultBuilder, StudyProgramme studyProgramme) {
+    String studyProgrammeName = StringEscapeUtils.escapeHtml(studyProgramme.getName());
+    if (studyProgramme.getOrganization() != null) {
+      studyProgrammeName = studyProgrammeName + " (" + StringEscapeUtils.escapeHtml(studyProgramme.getOrganization().getName()) + ")";
+    }
+    
     resultBuilder
       .append("<li>")
       .append("<span>")
-      .append(StringEscapeUtils.escapeHtml(studyProgramme.getName()))
+      .append(studyProgrammeName)
       .append("</span>")
       .append("<input type=\"hidden\" name=\"studyProgrammeId\" value=\"")
       .append(studyProgramme.getId())
       .append("\"/>")
-      .append(String.format("<input type=\"hidden\" name=\"studyProgrammeName\" value=\"%s\"/>", StringEscapeUtils.escapeHtml(studyProgramme.getName())))
+      .append(String.format("<input type=\"hidden\" name=\"studyProgrammeName\" value=\"%s\"/>", studyProgrammeName))
       .append("</li>");
   }
 }

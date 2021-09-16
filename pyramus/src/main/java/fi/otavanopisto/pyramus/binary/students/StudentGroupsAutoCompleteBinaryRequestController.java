@@ -74,15 +74,20 @@ public class StudentGroupsAutoCompleteBinaryRequestController extends BinaryRequ
   }
   
   private void addResult(StringBuilder resultBuilder, StudentGroup studentGroup) {
+    String studentGroupName = StringEscapeUtils.escapeHtml(studentGroup.getName());
+    if (studentGroup.getOrganization() != null) {
+      studentGroupName = studentGroupName + " (" + StringEscapeUtils.escapeHtml(studentGroup.getOrganization().getName()) + ")";
+    }
+    
     resultBuilder
       .append("<li>")
       .append("<span>")
-      .append(StringEscapeUtils.escapeHtml(studentGroup.getName()))
+      .append(studentGroupName)
       .append("</span>")
       .append("<input type=\"hidden\" name=\"studentGroupId\" value=\"")
       .append(studentGroup.getId())
       .append("\"/>")
-      .append(String.format("<input type=\"hidden\" name=\"studentGroupName\" value=\"%s\"/>", StringEscapeUtils.escapeHtml(studentGroup.getName())))
+      .append(String.format("<input type=\"hidden\" name=\"studentGroupName\" value=\"%s\"/>", studentGroupName))
       .append("</li>");
   }
 }

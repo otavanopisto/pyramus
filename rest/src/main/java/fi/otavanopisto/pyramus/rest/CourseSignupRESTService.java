@@ -60,6 +60,11 @@ public class CourseSignupRESTService extends AbstractRESTService {
   @Inject
   private ObjectFactory objectFactory;
   
+  /**
+   * Creates a signup study programme. 
+   * 
+   * Organization information within entity is not used.
+   */
   @Path("/courses/{COURSEID:[0-9]*}/signupStudyProgrammes")
   @POST
   @RESTPermit (CourseSignupGroupPermissions.CREATE_SIGNUP_STUDYPROGRAMME)
@@ -137,6 +142,11 @@ public class CourseSignupRESTService extends AbstractRESTService {
     return Response.noContent().build();
   }
 
+  /**
+   * Creates a signup student group. 
+   * 
+   * Organization information within entity is not used.
+   */
   @Path("/courses/{COURSEID:[0-9]*}/signupStudentGroups")
   @POST
   @RESTPermit (CourseSignupGroupPermissions.CREATE_SIGNUP_STUDENTGROUP)

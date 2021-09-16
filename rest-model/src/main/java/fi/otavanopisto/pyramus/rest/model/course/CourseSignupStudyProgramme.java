@@ -1,17 +1,20 @@
 package fi.otavanopisto.pyramus.rest.model.course;
 
+import fi.otavanopisto.pyramus.rest.model.OrganizationBasicInfo;
+
 public class CourseSignupStudyProgramme {
 
   public CourseSignupStudyProgramme() {
     super();
   }
 
-  public CourseSignupStudyProgramme(Long id, Long courseId, Long studyProgrammeId, String studyProgrammeName) {
+  public CourseSignupStudyProgramme(Long id, Long courseId, Long studyProgrammeId, String studyProgrammeName, OrganizationBasicInfo organization) {
     this();
     this.id = id;
     this.courseId = courseId;
     this.studyProgrammeId = studyProgrammeId;
     this.studyProgrammeName = studyProgrammeName;
+    this.organization = organization;
   }
 
   public Long getId() {
@@ -46,8 +49,17 @@ public class CourseSignupStudyProgramme {
     this.studyProgrammeName = studyProgrammeName;
   }
 
+  public OrganizationBasicInfo getOrganization() {
+    return organization;
+  }
+
+  public void setOrganization(OrganizationBasicInfo organization) {
+    this.organization = organization;
+  }
+
   private Long id;
   private Long courseId;
   private Long studyProgrammeId;
   private String studyProgrammeName;
+  private OrganizationBasicInfo organization;
 }
