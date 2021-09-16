@@ -19,6 +19,7 @@ public class MuidenLukioOpintojenSuoritus2019 extends LukionOsasuoritus2019 {
   }
   
   public MuidenLukioOpintojenSuoritus2019(LukionMuidenOpintojenTunniste2019 koulutusmoduuli) {
+    super(TYYPPI);
     this.koulutusmoduuli = koulutusmoduuli;
   }
   
