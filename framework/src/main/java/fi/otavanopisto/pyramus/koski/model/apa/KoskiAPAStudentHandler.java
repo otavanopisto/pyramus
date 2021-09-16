@@ -179,7 +179,7 @@ public class KoskiAPAStudentHandler extends AbstractAikuistenPerusopetuksenHandl
       OppiaineAidinkieliJaKirjallisuus aine = OppiaineAidinkieliJaKirjallisuus.AI7; // s2
       
       APAOppiaineenTunniste tunniste = new APAOppiaineenTunnisteAidinkieli(aine);
-      return mapSubject(subject, subjectCode, tunniste, map);
+      return mapSubject(subject, subjectCode, false, tunniste, map);
     }
     
     // APA has only A1 foreign language
@@ -192,7 +192,7 @@ public class KoskiAPAStudentHandler extends AbstractAikuistenPerusopetuksenHandl
         if (kieli != null) {
           APAOppiaineenTunniste tunniste = new APAOppiaineenTunnisteVierasKieli(
               AikuistenPerusopetuksenAlkuvaiheenOppiaineet.A1, kieli);
-          return mapSubject(subject, subjectCode, tunniste, map);
+          return mapSubject(subject, subjectCode, false, tunniste, map);
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
@@ -207,19 +207,19 @@ public class KoskiAPAStudentHandler extends AbstractAikuistenPerusopetuksenHandl
       // Common national subject
       
       APAOppiaineenTunniste tunniste = new APAOppiaineenTunnisteMuu(nationalSubject);
-      return mapSubject(subject, subjectCode, tunniste, map);
+      return mapSubject(subject, subjectCode, false, tunniste, map);
     } else {
       // Other local subject
       
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(subjectCode, kuvaus(subject.getName()));
       APAOppiaineenTunniste tunniste = new APAOppiaineenTunnistePaikallinen(paikallinenKoodi, kuvaus(subject.getName()));
-      return mapSubject(subject, subjectCode, tunniste, map);
+      return mapSubject(subject, subjectCode, true, tunniste, map);
     }
   }
 
-  private OppiaineenSuoritusWithSubject<APAOppiaineenSuoritus> mapSubject(Subject subject, String subjectCode, APAOppiaineenTunniste tunniste,
-      Map<String, OppiaineenSuoritusWithSubject<APAOppiaineenSuoritus>> map) {
-    OppiaineenSuoritusWithSubject<APAOppiaineenSuoritus> os = new OppiaineenSuoritusWithSubject<>(subject, new APAOppiaineenSuoritus(tunniste));
+  private OppiaineenSuoritusWithSubject<APAOppiaineenSuoritus> mapSubject(Subject subject, String subjectCode, boolean paikallinenOppiaine, 
+      APAOppiaineenTunniste tunniste, Map<String, OppiaineenSuoritusWithSubject<APAOppiaineenSuoritus>> map) {
+    OppiaineenSuoritusWithSubject<APAOppiaineenSuoritus> os = new OppiaineenSuoritusWithSubject<>(subject, paikallinenOppiaine, new APAOppiaineenSuoritus(tunniste));
     map.put(subjectCode, os);
     return os;
   }

@@ -223,7 +223,7 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
       if (StringUtils.equals(subjectCode, studentSubjects.getMath())) {
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMatematiikka(
             OppiaineMatematiikka.valueOf(subjectCode), isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.MA));
-        return mapSubject(subject, subjectCode, tunniste, map);
+        return mapSubject(subject, subjectCode, false, tunniste, map);
       } else
         return null;
     }
@@ -232,7 +232,7 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusAidinkieli(
             OppiaineAidinkieliJaKirjallisuus.AI1, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
-        return mapSubject(subject, subjectCode, tunniste, map);
+        return mapSubject(subject, subjectCode, false, tunniste, map);
       } else
         return null;
     }
@@ -240,7 +240,7 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
       if (StringUtils.equals(subjectCode, studentSubjects.getPrimaryLanguage())) {
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusAidinkieli(
             OppiaineAidinkieliJaKirjallisuus.AI7, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
-        return mapSubject(subject, subjectCode, tunniste, map);
+        return mapSubject(subject, subjectCode, false, tunniste, map);
       } else
         return null;
     }
@@ -254,7 +254,7 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
           KoskiOppiaineetYleissivistava valinta = studentSubjects.koskiKoodi(ops, subjectCode);
           LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusVierasKieli(valinta, kieli, 
               isPakollinenOppiaine(student, valinta));
-          return mapSubject(subject, subjectCode, tunniste, map);
+          return mapSubject(subject, subjectCode, false, tunniste, map);
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
@@ -273,7 +273,7 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
         
         KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
         LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-        return mapSubject(subject, "KT", tunniste, map);
+        return mapSubject(subject, "KT", false, tunniste, map);
       } else
         return null;
     }
@@ -283,18 +283,18 @@ public class KoskiLukioStudentHandler extends AbstractKoskiLukioStudentHandler {
       
       KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.valueOf(StringUtils.upperCase(subjectCode));
       LukionOppiaineenTunniste tunniste = new LukionOppiaineenSuoritusMuuValtakunnallinen(kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-      return mapSubject(subject, subjectCode, tunniste, map);
+      return mapSubject(subject, subjectCode, false, tunniste, map);
     } else {
       // Other local subject
       
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(subjectCode, kuvaus(subject.getName()));
       LukionOppiaineenSuoritusPaikallinen tunniste = new LukionOppiaineenSuoritusPaikallinen(paikallinenKoodi, false, kuvaus(subject.getName()));
-      return mapSubject(subject, subjectCode, tunniste, map);
+      return mapSubject(subject, subjectCode, true, tunniste, map);
     }
   }
 
-  private OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> mapSubject(Subject subject, String subjectCode, LukionOppiaineenTunniste tunniste, Map<String, OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus>> map) {
-    OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> os = new OppiaineenSuoritusWithSubject<>(subject, new LukionOppiaineenSuoritus(tunniste));
+  private OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> mapSubject(Subject subject, String subjectCode, boolean paikallinenOppiaine, LukionOppiaineenTunniste tunniste, Map<String, OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus>> map) {
+    OppiaineenSuoritusWithSubject<LukionOppiaineenSuoritus> os = new OppiaineenSuoritusWithSubject<>(subject, paikallinenOppiaine, new LukionOppiaineenSuoritus(tunniste));
     map.put(subjectCode, os);
     return os;
   }

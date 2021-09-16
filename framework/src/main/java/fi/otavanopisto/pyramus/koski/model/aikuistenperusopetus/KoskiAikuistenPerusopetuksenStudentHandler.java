@@ -201,7 +201,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
         
         AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusAidinkieli(
             aine, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.AI));
-        return mapSubject(subject, subjectCode, tunniste, map);
+        return mapSubject(subject, subjectCode, false, tunniste, map);
       } else
         return null;
     }
@@ -222,7 +222,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
           
           AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusVierasKieli(
               valinta, kieli, isPakollinenOppiaine(student, valinta));
-          return mapSubject(subject, subjectCode, tunniste, map);
+          return mapSubject(subject, subjectCode, false, tunniste, map);
         } else {
           logger.log(Level.SEVERE, String.format("Koski: Language code %s could not be converted to an enum.", langCode));
           koskiPersonLogDAO.create(student.getPerson(), student, KoskiPersonState.UNKNOWN_LANGUAGE, new Date(), langCode);
@@ -242,7 +242,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
         KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.KT;
         AikuistenPerusopetuksenOppiaineenTunniste tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusMuu(
             kansallinenAine, isPakollinenOppiaine(student, KoskiOppiaineetYleissivistava.KT));
-        return mapSubject(subject, "KT", tunniste, map);
+        return mapSubject(subject, "KT", false, tunniste, map);
       } else
         return null;
     }
@@ -253,7 +253,7 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
       KoskiOppiaineetYleissivistava kansallinenAine = KoskiOppiaineetYleissivistava.valueOf(StringUtils.upperCase(subjectCode));
       AikuistenPerusopetuksenOppiaineenTunniste tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusMuu(
           kansallinenAine, isPakollinenOppiaine(student, kansallinenAine));
-      return mapSubject(subject, subjectCode, tunniste, map);
+      return mapSubject(subject, subjectCode, false, tunniste, map);
     } else {
       // Other local subject
       // TODO Skipped subjects ?? (MUU)
@@ -261,14 +261,14 @@ public class KoskiAikuistenPerusopetuksenStudentHandler extends AbstractAikuiste
       PaikallinenKoodi paikallinenKoodi = new PaikallinenKoodi(subjectCode, kuvaus(subject.getName()));
       AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen tunniste = new AikuistenPerusopetuksenOppiaineenSuoritusPaikallinen(
           paikallinenKoodi, false, kuvaus(subject.getName()));
-      return mapSubject(subject, subjectCode, tunniste, map);
+      return mapSubject(subject, subjectCode, true, tunniste, map);
     }
   }
 
   private OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> mapSubject(
-      Subject subject, String subjectCode, AikuistenPerusopetuksenOppiaineenTunniste tunniste,
+      Subject subject, String subjectCode, boolean paikallinenOppiaine, AikuistenPerusopetuksenOppiaineenTunniste tunniste,
       Map<String, OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus>> map) {
-    OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> os = new OppiaineenSuoritusWithSubject<>(subject, new AikuistenPerusopetuksenOppiaineenSuoritus(tunniste));
+    OppiaineenSuoritusWithSubject<AikuistenPerusopetuksenOppiaineenSuoritus> os = new OppiaineenSuoritusWithSubject<>(subject, paikallinenOppiaine, new AikuistenPerusopetuksenOppiaineenSuoritus(tunniste));
     map.put(subjectCode, os);
     return os;
   }
